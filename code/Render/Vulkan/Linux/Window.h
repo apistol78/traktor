@@ -37,7 +37,14 @@ public:
 
 	virtual ~Window();
 
-	bool create(uint32_t display, int32_t width, int32_t height);
+	/*! Create window.
+	 *
+	 * \param fullscreen Map the toplevel fullscreen from the start. Requested before
+	 *                   the initial commit so the first configure already carries the
+	 *                   fullscreen size; requesting it afterwards cannot be answered
+	 *                   until the surface has content.
+	 */
+	bool create(uint32_t display, int32_t width, int32_t height, bool fullscreen);
 
 	void setTitle(const wchar_t* title);
 
@@ -74,6 +81,7 @@ private:
 	wl_shm* m_shm;
 	wl_seat* m_seat;
 	wl_pointer* m_pointer;
+	wl_keyboard* m_keyboard;
 	wl_surface* m_surface;
 	wl_cursor_theme* m_cursorTheme;
 	wl_cursor* m_cursor;
@@ -90,12 +98,24 @@ private:
 	bool m_active;
 	bool m_cursorShow;
 
+	// Alt held down, tracked to detect the fullscreen chord.
+	bool m_altDown;
+
 	// Pending events surfaced through update().
 	bool m_pendingClose;
 	bool m_pendingResize;
+	bool m_pendingToggleFullScreen;
 	uint32_t m_enterSerial;
 
 	void applyCursor();
+
+	/*! Pump events until the compositor reports the wanted fullscreen state.
+	 *
+	 * Fullscreen transitions are asynchronous; the new size only arrives with a
+	 * configure event. Waiting here lets the caller build its swap chain at the
+	 * final size right away instead of at a size which is already stale.
+	 */
+	void waitForFullScreenState(bool fullScreen);
 
 public:
 	// Wayland C-style listener callbacks (public so the file-scope listener
@@ -108,6 +128,15 @@ public:
 	// Seat / pointer listener.
 	static void seatCapabilities(void* data, wl_seat* seat, uint32_t caps);
 	static void seatName(void* data, wl_seat* seat, const char* name);
+
+	// Keyboard listener; used solely to detect the Alt+Enter fullscreen chord, all
+	// game input is handled by the input system on its own event queue.
+	static void keyboardKeymap(void* data, wl_keyboard* keyboard, uint32_t format, int32_t fd, uint32_t size);
+	static void keyboardEnter(void* data, wl_keyboard* keyboard, uint32_t serial, wl_surface* surface, wl_array* keys);
+	static void keyboardLeave(void* data, wl_keyboard* keyboard, uint32_t serial, wl_surface* surface);
+	static void keyboardKey(void* data, wl_keyboard* keyboard, uint32_t serial, uint32_t time, uint32_t key, uint32_t state);
+	static void keyboardModifiers(void* data, wl_keyboard* keyboard, uint32_t serial, uint32_t modsDepressed, uint32_t modsLatched, uint32_t modsLocked, uint32_t group);
+	static void keyboardRepeatInfo(void* data, wl_keyboard* keyboard, int32_t rate, int32_t delay);
 	static void pointerEnter(void* data, wl_pointer* pointer, uint32_t serial, wl_surface* surface, wl_fixed_t sx, wl_fixed_t sy);
 	static void pointerLeave(void* data, wl_pointer* pointer, uint32_t serial, wl_surface* surface);
 	static void pointerMotion(void* data, wl_pointer* pointer, uint32_t time, wl_fixed_t sx, wl_fixed_t sy);

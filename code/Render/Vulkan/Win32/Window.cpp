@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -30,8 +30,10 @@ BOOL enumMonitors(HMONITOR hMonitor, HDC hDC, LPRECT lpRect, LPARAM lpUser)
 Window::Window()
 :	m_hWnd(0)
 ,	m_fullScreen(false)
+,	m_windowedStyle(WS_OVERLAPPEDWINDOW)
+,	m_windowedStyleEx(0)
 {
-	std::memset(&m_windowPosition, 0, sizeof(m_windowPosition));
+	std::memset(&m_windowedRect, 0, sizeof(m_windowedRect));
 }
 
 Window::~Window()
@@ -43,7 +45,7 @@ Window::~Window()
 	}
 }
 
-bool Window::create(uint32_t display, int32_t width, int32_t height)
+bool Window::create(uint32_t display, int32_t width, int32_t height, bool fullscreen)
 {
 	T_ASSERT(!m_hWnd);
 
@@ -92,7 +94,11 @@ bool Window::create(uint32_t display, int32_t width, int32_t height)
 	if (!m_hWnd)
 		return false;
 
-	setWindowedStyle(width, height);
+	if (fullscreen)
+		setFullScreenStyle(width, height);
+	else
+		setWindowedStyle(width, height);
+
 	return true;
 }
 
@@ -105,13 +111,35 @@ void Window::setWindowedStyle(int32_t width, int32_t height)
 {
 	if (m_fullScreen)
 	{
-		SetWindowLong(m_hWnd, GWL_STYLE, WS_OVERLAPPEDWINDOW);
-		SetWindowPos(m_hWnd, HWND_NOTOPMOST, m_windowPosition.x, m_windowPosition.y, 0, 0, SWP_NOSIZE | SWP_FRAMECHANGED);
-		SetCursor(LoadCursor(NULL, IDC_ARROW));
+		// Restore the presentation saved on the way into fullscreen; the whole
+		// rectangle, as the fullscreen window owns the size as well as the position.
+		// The requested client size is applied below and wins when it is valid, so
+		// restoring the size here only matters when the caller has none to give.
+		SetWindowLong(m_hWnd, GWL_STYLE, m_windowedStyle);
+		SetWindowLong(m_hWnd, GWL_EXSTYLE, m_windowedStyleEx);
+
+		SetWindowPos(
+			m_hWnd,
+			HWND_NOTOPMOST,
+			m_windowedRect.left,
+			m_windowedRect.top,
+			m_windowedRect.right - m_windowedRect.left,
+			m_windowedRect.bottom - m_windowedRect.top,
+			SWP_FRAMECHANGED | SWP_NOACTIVATE);
+
+		// Cursor visibility belongs to the render view, which answers WM_SETCURSOR
+		// from its own state; forcing an arrow here would undo hideCursor().
 	}
 
 	if (m_fullScreen || !IsWindowVisible(m_hWnd))
 		ShowWindow(m_hWnd, SW_SHOWNOACTIVATE);
+
+	// Nothing sensible to size to; keep whatever was restored above.
+	if (width <= 0 || height <= 0)
+	{
+		m_fullScreen = false;
+		return;
+	}
 
 	RECT rcWindow, rcClient;
 	GetWindowRect(m_hWnd, &rcWindow);
@@ -137,24 +165,48 @@ void Window::setFullScreenStyle(int32_t width, int32_t height)
 {
 	if (!m_fullScreen)
 	{
-		// Remember current position.
-		RECT rcWindow;
-		GetWindowRect(m_hWnd, &rcWindow);
-		m_windowPosition.x = rcWindow.left;
-		m_windowPosition.y = rcWindow.top;
-
-		// Modify window style.
-		long style = GetWindowLong(m_hWnd, GWL_STYLE);
-		long styleEx = GetWindowLong(m_hWnd, GWL_EXSTYLE);
-
-		style = style & (~WS_BORDER) & (~WS_DLGFRAME) & (~WS_THICKFRAME);
-		styleEx = styleEx & (~WS_EX_WINDOWEDGE);
-
-		SetWindowLong(m_hWnd, GWL_STYLE, style | WS_POPUP);
-		SetWindowLong(m_hWnd, GWL_EXSTYLE, styleEx | WS_EX_TOPMOST);
+		// Remember the windowed presentation in full so it can be restored later.
+		GetWindowRect(m_hWnd, &m_windowedRect);
+		m_windowedStyle = GetWindowLong(m_hWnd, GWL_STYLE);
+		m_windowedStyleEx = GetWindowLong(m_hWnd, GWL_EXSTYLE);
 	}
 
-	ShowWindow(m_hWnd, SW_SHOWMAXIMIZED);
+	// A minimized window cannot be repositioned; restore it before moving it.
+	if (IsIconic(m_hWnd))
+		ShowWindow(m_hWnd, SW_RESTORE);
+
+	// Strip the frame and make it a popup. WS_SYSMENU is deliberately kept so Alt+F4
+	// still closes the window while fullscreen.
+	SetWindowLong(m_hWnd, GWL_STYLE, (m_windowedStyle & ~(WS_CAPTION | WS_BORDER | WS_DLGFRAME | WS_THICKFRAME | WS_MAXIMIZE | WS_MINIMIZE)) | WS_POPUP);
+	SetWindowLong(m_hWnd, GWL_EXSTYLE, m_windowedStyleEx & ~(WS_EX_WINDOWEDGE | WS_EX_CLIENTEDGE | WS_EX_DLGMODALFRAME));
+
+	// Cover exactly one monitor. Maximizing a WS_POPUP window is not reliably the
+	// same thing; depending on the styles left on the window it can size to the work
+	// area instead, which leaves the task bar showing over the view. The monitor
+	// rectangle is therefore applied explicitly. The requested size is only a fall
+	// back, as borderless fullscreen never changes the display mode.
+	RECT rcTarget = { 0, 0, width, height };
+	MONITORINFO mi = {};
+	mi.cbSize = sizeof(mi);
+	if (GetMonitorInfo(MonitorFromWindow(m_hWnd, MONITOR_DEFAULTTONEAREST), &mi))
+		rcTarget = mi.rcMonitor;
+
+	// Placed at the top of the normal Z order rather than made topmost; a topmost
+	// window stays over everything else after the user has alt-tabbed away, and a
+	// borderless window covering the whole monitor already hides the task bar while
+	// it is in the foreground.
+	SetWindowPos(
+		m_hWnd,
+		HWND_TOP,
+		rcTarget.left,
+		rcTarget.top,
+		rcTarget.right - rcTarget.left,
+		rcTarget.bottom - rcTarget.top,
+		SWP_FRAMECHANGED | SWP_NOACTIVATE);
+
+	if (!IsWindowVisible(m_hWnd))
+		ShowWindow(m_hWnd, SW_SHOWNOACTIVATE);
+
 	m_fullScreen = true;
 }
 
@@ -171,6 +223,20 @@ void Window::hide()
 bool Window::isActive() const
 {
 	return GetForegroundWindow() == m_hWnd;
+}
+
+int32_t Window::getWidth() const
+{
+	RECT rcClient;
+	GetClientRect(m_hWnd, &rcClient);
+	return (int32_t)(rcClient.right - rcClient.left);
+}
+
+int32_t Window::getHeight() const
+{
+	RECT rcClient;
+	GetClientRect(m_hWnd, &rcClient);
+	return (int32_t)(rcClient.bottom - rcClient.top);
 }
 
 uint32_t Window::getDisplay() const

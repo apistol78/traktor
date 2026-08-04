@@ -7,6 +7,8 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include <cstring>
+#include <unistd.h>
+#include <linux/input-event-codes.h>
 #include "Core/Log/Log.h"
 #include "Core/Misc/TString.h"
 #include "Core/System/OS.h"
@@ -38,6 +40,16 @@ const wl_pointer_listener c_pointerListener =
 	.axis = Window::pointerAxis
 };
 
+const wl_keyboard_listener c_keyboardListener =
+{
+	.keymap = Window::keyboardKeymap,
+	.enter = Window::keyboardEnter,
+	.leave = Window::keyboardLeave,
+	.key = Window::keyboardKey,
+	.modifiers = Window::keyboardModifiers,
+	.repeat_info = Window::keyboardRepeatInfo
+};
+
 libdecor_frame_interface c_frameInterface =
 {
 	Window::frameConfigure,
@@ -62,6 +74,7 @@ Window::Window()
 ,	m_shm(nullptr)
 ,	m_seat(nullptr)
 ,	m_pointer(nullptr)
+,	m_keyboard(nullptr)
 ,	m_surface(nullptr)
 ,	m_cursorTheme(nullptr)
 ,	m_cursor(nullptr)
@@ -74,8 +87,10 @@ Window::Window()
 ,	m_fullScreen(false)
 ,	m_active(true)
 ,	m_cursorShow(true)
+,	m_altDown(false)
 ,	m_pendingClose(false)
 ,	m_pendingResize(false)
+,	m_pendingToggleFullScreen(false)
 ,	m_enterSerial(0)
 {
 }
@@ -94,6 +109,8 @@ Window::~Window()
 		wl_surface_destroy(m_surface);
 	if (m_pointer)
 		wl_pointer_destroy(m_pointer);
+	if (m_keyboard)
+		wl_keyboard_destroy(m_keyboard);
 	if (m_seat)
 		wl_seat_destroy(m_seat);
 	if (m_shm)
@@ -106,7 +123,7 @@ Window::~Window()
 		wl_display_disconnect(m_display);
 }
 
-bool Window::create(uint32_t display, int32_t width, int32_t height)
+bool Window::create(uint32_t display, int32_t width, int32_t height, bool fullscreen)
 {
 	// On Wayland the client cannot select a specific output for a toplevel;
 	// the compositor decides placement. The display index is ignored.
@@ -180,6 +197,14 @@ bool Window::create(uint32_t display, int32_t width, int32_t height)
 	libdecor_frame_set_app_id(m_frame, m_appId.c_str());
 	libdecor_frame_map(m_frame);
 
+	// Requested right after mapping so the configure below has a chance to already
+	// carry the fullscreen size. Not waited on: a compositor cannot answer until the
+	// surface has content, which it does not have until the first frame is presented.
+	// The fullscreen configure which arrives then is surfaced as a resize event, and
+	// the view is reset to the granted size.
+	if (fullscreen)
+		libdecor_frame_set_fullscreen(m_frame, nullptr);
+
 	// Pump events until the compositor has configured the toplevel, so that the
 	// surface has a valid size before the Vulkan swapchain is created.
 	int32_t guard = 0;
@@ -197,25 +222,44 @@ void Window::setTitle(const wchar_t* title)
 
 void Window::setFullScreenStyle(int32_t /*width*/, int32_t /*height*/)
 {
+	// Already fullscreen; requesting it again would only provoke another configure.
+	if (m_fullScreen || !m_frame)
+		return;
+
 	// The compositor chooses the output and resolution; pass nullptr to let it
 	// fullscreen on the output the surface currently occupies.
-	if (m_frame)
-		libdecor_frame_set_fullscreen(m_frame, nullptr);
-	m_fullScreen = true;
+	libdecor_frame_set_fullscreen(m_frame, nullptr);
+	waitForFullScreenState(true);
 }
 
 void Window::setWindowedStyle(int32_t width, int32_t height)
 {
-	if (m_fullScreen && m_frame)
-		libdecor_frame_unset_fullscreen(m_frame);
-	m_fullScreen = false;
-
 	// Wayland clients cannot force their own toplevel size; the compositor
 	// drives sizing through configure events. Remember the requested size so
 	// the next configure can adopt it when the compositor leaves the choice
 	// to the client.
 	m_width = width;
 	m_height = height;
+
+	if (!m_fullScreen || !m_frame)
+		return;
+
+	libdecor_frame_unset_fullscreen(m_frame);
+	waitForFullScreenState(false);
+}
+
+void Window::waitForFullScreenState(bool fullScreen)
+{
+	// The compositor is free to ignore the request; bounded wait so a compositor
+	// which never answers cannot hang the caller indefinitely. m_fullScreen is
+	// only ever written from the configure handler, so it reports what was
+	// actually granted rather than what was asked for.
+	int32_t guard = 0;
+	while (m_fullScreen != fullScreen && guard++ < 100)
+		libdecor_dispatch(m_libdecor, 10);
+
+	if (m_fullScreen != fullScreen)
+		log::warning << L"Wayland compositor did not " << (fullScreen ? L"enter" : L"leave") << L" fullscreen; keeping reported state." << Endl;
 }
 
 void Window::showCursor()
@@ -257,6 +301,13 @@ bool Window::update(RenderEvent& outEvent)
 	{
 		m_pendingClose = false;
 		outEvent.type = RenderEventType::Close;
+		return true;
+	}
+
+	if (m_pendingToggleFullScreen)
+	{
+		m_pendingToggleFullScreen = false;
+		outEvent.type = RenderEventType::ToggleFullScreen;
 		return true;
 	}
 
@@ -328,6 +379,18 @@ void Window::seatCapabilities(void* data, wl_seat* seat, uint32_t caps)
 		wl_pointer_destroy(self->m_pointer);
 		self->m_pointer = nullptr;
 	}
+
+	if ((caps & WL_SEAT_CAPABILITY_KEYBOARD) != 0 && self->m_keyboard == nullptr)
+	{
+		self->m_keyboard = wl_seat_get_keyboard(seat);
+		wl_keyboard_add_listener(self->m_keyboard, &c_keyboardListener, self);
+	}
+	else if ((caps & WL_SEAT_CAPABILITY_KEYBOARD) == 0 && self->m_keyboard != nullptr)
+	{
+		wl_keyboard_destroy(self->m_keyboard);
+		self->m_keyboard = nullptr;
+		self->m_altDown = false;
+	}
 }
 
 void Window::seatName(void* /*data*/, wl_seat* /*seat*/, const char* /*name*/)
@@ -359,6 +422,63 @@ void Window::pointerButton(void* /*data*/, wl_pointer* /*pointer*/, uint32_t /*s
 }
 
 void Window::pointerAxis(void* /*data*/, wl_pointer* /*pointer*/, uint32_t /*time*/, uint32_t /*axis*/, wl_fixed_t /*value*/)
+{
+}
+
+void Window::keyboardKeymap(void* /*data*/, wl_keyboard* /*keyboard*/, uint32_t /*format*/, int32_t fd, uint32_t /*size*/)
+{
+	// The chord is matched against raw key codes so no keymap is needed here; the
+	// input system loads its own for translating keys into controls. The fd is
+	// ours to dispose of regardless of whether we use it.
+	if (fd >= 0)
+		close(fd);
+}
+
+void Window::keyboardEnter(void* data, wl_keyboard* /*keyboard*/, uint32_t /*serial*/, wl_surface* surface, wl_array* /*keys*/)
+{
+	Window* self = static_cast< Window* >(data);
+	if (surface != self->m_surface)
+		return;
+
+	// Any modifier held while focus arrived belongs to whatever the user did
+	// elsewhere, ie Alt+Tab; don't carry it into the chord.
+	self->m_altDown = false;
+}
+
+void Window::keyboardLeave(void* data, wl_keyboard* /*keyboard*/, uint32_t /*serial*/, wl_surface* surface)
+{
+	Window* self = static_cast< Window* >(data);
+	if (surface != self->m_surface)
+		return;
+
+	// No release will arrive for keys still held at focus loss.
+	self->m_altDown = false;
+}
+
+void Window::keyboardKey(void* data, wl_keyboard* /*keyboard*/, uint32_t /*serial*/, uint32_t /*time*/, uint32_t key, uint32_t state)
+{
+	Window* self = static_cast< Window* >(data);
+	const bool down = (state == WL_KEYBOARD_KEY_STATE_PRESSED);
+
+	// Raw evdev key codes; Alt and Enter sit at fixed positions on every layout so
+	// the chord needs no keymap translation.
+	if (key == KEY_LEFTALT || key == KEY_RIGHTALT)
+	{
+		self->m_altDown = down;
+		return;
+	}
+
+	if (down && self->m_altDown && (key == KEY_ENTER || key == KEY_KPENTER))
+		self->m_pendingToggleFullScreen = true;
+}
+
+void Window::keyboardModifiers(void* /*data*/, wl_keyboard* /*keyboard*/, uint32_t /*serial*/, uint32_t /*modsDepressed*/, uint32_t /*modsLatched*/, uint32_t /*modsLocked*/, uint32_t /*group*/)
+{
+	// Alt is tracked from the raw key events instead; resolving the modifier mask
+	// would require the keymap.
+}
+
+void Window::keyboardRepeatInfo(void* /*data*/, wl_keyboard* /*keyboard*/, int32_t /*rate*/, int32_t /*delay*/)
 {
 }
 

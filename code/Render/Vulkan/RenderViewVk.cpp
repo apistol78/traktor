@@ -95,8 +95,10 @@ bool RenderViewVk::create(const RenderViewDefaultDesc& desc)
 {
 #if defined(_WIN32) || defined(__LINUX__) || defined(__RPI__) || defined(__MAC__)
 	// Create render window.
+	// The window enters fullscreen as part of its creation; a view configured as
+	// fullscreen would otherwise come up windowed until something else reset it.
 	m_window = new Window();
-	if (!m_window->create(desc.display, desc.displayMode.width, desc.displayMode.height))
+	if (!m_window->create(desc.display, desc.displayMode.width, desc.displayMode.height, desc.fullscreen))
 	{
 		log::error << L"Failed to create render view; unable to create window." << Endl;
 		return false;
@@ -144,7 +146,16 @@ bool RenderViewVk::create(const RenderViewDefaultDesc& desc)
 	}
 #endif
 
-	if (!create(desc.displayMode.width, desc.displayMode.height, desc.multiSample, desc.multiSampleShading, desc.waitVBlanks, desc.allowHDR))
+	// The window is authoritative for the swap chain extent; in fullscreen the size
+	// is decided by the display or the compositor, not by the descriptor.
+	int32_t width = desc.displayMode.width;
+	int32_t height = desc.displayMode.height;
+#if defined(_WIN32) || defined(__LINUX__) || defined(__RPI__)
+	width = m_window->getWidth();
+	height = m_window->getHeight();
+#endif
+
+	if (!create(width, height, desc.multiSample, desc.multiSampleShading, desc.waitVBlanks, desc.allowHDR))
 		return false;
 
 	return true;
@@ -423,12 +434,19 @@ bool RenderViewVk::reset(const RenderViewDefaultDesc& desc)
 #	if defined(_WIN32)
 	m_window->addListener(this);
 #	endif
-#endif
 
+	// The window is authoritative for the swap chain extent; in fullscreen the size
+	// is decided by the display or the compositor, not by the descriptor. On Wayland
+	// the descriptor's display mode is the union of all outputs, so it must not be
+	// used here.
+	if (!reset(m_window->getWidth(), m_window->getHeight()))
+		return false;
+#else
 	if (!reset(
 			desc.displayMode.width,
 			desc.displayMode.height))
 		return false;
+#endif
 
 	return true;
 }
@@ -629,7 +647,14 @@ bool RenderViewVk::beginFrame()
 	T_PROFILER_END();
 	if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR)
 	{
-		log::error << L"vkAcquireNextImageKHR failed; result = " << getHumanResult(result) << Endl;
+		log::warning << L"vkAcquireNextImageKHR failed; result = " << getHumanResult(result) << L"; need to reset renderer." << Endl;
+
+		// Issue an event in order to reset view; the swap chain will not recover on
+		// its own, so without this the view would keep failing to acquire forever.
+		RenderEvent evt;
+		evt.type = RenderEventType::Lost;
+		m_eventQueue.push_back(evt);
+		m_lost = true;
 		return false;
 	}
 	if (m_currentImageIndex >= m_frames.size())
@@ -1948,8 +1973,14 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, uint32_t multiSample,
 	height = std::max(surfaceCapabilities.minImageExtent.height, height);
 	height = std::min(surfaceCapabilities.maxImageExtent.height, height);
 
+	// Surfaces which have no size of their own (Wayland), or no size yet, adopt the
+	// size we ask for; everywhere else the surface's own extent is the truth as the
+	// swap chain has to match it.
 	VkExtent2D surfaceResolution = surfaceCapabilities.currentExtent;
-	if (surfaceResolution.width <= -1)
+	if (
+		surfaceResolution.width == 0xffffffff || surfaceResolution.height == 0xffffffff ||
+		surfaceResolution.width == 0 || surfaceResolution.height == 0
+	)
 	{
 		surfaceResolution.width = width;
 		surfaceResolution.height = height;
@@ -2327,21 +2358,24 @@ bool RenderViewVk::windowListenerEvent(Window* window, UINT message, WPARAM wPar
 	}
 	else if (message == WM_SYSKEYDOWN)
 	{
-		if (wParam == VK_RETURN && (lParam & (1 << 29)) != 0)
-		{
-			RenderEvent evt;
-			evt.type = RenderEventType::ToggleFullScreen;
-			m_eventQueue.push_back(evt);
-		}
+		// Only Alt+Enter is ours; every other system key must fall through to the
+		// default handling, or Alt+F4, Alt+Space and F10 stop working. Alt+F4 in
+		// particular is the only way out of a borderless fullscreen window.
+		if (wParam != VK_RETURN || (lParam & (1 << 29)) == 0)
+			return false;
+
+		RenderEvent evt;
+		evt.type = RenderEventType::ToggleFullScreen;
+		m_eventQueue.push_back(evt);
 	}
 	else if (message == WM_KEYDOWN)
 	{
-		if (wParam == VK_RETURN && (GetAsyncKeyState(VK_CONTROL) & 0x8000) != 0)
-		{
-			RenderEvent evt;
-			evt.type = RenderEventType::ToggleFullScreen;
-			m_eventQueue.push_back(evt);
-		}
+		if (wParam != VK_RETURN || (GetAsyncKeyState(VK_CONTROL) & 0x8000) == 0)
+			return false;
+
+		RenderEvent evt;
+		evt.type = RenderEventType::ToggleFullScreen;
+		m_eventQueue.push_back(evt);
 	}
 	else if (message == WM_SETCURSOR)
 	{

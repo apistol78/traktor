@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -83,70 +83,6 @@ int32_t maxAnisotropyFromQuality(int32_t quality)
 	};
 #endif
 	return c_maxAnisotropy[quality];
-}
-
-bool findDisplayMode(render::IRenderSystem* renderSystem, uint32_t display, const render::DisplayMode& criteria, render::DisplayMode& outBestMatch)
-{
-	int32_t bestMatch = std::numeric_limits< int32_t >::max();
-	int32_t bestRefreshRate = 0;
-	uint32_t bestDisplayModeIndex = 0;
-
-	const uint32_t displayModeCount = renderSystem->getDisplayModeCount(display);
-	if (!displayModeCount)
-	{
-		const render::DisplayMode currentMode = renderSystem->getCurrentDisplayMode(display);
-		if (currentMode.width != 0 && currentMode.height != 0)
-		{
-			log::warning << L"Unable to enumerate display modes; using current display mode (" << currentMode.width << L" * " << currentMode.height << L") as fail safe" << Endl;
-			outBestMatch = currentMode;
-		}
-		else
-		{
-			log::warning << L"Unable to enumerate display modes; using criteria display mode (" << criteria.width << L" * " << criteria.height << L") as fail safe" << Endl;
-			outBestMatch = criteria;
-		}
-		return true;
-	}
-
-	const uint32_t c_preferColorBits[] = { 15, 16, 32, 24 };
-	for (uint32_t i = 0; i < sizeof_array(c_preferColorBits); ++i)
-	{
-		for (uint32_t j = 0; j < displayModeCount; ++j)
-		{
-			const render::DisplayMode check = renderSystem->getDisplayMode(display, j);
-			if (check.colorBits != c_preferColorBits[i])
-				continue;
-
-			const int32_t match =
-				traktor::abs((int32_t)(check.width - criteria.width)) +
-				traktor::abs((int32_t)(check.height - criteria.height));
-
-			if (
-				match < bestMatch ||
-				(
-					match == bestMatch &&
-					check.refreshRate > bestRefreshRate
-				)
-			)
-			{
-				bestDisplayModeIndex = j;
-				bestMatch = match;
-				bestRefreshRate = check.refreshRate;
-			}
-		}
-	}
-
-	if (bestMatch != std::numeric_limits< int32_t >::max())
-	{
-		outBestMatch = renderSystem->getDisplayMode(display, bestDisplayModeIndex);
-	}
-	else
-	{
-		log::warning << L"Unable to find matching display mode; using current display mode as fail safe." << Endl;
-		outBestMatch = renderSystem->getCurrentDisplayMode(display);
-	}
-
-	return true;
 }
 
 	}
@@ -249,16 +185,8 @@ bool RenderServerDefault::create(const PropertyGroup* defaultSettings, PropertyG
 	// Ensure no invalid multi-sample configuration is entered.
 	m_renderViewDesc.multiSample = sanitizeMultiSample(m_renderViewDesc.multiSample);
 
-	// Ensure display mode is still supported; else find closest match.
-	if (m_renderViewDesc.fullscreen)
-	{
-		if (!findDisplayMode(renderSystem, m_renderViewDesc.display, m_renderViewDesc.displayMode, m_renderViewDesc.displayMode))
-		{
-			log::error << L"Render server failed; unable to find an acceptable display mode." << Endl;
-			renderSystem->destroy();
-			return false;
-		}
-	}
+	// Fullscreen is a borderless window covering the display at its current mode;
+	// no mode is ever set, so there is no mode to search for.
 
 	Ref< render::IRenderView > renderView = renderSystem->createRenderView(m_renderViewDesc);
 	if (!renderView)
@@ -268,7 +196,15 @@ bool RenderServerDefault::create(const PropertyGroup* defaultSettings, PropertyG
 		return false;
 	}
 
-	// We've successfully created the render view; update settings to reflect found display mode.
+	// Adopt the size the view actually got; in fullscreen the display or the
+	// compositor decides it, not the descriptor.
+	if (renderView->getWidth() > 0 && renderView->getHeight() > 0)
+	{
+		m_renderViewDesc.displayMode.width = renderView->getWidth();
+		m_renderViewDesc.displayMode.height = renderView->getHeight();
+	}
+
+	// We've successfully created the render view; update settings to reflect actual size.
 	if (m_renderViewDesc.fullscreen)
 	{
 		settings->setProperty< PropertyInteger >(L"Render.DisplayMode/Width", m_renderViewDesc.displayMode.width);
@@ -308,10 +244,13 @@ int32_t RenderServerDefault::reconfigure(IEnvironment* environment, const Proper
 	resource::IResourceManager* resourceManager = environment->getResource()->getResourceManager();
 	int32_t result = CrUnaffected;
 
+	// Must read the same keys with the same defaults as create; else every
+	// reconfigure would see a difference and needlessly reset the view.
 	render::RenderViewDefaultDesc rvdd;
-	rvdd.depthBits = settings->getProperty< int32_t >(L"Render.DepthBits", 16);
+	rvdd.depthBits = settings->getProperty< int32_t >(L"Render.DepthBits", 24);
 	rvdd.stencilBits = settings->getProperty< int32_t >(L"Render.StencilBits", 8);
-	rvdd.multiSample = settings->getProperty< int32_t >(L"Render.MultiSample", 4);
+	rvdd.multiSample = settings->getProperty< int32_t >(L"Render.MultiSample", 0);
+	rvdd.allowHDR = settings->getProperty< bool >(L"Render.AllowHDR", true);
 	rvdd.waitVBlanks = settings->getProperty< int32_t >(L"Render.WaitVBlanks", 1);
 	rvdd.fullscreen = settings->getProperty< bool >(L"Render.FullScreen", false);
 	rvdd.title = settings->getProperty< std::wstring >(L"Render.Title", L"Traktor");
@@ -329,18 +268,17 @@ int32_t RenderServerDefault::reconfigure(IEnvironment* environment, const Proper
 	}
 
 	rvdd.displayMode.colorBits = 24;
+	rvdd.displayMode.refreshRate = m_originalDisplayMode.refreshRate;
 
-	// Ensure display mode is still supported; else find closest match.
-	if (rvdd.fullscreen)
-	{
-		if (!findDisplayMode(m_renderSystem, rvdd.display, rvdd.displayMode, rvdd.displayMode))
-		{
-			log::error << L"Unable to find an acceptable display mode; unable to continue." << Endl;
-			return CrFailed;
-		}
-	}
+	// Ensure no invalid multi-sample configuration is entered.
+	rvdd.multiSample = sanitizeMultiSample(rvdd.multiSample);
 
-	// Check if we need to reset render view.
+	// Fullscreen is a borderless window covering the display at its current mode;
+	// no mode is ever set, so there is no mode to search for.
+
+	// Check if we need to reset render view. The stored descriptor always carries the
+	// size the view actually got, so a mode change which the display or compositor
+	// resolved differently doesn't come back around as another reset.
 	if (
 		m_renderViewDesc.depthBits != rvdd.depthBits ||
 		m_renderViewDesc.stencilBits != rvdd.stencilBits ||
@@ -361,6 +299,14 @@ int32_t RenderServerDefault::reconfigure(IEnvironment* environment, const Proper
 			log::error << L"Failed to apply changes to render view; current is kept" << Endl;
 			m_renderViewDesc = current;
 			return CrFailed;
+		}
+
+		// Adopt the size the view actually got; in fullscreen the display or the
+		// compositor decides it, not the descriptor.
+		if (m_renderView->getWidth() > 0 && m_renderView->getHeight() > 0)
+		{
+			m_renderViewDesc.displayMode.width = m_renderView->getWidth();
+			m_renderViewDesc.displayMode.height = m_renderView->getHeight();
 		}
 
 		result = CrAccepted;
@@ -412,7 +358,9 @@ RenderServer::UpdateResult RenderServerDefault::update(PropertyGroup* settings)
 			return UrTerminate;
 		else if (evt.type == render::RenderEventType::ToggleFullScreen)
 		{
-			settings->setProperty< PropertyBoolean >(L"Render.FullScreen", !m_renderViewDesc.fullscreen);
+			// Toggle against the actual state, not the requested one; if the two have
+			// drifted apart, toggling the request could appear to do nothing.
+			settings->setProperty< PropertyBoolean >(L"Render.FullScreen", !m_renderView->isFullScreen());
 			return UrReconfigure;
 		}
 		else if (evt.type == render::RenderEventType::SetWindowed)
@@ -427,13 +375,27 @@ RenderServer::UpdateResult RenderServerDefault::update(PropertyGroup* settings)
 		}
 		else if (evt.type == render::RenderEventType::Resize)
 		{
-			if (!m_renderViewDesc.fullscreen)
+			// The view is authoritative about which mode it ended up in; a compositor
+			// is free to refuse fullscreen, and settings must not claim otherwise as
+			// other servers derive from them, ie mouse coordinate scaling.
+			const bool fullscreen = m_renderView->isFullScreen();
+			if (fullscreen != settings->getProperty< bool >(L"Render.FullScreen", false))
+				settings->setProperty< PropertyBoolean >(L"Render.FullScreen", fullscreen);
+
+			if (fullscreen)
+			{
+				// Fullscreen size is decided by the display or the compositor, so it has
+				// to be stored back rather than requested.
+				settings->setProperty< PropertyInteger >(L"Render.DisplayMode/Width", evt.resize.width);
+				settings->setProperty< PropertyInteger >(L"Render.DisplayMode/Height", evt.resize.height);
+			}
+			else
 			{
 				settings->setProperty< PropertyInteger >(L"Render.Display", m_renderView->getDisplay());
 				settings->setProperty< PropertyInteger >(L"Render.DisplayMode.Window/Width", evt.resize.width);
 				settings->setProperty< PropertyInteger >(L"Render.DisplayMode.Window/Height", evt.resize.height);
-				return UrReconfigure;
 			}
+			return UrReconfigure;
 		}
 		else if (evt.type == render::RenderEventType::Lost)
 		{

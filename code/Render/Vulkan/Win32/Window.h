@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -35,7 +35,7 @@ public:
 
 	virtual ~Window();
 
-	bool create(uint32_t display, int32_t width, int32_t height);
+	bool create(uint32_t display, int32_t width, int32_t height, bool fullscreen);
 
 	void setTitle(const wchar_t* title);
 
@@ -48,6 +48,12 @@ public:
 	void hide();
 
 	bool isActive() const;
+
+	/*! Get width of client area; authoritative size of the renderable surface. */
+	int32_t getWidth() const;
+
+	/*! Get height of client area; authoritative size of the renderable surface. */
+	int32_t getHeight() const;
 
 	uint32_t getDisplay() const;
 
@@ -65,7 +71,13 @@ private:
 	HWND m_hWnd;
 	bool m_fullScreen;
 	std::set< IListener* > m_listeners;
-	POINT m_windowPosition;
+
+	// Windowed presentation saved when entering fullscreen, so leaving it restores
+	// the window exactly as it was; position alone is not enough as the fullscreen
+	// window has taken over the size and the frame styles.
+	RECT m_windowedRect;
+	LONG m_windowedStyle;
+	LONG m_windowedStyleEx;
 
 	static LRESULT CALLBACK wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 };
