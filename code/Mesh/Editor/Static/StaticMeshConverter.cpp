@@ -13,6 +13,7 @@
 #include "Core/Math/Random.h"
 #include "Core/Misc/String.h"
 #include "Mesh/Editor/IndexRange.h"
+#include "Mesh/Editor/MeshAsset.h"
 #include "Mesh/Editor/MeshVertexWriter.h"
 #include "Mesh/Editor/RayTracingMeshGeometry.h"
 #include "Mesh/Static/StaticMesh.h"
@@ -73,7 +74,8 @@ bool StaticMeshConverter::convert(
 	// into the same vertex and index buffers.
 	AlignedVector< resource::Id< render::ITexture > > albedoTextures;
 	RayTracingGeometry rtGeometry;
-	buildRayTracingGeometry(model, materialTechniqueMap, modelVertexCount, albedoTextures, rtGeometry);
+	if (meshAsset->getEnableRaytracing())
+		buildRayTracingGeometry(model, materialTechniqueMap, modelVertexCount, albedoTextures, rtGeometry);
 
 	const uint32_t totalVertexCount = modelVertexCount + (uint32_t)rtGeometry.extraPositions.size();
 
@@ -90,6 +92,12 @@ bool StaticMeshConverter::convert(
 	const uint32_t indexBufferSize = (polygonCount * 3 + (uint32_t)rtGeometry.indices.size()) * indexSize;
 	const uint32_t rtVertexAttributesSize = (uint32_t)rtGeometry.materials.size() * sizeof(world::HWRT_Material);
 
+	// Only declare the ray tracing vertex attribute buffer when there is geometry for it;
+	// a zero-size buffer would fail to allocate at runtime.
+	SmallMap< FourCC, uint32_t > auxBufferSizes;
+	if (rtVertexAttributesSize > 0)
+		auxBufferSizes[IMesh::c_fccRayTracingVertexAttributes] = rtVertexAttributesSize;
+
 	Ref< render::Mesh > renderMesh = render::SystemMeshFactory().createMesh(
 		vertexElements,
 		vertexBufferSize,
@@ -97,7 +105,7 @@ bool StaticMeshConverter::convert(
 		depthVertexBufferSize,
 		useLargeIndices ? render::IndexType::UInt32 : render::IndexType::UInt16,
 		indexBufferSize,
-		{ { IMesh::c_fccRayTracingVertexAttributes, rtVertexAttributesSize } });
+		auxBufferSizes);
 
 	// Create vertex buffer.
 	uint8_t* vertex = (uint8_t*)renderMesh->getVertexBuffer()->lock();
@@ -278,12 +286,15 @@ bool StaticMeshConverter::convert(
 	}
 
 	// Add ray tracing part; primitives reference the appended ray tracing index range,
-	// and the vertex attributes match the acceleration structure primitive order.
+	// and the vertex attributes match the acceleration structure primitive order. Left
+	// empty when ray tracing is disabled for the asset so no acceleration structure is
+	// built for the mesh at runtime.
 	AlignedVector< render::RaytracingPrimitives > meshRaytracingPrimitives;
-	meshRaytracingPrimitives.push_back() = { render::Primitives::setIndexed(
-		render::PrimitiveType::Triangles,
-		rtIndexOffset,
-		(uint32_t)rtGeometry.indices.size() / 3), true };
+	if (!rtGeometry.indices.empty())
+		meshRaytracingPrimitives.push_back() = { render::Primitives::setIndexed(
+			render::PrimitiveType::Triangles,
+			rtIndexOffset,
+			(uint32_t)rtGeometry.indices.size() / 3), true };
 
 	if (rtVertexAttributesSize > 0)
 	{

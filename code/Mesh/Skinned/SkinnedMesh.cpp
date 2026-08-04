@@ -194,7 +194,9 @@ Ref< render::Buffer > SkinnedMesh::createJointBuffer(render::IRenderSystem* rend
 
 Ref< render::IAccelerationStructure > SkinnedMesh::createAccelerationStructure(render::IRenderSystem* renderSystem) const
 {
-	if (!renderSystem->supportRayTracing())
+	// No acceleration structure when ray tracing is unsupported, or when the mesh was built
+	// with ray tracing disabled (in which case it carries no ray tracing primitives).
+	if (!renderSystem->supportRayTracing() || m_mesh->getRaytracingPrimitives().empty())
 		return nullptr;
 
 	return renderSystem->createAccelerationStructure(

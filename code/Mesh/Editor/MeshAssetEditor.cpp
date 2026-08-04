@@ -169,6 +169,10 @@ bool MeshAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISerial
 	if (!m_checkDecalResponse->create(containerLeft, i18n::Text(L"MESHASSET_EDITOR_DECAL_RESPONSE")))
 		return false;
 
+	m_checkEnableRaytracing = new ui::CheckBox();
+	if (!m_checkEnableRaytracing->create(containerLeft, i18n::Text(L"MESHASSET_EDITOR_ENABLE_RAYTRACING")))
+		return false;
+
 	Ref< ui::Container > containerRight = new ui::Container();
 	containerRight->create(containerOptions, ui::WsNone, new ui::TableLayout(L"*,*", L"*", 0_ut, 4_ut));
 
@@ -270,6 +274,7 @@ void MeshAssetEditor::apply()
 	m_asset->setCenter(MeshAsset::CenterMode(m_dropCenter->getSelected()));
 	m_asset->setGrounded(m_checkGrounded->isChecked());
 	m_asset->setDecalResponse(m_checkDecalResponse->isChecked());
+	m_asset->setEnableRaytracing(m_checkEnableRaytracing->isChecked());
 	m_asset->setScaleFactor(Vector4(
 		parseString< float >(m_editScaleFactor[0]->getText()),
 		parseString< float >(m_editScaleFactor[1]->getText()),
@@ -346,6 +351,7 @@ void MeshAssetEditor::updateFile()
 	m_dropCenter->select((int32_t)m_asset->getCenter());
 	m_checkGrounded->setChecked(m_asset->getGrounded());
 	m_checkDecalResponse->setChecked(m_asset->getDecalResponse());
+	m_checkEnableRaytracing->setChecked(m_asset->getEnableRaytracing());
 	m_editScaleFactor[0]->setText(toString(m_asset->getScaleFactor().x()));
 	m_editScaleFactor[1]->setText(toString(m_asset->getScaleFactor().y()));
 	m_editScaleFactor[2]->setText(toString(m_asset->getScaleFactor().z()));

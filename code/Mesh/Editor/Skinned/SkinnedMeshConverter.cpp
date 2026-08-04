@@ -13,6 +13,7 @@
 #include "Core/Misc/String.h"
 #include "Editor/IPipelineDepends.h"
 #include "Mesh/Editor/IndexRange.h"
+#include "Mesh/Editor/MeshAsset.h"
 #include "Mesh/Editor/MeshVertexWriter.h"
 #include "Mesh/Editor/RayTracingMeshGeometry.h"
 #include "Mesh/Skinned/SkinnedMesh.h"
@@ -148,7 +149,8 @@ bool SkinnedMeshConverter::convert(
 	// in the skinning buffer so they get deformed along with the rest of the mesh.
 	AlignedVector< resource::Id< render::ITexture > > albedoTextures;
 	RayTracingGeometry rtGeometry;
-	buildRayTracingGeometry(model, materialTechniqueMap, modelVertexCount, albedoTextures, rtGeometry);
+	if (meshAsset->getEnableRaytracing())
+		buildRayTracingGeometry(model, materialTechniqueMap, modelVertexCount, albedoTextures, rtGeometry);
 
 	const uint32_t rtVertexCount = (uint32_t)rtGeometry.extraVertexSources.size();
 	const uint32_t totalSkinVertexCount = modelVertexCount + rtVertexCount;
@@ -163,6 +165,13 @@ bool SkinnedMeshConverter::convert(
 	const uint32_t auxBufferSize = (uint32_t)(totalSkinVertexCount * sizeof(SkinnedMesh::SkinBuffer));
 	const uint32_t rtVertexAttributesSize = (uint32_t)rtGeometry.materials.size() * sizeof(world::HWRT_Material);
 
+	// Only declare the ray tracing vertex attribute buffer when there is geometry for it;
+	// a zero-size buffer would fail to allocate at runtime.
+	SmallMap< FourCC, uint32_t > auxBufferSizes;
+	auxBufferSizes[SkinnedMesh::c_fccSkinPosition] = auxBufferSize;
+	if (rtVertexAttributesSize > 0)
+		auxBufferSizes[IMesh::c_fccRayTracingVertexAttributes] = rtVertexAttributesSize;
+
 	Ref< render::Mesh > mesh = render::SystemMeshFactory().createMesh(
 		vertexElements,
 		vertexBufferSize,
@@ -170,8 +179,7 @@ bool SkinnedMeshConverter::convert(
 		0,
 		useLargeIndices ? render::IndexType::UInt32 : render::IndexType::UInt16,
 		indexBufferSize,
-		{ { SkinnedMesh::c_fccSkinPosition, auxBufferSize },
-			{ IMesh::c_fccRayTracingVertexAttributes, rtVertexAttributesSize } });
+		auxBufferSizes);
 
 	// Create vertex and aux buffers.
 	uint8_t* vertex = nullptr;
@@ -362,12 +370,15 @@ bool SkinnedMeshConverter::convert(
 	}
 
 	// Add ray tracing part; primitives reference the appended ray tracing index range,
-	// and the vertex attributes match the acceleration structure primitive order.
+	// and the vertex attributes match the acceleration structure primitive order. Left
+	// empty when ray tracing is disabled for the asset so no acceleration structure is
+	// built for the mesh at runtime.
 	AlignedVector< render::RaytracingPrimitives > meshRaytracingPrimitives;
-	meshRaytracingPrimitives.push_back() = { render::Primitives::setIndexed(
-		render::PrimitiveType::Triangles,
-		rtIndexOffset,
-		(uint32_t)rtGeometry.indices.size() / 3), true };
+	if (!rtGeometry.indices.empty())
+		meshRaytracingPrimitives.push_back() = { render::Primitives::setIndexed(
+			render::PrimitiveType::Triangles,
+			rtIndexOffset,
+			(uint32_t)rtGeometry.indices.size() / 3), true };
 
 	if (rtVertexAttributesSize > 0)
 	{

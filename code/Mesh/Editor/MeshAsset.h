@@ -108,6 +108,12 @@ public:
 	/*! */
 	bool getDecalResponse() const { return m_decalResponse; }
 
+	/*! Set if ray tracing geometry and acceleration structure should be generated. */
+	void setEnableRaytracing(bool enableRaytracing) { m_enableRaytracing = enableRaytracing; }
+
+	/*! Check if ray tracing geometry and acceleration structure should be generated. */
+	bool getEnableRaytracing() const { return m_enableRaytracing; }
+
 	/*! */
 	void setReduce(float reduce) { m_reduce = reduce; }
 
@@ -131,6 +137,7 @@ private:
 	CenterMode m_center = CenterMode::None;
 	bool m_grounded = false;
 	bool m_decalResponse = true;
+	bool m_enableRaytracing = true;
 	float m_reduce = 1.0f;
 	float m_previewAngle = 0.0f;
 };

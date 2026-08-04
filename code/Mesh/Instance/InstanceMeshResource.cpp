@@ -99,7 +99,9 @@ Ref< IMesh > InstanceMeshResource::createMesh(
 		}
 	}
 
-	if (renderSystem->supportRayTracing())
+	// Meshes built with ray tracing disabled carry no ray tracing primitives, in which case
+	// no acceleration structure is created.
+	if (renderSystem->supportRayTracing() && !renderMesh->getRaytracingPrimitives().empty())
 	{
 		instanceMesh->m_rtAccelerationStructure = renderSystem->createAccelerationStructure(
 			renderMesh->getVertexBuffer(),

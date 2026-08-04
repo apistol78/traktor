@@ -73,7 +73,7 @@ void SkinnedMeshComponent::setState(const world::EntityState& state, const world
 	const bool visible = (m_world != nullptr) && state.visible;
 	if (visible)
 	{
-		if (!m_rtwInstance)
+		if (!m_rtwInstance && m_rtAccelerationStructure != nullptr)
 		{
 			world::RTWorldComponent* rtw = m_world->getComponent< world::RTWorldComponent >();
 			if (rtw != nullptr)

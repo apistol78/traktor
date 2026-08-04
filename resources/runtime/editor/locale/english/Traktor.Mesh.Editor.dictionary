@@ -230,6 +230,10 @@
 			<second>Decal Response</second>
 		</item>
 		<item>
+			<first>MESHASSET_EDITOR_ENABLE_RAYTRACING</first>
+			<second>Enable Raytracing</second>
+		</item>
+		<item>
 			<first>MESHASSET_EDITOR_EXTRACT_TEXTURE</first>
 			<second>Extract texture...</second>
 		</item>

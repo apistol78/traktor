@@ -92,8 +92,9 @@ Ref< IMesh > StaticMeshResource::createMesh(
 
 	staticMesh->m_renderMesh = renderMesh;
 
-	// Create ray tracing structures.
-	if (renderSystem->supportRayTracing())
+	// Create ray tracing structures. Meshes built with ray tracing disabled carry no ray
+	// tracing primitives, in which case no acceleration structure is created.
+	if (renderSystem->supportRayTracing() && !renderMesh->getRaytracingPrimitives().empty())
 	{
 		staticMesh->m_rtAccelerationStructure = renderSystem->createAccelerationStructure(
 			renderMesh->getVertexBuffer(),

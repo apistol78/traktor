@@ -20,7 +20,7 @@
 namespace traktor::mesh
 {
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.mesh.MeshAsset", 26, MeshAsset, editor::Asset)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.mesh.MeshAsset", 27, MeshAsset, editor::Asset)
 
 void MeshAsset::serialize(ISerializer& s)
 {
@@ -92,6 +92,9 @@ void MeshAsset::serialize(ISerializer& s)
 
 	if (s.getVersion() >= 23)
 		s >> Member< bool >(L"decalResponse", m_decalResponse);
+
+	if (s.getVersion() >= 27)
+		s >> Member< bool >(L"enableRaytracing", m_enableRaytracing);
 
 	if (s.getVersion() >= 2 && s.getVersion() < 14)
 		s >> ObsoleteMember< bool >(L"bakeOcclusion");

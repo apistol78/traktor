@@ -56,7 +56,7 @@ void InstanceMeshComponent::setState(const world::EntityState& state, const worl
 	const bool visible = (m_world != nullptr) && state.visible;
 	if (visible)
 	{
-		if (!m_rtwInstance)
+		if (!m_rtwInstance && m_mesh->getAccelerationStructure() != nullptr)
 		{
 			world::RTWorldComponent* rtw = m_world->getComponent< world::RTWorldComponent >();
 			if (rtw != nullptr)
@@ -109,7 +109,7 @@ void InstanceMeshComponent::build(
 			safeDestroy(m_rtwInstance);
 
 			world::RTWorldComponent* rtw = m_world->getComponent< world::RTWorldComponent >();
-			if (rtw != nullptr)
+			if (rtw != nullptr && m_mesh->getAccelerationStructure() != nullptr)
 			{
 				m_rtwInstance = rtw->createInstance(m_mesh->getAccelerationStructure(), m_mesh->getRTVertexAttributes());
 				m_rtwInstance->setTransform(m_transform.get0());

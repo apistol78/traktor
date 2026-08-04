@@ -101,6 +101,7 @@ private:
 	Ref< ui::DropDown > m_dropCenter;
 	Ref< ui::CheckBox > m_checkGrounded;
 	Ref< ui::CheckBox > m_checkDecalResponse;
+	Ref< ui::CheckBox > m_checkEnableRaytracing;
 	Ref< ui::Edit > m_editScaleFactor[3];
 	Ref< ui::Slider > m_sliderPreviewAngle;
 	Ref< ui::Image > m_imagePreview;
