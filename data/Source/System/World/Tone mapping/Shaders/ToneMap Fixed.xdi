@@ -12,11 +12,11 @@
 			<inputPins/>
 			<outputPins>
 				<item>
-					<id>{8BB6F055-2258-8F4D-B44C-F443961D973E}</id>
+					<id>{C17EC57F-3CC7-44B1-A6CB-2969C4856A73}</id>
 					<name>Position</name>
 				</item>
 				<item>
-					<id>{75B6E28A-E83A-1B4B-9312-590487A95175}</id>
+					<id>{7C724E33-487B-4644-A646-2F07EEE36D3A}</id>
 					<name>TexCoord</name>
 				</item>
 			</outputPins>
@@ -43,8 +43,8 @@
 			<id>{37DF1313-180C-4D49-B4F9-807441A7933A}</id>
 			<comment/>
 			<position>
-				<first>1921</first>
-				<second>800</second>
+				<first>1936</first>
+				<second>906</second>
 			</position>
 			<technique>Default</technique>
 			<priority>
@@ -129,14 +129,14 @@
 			<fragmentGuid>{B5946C59-A7C3-2549-83F9-44105CCBD422}</fragmentGuid>
 			<inputPins>
 				<item>
-					<id>{29646386-9200-5A48-8453-670F69381E4A}</id>
+					<id>{C0AF67CF-9E72-4FD0-8F80-EABD3EBE3E5D}</id>
 					<name>Input</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
-					<id>{BFE0D9AC-049A-E449-9735-BA652C41C211}</id>
+					<id>{656623E3-A0DE-41A3-AA7A-F70D5C0CCEE1}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>
@@ -151,14 +151,14 @@
 			<fragmentGuid>{B5946C59-A7C3-2549-83F9-44105CCBD422}</fragmentGuid>
 			<inputPins>
 				<item>
-					<id>{29646386-9200-5A48-8453-670F69381E4A}</id>
+					<id>{76493EBA-498E-42CE-8C09-F0BAC59795E2}</id>
 					<name>Input</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
-					<id>{BFE0D9AC-049A-E449-9735-BA652C41C211}</id>
+					<id>{9B7DEAA5-1D29-4C62-AC3F-04C6B1F2364B}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>
@@ -181,7 +181,7 @@ W
 			<comment/>
 			<position>
 				<first>1353</first>
-				<second>870</second>
+				<second>1110</second>
 			</position>
 			<name>Filmic</name>
 			<technique/>
@@ -195,13 +195,13 @@ W
 			<include/>
 			<inputPins>
 				<item>
-					<id>{C9DDDC32-8B49-5749-AC70-4A65FE284600}</id>
+					<id>{1EB4FB16-C75B-49E8-90F8-FD0EA9FD6BE4}</id>
 					<name>Input</name>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
-					<id>{F321640D-E63E-154A-B1E5-C131ADE3E119}</id>
+					<id>{478CA792-AC2C-47A7-BFEA-08CC109AA24F}</id>
 					<name>Output</name>
 					<type>Vector</type>
 				</item>
@@ -226,8 +226,8 @@ $Output = vec4(
 			<id>{84DFB728-2233-0747-B74D-BCEA40C34DC7}</id>
 			<comment/>
 			<position>
-				<first>1653</first>
-				<second>817</second>
+				<first>1668</first>
+				<second>923</second>
 			</position>
 			<swizzle>xyz</swizzle>
 		</item>
@@ -249,12 +249,78 @@ $Output = vec4(
 			</position>
 			<parameterDeclaration>{61140E45-0786-6F41-BB29-907049C1655B}</parameterDeclaration>
 		</item>
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
+			<id>{DD1EDA7D-5C9E-42CB-8D4E-6565617DC47B}</id>
+			<comment/>
+			<position>
+				<first>1353</first>
+				<second>870</second>
+			</position>
+			<fragmentGuid>{E324A72D-E61A-4848-B8A2-B81B840438A1}</fragmentGuid>
+			<inputPins>
+				<item>
+					<id>{B20D4304-B4E2-4371-A3F0-CAE9E2446936}</id>
+					<name>Input</name>
+					<optional>false</optional>
+				</item>
+			</inputPins>
+			<outputPins>
+				<item>
+					<id>{B6D469C4-4D17-4E6D-A72E-2A3BDC634790}</id>
+					<name>Output</name>
+				</item>
+			</outputPins>
+		</item>
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
+			<id>{AC31417F-AFEC-43F4-971A-314CF626D234}</id>
+			<comment/>
+			<position>
+				<first>1353</first>
+				<second>950</second>
+			</position>
+			<fragmentGuid>{C0555AAB-5BB2-4780-8CE2-BE0CE860DF00}</fragmentGuid>
+			<inputPins>
+				<item>
+					<id>{15D07109-4CBA-48DB-9CDA-DD8832E4C4E3}</id>
+					<name>Input</name>
+					<optional>false</optional>
+				</item>
+			</inputPins>
+			<outputPins>
+				<item>
+					<id>{16B36B27-036C-43FD-A225-110640A0A4A2}</id>
+					<name>Output</name>
+				</item>
+			</outputPins>
+		</item>
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
+			<id>{A72C0586-2E3B-4C4B-BFA8-9EF5BDB16059}</id>
+			<comment/>
+			<position>
+				<first>1353</first>
+				<second>1030</second>
+			</position>
+			<fragmentGuid>{C82CACA5-12FD-4AB3-9118-D514E79B0E3A}</fragmentGuid>
+			<inputPins>
+				<item>
+					<id>{D76D26BB-9B33-44BD-ADFF-1E4BF117AA0F}</id>
+					<name>Input</name>
+					<optional>false</optional>
+				</item>
+			</inputPins>
+			<outputPins>
+				<item>
+					<id>{37F8F243-A3B3-48F4-8F34-22DB4486E8A2}</id>
+					<name>Output</name>
+				</item>
+			</outputPins>
+		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge" version="1">
 			<source>
 				<node ref="/object/nodes/item"/>
-				<id>{75B6E28A-E83A-1B4B-9312-590487A95175}</id>
+				<id>{7C724E33-487B-4644-A646-2F07EEE36D3A}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[1]"/>
@@ -284,7 +350,7 @@ $Output = vec4(
 		<item type="traktor.render.Edge" version="1">
 			<source>
 				<node ref="/object/nodes/item[8]"/>
-				<id>{BFE0D9AC-049A-E449-9735-BA652C41C211}</id>
+				<id>{9B7DEAA5-1D29-4C62-AC3F-04C6B1F2364B}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[5]"/>
@@ -304,7 +370,7 @@ $Output = vec4(
 		<item type="traktor.render.Edge" version="1">
 			<source>
 				<node ref="/object/nodes/item[7]"/>
-				<id>{BFE0D9AC-049A-E449-9735-BA652C41C211}</id>
+				<id>{656623E3-A0DE-41A3-AA7A-F70D5C0CCEE1}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[4]"/>
@@ -318,7 +384,7 @@ $Output = vec4(
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[8]"/>
-				<id>{29646386-9200-5A48-8453-670F69381E4A}</id>
+				<id>{76493EBA-498E-42CE-8C09-F0BAC59795E2}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
@@ -328,7 +394,7 @@ $Output = vec4(
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[7]"/>
-				<id>{29646386-9200-5A48-8453-670F69381E4A}</id>
+				<id>{C0AF67CF-9E72-4FD0-8F80-EABD3EBE3E5D}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
@@ -338,7 +404,37 @@ $Output = vec4(
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[10]"/>
-				<id>{C9DDDC32-8B49-5749-AC70-4A65FE284600}</id>
+				<id>{1EB4FB16-C75B-49E8-90F8-FD0EA9FD6BE4}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[3]"/>
+				<id>{3B01355D-9153-4864-9B56-7D55F801BFF3}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[14]"/>
+				<id>{B20D4304-B4E2-4371-A3F0-CAE9E2446936}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[3]"/>
+				<id>{3B01355D-9153-4864-9B56-7D55F801BFF3}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[15]"/>
+				<id>{15D07109-4CBA-48DB-9CDA-DD8832E4C4E3}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[3]"/>
+				<id>{3B01355D-9153-4864-9B56-7D55F801BFF3}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[16]"/>
+				<id>{D76D26BB-9B33-44BD-ADFF-1E4BF117AA0F}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
@@ -349,16 +445,6 @@ $Output = vec4(
 			<destination>
 				<node ref="/object/nodes/item[2]"/>
 				<id>{7174FE5A-D079-4452-AFEF-9FC2BCC2900F}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[10]"/>
-				<id>{F321640D-E63E-154A-B1E5-C131ADE3E119}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[11]"/>
-				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
@@ -379,6 +465,16 @@ $Output = vec4(
 			<destination>
 				<node ref="/object/nodes/item[1]"/>
 				<id>{32EB5230-1F0D-40B8-93F6-9C8E5469454E}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[15]"/>
+				<id>{16B36B27-036C-43FD-A225-110640A0A4A2}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[11]"/>
+				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
 			</destination>
 		</item>
 	</edges>

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.render.ShaderModule" version="2">
+	<text><![CDATA[
+// AgX tone mapping, after Troy Sobotka's AgX.
+//
+// The chain is split so a "look" can be graded in between; looks operate on
+// the sigmoid output, before the outset matrix takes it back to display.
+
+const mat3 c_agxInset = mat3(
+	0.842479062253094f, 0.0423282422610123f, 0.0423756549057051f,
+	0.0784335999999992f, 0.878468636469772f, 0.0784336f,
+	0.0792237451477643f, 0.0791661274605434f, 0.879142973793104f
+);
+const mat3 c_agxOutset = mat3(
+	1.19687900512017f, -0.0528968517574562f, -0.0529716355144438f,
+	-0.0980208811401368f, 1.15190312990417f, -0.0980434501171241f,
+	-0.0990297440797205f, -0.0989611768448433f, 1.15107367264116f
+);
+const float c_agxMinEv = -12.47393f;
+const float c_agxMaxEv = 4.026069f;
+
+// Scene referred, exposed color into AgX log space, sigmoid compressed.
+vec3 AgXEncode(vec3 color)
+{
+	vec3 v = c_agxInset * max(color, vec3(0.0f));
+	v = log2(max(v, vec3(1e-10f)));
+	v = clamp((v - c_agxMinEv) / (c_agxMaxEv - c_agxMinEv), vec3(0.0f), vec3(1.0f));
+
+	// Sigmoid, 6th order polynomial approximation.
+	const vec3 v2 = v * v;
+	const vec3 v4 = v2 * v2;
+	return 15.5f * v4 * v2
+		- 40.14f * v4 * v
+		+ 31.96f * v4
+		- 6.868f * v2 * v
+		+ 0.4298f * v2
+		+ 0.1191f * v
+		- 0.00232f;
+}
+
+// ASC CDL style grade of an AgX encoded color; this is what defines a look.
+vec3 AgXLook(vec3 color, vec3 slope, vec3 offset, vec3 power, float saturation)
+{
+	const float luma = dot(color, vec3(0.2126f, 0.7152f, 0.0722f));
+	const vec3 graded = pow(max(color * slope + offset, vec3(0.0f)), power);
+	return luma + saturation * (graded - luma);
+}
+
+// AgX encoded color into display linear; gamma is applied in a later pass.
+vec3 AgXDecode(vec3 color)
+{
+	const vec3 v = pow(max(c_agxOutset * color, vec3(0.0f)), vec3(2.2f));
+	return clamp(v, vec3(0.0f), vec3(1.0f));
+}
+]]></text>
+	<samplers/>
+	<structDeclarations/>
+</object>

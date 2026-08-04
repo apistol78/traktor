@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
+	<nodes>
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
+			<id>{ED50BF6B-1CB0-4CC3-B184-B4C0DCFC3F11}</id>
+			<comment/>
+			<position>
+				<first>200</first>
+				<second>400</second>
+			</position>
+			<name>Input</name>
+			<optional>false</optional>
+		</item>
+		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
+			<id>{91F994E3-6DA8-4872-9F9B-A4B47B8604D7}</id>
+			<comment/>
+			<position>
+				<first>450</first>
+				<second>380</second>
+			</position>
+			<name>AgX Linear</name>
+			<technique/>
+			<domain>Undefined</domain>
+			<localSize>
+				<X>1</X>
+				<Y>1</Y>
+				<Z>1</Z>
+			</localSize>
+			<useRayTracing>false</useRayTracing>
+			<include>
+				<item>{D6F2CE29-93E2-497B-AFDA-AFC95DD6F7BA}</item>
+			</include>
+			<inputPins>
+				<item>
+					<id>{506EDD73-7E11-4F20-B510-FBEA8C56DDD4}</id>
+					<name>Input</name>
+				</item>
+			</inputPins>
+			<outputPins>
+				<item>
+					<id>{11128810-053A-426A-B3EB-3CDDFC7BB0C7}</id>
+					<name>Output</name>
+					<type>Vector</type>
+				</item>
+			</outputPins>
+			<script><![CDATA[// Neutral AgX; no look graded on top.
+$Output = vec4(AgXDecode(AgXEncode($Input.xyz)), 1.0f);
+]]></script>
+		</item>
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{AFD30244-42C2-46BE-96C9-021404B30AD1}</id>
+			<comment/>
+			<position>
+				<first>750</first>
+				<second>400</second>
+			</position>
+			<name>Output</name>
+		</item>
+	</nodes>
+	<edges>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item"/>
+				<id>{9AE16BB1-EB68-45A0-A878-8D01C210082B}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[1]"/>
+				<id>{506EDD73-7E11-4F20-B510-FBEA8C56DDD4}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[1]"/>
+				<id>{11128810-053A-426A-B3EB-3CDDFC7BB0C7}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[2]"/>
+				<id>{731844D4-AFDC-4EAA-8B41-C4BA2455898F}</id>
+			</destination>
+		</item>
+	</edges>
+	<groups/>
+</object>
