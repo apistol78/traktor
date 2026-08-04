@@ -247,6 +247,11 @@ public:
 		return m_data.size();
 	}
 
+	const AlignedVector< pair_t >& data() const
+	{
+		return m_data;
+	}
+
 	Item& operator [] (const view_type_t& key)
 	{
 		size_t is = 0;

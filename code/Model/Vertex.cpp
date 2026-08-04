@@ -1,18 +1,21 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include <cmath>
+#include "Model/Vertex.h"
+
 #include "Core/Misc/Murmur3.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberAlignedVector.h"
+#include "Core/Serialization/MemberSmallMap.h"
 #include "Core/Serialization/MemberStaticVector.h"
-#include "Model/Vertex.h"
+
+#include <cmath>
 
 namespace traktor::model
 {
@@ -20,19 +23,19 @@ namespace traktor::model
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.model.Vertex", 0, Vertex, ISerializable)
 
 Vertex::Vertex(uint32_t position)
-:	m_position(position)
+	: m_position(position)
 {
 }
 
 Vertex::Vertex(uint32_t position, uint32_t normal)
-:	m_position(position)
-,	m_normal(normal)
+	: m_position(position)
+	, m_normal(normal)
 {
 }
 
 Vertex::Vertex(uint32_t position, uint32_t normal, uint32_t texCoord)
-:	m_position(position)
-,	m_normal(normal)
+	: m_position(position)
+	, m_normal(normal)
 {
 	m_texCoords.push_back(texCoord);
 }
@@ -72,29 +75,28 @@ void Vertex::clearJointInfluences()
 
 void Vertex::setJointInfluence(uint32_t jointIndex, float influence)
 {
-	while (jointIndex >= uint32_t(m_jointInfluences.size()))
-		m_jointInfluences.push_back(0.0f);
-	m_jointInfluences[jointIndex] = influence;
+	if (influence > 0.0f)
+		m_jointInfluences[jointIndex] = influence;
+	else
+		m_jointInfluences.remove(jointIndex);
 }
 
 float Vertex::getJointInfluence(uint32_t jointIndex) const
 {
-	if (jointIndex < uint32_t(m_jointInfluences.size()))
-		return m_jointInfluences[jointIndex];
-	else
-		return 0.0f;
+	const auto it = m_jointInfluences.find(jointIndex);
+	return it != m_jointInfluences.end() ? it->second : 0.0f;
 }
 
 uint32_t Vertex::getJointInfluenceCount() const
 {
-	return uint32_t(m_jointInfluences.size());
+	return (uint32_t)m_jointInfluences.size();
 }
 
 uint32_t Vertex::getHash() const
 {
 	Murmur3 adler;
-
 	adler.begin();
+
 	adler.feed(m_position);
 	adler.feed(m_color);
 	adler.feed(m_normal);
@@ -102,10 +104,13 @@ uint32_t Vertex::getHash() const
 	adler.feed(m_binormal);
 	if (!m_texCoords.empty())
 		adler.feedBuffer(&m_texCoords[0], m_texCoords.size() * sizeof(uint32_t));
-	if (!m_jointInfluences.empty())
-		adler.feedBuffer(&m_jointInfluences[0], m_jointInfluences.size() * sizeof(float));
-	adler.end();
 
+	for (const auto inf : m_jointInfluences)
+	{
+		adler.feed(inf.first);
+		adler.feed(inf.second);
+	}
+	adler.end();
 	return adler.get();
 }
 
@@ -117,10 +122,22 @@ void Vertex::serialize(ISerializer& s)
 	s >> Member< uint32_t >(L"tangent", m_tangent);
 	s >> Member< uint32_t >(L"binormal", m_binormal);
 	s >> MemberStaticVector< uint32_t, 4 >(L"texCoords", m_texCoords);
-	s >> MemberAlignedVector< float >(L"jointInfluences", m_jointInfluences);
+
+	if (s.getVersion() >= 6)
+		s >> MemberSmallMap< uint32_t, float >(L"jointInfluences", m_jointInfluences);
+	else
+	{
+		AlignedVector< float > jointInfluences;
+		s >> MemberAlignedVector< float >(L"jointInfluences", jointInfluences);
+		for (uint32_t i = 0; i < jointInfluences.size(); ++i)
+		{
+			if (jointInfluences[i] > 0.0f)
+				m_jointInfluences.insert(i, jointInfluences[i]);
+		}
+	}
 }
 
-bool Vertex::operator == (const Vertex& r) const
+bool Vertex::operator==(const Vertex& r) const
 {
 	if (m_position != r.m_position)
 		return false;
@@ -142,8 +159,14 @@ bool Vertex::operator == (const Vertex& r) const
 			return false;
 
 	for (size_t i = 0; i < m_jointInfluences.size(); ++i)
-		if (std::fabs(m_jointInfluences[i] - r.m_jointInfluences[i]) > 0.0001f)
+	{
+		const auto& lh = m_jointInfluences.data()[i];
+		const auto& rh = r.m_jointInfluences.data()[i];
+		if (lh.first != rh.first)
 			return false;
+		if (std::fabs(lh.second - rh.second) > 0.0001f)
+			return false;
+	}
 
 	return true;
 }

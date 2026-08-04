@@ -1,12 +1,13 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include <algorithm>
+#include "Model/Model.h"
+
 #include "Core/Serialization/ISerializable.h"
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberAlignedVector.h"
@@ -15,77 +16,69 @@
 #include "Core/Serialization/MemberSmallMap.h"
 #include "Model/ContainerHelpers.h"
 #include "Model/IModelOperation.h"
-#include "Model/Model.h"
 #include "Model/Pose.h"
+
+#include <algorithm>
 
 namespace traktor::model
 {
-	namespace
-	{
+namespace
+{
 
 /*! Return true if a replacing vertex match or "exceed" an existing vertex. */
 bool shouldReplace(const Vertex& existing, const Vertex& replaceWith)
 {
 	if (
 		existing.getPosition() != c_InvalidIndex &&
-		existing.getPosition() != replaceWith.getPosition()
-	)
+		existing.getPosition() != replaceWith.getPosition())
 		return false;
 
 	if (
 		existing.getColor() != c_InvalidIndex &&
-		existing.getColor() != replaceWith.getColor()
-	)
+		existing.getColor() != replaceWith.getColor())
 		return false;
 
 	if (
 		existing.getNormal() != c_InvalidIndex &&
-		existing.getNormal() != replaceWith.getNormal()
-	)
+		existing.getNormal() != replaceWith.getNormal())
 		return false;
 
 	if (
 		existing.getTangent() != c_InvalidIndex &&
-		existing.getTangent() != replaceWith.getTangent()
-	)
+		existing.getTangent() != replaceWith.getTangent())
 		return false;
 
 	if (
 		existing.getBinormal() != c_InvalidIndex &&
-		existing.getBinormal() != replaceWith.getBinormal()
-	)
+		existing.getBinormal() != replaceWith.getBinormal())
 		return false;
 
 	if (existing.getTexCoordCount() > replaceWith.getTexCoordCount())
 		return false;
 
 	for (uint32_t i = 0; i < existing.getTexCoordCount(); ++i)
-	{
 		if (existing.getTexCoord(i) != replaceWith.getTexCoord(i))
 			return false;
-	}
 
 	if (existing.getJointInfluenceCount() != replaceWith.getJointInfluenceCount())
 		return false;
 
-	for (uint32_t i = 0; i < existing.getJointInfluenceCount(); ++i)
-	{
-		if (abs(existing.getJointInfluence(i) - replaceWith.getJointInfluence(i)) > FUZZY_EPSILON)
+	for (const auto& influence : existing.getJointInfluences())
+		if (abs(influence.second - replaceWith.getJointInfluence(influence.first)) > FUZZY_EPSILON)
 			return false;
-	}
 
 	return true;
 }
 
-	}
+}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.model.Model", 5, Model, PropertyGroup)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.model.Model", 6, Model, PropertyGroup)
 
 Model::Model()
-:	m_positions(0.5f)
-,	m_colors(0.1f)
-,	m_normals(0.1f)
-,	m_texCoords(0.1f)
+	: m_positions(0.5f)
+	, m_colors(0.1f)
+	, m_normals(0.1f)
+	, m_texCoords(0.1f)
 {
 }
 
@@ -180,7 +173,9 @@ bool Model::removeMaterial(uint32_t index)
 
 uint32_t Model::findMaterial(const std::wstring& name) const
 {
-	const auto it = std::find_if(m_materials.begin(), m_materials.end(), [&](const Material& m) { return m.getName() == name; });
+	const auto it = std::find_if(m_materials.begin(), m_materials.end(), [&](const Material& m) {
+		return m.getName() == name;
+	});
 	return it != m_materials.end() ? (uint32_t)std::distance(m_materials.begin(), it) : c_InvalidIndex;
 }
 
@@ -215,10 +210,8 @@ AlignedVector< Polygon > Model::getPolygonsByMaterial(uint32_t material) const
 	AlignedVector< Polygon > polygons;
 	polygons.reserve(m_polygons.size());
 	for (const auto& polygon : m_polygons)
-	{
 		if (polygon.getMaterial() == material)
 			polygons.push_back(polygon);
-	}
 	return polygons;
 }
 
@@ -331,10 +324,8 @@ uint32_t Model::findJointIndex(const std::wstring& jointName) const
 void Model::findChildJoints(uint32_t jointId, AlignedVector< uint32_t >& outChildJoints) const
 {
 	for (uint32_t i = 0; i < m_joints.size(); ++i)
-	{
 		if (m_joints[i].getParent() == jointId)
 			outChildJoints.push_back(i);
-	}
 }
 
 Transform Model::getJointGlobalTransform(uint32_t jointId) const
@@ -342,7 +333,7 @@ Transform Model::getJointGlobalTransform(uint32_t jointId) const
 	Transform Tglobal = Transform::identity();
 	while (jointId != c_InvalidIndex)
 	{
-		Tglobal = m_joints[jointId].getTransform() * Tglobal;	// ABC order (A root)
+		Tglobal = m_joints[jointId].getTransform() * Tglobal; // ABC order (A root)
 		jointId = m_joints[jointId].getParent();
 	}
 	return Tglobal;
@@ -377,8 +368,7 @@ void Model::setJointRotation(uint32_t jointId, const Quaternion& rotation)
 			const Quaternion QrotationDelta = TposeCurr.rotation() * Tcurr.rotation().inverse();
 			const Transform TposeNew(
 				TposeCurr.translation(),
-				QrotationDelta * rotation
-			);
+				QrotationDelta * rotation);
 
 			pose->setJointTransform(jointId, TposeNew);
 
@@ -525,11 +515,10 @@ void Model::serialize(ISerializer& s)
 	s >> MemberAlignedVector< std::wstring >(L"blendTargets", m_blendTargets);
 
 	s >> MemberSmallMap<
-		uint32_t,
-		AlignedVector< Vector4 >,
-		Member< uint32_t >,
-		MemberAlignedVector< Vector4 >
-	>(L"blendTargetPositions", m_blendTargetPositions);
+			 uint32_t,
+			 AlignedVector< Vector4 >,
+			 Member< uint32_t >,
+			 MemberAlignedVector< Vector4 > >(L"blendTargetPositions", m_blendTargetPositions);
 
 #if defined(_DEBUG)
 	if (s.getDirection() == ISerializer::Direction::Read)

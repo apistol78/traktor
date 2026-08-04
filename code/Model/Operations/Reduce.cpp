@@ -6,7 +6,8 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include <limits>
+#include "Model/Operations/Reduce.h"
+
 #include "Core/Containers/SmallSet.h"
 #include "Core/Containers/StaticVector.h"
 #include "Core/Math/Const.h"
@@ -15,8 +16,10 @@
 #include "Model/ModelAdjacency.h"
 #include "Model/Operations/CleanDegenerate.h"
 #include "Model/Operations/CleanDuplicates.h"
-#include "Model/Operations/Reduce.h"
 #include "Model/Operations/Triangulate.h"
+
+#include <algorithm>
+#include <limits>
 
 // Loosely based on following paper
 // http://www.jofcis.com/publishedpapers/2013_9_11_4271_4279.pdf
@@ -36,8 +39,8 @@
 
 namespace traktor::model
 {
-	namespace
-	{
+namespace
+{
 
 Scalar tetrahedronVolume(const Vector4& A, const Vector4& B, const Vector4& C, const Vector4& u)
 {
@@ -59,7 +62,7 @@ bool isTriangleDegenerate(const Model& model, uint32_t triangleId)
 		if (p0 == p1)
 			return true;
 	}
-		
+
 	return false;
 }
 
@@ -70,15 +73,13 @@ Vector4 triangleNormal(const Model& model, uint32_t triangleId)
 		return Vector4::zero();
 
 	const auto& vertices = polygon.getVertices();
-	const Vertex* v[] =
-	{
+	const Vertex* v[] = {
 		&model.getVertex(vertices[0]),
 		&model.getVertex(vertices[1]),
 		&model.getVertex(vertices[2])
 	};
 
-	Vector4 p[] =
-	{
+	Vector4 p[] = {
 		model.getPosition(v[0]->getPosition()),
 		model.getPosition(v[1]->getPosition()),
 		model.getPosition(v[2]->getPosition())
@@ -115,6 +116,26 @@ Vector2 triangleMidTexCoord(const Model& model, uint32_t triangleId)
 		midPoint += model.getTexCoord(model.getVertex(polygon.getVertex(j)).getTexCoord(0));
 
 	return midPoint / 3.0f;
+}
+
+SmallMap< uint32_t, float > triangleMidJointInfluences(const Model& model, uint32_t triangleId)
+{
+	const Polygon& polygon = model.getPolygon(triangleId);
+	if (polygon.getVertexCount() < 3)
+		return SmallMap< uint32_t, float >();
+
+	Vertex join;
+	for (uint32_t i = 0; i < 3; ++i)
+	{
+		const Vertex& vertex = model.getVertex(polygon.getVertex(i));
+		for (const auto it : vertex.getJointInfluences())
+			join.setJointInfluence(it.first, join.getJointInfluence(it.first) + it.second);
+	}
+
+	for (auto& it : join.getJointInfluences())
+		it.second /= 3.0f;
+
+	return join.getJointInfluences();
 }
 
 Vector4 triangleTipPoint(const Model& model, const ModelAdjacency& adjacency, uint32_t triangleId)
@@ -187,7 +208,37 @@ void triangleEdgeNeighbors(const Model& model, const ModelAdjacency& adjacency, 
 	}
 }
 
-void triangleSingleVertexNeighbors(const Model& model, uint32_t triangleId, AlignedVector< std::pair< uint32_t, uint32_t > >& outNeighborTriangleIds)
+// Maps every position id to the triangles that reference it. Rebuilt once per collapse in
+// Reduce::apply so the volume-error metric can enumerate single-vertex-sharing neighbors in
+// O(valence) instead of scanning the whole model - the former O(P) inner scan made the metric
+// O(P^2) up front and dominated reduction of dense (eg skinned) meshes. Position ids are dense
+// indices into the model's position array, so a flat vector-of-vectors is both the fastest
+// lookup and deterministic: each per-position list ends up in ascending polygon-id order simply
+// by being filled in polygon order.
+typedef AlignedVector< AlignedVector< uint32_t > > PositionToPolygons;
+
+void buildPositionToPolygons(const Model& model, PositionToPolygons& outPositionToPolygons)
+{
+	outPositionToPolygons.resize(model.getPositionCount());
+	for (auto& polygons : outPositionToPolygons)
+		polygons.resize(0);
+
+	const uint32_t polygonCount = model.getPolygonCount();
+	for (uint32_t i = 0; i < polygonCount; ++i)
+	{
+		const auto& vertices = model.getPolygon(i).getVertices();
+		if (vertices.size() != 3)
+			continue;
+		for (uint32_t j = 0; j < 3; ++j)
+		{
+			const uint32_t positionId = model.getVertex(vertices[j]).getPosition();
+			if (positionId < outPositionToPolygons.size())
+				outPositionToPolygons[positionId].push_back(i);
+		}
+	}
+}
+
+void triangleSingleVertexNeighbors(const Model& model, const PositionToPolygons& positionToPolygons, uint32_t triangleId, AlignedVector< std::pair< uint32_t, uint32_t > >& outNeighborTriangleIds)
 {
 	const Polygon& polygon = model.getPolygon(triangleId);
 	if (polygon.getVertexCount() < 3)
@@ -198,8 +249,31 @@ void triangleSingleVertexNeighbors(const Model& model, uint32_t triangleId, Alig
 	for (uint32_t i = 0; i < 3; ++i)
 		positionIds[i] = model.getVertex(polygon.getVertex(i)).getPosition();
 
-	for (uint32_t i = 0; i < model.getPolygonCount(); ++i)
+	// Only triangles incident to one of our positions can possibly share a vertex with us;
+	// gather them and walk the union in ascending polygon-id order. Sorting reproduces the exact
+	// visitation order of the previous full-model scan, which the error accumulation in
+	// triangleVolumeError relies on for bit-identical (hence deterministic) results.
+	AlignedVector< uint32_t > candidates;
+	for (uint32_t i = 0; i < 3; ++i)
 	{
+		const uint32_t positionId = positionIds[i];
+		if (positionId < positionToPolygons.size())
+		{
+			const AlignedVector< uint32_t >& incident = positionToPolygons[positionId];
+			candidates.insert(candidates.end(), incident.begin(), incident.end());
+		}
+	}
+	std::sort(candidates.begin(), candidates.end());
+
+	uint32_t previousId = c_InvalidIndex;
+	for (uint32_t i : candidates)
+	{
+		// A triangle that shares two or three positions with us appears once per shared
+		// position; collapse the duplicates so each candidate is tested at most once.
+		if (i == previousId)
+			continue;
+		previousId = i;
+
 		if (i == triangleId)
 			continue;
 
@@ -216,8 +290,7 @@ void triangleSingleVertexNeighbors(const Model& model, uint32_t triangleId, Alig
 			if (
 				sharedPositionId == positionIds[0] ||
 				sharedPositionId == positionIds[1] ||
-				sharedPositionId == positionIds[2]
-			)
+				sharedPositionId == positionIds[2])
 			{
 				numSharingVertices++;
 				sharingVertexId = vertices[j];
@@ -229,7 +302,7 @@ void triangleSingleVertexNeighbors(const Model& model, uint32_t triangleId, Alig
 	}
 }
 
-float triangleVolumeError(const Model& model, const ModelAdjacency& adjacency, uint32_t triangleId)
+float triangleVolumeError(const Model& model, const ModelAdjacency& adjacency, const PositionToPolygons& positionToPolygons, uint32_t triangleId)
 {
 	const Polygon& polygon = model.getPolygon(triangleId);
 	if (polygon.getVertexCount() < 3)
@@ -246,8 +319,7 @@ float triangleVolumeError(const Model& model, const ModelAdjacency& adjacency, u
 		model.getPosition(positionIds[0]),
 		model.getPosition(positionIds[1]),
 		model.getPosition(positionIds[2]),
-		tipPoint
-	);
+		tipPoint);
 
 	// Accumulate volume errors of edge sharing triangles.
 	for (uint32_t j = 0; j < 3; ++j)
@@ -261,8 +333,7 @@ float triangleVolumeError(const Model& model, const ModelAdjacency& adjacency, u
 				model.getVertexPosition(sharedTriangle.getVertex(0)),
 				model.getVertexPosition(sharedTriangle.getVertex(1)),
 				model.getVertexPosition(sharedTriangle.getVertex(2)),
-				tipPoint
-			);
+				tipPoint);
 		}
 		else
 		{
@@ -274,7 +345,7 @@ float triangleVolumeError(const Model& model, const ModelAdjacency& adjacency, u
 
 	// Accumulate volume errors of single vertex sharing triangles.
 	AlignedVector< std::pair< uint32_t, uint32_t > > neighborTriangleIds;
-	triangleSingleVertexNeighbors(model, triangleId, neighborTriangleIds);
+	triangleSingleVertexNeighbors(model, positionToPolygons, triangleId, neighborTriangleIds);
 
 	// Triangle with less than 3 single vertex sharing triangles shouldn't be discarded; thus return max error.
 	if (neighborTriangleIds.size() < 3)
@@ -287,19 +358,18 @@ float triangleVolumeError(const Model& model, const ModelAdjacency& adjacency, u
 			model.getVertexPosition(sharedTriangle.getVertex(0)),
 			model.getVertexPosition(sharedTriangle.getVertex(1)),
 			model.getVertexPosition(sharedTriangle.getVertex(2)),
-			tipPoint
-		);
+			tipPoint);
 	}
 
 	return error;
 }
 
-	}
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.model.Reduce", Reduce, IModelOperation)
 
 Reduce::Reduce(float target)
-:	m_target(target)
+	: m_target(target)
 {
 }
 
@@ -311,11 +381,16 @@ bool Reduce::apply(Model& model) const
 	// Prepare initial adjacency.
 	Ref< ModelAdjacency > adjacency = new ModelAdjacency(&model, ModelAdjacency::Mode::ByPosition);
 
+	// Acceleration structure for the single-vertex-neighbor lookups inside the error metric;
+	// rebuilt after every collapse so it always mirrors the current topology.
+	PositionToPolygons positionToPolygons;
+	buildPositionToPolygons(model, positionToPolygons);
+
 	// Calculate initial set of errors.
 	AlignedVector< float > errors;
 	for (uint32_t i = 0; i < model.getPolygonCount(); ++i)
 	{
-		const float error = triangleVolumeError(model, *adjacency, i);
+		const float error = triangleVolumeError(model, *adjacency, positionToPolygons, i);
 		errors.push_back(error);
 	}
 
@@ -364,22 +439,30 @@ bool Reduce::apply(Model& model) const
 		const Vector2 joinTexCoord = midTexCoord;
 		const uint32_t joinPointId = model.addUniquePosition(joinPoint);
 		const uint32_t joinTexCoordId = model.addUniqueTexCoord(joinTexCoord);
+		const SmallMap< uint32_t, float > joinJointInfluences = triangleMidJointInfluences(model, minErrorTriangleId);
 
 		// Replace all vertices which reference any of the collapsing triangle's positions.
 		auto& polygons = model.getPolygons();
-		for (uint32_t i = 0; i < (uint32_t)polygons.size(); )
+		for (uint32_t i = 0; i < (uint32_t)polygons.size();)
 		{
 			Polygon& polygon = polygons[i];
 			bool polygonModified = false;
 
 			for (uint32_t j = 0; j < polygon.getVertexCount(); ++j)
 			{
-				Vertex vrtx = model.getVertex(polygon.getVertex(j));
-				const auto it = std::find(errorTrianglePositionIds.begin(), errorTrianglePositionIds.end(), vrtx.getPosition());
+				// Test against a reference first and only copy the vertex when it actually
+				// needs replacing. Copying every vertex of every polygon each iteration
+				// heap-allocated each skinned vertex's joint map O(P^2) times over the whole
+				// reduction - the real reason reducing a skinned mesh crawled.
+				const uint32_t positionId = model.getVertex(polygon.getVertex(j)).getPosition();
+				const auto it = std::find(errorTrianglePositionIds.begin(), errorTrianglePositionIds.end(), positionId);
 				if (it != errorTrianglePositionIds.end())
 				{
+					Vertex vrtx = model.getVertex(polygon.getVertex(j));
 					vrtx.setPosition(joinPointId);
 					vrtx.setTexCoord(0, joinTexCoordId);
+					vrtx.setJointInfluences(joinJointInfluences);
+
 					const uint32_t replaceVrtxId = model.addUniqueVertex(vrtx);
 					polygon.setVertex(j, replaceVrtxId);
 					polygonModified = true;
@@ -424,9 +507,13 @@ bool Reduce::apply(Model& model) const
 		for (uint32_t modifiedPolygon : modifiedPolygons)
 			adjacency->update(modifiedPolygon);
 
+		// The collapse mutated and erased polygons; rebuild the position -> polygon index so it
+		// mirrors the current topology before recomputing errors against it.
+		buildPositionToPolygons(model, positionToPolygons);
+
 		// Update errors on polygons which has been modified.
 		for (uint32_t modifiedPolygon : modifiedPolygons)
-			errors[modifiedPolygon] = triangleVolumeError(model, *adjacency, modifiedPolygon);
+			errors[modifiedPolygon] = triangleVolumeError(model, *adjacency, positionToPolygons, modifiedPolygon);
 	}
 
 	// Remove unused vertices etc which will be a left over from reducing.

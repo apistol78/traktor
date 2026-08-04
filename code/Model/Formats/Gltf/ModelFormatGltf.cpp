@@ -471,12 +471,10 @@ bool ModelFormatGltf::write(const Path& filePath, const Model* model) const
 		{
 			// Gather the (up to) four strongest joint influences, normalised.
 			std::vector< std::pair< float, uint32_t > > influences;
-			const uint32_t influenceCount = v.getJointInfluenceCount();
-			for (uint32_t j = 0; j < influenceCount; ++j)
+			for (const auto& influence : v.getJointInfluences())
 			{
-				const float w = v.getJointInfluence(j);
-				if (w > 0.0f)
-					influences.push_back(std::make_pair(w, j));
+				if (influence.second > 0.0f)
+					influences.push_back(std::make_pair(influence.second, influence.first));
 			}
 			std::sort(influences.begin(), influences.end(), [](const std::pair< float, uint32_t >& a, const std::pair< float, uint32_t >& b) {
 				return a.first > b.first;

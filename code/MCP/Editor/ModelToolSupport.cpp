@@ -331,8 +331,13 @@ Ref< Json > vertexToJson(const model::Vertex& vertex)
 	obj->set(L"texCoords", texCoords);
 
 	Ref< Json > influences = Json::createArray();
-	for (uint32_t i = 0; i < vertex.getJointInfluenceCount(); ++i)
-		influences->push(Json::createReal(vertex.getJointInfluence(i)));
+	for (const auto& influence : vertex.getJointInfluences())
+	{
+		Ref< Json > inf = Json::createObject();
+		inf->set(L"joint", Json::createNumber((int64_t)influence.first));
+		inf->set(L"weight", Json::createReal(influence.second));
+		influences->push(inf);
+	}
 	obj->set(L"jointInfluences", influences);
 
 	return obj;

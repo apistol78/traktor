@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,7 +8,7 @@
  */
 #pragma once
 
-#include "Core/Containers/AlignedVector.h"
+#include "Core/Containers/SmallMap.h"
 #include "Core/Containers/StaticVector.h"
 #include "Core/Serialization/ISerializable.h"
 #include "Model/Types.h"
@@ -83,11 +83,17 @@ public:
 
 	uint32_t getJointInfluenceCount() const;
 
+	SmallMap< uint32_t, float >& getJointInfluences() { return m_jointInfluences; }
+
+	const SmallMap< uint32_t, float >& getJointInfluences() const { return m_jointInfluences; }
+
+	void setJointInfluences(const SmallMap< uint32_t, float >& jointInfluences) { m_jointInfluences = jointInfluences; }
+
 	uint32_t getHash() const;
 
 	virtual void serialize(ISerializer& s) override final;
 
-	bool operator == (const Vertex& r) const;
+	bool operator==(const Vertex& r) const;
 
 private:
 	uint32_t m_position = c_InvalidIndex;
@@ -96,7 +102,7 @@ private:
 	uint32_t m_tangent = c_InvalidIndex;
 	uint32_t m_binormal = c_InvalidIndex;
 	StaticVector< uint32_t, 4 > m_texCoords;
-	AlignedVector< float > m_jointInfluences;
+	SmallMap< uint32_t, float > m_jointInfluences;
 };
 
 struct VertexHashFunction

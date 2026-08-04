@@ -98,12 +98,10 @@ bool CleanDuplicates::apply(Model& model) const
 					cleanedVertex.setTexCoord(k, cleaned.addUniqueTexCoord(model.getTexCoord(id)));
 			}
 
-			const uint32_t influenceCount = vertex.getJointInfluenceCount();
-			for (uint32_t k = 0; k < influenceCount; ++k)
+			for (const auto& influence : vertex.getJointInfluences())
 			{
-				const float influence = vertex.getJointInfluence(k);
-				if (influence > FUZZY_EPSILON)
-					cleanedVertex.setJointInfluence(k, influence);
+				if (influence.second > FUZZY_EPSILON)
+					cleanedVertex.setJointInfluence(influence.first, influence.second);
 			}
 
 			cleanedPolygon.addVertex(cleaned.addUniqueVertex(cleanedVertex));

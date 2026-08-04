@@ -96,11 +96,8 @@ bool MergeModel::apply(Model& model) const
 			}
 		}
 
-		for (uint32_t j = 0; j < sourceVertex.getJointInfluenceCount(); ++j)
-		{
-			const float influence = sourceVertex.getJointInfluence(j);
-			v.setJointInfluence(j, influence);
-		}
+		for (const auto& influence : sourceVertex.getJointInfluences())
+			v.setJointInfluence(influence.first, influence.second);
 
 		vertexMap[i] = model.addUniqueVertex(v);
 	}
