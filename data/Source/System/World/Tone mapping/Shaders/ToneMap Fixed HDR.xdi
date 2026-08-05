@@ -43,8 +43,8 @@
 			<id>{41A2C38F-1C79-474E-965E-4F5A56B86F9C}</id>
 			<comment/>
 			<position>
-				<first>1921</first>
-				<second>800</second>
+				<first>1929</first>
+				<second>923</second>
 			</position>
 			<technique>Default</technique>
 			<priority>
@@ -226,8 +226,8 @@ $Output = vec4(
 			<id>{22B53308-B5AD-2E4D-87FE-4AAD78532591}</id>
 			<comment/>
 			<position>
-				<first>1653</first>
-				<second>817</second>
+				<first>1661</first>
+				<second>940</second>
 			</position>
 			<swizzle>xyz</swizzle>
 		</item>
@@ -403,16 +403,6 @@ $Output = vec4(
 				<id>{3B01355D-9153-4864-9B56-7D55F801BFF3}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[11]"/>
-				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[3]"/>
-				<id>{3B01355D-9153-4864-9B56-7D55F801BFF3}</id>
-			</source>
-			<destination>
 				<node ref="/object/nodes/item[10]"/>
 				<id>{C7A7C9B6-0574-42A0-838D-1FA2B6F02DCA}</id>
 			</destination>
@@ -475,6 +465,16 @@ $Output = vec4(
 			<destination>
 				<node ref="/object/nodes/item[1]"/>
 				<id>{32EB5230-1F0D-40B8-93F6-9C8E5469454E}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[15]"/>
+				<id>{4FAD1FF1-9EE9-44B2-BDC7-E5F27CEFB686}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[11]"/>
+				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
 			</destination>
 		</item>
 	</edges>
