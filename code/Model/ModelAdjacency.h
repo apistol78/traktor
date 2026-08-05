@@ -8,8 +8,8 @@
  */
 #pragma once
 
-#include "Core/Object.h"
 #include "Core/Containers/AlignedVector.h"
+#include "Core/Object.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -44,7 +44,7 @@ public:
 		uint32_t count;
 		const uint32_t* data;
 
-		uint32_t operator [] (uint32_t index) const { return data[index]; }
+		uint32_t operator[](uint32_t index) const { return data[index]; }
 	};
 
 	typedef AlignedVector< uint32_t > share_vector_t;
@@ -113,10 +113,17 @@ private:
 	AlignedVector< Edge > m_edges;
 	AlignedVector< uint32_t > m_polygonToFirstEdge;
 	AlignedVector< uint32_t > m_shareData;
+	AlignedVector< AlignedVector< uint32_t > > m_edgeLookup;
 
 	void shareDataPushBack(Edge& edge, uint32_t value);
 
 	void shareDataErase(Edge& edge, uint32_t index);
+
+	void edgeLookupInsert(uint32_t edge);
+
+	void edgeLookupErase(uint32_t edge);
+
+	void collectOppositeEdges(uint32_t edge, share_vector_t& outOpposite) const;
 };
 
 }

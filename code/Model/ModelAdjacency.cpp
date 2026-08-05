@@ -6,8 +6,11 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include "Model/Model.h"
 #include "Model/ModelAdjacency.h"
+
+#include "Model/Model.h"
+
+#include <algorithm>
 
 namespace traktor::model
 {
@@ -15,21 +18,23 @@ namespace traktor::model
 T_IMPLEMENT_RTTI_CLASS(L"traktor.model.ModelAdjacency", ModelAdjacency, Object)
 
 ModelAdjacency::ModelAdjacency(const Model* model, Mode mode, uint32_t channel)
-:	m_model(model)
-,	m_mode(mode)
-,	m_channel(channel)
+	: m_model(model)
+	, m_mode(mode)
+	, m_channel(channel)
 {
 	m_polygonToFirstEdge.resize(model->getPolygonCount(), c_InvalidIndex);
+	m_edgeLookup.resize(model->getVertexCount());
 	for (uint32_t i = 0; i < model->getPolygonCount(); ++i)
 		add(i);
 }
 
 ModelAdjacency::ModelAdjacency(const Model* model, const AlignedVector< uint32_t >& polygons, Mode mode, uint32_t channel)
-:	m_model(model)
-,	m_mode(mode)
-,	m_channel(channel)
+	: m_model(model)
+	, m_mode(mode)
+	, m_channel(channel)
 {
 	m_polygonToFirstEdge.resize(polygons.size(), c_InvalidIndex);
+	m_edgeLookup.resize(model->getVertexCount());
 	for (auto polygon : polygons)
 		add(polygon);
 }
@@ -40,6 +45,7 @@ void ModelAdjacency::add(uint32_t polygon)
 	T_FATAL_ASSERT(m_polygonToFirstEdge[polygon] == c_InvalidIndex);
 
 	const auto& polygonVertices = m_model->getPolygon(polygon).getVertices();
+	share_vector_t opposite;
 	for (uint32_t i = 0; i < polygonVertices.size(); ++i)
 	{
 		Edge& e = m_edges.push_back();
@@ -49,16 +55,14 @@ void ModelAdjacency::add(uint32_t polygon)
 		const uint32_t edge = (uint32_t)(m_edges.size() - 1);
 		getEdgeIndices(edge, e.index0, e.index1);
 
-		// Link with all other existing edges.
-		for (uint32_t j = 0; j < edge; ++j)
+		// Link with all existing opposite half-edges (those running index1 -> index0).
+		collectOppositeEdges(edge, opposite);
+		for (uint32_t j : opposite)
 		{
-			Edge& rightEdge = m_edges[j];
-			if (e.index0 == rightEdge.index1 && e.index1 == rightEdge.index0)
-			{
-				shareDataPushBack(rightEdge, edge);
-				shareDataPushBack(e, j);
-			}
+			shareDataPushBack(m_edges[j], edge);
+			shareDataPushBack(e, j);
 		}
+		edgeLookupInsert(edge);
 
 		// Remember offset to first edge of polyogn.
 		if (m_polygonToFirstEdge[polygon] == c_InvalidIndex)
@@ -74,6 +78,9 @@ void ModelAdjacency::remove(uint32_t polygon, bool reindex)
 	for (uint32_t i = firstEdge; i < m_edges.size() && m_edges[i].polygon == polygon; ++i)
 	{
 		Edge& edge = m_edges[i];
+
+		// Drop from the opposite-edge lookup while index0 is still valid.
+		edgeLookupErase(i);
 
 		// Remove references to this edge from sharing edges.
 		for (uint32_t o = 0; o < edge.shareDataCount; ++o)
@@ -103,10 +110,8 @@ void ModelAdjacency::remove(uint32_t polygon, bool reindex)
 	if (reindex)
 	{
 		for (auto& edge : m_edges)
-		{
 			if (edge.polygon != c_InvalidIndex && edge.polygon > polygon)
 				edge.polygon--;
-		}
 
 		m_polygonToFirstEdge.erase(m_polygonToFirstEdge.begin() + polygon);
 	}
@@ -125,6 +130,10 @@ void ModelAdjacency::update(uint32_t polygon)
 	for (uint32_t i = firstEdge; i < m_edges.size() && m_edges[i].polygon == polygon; ++i)
 	{
 		Edge& edge = m_edges[i];
+
+		// Drop from the opposite-edge lookup at its current (pre-update) index0.
+		edgeLookupErase(i);
+
 		for (uint32_t o = 0; o < edge.shareDataCount; ++o)
 		{
 			const uint32_t edgeIndex = m_shareData[edge.shareDataOffset + o];
@@ -145,6 +154,7 @@ void ModelAdjacency::update(uint32_t polygon)
 	}
 
 	// Add sharing references.
+	share_vector_t opposite;
 	const auto& polygonVertices = m_model->getPolygon(polygon).getVertices();
 	uint32_t edgeIndex = firstEdge;
 	for (uint32_t i = 0; i < polygonVertices.size(); ++i)
@@ -155,15 +165,16 @@ void ModelAdjacency::update(uint32_t polygon)
 
 		getEdgeIndices(edgeIndex, e.index0, e.index1);
 
-		for (uint32_t j = 0; j < (uint32_t)m_edges.size(); ++j)
+		// Link with the current opposite half-edges (index1 -> index0) via the lookup, then
+		// re-register this edge under its new index0.
+		collectOppositeEdges(edgeIndex, opposite);
+		for (uint32_t j : opposite)
 		{
-			Edge& rightEdge = m_edges[j];
-			if (e.index0 == rightEdge.index1 && e.index1 == rightEdge.index0)
-			{
-				shareDataPushBack(rightEdge, edgeIndex);
-				shareDataPushBack(e, j);
-			}
+			shareDataPushBack(m_edges[j], edgeIndex);
+			shareDataPushBack(e, j);
 		}
+		edgeLookupInsert(edgeIndex);
+
 		++edgeIndex;
 	}
 }
@@ -318,7 +329,7 @@ void ModelAdjacency::getEdgeIndices(uint32_t edge, uint32_t& outIndex0, uint32_t
 	if (e.polygon == c_InvalidIndex)
 	{
 		outIndex0 =
-		outIndex1 = c_InvalidIndex;
+			outIndex1 = c_InvalidIndex;
 		return;
 	}
 
@@ -328,7 +339,7 @@ void ModelAdjacency::getEdgeIndices(uint32_t edge, uint32_t& outIndex0, uint32_t
 	if (polygonVertices.size() < 2)
 	{
 		outIndex0 =
-		outIndex1 = c_InvalidIndex;
+			outIndex1 = c_InvalidIndex;
 		return;
 	}
 
@@ -398,8 +409,55 @@ void ModelAdjacency::shareDataErase(Edge& edge, uint32_t index)
 
 	for (uint32_t i = index; i < edge.shareDataCount - 1; ++i)
 		m_shareData[edge.shareDataOffset + i] = m_shareData[edge.shareDataOffset + i + 1];
-	
+
 	edge.shareDataCount--;
+}
+
+void ModelAdjacency::edgeLookupInsert(uint32_t edge)
+{
+	const uint32_t index0 = m_edges[edge].index0;
+	if (index0 == c_InvalidIndex)
+		return;
+	if (index0 >= (uint32_t)m_edgeLookup.size())
+		m_edgeLookup.resize(index0 + 1);
+	m_edgeLookup[index0].push_back(edge);
+}
+
+void ModelAdjacency::edgeLookupErase(uint32_t edge)
+{
+	const uint32_t index0 = m_edges[edge].index0;
+	if (index0 == c_InvalidIndex || index0 >= (uint32_t)m_edgeLookup.size())
+		return;
+
+	AlignedVector< uint32_t >& bucket = m_edgeLookup[index0];
+	for (uint32_t i = 0; i < (uint32_t)bucket.size(); ++i)
+	{
+		if (bucket[i] == edge)
+		{
+			bucket[i] = bucket.back();
+			bucket.pop_back();
+			return;
+		}
+	}
+}
+
+void ModelAdjacency::collectOppositeEdges(uint32_t edge, share_vector_t& outOpposite) const
+{
+	outOpposite.resize(0);
+
+	const uint32_t index0 = m_edges[edge].index0;
+	const uint32_t index1 = m_edges[edge].index1;
+	if (index0 == c_InvalidIndex || index1 == c_InvalidIndex)
+		return;
+
+	if (index1 < (uint32_t)m_edgeLookup.size())
+	{
+		for (uint32_t candidate : m_edgeLookup[index1])
+			if (m_edges[candidate].index1 == index0)
+				outOpposite.push_back(candidate);
+	}
+
+	std::sort(outOpposite.begin(), outOpposite.end());
 }
 
 }
