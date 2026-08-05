@@ -537,7 +537,7 @@ void TerrainComponent::setWorld(world::World* world)
 		T_FATAL_ASSERT(m_rtwInstance == nullptr);
 		world::RTWorldComponent* rtw = world->getComponent< world::RTWorldComponent >();
 		if (rtw != nullptr)
-			m_rtwInstance = rtw->createInstance(m_rtParts);
+			m_rtwInstance = rtw->createInstance(m_rtParts, false);
 	}
 
 	m_world = world;

@@ -52,15 +52,16 @@ RTWorldComponent::Instance* RTWorldComponent::createInstance(const render::IAcce
 {
 	AlignedVector< Part > parts;
 	parts.push_back({ blas, perVertexData });
-	return createInstance(parts);
+	return createInstance(parts, true);
 }
 
-RTWorldComponent::Instance* RTWorldComponent::createInstance(const AlignedVector< Part >& parts)
+RTWorldComponent::Instance* RTWorldComponent::createInstance(const AlignedVector< Part >& parts, bool cullingEnable)
 {
 	Instance* instance = new Instance();
 	instance->owner = this;
 	instance->transform = Transform::identity();
 	instance->parts = parts;
+	instance->cullingEnable = cullingEnable;
 
 	m_instances.push_back(instance);
 	m_instanceBufferDirty = true;
@@ -90,10 +91,12 @@ void RTWorldComponent::writeAccelerationStructure(render::IRenderView* renderVie
 		AlignedVector< render::IAccelerationStructure::Instance > tlasInstances;
 		for (const auto& instance : m_instances)
 		{
-			const Scalar distance = (instance->transform.translation().xyz0() - eyePosition.xyz0()).length();
-			if (distance > cullDistance)
-				continue;
-
+			if (instance->cullingEnable)
+			{
+				const Scalar distance = (instance->transform.translation().xyz0() - eyePosition.xyz0()).length();
+				if (distance > cullDistance)
+					continue;
+			}
 			for (auto part : instance->parts)
 			{
 				tlasInstances.push_back({

@@ -63,6 +63,7 @@ public:
 		RTWorldComponent* owner;
 		Transform transform;
 		AlignedVector< Part > parts;
+		bool cullingEnable;
 
 		void destroy();
 
@@ -81,7 +82,7 @@ public:
 
 	Instance* createInstance(const render::IAccelerationStructure* blas, const render::Buffer* perVertexData);
 
-	Instance* createInstance(const AlignedVector< Part >& parts);
+	Instance* createInstance(const AlignedVector< Part >& parts, bool cullingEnable);
 
 	void writeAccelerationStructure(render::IRenderView* renderView, const Vector4& eyePosition, float farDistance);
 

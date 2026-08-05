@@ -47,9 +47,9 @@ void SkinnedMeshComponentRenderer::setup(
 		{
 			SkinnedMeshComponent* meshComponent = static_cast< SkinnedMeshComponent* >(renderable);
 			const Transform& worldTransform = meshComponent->getTransform().get();
-
+			const Scalar radius = meshComponent->getBoundingBox().getExtent().length() * 0.75_simd;
 			const Scalar distance = dot3(worldRenderView.getEyeDirection(), worldTransform.translation() - worldRenderView.getEyePosition());
-			if (distance >= 0.0_simd)
+			if (distance >= -radius)
 				m_ranked.push_back({ distance, meshComponent });
 			else
 				m_ranked.push_back({ std::numeric_limits< float >::max(), meshComponent });
