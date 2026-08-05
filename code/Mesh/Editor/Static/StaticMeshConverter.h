@@ -23,6 +23,8 @@ public:
 	virtual bool convert(
 		const MeshAsset* meshAsset,
 		const model::Model* model,
+		const model::Model* rtModel,
+		uint32_t rtSharedVertexCount,
 		const Guid& materialGuid,
 		const std::map< std::wstring, std::list< MeshMaterialTechnique > >& materialTechniqueMap,
 		const AlignedVector< render::VertexElement >& vertexElements,

@@ -103,6 +103,8 @@ private:
 	Ref< ui::CheckBox > m_checkDecalResponse;
 	Ref< ui::CheckBox > m_checkEnableRaytracing;
 	Ref< ui::Edit > m_editScaleFactor[3];
+	Ref< ui::Edit > m_editReduce;
+	Ref< ui::Edit > m_editRaytracingReduce;
 	Ref< ui::Slider > m_sliderPreviewAngle;
 	Ref< ui::Image > m_imagePreview;
 	Ref< ui::GridView > m_materialShaderList;

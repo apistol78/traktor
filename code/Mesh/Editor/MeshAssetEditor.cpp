@@ -189,6 +189,18 @@ bool MeshAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISerial
 	m_editScaleFactor[2] = new ui::Edit();
 	m_editScaleFactor[2]->create(containerScaleFactor, L"", ui::WsNone, new ui::NumericEditValidator(true, 0.0f, 10000.0f, 2));
 
+	Ref< ui::Static > staticReduce = new ui::Static();
+	staticReduce->create(containerRight, i18n::Text(L"MESHASSET_EDITOR_REDUCE"));
+
+	m_editReduce = new ui::Edit();
+	m_editReduce->create(containerRight, L"", ui::WsNone, new ui::NumericEditValidator(true, 0.0f, 1.0f, 2));
+
+	Ref< ui::Static > staticRaytracingReduce = new ui::Static();
+	staticRaytracingReduce->create(containerRight, i18n::Text(L"MESHASSET_EDITOR_RAYTRACING_REDUCE"));
+
+	m_editRaytracingReduce = new ui::Edit();
+	m_editRaytracingReduce->create(containerRight, L"", ui::WsNone, new ui::NumericEditValidator(true, 0.0f, 1.0f, 2));
+
 	Ref< ui::Static > staticCenter = new ui::Static();
 	staticCenter->create(containerRight, i18n::Text(L"MESHASSET_EDITOR_CENTER"));
 
@@ -281,6 +293,8 @@ void MeshAssetEditor::apply()
 		parseString< float >(m_editScaleFactor[2]->getText()),
 		1.0f
 	));
+	m_asset->setReduce(parseString< float >(m_editReduce->getText()));
+	m_asset->setRaytracingReduce(parseString< float >(m_editRaytracingReduce->getText()));
 	m_asset->setPreviewAngle(m_sliderPreviewAngle->getValue() * TWO_PI / 100.0f);
 
 	SmallMap< std::wstring, Guid > materialShaders;
@@ -355,6 +369,8 @@ void MeshAssetEditor::updateFile()
 	m_editScaleFactor[0]->setText(toString(m_asset->getScaleFactor().x()));
 	m_editScaleFactor[1]->setText(toString(m_asset->getScaleFactor().y()));
 	m_editScaleFactor[2]->setText(toString(m_asset->getScaleFactor().z()));
+	m_editReduce->setText(toString(m_asset->getReduce()));
+	m_editRaytracingReduce->setText(toString(m_asset->getRaytracingReduce()));
 	m_sliderPreviewAngle->setValue((int32_t)(m_asset->getPreviewAngle() * 100.0f / TWO_PI));
 }
 

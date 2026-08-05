@@ -114,11 +114,17 @@ public:
 	/*! Check if ray tracing geometry and acceleration structure should be generated. */
 	bool getEnableRaytracing() const { return m_enableRaytracing; }
 
-	/*! */
+	/*! Set fraction of triangles to keep in the raster mesh (1 = no reduction). */
 	void setReduce(float reduce) { m_reduce = reduce; }
 
-	/*! */
+	/*! Get fraction of triangles to keep in the raster mesh. */
 	float getReduce() const { return m_reduce; }
+
+	/*! Set fraction of triangles to keep in the ray tracing mesh (1 = no reduction). */
+	void setRaytracingReduce(float raytracingReduce) { m_raytracingReduce = raytracingReduce; }
+
+	/*! Get fraction of triangles to keep in the ray tracing mesh. */
+	float getRaytracingReduce() const { return m_raytracingReduce; }
 
 	/*! */
 	void setPreviewAngle(float previewAngle) { m_previewAngle = previewAngle; }
@@ -139,6 +145,7 @@ private:
 	bool m_decalResponse = true;
 	bool m_enableRaytracing = true;
 	float m_reduce = 1.0f;
+	float m_raytracingReduce = 1.0f;
 	float m_previewAngle = 0.0f;
 };
 

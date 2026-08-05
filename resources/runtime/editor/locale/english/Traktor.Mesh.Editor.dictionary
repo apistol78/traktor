@@ -186,6 +186,14 @@
 			<second>Scale factor</second>
 		</item>
 		<item>
+			<first>MESHASSET_EDITOR_REDUCE</first>
+			<second>Reduce</second>
+		</item>
+		<item>
+			<first>MESHASSET_EDITOR_RAYTRACING_REDUCE</first>
+			<second>Ray tracing reduce</second>
+		</item>
+		<item>
 			<first>MESHASSET_EDITOR_SHADER</first>
 			<second>Shader</second>
 		</item>

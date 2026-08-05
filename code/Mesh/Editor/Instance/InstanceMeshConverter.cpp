@@ -61,6 +61,8 @@ bool InstanceMeshConverter::getOperations(const MeshAsset* meshAsset, bool edito
 bool InstanceMeshConverter::convert(
 	const MeshAsset* meshAsset,
 	const model::Model* model,
+	const model::Model* rtModel,
+	uint32_t rtSharedVertexCount,
 	const Guid& materialGuid,
 	const std::map< std::wstring, std::list< MeshMaterialTechnique > >& materialTechniqueMap,
 	const AlignedVector< render::VertexElement >& vertexElements,
@@ -82,7 +84,7 @@ bool InstanceMeshConverter::convert(
 	AlignedVector< resource::Id< render::ITexture > > albedoTextures;
 	RayTracingGeometry rtGeometry;
 	if (meshAsset->getEnableRaytracing())
-		buildRayTracingGeometry(model, materialTechniqueMap, modelVertexCount, albedoTextures, rtGeometry);
+		buildRayTracingGeometry(rtModel, materialTechniqueMap, modelVertexCount, rtSharedVertexCount, albedoTextures, rtGeometry);
 
 	const uint32_t totalVertexCount = modelVertexCount + (uint32_t)rtGeometry.extraPositions.size();
 

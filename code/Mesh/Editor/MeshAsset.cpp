@@ -20,7 +20,7 @@
 namespace traktor::mesh
 {
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.mesh.MeshAsset", 27, MeshAsset, editor::Asset)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.mesh.MeshAsset", 28, MeshAsset, editor::Asset)
 
 void MeshAsset::serialize(ISerializer& s)
 {
@@ -120,6 +120,9 @@ void MeshAsset::serialize(ISerializer& s)
 
 	if (s.getVersion() >= 24)
 		s >> Member< float >(L"reduce", m_reduce, AttributeRange(0.0f, 1.0f));
+
+	if (s.getVersion() >= 28)
+		s >> Member< float >(L"raytracingReduce", m_raytracingReduce, AttributeRange(0.0f, 1.0f));
 
 	if (s.getVersion() >= 20)
 		s >> Member< float >(L"previewAngle", m_previewAngle, AttributeNoHash());

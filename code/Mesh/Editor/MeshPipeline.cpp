@@ -24,8 +24,8 @@
 #include "Database/Database.h"
 #include "Database/Group.h"
 #include "Database/Instance.h"
-#include "Drawing/Image.h"
 #include "Drawing/Filters/GammaFilter.h"
+#include "Drawing/Image.h"
 #include "Editor/DataAccessCache.h"
 #include "Editor/IPipelineBuilder.h"
 #include "Editor/IPipelineDepends.h"
@@ -42,6 +42,7 @@
 #include "Model/Operations/CalculateNormals.h"
 #include "Model/Operations/CalculateTangents.h"
 #include "Model/Operations/CullDistantFaces.h"
+#include "Model/Operations/CutAlpha.h"
 #include "Model/Operations/Reduce.h"
 #include "Model/Operations/Transform.h"
 #include "Render/Editor/IProgramCompiler.h"
@@ -323,34 +324,44 @@ bool MeshPipeline::buildOutput(
 		return false;
 	}
 
-	// Create list of model operations we need to perform on model before converting it.
-	RefArray< const model::IModelOperation > operations;
-
-	if (asset->getReduce() < 1.0f)
-		operations.push_back(new model::Reduce(asset->getReduce()));
-
-	if (!converter->getOperations(asset, m_editor, operations))
+	// Create the model operations we need to perform before converting. The raster and ray tracing
+	// meshes share everything but the reduction factor, so build the common tail once and prepend a
+	// different Reduce to each.
+	RefArray< const model::IModelOperation > commonOperations;
+	if (!converter->getOperations(asset, m_editor, commonOperations))
 	{
 		log::error << L"Mesh pipeline failed; unable to create model operations." << Endl;
 		return false;
 	}
 
 	// Scale model according to scale factor in asset.
-	operations.push_back(new model::Transform(
+	commonOperations.push_back(new model::Transform(
 		translate(asset->getOffset()) *
 		scale(asset->getScaleFactor())));
 
 	// Recalculate normals regardless if already exist in model.
 	if (asset->getRenormalize())
 	{
-		operations.push_back(new model::CalculateNormals(true));
-		operations.push_back(new model::CalculateTangents(true));
+		commonOperations.push_back(new model::CalculateNormals(true));
+		commonOperations.push_back(new model::CalculateTangents(true));
 	}
 	else
 	{
-		operations.push_back(new model::CalculateNormals(false));
-		operations.push_back(new model::CalculateTangents(false));
+		commonOperations.push_back(new model::CalculateNormals(false));
+		commonOperations.push_back(new model::CalculateTangents(false));
 	}
+
+	RefArray< const model::IModelOperation > operations;
+	if (asset->getReduce() < 1.0f)
+		operations.push_back(new model::Reduce(asset->getReduce()));
+	for (auto operation : commonOperations)
+		operations.push_back(operation);
+
+	RefArray< const model::IModelOperation > rtOperations;
+	if (asset->getRaytracingReduce() < 1.0f)
+		rtOperations.push_back(new model::Reduce(asset->getRaytracingReduce()));
+	for (auto operation : commonOperations)
+		rtOperations.push_back(operation);
 
 	// We allow models to be passed as build parameters in case models
 	// are procedurally generated.
@@ -382,21 +393,35 @@ bool MeshPipeline::buildOutput(
 		return false;
 	}
 
-	model->apply(operations);
+	// Clone the ray tracing model from the source before the raster operations so it can be reduced
+	// independently (its own reduce, not stacked on the raster one), then run its operation list.
+	Ref< model::Model > rtModel;
+	if (asset->getEnableRaytracing())
+		rtModel = DeepClone(model.c_ptr()).create< model::Model >();
 
+	model->apply(operations);
+	if (rtModel)
+		rtModel->apply(rtOperations);
+
+	// Centre/ground from the raster model's bounds and apply the same transform to the ray tracing
+	// model so the two stay aligned even when reduced differently.
 	switch (asset->getCenter())
 	{
 	case MeshAsset::CenterMode::XZ:
 		{
-			const Aabb3 boundingBox = model->getBoundingBox();
-			model->apply(model::Transform(translate(-boundingBox.getCenter() * Vector4(1.0f, 0.0f, 1.0f))));
+			const Vector4 centerTranslate = -model->getBoundingBox().getCenter() * Vector4(1.0f, 0.0f, 1.0f);
+			model->apply(model::Transform(translate(centerTranslate)));
+			if (rtModel)
+				rtModel->apply(model::Transform(translate(centerTranslate)));
 		}
 		break;
 
 	case MeshAsset::CenterMode::XYZ:
 		{
-			const Aabb3 boundingBox = model->getBoundingBox();
-			model->apply(model::Transform(translate(-boundingBox.getCenter())));
+			const Vector4 centerTranslate = -model->getBoundingBox().getCenter();
+			model->apply(model::Transform(translate(centerTranslate)));
+			if (rtModel)
+				rtModel->apply(model::Transform(translate(centerTranslate)));
 		}
 		break;
 
@@ -406,8 +431,10 @@ bool MeshPipeline::buildOutput(
 
 	if (asset->getGrounded())
 	{
-		const Aabb3 boundingBox = model->getBoundingBox();
-		model->apply(model::Transform(translate(Vector4(0.0f, -boundingBox.mn.y(), 0.0f))));
+		const Vector4 groundTranslate = Vector4(0.0f, -model->getBoundingBox().mn.y(), 0.0f);
+		model->apply(model::Transform(translate(groundTranslate)));
+		if (rtModel)
+			rtModel->apply(model::Transform(translate(groundTranslate)));
 	}
 
 	AlignedVector< model::Material >& modelMaterials = model->getMaterials();
@@ -523,7 +550,7 @@ bool MeshPipeline::buildOutput(
 	}
 
 	// Ensure alpha tested materials have their diffuse coverage mask available in memory;
-	// the mesh converters cut the ray tracing geometry to this mask. Embedded/file textures
+	// CutAlpha (below) cuts the ray tracing geometry to this mask. Embedded/file textures
 	// already carry an image, but externally referenced textures must be loaded here.
 	for (model::Material& m : modelMaterials)
 	{
@@ -815,10 +842,8 @@ bool MeshPipeline::buildOutput(
 			// invalid, but nothing more or the saving is lost.
 			const bool depthStream = isDepthOnlyTechnique(materialTechniqueName);
 			if (depthStream)
-			{
 				for (auto vertexInputNode : materialTechniqueShaderGraph->findNodesOf< render::VertexInput >())
 					depthVertexInputs.insert(std::make_pair(vertexInputNode->getDataUsage(), vertexInputNode->getIndex()));
-			}
 
 			MeshMaterialTechnique mt;
 			mt.worldTechnique = materialTechniqueName;
@@ -952,10 +977,40 @@ bool MeshPipeline::buildOutput(
 		resource->setCompressed(true);
 	}
 
+	// Finalize the ray tracing model (built and reduced above): give it the raster mesh's processed
+	// materials - reduction keeps the material list intact - and cut its alpha tested surfaces to the
+	// coverage masks loaded above.
+	uint32_t rtSharedVertexCount = 0;
+	if (rtModel)
+	{
+		rtModel->getMaterials() = modelMaterials;
+		rtModel->apply(model::CutAlpha());
+
+		// CutAlpha only appends, so if the ray tracing model was reduced the same as the raster mesh
+		// its leading vertices are still identical and the converter reuses that part of the vertex
+		// buffer. A different reduction rewrites the vertices; detect it by comparing the leading
+		// positions by value (an index match would not prove the positions are the same).
+		const uint32_t rasterVertexCount = model->getVertexCount();
+		if (rtModel->getVertexCount() >= rasterVertexCount)
+		{
+			rtSharedVertexCount = rasterVertexCount;
+			for (uint32_t i = 0; i < rasterVertexCount; ++i)
+			{
+				if (rtModel->getVertexPosition(i) != model->getVertexPosition(i))
+				{
+					rtSharedVertexCount = 0;
+					break;
+				}
+			}
+		}
+	}
+
 	// Convert mesh asset.
 	if (!converter->convert(
 			asset,
 			model,
+			rtModel,
+			rtSharedVertexCount,
 			materialGuid,
 			materialTechniqueMap,
 			vertexElements,

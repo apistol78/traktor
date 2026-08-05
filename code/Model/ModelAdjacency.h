@@ -10,6 +10,8 @@
 
 #include "Core/Containers/AlignedVector.h"
 #include "Core/Object.h"
+#include "Core/Ref.h"
+#include "Model/Types.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
