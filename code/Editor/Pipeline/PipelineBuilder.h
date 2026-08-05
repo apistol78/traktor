@@ -141,7 +141,7 @@ private:
 	BuildResult performBuild(const PipelineDependencySet* dependencySet, const PipelineDependency* dependency, const Object* buildParams, uint32_t reason);
 
 	/*! Isolate instance in cache. */
-	bool putInstancesInCache(
+	int32_t putInstancesInCache(
 		IPipelineCache* cache,
 		const CacheKey& key,
 		const RefArray< db::Instance >& instances,
@@ -149,7 +149,7 @@ private:
 	) const;
 
 	/*! Get isolated instance from cache. */
-	bool getInstancesFromCache(
+	int32_t getInstancesFromCache(
 		IPipelineCache* cache,
 		const CacheKey& key,
 		RefArray< db::Instance >* outInstances,
