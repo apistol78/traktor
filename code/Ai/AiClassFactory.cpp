@@ -29,10 +29,19 @@ Ref< BoxedVector4 > MoveQuery_update(MoveQuery* self, const Vector4& currentPosi
 		return nullptr;
 }
 
-Vector4 NavMesh_findClosestPoint(NavMesh* self, const Vector4& searchFrom)
+Vector4 NavMesh_findClosestPoint(NavMesh* self, const Vector4& searchFrom, float searchDistance)
 {
 	Vector4 point;
-	if (self->findClosestPoint(searchFrom, point))
+	if (self->findClosestPoint(searchFrom, searchDistance, point))
+		return point;
+	else
+		return searchFrom;
+}
+
+Vector4 NavMesh_findClosestPointXZ(NavMesh* self, const Vector4& searchFrom, float searchDistance)
+{
+	Vector4 point;
+	if (self->findClosestPointXZ(searchFrom, searchDistance, point))
 		return point;
 	else
 		return searchFrom;
@@ -78,6 +87,7 @@ void AiClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	auto classNavMesh = new AutoRuntimeClass< NavMesh >();
 	classNavMesh->addMethod("createMoveQuery", &NavMesh::createMoveQuery);
 	classNavMesh->addMethod("findClosestPoint", &NavMesh_findClosestPoint);
+	classNavMesh->addMethod("findClosestPointXZ", &NavMesh_findClosestPointXZ);
 	classNavMesh->addMethod("findRandomPoint", &NavMesh_findRandomPoint_1);
 	classNavMesh->addMethod("findRandomPoint", &NavMesh_findRandomPoint_2);
 	registrar->registerClass(classNavMesh);

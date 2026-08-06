@@ -53,11 +53,30 @@ public:
 
 	/*! Find closest point on navigation mesh.
 	 *
+	 * Searches a cube of half-extent \a searchDistance (uniform on all three axes)
+	 * around \a searchFrom.
+	 *
 	 * \param searchFrom Search from point.
+	 * \param searchDistance Search half-extent, applied uniformly on all axes.
 	 * \param outPoint Closest point on navigation mesh.
 	 * \return True if closest point found.
 	 */
-	bool findClosestPoint(const Vector4& searchFrom, Vector4& outPoint) const;
+	bool findClosestPoint(const Vector4& searchFrom, float searchDistance, Vector4& outPoint) const;
+
+	/*! Find closest point on navigation mesh in the XZ plane only.
+	 *
+	 * Searches \a searchDistance in X and Z but the whole vertical column (Y is
+	 * effectively unbounded), so it resolves to ground directly beneath \a searchFrom
+	 * no matter how far above the mesh the point is. When several walkable surfaces
+	 * stack at the same spot (e.g. ground under a roof) the one whose height is closest
+	 * to searchFrom.y is returned.
+	 *
+	 * \param searchFrom Search from point.
+	 * \param searchDistance Search half-extent in the X and Z axes.
+	 * \param outPoint Closest point on navigation mesh.
+	 * \return True if closest point found.
+	 */
+	bool findClosestPointXZ(const Vector4& searchFrom, float searchDistance, Vector4& outPoint) const;
 
 	/*! Find a random point which is guaranteed to be on navigation mesh.
 	 *
