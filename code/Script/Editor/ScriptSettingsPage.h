@@ -45,6 +45,7 @@ public:
 private:
 	Ref< ui::CheckBox > m_checkAutoOpenDebugger;
 	Ref< ui::CheckBox > m_checkAutoOpenScript;
+	Ref< ui::CheckBox > m_checkAutocompleteEnabled;
 };
 
 }

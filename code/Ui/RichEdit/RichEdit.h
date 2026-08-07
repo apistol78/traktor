@@ -201,6 +201,11 @@ public:
 protected:
 	virtual void contentModified();
 
+	/*! Get accumulated width of characters between two offsets.
+	 * This properly accounts for tab stops and special characters.
+	 */
+	int32_t getAccumulatedWidth(int32_t fromOffset, int32_t toOffset) const;
+
 private:
 	struct TextAttribute
 	{
