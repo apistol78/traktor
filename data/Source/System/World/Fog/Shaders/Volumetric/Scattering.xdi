@@ -305,7 +305,7 @@ $Output = mix(pF, pB, blend);
 			<id>{CDF7AF06-7DDF-1141-BB02-7B528FDA5838}</id>
 			<comment/>
 			<position>
-				<first>53</first>
+				<first>64</first>
 				<second>286</second>
 			</position>
 			<parameterDeclaration>{A2B819CF-CC4F-124C-AC0F-CE2FD5DB1899}</parameterDeclaration>
@@ -314,7 +314,7 @@ $Output = mix(pF, pB, blend);
 			<id>{239DFEDC-2450-E34B-9392-8F22DB126D09}</id>
 			<comment/>
 			<position>
-				<first>37</first>
+				<first>48</first>
 				<second>325</second>
 			</position>
 			<parameterDeclaration>{07D82E61-B43F-0E4B-B371-33ED280DDAA6}</parameterDeclaration>
@@ -798,7 +798,7 @@ $Valid = NDCInRange(ndc) ? 1.0f : 0.0f;
 			<id>{6109B324-D87A-BC43-A885-D7E464E2E7B5}</id>
 			<comment/>
 			<position>
-				<first>149</first>
+				<first>160</first>
 				<second>364</second>
 			</position>
 			<name>L_IterOutput</name>
@@ -1021,8 +1021,8 @@ else
 			<id>{5F3D8A17-4C29-4B60-9E81-A2704D6BC395}</id>
 			<comment/>
 			<position>
-				<first>-679</first>
-				<second>387</second>
+				<first>-946</first>
+				<second>378</second>
 			</position>
 			<parameterDeclaration>{EA77CECB-1DC2-E340-B4CE-3E94B17C8061}</parameterDeclaration>
 		</item>
@@ -1030,8 +1030,8 @@ else
 			<id>{B8E73A29-177B-4407-9884-6CC25245AA77}</id>
 			<comment/>
 			<position>
-				<first>-375</first>
-				<second>435</second>
+				<first>-642</first>
+				<second>426</second>
 			</position>
 			<name>IrradianceAmbient</name>
 			<technique/>
@@ -1126,8 +1126,8 @@ $Output = vec4(dc * 0.2820947917738781f, 1.0f);
 			<id>{0A5C93E1-64BD-4F7A-8C26-D1E4970B58F3}</id>
 			<comment><![CDATA[No irradiance grid in the scene; no ambient in-scattering.]]></comment>
 			<position>
-				<first>-275</first>
-				<second>574</second>
+				<first>-542</first>
+				<second>565</second>
 			</position>
 			<value>0, 0, 0, 0</value>
 		</item>
@@ -1135,8 +1135,8 @@ $Output = vec4(dc * 0.2820947917738781f, 1.0f);
 			<id>{B3E7D52A-08C4-4916-A7F1-6C205E8B94D7}</id>
 			<comment/>
 			<position>
-				<first>-1</first>
-				<second>475</second>
+				<first>-268</first>
+				<second>466</second>
 			</position>
 			<parameterName>World_IrradianceEnable</parameterName>
 		</item>
@@ -1144,8 +1144,8 @@ $Output = vec4(dc * 0.2820947917738781f, 1.0f);
 			<id>{2E9C4B08-71DA-4F35-8C60-19A7E5D3B842}</id>
 			<comment/>
 			<position>
-				<first>-695</first>
-				<second>489</second>
+				<first>-962</first>
+				<second>480</second>
 			</position>
 			<parameterDeclaration>{B5DD3CAE-937A-014D-B369-DB0468FA5DF9}</parameterDeclaration>
 		</item>
@@ -1153,8 +1153,8 @@ $Output = vec4(dc * 0.2820947917738781f, 1.0f);
 			<id>{7A16C5F3-2D48-4E09-B571-C4980E62A3D1}</id>
 			<comment/>
 			<position>
-				<first>-695</first>
-				<second>540</second>
+				<first>-962</first>
+				<second>531</second>
 			</position>
 			<parameterDeclaration>{F702C3A1-3468-F141-890D-A677B0CF83BB}</parameterDeclaration>
 		</item>
@@ -1162,8 +1162,8 @@ $Output = vec4(dc * 0.2820947917738781f, 1.0f);
 			<id>{C08B394E-6F52-4A7D-9218-3D5E1BA0C764}</id>
 			<comment/>
 			<position>
-				<first>-663</first>
-				<second>591</second>
+				<first>-930</first>
+				<second>582</second>
 			</position>
 			<parameterDeclaration>{BE897B94-B1E4-6E49-94F9-1E2F10BFC5A3}</parameterDeclaration>
 		</item>
@@ -1180,8 +1180,8 @@ $Output = vec4(dc * 0.2820947917738781f, 1.0f);
 			<id>{206CEA2C-810A-42A0-BD17-244B3EA8DCDD}</id>
 			<comment/>
 			<position>
-				<first>-615</first>
-				<second>438</second>
+				<first>-882</first>
+				<second>429</second>
 			</position>
 			<name>L_WorldPosition</name>
 		</item>
@@ -1277,12 +1277,21 @@ $Output = vec4(dc * 0.2820947917738781f, 1.0f);
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
 			<id>{A75C2E10-4B86-49DF-8C03-16E9D74B052A}</id>
-			<comment>Top of the fog, world space.</comment>
+			<comment><![CDATA[Top of the fog, world space.]]></comment>
 			<position>
-				<first>-60</first>
-				<second>500</second>
+				<first>96</first>
+				<second>531</second>
 			</position>
 			<parameterDeclaration>{84DB5F00-D485-4005-8024-04345325CF79}</parameterDeclaration>
+		</item>
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
+			<id>{A0621D3E-1A45-DD4A-BF86-E697094433FD}</id>
+			<comment/>
+			<position>
+				<first>144</first>
+				<second>477</second>
+			</position>
+			<name>L_WorldPosition</name>
 		</item>
 	</nodes>
 	<edges>
@@ -2118,22 +2127,22 @@ $Output = vec4(dc * 0.2820947917738781f, 1.0f);
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[49]"/>
-				<id>{70C35B91-1C36-454C-98EC-7514AACF73C8}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[65]"/>
-				<id>{2B5F91C4-8E07-4A63-9D18-70C4E2A5B3F9}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
 				<node ref="/object/nodes/item[87]"/>
 				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[65]"/>
 				<id>{D0417E8B-63A9-4C25-BE71-58F3A906C142}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[88]"/>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[65]"/>
+				<id>{2B5F91C4-8E07-4A63-9D18-70C4E2A5B3F9}</id>
 			</destination>
 		</item>
 	</edges>

@@ -133,7 +133,7 @@
 const int N = 1;
 const int Ndisclose = 4;
 const int Nspatial = 4;
-const int K = 10;
+const int K = 20;
 const float Far = 6.0f;
 const float FarSecond = 8.0f;
 const float TemporalNormalThreshold = 0.1f;
@@ -154,7 +154,10 @@ const int lastIndex = cvpt.x + cvpt.y * sz.x;
 const bool lastIndexOutside = (uvpt != cvpt);
 const vec3 cameraPosition = ($ViewInverse * vec4(0.0f, 0.0f, 0.0f, 1.0f)).xyz;
 
-int rndState = int($Random * sz.x * sz.y);
+// Random state must differ per pixel; with a shared per-frame state every
+// pixel traces the same directions so the estimation error pulsates in
+// unison across the screen. Masked to stay positive as it's used with %.
+int rndState = int((uint(pt.x) * 73856093u ^ uint(pt.y) * 19349663u ^ uint($Random * 16777216.0f) * 2654435761u) & 0x00FFFFFFu);
 
 if (pt.x < sz.x && pt.y < sz.y)
 {

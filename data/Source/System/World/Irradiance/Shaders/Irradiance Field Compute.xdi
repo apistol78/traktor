@@ -62,8 +62,8 @@
 			<outputPins/>
 			<script><![CDATA[
 const int N = 4;
-const float Far = 70.0f;
-const float TemporalFilter = 0.925f;
+const float Far = 20.0f;
+const float TemporalFilter = 0.95f;
 
 
 HWRT_Material m;
@@ -75,12 +75,21 @@ const vec3 Nacc0 = SampleIrradianceField($LastIrradianceField, $LastViewInverse,
 
 vec3 Nacc = vec3(0.0f, 0.0f, 0.0f);
 
-int sampleOffset = int($Random * 256 / N);
-int rndState = int($Random * 2029);
+// Random state must differ per cell; with a shared per-frame state every cell
+// traces identical directions so the estimation error is globally correlated
+// and the entire field pulsates in unison instead of averaging out spatially.
+const uint cellSeed = uint(pt.x) * 73856093u ^ uint(pt.y) * 19349663u ^ uint(pt.z) * 83492791u;
+int rndState = int(cellSeed + uint($Random * 16777216.0f) * 2654435761u);
+
+const int sampleOffset = int(Hash(rndState++) * 256.0f);
+const float azimuthRotation = Hash(rndState++);
 
 for (int i = 0; i < N; ++i)
 {
-	const vec2 rnd = Hammersley(sampleOffset++ & 255, 256);
+	// One sample per stratum of the full sequence; consecutive indices share
+	// nearly the same inclination leaving most of the sphere unsampled.
+	vec2 rnd = Hammersley((sampleOffset + i * (256 / N)) & 255, 256);
+	rnd.y = fract(rnd.y + azimuthRotation);
 
 	const vec3 ro = vec3(
 		(Hash(rndState++) * 2.0f - 1.0f) * CellExtent,
