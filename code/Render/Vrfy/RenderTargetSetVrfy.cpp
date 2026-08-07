@@ -1,14 +1,15 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2023 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Render/Vrfy/RenderTargetSetVrfy.h"
+
 #include "Core/Misc/SafeDestroy.h"
 #include "Render/Vrfy/Error.h"
-#include "Render/Vrfy/RenderTargetSetVrfy.h"
 #include "Render/Vrfy/ResourceTracker.h"
 #include "Render/Vrfy/TextureVrfy.h"
 
@@ -18,9 +19,9 @@ namespace traktor::render
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderTargetSetVrfy", RenderTargetSetVrfy, IRenderTargetSet)
 
 RenderTargetSetVrfy::RenderTargetSetVrfy(ResourceTracker* resourceTracker, const RenderTargetSetCreateDesc& setDesc, IRenderTargetSet* renderTargetSet)
-:	m_resourceTracker(resourceTracker)
-,	m_setDesc(setDesc)
-,	m_renderTargetSet(renderTargetSet)
+	: m_resourceTracker(resourceTracker)
+	, m_setDesc(setDesc)
+	, m_renderTargetSet(renderTargetSet)
 {
 	m_resourceTracker->add(this);
 }
@@ -40,7 +41,8 @@ void RenderTargetSetVrfy::destroy()
 	m_colorTextures[3].reset();
 	m_depthTexture.reset();
 
-	safeDestroy(m_renderTargetSet);
+	if (m_renderTargetSet)
+		m_renderTargetSet->destroy();
 }
 
 int32_t RenderTargetSetVrfy::getWidth() const

@@ -50,10 +50,10 @@ public:
 protected:
 	Context* m_context = nullptr;
 	Ref< BufferDynamicVk > m_instanceBuffer;
-	// Ring of acceleration structures. A dynamic bottom level structure is rebuilt every
-	// frame on the asynchronous compute queue while prior frames' graphics ray queries
-	// still read it, so it is buffered to the in-flight count; each frame writes a fresh
-	// slot. Top level and static bottom level structures use a single slot.
+	// Ring of acceleration structures. Top level and dynamic bottom level structures are
+	// rebuilt on the asynchronous compute queue while prior frames' graphics ray queries
+	// still read them, so they are buffered to the in-flight count; each rebuild writes a
+	// fresh slot. Static bottom level structures are built once and use a single slot.
 	AlignedVector< Ref< ApiBuffer > > m_hierarchyBuffers;
 	AlignedVector< Ref< ApiBuffer > > m_scratchBuffers;
 	AlignedVector< VkAccelerationStructureKHR > m_as;

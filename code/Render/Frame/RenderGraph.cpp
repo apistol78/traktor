@@ -239,7 +239,9 @@ RGTexture RenderGraph::addPersistentTexture(const wchar_t* const name, handle_t 
 
 RGDependency RenderGraph::addDependency()
 {
-	return RGDependency(m_nextResourceId++);
+	const RGDependency dependency(m_nextResourceId++);
+	m_dependencies.insert(dependency.get());
+	return dependency;
 }
 
 IRenderTargetSet* RenderGraph::getTargetSet(RGTargetSet resource) const
@@ -288,7 +290,7 @@ bool RenderGraph::validate()
 		else if (output.resourceId != ~0 && output.resourceId != 0)
 		{
 			auto it = m_targets.find(RGTargetSet(output.resourceId));
-			if (it->second.external)
+			if (it != m_targets.end() && it->second.external)
 				roots.push_back(i);
 		}
 		else if (output.resourceId == 0)
@@ -341,13 +343,179 @@ bool RenderGraph::validate()
 		m_order[band].push_back(i);
 	}
 
-	// Sort each depth based on output resource.
+	// Determine which graphics passes consume outputs of asynchronous compute
+	// passes; they are ordered as late as possible within their band so as much
+	// other work as possible is recorded before the graphics queue has to wait
+	// on the asynchronous results. Asynchronous passes themselves are excluded;
+	// they should record, and thus submit, as early as possible.
+	StaticSet< handle_t, 64 > asyncOutputs;
+	for (uint32_t i = 0; i < (uint32_t)m_passes.size(); ++i)
+		if (m_passes[i]->getQueue() == RenderPass::Queue::AsyncCompute && m_passes[i]->getOutput().resourceId != ~0U)
+			asyncOutputs.insert(m_passes[i]->getOutput().resourceId);
+
+	StaticVector< bool, 512 > lateKeys;
+	lateKeys.resize(m_passes.size(), false);
+	if (!asyncOutputs.empty())
+	{
+		for (uint32_t i = 0; i < (uint32_t)m_passes.size(); ++i)
+		{
+			if (m_passes[i]->getQueue() == RenderPass::Queue::AsyncCompute)
+				continue;
+			for (const auto& input : m_passes[i]->getInputs())
+				if (asyncOutputs.find(input.resourceId) != asyncOutputs.end())
+				{
+					lateKeys[i] = true;
+					break;
+				}
+		}
+
+		// Aggregate the flag per output resource within each band so passes merged
+		// into the same render pass are kept adjacent and merging stays intact.
+		for (int32_t i = 0; i < sizeof_array(m_order); ++i)
+		{
+			const auto& order = m_order[i];
+			for (uint32_t a = 0; a < order.size(); ++a)
+			{
+				const handle_t oa = m_passes[order[a]]->getOutput().resourceId;
+				if (oa == ~0U || !lateKeys[order[a]])
+					continue;
+				for (uint32_t b = 0; b < order.size(); ++b)
+					if (m_passes[order[b]]->getOutput().resourceId == oa)
+						lateKeys[order[b]] = true;
+			}
+		}
+	}
+
+	// Sort each depth; passes consuming asynchronous results last, then based
+	// on output resource.
 	for (int32_t i = 0; i < sizeof_array(m_order); ++i)
 		std::stable_sort(m_order[i].begin(), m_order[i].end(), [&](uint32_t lh, uint32_t rh) {
+			if (lateKeys[lh] != lateKeys[rh])
+				return !lateKeys[lh];
 			const auto lt = m_passes[lh]->getOutput().resourceId;
 			const auto rt = m_passes[rh]->getOutput().resourceId;
 			return lt > rt;
 		});
+
+	// Stabilize order within each band so a pass consuming a dependency is
+	// recorded after the pass producing it; the sort above only groups passes
+	// by output resource and anchored bands would otherwise be ordered by
+	// insertion order which is arbitrary. Only dependency resources are used
+	// as edges to not disturb the target grouping.
+	const auto producesDependencyFor = [&](uint32_t producer, uint32_t consumer) {
+		const handle_t output = m_passes[producer]->getOutput().resourceId;
+		if (output == ~0U || m_dependencies.find(output) == m_dependencies.end())
+			return false;
+		for (const auto& input : m_passes[consumer]->getInputs())
+			if (input.resourceId == output)
+				return true;
+		return false;
+	};
+	for (int32_t i = 0; i < sizeof_array(m_order); ++i)
+	{
+		auto& order = m_order[i];
+		if (order.size() <= 1)
+			continue;
+
+		StaticVector< uint32_t, 64 > sorted;
+		StaticVector< uint32_t, 64 > pending = order;
+		while (!pending.empty())
+		{
+			// Pick first pass with no pending producer; fall back to first pass in case of a cycle.
+			size_t pick = 0;
+			for (size_t j = 0; j < pending.size(); ++j)
+			{
+				bool ready = true;
+				for (size_t k = 0; k < pending.size() && ready; ++k)
+					if (k != j && producesDependencyFor(pending[k], pending[j]))
+						ready = false;
+				if (ready)
+				{
+					pick = j;
+					break;
+				}
+			}
+			sorted.push_back(pending[pick]);
+			pending.erase(pending.begin() + pick);
+		}
+		order = sorted;
+	}
+
+	// Determine synchronization points for asynchronous compute passes; the
+	// graphics queue must wait upon the asynchronous work before the first
+	// graphics pass consuming any of its outputs is executed. Since a wait
+	// covers all asynchronous work recorded before its signal a single wait
+	// before the earliest consumer covers every later consumer as well. A
+	// consumer on the asynchronous queue only requires a barrier since that
+	// queue executes in recorded order.
+	m_syncBefore.reset();
+	m_barrierBefore.reset();
+	m_waitAfter.reset();
+	{
+		StaticVector< uint32_t, 512 > linear;
+		for (int32_t i = sizeof_array(m_order) - 1; i >= 0; --i)
+			for (const auto index : m_order[i])
+				linear.push_back(index);
+
+		for (uint32_t i = 0; i < (uint32_t)linear.size(); ++i)
+		{
+			const RenderPass* producer = m_passes[linear[i]];
+			if (producer->getQueue() != RenderPass::Queue::AsyncCompute)
+				continue;
+
+			const handle_t output = producer->getOutput().resourceId;
+
+			// Asynchronous compute passes cannot render to targets.
+			T_ASSERT(m_targets.find(RGTargetSet(output)) == m_targets.end());
+
+#if defined(_DEBUG)
+			// Asynchronous compute passes cannot consume results produced by graphics
+			// passes within the same frame; the compute queue cannot wait upon the
+			// graphics queue.
+			for (const auto& input : producer->getInputs())
+				for (uint32_t j = 0; j < (uint32_t)linear.size(); ++j)
+					T_ASSERT_M(
+						m_passes[linear[j]]->getQueue() != RenderPass::Queue::Graphics || m_passes[linear[j]]->getOutput().resourceId != input.resourceId,
+						L"Asynchronous compute pass consumes graphics output; not supported.");
+#endif
+
+			bool haveConsumer = false;
+			if (output != ~0U)
+			{
+				for (uint32_t j = i + 1; j < (uint32_t)linear.size(); ++j)
+				{
+					const RenderPass* consumer = m_passes[linear[j]];
+
+					bool consumes = false;
+					for (const auto& input : consumer->getInputs())
+						if (input.resourceId == output)
+						{
+							consumes = true;
+							break;
+						}
+					if (!consumes)
+						continue;
+
+					if (consumer->getQueue() == RenderPass::Queue::AsyncCompute)
+					{
+						m_barrierBefore.insert(linear[j]);
+						haveConsumer = true;
+					}
+					else
+					{
+						m_syncBefore[linear[j]].push_back(linear[i]);
+						haveConsumer = true;
+						break;
+					}
+				}
+			}
+
+			// No consumer pass known; conservatively synchronize immediately after the
+			// pass to guarantee this frame's graphics work observes the result.
+			if (!haveConsumer)
+				m_waitAfter.insert(linear[i]);
+		}
+	}
 
 	// Gather targets which are used as shared depth.
 	for (auto& it : m_targets)
@@ -513,6 +681,11 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 	TargetResource* currentTarget = nullptr;
 	RenderPass::Output currentOutput;
 
+	// Handles of signalled asynchronous compute passes; used to synchronize the
+	// graphics queue before the first consumer of each asynchronous pass.
+	StaticVector< ComputeHandle*, 512 > asyncComputeHandles;
+	asyncComputeHandles.resize(m_passes.size(), nullptr);
+
 	for (int32_t i = sizeof_array(m_order) - 1; i >= 0; --i)
 	{
 		const auto& order = m_order[i];
@@ -521,14 +694,37 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 			const auto pass = m_passes[index];
 			const auto& inputs = pass->getInputs();
 			const auto& output = pass->getOutput();
+			const bool asyncCompute = (pass->getQueue() == RenderPass::Queue::AsyncCompute);
+			const auto syncBefore = m_syncBefore.find(index);
+			const bool syncPoint = (syncBefore != m_syncBefore.end());
+			const bool waitAfter = asyncCompute && (m_waitAfter.find(index) != m_waitAfter.end());
 
-			// Begin render pass.
-			if (pass->haveOutput())
+			// Begin render pass. An asynchronous compute pass doesn't interact with the
+			// graphics queue, except when it's conservatively waited upon immediately, so
+			// any current render pass is left open.
+			if (asyncCompute)
+			{
+				if (waitAfter && currentOutput.resourceId != ~0U)
+				{
+					T_PASS_PROFILE_BEGIN();
+					renderContext->mergeComputeIntoRender();
+					renderContext->mergeDrawIntoRender();
+					renderContext->direct< EndPassRenderBlock >();
+					T_PASS_PROFILE_END();
+
+					if (currentTarget && currentTarget->doubleBuffered)
+						currentTarget->targetSet->swap();
+
+					currentTarget = nullptr;
+					currentOutput = RenderPass::Output();
+				}
+			}
+			else if (pass->haveOutput())
 			{
 				if (output.resourceId != 0)
 				{
 					// Continue rendering to same target if possible; else start another pass.
-					if (T_PASS_IS_PROFILING || currentOutput != output)
+					if (T_PASS_IS_PROFILING || syncPoint || currentOutput != output)
 					{
 						if (currentOutput.resourceId != ~0U)
 						{
@@ -592,7 +788,7 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 				}
 				else // Output to framebuffer; implicit as target 0.
 				{
-					if (T_PASS_IS_PROFILING || currentOutput.resourceId != 0)
+					if (T_PASS_IS_PROFILING || syncPoint || currentOutput.resourceId != 0)
 					{
 						if (currentOutput.resourceId != ~0U)
 						{
@@ -648,17 +844,45 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 				T_PASS_PROFILE_END();
 			}
 
+			// Make the graphics queue wait upon asynchronous compute work which this, and
+			// thus any later, pass consumes. Recorded outside of any render pass since
+			// synchronization can split the graphics queue. The begin pass block above is
+			// still pending in the draw queue so the wait gets recorded before it.
+			if (syncPoint)
+			{
+				for (const auto producerIndex : syncBefore->second)
+				{
+					T_FATAL_ASSERT(asyncComputeHandles[producerIndex] != nullptr);
+					renderContext->direct< WaitComputeRenderBlock >(asyncComputeHandles[producerIndex]);
+				}
+			}
+
 			// Build this pass.
 			T_PROFILER_BEGIN(L"RenderGraph build \"" + pass->getName() + L"\"");
 			m_buildingPasses = true;
 
 #if !defined(__ANDROID__) && !defined(__IOS__)
-			if (m_profiler)
+			if (m_profiler && !asyncCompute)
 			{
 				T_FATAL_ASSERT(profiling == nullptr);
 				profiling = &passQueryHandles[index];
 			}
 #endif
+
+			if (asyncCompute)
+			{
+				// Pass consumes results of earlier asynchronous passes; insert barriers on
+				// the compute queue covering compute and acceleration structure writes
+				// against compute and acceleration structure reads.
+				if (m_barrierBefore.find(index) != m_barrierBefore.end())
+				{
+					renderContext->compute< BarrierRenderBlock >(Stage::Compute, Stage::Compute, nullptr, 0, true);
+					renderContext->compute< BarrierRenderBlock >(Stage::Compute, Stage::AccelerationStructureUpdate, nullptr, 0, true);
+					renderContext->compute< BarrierRenderBlock >(Stage::AccelerationStructureUpdate, Stage::AccelerationStructureUpdate | Stage::Compute, nullptr, 0, true);
+				}
+				renderContext->beginAsyncCompute();
+			}
+
 			for (const auto& build : pass->getBuilds())
 			{
 				build(*this, renderContext);
@@ -666,6 +890,36 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 				// Merge all pending priority draws (sorted by depth) after each build step.
 				renderContext->mergePriorityIntoDraw(RenderPriority::All);
 			}
+
+			if (asyncCompute)
+			{
+				renderContext->endAsyncCompute();
+
+				// Fence the asynchronous work with a handle so consumer passes can wait
+				// upon it; merged into the render queue immediately so the work is
+				// recorded, and possibly submitted, as early as possible.
+				ComputeHandle* handle = renderContext->alloc< ComputeHandle >();
+				asyncComputeHandles[index] = handle;
+				renderContext->compute< SignalComputeRenderBlock >(handle);
+
+#if !defined(__ANDROID__) && !defined(__IOS__)
+				// The timestamps only bracket the graphics queue while the asynchronous
+				// work is recorded; not the execution of the work itself.
+				if (m_profiler)
+					renderContext->direct< ProfileBeginRenderBlock >(&passQueryHandles[index]);
+#endif
+				renderContext->mergeComputeIntoRender();
+#if !defined(__ANDROID__) && !defined(__IOS__)
+				if (m_profiler)
+					renderContext->direct< ProfileEndRenderBlock >(&passQueryHandles[index]);
+#endif
+
+				// No consumer pass known; conservatively make all subsequent graphics work
+				// observe the result.
+				if (waitAfter)
+					renderContext->direct< WaitComputeRenderBlock >(handle);
+			}
+
 			m_buildingPasses = false;
 			T_PROFILER_END();
 
@@ -887,6 +1141,10 @@ void RenderGraph::cleanup()
 	for (int32_t i = 0; i < sizeof_array(m_order); ++i)
 		m_order[i].resize(0);
 	m_sharedDepthTargets.clear();
+	m_dependencies.reset();
+	m_syncBefore.reset();
+	m_barrierBefore.reset();
+	m_waitAfter.reset();
 	m_nextResourceId = 1;
 }
 

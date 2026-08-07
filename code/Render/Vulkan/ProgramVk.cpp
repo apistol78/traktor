@@ -691,6 +691,18 @@ bool ProgramVk::validateDescriptorSet()
 		key.push_back((intptr_t)sbuffer.bufferView->getVkBuffer());
 	}
 
+	// Add acceleration structures to key. The handle must be part of the key since
+	// ring buffered structures resolve to a different handle after each rebuild; a
+	// cached set would otherwise keep referencing the slot being rebuilt.
+	for (const auto& as : m_accelerationStructures)
+	{
+		if (as.binding < 0)
+			continue;
+		if (!as.as)
+			return false;
+		key.push_back((intptr_t)as.as->getVkAccelerationStructureKHR());
+	}
+
 	// Get already created descriptor set for resources.
 	const auto it = m_descriptorSets.find(key);
 	if (it != m_descriptorSets.end())

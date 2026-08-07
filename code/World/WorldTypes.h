@@ -122,6 +122,8 @@ struct GatherView
 	const FogComponent* fog = nullptr;
 	const IrradianceGrid* irradianceGrid = nullptr;
 	const render::IAccelerationStructure* rtWorldTopLevel = nullptr;
+	render::RGDependency rtWorldDependency;					//!< Dependency of the ray tracing world (TLAS) update; passes tracing rays against the world take this as input.
+	AlignedVector< render::RGDependency > setupAttachments; //!< Dependencies of setup work, added by entity renderers; passes drawing gathered entities take these as inputs.
 };
 
 /*!

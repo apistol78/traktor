@@ -116,9 +116,11 @@ void WorldRendererSimple::setup(
 	}
 
 	// Add additional passes by entity renderers.
+	render::RGDependency rtWorldDependency;
 	{
 		T_PROFILER_SCOPE(L"WorldRendererSimple setup extra passes");
-		const WorldSetupContext context(world, m_entityRenderers, renderGraph, m_visualAttachments);
+		const WorldSetupContext context(world, m_entityRenderers, renderGraph, m_visualAttachments, m_setupAttachments);
+		rtWorldDependency = context.getRTWorldDependency();
 
 		for (auto it : m_gathered)
 		{
@@ -139,6 +141,9 @@ void WorldRendererSimple::setup(
 
 	for (auto attachment : m_visualAttachments)
 		rp->addInput(attachment);
+	for (auto attachment : m_setupAttachments)
+		rp->addInput(attachment);
+	rp->addInput(rtWorldDependency);
 
 	rp->addBuild(
 		[=, this](const render::RenderGraph& renderGraph, render::RenderContext* renderContext) {

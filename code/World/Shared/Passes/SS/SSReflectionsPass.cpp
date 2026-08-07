@@ -157,6 +157,7 @@ render::RGTargetSet SSReflectionsPass::setup(
 	rp->addInput(dbufferTargetSetId);
 	rp->addInput(visualReadTargetSetId);
 	rp->addInput(velocityTargetSetId);
+	rp->addInput(gatheredView.rtWorldDependency);
 
 	render::Clear clear;
 	clear.mask = render::CfColor;

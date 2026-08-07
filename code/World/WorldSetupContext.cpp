@@ -8,6 +8,7 @@
  */
 #include "World/WorldSetupContext.h"
 
+#include "Render/Frame/RenderGraph.h"
 #include "World/IEntityRenderer.h"
 #include "World/WorldEntityRenderers.h"
 
@@ -20,13 +21,18 @@ WorldSetupContext::WorldSetupContext(
 	const World* world,
 	const WorldEntityRenderers* entityRenderers,
 	render::RenderGraph& renderGraph,
-	AlignedVector< render::RGDependency >& visualAttachments)
+	AlignedVector< render::RGDependency >& outVisualAttachments,
+	AlignedVector< render::RGDependency >& outSetupAttachments)
 	: m_world(world)
 	, m_entityRenderers(entityRenderers)
 	, m_renderGraph(renderGraph)
-	, m_visualAttachments(visualAttachments)
+	, m_visualAttachments(outVisualAttachments)
+	, m_setupAttachments(outSetupAttachments)
 {
 	m_visualAttachments.resize(0);
+	m_setupAttachments.resize(0);
+	m_asDependency = renderGraph.addDependency();
+	m_rtWorldDependency = renderGraph.addDependency();
 }
 
 }

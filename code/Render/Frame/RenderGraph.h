@@ -289,6 +289,10 @@ private:
 	RefArray< const RenderPass > m_passes;
 	StaticVector< uint32_t, 64 > m_order[32];
 	StaticSet< RGTargetSet, 64 > m_sharedDepthTargets;
+	StaticSet< handle_t, 64 > m_dependencies;					//!< Resource ids created by addDependency.
+	SmallMap< uint32_t, StaticVector< uint32_t, 8 > > m_syncBefore; //!< Graphics pass index -> async producer pass indices to wait upon before the pass.
+	StaticSet< uint32_t, 64 > m_barrierBefore;					//!< Async pass indices which consume earlier async work; needs a compute queue barrier.
+	StaticSet< uint32_t, 64 > m_waitAfter;						//!< Async pass indices with no consumer known; conservatively waited upon immediately.
 	uint32_t m_counter;
 	uint32_t m_multiSample;
 	handle_t m_nextResourceId;

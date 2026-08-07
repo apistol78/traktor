@@ -83,18 +83,34 @@ void* RenderContext::alloc(uint32_t blockSize, uint32_t align)
 	return alloc(blockSize);
 }
 
+void RenderContext::beginAsyncCompute()
+{
+	T_ASSERT(!m_asyncCompute);
+	m_asyncCompute = true;
+}
+
+void RenderContext::endAsyncCompute()
+{
+	T_ASSERT(m_asyncCompute);
+	m_asyncCompute = false;
+}
+
 void RenderContext::compute(RenderBlock* renderBlock)
 {
+	if (m_asyncCompute)
+		renderBlock->asynchronous = true;
 	m_computeQueue.push_back(renderBlock);
 }
 
 void RenderContext::draw(RenderBlock* renderBlock)
 {
+	T_ASSERT_M(!m_asyncCompute, L"Draws are not permitted in an asynchronous compute pass.");
 	m_drawQueue.push_back(renderBlock);
 }
 
 void RenderContext::draw(uint32_t type, DrawableRenderBlock* renderBlock)
 {
+	T_ASSERT_M(!m_asyncCompute, L"Draws are not permitted in an asynchronous compute pass.");
 	if (type == RenderPriority::Setup)
 		m_priorityQueue[0].push_back(renderBlock);
 	else if (type == RenderPriority::Opaque)

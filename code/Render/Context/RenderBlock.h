@@ -40,6 +40,7 @@ class T_DLLCLASS RenderBlock
 {
 public:
 	std::wstring name;
+	bool asynchronous = false; //!< Block is recorded on the asynchronous compute queue.
 
 	virtual ~RenderBlock() {}
 
@@ -70,7 +71,6 @@ public:
 	IProgram* program = nullptr;
 	ProgramParameters* programParams = nullptr;
 	int32_t workSize[3] = { 1, 1, 1 };
-	bool asynchronous = false;
 	ComputeHandle* outHandle = nullptr;	//!< If set, receives the handle of the (asynchronous) compute work.
 
 	virtual void render(IRenderView* renderView) const override final;
@@ -258,6 +258,27 @@ public:
 	virtual void render(IRenderView* renderView) const override final;
 };
 
+/*! Signal asynchronous compute batch block.
+ * \ingroup Render
+ *
+ * Fences all asynchronous compute work recorded so far with a handle which
+ * subsequent graphics work can wait upon using WaitComputeRenderBlock.
+ */
+class T_DLLCLASS SignalComputeRenderBlock : public RenderBlock
+{
+public:
+	ComputeHandle* outHandle = nullptr;
+
+	SignalComputeRenderBlock() = default;
+
+	explicit SignalComputeRenderBlock(ComputeHandle* outHandle_)
+		: outHandle(outHandle_)
+	{
+	}
+
+	virtual void render(IRenderView* renderView) const override final;
+};
+
 /*! Wait for asynchronous compute block.
  * \ingroup Render
  *
@@ -301,7 +322,6 @@ public:
 	Stage to = Stage::Invalid;
 	ITexture* written = nullptr;
 	uint32_t writtenMip = 0;
-	bool asynchronous = false;	//!< Record the barrier on the asynchronous compute queue.
 
 	BarrierRenderBlock() = default;
 
@@ -310,8 +330,8 @@ public:
 		, to(to_)
 		, written(written_)
 		, writtenMip(writtenMip_)
-		, asynchronous(asynchronous_)
 	{
+		asynchronous = asynchronous_;
 	}
 
 	virtual void render(IRenderView* renderView) const override final;
@@ -324,7 +344,6 @@ class T_DLLCLASS LambdaRenderBlock : public RenderBlock
 {
 public:
 	std::function< void(IRenderView*) > lambda;
-	bool asynchronous = false;	//!< The lambda is expected to work on the asynchronous compute queue.
 
 	LambdaRenderBlock() = default;
 

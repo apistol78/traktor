@@ -58,6 +58,8 @@ render::RGTargetSet ZPrePass::setup(
 	// Add Z pre-pass render pass.
 	Ref< render::RenderPass > rp = new render::RenderPass(L"ZPrePass");
 	rp->addWeakInput(hiZTextureId);
+	for (const auto& attachment : gatheredView.setupAttachments)
+		rp->addInput(attachment);
 
 	render::Clear clear;
 	clear.mask = render::CfDepth | render::CfStencil;

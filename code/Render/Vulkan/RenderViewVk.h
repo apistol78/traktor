@@ -162,6 +162,7 @@ private:
 		AlignedVector< bool > markerStack;
 		uint64_t computeRecordValue = 0;	//!< Timeline value of the open (not yet submitted) asynchronous compute batch; 0 if none open.
 		uint64_t computeSubmittedValue = 0;	//!< Highest asynchronous compute batch value already submitted to the compute queue this frame.
+		uint64_t graphicsWaitedValue = 0;	//!< Highest asynchronous compute batch value the graphics queue already waits upon this frame.
 	};
 
 	Context* m_context = nullptr;

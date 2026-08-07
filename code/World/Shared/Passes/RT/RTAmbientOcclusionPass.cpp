@@ -126,6 +126,7 @@ render::RGTargetSet RTAmbientOcclusionPass::setup(
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Ambient occlusion");
 	rp->addInput(gbufferTargetSetId);
 	rp->addInput(halfResDepthTextureId);
+	rp->addInput(gatheredView.rtWorldDependency);
 
 	render::Clear clear;
 	clear.mask = render::CfColor;

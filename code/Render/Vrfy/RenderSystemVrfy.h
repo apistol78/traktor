@@ -102,7 +102,7 @@ public:
 private:
 	Ref< IRenderSystem > m_renderSystem;
 	bool m_useRenderDoc = false;
-	bool m_useAftermath = false;
+	bool m_useAftermath = true;
 	Ref< Library > m_libRenderDoc;
 	void* m_apiRenderDoc = nullptr;
 	Ref< ResourceTracker > m_resourceTracker;

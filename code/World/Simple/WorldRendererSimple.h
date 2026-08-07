@@ -71,6 +71,7 @@ private:
 	const render::IAccelerationStructure* m_gatheredTLAS;
 	SmallMap< IEntityRenderer*, Renderable > m_gathered;
 	AlignedVector< render::RGDependency > m_visualAttachments;
+	AlignedVector< render::RGDependency > m_setupAttachments;
 };
 
 }

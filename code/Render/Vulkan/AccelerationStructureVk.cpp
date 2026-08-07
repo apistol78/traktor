@@ -112,66 +112,70 @@ Ref< AccelerationStructureVk > AccelerationStructureVk::createTopLevel(Context* 
 		topLevelMaxPrimitiveCountList.ptr(),
 		&topLevelAccelerationStructureBuildSizesInfo);
 
-	// Create buffer to hold AS hierarchical data. Shared concurrently between graphics
-	// and a dedicated compute queue since the structure is built on compute but read
-	// by graphics (ray queries) when built asynchronously.
-	Ref< ApiBuffer > hierarchyBuffer = new ApiBuffer(context);
-	if (!hierarchyBuffer->create(
-			topLevelAccelerationStructureBuildSizesInfo.accelerationStructureSize,
-			VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_STORAGE_BIT_KHR,
-			false,
-			true,
-			true))
-	{
-		safeDestroy(instanceBuffer);
-		return nullptr;
-	}
-
-	// Create scratch buffer used when building the hierarchy.
-	Ref< ApiBuffer > scratchBuffer = new ApiBuffer(context);
-	if (!scratchBuffer->create(
-			topLevelAccelerationStructureBuildSizesInfo.buildScratchSize + scratchAlignment,
-			VK_BUFFER_USAGE_STORAGE_BUFFER_BIT | VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT,
-			false,
-			true))
-	{
-		safeDestroy(instanceBuffer);
-		safeDestroy(hierarchyBuffer);
-		return nullptr;
-	}
-
-	// Create AS object.
-	VkAccelerationStructureCreateInfoKHR topLevelAccelerationStructureCreateInfo = {
-		.sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_CREATE_INFO_KHR,
-		.pNext = nullptr,
-		.createFlags = 0,
-		.buffer = *hierarchyBuffer,
-		.offset = 0,
-		.size = topLevelAccelerationStructureBuildSizesInfo.accelerationStructureSize,
-		.type = VK_ACCELERATION_STRUCTURE_TYPE_TOP_LEVEL_KHR,
-		.deviceAddress = 0
-	};
-
-	VkAccelerationStructureKHR accelerationStructure = VK_NULL_HANDLE;
-	result = vkCreateAccelerationStructureKHR(
-		context->getLogicalDevice(),
-		&topLevelAccelerationStructureCreateInfo,
-		nullptr,
-		&accelerationStructure);
-	if (result != VK_SUCCESS)
-	{
-		safeDestroy(instanceBuffer);
-		safeDestroy(hierarchyBuffer);
-		safeDestroy(scratchBuffer);
-		return nullptr;
-	}
-
+	// The structure is rebuilt on the asynchronous compute queue while prior frames'
+	// graphics ray queries may still traverse it, so it is ring buffered to the
+	// in-flight count and every rebuild writes a fresh slot; \sa writeInstances.
 	Ref< AccelerationStructureVk > as = new AccelerationStructureVk(context, false);
-	as->m_hierarchyBuffers.push_back(hierarchyBuffer);
-	as->m_scratchBuffers.push_back(scratchBuffer);
-	as->m_as.push_back(accelerationStructure);
 	as->m_instanceBuffer = instanceBuffer;
 	as->m_scratchAlignment = scratchAlignment;
+	as->m_index = inFlightCount - 1; // First writeInstances advances to slot 0.
+
+	for (uint32_t slot = 0; slot < inFlightCount; ++slot)
+	{
+		// Create buffer to hold AS hierarchical data. Shared concurrently between graphics
+		// and a dedicated compute queue since the structure is built on compute but read
+		// by graphics (ray queries) when built asynchronously.
+		Ref< ApiBuffer > hierarchyBuffer = new ApiBuffer(context);
+		if (!hierarchyBuffer->create(
+				topLevelAccelerationStructureBuildSizesInfo.accelerationStructureSize,
+				VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_STORAGE_BIT_KHR,
+				false,
+				true,
+				true))
+			return nullptr;
+
+		// Create scratch buffer used when building the hierarchy.
+		Ref< ApiBuffer > scratchBuffer = new ApiBuffer(context);
+		if (!scratchBuffer->create(
+				topLevelAccelerationStructureBuildSizesInfo.buildScratchSize + scratchAlignment,
+				VK_BUFFER_USAGE_STORAGE_BUFFER_BIT | VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT,
+				false,
+				true))
+		{
+			safeDestroy(hierarchyBuffer);
+			return nullptr;
+		}
+
+		// Create AS object.
+		const VkAccelerationStructureCreateInfoKHR topLevelAccelerationStructureCreateInfo = {
+			.sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_CREATE_INFO_KHR,
+			.pNext = nullptr,
+			.createFlags = 0,
+			.buffer = *hierarchyBuffer,
+			.offset = 0,
+			.size = topLevelAccelerationStructureBuildSizesInfo.accelerationStructureSize,
+			.type = VK_ACCELERATION_STRUCTURE_TYPE_TOP_LEVEL_KHR,
+			.deviceAddress = 0
+		};
+
+		VkAccelerationStructureKHR accelerationStructure = VK_NULL_HANDLE;
+		result = vkCreateAccelerationStructureKHR(
+			context->getLogicalDevice(),
+			&topLevelAccelerationStructureCreateInfo,
+			nullptr,
+			&accelerationStructure);
+		if (result != VK_SUCCESS)
+		{
+			safeDestroy(hierarchyBuffer);
+			safeDestroy(scratchBuffer);
+			return nullptr;
+		}
+
+		as->m_hierarchyBuffers.push_back(hierarchyBuffer);
+		as->m_scratchBuffers.push_back(scratchBuffer);
+		as->m_as.push_back(accelerationStructure);
+	}
+
 	return as;
 }
 
@@ -233,6 +237,11 @@ void AccelerationStructureVk::teardown()
 
 bool AccelerationStructureVk::writeInstances(CommandBuffer* commandBuffer, const AlignedVector< Instance >& instances)
 {
+	// Advance to the next ring slot so this build does not write a structure that a
+	// prior, still in-flight frame's graphics ray queries may be reading; readers
+	// resolve the current slot when their descriptors are recorded.
+	m_index = (m_index + 1) % (uint32_t)m_as.size();
+
 	VkAccelerationStructureInstanceKHR* ptr = (VkAccelerationStructureInstanceKHR*)m_instanceBuffer->lock();
 	if (!ptr)
 		return false;

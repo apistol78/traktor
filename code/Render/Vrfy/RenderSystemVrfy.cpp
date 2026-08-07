@@ -21,10 +21,12 @@
 #endif
 #include "Render/Vrfy/RenderSystemVrfy.h"
 
+#include "Core/Containers/AlignedVector.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/IStream.h"
 #include "Core/Library/Library.h"
 #include "Core/Misc/String.h"
+#include "Core/Misc/TString.h"
 #include "Core/System/OS.h"
 #include "Core/Thread/Acquire.h"
 #include "Core/Thread/Semaphore.h"
@@ -64,6 +66,83 @@ void aftermathGpuCrashDumpCallback(const void* crashDump, const uint32_t crashDu
 	}
 	else
 		log::error << L"Unable to create GPU crash dump file!" << Endl;
+
+	// Decode the crash dump so the essentials are readable without external tools.
+	GFSDK_Aftermath_GpuCrashDump_Decoder decoder = {};
+	if (GFSDK_Aftermath_GpuCrashDump_CreateDecoder(GFSDK_Aftermath_Version_API, crashDump, crashDumpSize, &decoder) == GFSDK_Aftermath_Result_Success)
+	{
+		// Log page fault information; faulting address and any resources matching it.
+		GFSDK_Aftermath_GpuCrashDump_PageFaultInfo pageFaultInfo = {};
+		if (GFSDK_Aftermath_GpuCrashDump_GetPageFaultInfo(decoder, &pageFaultInfo) == GFSDK_Aftermath_Result_Success)
+		{
+			log::error << L"GPU page fault:" << Endl;
+			log::error << L"\tfaulting GPU VA 0x" << str(L"%016llx", pageFaultInfo.faultingGpuVA) << Endl;
+			log::error << L"\tfault type " << (int32_t)pageFaultInfo.faultType << L", access type " << (int32_t)pageFaultInfo.accessType << Endl;
+			log::error << L"\tengine " << (int32_t)pageFaultInfo.engine << L", client " << (int32_t)pageFaultInfo.client << Endl;
+
+			if (pageFaultInfo.resourceInfoCount > 0)
+			{
+				AlignedVector< GFSDK_Aftermath_GpuCrashDump_ResourceInfo > resourceInfos(pageFaultInfo.resourceInfoCount);
+				if (GFSDK_Aftermath_GpuCrashDump_GetPageFaultResourceInfo(decoder, pageFaultInfo.resourceInfoCount, resourceInfos.ptr()) == GFSDK_Aftermath_Result_Success)
+				{
+					for (const auto& ri : resourceInfos)
+					{
+						log::error << L"\tresource \"" << mbstows(ri.debugName) << L"\"" << Endl;
+						log::error << L"\t\tGPU VA 0x" << str(L"%016llx", ri.gpuVa) << L", size " << ri.size << Endl;
+						log::error << L"\t\tapi resource 0x" << str(L"%016llx", ri.apiResource) << L", format " << ri.format << Endl;
+						log::error << L"\t\tdestroyed " << (ri.bWasDestroyed ? L"yes" : L"no") << L", residency " << (int32_t)ri.residency << Endl;
+					}
+				}
+			}
+			else
+				log::error << L"\tno resource matched the faulting address." << Endl;
+		}
+
+		// Log active shader hashes so the faulting shader can be identified.
+		uint32_t shaderCount = 0;
+		if (GFSDK_Aftermath_GpuCrashDump_GetActiveShadersInfoCount(decoder, &shaderCount) == GFSDK_Aftermath_Result_Success && shaderCount > 0)
+		{
+			AlignedVector< GFSDK_Aftermath_GpuCrashDump_ShaderInfo > shaderInfos(shaderCount);
+			if (GFSDK_Aftermath_GpuCrashDump_GetActiveShadersInfo(decoder, shaderCount, shaderInfos.ptr()) == GFSDK_Aftermath_Result_Success)
+			{
+				log::error << L"Active shaders at crash:" << Endl;
+				for (const auto& si : shaderInfos)
+					log::error << L"\thash 0x" << str(L"%016llx", si.shaderHash) << L", type " << (int32_t)si.shaderType << Endl;
+			}
+		}
+
+		// Write the full decoded dump as JSON next to the binary dump.
+		uint32_t jsonSize = 0;
+		if (GFSDK_Aftermath_GpuCrashDump_GenerateJSON(
+				decoder,
+				GFSDK_Aftermath_GpuCrashDumpDecoderFlags_ALL_INFO,
+				GFSDK_Aftermath_GpuCrashDumpFormatterFlags_UTF8_OUTPUT,
+				nullptr,
+				nullptr,
+				nullptr,
+				nullptr,
+				&jsonSize) == GFSDK_Aftermath_Result_Success && jsonSize > 0)
+		{
+			AlignedVector< char > json(jsonSize);
+			if (GFSDK_Aftermath_GpuCrashDump_GetJSON(decoder, jsonSize, json.ptr()) == GFSDK_Aftermath_Result_Success)
+			{
+				const std::wstring jsonFilename = OS::getInstance().getWritableFolderPath() + L"/Traktor/traktor_gpu_crash.json";
+				Ref< IStream > fj = FileSystem::getInstance().open(jsonFilename, File::FmWrite);
+				if (fj)
+				{
+					// Buffer is null terminated; do not write the terminator.
+					fj->write(json.c_ptr(), jsonSize - 1);
+					fj->close();
+					fj = nullptr;
+					log::error << L"GPU crash dump JSON written to \"" << jsonFilename << L"\"." << Endl;
+				}
+			}
+		}
+
+		GFSDK_Aftermath_GpuCrashDump_DestroyDecoder(decoder);
+	}
+	else
+		log::error << L"Unable to decode GPU crash dump." << Endl;
 }
 
 void aftermathShaderDebugInfo(const void* shaderDebugInfo, const uint32_t shaderDebugInfoSize, void* userData)

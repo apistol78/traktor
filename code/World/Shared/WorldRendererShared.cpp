@@ -454,6 +454,8 @@ render::RGTargetSet WorldRendererShared::setupLightPass(
 
 		// Add shadow map render passes.
 		Ref< render::RenderPass > rp = new render::RenderPass(L"Shadow map");
+		for (const auto& attachment : m_gatheredView.setupAttachments)
+			rp->addInput(attachment);
 		rp->setOutput(shadowMapAtlasTargetSetId, render::TfNone, render::TfDepth);
 
 		if (m_gatheredView.cascadingDirectionalLight != nullptr)

@@ -69,6 +69,8 @@ render::RGTargetSet GBufferPass::setup(
 	Ref< render::RenderPass > rp = new render::RenderPass(L"GBuffer");
 	rp->addWeakInput(hiZTextureId);
 	rp->addInput(zprepassTargetSetId);
+	for (const auto& attachment : gatheredView.setupAttachments)
+		rp->addInput(attachment);
 
 	render::Clear clear;
 	clear.mask = inheritDepth ? render::CfColor : (render::CfColor | render::CfDepth | render::CfStencil);

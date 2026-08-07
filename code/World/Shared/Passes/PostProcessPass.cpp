@@ -263,6 +263,7 @@ void PostProcessPass::setup(
 			sizeReferenceTargetSetId = outputTargetSetId;
 
 		Ref< render::RenderPass > rp = new render::RenderPass(L"Process");
+		rp->addInput(gatheredView.rtWorldDependency);
 
 		if (m_antiAliasPlugin != nullptr && process == m_antiAlias.getResource())
 		{

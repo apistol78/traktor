@@ -214,6 +214,7 @@ render::RGTargetSet RTReflectionsPass::setup(
 		rp->addInput(visualReadTargetSetId);
 		rp->addInput(reservoirBufferId.previous);
 		rp->addInput(reservoirBufferId.current);
+		rp->addInput(gatheredView.rtWorldDependency);
 		rp->setOutput(reflectionsTextureId);
 		rp->addBuild(
 			[=, this](const render::RenderGraph& renderGraph, render::RenderContext* renderContext) {

@@ -762,6 +762,7 @@ bool RenderViewVk::beginFrame()
 	// No asynchronous compute batch open for the new frame.
 	frame.computeRecordValue = 0;
 	frame.computeSubmittedValue = m_timelineSemaphoreValue;
+	frame.graphicsWaitedValue = m_timelineSemaphoreValue;
 	return true;
 }
 
@@ -1442,6 +1443,7 @@ void RenderViewVk::synchronize()
 	// All asynchronous compute work has been flushed.
 	frame.computeRecordValue = 0;
 	frame.computeSubmittedValue = m_timelineSemaphoreValue;
+	frame.graphicsWaitedValue = m_timelineSemaphoreValue;
 }
 
 ComputeHandle RenderViewVk::signalAsynchronousCompute()
@@ -1480,10 +1482,18 @@ void RenderViewVk::waitAsynchronousCompute(ComputeHandle handle)
 
 	auto& frame = m_frames[m_currentImageIndex];
 
+	// The graphics queue already waits upon this value; a redundant wait would
+	// only split the graphics command buffer again.
+	if (handle.value <= frame.graphicsWaitedValue)
+		return;
+
 	// Shared graphics/compute queue family: both buffers submit to the same VkQueue in order, so a
 	// pipeline barrier in the graphics buffer suffices to make compute results visible; no split needed.
 	if (m_context->getComputeQueue()->getQueueIndex() == m_context->getGraphicsQueue()->getQueueIndex())
 	{
+		// The barrier covers all compute work recorded so far.
+		frame.graphicsWaitedValue = std::max(frame.computeSubmittedValue, frame.computeRecordValue);
+
 		const VkMemoryBarrier mb = {
 			.sType = VK_STRUCTURE_TYPE_MEMORY_BARRIER,
 			.pNext = nullptr,
@@ -1522,6 +1532,7 @@ void RenderViewVk::waitAsynchronousCompute(ComputeHandle handle)
 		VK_PIPELINE_STAGE_ALL_COMMANDS_BIT);
 	frame.flyingCommandBuffers.push_back(frame.graphicsCommandBuffer);
 	frame.graphicsCommandBuffer = m_context->getGraphicsQueue()->acquireCommandBuffer(L"Graphics");
+	frame.graphicsWaitedValue = handle.value;
 
 	// Graphics command buffer swapped; invalidate the graphics bind caches so the next draw rebinds into
 	// the fresh buffer (the compute pipeline cache is command buffer aware and rebinds itself).

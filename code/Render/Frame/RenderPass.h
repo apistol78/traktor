@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -41,6 +41,20 @@ class T_DLLCLASS RenderPass : public RefCountImpl< ITypedObject >
 public:
 	typedef std::function< void(const RenderGraph&, RenderContext*) > fn_build_t;
 
+	/*! Queue which the pass's work is executed on.
+	 *
+	 * An asynchronous compute pass records its work onto the asynchronous
+	 * compute queue; the render graph automatically synchronizes the graphics
+	 * queue with the asynchronous work before the first pass consuming any of
+	 * the pass's outputs. Asynchronous compute passes cannot target render
+	 * targets nor issue draws.
+	 */
+	enum class Queue
+	{
+		Graphics = 0,
+		AsyncCompute = 1
+	};
+
 	struct Input
 	{
 		handle_t resourceId = 0; //!< Resource name.
@@ -67,11 +81,13 @@ public:
 		}
 	};
 
-	explicit RenderPass(const std::wstring& name = L"Unnamed");
+	explicit RenderPass(const std::wstring& name, Queue queue = Queue::Graphics);
 
 	void setName(const std::wstring& name);
 
 	const std::wstring& getName() const { return m_name; }
+
+	Queue getQueue() const { return m_queue; }
 
 	//! \{
 
@@ -147,6 +163,7 @@ public:
 
 protected:
 	std::wstring m_name;
+	Queue m_queue = Queue::Graphics;
 	StaticVector< Input, 16 > m_inputs;
 	Output m_output;
 	AlignedVector< fn_build_t > m_builds;

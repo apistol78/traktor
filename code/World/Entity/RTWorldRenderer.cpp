@@ -37,19 +37,26 @@ void RTWorldRenderer::setup(
 	const Vector4 eyePosition = worldRenderView.getEyePosition();
 	const float farDistance = worldRenderView.getViewFrustum().getFarZ();
 
-	Ref< render::RenderPass > rp = new render::RenderPass(L"RT world setup");
+	// Build the top level structure on the asynchronous compute queue. It reads
+	// the bottom level structures whose producers output the acceleration
+	// structure dependency; passes tracing rays against the world consume the
+	// RT world dependency and the render graph synchronizes the graphics queue
+	// before the first of them.
+	Ref< render::RenderPass > rp = new render::RenderPass(L"RT world setup", render::RenderPass::Queue::AsyncCompute);
 	rp->addInput(render::RGDependency::First);
+	rp->addInput(context.getAccelerationStructureDependency());
+	rp->setOutput(context.getRTWorldDependency());
 	rp->addBuild([=, this](const render::RenderGraph&, render::RenderContext* renderContext) {
+		const bool asynchronous = renderContext->isAsyncCompute();
 		auto rb = renderContext->allocNamed< render::LambdaRenderBlock >(L"RTWorldRenderer");
 		rb->lambda = [=](render::IRenderView* renderView) {
 			for (Object* renderable : renderables)
 			{
 				auto rtWorldComponent = static_cast< RTWorldComponent* >(renderable);
-				rtWorldComponent->writeAccelerationStructure(renderView, eyePosition, farDistance);
+				rtWorldComponent->writeAccelerationStructure(renderView, eyePosition, farDistance, asynchronous);
 			}
 		};
 		renderContext->compute(rb);
-		renderContext->compute< render::BarrierRenderBlock >(render::Stage::AccelerationStructureUpdate, render::Stage::Vertex | render::Stage::Fragment | render::Stage::Compute, nullptr, 0, false);
 	});
 	context.getRenderGraph().addPass(rp);
 }

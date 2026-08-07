@@ -37,9 +37,16 @@ void SkinnedMeshComponentRenderer::setup(
 	const world::WorldRenderView& worldRenderView,
 	const AlignedVector< Object* >& renderables)
 {
-	Ref< render::RenderPass > rp = new render::RenderPass(L"Skinned mesh setup");
-	rp->addInput(render::RGDependency::First);
-	rp->addBuild([=, this](const render::RenderGraph&, render::RenderContext* renderContext) {
+	render::RenderGraph& renderGraph = context.getRenderGraph();
+
+	// Skin all components on the asynchronous compute queue; the render graph
+	// synchronizes the graphics queue before the first pass drawing the results.
+	const render::RGDependency skinDependency = renderGraph.addDependency();
+
+	Ref< render::RenderPass > skinPass = new render::RenderPass(L"Skinned mesh skin", render::RenderPass::Queue::AsyncCompute);
+	skinPass->addInput(render::RGDependency::First);
+	skinPass->setOutput(skinDependency);
+	skinPass->addBuild([=, this](const render::RenderGraph&, render::RenderContext* renderContext) {
 		m_ranked.resize(0);
 		m_ranked.reserve(renderables.size());
 
@@ -59,31 +66,37 @@ void SkinnedMeshComponentRenderer::setup(
 			return lh.distance < rh.distance;
 		});
 
-		// Setup all skinned meshes; skin for every component first, then the ray tracing acceleration structures.
-		bool needSynchronization = false;
 		for (int32_t i = 0; i < (int32_t)m_ranked.size(); ++i)
-			needSynchronization |= m_ranked[i].meshComponent->setupSkin(worldRenderView, renderContext, i);
-		for (int32_t i = 0; i < (int32_t)m_ranked.size(); ++i)
-			needSynchronization |= m_ranked[i].meshComponent->setupAccelerationStructure(worldRenderView, renderContext, i);
-
-		// Synchronize the async compute skinning and RT jobs with the graphics queue.
-		if (needSynchronization)
-		{
-			render::ComputeHandle* handle = renderContext->alloc< render::ComputeHandle >();
-
-			renderContext->compute< render::LambdaRenderBlock >([=](render::IRenderView* renderView) {
-				*handle = renderView->signalAsynchronousCompute();
-			});
-
-			// #todo This should be moved closer to the consumer pass to increase overlap.
-			renderContext->compute< render::LambdaRenderBlock >([=](render::IRenderView* renderView) {
-				renderView->waitAsynchronousCompute(*handle);
-			});
-
-			// renderContext->compute< render::SynchronizeRenderBlock >();
-		}
+			m_ranked[i].meshComponent->setupSkin(worldRenderView, renderContext, i);
 	});
-	context.getRenderGraph().addPass(rp);
+	renderGraph.addPass(skinPass);
+
+	// All passes drawing the gathered entities consume the skinning results.
+	context.addSetupAttachment(skinDependency);
+
+	// Update the ray tracing acceleration structures from the skinning results,
+	// also on the asynchronous compute queue. The top level structure build
+	// consumes the acceleration structure dependency.
+	bool haveAccelerationStructures = false;
+	for (Object* renderable : renderables)
+		if (static_cast< SkinnedMeshComponent* >(renderable)->haveAccelerationStructure())
+		{
+			haveAccelerationStructures = true;
+			break;
+		}
+
+	if (haveAccelerationStructures)
+	{
+		Ref< render::RenderPass > blasPass = new render::RenderPass(L"Skinned mesh AS", render::RenderPass::Queue::AsyncCompute);
+		blasPass->addInput(render::RGDependency::First);
+		blasPass->addInput(skinDependency);
+		blasPass->setOutput(context.getAccelerationStructureDependency());
+		blasPass->addBuild([=, this](const render::RenderGraph&, render::RenderContext* renderContext) {
+			for (int32_t i = 0; i < (int32_t)m_ranked.size(); ++i)
+				m_ranked[i].meshComponent->setupAccelerationStructure(worldRenderView, renderContext, i);
+		});
+		renderGraph.addPass(blasPass);
+	}
 }
 
 void SkinnedMeshComponentRenderer::build(

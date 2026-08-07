@@ -67,6 +67,23 @@ public:
 		return object;
 	}
 
+	/*! Begin asynchronous compute scope.
+	 *
+	 * Blocks added to the compute queue while the scope is active are tagged
+	 * as asynchronous, i.e. they are recorded on the asynchronous compute queue
+	 * when rendered. Draws are not permitted inside the scope.
+	 *
+	 * The scope is controlled by the render graph when building passes with
+	 * Queue::AsyncCompute; pass builds should only need isAsyncCompute().
+	 */
+	void beginAsyncCompute();
+
+	/*! End asynchronous compute scope. */
+	void endAsyncCompute();
+
+	/*! Check if the asynchronous compute scope is active. */
+	bool isAsyncCompute() const { return m_asyncCompute; }
+
 	/*! Add block to compute queue. */
 	void compute(RenderBlock* renderBlock);
 
@@ -135,6 +152,7 @@ private:
 	AlignedVector< DrawableRenderBlock* > m_priorityQueue[6];
 	AlignedVector< RenderBlock* > m_drawQueue;
 	AlignedVector< RenderBlock* > m_renderQueue;
+	bool m_asyncCompute = false;
 };
 
 }

@@ -96,6 +96,8 @@ render::RGTargetSet VelocityPass::setup(
 	{
 		Ref< render::RenderPass > pass = new render::RenderPass(L"Velocity initial");
 		pass->addInput(gbufferTargetSetId);
+		for (const auto& attachment : gatheredView.setupAttachments)
+			pass->addInput(attachment);
 		pass->setOutput(velocityInitialTargetSetId, render::TfDepth, render::TfColor | render::TfDepth);
 
 		if (m_velocityPrime)

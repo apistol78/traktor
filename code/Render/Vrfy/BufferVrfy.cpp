@@ -6,32 +6,34 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include <cstring>
+#include "Render/Vrfy/BufferVrfy.h"
+
 #include "Core/Debug/CallStack.h"
 #include "Core/Memory/Alloc.h"
 #include "Core/Misc/SafeDestroy.h"
-#include "Render/Vrfy/BufferVrfy.h"
 #include "Render/Vrfy/Error.h"
 #include "Render/Vrfy/ResourceTracker.h"
+
+#include <cstring>
 
 #define T_VRFY_CHECK_UNTOUCHED 0
 
 namespace traktor::render
 {
-	namespace
-	{
+namespace
+{
 
 constexpr int32_t c_guardBytes = 16;
 
-	}
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.BufferVrfy", BufferVrfy, Buffer)
 
 BufferVrfy::BufferVrfy(ResourceTracker* resourceTracker, Buffer* buffer, uint32_t bufferSize, const wchar_t* const tag)
-:	Buffer(bufferSize)
-,	m_resourceTracker(resourceTracker)
-,	m_buffer(buffer)
-,	m_tag(tag)
+	: Buffer(bufferSize)
+	, m_resourceTracker(resourceTracker)
+	, m_buffer(buffer)
+	, m_tag(tag)
 {
 	m_resourceTracker->add(this);
 
@@ -54,16 +56,18 @@ BufferVrfy::~BufferVrfy()
 
 void BufferVrfy::destroy()
 {
-	T_CAPTURE_ASSERT (!m_locked, L"Cannot destroy locked struct buffer (" << m_tag << L").");
+	T_CAPTURE_ASSERT(!m_locked, L"Cannot destroy locked struct buffer (" << m_tag << L").");
+	if (m_buffer)
+		m_buffer->destroy();
 }
 
 void* BufferVrfy::lock()
 {
-	T_CAPTURE_ASSERT (m_buffer, L"Buffer (" << m_tag << L") destroyed.");
-	T_CAPTURE_ASSERT (!m_locked, L"Buffer (" << m_tag << L") already locked.");
+	T_CAPTURE_ASSERT(m_buffer, L"Buffer (" << m_tag << L") destroyed.");
+	T_CAPTURE_ASSERT(!m_locked, L"Buffer (" << m_tag << L") already locked.");
 
 	verifyGuard();
-	verifyUntouched();	
+	verifyUntouched();
 
 	if (!m_buffer)
 		return nullptr;

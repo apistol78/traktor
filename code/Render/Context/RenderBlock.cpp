@@ -225,6 +225,16 @@ void SetScissorRenderBlock::render(IRenderView* renderView) const
 	T_CONTEXT_POP_MARKER(renderView, false);
 }
 
+void SignalComputeRenderBlock::render(IRenderView* renderView) const
+{
+	T_CONTEXT_PUSH_MARKER(renderView, false, name);
+
+	if (outHandle)
+		*outHandle = renderView->signalAsynchronousCompute();
+
+	T_CONTEXT_POP_MARKER(renderView, false);
+}
+
 void WaitComputeRenderBlock::render(IRenderView* renderView) const
 {
 	T_CONTEXT_PUSH_MARKER(renderView, false, name);

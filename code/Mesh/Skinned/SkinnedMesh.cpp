@@ -46,9 +46,9 @@ bool SkinnedMesh::supportTechnique(render::handle_t technique) const
 void SkinnedMesh::buildSkin(
 	render::RenderContext* renderContext,
 	render::Buffer* jointTransforms,
-	render::Buffer* skinBuffer,
-	bool asynchronous) const
+	render::Buffer* skinBuffer) const
 {
+	const bool asynchronous = renderContext->isAsyncCompute();
 	const uint32_t vertexCount = m_mesh->getAuxBuffer(c_fccSkinPosition)->getBufferSize() / sizeof(SkinBuffer);
 
 	auto programParams = renderContext->alloc< render::ProgramParameters >();
@@ -63,7 +63,6 @@ void SkinnedMesh::buildSkin(
 	renderBlock->program = m_shaderUpdateSkin->getProgram().program;
 	renderBlock->programParams = programParams;
 	renderBlock->workSize[0] = vertexCount;
-	renderBlock->asynchronous = asynchronous;
 
 	renderContext->compute(renderBlock);
 
@@ -75,13 +74,12 @@ void SkinnedMesh::buildAccelerationStructure(
 	render::RenderContext* renderContext,
 	render::Buffer* skinBuffer,
 	render::IAccelerationStructure* accelerationStructure,
-	bool rebuild,
-	bool asynchronous) const
+	bool rebuild) const
 {
-	// Wait for skinning data to be ready before building AS. When asynchronous this
-	// barrier is recorded on the compute queue, ordering it after the asynchronous
-	// skinning dispatch on the same queue.
-	renderContext->compute< render::BarrierRenderBlock >(render::Stage::Compute, render::Stage::AccelerationStructureUpdate, nullptr, 0, asynchronous);
+	const bool asynchronous = renderContext->isAsyncCompute();
+
+	if (!asynchronous)
+		renderContext->compute< render::BarrierRenderBlock >(render::Stage::Compute, render::Stage::AccelerationStructureUpdate, nullptr, 0);
 
 	// Rebuild acceleration structure.
 	auto rb = renderContext->allocNamed< render::LambdaRenderBlock >(L"SkinnedMesh update AS");
@@ -96,7 +94,6 @@ void SkinnedMesh::buildAccelerationStructure(
 			rebuild,
 			asynchronous);
 	};
-	rb->asynchronous = asynchronous;
 	renderContext->compute(rb);
 }
 

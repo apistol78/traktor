@@ -47,14 +47,14 @@ ProgramVrfy::ProgramVrfy(ResourceTracker* resourceTracker, const ProgramResource
 
 ProgramVrfy::~ProgramVrfy()
 {
-	T_CAPTURE_ASSERT(!m_program, L"Program not destroyed.");
 	m_resourceTracker->remove(this);
 }
 
 void ProgramVrfy::destroy()
 {
 	T_CAPTURE_ASSERT(m_program, L"Program already destroyed.");
-	safeDestroy(m_program);
+	if (m_program)
+		m_program->destroy();
 }
 
 void ProgramVrfy::setFloatParameter(handle_t handle, float param)
@@ -194,7 +194,9 @@ void ProgramVrfy::setTextureParameter(handle_t handle, ITexture* texture)
 			T_CAPTURE_ASSERT(textureVrfy->getTexture(), L"Trying to set destroyed texture as shader parameter.");
 		}
 		else
+		{
 			T_FATAL_ERROR;
+		}
 	}
 	else
 		m_program->setTextureParameter(handle, nullptr);
@@ -309,9 +311,7 @@ void ProgramVrfy::verify()
 	T_CAPTURE_ASSERT(m_program, L"Program destroyed.");
 
 	for (const auto& parameter : m_shadow)
-	{
 		T_CAPTURE_ASSERT(parameter.second.set, L"Parameter \"" << parameter.second.name << L"\" not set, value undefined (" << m_tag << L").");
-	}
 
 	for (auto i = m_boundTextures.begin(); i != m_boundTextures.end(); ++i)
 	{

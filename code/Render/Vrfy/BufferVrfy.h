@@ -12,6 +12,8 @@
 #include "Render/Buffer.h"
 #include "Render/Vrfy/BufferViewVrfy.h"
 
+#include <string>
+
 namespace traktor::render
 {
 

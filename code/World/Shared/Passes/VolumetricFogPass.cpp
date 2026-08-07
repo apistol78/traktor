@@ -113,6 +113,7 @@ render::RGTexture VolumetricFogPass::setup(
 	rp->setOutput(fogVolumeIntegratedTextureId);
 	rp->addInput(fogVolumeInputTextureId);
 	rp->addInput(shadowMapAtlasTargetSetId);
+	rp->addInput(gatheredView.rtWorldDependency);
 
 	rp->addBuild(
 		[=, this](const render::RenderGraph& renderGraph, render::RenderContext* renderContext) {

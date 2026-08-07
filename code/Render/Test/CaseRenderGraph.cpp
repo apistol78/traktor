@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -27,14 +27,14 @@ void CaseRenderGraph::run()
 	const RGTargetSet target = rg->addTransientTargetSet(L"Target", desc);
 
 	{
-		Ref< RenderPass > rp = new RenderPass();
+		Ref< RenderPass > rp = new RenderPass(L"First");
 		rp->addInput(target);
 		rp->setOutput(target, render::TfAll, render::TfAll);
 		rg->addPass(rp);
 	}
 
 	{
-		Ref< RenderPass > rp = new RenderPass();
+		Ref< RenderPass > rp = new RenderPass(L"Second");
 		rp->addInput(target);
 		rp->setOutput(RGTargetSet::Output, render::TfAll, render::TfAll);
 		rg->addPass(rp);

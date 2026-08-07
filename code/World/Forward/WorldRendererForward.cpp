@@ -126,7 +126,8 @@ void WorldRendererForward::setup(
 	// Add additional passes by entity renderers.
 	{
 		T_PROFILER_SCOPE(L"WorldRendererForward setup extra passes");
-		WorldSetupContext context(world, m_entityRenderers, renderGraph, m_visualAttachments);
+		WorldSetupContext context(world, m_entityRenderers, renderGraph, m_visualAttachments, m_gatheredView.setupAttachments);
+		m_gatheredView.rtWorldDependency = context.getRTWorldDependency();
 
 		for (auto it : m_gatheredView.renderables)
 		{
@@ -235,7 +236,10 @@ void WorldRendererForward::setupVisualPass(
 
 	rp->addInput(fogVolumeTextureId);
 
+	rp->addInput(m_gatheredView.rtWorldDependency);
 	for (auto attachment : m_visualAttachments)
+		rp->addInput(attachment);
+	for (auto attachment : m_gatheredView.setupAttachments)
 		rp->addInput(attachment);
 
 	render::Clear clear;

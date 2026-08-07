@@ -73,7 +73,7 @@ RTWorldComponent::Instance* RTWorldComponent::createInstance(const AlignedVector
 	return instance;
 }
 
-void RTWorldComponent::writeAccelerationStructure(render::IRenderView* renderView, const Vector4& eyePosition, float farDistance)
+void RTWorldComponent::writeAccelerationStructure(render::IRenderView* renderView, const Vector4& eyePosition, float farDistance, bool asynchronous)
 {
 	// Distance culling depends on the camera, so re-dirty when the eye moves; otherwise the
 	// culled set would never refresh on a static scene with a moving camera.
@@ -107,7 +107,7 @@ void RTWorldComponent::writeAccelerationStructure(render::IRenderView* renderVie
 			}
 		}
 
-		renderView->writeAccelerationStructure(m_tlas, tlasInstances, false);
+		renderView->writeAccelerationStructure(m_tlas, tlasInstances, asynchronous);
 		m_instanceBufferDirty = false;
 	}
 }

@@ -56,13 +56,16 @@ public:
 
 	virtual Aabb3 getBoundingBox() const override;
 
-	virtual bool setupSkin(const world::WorldRenderView& worldRenderView, render::RenderContext* renderContext, int32_t lodRank);
+	virtual void setupSkin(const world::WorldRenderView& worldRenderView, render::RenderContext* renderContext, int32_t lodRank);
 
-	virtual bool setupAccelerationStructure(const world::WorldRenderView& worldRenderView, render::RenderContext* renderContext, int32_t lodRank);
+	virtual void setupAccelerationStructure(const world::WorldRenderView& worldRenderView, render::RenderContext* renderContext, int32_t lodRank);
 
 	virtual void build(const world::WorldBuildContext& context, const world::WorldRenderView& worldRenderView, const world::IWorldRenderPass& worldRenderPass);
 
 	void setJointTransforms(const AlignedVector< Matrix44 >& jointTransforms);
+
+	/*! Check if this component maintains a ray tracing acceleration structure instance. */
+	bool haveAccelerationStructure() const { return m_rtwInstance != nullptr; }
 
 protected:
 	resource::Proxy< SkinnedMesh > m_mesh;

@@ -99,21 +99,15 @@ Aabb3 SkinnedMeshComponent::getBoundingBox() const
 	return m_mesh->getBoundingBox();
 }
 
-bool SkinnedMeshComponent::setupSkin(const world::WorldRenderView& worldRenderView, render::RenderContext* renderContext, int32_t lodRank)
+void SkinnedMeshComponent::setupSkin(const world::WorldRenderView& worldRenderView, render::RenderContext* renderContext, int32_t lodRank)
 {
-	const bool asynchronous = false;
-
 	std::swap(m_skinBuffer[0], m_skinBuffer[1]);
-	m_mesh->buildSkin(renderContext, m_jointBuffer, m_skinBuffer[0], asynchronous);
+	m_mesh->buildSkin(renderContext, m_jointBuffer, m_skinBuffer[0]);
 	m_setupBuiltSkin = true;
-
-	return asynchronous;
 }
 
-bool SkinnedMeshComponent::setupAccelerationStructure(const world::WorldRenderView& worldRenderView, render::RenderContext* renderContext, int32_t lodRank)
+void SkinnedMeshComponent::setupAccelerationStructure(const world::WorldRenderView& worldRenderView, render::RenderContext* renderContext, int32_t lodRank)
 {
-	const bool asynchronous = false;
-
 	// Only build when the skin was (re)built this setup; the acceleration structure reads the
 	// skinned vertex buffer, so there is nothing new to build otherwise.
 	if (m_setupBuiltSkin && m_rtwInstance)
@@ -132,13 +126,11 @@ bool SkinnedMeshComponent::setupAccelerationStructure(const world::WorldRenderVi
 				rebuild = true;
 				m_rtUpdates = 0;
 			}
-			m_mesh->buildAccelerationStructure(renderContext, m_skinBuffer[0], m_rtAccelerationStructure, rebuild, asynchronous);
+			m_mesh->buildAccelerationStructure(renderContext, m_skinBuffer[0], m_rtAccelerationStructure, rebuild);
 		}
 
 		m_rtwInstance->setTransform(worldTransform);
 	}
-
-	return asynchronous;
 }
 
 void SkinnedMeshComponent::build(const world::WorldBuildContext& context, const world::WorldRenderView& worldRenderView, const world::IWorldRenderPass& worldRenderPass)

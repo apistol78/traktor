@@ -84,7 +84,7 @@ public:
 
 	Instance* createInstance(const AlignedVector< Part >& parts, bool cullingEnable);
 
-	void writeAccelerationStructure(render::IRenderView* renderView, const Vector4& eyePosition, float farDistance);
+	void writeAccelerationStructure(render::IRenderView* renderView, const Vector4& eyePosition, float farDistance, bool asynchronous);
 
 	const render::IAccelerationStructure* getTopLevel() const { return m_tlas; }
 

@@ -226,6 +226,7 @@ render::RGTargetSet RTIrradiancePass::setup(
 	{
 		Ref< render::RenderPass > rp = new render::RenderPass(L"Irradiance field compute");
 		rp->addInput(irradianceFieldTexturePreviousId);
+		rp->addInput(gatheredView.rtWorldDependency);
 		rp->setOutput(irradianceFieldTextureCurrentId);
 		rp->addBuild(
 			[=, this](const render::RenderGraph& renderGraph, render::RenderContext* renderContext) {
@@ -260,6 +261,7 @@ render::RGTargetSet RTIrradiancePass::setup(
 		rp->addInput(reservoirBufferId.previous);
 		rp->addInput(reservoirBufferId.current);
 		rp->addInput(irradianceFieldTextureCurrentId);
+		rp->addInput(gatheredView.rtWorldDependency);
 		rp->setOutput(irradianceTextureId);
 		rp->addBuild(
 			[=, this](const render::RenderGraph& renderGraph, render::RenderContext* renderContext) {
