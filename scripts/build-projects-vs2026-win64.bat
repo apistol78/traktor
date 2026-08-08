@@ -12,9 +12,11 @@ set OPENSSL_SDK=%TRAKTOR_HOME%\3rdp\openssl-1.0.2u-x64_86
 	-i ^
 	-p=$(TRAKTOR_HOME)\resources\build\configurations\msvc-2026-win64.xml ^
 	%TRAKTOR_HOME%\resources\build\ExternWin64.xms
+if %ERRORLEVEL% neq 0 exit /b %ERRORLEVEL%
 
 %SOLUTIONBUILDER% ^
 	-f=msvc ^
 	-i ^
 	-p=$(TRAKTOR_HOME)\resources\build\configurations\msvc-2026-win64.xml ^
 	%TRAKTOR_HOME%\resources\build\TraktorWin64.xms
+if %ERRORLEVEL% neq 0 exit /b %ERRORLEVEL%
