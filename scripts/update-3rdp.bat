@@ -12,4 +12,6 @@ if errorlevel 1 (
 
 pushd %TRAKTOR_HOME%
 %TRAKTOR_HOME%/bin/win64/releasestatic/Traktor.Run.App ./scripts/misc/update-3rdp.run -packages="$(RUN_SCRIPT_PATH)/packages.run"
+set XL=%ERRORLEVEL%
 popd
+if %XL% neq 0 exit /b %XL%

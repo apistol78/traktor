@@ -14,4 +14,4 @@ set XL=%ERRORLEVEL%
 popd
 
 echo Autobuild Win64 finished, exit %XL% 
-exit %XL%
+exit /b %XL%

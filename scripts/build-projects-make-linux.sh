@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 # Source environment configuration.
 . "`dirname \"$BASH_SOURCE\"`/config.sh"

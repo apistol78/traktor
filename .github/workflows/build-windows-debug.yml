@@ -13,7 +13,10 @@ jobs:
     - uses: actions/checkout@v3
     - name: Install 3rdp dependencies
       run: ./scripts/update-3rdp.bat
+      shell: cmd
     - name: Generate build files
       run: ./scripts/build-projects-vs2026-win64.bat
+      shell: cmd
     - name: Build DebugShared
       run: ./scripts/autobuild/autobuild-latest-win64.bat DebugShared
+      shell: cmd
