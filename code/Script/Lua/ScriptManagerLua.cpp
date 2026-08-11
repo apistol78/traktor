@@ -286,6 +286,16 @@ void ScriptManagerLua::registerClass(IRuntimeClass* runtimeClass)
 		lua_pushcfunction(m_luaState, classGc);
 		lua_setfield(m_luaState, -2, "__gc");
 	}
+	else
+	{
+		// The Lua "class" helper flattens inheritance by copying every field of the super
+		// class table -- including the "__gc" set on Boxed above. Left in place it would
+		// make every embedded instance finalizable, and the finalizer would release the
+		// instance embedded in the userdata itself, handing storage owned by Lua to the
+		// boxed allocator.
+		lua_pushnil(m_luaState);
+		lua_setfield(m_luaState, -2, "__gc");
+	}
 
 	// Create constructor callback to instantiate the C++ object from script side.
 	// Value types build a userdata directly via an overridden "__call" metamethod;
