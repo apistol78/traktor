@@ -9,6 +9,7 @@
 #include "World/Entity/GroupComponent.h"
 
 #include "World/Entity.h"
+#include "World/World.h"
 
 namespace traktor::world
 {
@@ -18,7 +19,13 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.world.GroupComponent", GroupComponent, IEntityC
 void GroupComponent::destroy()
 {
 	for (auto entity : m_entities)
+	{
+		world::World* world = entity->getWorld();
+		if (world)
+			world->removeEntity(entity);
+
 		entity->destroy();
+	}
 	m_entities.resize(0);
 }
 
