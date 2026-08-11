@@ -32,6 +32,22 @@ const float c_recentTimeOffset = 1.0f / 30.0f;
 handle_t s_handleDistance = 0;
 handle_t s_handleVelocity = 0;
 
+/*! Position of a source within the fade band; 0 at the inner radius, 1 at max distance.
+ *
+ * Same normalization as the distance attenuation of the surround filter, so a
+ * source within the inner radius is heard at both full volume and full
+ * bandwidth, and reach silence and full muffling at the same distance.
+ */
+float fadeBandRatio(float distance, float innerRadius, float maxDistance)
+{
+	// Guard against an inner radius which reach beyond the max distance.
+	float fadeRange = maxDistance - innerRadius;
+	if (fadeRange < FUZZY_EPSILON)
+		fadeRange = FUZZY_EPSILON;
+
+	return clamp((distance - innerRadius) / fadeRange, 0.0f, 1.0f);
+}
+
 	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.SoundPlayer", SoundPlayer, Object)
@@ -178,20 +194,18 @@ Ref< SoundHandle > SoundPlayer::play(const Sound* sound, const Vector4& position
 	for (const auto& listenerTransform : m_surroundEnvironment->getListenerTransforms())
 	{
 		const Vector4 listenerPosition = listenerTransform.translation().xyz1();
-		const Scalar listenerDistance = (position - listenerPosition).xyz0().length();
+		const Scalar listenerDistance = m_surroundEnvironment->getScaledDistance(position - listenerPosition);
 		distance = std::min(distance, listenerDistance);
 	}
 	if (autoStopFar && distance > maxDistance)
 		return nullptr;
 
-	const float k0 = distance / maxDistance;
-	const float k1 = (distance - m_surroundEnvironment->getInnerRadius()) / (maxDistance - m_surroundEnvironment->getInnerRadius());
-
 	// Surround filter.
 	Ref< SurroundFilter > surroundFilter = new SurroundFilter(m_surroundEnvironment, position.xyz1(), maxDistance);
 
 	// Calculate initial cut-off frequency.
-	const float cutOff = lerp(c_nearCutOff, c_farCutOff, clamp(std::sqrt(k0), 0.0f, 1.0f));
+	const float k = fadeBandRatio(distance, m_surroundEnvironment->getInnerRadius(), maxDistance);
+	const float cutOff = lerp(c_nearCutOff, c_farCutOff, std::sqrt(k));
 	Ref< LowPassFilter > lowPassFilter = new LowPassFilter(cutOff);
 
 	Ref< GroupFilter > groupFilter = new GroupFilter(lowPassFilter, surroundFilter);
@@ -348,7 +362,7 @@ void SoundPlayer::update(float dT)
 			for (const auto& listenerTransform : listenerTransforms)
 			{
 				const Vector4 listenerPosition = listenerTransform.translation().xyz1();
-				const Scalar listenerDistance = (channel.position - listenerPosition).xyz0().length();
+				const Scalar listenerDistance = m_surroundEnvironment->getScaledDistance(channel.position - listenerPosition);
 				distance = std::min(distance, listenerDistance);
 			}
 			if (channel.autoStopFar && distance > maxDistance)
@@ -365,13 +379,14 @@ void SoundPlayer::update(float dT)
 
 			// Calculate cut-off frequency.
 			const float k0 = clamp< float >(distance / maxDistance, 0.0f, 1.0f);
+			const float k = fadeBandRatio(distance, m_surroundEnvironment->getInnerRadius(), maxDistance);
 
 			// Set filter parameters.
 			if (channel.surroundFilter)
 				channel.surroundFilter->setSpeakerPosition(channel.position);
 			if (channel.lowPassFilter)
 			{
-				const float cutOff = lerp(c_nearCutOff, c_farCutOff, std::sqrt(k0));
+				const float cutOff = lerp(c_nearCutOff, c_farCutOff, std::sqrt(k));
 				channel.lowPassFilter->setCutOff(cutOff);
 			}
 

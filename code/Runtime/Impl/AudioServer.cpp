@@ -27,6 +27,18 @@
 
 namespace traktor::runtime
 {
+namespace
+{
+
+/*! Defaults used when a platform doesn't configure the surround environment. */
+const float c_surroundMaxDistance = 25.0f;
+const float c_surroundInnerRadius = 5.0f;
+/*! Linear fall off; less than one keep sources loud further out, more than one fade them out quicker. */
+const float c_surroundFallOffExponent = 1.0f;
+/*! Height count as much as distance along the ground; above one make height count for more. */
+const float c_surroundVerticalScale = 1.0f;
+
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.runtime.AudioServer", AudioServer, IAudioServer)
 
@@ -95,13 +107,15 @@ bool AudioServer::create(const PropertyGroup* settings, const SystemApplication&
 	}
 
 	// Create surround environment.
-	const float surroundMaxDistance = 25.0f; // settings->getProperty< float >(L"Audio.Surround/MaxDistance", 50.0f);
-	const float surroundInnerRadius = 5.0f; // settings->getProperty< float >(L"Audio.Surround/InnerRadius", 5.0f);
-	const float surroundFallOffExponent = 4.0f; // settings->getProperty< float >(L"Audio.Surround/FallOffExponent", 4.0f);
+	const float surroundMaxDistance = settings->getProperty< float >(L"Audio.Surround/MaxDistance", c_surroundMaxDistance);
+	const float surroundInnerRadius = settings->getProperty< float >(L"Audio.Surround/InnerRadius", c_surroundInnerRadius);
+	const float surroundFallOffExponent = settings->getProperty< float >(L"Audio.Surround/FallOffExponent", c_surroundFallOffExponent);
+	const float surroundVerticalScale = settings->getProperty< float >(L"Audio.Surround/VerticalScale", c_surroundVerticalScale);
 	m_surroundEnvironment = new sound::SurroundEnvironment(
 		surroundMaxDistance,
 		surroundInnerRadius,
 		surroundFallOffExponent,
+		surroundVerticalScale,
 		ascd.driverDesc.hwChannels >= 5+1
 	);
 
@@ -224,11 +238,15 @@ int32_t AudioServer::reconfigure(const PropertyGroup* settings)
 		}
 	}
 
-	// Configure surround environment distances.
-	//const float surroundMaxDistance = settings->getProperty< float >(L"Audio.Surround/MaxDistance", 10.0f);
-	//const float surroundInnerRadius = settings->getProperty< float >(L"Audio.Surround/InnerRadius", 1.0f);
-	//m_surroundEnvironment->setMaxDistance(surroundMaxDistance);
-	//m_surroundEnvironment->setInnerRadius(surroundInnerRadius);
+	// Configure surround environment.
+	if (m_surroundEnvironment)
+	{
+		m_surroundEnvironment->setMaxDistance(settings->getProperty< float >(L"Audio.Surround/MaxDistance", c_surroundMaxDistance));
+		m_surroundEnvironment->setInnerRadius(settings->getProperty< float >(L"Audio.Surround/InnerRadius", c_surroundInnerRadius));
+		m_surroundEnvironment->setFallOffExponent(settings->getProperty< float >(L"Audio.Surround/FallOffExponent", c_surroundFallOffExponent));
+		m_surroundEnvironment->setVerticalScale(settings->getProperty< float >(L"Audio.Surround/VerticalScale", c_surroundVerticalScale));
+	}
+
 	return CrAccepted;
 }
 

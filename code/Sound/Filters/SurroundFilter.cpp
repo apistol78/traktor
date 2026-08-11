@@ -12,7 +12,6 @@
 #include "Core/Memory/Alloc.h"
 #include "Core/Memory/IAllocator.h"
 #include "Core/Memory/MemoryConfig.h"
-#include "Core/Misc/Align.h"
 #include "Core/Serialization/AttributePoint.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
@@ -43,6 +42,31 @@ Scalar angleDifference(const Scalar& angle1, const Scalar& angle2)
 	const Scalar B = abs(angle1 + twoPi - angle2);
 	const Scalar C = abs(angle2 + twoPi - angle1);
 	return min(min(A, B), C);
+}
+
+/*! Attenuation of a source from its distance to the listener.
+ *
+ * Sources within the inner radius are heard at full volume, then attenuation
+ * ramps down to reach silence at the max distance; the same distance at which
+ * the sound player stop sources which are set to automatically stop when far
+ * away. The fall-off exponent shapes that ramp; 1 being linear, higher values
+ * keeping sources loud close by and dropping them off quicker further out.
+ *
+ * \param distance Distance from listener to source.
+ * \param innerRadius Radius within which the source is at full volume.
+ * \param maxDistance Distance at which the source is silent.
+ * \param fallOffExponent Exponent shaping the ramp.
+ */
+Scalar distanceAttenuation(const Scalar& distance, const Scalar& innerRadius, const Scalar& maxDistance, const Scalar& fallOffExponent)
+{
+	// Guard against an inner radius which reach beyond the max distance; the
+	// ramp then collapse into a step at the inner radius.
+	Scalar fadeRange = maxDistance - innerRadius;
+	if (fadeRange < FUZZY_EPSILON)
+		fadeRange = Scalar(FUZZY_EPSILON);
+
+	const Scalar atten = clamp(1.0_simd - (distance - innerRadius) / fadeRange, 0.0_simd, 1.0_simd);
+	return power(atten, fallOffExponent);
 }
 
 struct SurroundFilterInstance : public RefCountImpl< IAudioFilterInstance >
@@ -191,12 +215,18 @@ void SurroundFilter::applyStereo(IAudioFilterInstance* instance, AudioBlock& out
 	{
 		const Transform listenerTransformInv = listenerTransform.inverse();
 
+		// Panning is derived in listener space, distance in world space so the
+		// vertical scale is applied along world up rather than the listener's.
 		const Vector4 speakerPosition = listenerTransformInv * m_speakerPosition.xyz1();
-		const Scalar speakerDistance = speakerPosition.xyz0().length();
+		const Scalar speakerDistance = m_environment->getScaledDistance(m_speakerPosition.xyz1() - listenerTransform.translation().xyz1());
 		const Scalar speakerAngle = angleRange(Scalar(atan2f(-speakerPosition.z(), -speakerPosition.x()) + PI));
 
-		const Scalar& innerRadius = m_environment->getInnerRadius();
-		const Scalar distanceAtten = power(clamp(1.0_simd - (speakerDistance - innerRadius) / m_maxDistance, 0.0_simd, 1.0_simd), 1.0_simd);
+		const Scalar distanceAtten = distanceAttenuation(
+			speakerDistance,
+			m_environment->getInnerRadius(),
+			m_maxDistance,
+			m_environment->getFallOffExponent()
+		);
 
 		for (uint32_t i = 0; i < sizeof_array(c_speakersStereo); ++i)
 		{
@@ -219,70 +249,72 @@ void SurroundFilter::applyStereo(IAudioFilterInstance* instance, AudioBlock& out
 
 void SurroundFilter::applyFull(IAudioFilterInstance* instance, AudioBlock& outBlock) const
 {
-	//SurroundFilterInstance* sfi = static_cast< SurroundFilterInstance* >(instance);
+	SurroundFilterInstance* sfi = static_cast< SurroundFilterInstance* >(instance);
 
-	//const Scalar c_angleCone(deg2rad(90.0f + 30.0f));
+	const Scalar c_angleCone(deg2rad(90.0f + 30.0f));
 
-	//// Combine all channels into a mono channel.
-	//for (uint32_t i = 0; i < outBlock.samplesCount; i += 4)
-	//{
-	//	Vector4 s4 = Vector4::zero();
-	//	for (uint32_t j = 0; j < outBlock.maxChannel; ++j)
-	//	{
-	//		if (outBlock.samples[j])
-	//			s4 += Vector4::loadAligned(&outBlock.samples[j][i]);
-	//	}
-	//	s4.storeAligned(&sfi->m_mono[i]);
-	//}
+	// Combine all channels into a mono channel.
+	for (uint32_t i = 0; i < outBlock.samplesCount; i += 4)
+	{
+		Vector4 s4 = Vector4::zero();
+		for (uint32_t j = 0; j < outBlock.maxChannel; ++j)
+		{
+			if (outBlock.samples[j])
+				s4 += Vector4::loadAligned(&outBlock.samples[j][i]);
+		}
+		s4.storeAligned(&sfi->m_mono[i]);
+	}
 
-	//const Transform& listenerTransformInv = m_environment->getListenerTransformInv();
+	// Prepare output blocks.
+	for (uint32_t i = 0; i < sizeof_array(c_speakersFull); ++i)
+	{
+		float* outputSamples = sfi->m_buffer[c_speakersFull[i].channel];
+		std::memset(outputSamples, 0, outBlock.samplesCount * sizeof(float));
+		outBlock.samples[c_speakersFull[i].channel] = outputSamples;
+	}
+	outBlock.maxChannel = c_speakersFullMaxChannel;
 
-	//const Vector4 speakerPosition = listenerTransformInv * m_speakerPosition.xyz1();
-	//const Scalar speakerDistance = speakerPosition.xyz0().length();
+	// Mix in all listeners.
+	for (const auto& listenerTransform : m_environment->getListenerTransforms())
+	{
+		const Transform listenerTransformInv = listenerTransform.inverse();
 
-	//const Scalar& innerRadius = m_environment->getInnerRadius();
+		// Panning is derived in listener space, distance in world space so the
+		// vertical scale is applied along world up rather than the listener's.
+		const Vector4 speakerPosition = listenerTransformInv * m_speakerPosition.xyz1();
+		const Scalar speakerDistance = m_environment->getScaledDistance(m_speakerPosition.xyz1() - listenerTransform.translation().xyz1());
 
-	//const Scalar distanceAtten = 1.0_simd - clamp(squareRoot(speakerDistance / m_maxDistance), 0.0_simd, 1.0_simd);
-	//const Scalar innerAtten = clamp(squareRoot(speakerDistance / innerRadius), 0.0_simd, 1.0_simd);
+		const Scalar& innerRadius = m_environment->getInnerRadius();
 
-	//if (distanceAtten >= FUZZY_EPSILON)
-	//{
-	//	const Scalar speakerAngle = angleRange(Scalar(atan2f(-speakerPosition.z(), -speakerPosition.x()) + PI));
+		const Scalar distanceAtten = distanceAttenuation(
+			speakerDistance,
+			innerRadius,
+			m_maxDistance,
+			m_environment->getFallOffExponent()
+		);
+		if (distanceAtten < FUZZY_EPSILON)
+			continue;
 
-	//	for (uint32_t i = 0; i < sizeof_array(c_speakersFull); ++i)
-	//	{
-	//		float* inputSamples = sfi->m_mono;
-	//		float* outputSamples = sfi->m_buffer[c_speakersFull[i].channel];
+		const Scalar innerAtten = clamp(squareRoot(speakerDistance / innerRadius), 0.0_simd, 1.0_simd);
+		const Scalar speakerAngle = angleRange(Scalar(atan2f(-speakerPosition.z(), -speakerPosition.x()) + PI));
 
-	//		const Scalar angleOffset = angleDifference(c_speakersFull[i].angle, speakerAngle);
-	//		const Scalar angleAtten = clamp(1.0_simd - angleOffset / c_angleCone, 0.0_simd, 1.0_simd);
-	//		const Scalar attenuation = angleAtten * distanceAtten * (1.0_simd - c_speakersFull[i].inner * innerAtten);
+		for (uint32_t i = 0; i < sizeof_array(c_speakersFull); ++i)
+		{
+			const float* inputSamples = sfi->m_mono;
+			float* outputSamples = sfi->m_buffer[c_speakersFull[i].channel];
 
-	//		for (uint32_t j = 0; j < outBlock.samplesCount; j += 4)
-	//		{
-	//			Vector4 s4 = Vector4::loadAligned(&inputSamples[j]);
-	//			s4 *= attenuation;
-	//			s4.storeAligned(&outputSamples[j]);
-	//		}
+			const Scalar angleOffset = angleDifference(c_speakersFull[i].angle, speakerAngle);
+			const Scalar angleAtten = clamp(1.0_simd - angleOffset / c_angleCone, 0.0_simd, 1.0_simd);
+			const Scalar attenuation = angleAtten * distanceAtten * (1.0_simd - c_speakersFull[i].inner * innerAtten);
 
-	//		outBlock.samples[c_speakersFull[i].channel] = outputSamples;
-	//	}
-	//}
-	//else
-	//{
-	//	for (uint32_t i = 0; i < sizeof_array(c_speakersFull); ++i)
-	//	{
-	//		float* outputSamples = sfi->m_buffer[c_speakersFull[i].channel];
-	//		T_ASSERT(alignUp(samples, 16) == samples);
-
-	//		for (uint32_t j = 0; j < outBlock.samplesCount; j += 4)
-	//			Vector4::zero().storeAligned(&outputSamples[j]);
-
-	//		outBlock.samples[c_speakersFull[i].channel] = outputSamples;
-	//	}
-	//}
-
-	//outBlock.maxChannel = c_speakersFullMaxChannel;
+			for (uint32_t j = 0; j < outBlock.samplesCount; j += 4)
+			{
+				const Vector4 sd4 = Vector4::loadAligned(&inputSamples[j]);
+				const Vector4 s4 = sd4 * attenuation;
+				(Vector4::loadAligned(&outputSamples[j]) + s4).storeAligned(&outputSamples[j]);
+			}
+		}
+	}
 }
 
 void SurroundFilter::serialize(ISerializer& s)

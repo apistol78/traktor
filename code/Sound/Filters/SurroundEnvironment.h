@@ -34,6 +34,7 @@ public:
 		float maxDistance,
 		float innerRadius,
 		float fallOffExponent,
+		float verticalScale,
 		bool fullSurround
 	);
 
@@ -49,6 +50,10 @@ public:
 
 	const Scalar& getFallOffExponent() const { return m_fallOffExponent;  }
 
+	void setVerticalScale(float verticalScale);
+
+	float getVerticalScale() const { return m_verticalAxisScale.y(); }
+
 	void setFullSurround(bool fullSurround);
 
 	bool getFullSurround() const { return m_fullSurround; }
@@ -57,10 +62,22 @@ public:
 
 	const listenerTransformVector_t& getListenerTransforms() const { return m_listenerTransforms; }
 
+	/*! Length of a listener relative vector, with the world vertical axis scaled.
+	 *
+	 * A vertical scale above one make height count for more than the same
+	 * distance along the ground, so a source a floor below is heard as being
+	 * further away than one the same number of meters to the side.
+	 *
+	 * \param delta Vector from listener to source, in world space.
+	 * \return Scaled distance.
+	 */
+	Scalar getScaledDistance(const Vector4& delta) const { return (delta * m_verticalAxisScale).length(); }
+
 private:
 	Scalar m_maxDistance;
 	Scalar m_innerRadius;
 	Scalar m_fallOffExponent;
+	Vector4 m_verticalAxisScale;
 	bool m_fullSurround;
 	listenerTransformVector_t m_listenerTransforms;
 };

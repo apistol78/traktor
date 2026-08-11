@@ -42,7 +42,7 @@ class T_DLLCLASS AudioLayer : public Layer
 	T_RTTI_CLASS;
 
 public:
-	AudioLayer(
+	explicit AudioLayer(
 		Stage* stage,
 		const std::wstring& name,
 		bool permitTransition,

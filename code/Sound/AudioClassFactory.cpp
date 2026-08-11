@@ -104,6 +104,8 @@ void AudioClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	auto classSurroundEnvironment = new AutoRuntimeClass< SurroundEnvironment >();
 	classSurroundEnvironment->addProperty("maxDistance", &SurroundEnvironment::setMaxDistance, &SurroundEnvironment::getMaxDistance);
 	classSurroundEnvironment->addProperty("innerRadius", &SurroundEnvironment::setInnerRadius, &SurroundEnvironment::getInnerRadius);
+	classSurroundEnvironment->addProperty("fallOffExponent", &SurroundEnvironment::setFallOffExponent, &SurroundEnvironment::getFallOffExponent);
+	classSurroundEnvironment->addProperty("verticalScale", &SurroundEnvironment::setVerticalScale, &SurroundEnvironment::getVerticalScale);
 	classSurroundEnvironment->addProperty("fullSurround", &SurroundEnvironment::setFullSurround, &SurroundEnvironment::getFullSurround);
 	registrar->registerClass(classSurroundEnvironment);
 

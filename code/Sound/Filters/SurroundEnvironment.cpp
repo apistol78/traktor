@@ -17,11 +17,13 @@ SurroundEnvironment::SurroundEnvironment(
 	float maxDistance,
 	float innerRadius,
 	float fallOffExponent,
+	float verticalScale,
 	bool fullSurround
 )
 :	m_maxDistance(maxDistance)
 ,	m_innerRadius(innerRadius)
 ,	m_fallOffExponent(fallOffExponent)
+,	m_verticalAxisScale(1.0f, verticalScale, 1.0f, 0.0f)
 ,	m_fullSurround(fullSurround)
 {
 }
@@ -39,6 +41,11 @@ void SurroundEnvironment::setInnerRadius(float innerRadius)
 void SurroundEnvironment::setFallOffExponent(float fallOffExponent)
 {
 	m_fallOffExponent = Scalar(fallOffExponent);
+}
+
+void SurroundEnvironment::setVerticalScale(float verticalScale)
+{
+	m_verticalAxisScale = Vector4(1.0f, verticalScale, 1.0f, 0.0f);
 }
 
 void SurroundEnvironment::setFullSurround(bool fullSurround)

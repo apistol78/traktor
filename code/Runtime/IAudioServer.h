@@ -37,6 +37,8 @@ namespace traktor::runtime
  * "Audio.MasterVolume"			- Master volume.
  * "Audio.Surround/MaxDistance"	- Surround sound max speaker distance.
  * "Audio.Surround/InnerRadius"	- Surround inner listener radius.
+ * "Audio.Surround/FallOffExponent" - Surround distance fall-off exponent.
+ * "Audio.Surround/VerticalScale"	- Scale of vertical distance to listener.
  * "Audio.Volumes/<Category>"   - Per category volume.
  */
 class T_DLLCLASS IAudioServer : public IServer
