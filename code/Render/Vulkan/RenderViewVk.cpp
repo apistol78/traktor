@@ -1409,6 +1409,11 @@ void RenderViewVk::synchronize()
 	T_PROFILER_SCOPE(L"RenderViewVk::synchronize");
 	auto& frame = m_frames[m_currentImageIndex];
 
+	// Frame work is being submitted before endFrame; resources created this frame
+	// have their uploads, including initial layout transitions, pending in the
+	// upload command buffer which must execute first. \sa waitAsynchronousCompute
+	m_context->performUploads();
+
 	++m_timelineSemaphoreValue;
 
 	// Submit compute command buffer.
@@ -1464,6 +1469,12 @@ ComputeHandle RenderViewVk::signalAsynchronousCompute()
 	// before graphics), so ordering is implicit; avoid splitting the compute command buffer here.
 	if (m_context->getComputeQueue()->getQueueIndex() != m_context->getGraphicsQueue()->getQueueIndex())
 	{
+		// The batch is submitted before endFrame; resources created this frame have
+		// their uploads pending in the upload command buffer which must execute
+		// first as the batch may consume them. Uploads are waited upon so ordering
+		// holds across queues. \sa waitAsynchronousCompute
+		m_context->performUploads();
+
 		// Dedicated compute queue; flush the open compute batch signalling its timeline value and
 		// continue recording subsequent asynchronous work into a fresh buffer.
 		frame.computeCommandBuffer->submitSignal(m_timelineSemaphore, value);
@@ -1513,6 +1524,13 @@ void RenderViewVk::waitAsynchronousCompute(ComputeHandle handle)
 			nullptr);
 		return;
 	}
+
+	// Splitting the graphics queue submits this frame's work recorded so far, ahead
+	// of endFrame's upload submission. Resources created this frame have their
+	// uploads, including the initial layout transition of storage textures, pending
+	// in the upload command buffer; those must execute before any frame work which
+	// consumes the resources, so flush them, waited upon, before submitting.
+	m_context->performUploads();
 
 	// Dedicated compute queue; if the requested value has not been signalled yet, flush the open
 	// compute batch signalling it now.
