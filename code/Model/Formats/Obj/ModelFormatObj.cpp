@@ -158,13 +158,13 @@ bool ModelFormatObj::write(const Path& filePath, const Model* model) const
 	s << Endl;
 
 	for (auto position : model->getPositions())
-		s << L"v " << position.x() << L" " << position.y() << L" " << position.z() << Endl;
+		s << L"v " << -position.x() << L" " << position.y() << L" " << position.z() << Endl;
 
 	for (auto texCoord : model->getTexCoords())
 		s << L"vt " << texCoord.x << L" " << (1.0f - texCoord.y) << Endl;
 
 	for (auto normal : model->getNormals())
-		s << L"vn " << normal.x() << L" " << normal.y() << L" " << normal.z() << Endl;
+		s << L"vn " << -normal.x() << L" " << normal.y() << L" " << normal.z() << Endl;
 
 	s << Endl;
 	s << L"#	    Point/Line/Face list" << Endl;
@@ -183,7 +183,7 @@ bool ModelFormatObj::write(const Path& filePath, const Model* model) const
 
 				s << L"f";
 				const auto& vertices = polygon.getVertices();
-				for (int32_t i = (int32_t)vertices.size() - 1; i >= 0; --i)
+				for (int32_t i = 0; i < (int32_t)vertices.size(); ++i)
 				{
 					const Vertex& vertex = model->getVertex(vertices[i]);
 
