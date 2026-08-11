@@ -821,7 +821,13 @@ Ref< Body > PhysicsManagerJolt::createBody(resource::IResourceManager* resourceM
 		AlignedVector< float > samples(size * size);
 		for (int32_t y = 0; y < size; ++y)
 			for (int32_t x = 0; x < size; ++x)
-				samples[x + y * size] = heightfield->getGridHeightNearest(x, y);
+			{
+				// Cut samples are flagged as "no collision"; Jolt discards triangles
+				// sharing such samples, same as the Bullet heightfield shape.
+				samples[x + y * size] = heightfield->getGridCut(x, y)
+					? heightfield->getGridHeightNearest(x, y)
+					: JPH::HeightFieldShapeConstants::cNoCollisionValue;
+			}
 
 		const Vector4& worldExtent = heightfield->getWorldExtent();
 		const Vector4 scale(1.0f / size, 1.0f, 1.0f / size, 1.0f);
