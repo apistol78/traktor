@@ -8,7 +8,7 @@
  */
 #pragma once
 
-#include "Scene/Editor/IWorldComponentEditorFactory.h"
+#include "Scene/Editor/IComponentPanelEditorFactory.h"
 
 namespace traktor::ai
 {
@@ -16,14 +16,14 @@ namespace traktor::ai
 /*! Navigation mesh entity scene editor factory.
  * \ingroup AI
  */
-class NavMeshComponentEditorFactory : public scene::IWorldComponentEditorFactory
+class NavMeshComponentEditorFactory : public scene::IComponentPanelEditorFactory
 {
 	T_RTTI_CLASS;
 
 public:
 	virtual const TypeInfoSet getComponentDataTypes() const override final;
 
-	virtual Ref< scene::IWorldComponentEditor > createComponentEditor(const TypeInfo& componentDataType) const override final;
+	virtual Ref< scene::IComponentPanelEditor > createComponentPanelEditor(const TypeInfo& componentDataType) const override final;
 };
 
 }

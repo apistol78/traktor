@@ -68,7 +68,7 @@ namespace traktor::scene
 class SceneEditorContext;
 class IComponentEditorFactory;
 class ISceneEditorUIExtension;
-class IWorldComponentEditorFactory;
+class IComponentPanelEditorFactory;
 class IEntityEditorFactory;
 
 /*! Scene editor plugin.
@@ -142,14 +142,14 @@ public:
 		RefArray< world::IEntityRenderer >& outEntityRenderers
 	) const = 0;
 
-	/*! Create scene controller editor factories.
+	/*! Create component panel editor factories.
 	 *
 	 * \param context Scene editor context.
-	 * \param outControllerEditorFactories Scene controller editor factories.
+	 * \param outComponentPanelEditorFactories Component panel editor factories.
 	 */
-	virtual void createControllerEditorFactories(
+	virtual void createComponentPanelEditorFactories(
 		SceneEditorContext* context,
-		RefArray< const IWorldComponentEditorFactory >& outControllerEditorFactories
+		RefArray< const IComponentPanelEditorFactory >& outComponentPanelEditorFactories
 	) const = 0;
 
 	/*! Create entity editor factories.

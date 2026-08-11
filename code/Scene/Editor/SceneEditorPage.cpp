@@ -52,8 +52,8 @@
 #include "Scene/Editor/Events/SceneSelectionChangeEvent.h"
 #include "Scene/Editor/ISceneEditorPlugin.h"
 #include "Scene/Editor/ISceneOperationData.h"
-#include "Scene/Editor/IWorldComponentEditor.h"
-#include "Scene/Editor/IWorldComponentEditorFactory.h"
+#include "Scene/Editor/IComponentPanelEditor.h"
+#include "Scene/Editor/IComponentPanelEditorFactory.h"
 #include "Scene/Editor/SceneAsset.h"
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Scene/Editor/ScenePreviewControl.h"
@@ -461,12 +461,12 @@ bool SceneEditorPage::create(ui::Container* parent)
 
 	m_site->createAdditionalPanel(m_tabMisc, 400_ut, false);
 
-	// Create controller panel.
-	m_controllerPanel = new ui::Container();
-	m_controllerPanel->create(parent, ui::WsNone, new ui::FloodLayout());
-	m_controllerPanel->setText(i18n::Text(L"SCENE_EDITOR_CONTROLLER"));
+	// Create component panel; hosts editors of components which need more than the property view.
+	m_componentPanel = new ui::Tab();
+	m_componentPanel->create(parent, ui::Tab::WsLine);
+	m_componentPanel->setText(i18n::Text(L"SCENE_EDITOR_CONTROLLER"));
 
-	m_site->createAdditionalPanel(m_controllerPanel, 140_ut, true);
+	m_site->createAdditionalPanel(m_componentPanel, 140_ut, true);
 
 	// Create the scene, loads textures etc, using a background job since it might take significant amount of time.
 	Ref< Job > job = JobManager::getInstance().add([&]() {
@@ -504,7 +504,7 @@ bool SceneEditorPage::create(ui::Container* parent)
 
 	// Finally realize the scene.
 	createInstanceGrid();
-	createControllerEditor();
+	createComponentPanelEditors();
 	updatePropertyObject();
 	updateStatusBar();
 
@@ -535,24 +535,24 @@ void SceneEditorPage::destroy()
 		m_editor->commitGlobalSettings();
 	}
 
-	// Destroy controller editor.
-	if (m_context->getControllerEditor())
-		m_context->getControllerEditor()->destroy();
+	// Destroy component panel editors.
+	for (auto componentPanelEditor : m_context->getComponentPanelEditors())
+		componentPanelEditor->destroy();
 
 	// Destroy panels.
 	if (m_entityPanel)
 		m_site->destroyAdditionalPanel(m_entityPanel);
 	if (m_tabMisc)
 		m_site->destroyAdditionalPanel(m_tabMisc);
-	if (m_controllerPanel)
-		m_site->destroyAdditionalPanel(m_controllerPanel);
+	if (m_componentPanel)
+		m_site->destroyAdditionalPanel(m_componentPanel);
 
 	// Destroy widgets.
 	safeDestroy(m_editPanel);
 	safeDestroy(m_editControl);
 	safeDestroy(m_entityPanel);
 	safeDestroy(m_tabMisc);
-	safeDestroy(m_controllerPanel);
+	safeDestroy(m_componentPanel);
 	safeDestroy(m_entityToolBar);
 	safeDestroy(m_instanceGrid);
 
@@ -692,8 +692,8 @@ bool SceneEditorPage::handleCommand(const ui::Command& command)
 				{
 					parentGroup->removeChild(selectedEntity);
 
-					if (m_context->getControllerEditor())
-						m_context->getControllerEditor()->entityRemoved(selectedEntity);
+					for (auto componentPanelEditor : m_context->getComponentPanelEditors())
+						componentPanelEditor->entityRemoved(selectedEntity);
 
 					selectedEntity->destroyEntity();
 				}
@@ -763,8 +763,8 @@ bool SceneEditorPage::handleCommand(const ui::Command& command)
 			{
 				parentGroup->removeChild(selectedEntity);
 
-				if (m_context->getControllerEditor())
-					m_context->getControllerEditor()->entityRemoved(selectedEntity);
+				for (auto componentPanelEditor : m_context->getComponentPanelEditors())
+					componentPanelEditor->entityRemoved(selectedEntity);
 
 				selectedEntity->destroyEntity();
 				removedCount++;
@@ -970,9 +970,14 @@ bool SceneEditorPage::handleCommand(const ui::Command& command)
 	{
 		result = false;
 
-		// Propagate command to controller editor.
-		if (!result && m_context->getControllerEditor())
-			result = m_context->getControllerEditor()->handleCommand(command);
+		// Propagate command to component panel editors; iterate a copy as handling a
+		// command might cause the editors to be recreated.
+		const RefArray< IComponentPanelEditor > componentPanelEditors = m_context->getComponentPanelEditors();
+		for (auto componentPanelEditor : componentPanelEditors)
+		{
+			if ((result = componentPanelEditor->handleCommand(command)) == true)
+				break;
+		}
 
 		// Propagate command to editor control.
 		if (!result)
@@ -1042,55 +1047,109 @@ bool SceneEditorPage::createSceneAsset()
 	return true;
 }
 
-void SceneEditorPage::createControllerEditor()
+void SceneEditorPage::getComponentDataTypes(SmallSet< const TypeInfo* >& outComponentDataTypes) const
 {
-	if (m_context->getControllerEditor())
+	const SceneAsset* sceneAsset = m_context->getSceneAsset();
+	if (!sceneAsset)
+		return;
+
+	for (auto worldComponentData : sceneAsset->getWorldComponents())
+		outComponentDataTypes.insert(&type_of(worldComponentData));
+
+	for (auto entityAdapter : m_context->getEntities())
 	{
-		m_context->getControllerEditor()->destroy();
-		m_context->setControllerEditor(nullptr);
+		const world::EntityData* entityData = entityAdapter->getEntityData();
+		if (entityData == nullptr)
+			continue;
+		for (auto componentData : entityData->getComponents())
+			outComponentDataTypes.insert(&type_of(componentData));
 	}
+}
 
-	m_site->hideAdditionalPanel(m_controllerPanel);
+void SceneEditorPage::createComponentPanelEditors()
+{
+	// Collect all component data types, both world and entity components, of the scene.
+	SmallSet< const TypeInfo* > componentDataTypes;
+	getComponentDataTypes(componentDataTypes);
 
-	Ref< SceneAsset > sceneAsset = m_context->getSceneAsset();
-	if (sceneAsset)
+	// Create component editor factories.
+	RefArray< const IComponentPanelEditorFactory > componentEditorFactories;
+	for (auto plugin : m_context->getPlugins())
+		plugin->createComponentPanelEditorFactories(m_context, componentEditorFactories);
+
+	// Determine which factories are applicable to the scene as it is now.
+	AlignedVector< const IComponentPanelEditorFactory* > applicableFactories;
+	AlignedVector< const TypeInfo* > applicableTypes;
+	for (auto componentEditorFactory : componentEditorFactories)
 	{
-		for (auto worldComponentData : sceneAsset->getWorldComponents())
+		for (auto componentDataType : componentEditorFactory->getComponentDataTypes())
 		{
-			RefArray< const IWorldComponentEditorFactory > componentEditorFactories;
-			Ref< IWorldComponentEditor > componentEditor;
-
-			// Create world component editor factories.
-			for (auto plugin : m_context->getPlugins())
-				plugin->createControllerEditorFactories(m_context, componentEditorFactories);
-
-			for (auto controllerEditorFactory : componentEditorFactories)
+			if (componentDataTypes.find(componentDataType) != componentDataTypes.end())
 			{
-				TypeInfoSet typeSet = controllerEditorFactory->getComponentDataTypes();
-				if (typeSet.find(&type_of(worldComponentData)) != typeSet.end())
-				{
-					componentEditor = controllerEditorFactory->createComponentEditor(type_of(worldComponentData));
-					if (componentEditor)
-						break;
-				}
+				applicableFactories.push_back(componentEditorFactory);
+				applicableTypes.push_back(componentDataType);
+				break;
 			}
-
-			if (componentEditor)
-				if (componentEditor->create(
-						m_context,
-						m_controllerPanel))
-				{
-					m_context->setControllerEditor(componentEditor);
-					m_site->showAdditionalPanel(m_controllerPanel);
-				}
-				else
-					log::error << L"Unable to create world component editor; create failed." << Endl;
-			else
-				T_DEBUG(L"Unable to find world component editor for type \"" << type_name(worldComponentData) << L"\".");
 		}
 	}
 
-	m_controllerPanel->update();
+	// Keep editors as-is if the set of applicable factories hasn't changed; this
+	// is called after each build of the scene in order to catch components being
+	// added to, or removed from, entities.
+	if (m_componentPanelEditorsCreated && applicableTypes == m_componentPanelEditorTypes)
+		return;
+
+	for (auto componentPanelEditor : m_context->getComponentPanelEditors())
+		componentPanelEditor->destroy();
+	m_context->setComponentPanelEditors(RefArray< IComponentPanelEditor >());
+
+	m_site->hideAdditionalPanel(m_componentPanel);
+	m_componentPanel->removeAllPages();
+
+	RefArray< IComponentPanelEditor > componentPanelEditors;
+	for (size_t i = 0; i < applicableFactories.size(); ++i)
+	{
+		Ref< IComponentPanelEditor > componentEditor = applicableFactories[i]->createComponentPanelEditor(*applicableTypes[i]);
+		if (!componentEditor)
+		{
+			log::error << L"Unable to create component editor for type \"" << applicableTypes[i]->getName() << L"\"." << Endl;
+			continue;
+		}
+
+		// Each editor gets its own page of the panel so several editors can coexist.
+		Ref< ui::TabPage > tabPage = new ui::TabPage();
+		if (!tabPage->create(m_componentPanel, componentEditor->getTitle(), new ui::FloodLayout()))
+			continue;
+
+		if (!componentEditor->create(m_context, tabPage))
+		{
+			log::error << L"Unable to create component editor for type \"" << applicableTypes[i]->getName() << L"\"; create failed." << Endl;
+			safeDestroy(tabPage);
+			continue;
+		}
+
+		componentPanelEditors.push_back(componentEditor);
+
+		// Editors which only draw guides do not create any UI; no need for a page.
+		if (tabPage->getFirstChild() != nullptr)
+			m_componentPanel->addPage(tabPage);
+		else
+			safeDestroy(tabPage);
+	}
+
+	if (!componentPanelEditors.empty())
+		m_context->setComponentPanelEditors(componentPanelEditors);
+
+	// Only show panel if any editor has created a page.
+	if (m_componentPanel->getPageCount() > 0)
+	{
+		m_componentPanel->setActivePage(m_componentPanel->getPage(0));
+		m_site->showAdditionalPanel(m_componentPanel);
+	}
+
+	m_componentPanelEditorTypes = applicableTypes;
+	m_componentPanelEditorsCreated = true;
+	m_componentPanel->update();
 }
 
 void SceneEditorPage::updateScene()
@@ -1717,10 +1776,9 @@ void SceneEditorPage::eventPropertiesChanged(ui::ContentChangeEvent* event)
 	{
 		createInstanceGrid();
 
-		// Notify controller editor as well.
-		Ref< IWorldComponentEditor > controllerEditor = m_context->getControllerEditor();
-		if (controllerEditor)
-			controllerEditor->propertiesChanged();
+		// Notify component panel editors as well.
+		for (auto componentPanelEditor : m_context->getComponentPanelEditors())
+			componentPanelEditor->propertiesChanged();
 
 		// Propagate to editor controls.
 		m_editControl->handleCommand(ui::Command(L"Editor.PropertiesChanged"));
@@ -1731,6 +1789,9 @@ void SceneEditorPage::eventContextPostBuild(PostBuildEvent* event)
 {
 	createInstanceGrid();
 	updateStatusBar();
+
+	// Components might have been added to, or removed from, entities.
+	createComponentPanelEditors();
 }
 
 void SceneEditorPage::eventContextSelect(SceneSelectionChangeEvent* event)

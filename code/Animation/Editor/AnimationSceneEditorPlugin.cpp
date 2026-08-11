@@ -73,9 +73,9 @@ void AnimationSceneEditorPlugin::createEntityRenderers(
 	outEntityRenderers.push_back(new ClothRenderer());
 }
 
-void AnimationSceneEditorPlugin::createControllerEditorFactories(
+void AnimationSceneEditorPlugin::createComponentPanelEditorFactories(
 	scene::SceneEditorContext* context,
-	RefArray< const scene::IWorldComponentEditorFactory >& outComponentEditorFactories) const
+	RefArray< const scene::IComponentPanelEditorFactory >& outComponentEditorFactories) const
 {
 }
 

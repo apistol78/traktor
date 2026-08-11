@@ -84,7 +84,7 @@ class IComponentEditorFactory;
 class IEntityEditorFactory;
 class IModifier;
 class IModifierAnchor;
-class IWorldComponentEditor;
+class IComponentPanelEditor;
 class ISceneEditorUIExtension;
 class ISceneEditorPlugin;
 class ISceneRenderControl;
@@ -142,7 +142,7 @@ public:
 
 	void createEditorFactories();
 
-	void setControllerEditor(IWorldComponentEditor* controllerEditor);
+	void setComponentPanelEditors(const RefArray< IComponentPanelEditor >& componentPanelEditors);
 
 	/*! \name State management. */
 	//@{
@@ -285,13 +285,16 @@ public:
 
 	RefArray< ISceneEditorUIExtension >& getUIExtensions() { return m_uiExtensions; }
 
-	Ref< IWorldComponentEditor >& getControllerEditor() { return m_controllerEditor; }
+	const RefArray< IComponentPanelEditor >& getComponentPanelEditors() const { return m_componentPanelEditors; }
 
 	SceneAsset* getSceneAsset() { return m_sceneAsset; }
 
 	Scene* getScene() { return m_scene; }
 
 	const RefArray< EntityAdapter > getLayerEntityAdapters() { return m_layerEntityAdapters; }
+
+	/*! Number of times entities has been built; incremented for each build. */
+	uint32_t getBuildCount() const { return m_buildCount; }
 
 	uint32_t getEntityCount() const { return m_entityCount; }
 
@@ -333,7 +336,7 @@ private:
 	RefArray< ISceneEditorUIExtension > m_uiExtensions;
 	RefArray< const IEntityEditorFactory > m_entityEditorFactories;
 	RefArray< const IComponentEditorFactory > m_componentEditorFactories;
-	Ref< IWorldComponentEditor > m_controllerEditor;
+	RefArray< IComponentPanelEditor > m_componentPanelEditors;
 	Ref< IModifier > m_modifier;
 	SmallMap< std::wstring, bool > m_drawGuide;
 	float m_guideSize;

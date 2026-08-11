@@ -79,9 +79,9 @@ void TerrainSceneEditorPlugin::createEntityRenderers(
 	outEntityRenderers.push_back(new EntityRenderer(100.0f, 8192));
 }
 
-void TerrainSceneEditorPlugin::createControllerEditorFactories(
+void TerrainSceneEditorPlugin::createComponentPanelEditorFactories(
 	scene::SceneEditorContext* context,
-	RefArray< const scene::IWorldComponentEditorFactory >& outComponentEditorFactories) const
+	RefArray< const scene::IComponentPanelEditorFactory >& outComponentEditorFactories) const
 {
 }
 

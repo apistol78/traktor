@@ -122,7 +122,7 @@ void SceneEditorContext::destroy()
 	m_uiExtensions.clear();
 	m_entityEditorFactories.clear();
 	m_componentEditorFactories.clear();
-	m_controllerEditor = nullptr;
+	m_componentPanelEditors.clear();
 
 	if (m_modifier != nullptr)
 	{
@@ -163,9 +163,9 @@ void SceneEditorContext::createEditorFactories()
 	}
 }
 
-void SceneEditorContext::setControllerEditor(IWorldComponentEditor* controllerEditor)
+void SceneEditorContext::setComponentPanelEditors(const RefArray< IComponentPanelEditor >& componentPanelEditors)
 {
-	m_controllerEditor = controllerEditor;
+	m_componentPanelEditors = componentPanelEditors;
 }
 
 void SceneEditorContext::setModifier(IModifier* modifier)

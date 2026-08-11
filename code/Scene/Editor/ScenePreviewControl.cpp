@@ -28,7 +28,7 @@
 #include "Scene/Editor/IEntityEditor.h"
 #include "Scene/Editor/ISceneEditorUIExtension.h"
 #include "Scene/Editor/ISceneEditorPlugin.h"
-#include "Scene/Editor/IWorldComponentEditor.h"
+#include "Scene/Editor/IComponentPanelEditor.h"
 #include "Scene/Editor/Modifiers/RotateModifier.h"
 #include "Scene/Editor/Modifiers/TranslateModifier.h"
 #include "Scene/Editor/RenderControls/DefaultRenderControl.h"
@@ -465,10 +465,9 @@ void ScenePreviewControl::eventRedraw(RedrawEvent* event)
 		for (int32_t i = 0; i < 4; ++i)
 			cameraStable &= m_context->getCamera(i)->update(deltaTime);
 
-		// Update scene controller editor.
-		Ref< IWorldComponentEditor > controllerEditor = m_context->getControllerEditor();
-		if (controllerEditor)
-			controllerEditor->update();
+		// Update component panel editors.
+		for (auto componentPanelEditor : m_context->getComponentPanelEditors())
+			componentPanelEditor->update();
 
 		// Use physics; update in steps of 1/60th of a second.
 		if (m_context->getPhysicsEnable())

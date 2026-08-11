@@ -59,9 +59,9 @@ void HeightfieldSceneEditorPlugin::createEntityRenderers(
 {
 }
 
-void HeightfieldSceneEditorPlugin::createControllerEditorFactories(
+void HeightfieldSceneEditorPlugin::createComponentPanelEditorFactories(
 	scene::SceneEditorContext* context,
-	RefArray< const scene::IWorldComponentEditorFactory >& outComponentEditorFactories) const
+	RefArray< const scene::IComponentPanelEditorFactory >& outComponentEditorFactories) const
 {
 }
 

@@ -57,9 +57,9 @@ public:
 		RefArray< world::IEntityRenderer >& outEntityRenderers
 	) const override final;
 
-	virtual void createControllerEditorFactories(
+	virtual void createComponentPanelEditorFactories(
 		scene::SceneEditorContext* context,
-		RefArray< const scene::IWorldComponentEditorFactory >& outComponentEditorFactories	) const override final;
+		RefArray< const scene::IComponentPanelEditorFactory >& outComponentEditorFactories	) const override final;
 
 	virtual void createEntityEditorFactories(
 		scene::SceneEditorContext* context,

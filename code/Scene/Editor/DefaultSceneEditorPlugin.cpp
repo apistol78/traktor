@@ -111,9 +111,9 @@ void DefaultSceneEditorPlugin::createEntityRenderers(
 	outEntityRenderers.push_back(new weather::SkyRenderer());
 }
 
-void DefaultSceneEditorPlugin::createControllerEditorFactories(
+void DefaultSceneEditorPlugin::createComponentPanelEditorFactories(
 	scene::SceneEditorContext* context,
-	RefArray< const scene::IWorldComponentEditorFactory >& outComponentEditorFactories) const
+	RefArray< const scene::IComponentPanelEditorFactory >& outComponentEditorFactories) const
 {
 }
 

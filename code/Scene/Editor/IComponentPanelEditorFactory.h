@@ -22,12 +22,12 @@
 namespace traktor::scene
 {
 
-class IWorldComponentEditor;
+class IComponentPanelEditor;
 
 /*!
  * \ingroup Scene
  */
-class T_DLLCLASS IWorldComponentEditorFactory : public Object
+class T_DLLCLASS IComponentPanelEditorFactory : public Object
 {
 	T_RTTI_CLASS;
 
@@ -40,9 +40,9 @@ public:
 
 	/*! Create component editor instance.
 	 *
-	 * \param controllerDataType Component data type.
+	 * \param componentDataType Component data type.
 	 */
-	virtual Ref< IWorldComponentEditor > createComponentEditor(const TypeInfo& componentDataType) const = 0;
+	virtual Ref< IComponentPanelEditor > createComponentPanelEditor(const TypeInfo& componentDataType) const = 0;
 };
 
 }

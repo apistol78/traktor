@@ -70,9 +70,9 @@ void SpraySceneEditorPlugin::createEntityRenderers(
 	outEntityRenderers.push_back(new spray::EffectRenderer(context->getRenderSystem(), 50.0f, 100.0f));
 }
 
-void SpraySceneEditorPlugin::createControllerEditorFactories(
+void SpraySceneEditorPlugin::createComponentPanelEditorFactories(
 	scene::SceneEditorContext* context,
-	RefArray< const scene::IWorldComponentEditorFactory >& outComponentEditorFactories) const
+	RefArray< const scene::IComponentPanelEditorFactory >& outComponentEditorFactories) const
 {
 }
 

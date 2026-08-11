@@ -67,9 +67,9 @@ void AiSceneEditorPlugin::createEntityRenderers(
 {
 }
 
-void AiSceneEditorPlugin::createControllerEditorFactories(
+void AiSceneEditorPlugin::createComponentPanelEditorFactories(
 	scene::SceneEditorContext* context,
-	RefArray< const scene::IWorldComponentEditorFactory >& outComponentEditorFactories) const
+	RefArray< const scene::IComponentPanelEditorFactory >& outComponentEditorFactories) const
 {
 	outComponentEditorFactories.push_back(new NavMeshComponentEditorFactory());
 }

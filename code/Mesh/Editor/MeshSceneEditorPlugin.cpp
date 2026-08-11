@@ -69,9 +69,9 @@ void MeshSceneEditorPlugin::createEntityRenderers(
 	outEntityRenderers.push_back(new mesh::SkinnedMeshComponentRenderer());
 }
 
-void MeshSceneEditorPlugin::createControllerEditorFactories(
+void MeshSceneEditorPlugin::createComponentPanelEditorFactories(
 	scene::SceneEditorContext* context,
-	RefArray< const scene::IWorldComponentEditorFactory >& outComponentEditorFactories) const
+	RefArray< const scene::IComponentPanelEditorFactory >& outComponentEditorFactories) const
 {
 }
 

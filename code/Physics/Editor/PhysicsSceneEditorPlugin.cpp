@@ -67,9 +67,9 @@ void PhysicsSceneEditorPlugin::createEntityRenderers(
 {
 }
 
-void PhysicsSceneEditorPlugin::createControllerEditorFactories(
+void PhysicsSceneEditorPlugin::createComponentPanelEditorFactories(
 	scene::SceneEditorContext* context,
-	RefArray< const scene::IWorldComponentEditorFactory >& outComponentEditorFactories) const
+	RefArray< const scene::IComponentPanelEditorFactory >& outComponentEditorFactories) const
 {
 }
 

@@ -32,7 +32,7 @@
 #include "Scene/Editor/EntityAdapter.h"
 #include "Scene/Editor/IModifier.h"
 #include "Scene/Editor/ISceneEditorPlugin.h"
-#include "Scene/Editor/IWorldComponentEditor.h"
+#include "Scene/Editor/IComponentPanelEditor.h"
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Scene/Editor/TransformChain.h"
 #include "Scene/Scene.h"

@@ -13,14 +13,14 @@
 namespace traktor::ai
 {
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.ai.NavMeshComponentEditorFactory", NavMeshComponentEditorFactory, scene::IWorldComponentEditorFactory)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.ai.NavMeshComponentEditorFactory", NavMeshComponentEditorFactory, scene::IComponentPanelEditorFactory)
 
 const TypeInfoSet NavMeshComponentEditorFactory::getComponentDataTypes() const
 {
 	return makeTypeInfoSet< NavMeshComponentData >();
 }
 
-Ref< scene::IWorldComponentEditor > NavMeshComponentEditorFactory::createComponentEditor(const TypeInfo& componentDataType) const
+Ref< scene::IComponentPanelEditor > NavMeshComponentEditorFactory::createComponentPanelEditor(const TypeInfo& componentDataType) const
 {
 	return new NavMeshComponentEditor();
 }

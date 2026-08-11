@@ -17,7 +17,12 @@
 namespace traktor::ai
 {
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.ai.NavMeshComponentEditor", NavMeshComponentEditor, scene::IWorldComponentEditor)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.ai.NavMeshComponentEditor", NavMeshComponentEditor, scene::IComponentPanelEditor)
+
+std::wstring NavMeshComponentEditor::getTitle() const
+{
+	return L"Navigation mesh";
+}
 
 bool NavMeshComponentEditor::create(scene::SceneEditorContext* context, ui::Container* parent)
 {

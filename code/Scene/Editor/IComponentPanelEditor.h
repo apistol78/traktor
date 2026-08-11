@@ -10,6 +10,8 @@
 
 #include "Core/Object.h"
 
+#include <string>
+
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_SCENE_EDITOR_EXPORT)
@@ -39,14 +41,24 @@ namespace traktor::scene
 class SceneEditorContext;
 class EntityAdapter;
 
-/*! World component editor interface.
+/*! Component panel editor interface.
+ *
+ * An editor of a component, either a world component or an entity component,
+ * which need more elaborate editing than the property view can offer. Such
+ * an editor is presented in its own page of the component panel, and can
+ * also draw guides in the 3d views.
+ *
  * \ingroup Scene
  */
-class T_DLLCLASS IWorldComponentEditor : public Object
+class T_DLLCLASS IComponentPanelEditor : public Object
 {
 	T_RTTI_CLASS;
 
 public:
+	/*! Title of editor as presented to the user. */
+	virtual std::wstring getTitle() const = 0;
+
+	/*! Create editor UI; an editor which doesn't create any UI will not get a page in the component panel. */
 	virtual bool create(SceneEditorContext* context, ui::Container* parent) = 0;
 
 	virtual void destroy() = 0;

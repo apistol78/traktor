@@ -8,7 +8,9 @@
  */
 #pragma once
 
+#include "Core/Containers/AlignedVector.h"
 #include "Core/Containers/CircularVector.h"
+#include "Core/Containers/SmallSet.h"
 #include "Editor/IEditorPage.h"
 #include "Ui/Events/AllEvents.h"
 
@@ -118,7 +120,7 @@ private:
 	Ref< ui::Menu > m_entityMenuDefault;
 	Ref< ui::Menu > m_entityMenuGroup;
 	Ref< ui::Menu > m_entityMenuExternal;
-	Ref< ui::Container > m_controllerPanel;
+	Ref< ui::Tab > m_componentPanel;
 	Ref< editor::PropertiesView > m_propertiesView;
 	Ref< ui::ToolBar > m_entityToolBar;
 	Ref< ui::ToolBarButton > m_buttonFilterEntity;
@@ -134,11 +136,15 @@ private:
 	Ref< ui::Font > m_instanceGridFontBold;
 	Ref< ui::Font > m_instanceGridFontHuge;
 	const TypeInfo* m_entityFilterType = nullptr;
+	AlignedVector< const TypeInfo* > m_componentPanelEditorTypes;
+	bool m_componentPanelEditorsCreated = false;
 	CircularVector< double, 256 > m_measurementVariance[64];
 
 	bool createSceneAsset();
 
-	void createControllerEditor();
+	void getComponentDataTypes(SmallSet< const TypeInfo* >& outComponentDataTypes) const;
+
+	void createComponentPanelEditors();
 
 	void updateScene();
 

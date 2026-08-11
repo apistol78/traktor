@@ -78,9 +78,9 @@ void SceneEditorPlugin::createEntityRenderers(
 	outEntityRenderers.push_back(new EntityRenderer());
 }
 
-void SceneEditorPlugin::createControllerEditorFactories(
+void SceneEditorPlugin::createComponentPanelEditorFactories(
 	scene::SceneEditorContext* context,
-	RefArray< const scene::IWorldComponentEditorFactory >& outComponentEditorFactories) const
+	RefArray< const scene::IComponentPanelEditorFactory >& outComponentEditorFactories) const
 {
 }
 

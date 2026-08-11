@@ -9,7 +9,7 @@
 #pragma once
 
 #include "Core/Ref.h"
-#include "Scene/Editor/IWorldComponentEditor.h"
+#include "Scene/Editor/IComponentPanelEditor.h"
 
 namespace traktor::ai
 {
@@ -17,11 +17,13 @@ namespace traktor::ai
 /*! Navigation mesh component editor.
  * \ingroup AI
  */
-class NavMeshComponentEditor : public scene::IWorldComponentEditor
+class NavMeshComponentEditor : public scene::IComponentPanelEditor
 {
 	T_RTTI_CLASS;
 
 public:
+	virtual std::wstring getTitle() const override final;
+
 	virtual bool create(scene::SceneEditorContext* context, ui::Container* parent) override final;
 
 	virtual void destroy() override final;
