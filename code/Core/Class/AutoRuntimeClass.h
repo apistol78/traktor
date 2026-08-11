@@ -20,14 +20,6 @@
 #include "Core/Misc/Align.h"
 #include "Core/Misc/TString.h"
 
-// import/export mechanism.
-#undef T_DLLCLASS
-#if defined(T_CORE_EXPORT)
-#	define T_DLLCLASS T_DLLEXPORT
-#else
-#	define T_DLLCLASS T_DLLIMPORT
-#endif
-
 namespace traktor
 {
 
@@ -44,7 +36,7 @@ namespace traktor
  * time.
  */
 template < typename ClassType >
-class T_DLLCLASS AutoRuntimeClass final : public RuntimeClass
+class AutoRuntimeClass final : public RuntimeClass
 {
 public:
 	T_NO_COPY_CLASS(AutoRuntimeClass);
