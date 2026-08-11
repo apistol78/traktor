@@ -41,6 +41,8 @@
 #include "World/Entity/ProbeComponentData.h"
 #include "World/Entity/ScriptComponent.h"
 #include "World/Entity/ScriptComponentData.h"
+#include "World/Entity/ScriptEvent.h"
+#include "World/Entity/ScriptEventData.h"
 #include "World/Entity/VolumeComponent.h"
 #include "World/Entity/VolumeComponentData.h"
 #include "World/Entity/ComputeTextureComponent.h"
@@ -76,7 +78,7 @@ const TypeInfoSet WorldEntityFactory::getEntityTypes() const
 
 const TypeInfoSet WorldEntityFactory::getEntityEventTypes() const
 {
-	return makeTypeInfoSet< DecalEventData >();
+	return makeTypeInfoSet< DecalEventData, ScriptEventData >();
 }
 
 const TypeInfoSet WorldEntityFactory::getEntityComponentTypes() const
@@ -181,6 +183,10 @@ Ref< IEntityEvent > WorldEntityFactory::createEntityEvent(const IEntityBuilder* 
 		if (m_resourceManager->bind(decalData->getShader(), decal->m_shader))
 			return decal;
 	}
+
+	if (auto scriptEventData = dynamic_type_cast< const ScriptEventData* >(&entityEventData))
+		return new ScriptEvent(scriptEventData->getMethod());
+
 	return nullptr;
 }
 
