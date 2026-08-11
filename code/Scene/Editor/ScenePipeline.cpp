@@ -263,11 +263,7 @@ bool ScenePipeline::buildOutput(
 					pipelineBuilder->buildProduct(sourceInstance, assetEntityData)
 				);
 				if (outputEntityData)
-				{
-					// Move dynamic state from layer to child.
-					outputEntityData->setState(layer->getState(), world::EntityState::Dynamic);
 					groupComponentData->addEntityData(outputEntityData);
-				}
 			}
 		}
 
