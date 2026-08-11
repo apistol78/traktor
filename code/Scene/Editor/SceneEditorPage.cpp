@@ -120,6 +120,16 @@ constexpr int32_t c_instanceGridDynamic = 1;
 constexpr int32_t c_instanceGridVisible = 2;
 constexpr int32_t c_instanceGridLocked = 3;
 
+/*! Distance, in front of camera, where new entities are placed. */
+constexpr float c_placementDistance = 4.0f;
+
+/*! Get world position in front of camera. */
+Vector4 getPlacementPosition(const Camera* camera)
+{
+	const Matrix44 Mworld = camera->getWorld().toMatrix44() * translate(0.0f, 0.0f, c_placementDistance);
+	return Mworld.translation().xyz1();
+}
+
 bool isChildEntitySelected(const EntityAdapter* entityAdapter)
 {
 	for (auto child : entityAdapter->getChildren())
@@ -623,8 +633,7 @@ bool SceneEditorPage::dropInstance(db::Instance* instance, const ui::Point& posi
 		const Camera* camera = m_context->getCamera(viewIndex);
 		T_ASSERT(camera);
 
-		const Matrix44 Mworld = camera->getWorld().toMatrix44() * translate(0.0f, 0.0f, 4.0f);
-		entityAdapter->setTransform(Transform(Mworld.translation()));
+		entityAdapter->setTransform(Transform(getPlacementPosition(camera)));
 
 		// Finally add adapter to parent group.
 		parentGroupAdapter->addChild(nullptr, entityAdapter);
@@ -730,12 +739,31 @@ bool SceneEditorPage::handleCommand(const ui::Command& command)
 		if (entityDatas.empty())
 			return false;
 
+		// Calculate center of all entities in clipboard.
+		Vector4 center = Vector4::zero();
+		for (auto entityData : entityDatas)
+			center += entityData->getTransform().translation();
+		center /= Scalar((float)entityDatas.size());
+
+		// Offset which move center of pasted entities in front of perspective
+		// camera, thus preserving relative offsets between entities.
+		const Camera* camera = m_context->getCamera(0);
+		T_ASSERT(camera);
+
+		const Vector4 offset = (getPlacementPosition(camera) - center).xyz0();
+
 		m_context->getDocument()->push();
 
 		// Create new instances and adapters for each entity found in clipboard.
 		for (auto entityData : entityDatas)
 		{
 			generateEntityIds(entityData);
+
+			const Transform transform = entityData->getTransform();
+			entityData->setTransform(Transform(
+				transform.translation() + offset,
+				transform.rotation()
+			));
 
 			Ref< EntityAdapter > entityAdapter = new EntityAdapter(m_context);
 			entityAdapter->prepare(entityData, nullptr);
