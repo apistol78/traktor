@@ -244,6 +244,9 @@ void WorldClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	auto classEntity = new AutoRuntimeClass< Entity >();
 	classEntity->addProperty("world", &Entity::getWorld);
 	classEntity->addProperty("name", &Entity::getName);
+	classEntity->addProperty("visible", &Entity::setVisible, &Entity::isVisible);
+	classEntity->addProperty("dynamic", &Entity::setDynamic, &Entity::isDynamic);
+	classEntity->addProperty("locked", &Entity::setLocked, &Entity::isLocked);
 	classEntity->addProperty("transform", &Entity_setTransform, &Entity_getTransform);
 	classEntity->addProperty("boundingBox", &Entity::getBoundingBox);
 	classEntity->addMethod("destroy", &Entity::destroy);
