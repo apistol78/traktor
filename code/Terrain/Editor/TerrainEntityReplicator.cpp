@@ -58,6 +58,9 @@ Ref< model::Model > TerrainEntityReplicator::createModel(
 	Usage usage
 ) const
 {
+	if (usage != Usage::Visual)
+		return nullptr;
+
 	const TerrainComponentData* terrainComponentData = mandatory_non_null_type_cast< const TerrainComponentData* >(componentData);
 	const resource::Id< terrain::Terrain >& terrain = terrainComponentData->getTerrain();
 
