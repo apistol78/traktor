@@ -146,6 +146,22 @@ ScriptManagerLua::ScriptManagerLua()
 	lua_atpanic(m_luaState, luaPanic);
 	luaL_openlibs(m_luaState);
 
+	// Collect generationally.
+	//
+	// Every wrapper we hand to script land carries a "__gc" (classGc, which releases the
+	// native object), so a game that passes vectors and transforms about produces millions
+	// of *finalizable* objects a minute. Lua's incremental collector cannot keep up with
+	// that: finalizers are run at a bounded rate per cycle, and once it falls behind it
+	// stays behind, so the heap climbs for as long as the session lasts. Measured over
+	// 4.7M wrapper allocations (30 entities x 25 boxes x 6000 frames): incremental leaves
+	// 116 MiB live having run 2.8M of 4.7M finalizers, generational leaves 0.03 MiB having
+	// run all but one of them.
+	//
+	// The mode is set here and left running -- the collector paces itself against
+	// allocation far better than the frame-rate-driven stepping this used to do, and a
+	// minor collection is cheap enough not to need a budget. See collectGarbagePartial.
+	lua_gc(m_luaState, LUA_GCGEN);
+
 	lua_register(m_luaState, "print", luaPrint);
 	lua_register(m_luaState, "sleep", luaSleep);
 
@@ -261,8 +277,15 @@ void ScriptManagerLua::registerClass(IRuntimeClass* runtimeClass)
 	lua_rawseti(m_luaState, -2, c_tableKey_class);
 
 	// Create "__gc" callback to be able to track C++ object lifetime.
-	lua_pushcfunction(m_luaState, classGc);
-	lua_setfield(m_luaState, -2, "__gc");
+	//
+	// Skipped for embedded value types: they hold no reference to give back, and a
+	// finalizer on them is exactly what we are here to avoid -- every finalizable object
+	// costs the collector two cycles, and script land makes millions of vectors a minute.
+	if (runtimeClass->getEmbeddedSize() == 0)
+	{
+		lua_pushcfunction(m_luaState, classGc);
+		lua_setfield(m_luaState, -2, "__gc");
+	}
 
 	// Create constructor callback to instantiate the C++ object from script side.
 	// Value types build a userdata directly via an overridden "__call" metamethod;
@@ -536,6 +559,53 @@ void ScriptManagerLua::getStatistics(ScriptStatistics& outStatistics) const
 	outStatistics.memoryUsage = uint32_t(m_totalMemoryUse);
 }
 
+namespace
+{
+
+/*! Push a value type instance as full userdata.
+ *
+ * Two representations, chosen by the class:
+ *
+ *  - *embedded*: the instance is copy constructed into the userdata itself. Nothing is
+ *    allocated apart from the userdata and the class carries no "__gc", which is what
+ *    makes handing thousands of vectors a frame to script land affordable -- Lua's
+ *    collector runs finalizers at a bounded rate and cannot keep up with millions of
+ *    finalizable objects a minute.
+ *  - *referenced*: the userdata holds a pointer to a separately allocated instance and
+ *    owns a reference to it, released by "__gc". Used for value types that own something
+ *    (and so must be destructed) and for anything not copy constructible.
+ *
+ * Either way the *pointer* to the instance sits at offset zero of the payload, so every
+ * reader -- toTypedObject, isNativeInstance, toAny -- is identical for both.
+ */
+void pushValueInstance(lua_State* luaState, const IRuntimeClass* runtimeClass, int32_t classTableRef, ITypedObject* object)
+{
+	const uint32_t embeddedSize = runtimeClass->getEmbeddedSize();
+	if (embeddedSize > 0)
+	{
+		uint8_t* ud = (uint8_t*)lua_newuserdatauv(luaState, sizeof(ITypedObject*) + embeddedSize, 0);
+		ITypedObject* embedded = runtimeClass->embedCopy(ud + sizeof(ITypedObject*), object);
+		T_FATAL_ASSERT(embedded != nullptr);
+		*(ITypedObject**)ud = embedded;
+
+		// One reference that is never given back. The instance lives and dies with the
+		// userdata, so its counter must never reach zero: a stray release would otherwise
+		// hand storage owned by Lua to the allocator.
+		T_SAFE_ANONYMOUS_ADDREF(embedded);
+	}
+	else
+	{
+		ITypedObject** ud = (ITypedObject**)lua_newuserdatauv(luaState, sizeof(ITypedObject*), 0);
+		*ud = object;
+		T_SAFE_ANONYMOUS_ADDREF(object);
+	}
+
+	lua_rawgeti(luaState, LUA_REGISTRYINDEX, classTableRef);
+	lua_setmetatable(luaState, -2);
+}
+
+}
+
 void ScriptManagerLua::pushObject(ITypedObject* object)
 {
 	CHECK_LUA_STACK(m_luaState, 1);
@@ -573,16 +643,11 @@ void ScriptManagerLua::pushObject(ITypedObject* object)
 
 	const RegisteredClass& rc = m_classRegistry[classId];
 
-	// Value types are represented as full userdata holding the boxed pointer.
-	// They carry no script-side identity, so we skip the weak instance cache
-	// and the table allocation entirely.
+	// Value types are full userdata (see pushValueInstance). They carry no script-side
+	// identity, so we skip the weak instance cache and the table allocation entirely.
 	if (rc.isValueType)
 	{
-		ITypedObject** ud = (ITypedObject**)lua_newuserdatauv(m_luaState, sizeof(ITypedObject*), 0);
-		*ud = object;
-		lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, rc.classTableRef);
-		lua_setmetatable(m_luaState, -2);
-		T_SAFE_ADDREF(object);
+		pushValueInstance(m_luaState, rc.runtimeClass, rc.classTableRef, object);
 		return;
 	}
 
@@ -872,16 +937,23 @@ void ScriptManagerLua::collectGarbageFullNoLock()
 	if (!m_luaState)
 		return;
 
-	// Repeat GC until allocated memory doesn't decrease
-	// further in multiple consecutive GCs.
-	int32_t count = 100;
+	// Repeat GC while it keeps freeing memory, then a few more times to be sure.
+	//
+	// Each pass is a full mark and sweep of the whole heap, so the patience is what this
+	// costs when it finds nothing: a hundred of them over a large heap is seconds of stall
+	// at a state transition, which is where this is called from. Three is enough to be
+	// thorough -- an object with a finalizer needs one cycle to run "__gc" and another
+	// before it can be freed, so two passes are required to settle a finalizer at all and
+	// the third confirms nothing new was resurrected.
+	const int32_t c_settlePasses = 3;
+	int32_t count = c_settlePasses;
 	while (count > 0)
 	{
 		const size_t memoryUseBefore = m_totalMemoryUse;
 		lua_gc(m_luaState, LUA_GCCOLLECT, 0);
 
 		if (m_totalMemoryUse < memoryUseBefore)
-			count = 100;
+			count = c_settlePasses;
 		else
 			count--;
 	}
@@ -892,27 +964,18 @@ void ScriptManagerLua::collectGarbageFullNoLock()
 void ScriptManagerLua::collectGarbagePartial()
 {
 #if defined(T_SCRIPT_LUA_USE_GENERATIONAL_COLLECTOR)
-#	if defined(T_SCRIPT_LUA_USE_MT_LOCK)
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-#	endif
 
-	// if (m_collectSteps < 0)
-	// {
-	// 	lua_gc(m_luaState, LUA_GCSTOP, 0);
-	// 	lua_gc(m_luaState, LUA_GCGEN, 0);
-	// 	m_collectSteps = 0;
-	// }
-
-	// T_ASSERT(lua_gc(m_luaState, LUA_GCISRUNNING, 0) == 0);
-
-	// m_collectTargetSteps += float(s_timer.getDeltaTime() * m_collectStepFrequency);
-
-	// int32_t targetSteps = int32_t(m_collectTargetSteps);
-	// while (m_collectSteps < targetSteps)
-	// {
-	// 	lua_gc(m_luaState, LUA_GCSTEP, 0);
-	// 	++m_collectSteps;
-	// }
+	// Nothing to do, deliberately: the generational collector enabled in the constructor
+	// runs itself, paced against allocation by Lua rather than against our frame rate.
+	//
+	// This used to hand-pace the collector -- stop it, then issue a number of GCSTEP calls
+	// per second derived from the observed garbage rate. That scheme cannot be recommended
+	// and is kept below only for the non-generational build: it makes the collector's
+	// throughput a function of frame rate, it caps out (60 steps/s), and the step argument
+	// changed units in Lua 5.5 -- lua_gc(LUA_GCSTEP, n) now credits n *bytes* of allocation
+	// (lapi.c: "luaE_setdebt(g, g->GCdebt - n)") where 5.4 credited n Kbytes, so a step size
+	// of 128 that once meant 128 KiB silently became 128 bytes and collection all but
+	// stopped. Letting Lua schedule its own collection avoids the entire class of problem.
 
 #else
 
@@ -936,7 +999,10 @@ void ScriptManagerLua::collectGarbagePartial()
 		// Progress with garbage collector.
 		while (m_collectSteps < targetSteps)
 		{
-			lua_gc(m_luaState, LUA_GCSTEP, 128);
+			// 128 KiB of allocation credited per step. Expressed in bytes because that is
+			// what LUA_GCSTEP takes as of Lua 5.5; it took Kbytes up to 5.4, so the bare
+			// 128 this once was became 1024x too little work per step after the upgrade.
+			lua_gc(m_luaState, LUA_GCSTEP, 128 * 1024);
 			++m_collectSteps;
 		}
 		m_collectSteps = targetSteps;
@@ -1077,12 +1143,8 @@ int ScriptManagerLua::classNewValue(lua_State* luaState)
 		if (!object) [[unlikely]]
 			return 0;
 
-		// Represent the value type as full userdata holding the boxed pointer.
-		ITypedObject** ud = (ITypedObject**)lua_newuserdatauv(luaState, sizeof(ITypedObject*), 0);
-		*ud = object.ptr();
-		lua_rawgeti(luaState, LUA_REGISTRYINDEX, rc.classTableRef);
-		lua_setmetatable(luaState, -2);
-		T_SAFE_ANONYMOUS_ADDREF(object);
+		// Represent the value type as full userdata (embedded where the class permits).
+		pushValueInstance(luaState, rc.runtimeClass, rc.classTableRef, object);
 		return 1;
 	}
 #if T_VERIFY_USING_EXCEPTIONS

@@ -38,6 +38,12 @@ public:
 	/*! */
 	virtual bool isValueType() const override final;
 
+	/*! */
+	virtual uint32_t getEmbeddedSize() const override final;
+
+	/*! */
+	virtual ITypedObject* embedCopy(void* storage, const ITypedObject* source) const override final;
+
 	/*! \name Constants */
 	/*! \{ */
 
@@ -96,7 +102,11 @@ protected:
 		Ref< IRuntimeDispatch > getter;
 	};
 
+	typedef ITypedObject* (*embed_copy_fn_t)(void* storage, const ITypedObject* source);
+
 	bool m_valueType = false;
+	uint32_t m_embeddedSize = 0;
+	embed_copy_fn_t m_embedCopy = nullptr;
 	uint32_t m_constructorArgc = 0;
 	Ref< IRuntimeDispatch > m_constructor;
 	AlignedVector< ConstInfo > m_consts;
@@ -104,6 +114,8 @@ protected:
 	AlignedVector< MethodInfo > m_staticMethods;
 	AlignedVector< PropertyInfo > m_properties;
 	Ref< IRuntimeDispatch > m_operators[(int32_t)Operator::Count];
+
+	void setEmbeddedValue(uint32_t size, embed_copy_fn_t copy);
 
 	void addConstructor(uint32_t argc, IRuntimeDispatch* constructor);
 

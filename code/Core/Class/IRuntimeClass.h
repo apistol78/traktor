@@ -90,13 +90,19 @@ public:
 	/*! Get math operator. */
 	virtual const IRuntimeDispatch* getOperatorDispatch(Operator op) const = 0;
 
-	/*! Check if instances are immutable value types.
-	 *
-	 * Value types don't require reference identity nor script-side field
-	 * attachment and may therefore be represented more efficiently in
-	 * script land.
-	 */
+	/*! Check if instances are immutable value types. */
 	virtual bool isValueType() const = 0;
+
+	/*! Storage required to embed an instance, in bytes, or 0 if instances cannot be embedded. */
+	virtual uint32_t getEmbeddedSize() const { return 0; }
+
+	/*! Copy construct an instance into caller provided storage.
+	 *
+	 * \param storage At least getEmbeddedSize() bytes, owned by the caller.
+	 * \param source Instance to copy.
+	 * \return The embedded instance.
+	 */
+	virtual ITypedObject* embedCopy(void* storage, const ITypedObject* source) const { return nullptr; }
 };
 
 /*!

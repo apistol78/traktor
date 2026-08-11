@@ -18,9 +18,28 @@ void RuntimeClass::setValueType(bool valueType)
 	m_valueType = valueType;
 }
 
+void RuntimeClass::setEmbeddedValue(uint32_t size, embed_copy_fn_t copy)
+{
+	m_valueType = true;
+	m_embeddedSize = size;
+	m_embedCopy = copy;
+}
+
 bool RuntimeClass::isValueType() const
 {
 	return m_valueType;
+}
+
+uint32_t RuntimeClass::getEmbeddedSize() const
+{
+	return m_embeddedSize;
+}
+
+ITypedObject* RuntimeClass::embedCopy(void* storage, const ITypedObject* source) const
+{
+	if (m_embedCopy == nullptr || storage == nullptr || source == nullptr)
+		return nullptr;
+	return m_embedCopy(storage, source);
 }
 
 void RuntimeClass::addConstant(const std::string& name, const Any& value)

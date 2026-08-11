@@ -49,7 +49,7 @@ void BoxedClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classBoxed);
 
 	auto classBoxedAabb2 = new AutoRuntimeClass< BoxedAabb2 >();
-	classBoxedAabb2->setValueType();
+	classBoxedAabb2->setEmbeddedValueType();
 	classBoxedAabb2->addConstructor();
 	classBoxedAabb2->addConstructor< const BoxedVector2*, const BoxedVector2* >();
 	classBoxedAabb2->addProperty("min", &BoxedAabb2::min);
@@ -62,7 +62,7 @@ void BoxedClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classBoxedAabb2);
 
 	auto classBoxedAabb3 = new AutoRuntimeClass< BoxedAabb3 >();
-	classBoxedAabb3->setValueType();
+	classBoxedAabb3->setEmbeddedValueType();
 	classBoxedAabb3->addConstructor();
 	classBoxedAabb3->addConstructor< const BoxedVector4*, const BoxedVector4* >();
 	classBoxedAabb3->addProperty("min", &BoxedAabb3::min);
@@ -98,7 +98,7 @@ void BoxedClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classBoxedAlignedVector);
 
 	auto classBoxedBezier2nd = new AutoRuntimeClass< BoxedBezier2nd >();
-	classBoxedBezier2nd->setValueType();
+	classBoxedBezier2nd->setEmbeddedValueType();
 	classBoxedBezier2nd->addConstructor();
 	classBoxedBezier2nd->addConstructor< const BoxedVector2*, const BoxedVector2*, const BoxedVector2* >();
 	classBoxedBezier2nd->addProperty("cp0", &BoxedBezier2nd::cp0);
@@ -115,7 +115,7 @@ void BoxedClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classBoxedBezier2nd);
 
 	auto classBoxedBezier3rd = new AutoRuntimeClass< BoxedBezier3rd >();
-	classBoxedBezier3rd->setValueType();
+	classBoxedBezier3rd->setEmbeddedValueType();
 	classBoxedBezier3rd->addConstructor();
 	classBoxedBezier3rd->addConstructor< const BoxedVector2*, const BoxedVector2*, const BoxedVector2*, const BoxedVector2* >();
 	classBoxedBezier3rd->addProperty("cp0", &BoxedBezier3rd::cp0);
@@ -131,7 +131,7 @@ void BoxedClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classBoxedBezier3rd);
 
 	auto classBoxedColor4f = new AutoRuntimeClass< BoxedColor4f >();
-	classBoxedColor4f->setValueType();
+	classBoxedColor4f->setEmbeddedValueType();
 	classBoxedColor4f->addConstructor();
 	classBoxedColor4f->addConstructor< float, float, float >();
 	classBoxedColor4f->addConstructor< float, float, float, float >();
@@ -156,7 +156,7 @@ void BoxedClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classBoxedColor4f);
 
 	auto classBoxedColor4ub = new AutoRuntimeClass< BoxedColor4ub >();
-	classBoxedColor4ub->setValueType();
+	classBoxedColor4ub->setEmbeddedValueType();
 	classBoxedColor4ub->addConstructor();
 	classBoxedColor4ub->addConstructor< uint8_t, uint8_t, uint8_t >();
 	classBoxedColor4ub->addConstructor< uint8_t, uint8_t, uint8_t, uint8_t >();
@@ -170,7 +170,7 @@ void BoxedClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classBoxedColor4ub);
 
 	auto classBoxedFrustum = new AutoRuntimeClass< BoxedFrustum >();
-	classBoxedFrustum->setValueType();
+	classBoxedFrustum->setEmbeddedValueType();
 	classBoxedFrustum->addConstructor();
 	classBoxedFrustum->addProperty("nearZ", &BoxedFrustum::setNearZ, &BoxedFrustum::getNearZ);
 	classBoxedFrustum->addProperty("farZ", &BoxedFrustum::setFarZ, &BoxedFrustum::getFarZ);
@@ -185,7 +185,7 @@ void BoxedClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classBoxedFrustum);
 
 	auto classBoxedGuid = new AutoRuntimeClass< BoxedGuid >();
-	classBoxedGuid->setValueType();
+	classBoxedGuid->setEmbeddedValueType();
 	classBoxedGuid->addConstructor();
 	classBoxedGuid->addConstructor< const std::wstring& >();
 	classBoxedGuid->addStaticMethod("create", &BoxedGuid::create);
@@ -197,13 +197,13 @@ void BoxedClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classBoxedGuid);
 
 	auto classBoxedIntervalTransform = new AutoRuntimeClass< BoxedIntervalTransform >();
-	classBoxedIntervalTransform->setValueType();
+	classBoxedIntervalTransform->setEmbeddedValueType();
 	classBoxedIntervalTransform->addConstructor();
 	classBoxedIntervalTransform->addMethod("get", &BoxedIntervalTransform::get);
 	registrar->registerClass(classBoxedIntervalTransform);
 
 	auto classBoxedMatrix33 = new AutoRuntimeClass< BoxedMatrix33 >();
-	classBoxedMatrix33->setValueType();
+	classBoxedMatrix33->setEmbeddedValueType();
 	classBoxedMatrix33->addConstructor();
 	classBoxedMatrix33->addConstant("zero", CastAny< Matrix33 >::set(Matrix33::zero()));
 	classBoxedMatrix33->addConstant("identity", CastAny< Matrix33 >::set(Matrix33::identity()));
@@ -223,7 +223,7 @@ void BoxedClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classBoxedMatrix33);
 
 	auto classBoxedMatrix44 = new AutoRuntimeClass< BoxedMatrix44 >();
-	classBoxedMatrix44->setValueType();
+	classBoxedMatrix44->setEmbeddedValueType();
 	classBoxedMatrix44->addConstructor();
 	classBoxedMatrix44->addConstructor< const BoxedVector4*, const BoxedVector4*, const BoxedVector4*, const BoxedVector4* >();
 	classBoxedMatrix44->addConstant("zero", CastAny< Matrix44 >::set(Matrix44::zero()));
@@ -260,7 +260,7 @@ void BoxedClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classBoxedMatrix44);
 
 	auto classBoxedPlane = new AutoRuntimeClass< BoxedPlane >();
-	classBoxedPlane->setValueType();
+	classBoxedPlane->setEmbeddedValueType();
 	classBoxedPlane->addConstructor();
 	classBoxedPlane->addConstructor< const Plane& >();
 	classBoxedPlane->addConstructor< const Vector4&, float >();
@@ -282,7 +282,7 @@ void BoxedClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classBoxedPointer);
 
 	auto classBoxedQuaternion = new AutoRuntimeClass< BoxedQuaternion >();
-	classBoxedQuaternion->setValueType();
+	classBoxedQuaternion->setEmbeddedValueType();
 	classBoxedQuaternion->addConstructor();
 	classBoxedQuaternion->addConstructor< float, float, float, float >();
 	classBoxedQuaternion->addConstructor< const BoxedVector4*, float >();
@@ -323,6 +323,8 @@ void BoxedClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classBoxedRandomGeometry);
 
 	auto classBoxedRange = new AutoRuntimeClass< BoxedRange >();
+	// Referenced rather than embedded: a range holds its bounds as Any, which may own an
+	// object reference, so this one has a destructor that has to run.
 	classBoxedRange->setValueType();
 	classBoxedRange->addConstructor();
 	classBoxedRange->addProperty("min", &BoxedRange::min);
@@ -330,7 +332,7 @@ void BoxedClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classBoxedRange);
 
 	auto classBoxedRay3 = new AutoRuntimeClass< BoxedRay3 >();
-	classBoxedRay3->setValueType();
+	classBoxedRay3->setEmbeddedValueType();
 	classBoxedRay3->addConstructor();
 	classBoxedRay3->addConstructor< const Ray3& >();
 	classBoxedRay3->addProperty("origin", &BoxedRay3::origin);
@@ -354,7 +356,7 @@ void BoxedClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classBoxedRefArray);
 
 	auto classBoxedSphere = new AutoRuntimeClass< BoxedSphere >();
-	classBoxedSphere->setValueType();
+	classBoxedSphere->setEmbeddedValueType();
 	classBoxedSphere->addConstructor();
 	classBoxedSphere->addConstructor< const Vector4&, float >();
 	classBoxedSphere->addProperty("center", &BoxedSphere::setCenter, &BoxedSphere::center);
@@ -380,7 +382,7 @@ void BoxedClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classBoxedStdVector);
 
 	auto classBoxedTransform = new AutoRuntimeClass< BoxedTransform >();
-	classBoxedTransform->setValueType();
+	classBoxedTransform->setEmbeddedValueType();
 	classBoxedTransform->addConstructor();
 	classBoxedTransform->addConstructor< const BoxedVector4*, const BoxedQuaternion* >();
 	classBoxedTransform->addConstructor< const BoxedMatrix44* >();
@@ -414,7 +416,7 @@ void BoxedClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classBoxedTypeInfo);
 
 	auto classBoxedVector2 = new AutoRuntimeClass< BoxedVector2 >();
-	classBoxedVector2->setValueType();
+	classBoxedVector2->setEmbeddedValueType();
 	classBoxedVector2->addConstructor();
 	classBoxedVector2->addConstructor< float, float >();
 	classBoxedVector2->addConstant("zero", CastAny< Vector2 >::set(Vector2::zero()));
@@ -439,7 +441,7 @@ void BoxedClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classBoxedVector2);
 
 	auto classBoxedVector4 = new AutoRuntimeClass< BoxedVector4 >();
-	classBoxedVector4->setValueType();
+	classBoxedVector4->setEmbeddedValueType();
 	classBoxedVector4->addConstructor();
 	classBoxedVector4->addConstructor< float, float, float >();
 	classBoxedVector4->addConstructor< float, float, float, float >();
