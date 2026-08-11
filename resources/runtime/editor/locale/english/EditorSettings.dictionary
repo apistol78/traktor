@@ -34,10 +34,6 @@
 			<second>Build after browe instance</second>
 		</item>
 		<item>
-			<first>EDITOR_SETTINGS_BUILD_AT_EDIT_INSTANCE</first>
-			<second>Build asset before editing</second>
-		</item>
-		<item>
 			<first>EDITOR_SETTINGS_BUILD_WHEN_ASSET_MODIFIED</first>
 			<second>Build when asset modified</second>
 		</item>
@@ -98,10 +94,6 @@
 			<second>Shader compiler</second>
 		</item>
 		<item>
-			<first>EDITOR_SETTINGS_DEPENDENT_MODULES</first>
-			<second>Modules</second>
-		</item>
-		<item>
 			<first>EDITOR_SETTINGS_DICTIONARY</first>
 			<second>Dictionary</second>
 		</item>
@@ -114,24 +106,8 @@
 			<second>General</second>
 		</item>
 		<item>
-			<first>EDITOR_SETTINGS_HOME_URL</first>
-			<second>Home URL</second>
-		</item>
-		<item>
 			<first>EDITOR_SETTINGS_MODULES</first>
 			<second>Modules</second>
-		</item>
-		<item>
-			<first>EDITOR_SETTINGS_OPEN_DATABASE_AT_STARTUP</first>
-			<second>Open database at startup</second>
-		</item>
-		<item>
-			<first>EDITOR_SETTINGS_OPEN_INSTANCES_AT_STARTUP</first>
-			<second>Open instances at startup</second>
-		</item>
-		<item>
-			<first>EDITOR_SETTINGS_OPEN_LAST_PROJECT</first>
-			<second>Open last project at startup</second>
 		</item>
 		<item>
 			<first>EDITOR_SETTINGS_OUTPUT_DATABASE</first>
@@ -140,14 +116,6 @@
 		<item>
 			<first>EDITOR_SETTINGS_PIPELINE</first>
 			<second>Pipeline</second>
-		</item>
-		<item>
-			<first>EDITOR_SETTINGS_PIPELINE_BUILD_DISTRIBUTED</first>
-			<second>Use distributed build</second>
-		</item>
-		<item>
-			<first>EDITOR_SETTINGS_PIPELINE_BUILD_THREADS</first>
-			<second>Use multiple build threads</second>
 		</item>
 		<item>
 			<first>EDITOR_SETTINGS_PIPELINE_CACHE_READ</first>
@@ -170,16 +138,8 @@
 			<second>Use file cache</second>
 		</item>
 		<item>
-			<first>EDITOR_SETTINGS_PIPELINE_USE_DEPENDENCY_CACHE</first>
-			<second>Use dependency cache</second>
-		</item>
-		<item>
 			<first>EDITOR_SETTINGS_PIPELINE_VERBOSE</first>
 			<second>Verbose scanning and building</second>
-		</item>
-		<item>
-			<first>EDITOR_SETTINGS_PROPERTY_HELP_VISIBLE</first>
-			<second>Help section visible in property view</second>
 		</item>
 		<item>
 			<first>EDITOR_SETTINGS_SHOW_NEW_LOG_TARGETS</first>
@@ -316,22 +276,6 @@
 		<item>
 			<first>EDITOR_SETTINGS_STYLESHEET</first>
 			<second>Style sheet</second>
-		</item>
-		<item>
-			<first>EDITOR_SETTINGS_STYLESHEET_DARK</first>
-			<second>Dark</second>
-		</item>
-		<item>
-			<first>EDITOR_SETTINGS_STYLESHEET_LIGHT</first>
-			<second>Light</second>
-		</item>
-        <item>
-            <first>EDITOR_SETTINGS_STYLESHEET_MONOKAI</first>
-            <second>Monokai</second>
-        </item>
-		<item>
-			<first>EDITOR_SETTINGS_STYLESHEET_ORANGE</first>
-			<second>Orange</second>
 		</item>
 		<item>
 			<first>EDITOR_SETTINGS_SYSTEM_ROOT</first>

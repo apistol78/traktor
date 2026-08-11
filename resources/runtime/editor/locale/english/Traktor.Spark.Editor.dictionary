@@ -41,13 +41,5 @@
       <first>FLASH_EDITOR_STOP</first>
       <second>Stop</second>
     </item>
-    <item>
-      <first>IMPORT_FLASH_DESCRIPTION</first>
-      <second>Flash...</second>
-    </item>
-    <item>
-      <first>IMPORT_FLASH_TITLE</first>
-      <second>Choose flash movie</second>
-    </item>
   </map>
 </object>

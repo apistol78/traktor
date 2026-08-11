@@ -2,10 +2,6 @@
 <object type="traktor.i18n.Dictionary">
 	<map>
 		<item>
-			<first>IMPORT_SOUND_DESCRIPTION</first>
-			<second>Sound...</second>
-		</item>
-		<item>
 			<first>SOUND_BATCH_REMOVE</first>
 			<second>Remove sounds</second>
 		</item>
@@ -54,6 +50,14 @@
 			<second>Even horizontally</second>
 		</item>
 		<item>
+			<first>SOUND_PROCESSOR_EDITOR_PLAY</first>
+			<second>Play</second>
+		</item>
+		<item>
+			<first>SOUND_PROCESSOR_EDITOR_STOP</first>
+			<second>Stop</second>
+		</item>
+		<item>
 			<first>SOUND_PROCESSOR_EDITOR_CREATE_NODE</first>
 			<second>Create...</second>
 		</item>
@@ -80,10 +84,6 @@
 		<item>
 			<first>SOUND_PROCESSOR_NODE_FILTER</first>
 			<second>Filter</second>
-		</item>
-		<item>
-			<first>SOUND_PROCESSOR_NODE_MODULATE</first>
-			<second>Modulate</second>
 		</item>
 		<item>
 			<first>SOUND_PROCESSOR_NODE_MULTIPLY</first>

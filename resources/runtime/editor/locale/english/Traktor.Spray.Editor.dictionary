@@ -6,14 +6,6 @@
 			<second>Add layer</second>
 		</item>
 		<item>
-			<first>EFFECT_EDITOR_BROWSE_BACKGROUND</first>
-			<second>Browse background...</second>
-		</item>
-		<item>
-			<first>EFFECT_EDITOR_BROWSE_POSTPROCESS</first>
-			<second>Browse postprocess...</second>
-		</item>
-		<item>
 			<first>EFFECT_EDITOR_PLAY</first>
 			<second>Play</second>
 		</item>
@@ -42,12 +34,12 @@
 			<second>Timeline</second>
 		</item>
 		<item>
-			<first>EFFECT_EDITOR_TOGGLE_GUIDE</first>
-			<second>Show guide lines</second>
+			<first>EFFECT_EDITOR_TOGGLE_GRID</first>
+			<second>Show grid</second>
 		</item>
 		<item>
-			<first>EFFECT_EDITOR_TOGGLE_MOVE</first>
-			<second>Move emitter</second>
+			<first>EFFECT_EDITOR_TOGGLE_GUIDE</first>
+			<second>Show guide lines</second>
 		</item>
 	</map>
 </object>

@@ -6,92 +6,12 @@
 			<second>Generate C++ struct</second>
 		</item>
 		<item>
-			<first>IMPORT_TEXTURE_DESCRIPTION</first>
-			<second>Texture...</second>
-		</item>
-		<item>
-			<first>IMPORT_TEXTURE_ENABLE_COMPRESSION</first>
-			<second>Enable compression</second>
-		</item>
-		<item>
-			<first>IMPORT_TEXTURE_GENERATE_MIPS</first>
-			<second>Generate mipmaps</second>
-		</item>
-		<item>
-			<first>IMPORT_TEXTURE_GENERATE_NORMALMAP</first>
-			<second>Generate normalmap</second>
-		</item>
-		<item>
-			<first>IMPORT_TEXTURE_IGNORE_ALPHA</first>
-			<second>Ignore alpha</second>
-		</item>
-		<item>
-			<first>IMPORT_TEXTURE_IS_CUBEMAP</first>
-			<second>Is cubemap</second>
-		</item>
-		<item>
-			<first>IMPORT_TEXTURE_KEEP_ZERO_ALPHA</first>
-			<second>Keep zero alpha when generating mipmaps</second>
-		</item>
-		<item>
-			<first>IMPORT_TEXTURE_LINEAR_GAMMA</first>
-			<second>Linear gamma</second>
-		</item>
-		<item>
-			<first>IMPORT_TEXTURE_SCALE_DEPTH</first>
-			<second>Scale depth</second>
-		</item>
-		<item>
-			<first>IMPORT_TEXTURE_SCALE_IMAGE</first>
-			<second>Scale image</second>
-		</item>
-		<item>
-			<first>IMPORT_TEXTURE_TITLE</first>
-			<second>Import texture</second>
-		</item>
-		<item>
-			<first>POSTPROCESS_EDITOR_ADD_STEP</first>
-			<second>Add step</second>
-		</item>
-		<item>
-			<first>POSTPROCESS_EDITOR_ADD_TARGET_DEFINITION</first>
-			<second>Add target</second>
-		</item>
-		<item>
-			<first>POSTPROCESS_EDITOR_ADD_TEXTURE_DEFINITION</first>
-			<second>Add texture</second>
-		</item>
-		<item>
-			<first>POSTPROCESS_EDITOR_DESCRIPTION</first>
-			<second>Description</second>
-		</item>
-		<item>
-			<first>POSTPROCESS_EDITOR_ID</first>
-			<second>Id</second>
-		</item>
-		<item>
-			<first>POSTPROCESS_EDITOR_MOVE_DOWN</first>
-			<second>Move down</second>
-		</item>
-		<item>
-			<first>POSTPROCESS_EDITOR_MOVE_UP</first>
-			<second>Move up</second>
-		</item>
-		<item>
-			<first>POSTPROCESS_EDITOR_ORDER</first>
-			<second>Order</second>
-		</item>
-		<item>
-			<first>POSTPROCESS_EDITOR_REMOVE_DEFINITION</first>
-			<second>Remove</second>
-		</item>
-		<item>
-			<first>POSTPROCESS_EDITOR_REMOVE_STEP</first>
-			<second>Remove step</second>
-		</item>
-		<item>
 			<first>RENDER_SHADER_WIZARDTOOL_DESCRIPTION</first>
 			<second>Create shader from template...</second>
+		</item>
+		<item>
+			<first>RENDER_SHADER_WIZARDTOOL_EMPTY</first>
+			<second>(None)</second>
 		</item>
 		<item>
 			<first>RENDER_SHADER_WIZARDTOOL_DIALOG_MESSAGE</first>
@@ -226,16 +146,16 @@
 			<second>Even horizonally</second>
 		</item>
 		<item>
+			<first>SHADERGRAPH_ERROR_MISSING_FRAGMENT_CAPTION</first>
+			<second>Missing fragment</second>
+		</item>
+		<item>
+			<first>SHADERGRAPH_ERROR_MISSING_FRAGMENT_MESSAGE</first>
+			<second>Unable to read fragment; fragment is missing from database.</second>
+		</item>
+		<item>
 			<first>SHADERGRAPH_EVEN_VERTICALLY</first>
 			<second>Even vertically</second>
-		</item>
-		<item>
-			<first>SHADERGRAPH_EXTERNAL_FRAGMENT_MISMATCH_MESSAGE</first>
-			<second>External node(s) mismatch; update external node(s)?</second>
-		</item>
-		<item>
-			<first>SHADERGRAPH_EXTERNAL_FRAGMENT_MISMATCH_TITLE</first>
-			<second>External mismatch</second>
 		</item>
 		<item>
 			<first>SHADERGRAPH_FIND_IN_DATABASE</first>
@@ -256,10 +176,6 @@
 		<item>
 			<first>SHADERGRAPH_NO_DEPENDENCY_TRACKER_ERROR</first>
 			<second>No dependency tracker, unable to list referees.</second>
-		</item>
-		<item>
-			<first>SHADERGRAPH_NODE_TYPE</first>
-			<second>Type</second>
 		</item>
 		<item>
 			<first>SHADERGRAPH_NODE_COUNT</first>
@@ -638,6 +554,10 @@
 			<second>Permutation</second>
 		</item>
 		<item>
+			<first>SHADERGRAPH_PRETTIFY</first>
+			<second>Prettify graph</second>
+		</item>
+		<item>
 			<first>SHADERGRAPH_RENDERER_PERMUTATION</first>
 			<second>Renderer permutation</second>
 		</item>
@@ -653,66 +573,6 @@
             <first>SHADERGRAPH_RESOLVE_BUNDLES</first>
             <second>Resolve bundles</second>
         </item>
-        <item>
-			<first>SHADERGRAPH_SAMPLER</first>
-			<second>Sampler</second>
-		</item>
-		<item>
-			<first>SHADERGRAPH_SCRIPT_EDIT</first>
-			<second>Edit script</second>
-		</item>
-		<item>
-			<first>SHADERGRAPH_SCRIPT_INPUT</first>
-			<second>Input</second>
-		</item>
-		<item>
-			<first>SHADERGRAPH_SCRIPT_OUTPUT</first>
-			<second>Output</second>
-		</item>
-		<item>
-			<first>SHADERGRAPH_SCRIPT_TYPE</first>
-			<second>Type</second>
-		</item>
-		<item>
-			<first>SHADERGRAPH_SCRIPT_SAMPLER</first>
-			<second>Sampler</second>
-		</item>
-		<item>
-			<first>SHADERGRAPH_SCRIPT_ADD_PIN</first>
-			<second>(Add pin)</second>
-		</item>
-		<item>
-			<first>SHADERGRAPH_SCRIPT_UNNAMED</first>
-			<second>Unnamed</second>
-		</item>
-		<item>
-			<first>SHADERGRAPH_SCRIPT_TYPE_SCALAR</first>
-			<second>Scalar</second>
-		</item>
-		<item>
-			<first>SHADERGRAPH_SCRIPT_TYPE_VECTOR</first>
-			<second>Vector</second>
-		</item>
-		<item>
-			<first>SHADERGRAPH_SCRIPT_TYPE_MATRIX</first>
-			<second>Matrix</second>
-		</item>
-		<item>
-			<first>SHADERGRAPH_SCRIPT_TYPE_TEXTURE_2D</first>
-			<second>Texture 2D</second>
-		</item>
-		<item>
-			<first>SHADERGRAPH_SCRIPT_TYPE_TEXTURE_3D</first>
-			<second>Texture 3D</second>
-		</item>
-		<item>
-			<first>SHADERGRAPH_SCRIPT_TYPE_TEXTURE_CUBE</first>
-			<second>Texture Cube</second>
-		</item>
-		<item>
-			<first>SHADERGRAPH_SCRIPT_TYPE_STRUCT_BUFFER</first>
-			<second>Struct Buffer</second>
-		</item>
         <item>
             <first>SHADERGRAPH_SWIZZLED_PERMUTATION</first>
             <second>Swizzled permutation</second>
@@ -750,18 +610,6 @@
 			<second>Pixel</second>
 		</item>
         <item>
-            <first>SHADERGRAPH_VIEWER_RAYGEN</first>
-            <second>RayGen</second>
-        </item>
-        <item>
-            <first>SHADERGRAPH_VIEWER_RAYHIT</first>
-            <second>RayHit</second>
-        </item>
-        <item>
-            <first>SHADERGRAPH_VIEWER_RAYMISS</first>
-            <second>RayMiss</second>
-        </item>
-        <item>
 			<first>SHADERGRAPH_VIEWER_TECHNIQUE</first>
 			<second>Technique</second>
 		</item>
@@ -786,24 +634,8 @@
 			<second>Variables</second>
 		</item>
 		<item>
-			<first>SHADERGRAPH_VARIABLES_GLOBAL</first>
-			<second>Global</second>
-		</item>
-		<item>
-			<first>SHADERGRAPH_VARIABLES_LOCAL</first>
-			<second>Local</second>
-		</item>
-		<item>
 			<first>SHADERGRAPH_VARIABLES_NAME</first>
 			<second>Name</second>
-		</item>
-		<item>
-			<first>SHADERGRAPH_VARIABLES_SCOPE</first>
-			<second>Scope</second>
-		</item>
-		<item>
-			<first>SHADERGRAPH_VARIABLES_SCOPE_ERROR</first>
-			<second>Scope error</second>
 		</item>
 		<item>
 			<first>SHADERGRAPH_VARIABLES_N_READ</first>
@@ -888,10 +720,6 @@
 		<item>
 			<first>TEXTURE_BATCH_WIZARDTOOL_DESCRIPTION</first>
 			<second>Import texture batch...</second>
-		</item>
-		<item>
-			<first>TEXTURE_EDITOR_COLOR</first>
-			<second>Texture color</second>
 		</item>
 		<item>
 			<first>IMAGEGRAPH_CENTER</first>

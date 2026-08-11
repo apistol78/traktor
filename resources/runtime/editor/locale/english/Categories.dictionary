@@ -22,10 +22,6 @@
 			<second>Target</second>
 		</item>
 		<item>
-			<first>TRAKTOR_ANIMATION_ANIMATEDMESHENTITYDATA</first>
-			<second>Animated mesh entity</second>
-		</item>
-		<item>
 			<first>TRAKTOR_ANIMATION_ANIMATION</first>
 			<second>Animation</second>
 		</item>
@@ -62,10 +58,6 @@
 			<second>Heightfield</second>
 		</item>
 		<item>
-			<first>TRAKTOR_HF_MATERIALMASKASSET</first>
-			<second>Heightfield material mask</second>
-		</item>
-		<item>
 			<first>TRAKTOR_HF_OCCLUSIONTEXTUREASSET</first>
 			<second>Heightfield occlusion texture</second>
 		</item>
@@ -78,16 +70,8 @@
 			<second>Input mapping</second>
 		</item>
 		<item>
-			<first>TRAKTOR_MESH_LODMESHENTITYDATA</first>
-			<second>LOD mesh entity</second>
-		</item>
-		<item>
 			<first>TRAKTOR_MESH_MESHASSET</first>
 			<second>Mesh</second>
-		</item>
-		<item>
-			<first>TRAKTOR_MESH_MESHENTITYDATA</first>
-			<second>Mesh entity</second>
 		</item>
 		<item>
 			<first>TRAKTOR_ONLINE_GCGAMECONFIGURATION</first>
@@ -162,10 +146,6 @@
 			<second>Effect</second>
 		</item>
 		<item>
-			<first>TRAKTOR_SPRAY_EFFECTENTITYDATA</first>
-			<second>Effect entity</second>
-		</item>
-		<item>
 			<first>TRAKTOR_SPRAY_POINTSETASSET</first>
 			<second>Effect point set</second>
 		</item>
@@ -208,10 +188,6 @@
 		<item>
 			<first>TRAKTOR_SOUND_GRAPHASSET</first>
 			<second>Sound graph</second>
-		</item>
-		<item>
-			<first>TRAKTOR_SHAPE_BAKECONFIGURATION</first>
-			<second>Lightmap configuration</second>
 		</item>
 		<item>
 			<first>TRAKTOR_RENDER_IMAGEGRAPHASSET</first>

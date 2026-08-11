@@ -66,6 +66,10 @@
 			<second>Rest</second>
 		</item>
 		<item>
+			<first>MODEL_TOOL_RELOAD</first>
+			<second>Reload</second>
+		</item>
+		<item>
 			<first>MODEL_TOOL_MATERIALS</first>
 			<second>Materials</second>
 		</item>
@@ -106,10 +110,6 @@
 			<second>Normal map</second>
 		</item>
 		<item>
-			<first>MODEL_TOOL_MATERIAL_LIGHT_MAP</first>
-			<second>Light map</second>
-		</item>
-		<item>
 			<first>MODEL_TOOL_MATERIAL_COLOR</first>
 			<second>Color</second>
 		</item>
@@ -140,10 +140,6 @@
 		<item>
 			<first>MODEL_TOOL_MATERIAL_REFLECTIVE</first>
 			<second>Reflective</second>
-		</item>
-		<item>
-			<first>MODEL_TOOL_MATERIAL_RIM_LIGHT</first>
-			<second>Rim light</second>
 		</item>
 		<item>
 			<first>MODEL_TOOL_MATERIAL_BLEND_OPERATOR</first>

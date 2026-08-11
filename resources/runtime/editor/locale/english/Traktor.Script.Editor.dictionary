@@ -30,10 +30,6 @@
       <second>Script debugger...</second>
     </item>
     <item>
-      <first>SCRIPT_EDITOR_ADD_DEPENDENCY</first>
-      <second>Add dependency</second>
-    </item>
-    <item>
       <first>SCRIPT_EDITOR_ADD_USING</first>
       <second>Add #using...</second>
     </item>
@@ -48,10 +44,6 @@
     <item>
       <first>SCRIPT_EDITOR_CONTINUE</first>
       <second>Continue</second>
-    </item>
-    <item>
-      <first>SCRIPT_EDITOR_DEBUGGER</first>
-      <second>Debugger</second>
     </item>
     <item>
       <first>SCRIPT_EDITOR_DEBUG_COPY_LOCAL_VALUE</first>
@@ -82,24 +74,8 @@
       <second>Script</second>
     </item>
     <item>
-      <first>SCRIPT_EDITOR_DEPENDENCIES</first>
-      <second>Dependencies</second>
-    </item>
-    <item>
-      <first>SCRIPT_EDITOR_DEPENDENTS</first>
-      <second>Dependents</second>
-    </item>
-    <item>
       <first>SCRIPT_EDITOR_EXPLORER</first>
       <second>Explorer</second>
-    </item>
-    <item>
-      <first>SCRIPT_EDITOR_MOVE_DEPENDENCY_DOWN</first>
-      <second>Move dependency down</second>
-    </item>
-    <item>
-      <first>SCRIPT_EDITOR_MOVE_DEPENDENCY_UP</first>
-      <second>Move dependency up</second>
     </item>
     <item>
       <first>SCRIPT_EDITOR_OUTLINE</first>
@@ -112,14 +88,6 @@
     <item>
       <first>SCRIPT_EDITOR_OUTLINE_NAME</first>
       <second>Name</second>
-    </item>
-    <item>
-      <first>SCRIPT_EDITOR_REMOVE_ALL_BREAKPOINTS</first>
-      <second>Remove all breakpoints</second>
-    </item>
-    <item>
-      <first>SCRIPT_EDITOR_REMOVE_DEPENDENCY</first>
-      <second>Remove dependency</second>
     </item>
     <item>
       <first>SCRIPT_EDITOR_STATUS_OTHER_ERROR</first>
@@ -140,10 +108,6 @@
     <item>
       <first>SCRIPT_EDITOR_STEP_OVER</first>
       <second>Step over</second>
-    </item>
-    <item>
-      <first>SCRIPT_EDITOR_TOGGLE_COMMENTS</first>
-      <second>Toggle comments</second>
     </item>
     <item>
       <first>SCRIPT_PROFILER_CLEAR_SAMPLES</first>

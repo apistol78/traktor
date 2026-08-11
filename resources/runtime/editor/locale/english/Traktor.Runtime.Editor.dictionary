@@ -122,10 +122,6 @@
 			<second>Collision mesh</second>
 		</item>
 		<item>
-			<first>GAMEENTITY_WIZARD_CREATE_GROUP</first>
-			<second>Create into group entity</second>
-		</item>
-		<item>
 			<first>GAMEENTITY_WIZARD_CREATE_SCRIPT</first>
 			<second>Create script</second>
 		</item>
@@ -229,10 +225,6 @@
 		<item>
 			<first>RUNTIME_SETTINGS_AUTO_BUILD_RUNNING_TARGETS</first>
 			<second>Auto-build running targets</second>
-		</item>
-		<item>
-			<first>RUNTIME_SETTINGS_VERBOSE_RESOURCE_MANAGER</first>
-			<second>Verbose resource manager</second>
 		</item>
 		<item>
 			<first>RUNTIME_SETTINGS_ANDROID_SDK_HOME</first>

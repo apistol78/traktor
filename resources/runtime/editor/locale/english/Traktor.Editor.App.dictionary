@@ -26,28 +26,12 @@
 			<second>Global</second>
 		</item>
 		<item>
-			<first>BROWSE_TYPE_ICON</first>
-			<second>Icon</second>
-		</item>
-		<item>
-			<first>BROWSE_TYPE_SMALL</first>
-			<second>Small</second>
-		</item>
-		<item>
 			<first>BROWSE_TYPE_TITLE</first>
 			<second>Select type</second>
 		</item>
 		<item>
 			<first>BROWSE_TYPE_TYPES</first>
 			<second>Types</second>
-		</item>
-		<item>
-			<first>BUILDING_ASSETS_MESSAGE</first>
-			<second>Building assets...</second>
-		</item>
-		<item>
-			<first>BUILDING_ASSETS_TITLE</first>
-			<second>Building</second>
 		</item>
 		<item>
 			<first>CLOSE</first>
@@ -60,22 +44,6 @@
 		<item>
 			<first>COLOR_DIALOG_TEXT</first>
 			<second>Pick color</second>
-		</item>
-		<item>
-			<first>CONVERT_DATABASE_CONVERTING_MESSAGE</first>
-			<second>Converting database...</second>
-		</item>
-		<item>
-			<first>CONVERT_DATABASE_CONVERTING_TITLE</first>
-			<second>Converting database</second>
-		</item>
-		<item>
-			<first>CONVERT_DATABASE_DESCRIPTION</first>
-			<second>Convert database</second>
-		</item>
-		<item>
-			<first>CROP_HEIGHTFIELD_WIZARDTOOL_DESCRIPTION</first>
-			<second>Crop heightfield...</second>
 		</item>
 		<item>
 			<first>CROP_HEIGHTFIELD_WIZARDTOOL_MESSAGE</first>
@@ -174,40 +142,8 @@
 			<second>Filter instance&apos;s type</second>
 		</item>
 		<item>
-			<first>DATABASE_IMPORT</first>
-			<second>Import</second>
-		</item>
-		<item>
-			<first>DATABASE_IMPORT_DIALOG_TITLE</first>
-			<second>Import</second>
-		</item>
-		<item>
-			<first>DATABASE_IMPORT_IMPORTING_MESSAGE</first>
-			<second>Importing...</second>
-		</item>
-		<item>
-			<first>DATABASE_IMPORT_IMPORTING_TITLE</first>
-			<second>Importing</second>
-		</item>
-		<item>
-			<first>DATABASE_INSTANCE_NAME</first>
-			<second>Name</second>
-		</item>
-		<item>
-			<first>DATABASE_INSTANCE_TYPE</first>
-			<second>Type</second>
-		</item>
-		<item>
 			<first>DATABASE_LIST_DEPENDENTS</first>
 			<second>List dependents...</second>
-		</item>
-		<item>
-			<first>DATABASE_LOADING_MESSAGE</first>
-			<second>Loading database...</second>
-		</item>
-		<item>
-			<first>DATABASE_LOADING_TITLE</first>
-			<second>Loading</second>
 		</item>
 		<item>
 			<first>DATABASE_NEW_GROUP</first>
@@ -220,10 +156,6 @@
 		<item>
 			<first>DATABASE_NEW_INSTANCE</first>
 			<second>New instance...</second>
-		</item>
-		<item>
-			<first>DATABASE_OPEN_DIALOG_TITLE</first>
-			<second>Choose databas</second>
 		</item>
 		<item>
 			<first>DATABASE_OPEN_IN_NEW_EDITOR</first>
@@ -246,14 +178,6 @@
 			<second>Replace instance...</second>
 		</item>
 		<item>
-			<first>DATABASE_SHOW_EDITABLE</first>
-			<second>Show editable</second>
-		</item>
-		<item>
-			<first>DATABASE_SYSTEM</first>
-			<second>System</second>
-		</item>
-		<item>
 			<first>DATABASE_TOGGLE_AS_FAVORITE</first>
 			<second>Toggle favorite</second>
 		</item>
@@ -266,16 +190,8 @@
 			<second>Remove entire group from favorites</second>
 		</item>
 		<item>
-			<first>DATABASE_USER</first>
-			<second>User</second>
-		</item>
-		<item>
 			<first>DATABASE_VIEW_MODE</first>
 			<second>View mode</second>
-		</item>
-		<item>
-			<first>DATABASE_VIEW_MODE_CATEGORY</first>
-			<second>Category</second>
 		</item>
 		<item>
 			<first>DATABASE_VIEW_MODE_HIERARCHY</first>
@@ -306,10 +222,6 @@
       <second>Copy dependencies as dot graph</second>
     </item>
 		<item>
-			<first>EDITOR_ABOUT_TITLE</first>
-			<second>About</second>
-		</item>
-		<item>
 			<first>EDITOR_BROWSE_FILE</first>
 			<second>Choose file</second>
 		</item>
@@ -320,10 +232,6 @@
 		<item>
 			<first>EDITOR_BROWSE_WORKSPACE</first>
 			<second>Choose workspace</second>
-		</item>
-		<item>
-			<first>EDITOR_HOME</first>
-			<second>Home</second>
 		</item>
 		<item>
 			<first>EDITOR_NEW_WORKSPACE_NAME</first>
@@ -402,16 +310,8 @@
 			<second>Workspace</second>
 		</item>
 		<item>
-			<first>ERROR_MESSAGE_UNABLE_TO_OPEN_DATABASE</first>
-			<second>Unable to open database {0}</second>
-		</item>
-		<item>
 			<first>ERROR_MESSAGE_UNABLE_TO_SAVE_DOCUMENT</first>
 			<second>Unable to save document, possibly write-protected</second>
-		</item>
-		<item>
-			<first>ERROR_TITLE_UNABLE_TO_OPEN_DATABASE</first>
-			<second>Unable to open database</second>
 		</item>
 		<item>
 			<first>ERROR_TITLE_UNABLE_TO_SAVE_DOCUMENT</first>
@@ -498,24 +398,12 @@
 			<second>File</second>
 		</item>
 		<item>
-			<first>MENU_FILE_CLOSE_PROJECT</first>
-			<second>Close project</second>
-		</item>
-		<item>
 			<first>MENU_FILE_EXIT</first>
 			<second>Exit</second>
 		</item>
 		<item>
-			<first>MENU_FILE_NEW_PROJECT</first>
-			<second>New project...</second>
-		</item>
-		<item>
 			<first>MENU_FILE_NEW_WORKSPACE</first>
 			<second>New workspace...</second>
-		</item>
-		<item>
-			<first>MENU_FILE_OPEN_PROJECT</first>
-			<second>Open project...</second>
 		</item>
 		<item>
 			<first>MENU_FILE_OPEN_RECENT_WORKSPACE</first>
@@ -542,14 +430,6 @@
 			<second>Save all</second>
 		</item>
 		<item>
-			<first>MENU_HELP</first>
-			<second>Help</second>
-		</item>
-		<item>
-			<first>MENU_HELP_ABOUT</first>
-			<second>About...</second>
-		</item>
-		<item>
 			<first>MENU_TOOLS</first>
 			<second>Tools</second>
 		</item>
@@ -560,14 +440,6 @@
 		<item>
 			<first>MENU_VIEW_DATABASE</first>
 			<second>Database</second>
-		</item>
-		<item>
-			<first>MENU_VIEW_HEAP</first>
-			<second>Heap</second>
-		</item>
-		<item>
-			<first>MENU_VIEW_HOME</first>
-			<second>Home</second>
 		</item>
 		<item>
 			<first>MENU_VIEW_LOG</first>
@@ -598,16 +470,8 @@
 			<second>Global</second>
 		</item>
 		<item>
-			<first>NEW_INSTANCE_ICON</first>
-			<second>Icon</second>
-		</item>
-		<item>
 			<first>NEW_INSTANCE_NAME</first>
 			<second>Name</second>
-		</item>
-		<item>
-			<first>NEW_INSTANCE_SMALL</first>
-			<second>Small</second>
 		</item>
 		<item>
 			<first>NEW_INSTANCE_TITLE</first>
@@ -658,18 +522,6 @@
 			<second>Building assets...</second>
 		</item>
 		<item>
-			<first>STATUS_BUILDING_ASSET</first>
-			<second>{0}</second>
-		</item>
-		<item>
-			<first>STATUS_COLLECTING_DEPENDENCIES</first>
-			<second>Collecting dependencies...</second>
-		</item>
-		<item>
-			<first>STATUS_FINDING_PIPELINES</first>
-			<second>Finding pipelines...</second>
-		</item>
-		<item>
 			<first>STATUS_FINISHED</first>
 			<second>Finished</second>
 		</item>
@@ -690,20 +542,8 @@
 			<second>Edit</second>
 		</item>
 		<item>
-			<first>TITLE_BUILD</first>
-			<second>Build</second>
-		</item>
-		<item>
 			<first>TITLE_DATABASE</first>
 			<second>Database</second>
-		</item>
-		<item>
-			<first>TITLE_LOG</first>
-			<second>Log</second>
-		</item>
-		<item>
-			<first>TITLE_TOOLS</first>
-			<second>Tools</second>
 		</item>
 		<item>
 			<first>TITLE_OUTPUT</first>
@@ -732,10 +572,6 @@
 		<item>
 			<first>TOOLBAR_PASTE</first>
 			<second>Paste</second>
-		</item>
-		<item>
-			<first>TOOLBAR_REBUILD</first>
-			<second>Rebuild assets</second>
 		</item>
 		<item>
 			<first>TOOLBAR_REDO</first>
