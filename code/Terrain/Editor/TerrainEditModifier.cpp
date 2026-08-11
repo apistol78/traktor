@@ -416,7 +416,7 @@ bool TerrainEditModifier::activate()
 	{
 		for (int32_t u = 0; u < size; ++u)
 		{
-			m_cutData[u + v * size] = m_heightfield->getGridCut(u, v) ? 0x00 : 0xff;
+			m_cutData[u + v * size] = m_heightfield->getGridCut(u, v) ? 0xff : 0x00;
 		}
 	}
 
@@ -949,7 +949,7 @@ void TerrainEditModifier::apply(const Vector4& center)
 			{
 				for (int32_t u = mnx; u <= mxx; ++u)
 				{
-					m_cutData[u + v * size] = hf->getGridCut(u, v) ? 0x00 : 0xff;
+					m_cutData[u + v * size] = hf->getGridCut(u, v) ? 0xff : 0x00;
 				}
 			}
 
