@@ -19,6 +19,7 @@
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyInteger.h"
 #include "Core/Settings/PropertyString.h"
+#include "Core/Thread/JobManager.h"
 #include "Database/Instance.h"
 #include "Editor/IPipelineBuilder.h"
 #include "Editor/IPipelineDepends.h"
@@ -167,50 +168,62 @@ bool NavMeshPipeline::buildOutput(
 	Aabb3 navMaximumBounds;
 	float oceanHeight = -std::numeric_limits< float >::max();
 	bool oceanClip = false;
+	RefArray< Job > jobs;
 
 	scene::Traverser::visit(sourceData, [&](const world::EntityData* entityData) -> scene::Traverser::Result {
 		// Dynamic layers do not get included in nav.
 		if (!entityData->getState().visible || entityData->getState().dynamic)
 			return scene::Traverser::Result::Skip;
 
-		Ref< model::Model > model;
-		for (auto componentData : entityData->getComponents())
-		{
-			// Find model synthesizer which can generate from current component.
-			const world::IEntityReplicator* entityReplicator = m_entityReplicators[&type_of(componentData)];
-			if (entityReplicator)
+		Ref< Job > job = JobManager::getInstance().add([=, this, &navModels, &navMaximumBounds, &oceanHeight, &oceanClip]() {
+			Ref< model::Model > model;
+			for (auto componentData : entityData->getComponents())
 			{
-				if ((model = entityReplicator->createModel(pipelineBuilder, entityData, componentData, world::IEntityReplicator::Usage::Collision)) != nullptr)
-					break;
+				// Find model synthesizer which can generate from current component.
+				const world::IEntityReplicator* entityReplicator = m_entityReplicators[&type_of(componentData)];
+				if (entityReplicator)
+				{
+					if ((model = entityReplicator->createModel(pipelineBuilder, entityData, componentData, world::IEntityReplicator::Usage::Collision)) != nullptr)
+						break;
+				}
 			}
-		}
 
-		// Explicitly check for ocean component, need to discard everything below ocean level.
-		if (auto oceanComponentData = entityData->getComponent< terrain::OceanComponentData >())
-		{
-			oceanHeight = max< float >(oceanHeight, entityData->getTransform().translation().y());
-			oceanClip = true;
-		}
+			// Explicitly check for ocean component, need to discard everything below ocean level.
+			if (auto oceanComponentData = entityData->getComponent< terrain::OceanComponentData >())
+			{
+				oceanHeight = max< float >(oceanHeight, entityData->getTransform().translation().y());
+				oceanClip = true;
+			}
 
-		// Check for explicit volume bounds.
-		if (auto volumeComponentData = entityData->getComponent< world::VolumeComponentData >())
-		{
-			if (entityData->getName() == L"NavMesh" && !volumeComponentData->getBoundingBox().empty())
-				navMaximumBounds = volumeComponentData->getBoundingBox();
-		}
+			// Check for explicit volume bounds.
+			if (auto volumeComponentData = entityData->getComponent< world::VolumeComponentData >())
+			{
+				if (entityData->getName() == L"NavMesh" && !volumeComponentData->getBoundingBox().empty())
+					navMaximumBounds = volumeComponentData->getBoundingBox();
+			}
 
-		if (model)
-		{
-			model->apply(model::Triangulate());
-			navModels.push_back(NavMeshSourceModel(
-				model,
-				entityData->getTransform()));
-		}
+			if (model)
+			{
+				model->apply(model::Triangulate());
+				navModels.push_back(NavMeshSourceModel(
+					model,
+					entityData->getTransform()));
+			}
+		});
+		if (!job)
+			return scene::Traverser::Result::Failed;
 
+		jobs.push_back(job);
 		return scene::Traverser::Result::Continue;
 	});
 
-#if 0
+	while (!jobs.empty())
+	{
+		jobs.back()->wait();
+		jobs.pop_back();
+	}
+
+#if 1
 	// Create a merged debug mesh.
 	Ref< model::Model > debugModel = new model::Model();
 	for (const auto& nm : navModels)
@@ -218,7 +231,7 @@ bool NavMeshPipeline::buildOutput(
 		const model::MergeModel mrg(*nm.model, nm.transform, 0.0001f);
 		debugModel->apply(mrg);
 	}
-	model::ModelFormat::writeAny(Path(L"NavMesh.obj"), debugModel);
+	model::ModelFormat::writeAny(Path(L"data/Temp/NavMesh_source.obj"), debugModel);
 #endif
 
 	// Calculate aabb and count.
