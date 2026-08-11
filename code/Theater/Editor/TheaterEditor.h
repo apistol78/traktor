@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,20 +9,21 @@
 #pragma once
 
 #include "Core/Ref.h"
-#include "Scene/Editor/IWorldComponentEditor.h"
+#include "Core/RefArray.h"
+#include "Scene/Editor/IComponentPanelEditor.h"
+#include "Ui/EventSubject.h"
 
-namespace traktor
+namespace traktor::scene
 {
-	namespace scene
-	{
 
 class PostFrameEvent;
 
-	}
+}
 
-	namespace ui
-	{
+namespace traktor::ui
+{
 
+class Container;
 class CursorMoveEvent;
 class KeyMoveEvent;
 class SelectionChangeEvent;
@@ -31,18 +32,27 @@ class ToolBarButtonClickEvent;
 class ToolBarDropDown;
 class SequencerControl;
 
-	}
+}
 
-	namespace theater
-	{
+namespace traktor::theater
+{
 
-/*! Theater component editor
+class ActData;
+class TheaterEditTarget;
+
+/*! Theater editor.
+ *
+ * Edit acts of any theater component of the scene; either the world
+ * component, animating any entity of the scene, or an entity component
+ * animating child entities of a single entity.
  */
-class TheaterComponentEditor : public scene::IWorldComponentEditor
+class TheaterEditor : public scene::IComponentPanelEditor
 {
 	T_RTTI_CLASS;
 
 public:
+	virtual std::wstring getTitle() const override final;
+
 	virtual bool create(scene::SceneEditorContext* context, ui::Container* parent) override final;
 
 	virtual void destroy() override final;
@@ -58,10 +68,28 @@ public:
 	virtual void draw(render::PrimitiveRenderer* primitiveRenderer) override final;
 
 private:
+	Ref< ui::Container > m_container;
+	Ref< ui::ToolBarDropDown > m_dropDownTargets;
 	Ref< ui::ToolBarDropDown > m_dropDownActs;
 	Ref< ui::ToolBar > m_toolBar;
 	Ref< ui::SequencerControl > m_trackSequencer;
 	Ref< scene::SceneEditorContext > m_context;
+	Ref< ui::EventSubject::IEventHandler > m_eventHandlerPostFrame;
+	RefArray< TheaterEditTarget > m_targets;
+	uint32_t m_buildCount = 0;
+	bool m_refreshProperties = false;
+
+	/*! Collect all theater components of the scene. */
+	void updateTargets();
+
+	/*! Get selected target, null if none selected. */
+	TheaterEditTarget* getTarget() const;
+
+	/*! Get selected act, null if no act ("<None>") is selected. */
+	ActData* getAct() const;
+
+	/*! Re-instantiate the selected target after its acts have been modified. */
+	void rebuildTarget();
 
 	void updateView();
 
@@ -90,6 +118,4 @@ private:
 	void eventContextPostFrame(scene::PostFrameEvent* event);
 };
 
-	}
 }
-

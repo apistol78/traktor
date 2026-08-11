@@ -8,8 +8,11 @@
  */
 #pragma once
 
+#include "Core/Ref.h"
 #include "Core/RefArray.h"
 #include "Core/Serialization/ISerializable.h"
+
+#include <string>
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -18,6 +21,13 @@
 #else
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
+
+namespace traktor::world
+{
+
+class IEntityBuilder;
+
+}
 
 namespace traktor::theater
 {
@@ -33,7 +43,13 @@ class T_DLLCLASS ActData : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	Ref< Act > createInstance(float start, float end) const;
+	/*! Create act instance.
+	 *
+	 * \param start Start time of act.
+	 * \param end End time of act.
+	 * \param entityBuilder Builder used to instantiate track events; if null then no events are instantiated.
+	 */
+	Ref< Act > createInstance(float start, float end, const world::IEntityBuilder* entityBuilder) const;
 
 	virtual void serialize(ISerializer& s) override final;
 

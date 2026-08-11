@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,21 +8,21 @@
  */
 #pragma once
 
-#include "Scene/Editor/IWorldComponentEditorFactory.h"
+#include "Scene/Editor/IComponentPanelEditorFactory.h"
 
 namespace traktor::theater
 {
 
 /*!
  */
-class TheaterComponentEditorFactory : public scene::IWorldComponentEditorFactory
+class TheaterEditorFactory : public scene::IComponentPanelEditorFactory
 {
 	T_RTTI_CLASS;
 
 public:
 	virtual const TypeInfoSet getComponentDataTypes() const override final;
 
-	virtual Ref< scene::IWorldComponentEditor > createComponentEditor(const TypeInfo& componentDataType) const override final;
+	virtual Ref< scene::IComponentPanelEditor > createComponentPanelEditor(const TypeInfo& componentDataType) const override final;
 };
 
 }

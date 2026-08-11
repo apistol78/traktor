@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,7 +8,6 @@
  */
 #pragma once
 
-#include "Core/Guid.h"
 #include "Core/Ref.h"
 #include "Core/RefArray.h"
 #include "World/IWorldComponentData.h"
@@ -21,21 +20,28 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
+namespace traktor::world
+{
+
+class IEntityBuilder;
+
+}
+
 namespace traktor::theater
 {
 
 class ActData;
-class TheaterComponent;
+class TheaterWorldComponent;
 
 /*! Theater world component data.
  * \ingroup Theater
  */
-class T_DLLCLASS TheaterComponentData : public world::IWorldComponentData
+class T_DLLCLASS TheaterWorldComponentData : public world::IWorldComponentData
 {
 	T_RTTI_CLASS;
 
 public:
-	Ref< TheaterComponent > createInstance(bool editor) const;
+	Ref< TheaterWorldComponent > createInstance(const world::IEntityBuilder* entityBuilder, bool editor) const;
 
 	virtual void serialize(ISerializer& s) override final;
 
@@ -46,10 +52,9 @@ public:
 	float getActStartTime(int32_t act) const;
 
 private:
-	friend class TheaterComponentPipeline;
+	friend class TheaterWorldComponentPipeline;
 
 	RefArray< ActData > m_acts;
-	bool m_repeatActs = false;
 	bool m_randomizeActs = false;
 };
 

@@ -1,50 +1,53 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Theater/Editor/TheaterWorldComponentPipeline.h"
+
 #include "Core/Log/Log.h"
 #include "Core/Serialization/DeepHash.h"
 #include "Editor/IPipelineBuilder.h"
+#include "Editor/IPipelineDepends.h"
 #include "Theater/ActData.h"
-#include "Theater/TheaterComponentData.h"
+#include "Theater/TheaterWorldComponentData.h"
 #include "Theater/TrackData.h"
-#include "Theater/Editor/TheaterComponentPipeline.h"
 #include "World/EntityData.h"
+#include "World/IEntityEventData.h"
 
 namespace traktor::theater
 {
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.theater.TheaterComponentPipeline", 2, TheaterComponentPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.theater.TheaterWorldComponentPipeline", 2, TheaterWorldComponentPipeline, editor::IPipeline)
 
-bool TheaterComponentPipeline::create(const editor::IPipelineSettings* settings, db::Database* database)
+bool TheaterWorldComponentPipeline::create(const editor::IPipelineSettings* settings, db::Database* database)
 {
 	return true;
 }
 
-void TheaterComponentPipeline::destroy()
+void TheaterWorldComponentPipeline::destroy()
 {
 }
 
-TypeInfoSet TheaterComponentPipeline::getAssetTypes() const
+TypeInfoSet TheaterWorldComponentPipeline::getAssetTypes() const
 {
-	return makeTypeInfoSet< TheaterComponentData >();
+	return makeTypeInfoSet< TheaterWorldComponentData >();
 }
 
-bool TheaterComponentPipeline::shouldCache() const
+bool TheaterWorldComponentPipeline::shouldCache() const
 {
 	return false;
 }
 
-uint32_t TheaterComponentPipeline::hashAsset(const ISerializable* sourceAsset) const
+uint32_t TheaterWorldComponentPipeline::hashAsset(const ISerializable* sourceAsset) const
 {
 	return DeepHash(sourceAsset).get();
 }
 
-bool TheaterComponentPipeline::buildDependencies(
+bool TheaterWorldComponentPipeline::buildDependencies(
 	editor::IPipelineDepends* pipelineDepends,
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,
@@ -52,10 +55,22 @@ bool TheaterComponentPipeline::buildDependencies(
 	const Guid& outputGuid
 ) const
 {
+	const TheaterWorldComponentData* componentData = checked_type_cast< const TheaterWorldComponentData*, false >(sourceAsset);
+
+	// Add dependencies of events issued from tracks.
+	for (auto act : componentData->getActs())
+	{
+		for (auto track : act->getTracks())
+		{
+			for (const auto& eventKey : track->getEvents())
+				pipelineDepends->addDependency(eventKey.event.c_ptr());
+		}
+	}
+
 	return true;
 }
 
-bool TheaterComponentPipeline::buildOutput(
+bool TheaterWorldComponentPipeline::buildOutput(
 	editor::IPipelineBuilder* pipelineBuilder,
 	const editor::PipelineDependencySet* dependencySet,
 	const editor::PipelineDependency* dependency,
@@ -70,18 +85,17 @@ bool TheaterComponentPipeline::buildOutput(
 	return false;
 }
 
-Ref< ISerializable > TheaterComponentPipeline::buildProduct(
+Ref< ISerializable > TheaterWorldComponentPipeline::buildProduct(
 	editor::IPipelineBuilder* pipelineBuilder,
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,
 	const Object* buildParams
 ) const
 {
-	const TheaterComponentData* sourceComponentData = checked_type_cast< const TheaterComponentData*, false >(sourceAsset);
+	const TheaterWorldComponentData* sourceComponentData = checked_type_cast< const TheaterWorldComponentData*, false >(sourceAsset);
 	const RefArray< ActData >& sourceActs = sourceComponentData->getActs();
 
-	Ref< TheaterComponentData > componentData = new TheaterComponentData();
-	componentData->m_repeatActs = sourceComponentData->m_repeatActs;
+	Ref< TheaterWorldComponentData > componentData = new TheaterWorldComponentData();
 	componentData->m_randomizeActs = sourceComponentData->m_randomizeActs;
 
 	RefArray< ActData >& acts = componentData->getActs();

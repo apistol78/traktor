@@ -9,7 +9,7 @@
 #include "Core/Serialization/ISerializable.h"
 #include "Theater/TheaterEntityFactory.h"
 #include "Theater/Editor/TheaterSceneEditorPlugin.h"
-#include "Theater/Editor/TheaterComponentEditorFactory.h"
+#include "Theater/Editor/TheaterEditorFactory.h"
 #include "Ui/Command.h"
 
 namespace traktor::theater
@@ -68,11 +68,11 @@ void TheaterSceneEditorPlugin::createEntityRenderers(
 {
 }
 
-void TheaterSceneEditorPlugin::createControllerEditorFactories(
+void TheaterSceneEditorPlugin::createComponentPanelEditorFactories(
 	scene::SceneEditorContext* context,
-	RefArray< const scene::IWorldComponentEditorFactory >& outComponentEditorFactories) const
+	RefArray< const scene::IComponentPanelEditorFactory >& outComponentEditorFactories) const
 {
-	outComponentEditorFactories.push_back(new TheaterComponentEditorFactory());
+	outComponentEditorFactories.push_back(new TheaterEditorFactory());
 }
 
 void TheaterSceneEditorPlugin::createEntityEditorFactories(

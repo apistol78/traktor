@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,9 +8,10 @@
  */
 #pragma once
 
-#include <string>
-#include "Core/RefArray.h"
+#include "Core/Ref.h"
 #include "World/IWorldComponent.h"
+
+#include <string>
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -23,17 +24,20 @@
 namespace traktor::theater
 {
 
-class Act;
+class Performance;
 
 /*! Theater world component.
+ *
+ * Animate entities of the entire world.
+ *
  * \ingroup Theater
  */
-class T_DLLCLASS TheaterComponent : public world::IWorldComponent
+class T_DLLCLASS TheaterWorldComponent : public world::IWorldComponent
 {
 	T_RTTI_CLASS;
 
 public:
-	explicit TheaterComponent(const RefArray< const Act >& acts, float totalDuration);
+	explicit TheaterWorldComponent(Performance* performance);
 
 	virtual void destroy() override final;
 
@@ -43,16 +47,12 @@ public:
 
 	void stop();
 
-	bool isPlaying() const { return m_act != nullptr; }
+	bool isPlaying() const;
+
+	Performance* getPerformance() const { return m_performance; }
 
 private:
-	friend class TheaterComponentEditor;
-
-	RefArray< const Act > m_acts;
-	double m_totalDuration = 0.0f;
-	const Act* m_act = nullptr;
-	double m_timeStart = -1.0;
-	double m_timeLast = -1.0;
+	Ref< Performance > m_performance;
 };
 
 }

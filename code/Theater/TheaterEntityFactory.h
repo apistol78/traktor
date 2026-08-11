@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2024 Anders Pistol.
+ * Copyright (c) 2024-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -29,7 +29,11 @@ class T_DLLCLASS TheaterEntityFactory : public world::AbstractEntityFactory
 	T_RTTI_CLASS;
 
 public:
+	virtual const TypeInfoSet getEntityComponentTypes() const override final;
+
 	virtual const TypeInfoSet getWorldComponentTypes() const override final;
+
+	virtual Ref< world::IEntityComponent > createEntityComponent(const world::IEntityBuilder* builder, const world::IEntityComponentData& entityComponentData) const override final;
 
 	virtual Ref< world::IWorldComponent > createWorldComponent(const world::IEntityBuilder* builder, const world::IWorldComponentData& worldComponentData) const override final;
 };
