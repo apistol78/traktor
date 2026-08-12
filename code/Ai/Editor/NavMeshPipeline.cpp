@@ -123,6 +123,34 @@ bool NavMeshPipeline::buildDependencies(
 {
 	const NavMeshAsset* asset = mandatory_non_null_type_cast< const NavMeshAsset* >(sourceAsset);
 	pipelineDepends->addDependency(asset->m_source, editor::PdfUse);
+
+	// The navigation mesh is generated from the geometry of the source scene, so every
+	// external entity the scene reference is an input to this build and not merely
+	// something the scene happen to point at. The scene itself declare them PdfBuild
+	// only, which is right for the scene -- it keeps the reference and lets the external
+	// build into an instance of its own -- but the global hash deciding whether to
+	// rebuild only recurse through PdfUse edges, so without adding them here again the
+	// nav mesh is never rebuilt when an external entity is modified.
+	//
+	// Resolved the same way buildOutput does, so the two agree on what was consumed.
+	// Note this walks the scene as authored; entities introduced by scene operators are
+	// covered through the scene's own hash rather than from here.
+	Ref< const ISerializable > sourceData = pipelineDepends->getObjectReadOnly(asset->m_source);
+	if (!sourceData)
+		return true;
+
+	AlignedVector< Guid > externalEntities;
+	world::resolveExternal(
+		[&](const Guid& objectId) -> Ref< const ISerializable > {
+		return pipelineDepends->getObjectReadOnly(objectId);
+	},
+		sourceData,
+		Guid::null,
+		&externalEntities);
+
+	for (const auto& externalEntity : externalEntities)
+		pipelineDepends->addDependency(externalEntity, editor::PdfUse);
+
 	return true;
 }
 

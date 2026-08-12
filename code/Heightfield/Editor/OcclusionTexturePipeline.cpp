@@ -251,6 +251,30 @@ bool OcclusionTexturePipeline::buildDependencies(
 	const OcclusionTextureAsset* asset = checked_type_cast< const OcclusionTextureAsset* >(sourceAsset);
 	pipelineDepends->addDependency(asset->m_occluderData, editor::PdfUse);
 	pipelineDepends->addDependency< render::TextureOutput >();
+
+	// The occluders are flattened into this texture, so every external entity reached is
+	// an input to this build. They are declared PdfBuild where the occluder data itself
+	// reference them -- right there, since the external build into an instance of its own
+	// -- but the global hash deciding whether to rebuild only recurse through PdfUse
+	// edges, so without adding them here again the texture is never rebuilt when an
+	// external entity is modified. Resolved the same way buildOutput does.
+	Ref< const ISerializable > occluderData = pipelineDepends->getObjectReadOnly(asset->m_occluderData);
+	if (!occluderData)
+		return true;
+
+	AlignedVector< Guid > externalEntities;
+	world::resolveExternal(
+		[&](const Guid& objectId) -> Ref< const ISerializable > {
+			return pipelineDepends->getObjectReadOnly(objectId);
+		},
+		occluderData,
+		Guid::null,
+		&externalEntities
+	);
+
+	for (const auto& externalEntity : externalEntities)
+		pipelineDepends->addDependency(externalEntity, editor::PdfUse);
+
 	return true;
 }
 
