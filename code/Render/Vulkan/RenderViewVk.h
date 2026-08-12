@@ -11,6 +11,7 @@
 #include "Core/Containers/AlignedVector.h"
 #include "Core/RefArray.h"
 #include "Core/System.h"
+#include "Core/Thread/Semaphore.h"
 #include "Render/IRenderView.h"
 #include "Render/Vulkan/BufferViewVk.h"
 #include "Render/Vulkan/Private/ApiHeader.h"
@@ -204,7 +205,8 @@ private:
 	VkPresentModeKHR m_presentMode = VK_PRESENT_MODE_FIFO_KHR;
 	uint32_t m_presentQueueFamilyIndex = ~0u;
 
-	// Event queue.
+	// System window event queue.
+	Semaphore m_eventQueueLock;
 	std::list< RenderEvent > m_eventQueue;
 
 	// Render pass cache.

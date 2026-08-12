@@ -16,6 +16,7 @@
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/String.h"
 #include "Core/Misc/TString.h"
+#include "Core/Thread/Acquire.h"
 #include "Core/Timer/Profiler.h"
 #include "Render/ResourceMorgue.h"
 #include "Render/Vulkan/AccelerationStructureVk.h"
@@ -304,6 +305,8 @@ bool RenderViewVk::nextEvent(RenderEvent& outEvent)
 	}
 #endif
 
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_eventQueueLock);
+
 	if (m_eventQueue.empty())
 		return false;
 
@@ -324,7 +327,10 @@ void RenderViewVk::close()
 	m_lost = true;
 
 	// Ensure event queue doesn't contain stale events.
-	m_eventQueue.clear();
+	{
+		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_eventQueueLock);
+		m_eventQueue.clear();
+	}
 
 	// Destroy frame resources.
 	for (auto& frame : m_frames)
@@ -458,7 +464,10 @@ bool RenderViewVk::reset(int32_t width, int32_t height)
 	m_lost = true;
 
 	// Ensure event queue doesn't contain stale events.
-	m_eventQueue.clear();
+	{
+		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_eventQueueLock);
+		m_eventQueue.clear();
+	}
 
 	// Destroy only size-dependent per-frame resources (the primary target owns swap chain image views);
 	// semaphores, command buffers and the query pool are size-independent and reused by create().
@@ -653,7 +662,10 @@ bool RenderViewVk::beginFrame()
 		// its own, so without this the view would keep failing to acquire forever.
 		RenderEvent evt;
 		evt.type = RenderEventType::Lost;
-		m_eventQueue.push_back(evt);
+		{
+			T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_eventQueueLock);
+			m_eventQueue.push_back(evt);
+		}
 		m_lost = true;
 		return false;
 	}
@@ -687,7 +699,10 @@ bool RenderViewVk::beginFrame()
 			// Issue an event in order to reset view.
 			RenderEvent evt;
 			evt.type = RenderEventType::Lost;
-			m_eventQueue.push_back(evt);
+			{
+				T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_eventQueueLock);
+				m_eventQueue.push_back(evt);
+			}
 			m_lost = true;
 
 			log::error << L"Timeout while waiting on graphics command buffer to complete." << Endl;
@@ -720,7 +735,10 @@ bool RenderViewVk::beginFrame()
 			// Issue an event in order to reset view.
 			RenderEvent evt;
 			evt.type = RenderEventType::Lost;
-			m_eventQueue.push_back(evt);
+			{
+				T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_eventQueueLock);
+				m_eventQueue.push_back(evt);
+			}
 			m_lost = true;
 
 			log::error << L"Timeout while waiting on compute command buffer to complete." << Endl;
@@ -836,7 +854,10 @@ void RenderViewVk::present()
 		// Issue an event in order to reset view.
 		RenderEvent evt;
 		evt.type = RenderEventType::Lost;
-		m_eventQueue.push_back(evt);
+		{
+			T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_eventQueueLock);
+			m_eventQueue.push_back(evt);
+		}
 		m_lost = true;
 		return;
 	}
@@ -2319,6 +2340,8 @@ void RenderViewVk::rerecordTimeQueryReset(Frame& frame)
 #if defined(_WIN32)
 bool RenderViewVk::windowListenerEvent(Window* window, UINT message, WPARAM wParam, LPARAM lParam, LRESULT& outResult)
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_eventQueueLock);
+
 	if (message == WM_CLOSE)
 	{
 		RenderEvent evt;
@@ -2334,8 +2357,8 @@ bool RenderViewVk::windowListenerEvent(Window* window, UINT message, WPARAM wPar
 
 		RenderEvent evt;
 		evt.type = RenderEventType::Resize;
-		evt.resize.width = getWidth();
-		evt.resize.height = getHeight();
+		evt.resize.width = window->getWidth();
+		evt.resize.height = window->getHeight();
 		m_eventQueue.push_back(evt);
 	}
 	else if (message == WM_SIZE)

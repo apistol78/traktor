@@ -351,6 +351,9 @@ RenderServer::UpdateResult RenderServerDefault::update(PropertyGroup* settings)
 	if (!m_renderView)
 		return UrSuccess;
 
+	bool fullscreen = m_renderView->isFullScreen();
+	bool reconfigure = false;
+
 	render::RenderEvent evt;
 	while (m_renderView->nextEvent(evt))
 	{
@@ -358,34 +361,23 @@ RenderServer::UpdateResult RenderServerDefault::update(PropertyGroup* settings)
 			return UrTerminate;
 		else if (evt.type == render::RenderEventType::ToggleFullScreen)
 		{
-			// Toggle against the actual state, not the requested one; if the two have
-			// drifted apart, toggling the request could appear to do nothing.
-			settings->setProperty< PropertyBoolean >(L"Render.FullScreen", !m_renderView->isFullScreen());
-			return UrReconfigure;
+			fullscreen = !fullscreen;
+			reconfigure = true;
 		}
 		else if (evt.type == render::RenderEventType::SetWindowed)
 		{
-			settings->setProperty< PropertyBoolean >(L"Render.FullScreen", false);
-			return UrReconfigure;
+			fullscreen = false;
+			reconfigure = true;
 		}
 		else if (evt.type == render::RenderEventType::SetFullScreen)
 		{
-			settings->setProperty< PropertyBoolean >(L"Render.FullScreen", true);
-			return UrReconfigure;
+			fullscreen = true;
+			reconfigure = true;
 		}
 		else if (evt.type == render::RenderEventType::Resize)
 		{
-			// The view is authoritative about which mode it ended up in; a compositor
-			// is free to refuse fullscreen, and settings must not claim otherwise as
-			// other servers derive from them, ie mouse coordinate scaling.
-			const bool fullscreen = m_renderView->isFullScreen();
-			if (fullscreen != settings->getProperty< bool >(L"Render.FullScreen", false))
-				settings->setProperty< PropertyBoolean >(L"Render.FullScreen", fullscreen);
-
-			if (fullscreen)
+			if (m_renderView->isFullScreen())
 			{
-				// Fullscreen size is decided by the display or the compositor, so it has
-				// to be stored back rather than requested.
 				settings->setProperty< PropertyInteger >(L"Render.DisplayMode/Width", evt.resize.width);
 				settings->setProperty< PropertyInteger >(L"Render.DisplayMode/Height", evt.resize.height);
 			}
@@ -395,14 +387,21 @@ RenderServer::UpdateResult RenderServerDefault::update(PropertyGroup* settings)
 				settings->setProperty< PropertyInteger >(L"Render.DisplayMode.Window/Width", evt.resize.width);
 				settings->setProperty< PropertyInteger >(L"Render.DisplayMode.Window/Height", evt.resize.height);
 			}
-			return UrReconfigure;
+			reconfigure = true;
 		}
 		else if (evt.type == render::RenderEventType::Lost)
 		{
 			m_renderViewDesc.displayMode.width = 0;
 			m_renderViewDesc.displayMode.height = 0;
-			return UrReconfigure;
+			reconfigure = true;
 		}
+	}
+
+	if (reconfigure)
+	{
+		if (fullscreen != settings->getProperty< bool >(L"Render.FullScreen", false))
+			settings->setProperty< PropertyBoolean >(L"Render.FullScreen", fullscreen);
+		return UrReconfigure;
 	}
 
 	return UrSuccess;

@@ -145,17 +145,26 @@ void Window::setWindowedStyle(int32_t width, int32_t height)
 	GetWindowRect(m_hWnd, &rcWindow);
 	GetClientRect(m_hWnd, &rcClient);
 
-	int32_t windowWidth = rcWindow.right - rcWindow.left;
-	int32_t windowHeight = rcWindow.bottom - rcWindow.top;
-
-	const int32_t realClientWidth = rcClient.right - rcClient.left;
-	const int32_t realClientHeight = rcClient.bottom - rcClient.top;
+	int32_t realClientWidth = rcClient.right - rcClient.left;
+	int32_t realClientHeight = rcClient.bottom - rcClient.top;
 
 	if (realClientWidth != width || realClientHeight != height)
 	{
-		windowWidth = (windowWidth - realClientWidth) + width;
-		windowHeight = (windowHeight - realClientHeight) + height;
-		SetWindowPos(m_hWnd, NULL, 0, 0, windowWidth, windowHeight, SWP_NOMOVE | SWP_NOZORDER);
+		if (IsZoomed(m_hWnd))
+		{
+			ShowWindow(m_hWnd, SW_RESTORE);
+			GetWindowRect(m_hWnd, &rcWindow);
+			GetClientRect(m_hWnd, &rcClient);
+			realClientWidth = rcClient.right - rcClient.left;
+			realClientHeight = rcClient.bottom - rcClient.top;
+		}
+
+		if (realClientWidth != width || realClientHeight != height)
+		{
+			const int32_t windowWidth = (rcWindow.right - rcWindow.left) - realClientWidth + width;
+			const int32_t windowHeight = (rcWindow.bottom - rcWindow.top) - realClientHeight + height;
+			SetWindowPos(m_hWnd, NULL, 0, 0, windowWidth, windowHeight, SWP_NOMOVE | SWP_NOZORDER);
+		}
 	}
 
 	m_fullScreen = false;
