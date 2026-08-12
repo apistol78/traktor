@@ -6,6 +6,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
 #include "Core/Math/Float.h"
 #include "Core/Thread/Acquire.h"
@@ -46,6 +47,23 @@ float fadeBandRatio(float distance, float innerRadius, float maxDistance)
 		fadeRange = FUZZY_EPSILON;
 
 	return clamp((distance - innerRadius) / fadeRange, 0.0f, 1.0f);
+}
+
+/*! Distance from the closest listener to a position.
+ *
+ * \param surroundEnvironment Environment holding the listener transforms.
+ * \param position Position in world space.
+ * \return Scaled distance to the closest listener; infinite when there are no listeners.
+ */
+Scalar closestListenerDistance(const SurroundEnvironment* surroundEnvironment, const Vector4& position)
+{
+	Scalar distance = Scalar(std::numeric_limits< float >::max());
+	for (const auto& listenerTransform : surroundEnvironment->getListenerTransforms())
+	{
+		const Vector4 listenerPosition = listenerTransform.translation().xyz1();
+		distance = std::min(distance, surroundEnvironment->getScaledDistance(position - listenerPosition));
+	}
+	return distance;
 }
 
 	}
@@ -190,13 +208,7 @@ Ref< SoundHandle > SoundPlayer::play(const Sound* sound, const Vector4& position
 	if (maxDistance <= m_surroundEnvironment->getInnerRadius())
 		maxDistance = m_surroundEnvironment->getMaxDistance();
 
-	Scalar distance = Scalar(std::numeric_limits< float >::max());
-	for (const auto& listenerTransform : m_surroundEnvironment->getListenerTransforms())
-	{
-		const Vector4 listenerPosition = listenerTransform.translation().xyz1();
-		const Scalar listenerDistance = m_surroundEnvironment->getScaledDistance(position - listenerPosition);
-		distance = std::min(distance, listenerDistance);
-	}
+	const Scalar distance = closestListenerDistance(m_surroundEnvironment, position.xyz1());
 	if (autoStopFar && distance > maxDistance)
 		return nullptr;
 
@@ -222,7 +234,6 @@ Ref< SoundHandle > SoundPlayer::play(const Sound* sound, const Vector4& position
 		// First try to associate sound with non-playing channel.
 		for (auto& channel : m_channels)
 		{
-			const Scalar channelDistance = (channel.position - distance).xyz0().length();
 			if (!channel.audioChannel->isPlaying())
 			{
 				if (channel.handle)
@@ -285,7 +296,8 @@ Ref< SoundHandle > SoundPlayer::play(const Sound* sound, const Vector4& position
 		// Then try to associate sound with similar priority channel but further away.
 		for (auto& channel : m_channels)
 		{
-			const Scalar channelDistance = (channel.position - distance).xyz0().length();
+			// Steal from a channel whose own source is further away than this one.
+			const Scalar channelDistance = closestListenerDistance(m_surroundEnvironment, channel.position);
 			if (
 				priority == channel.priority &&
 				channel.position.w() > 0.5_simd &&
@@ -325,6 +337,17 @@ Ref< SoundHandle > SoundPlayer::play(const Sound* sound, const Vector4& position
 void SoundPlayer::addListener(const SoundListener* listener)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+
+	// Listener transforms reach the surround environment through a fixed size vector, so
+	// refuse here instead of overrunning it later; push_back past the capacity is only an
+	// assert, which means a release build writes outside the vector. Hitting this usually
+	// means listeners are being leaked rather than that this many are really wanted.
+	if (m_listeners.size() >= SurroundEnvironment::listenerTransformVector_t::Capacity)
+	{
+		log::error << L"Unable to add sound listener; at most " << int32_t(SurroundEnvironment::listenerTransformVector_t::Capacity) << L" listeners are supported." << Endl;
+		return;
+	}
+
 	m_listeners.push_back(listener);
 }
 
@@ -343,7 +366,11 @@ void SoundPlayer::update(float dT)
 		// Update listener transforms.
 		SurroundEnvironment::listenerTransformVector_t listenerTransforms;
 		for (auto listener : m_listeners)
+		{
+			if (listenerTransforms.full())
+				break;
 			listenerTransforms.push_back(listener->getTransform());
+		}
 		m_surroundEnvironment->setListenerTransforms(listenerTransforms);
 
 		// Update surround and low pass filters on playing 3d sounds.
@@ -358,13 +385,7 @@ void SoundPlayer::update(float dT)
 				maxDistance = m_surroundEnvironment->getMaxDistance();
 
 			// Calculate distance from listener; automatically stop sounds which has moved outside max listener distance.
-			Scalar distance = Scalar(std::numeric_limits< float >::max());
-			for (const auto& listenerTransform : listenerTransforms)
-			{
-				const Vector4 listenerPosition = listenerTransform.translation().xyz1();
-				const Scalar listenerDistance = m_surroundEnvironment->getScaledDistance(channel.position - listenerPosition);
-				distance = std::min(distance, listenerDistance);
-			}
+			const Scalar distance = closestListenerDistance(m_surroundEnvironment, channel.position);
 			if (channel.autoStopFar && distance > maxDistance)
 			{
 				if (channel.handle)

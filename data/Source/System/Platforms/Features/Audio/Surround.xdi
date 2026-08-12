@@ -62,7 +62,7 @@
 						<item>
 							<first>InnerRadius</first>
 							<second type="traktor.PropertyFloat">
-								<value>4</value>
+								<value>2</value>
 							</second>
 						</item>
 						<item>

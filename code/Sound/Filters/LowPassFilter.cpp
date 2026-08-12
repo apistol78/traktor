@@ -6,6 +6,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include <cmath>
 #include <cstring>
 #include "Core/Math/Const.h"
 #include "Core/Math/Vector4.h"
@@ -54,10 +55,26 @@ Ref< IAudioFilterInstance > LowPassFilter::createInstance() const
 void LowPassFilter::apply(IAudioFilterInstance* instance, AudioBlock& outBlock) const
 {
 	LowPassFilterInstance* lpfi = static_cast< LowPassFilterInstance* >(instance);
-	if (m_cutOff > FUZZY_EPSILON && m_cutOff <= 22050.0f)
+	if (m_cutOff > FUZZY_EPSILON && outBlock.sampleRate > 0)
 	{
-		const float dt = 1.0f / outBlock.sampleRate;
-		const Scalar alpha(dt / (dt + 1.0f / m_cutOff));
+		// One pole coefficient of an RC low pass. The cut off is a frequency in hertz,
+		// so it is the angular frequency which belong in the time constant; leaving out
+		// the turn placed the actual -3 dB point a factor two pi below the one asked for,
+		// i.e. every filtered source came out far darker than authored.
+		//
+		// The exponential form is used rather than dt / (dt + RC) since the latter only
+		// hold while the cut off sit well below the sample rate: it saturates around a
+		// third as the cut off approach Nyquist instead of reaching one, so a filter meant
+		// to pass everything through still muffled down to a couple of kHz. This one
+		// approaches unity smoothly, which lets the filter fade out of the way rather than
+		// having to be switched off by a threshold, and stays sane above Nyquist too.
+		const float a = 1.0f - std::exp(-TWO_PI * m_cutOff / outBlock.sampleRate);
+
+		// Transparent; nothing to do.
+		if (a >= 1.0f - FUZZY_EPSILON)
+			return;
+
+		const Scalar alpha(a);
 
 		for (uint32_t j = 0; j < outBlock.maxChannel; ++j)
 		{

@@ -56,7 +56,7 @@ public:
 private:
 	Ref< sound::SoundPlayer > m_soundPlayer;
 	Ref< sound::SoundListener > m_soundListener;
-	Transform m_transform;
+	bool m_enabled = false;
 };
 
 }

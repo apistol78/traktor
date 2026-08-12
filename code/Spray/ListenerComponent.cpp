@@ -22,16 +22,17 @@ ListenerComponent::ListenerComponent(sound::SoundPlayer* soundPlayer)
 	{
 		m_soundListener = new sound::SoundListener();
 		m_soundPlayer->addListener(m_soundListener);
+		m_enabled = true;
 	}
 }
 
 void ListenerComponent::destroy()
 {
-	if (m_soundPlayer != nullptr)
-	{
-		m_soundPlayer->removeListener(m_soundListener);
-		m_soundPlayer = nullptr;
-	}
+	// Unregister before letting go of the player; a listener left behind keep being
+	// mixed against, frozen wherever it last stood, and there is no way back to it.
+	setEnable(false);
+	m_soundListener = nullptr;
+	m_soundPlayer = nullptr;
 }
 
 void ListenerComponent::setOwner(world::Entity* owner)
@@ -55,24 +56,23 @@ void ListenerComponent::update(const world::UpdateParams& update)
 
 void ListenerComponent::setEnable(bool enable)
 {
-	if (m_soundPlayer == nullptr || enable == isEnable())
+	if (m_soundPlayer == nullptr || m_soundListener == nullptr || enable == m_enabled)
 		return;
 
+	// Only the registration with the player is toggled; the listener itself is kept so
+	// it holds on to its transform and re-enabling does not spatialize a frame against
+	// the origin before the owner next moves.
 	if (enable)
-	{
-		m_soundListener = new sound::SoundListener();
 		m_soundPlayer->addListener(m_soundListener);
-	}
 	else
-	{
 		m_soundPlayer->removeListener(m_soundListener);
-		m_soundPlayer = nullptr;
-	}
+
+	m_enabled = enable;
 }
 
 bool ListenerComponent::isEnable() const
 {
-	return m_soundListener != nullptr;
+	return m_enabled;
 }
 
 }
