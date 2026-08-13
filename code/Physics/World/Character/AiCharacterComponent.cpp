@@ -72,6 +72,11 @@ void AiCharacterComponent::setOwner(world::Entity* owner)
 		m_bodyWide->setEnable(true);
 		m_headAngle = transform.rotation().toEulerAngles().x();
 	}
+
+	if (m_bodyWide)
+		m_bodyWide->setOwner(owner);
+	if (m_bodySlim)
+		m_bodySlim->setOwner(owner);
 }
 
 void AiCharacterComponent::setTransform(const Transform& transform)

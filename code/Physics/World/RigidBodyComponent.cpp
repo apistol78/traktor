@@ -1,18 +1,19 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Physics/World/RigidBodyComponent.h"
+
 #include "Core/Misc/SafeDestroy.h"
 #include "Physics/Body.h"
 #include "Physics/CollisionListener.h"
-#include "Physics/World/RigidBodyComponent.h"
 #include "World/Entity.h"
-#include "World/World.h"
 #include "World/Entity/EventManagerComponent.h"
+#include "World/World.h"
 
 namespace traktor::physics
 {
@@ -22,15 +23,17 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.physics.RigidBodyComponent", RigidBodyComponent
 RigidBodyComponent::RigidBodyComponent(
 	Body* body,
 	world::IEntityEvent* eventCollide,
-	float transformFilter
-)
-:	m_owner(nullptr)
-,	m_body(body)
-,	m_eventCollide(eventCollide)
-,	m_transformFilter(transformFilter)
+	float transformFilter)
+	: m_owner(nullptr)
+	, m_body(body)
+	, m_eventCollide(eventCollide)
+	, m_transformFilter(transformFilter)
 {
-	if (m_body && m_eventCollide)
-		m_body->addCollisionListener(physics::createCollisionListener(this, &RigidBodyComponent::collisionListener));
+	if (m_body)
+	{
+		if (m_eventCollide)
+			m_body->addCollisionListener(physics::createCollisionListener(this, &RigidBodyComponent::collisionListener));
+	}
 }
 
 void RigidBodyComponent::destroy()
@@ -47,6 +50,7 @@ void RigidBodyComponent::setOwner(world::Entity* owner)
 		const Transform transform = m_owner->getTransform();
 		if (m_body)
 		{
+			m_body->setOwner(owner);
 			m_body->setTransform(transform);
 			m_body->setEnable(true);
 		}
@@ -107,8 +111,7 @@ void RigidBodyComponent::collisionListener(const physics::CollisionInfo& collisi
 
 	const Transform Tworld(
 		position,
-		Quaternion(Vector4(0.0f, 1.0f, 0.0f, 0.0f), normal)
-	);
+		Quaternion(Vector4(0.0f, 1.0f, 0.0f, 0.0f), normal));
 
 	const Transform T = m_body->getTransform();
 	eventManager->raise(m_eventCollide, m_owner, T.inverse() * Tworld);

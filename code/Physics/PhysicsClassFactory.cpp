@@ -6,6 +6,8 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Physics/PhysicsClassFactory.h"
+
 #include "Core/Class/AutoRuntimeClass.h"
 #include "Core/Class/Boxes/BoxedQuaternion.h"
 #include "Core/Class/Boxes/BoxedRefArray.h"
@@ -20,28 +22,27 @@
 #include "Physics/ConeTwistJoint.h"
 #include "Physics/Hinge2Joint.h"
 #include "Physics/HingeJoint.h"
-#include "Physics/PhysicsClassFactory.h"
 #include "Physics/PhysicsManager.h"
-#include "Physics/World/JointComponent.h"
-#include "Physics/World/RigidBodyComponent.h"
 #include "Physics/World/Character/AiCharacterComponent.h"
 #include "Physics/World/Character/CharacterComponent.h"
+#include "Physics/World/JointComponent.h"
+#include "Physics/World/RigidBodyComponent.h"
 #include "Physics/World/Vehicle/VehicleComponent.h"
 #include "Physics/World/Vehicle/Wheel.h"
 #include "Physics/World/Vehicle/WheelData.h"
 
 namespace traktor::physics
 {
-	namespace
-	{
+namespace
+{
 
 class CollisionContactWrapper : public Object
 {
 	T_RTTI_CLASS;
 
 public:
-	CollisionContactWrapper(const AlignedVector< CollisionContact >& contacts)
-	:	m_contacts(contacts)
+	explicit CollisionContactWrapper(const AlignedVector< CollisionContact >& contacts)
+		: m_contacts(contacts)
 	{
 	}
 
@@ -76,15 +77,14 @@ class CollisionListenerWrapper : public CollisionListener
 	T_RTTI_CLASS;
 
 public:
-	CollisionListenerWrapper(IRuntimeDelegate* delegate)
-	:	m_delegate(delegate)
+	explicit CollisionListenerWrapper(IRuntimeDelegate* delegate)
+		: m_delegate(delegate)
 	{
 	}
 
 	virtual void notify(const CollisionInfo& collisionInfo) override final
 	{
-		Any argv[] =
-		{
+		Any argv[] = {
 			Any::fromObject(collisionInfo.body1),
 			Any::fromObject(collisionInfo.body2),
 			Any::fromObject(new CollisionContactWrapper(collisionInfo.contacts))
@@ -107,21 +107,21 @@ public:
 	QueryFilterWrapper() = default;
 
 	explicit QueryFilterWrapper(uint32_t includeGroup)
-	:	m_queryFilter(includeGroup)
+		: m_queryFilter(includeGroup)
 	{
 	}
 
 	explicit QueryFilterWrapper(uint32_t includeGroup, uint32_t ignoreGroup)
-	:	m_queryFilter(includeGroup, ignoreGroup)
+		: m_queryFilter(includeGroup, ignoreGroup)
 	{
 	}
 
 	explicit QueryFilterWrapper(uint32_t includeGroup, uint32_t ignoreGroup, uint32_t ignoreClusterId)
-	:	m_queryFilter(includeGroup, ignoreGroup, ignoreClusterId)
+		: m_queryFilter(includeGroup, ignoreGroup, ignoreClusterId)
 	{
 	}
 
-	operator const QueryFilter& () const
+	operator const QueryFilter&() const
 	{
 		return m_queryFilter;
 	}
@@ -137,8 +137,8 @@ class QueryResultWrapper : public Object
 	T_RTTI_CLASS;
 
 public:
-	QueryResultWrapper(const QueryResult& result)
-	:	m_result(result)
+	explicit QueryResultWrapper(const QueryResult& result)
+		: m_result(result)
 	{
 	}
 
@@ -193,8 +193,7 @@ Ref< QueryResultWrapper > PhysicsManager_queryRay(
 	const Vector4& direction,
 	float maxLength,
 	const QueryFilterWrapper* queryFilter,
-	bool ignoreBackFace
-)
+	bool ignoreBackFace)
 {
 	QueryResult result;
 	if (self->queryRay(at, direction, maxLength, *queryFilter, ignoreBackFace, result))
@@ -209,8 +208,7 @@ bool PhysicsManager_queryShadowRay(
 	const Vector4& direction,
 	float maxLength,
 	const QueryFilterWrapper* queryFilter,
-	uint32_t queryTypes
-)
+	uint32_t queryTypes)
 {
 	return self->queryShadowRay(at, direction, maxLength, *queryFilter, queryTypes);
 }
@@ -220,8 +218,7 @@ RefArray< Body > PhysicsManager_querySphere(
 	const Vector4& at,
 	float radius,
 	const QueryFilterWrapper* queryFilter,
-	uint32_t queryTypes
-)
+	uint32_t queryTypes)
 {
 	RefArray< Body > bodies;
 	self->querySphere(at, radius, *queryFilter, queryTypes, bodies);
@@ -234,8 +231,7 @@ Ref< QueryResultWrapper > PhysicsManager_querySweep_1(
 	const Vector4& direction,
 	float maxLength,
 	float radius,
-	const QueryFilterWrapper* queryFilter
-)
+	const QueryFilterWrapper* queryFilter)
 {
 	QueryResult result;
 	if (self->querySweep(at, direction, maxLength, radius, *queryFilter, result))
@@ -251,8 +247,7 @@ Ref< QueryResultWrapper > PhysicsManager_querySweep_2(
 	const Vector4& at,
 	const Vector4& direction,
 	float maxLength,
-	const QueryFilterWrapper* queryFilter
-)
+	const QueryFilterWrapper* queryFilter)
 {
 	QueryResult result;
 	if (self->querySweep(body, orientation, at, direction, maxLength, *queryFilter, result))
@@ -261,7 +256,7 @@ Ref< QueryResultWrapper > PhysicsManager_querySweep_2(
 		return nullptr;
 }
 
-	}
+}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.PhysicsClassFactory", 0, PhysicsClassFactory, IRuntimeClassFactory)
 
@@ -311,7 +306,7 @@ void PhysicsClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classBody->addProperty("state", &Body::setState, &Body::getState);
 	classBody->addProperty("linearVelocity", &Body::setLinearVelocity, &Body::getLinearVelocity);
 	classBody->addProperty("angularVelocity", &Body::setAngularVelocity, &Body::getAngularVelocity);
-	classBody->addProperty("userObject", &Body::setUserObject, &Body::getUserObject);
+	classBody->addProperty("owner", &Body::setOwner, &Body::getOwner);
 	classBody->addMethod("reset", &Body::reset);
 	classBody->addMethod("setMass", &Body::setMass);
 	classBody->addMethod("addForceAt", &Body::addForceAt);

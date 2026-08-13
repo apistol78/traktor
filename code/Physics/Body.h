@@ -173,17 +173,17 @@ public:
 	/*! Check if have any collision listeners. */
 	bool haveCollisionListeners() const { return !m_collisionListeners.empty(); }
 
-	/*! Attach user defined object.
+	/*! Attach owner object.
 	 *
-	 * \param userObject User object.
+	 * \param owner Owner object.
 	 */
-	void setUserObject(Object* userObject) { m_userObject = userObject; }
+	void setOwner(Object* owner) { m_owner = owner; }
 
-	/*! Get attached user defined object.
+	/*! Get attached owner object.
 	 *
-	 * \return User object.
+	 * \return Owner object.
 	 */
-	Object* getUserObject() const { return m_userObject; }
+	Object* getOwner() const { return m_owner; }
 
 	/*! Set cluster id.
 	 *
@@ -209,8 +209,8 @@ protected:
 private:
 	std::wstring m_tag;
 	RefArray< CollisionListener > m_collisionListeners;
-	Ref< Object > m_userObject;
-	uint32_t m_clusterId;
+	Object* m_owner = nullptr;
+	uint32_t m_clusterId = 0;
 };
 
 }
