@@ -22,6 +22,11 @@ namespace traktor::spark
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spark.BatchWizardTool", 0, BatchWizardTool, editor::IWizardTool)
 
+bool BatchWizardTool::create(const PropertyGroup* settings)
+{
+	return true;
+}
+
 std::wstring BatchWizardTool::getDescription() const
 {
 	return i18n::Text(L"FLASH_BATCH_WIZARDTOOL_DESCRIPTION");

@@ -1,19 +1,20 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Mesh/Editor/MeshEntityWizardTool.h"
+
 #include "Core/Log/Log.h"
 #include "Database/Group.h"
 #include "Database/Instance.h"
 #include "Editor/IEditor.h"
 #include "I18N/Text.h"
-#include "Mesh/MeshComponentData.h"
 #include "Mesh/Editor/MeshAsset.h"
-#include "Mesh/Editor/MeshEntityWizardTool.h"
+#include "Mesh/MeshComponentData.h"
 #include "Ui/MessageBox.h"
 #include "World/EntityData.h"
 
@@ -21,6 +22,11 @@ namespace traktor::mesh
 {
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.MeshEntityWizardTool", 0, MeshEntityWizardTool, editor::IWizardTool)
+
+bool MeshEntityWizardTool::create(const PropertyGroup* settings)
+{
+	return true;
+}
 
 std::wstring MeshEntityWizardTool::getDescription() const
 {
@@ -54,8 +60,7 @@ bool MeshEntityWizardTool::launch(ui::Widget* parent, editor::IEditor* editor, d
 	// Create mesh entity data instance.
 	Ref< db::Instance > entityDataInstance = group->createInstance(
 		instance->getName() + L"-Entity",
-		db::CifReplaceExisting | db::CifKeepExistingGuid
-	);
+		db::CifReplaceExisting | db::CifKeepExistingGuid);
 	if (!entityDataInstance)
 	{
 		log::error << L"Failed to create instance." << Endl;

@@ -39,6 +39,11 @@ Ref< drawing::Image > loadImage(IStream* stream)
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.terrain.CropTerrainWizardTool", 0, CropTerrainWizardTool, editor::IWizardTool)
 
+bool CropTerrainWizardTool::create(const PropertyGroup* settings)
+{
+	return true;
+}
+
 std::wstring CropTerrainWizardTool::getDescription() const
 {
 	return i18n::Text(L"CROP_TERRAIN_WIZARDTOOL_DESCRIPTION");

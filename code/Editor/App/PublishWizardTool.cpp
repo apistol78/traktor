@@ -44,6 +44,11 @@ bool isSystemInstance(db::Instance* instance)
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.editor.PublishWizardTool", 0, PublishWizardTool, editor::IWizardTool)
 
+bool PublishWizardTool::create(const PropertyGroup* settings)
+{
+	return true;
+}
+
 std::wstring PublishWizardTool::getDescription() const
 {
 	return i18n::Text(L"STORE_PUBLISH_WIZARDTOOL_DESCRIPTION");

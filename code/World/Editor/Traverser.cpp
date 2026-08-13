@@ -1,21 +1,22 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2023 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "World/Editor/Traverser.h"
+
 #include "Core/Reflection/Reflection.h"
 #include "Core/Reflection/RfmObject.h"
 #include "Core/Reflection/RfpMemberType.h"
-#include "Scene/Editor/Traverser.h"
 #include "World/EntityData.h"
 
-namespace traktor::scene
+namespace traktor::world
 {
 
-bool Traverser::visit(const ISerializable* object, const std::function< Result (const world::EntityData*) >& visitor)
+bool Traverser::visit(const ISerializable* object, const std::function< Result(const EntityData*) >& visitor)
 {
 	if (!object)
 		return true;
@@ -24,15 +25,15 @@ bool Traverser::visit(const ISerializable* object, const std::function< Result (
 	if (!reflection)
 		return false;
 
- 	RefArray< ReflectionMember > objectMembers;
- 	reflection->findMembers(RfpMemberType(type_of< RfmObject >()), objectMembers);
+	RefArray< ReflectionMember > objectMembers;
+	reflection->findMembers(RfpMemberType(type_of< RfmObject >()), objectMembers);
 	for (auto member : objectMembers)
 	{
 		RfmObject* objectMember = dynamic_type_cast< RfmObject* >(member);
 		if (!objectMember->get())
 			continue;
 
-		if (auto entityData = dynamic_type_cast< const world::EntityData* >(objectMember->get()))
+		if (auto entityData = dynamic_type_cast< const EntityData* >(objectMember->get()))
 		{
 			const Result result = visitor(entityData);
 			if (result == Result::Continue)
@@ -53,7 +54,7 @@ bool Traverser::visit(const ISerializable* object, const std::function< Result (
 	return true;
 }
 
-bool Traverser::visit(ISerializable* object, const std::function< Result (Ref< world::EntityData >&) >& visitor)
+bool Traverser::visit(ISerializable* object, const std::function< Result(Ref< EntityData >&) >& visitor)
 {
 	if (!object)
 		return true;
@@ -64,15 +65,15 @@ bool Traverser::visit(ISerializable* object, const std::function< Result (Ref< w
 
 	bool needToApply = false;
 
- 	RefArray< ReflectionMember > objectMembers;
- 	reflection->findMembers(RfpMemberType(type_of< RfmObject >()), objectMembers);
+	RefArray< ReflectionMember > objectMembers;
+	reflection->findMembers(RfpMemberType(type_of< RfmObject >()), objectMembers);
 	for (auto member : objectMembers)
 	{
 		RfmObject* objectMember = dynamic_type_cast< RfmObject* >(member);
 		if (!objectMember->get())
 			continue;
 
-		Ref< world::EntityData > entityData = dynamic_type_cast< world::EntityData* >(objectMember->get());
+		Ref< EntityData > entityData = dynamic_type_cast< world::EntityData* >(objectMember->get());
 		if (entityData)
 		{
 			const Result result = visitor(entityData);

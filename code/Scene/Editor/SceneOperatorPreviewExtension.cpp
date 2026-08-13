@@ -23,7 +23,7 @@
 #include "Scene/Editor/SceneAsset.h"
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Scene/Editor/SceneOperatorChain.h"
-#include "Scene/Editor/Traverser.h"
+#include "World/Editor/Traverser.h"
 #include "World/Entity.h"
 #include "World/EntityData.h"
 
@@ -40,7 +40,7 @@ class EditorTransformContext : public ISceneOperator::TransformContext
 {
 public:
 	explicit EditorTransformContext(db::Database* database)
-	:	m_database(database)
+		: m_database(database)
 	{
 	}
 
@@ -63,7 +63,7 @@ private:
 T_IMPLEMENT_RTTI_CLASS(L"traktor.scene.SceneOperatorPreviewExtension", SceneOperatorPreviewExtension, ISceneEditorUIExtension)
 
 SceneOperatorPreviewExtension::SceneOperatorPreviewExtension(SceneEditorContext* context)
-:	m_context(context)
+	: m_context(context)
 {
 }
 
@@ -111,14 +111,12 @@ void SceneOperatorPreviewExtension::apply()
 	// Collect the resulting transforms by entity id.
 	SmallMap< Guid, Transform > transforms;
 	for (auto layer : working->getLayers())
-	{
-		Traverser::visit(layer, [&](const world::EntityData* entityData) -> Traverser::Result {
+		world::Traverser::visit(layer, [&](const world::EntityData* entityData) -> world::Traverser::Result {
 			const Guid& id = entityData->getId();
 			if (id.isNotNull())
 				transforms[id] = entityData->getTransform();
-			return Traverser::Result::Continue;
+			return world::Traverser::Result::Continue;
 		});
-	}
 
 	// Copy transforms onto the live rendered entities only; the authored scene
 	// asset and its EntityData are left untouched.

@@ -20,19 +20,19 @@
 #include "Database/Database.h"
 #include "Database/Instance.h"
 #include "Editor/IPipelineCommon.h"
+#include "Heightfield/Editor/HeightfieldAsset.h"
 #include "Heightfield/Heightfield.h"
 #include "Heightfield/HeightfieldFormat.h"
-#include "Heightfield/Editor/HeightfieldAsset.h"
 #include "Model/Model.h"
 #include "Scene/Editor/SceneAsset.h"
-#include "Scene/Editor/Traverser.h"
-#include "Terrain/TerrainComponentData.h"
 #include "Terrain/Editor/AlignToTerrainOperationData.h"
 #include "Terrain/Editor/TerrainAsset.h"
-#include "World/EntityData.h"
+#include "Terrain/TerrainComponentData.h"
 #include "World/Editor/IEntityReplicator.h"
+#include "World/Editor/Traverser.h"
 #include "World/Entity/ExternalEntityData.h"
 #include "World/Entity/GroupComponentData.h"
+#include "World/EntityData.h"
 
 namespace traktor::terrain
 {
@@ -62,7 +62,7 @@ class TransformContextPipelineCommon : public editor::IPipelineCommon
 {
 public:
 	explicit TransformContextPipelineCommon(const scene::ISceneOperator::TransformContext& context)
-	:	m_context(context)
+		: m_context(context)
 	{
 	}
 
@@ -132,8 +132,7 @@ int32_t sampleFootprint(
 	const Vector4& footprintMin,
 	const Vector4& footprintMax,
 	Vector4* outPositions,
-	Vector4* outNormals
-)
+	Vector4* outNormals)
 {
 	const float cellSize = heightfield->getWorldExtent().x() / (float)heightfield->getSize();
 	const float extentX = footprintMax.x() - footprintMin.x();
@@ -157,8 +156,7 @@ int32_t sampleFootprint(
 				worldSampleX,
 				heightfield->getWorldHeight(worldSampleX, worldSampleZ),
 				worldSampleZ,
-				1.0f
-			);
+				1.0f);
 
 			if (outNormals)
 			{
@@ -195,8 +193,7 @@ float resolveHeight(
 	float worldX,
 	float worldZ,
 	const Vector4* positions,
-	int32_t count
-)
+	int32_t count)
 {
 	const float upX = up.x();
 	const float upY = up.y();
@@ -249,13 +246,13 @@ Guid findTerrainInScene(scene::SceneAsset* sceneAsset)
 		if (!layer)
 			continue;
 
-		scene::Traverser::visit(layer, [&](const world::EntityData* entityData) -> scene::Traverser::Result {
+		world::Traverser::visit(layer, [&](const world::EntityData* entityData) -> world::Traverser::Result {
 			if (const auto terrainComponentData = entityData->getComponent< TerrainComponentData >())
 			{
 				if (terrainId.isNull())
 					terrainId = terrainComponentData->getTerrain();
 			}
-			return scene::Traverser::Result::Continue;
+			return world::Traverser::Result::Continue;
 		});
 
 		if (terrainId.isNotNull())
@@ -295,8 +292,7 @@ TypeInfoSet AlignToTerrainOperator::getOperatorTypes() const
 
 void AlignToTerrainOperator::addDependencies(
 	editor::IPipelineDepends* pipelineDepends,
-	const ISerializable* operatorData
-) const
+	const ISerializable* operatorData) const
 {
 }
 
@@ -312,8 +308,7 @@ void AlignToTerrainOperator::gatherGeometry(
 	float contactRatio,
 	AlignedVector< GeometryPlacement >& outPlacements,
 	boundingBoxCache_t& inoutCache,
-	int32_t depth
-) const
+	int32_t depth) const
 {
 	if (!entityData || depth >= c_maxEntityDepth)
 		return;
@@ -354,8 +349,7 @@ void AlignToTerrainOperator::gatherGeometry(
 			pipelineCommon,
 			entityData,
 			componentData,
-			world::IEntityReplicator::Usage::Visual
-		);
+			world::IEntityReplicator::Usage::Visual);
 		if (!model)
 			continue;
 
@@ -366,7 +360,6 @@ void AlignToTerrainOperator::gatherGeometry(
 
 	// Geometry contributed by child entities.
 	if (auto groupComponentData = entityData->getComponent< world::GroupComponentData >())
-	{
 		for (auto childEntityData : groupComponentData->getEntityData())
 			gatherGeometry(
 				pipelineCommon,
@@ -375,9 +368,7 @@ void AlignToTerrainOperator::gatherGeometry(
 				contactRatio,
 				outPlacements,
 				inoutCache,
-				depth + 1
-			);
-	}
+				depth + 1);
 }
 
 Aabb3 AlignToTerrainOperator::calculateContactBoundingBox(
@@ -385,8 +376,7 @@ Aabb3 AlignToTerrainOperator::calculateContactBoundingBox(
 	const world::EntityData* entityData,
 	float contactRatio,
 	boundingBoxCache_t& inoutCache,
-	int32_t depth
-) const
+	int32_t depth) const
 {
 	AlignedVector< GeometryPlacement > placements;
 	gatherGeometry(pipelineCommon, entityData, Transform::identity(), contactRatio, placements, inoutCache, depth);
@@ -432,8 +422,7 @@ Aabb3 AlignToTerrainOperator::calculateContactBoundingBox(
 bool AlignToTerrainOperator::transform(
 	const scene::ISceneOperator::TransformContext& context,
 	const ISerializable* operatorData,
-	scene::SceneAsset* inoutSceneAsset
-) const
+	scene::SceneAsset* inoutSceneAsset) const
 {
 	const AlignToTerrainOperationData* data = mandatory_non_null_type_cast< const AlignToTerrainOperationData* >(operatorData);
 
@@ -466,8 +455,7 @@ bool AlignToTerrainOperator::transform(
 
 	Ref< hf::Heightfield > heightfield = hf::HeightfieldFormat().read(
 		sourceData,
-		heightfieldAsset->getWorldExtent()
-	);
+		heightfieldAsset->getWorldExtent());
 	safeClose(sourceData);
 	if (!heightfield)
 		return true;
@@ -537,8 +525,7 @@ bool AlignToTerrainOperator::transform(
 					footprintMin,
 					footprintMax,
 					samplePositions,
-					sampleNormals
-				);
+					sampleNormals);
 
 				Vector4 normal = Vector4::zero();
 				for (int32_t i = 0; i < count; ++i)
@@ -549,8 +536,7 @@ bool AlignToTerrainOperator::transform(
 				rotation = slerp(
 					Quaternion(Vector4(0.0f, 1.0f, 0.0f, 0.0f), normal),
 					Quaternion::identity(),
-					data->getUpness()
-				);
+					data->getUpness());
 			}
 
 			if (data->getRandomHeadingAngle())
@@ -570,22 +556,20 @@ bool AlignToTerrainOperator::transform(
 				footprintMin,
 				footprintMax,
 				samplePositions,
-				nullptr
-			);
+				nullptr);
 
 			const float worldY = resolveHeight(
-				groundFit,
-				rotation * Vector4(0.0f, 1.0f, 0.0f, 0.0f),
-				worldX,
-				worldZ,
-				samplePositions,
-				count
-			) + data->getOffset();
+									 groundFit,
+									 rotation * Vector4(0.0f, 1.0f, 0.0f, 0.0f),
+									 worldX,
+									 worldZ,
+									 samplePositions,
+									 count) +
+				data->getOffset();
 
 			entityData->setTransform(Transform(
 				Vector4(worldX, worldY, worldZ, 1.0f),
-				rotation
-			));
+				rotation));
 			++aligned;
 		}
 	}
@@ -599,8 +583,7 @@ bool AlignToTerrainOperator::build(
 	const ISerializable* operatorData,
 	const db::Instance* sourceInstance,
 	scene::SceneAsset* inoutSceneAsset,
-	bool rebuild
-) const
+	bool rebuild) const
 {
 	// All alignment happens in transform(); nothing to build here.
 	return true;

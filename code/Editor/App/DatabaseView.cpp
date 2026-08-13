@@ -570,8 +570,13 @@ void DatabaseView::setDatabase(db::Database* db)
 		for (const auto& wizardToolType : wizardToolTypes)
 		{
 			Ref< IWizardTool > wizard = dynamic_type_cast< IWizardTool* >(wizardToolType->createInstance());
-			if (wizard)
-				m_wizardTools.push_back(wizard);
+			if (!wizard)
+				continue;
+
+			if (!wizard->create(m_editor->getSettings()))
+				continue;
+			
+			m_wizardTools.push_back(wizard);
 		}
 
 		// Sort wizard based on their description.

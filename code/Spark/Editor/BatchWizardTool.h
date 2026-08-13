@@ -26,6 +26,8 @@ class T_DLLCLASS BatchWizardTool : public editor::IWizardTool
 	T_RTTI_CLASS;
 
 public:
+	virtual bool create(const PropertyGroup* settings) override final;
+
 	virtual std::wstring getDescription() const override final;
 
 	virtual const TypeInfoSet getSupportedTypes() const override final;

@@ -28,10 +28,10 @@
 #include "Model/ModelFormat.h"
 #include "Model/Operations/MergeModel.h"
 #include "Model/Operations/Triangulate.h"
-#include "Scene/Editor/Traverser.h"
 #include "Terrain/OceanComponentData.h"
 #include "World/Editor/IEntityReplicator.h"
 #include "World/Editor/ResolveExternal.h"
+#include "World/Editor/Traverser.h"
 #include "World/Entity/ExternalEntityData.h"
 #include "World/Entity/VolumeComponentData.h"
 #include "World/EntityData.h"
@@ -198,10 +198,10 @@ bool NavMeshPipeline::buildOutput(
 	bool oceanClip = false;
 	RefArray< Job > jobs;
 
-	scene::Traverser::visit(sourceData, [&](const world::EntityData* entityData) -> scene::Traverser::Result {
+	world::Traverser::visit(sourceData, [&](const world::EntityData* entityData) -> world::Traverser::Result {
 		// Dynamic layers do not get included in nav.
 		if (!entityData->getState().visible || entityData->getState().dynamic)
-			return scene::Traverser::Result::Skip;
+			return world::Traverser::Result::Skip;
 
 		Ref< Job > job = JobManager::getInstance().add([=, this, &navModels, &navMaximumBounds, &oceanHeight, &oceanClip]() {
 			Ref< model::Model > model;
@@ -239,10 +239,10 @@ bool NavMeshPipeline::buildOutput(
 			}
 		});
 		if (!job)
-			return scene::Traverser::Result::Failed;
+			return world::Traverser::Result::Failed;
 
 		jobs.push_back(job);
-		return scene::Traverser::Result::Continue;
+		return world::Traverser::Result::Continue;
 	});
 
 	while (!jobs.empty())

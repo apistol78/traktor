@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2025 Anders Pistol.
+ * Copyright (c) 2025-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -16,6 +16,9 @@ namespace traktor::render
 class CppStructWizardTool : public editor::IWizardTool
 {
 	T_RTTI_CLASS;
+
+public:
+	virtual bool create(const PropertyGroup* settings) override final;
 
 	virtual std::wstring getDescription() const override final;
 

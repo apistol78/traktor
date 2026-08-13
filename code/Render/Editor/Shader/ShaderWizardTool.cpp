@@ -1,11 +1,13 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Render/Editor/Shader/ShaderWizardTool.h"
+
 #include "Database/Database.h"
 #include "Database/Group.h"
 #include "Database/Instance.h"
@@ -13,22 +15,19 @@
 #include "Editor/IEditor.h"
 #include "I18N/Text.h"
 #include "Render/Editor/Shader/ShaderGraph.h"
-#include "Render/Editor/Shader/ShaderWizardTool.h"
 #include "Ui/InputDialog.h"
 #include "Ui/StyleBitmap.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
-		namespace
-		{
+namespace
+{
 
 class ShaderValueEnumerator : public RefCountImpl< ui::InputDialog::IValueEnumerator >
 {
 public:
-	ShaderValueEnumerator(const RefArray< db::Instance >& instances)
-	:	m_instances(instances)
+	explicit ShaderValueEnumerator(const RefArray< db::Instance >& instances)
+		: m_instances(instances)
 	{
 	}
 
@@ -56,9 +55,14 @@ private:
 	const RefArray< db::Instance >& m_instances;
 };
 
-		}
+}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ShaderWizardTool", 0, ShaderWizardTool, editor::IWizardTool)
+
+bool ShaderWizardTool::create(const PropertyGroup* settings)
+{
+	return true;
+}
 
 std::wstring ShaderWizardTool::getDescription() const
 {
@@ -91,20 +95,15 @@ bool ShaderWizardTool::launch(ui::Widget* parent, editor::IEditor* editor, db::G
 		return false;
 
 	ui::InputDialog inputDialog;
-	ui::InputDialog::Field fields[] =
-	{
-		{
-			i18n::Text(L"RENDER_SHADER_WIZARDTOOL_SHADER_TEMPLATE"),
+	ui::InputDialog::Field fields[] = {
+		{ i18n::Text(L"RENDER_SHADER_WIZARDTOOL_SHADER_TEMPLATE"),
 			L"",
 			nullptr,
-			new ShaderValueEnumerator(shaderInstances)
-		},
-		{
-			i18n::Text(L"RENDER_SHADER_WIZARDTOOL_NAME"),
+			new ShaderValueEnumerator(shaderInstances) },
+		{ i18n::Text(L"RENDER_SHADER_WIZARDTOOL_NAME"),
 			L"",
 			nullptr,
-			nullptr
-		},
+			nullptr },
 	};
 
 	inputDialog.create(
@@ -112,8 +111,7 @@ bool ShaderWizardTool::launch(ui::Widget* parent, editor::IEditor* editor, db::G
 		i18n::Text(L"RENDER_SHADER_WIZARDTOOL_DIALOG_TITLE"),
 		i18n::Text(L"RENDER_SHADER_WIZARDTOOL_DIALOG_MESSAGE"),
 		fields,
-		sizeof_array(fields)
-	);
+		sizeof_array(fields));
 
 	inputDialog.setIcon(new ui::StyleBitmap(L"Editor.Icon"));
 
@@ -141,8 +139,7 @@ bool ShaderWizardTool::launch(ui::Widget* parent, editor::IEditor* editor, db::G
 
 	Ref< db::Instance > outputInstance = group->createInstance(
 		shaderName,
-		db::CifReplaceExisting | db::CifKeepExistingGuid
-	);
+		db::CifReplaceExisting | db::CifKeepExistingGuid);
 	if (!outputInstance)
 		return false;
 
@@ -154,5 +151,4 @@ bool ShaderWizardTool::launch(ui::Widget* parent, editor::IEditor* editor, db::G
 	return true;
 }
 
-	}
 }

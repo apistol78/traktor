@@ -1,11 +1,13 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Render/Editor/Texture/TextureBatchWizardTool.h"
+
 #include "Core/Log/Log.h"
 #include "Database/Database.h"
 #include "Database/Group.h"
@@ -14,12 +16,16 @@
 #include "I18N/Text.h"
 #include "Render/Editor/Texture/TextureAsset.h"
 #include "Render/Editor/Texture/TextureBatchDialog.h"
-#include "Render/Editor/Texture/TextureBatchWizardTool.h"
 
 namespace traktor::render
 {
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.TextureBatchWizardTool", 0, TextureBatchWizardTool, editor::IWizardTool)
+
+bool TextureBatchWizardTool::create(const PropertyGroup* settings)
+{
+	return true;
+}
 
 std::wstring TextureBatchWizardTool::getDescription() const
 {

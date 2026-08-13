@@ -1,11 +1,13 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Mesh/Editor/MeshAssetWizardTool.h"
+
 #include "Core/Io/FileSystem.h"
 #include "Core/Log/Log.h"
 #include "Core/Settings/PropertyGroup.h"
@@ -15,16 +17,18 @@
 #include "Editor/IEditor.h"
 #include "I18N/Text.h"
 #include "Mesh/Editor/MeshAsset.h"
-#include "Mesh/Editor/MeshAssetWizardTool.h"
-#include "Ui/MessageBox.h"
 #include "Ui/FileDialog.h"
+#include "Ui/MessageBox.h"
 
-namespace traktor
+namespace traktor::mesh
 {
-	namespace mesh
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.MeshAssetWizardTool", 0, MeshAssetWizardTool, editor::IWizardTool)
+
+bool MeshAssetWizardTool::create(const PropertyGroup* settings)
+{
+	return true;
+}
 
 std::wstring MeshAssetWizardTool::getDescription() const
 {
@@ -62,8 +66,7 @@ bool MeshAssetWizardTool::launch(ui::Widget* parent, editor::IEditor* editor, db
 	FileSystem::getInstance().getRelativePath(
 		FileSystem::getInstance().getAbsolutePath(fileName),
 		FileSystem::getInstance().getAbsolutePath(assetPath),
-		fileName
-	);
+		fileName);
 
 	// Create source asset.
 	Ref< MeshAsset > asset = new MeshAsset();
@@ -73,8 +76,7 @@ bool MeshAssetWizardTool::launch(ui::Widget* parent, editor::IEditor* editor, db
 	// Create asset instance.
 	Ref< db::Instance > assetInstance = group->createInstance(
 		fileName.getFileNameNoExtension(),
-		db::CifReplaceExisting | db::CifKeepExistingGuid
-	);
+		db::CifReplaceExisting | db::CifKeepExistingGuid);
 	if (!assetInstance)
 	{
 		log::error << L"Failed to create instance." << Endl;
@@ -92,5 +94,4 @@ bool MeshAssetWizardTool::launch(ui::Widget* parent, editor::IEditor* editor, db
 	return true;
 }
 
-	}
 }

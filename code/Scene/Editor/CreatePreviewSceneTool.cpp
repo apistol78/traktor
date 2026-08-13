@@ -1,33 +1,39 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Scene/Editor/CreatePreviewSceneTool.h"
+
 #include "Core/Log/Log.h"
-#include "Database/Group.h"
 #include "Database/Database.h"
+#include "Database/Group.h"
 #include "Database/Instance.h"
 #include "Database/Traverse.h"
 #include "Editor/IEditor.h"
 #include "I18N/Text.h"
 #include "Scene/Editor/SceneAsset.h"
-#include "Scene/Editor/CreatePreviewSceneTool.h"
-#include "World/EntityData.h"
 #include "World/Entity/GroupComponentData.h"
+#include "World/EntityData.h"
 
 namespace traktor::scene
 {
-	namespace
-	{
+namespace
+{
 
 const Guid c_guidWhiteRoomScene(L"{B4AFD9C3-E47C-654B-99BE-B281AD10DD1A}");
 
-	}
+}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.script.CreatePreviewSceneTool", 0, CreatePreviewSceneTool, editor::IWizardTool)
+
+bool CreatePreviewSceneTool::create(const PropertyGroup* settings)
+{
+	return true;
+}
 
 std::wstring CreatePreviewSceneTool::getDescription() const
 {
@@ -84,16 +90,14 @@ bool CreatePreviewSceneTool::launch(ui::Widget* parent, editor::IEditor* editor,
 
 		entityData->setName(entityInstances[i]->getName());
 		entityData->setTransform(Transform(
-			Vector4(float((x - n / 2) * 32.0f), 0.0f, float((z - n / 2) * 32.0f), 0.0f)
-		));
+			Vector4(float((x - n / 2) * 32.0f), 0.0f, float((z - n / 2) * 32.0f), 0.0f)));
 		layers[1]->getComponent< world::GroupComponentData >()->addEntityData(entityData);
 	}
 
 	// Create output instance.
 	Ref< db::Instance > sceneInstance = group->createInstance(
 		L"Preview Scene",
-		db::CifReplaceExisting | db::CifKeepExistingGuid
-	);
+		db::CifReplaceExisting | db::CifKeepExistingGuid);
 	if (!sceneInstance)
 		return false;
 

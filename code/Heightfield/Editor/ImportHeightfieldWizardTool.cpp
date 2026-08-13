@@ -1,12 +1,13 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include <cstring>
+#include "Heightfield/Editor/ImportHeightfieldWizardTool.h"
+
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
@@ -16,21 +17,22 @@
 #include "Core/Settings/PropertyString.h"
 #include "Database/Group.h"
 #include "Database/Instance.h"
-#include "Drawing/Image.h"
 #include "Drawing/Filters/MirrorFilter.h"
 #include "Drawing/Filters/ScaleFilter.h"
+#include "Drawing/Image.h"
 #include "Editor/IEditor.h"
-#include "I18N/Text.h"
+#include "Heightfield/Editor/HeightfieldAsset.h"
 #include "Heightfield/Heightfield.h"
 #include "Heightfield/HeightfieldFormat.h"
-#include "Heightfield/Editor/HeightfieldAsset.h"
-#include "Heightfield/Editor/ImportHeightfieldWizardTool.h"
+#include "I18N/Text.h"
 #include "Ui/FileDialog.h"
+
+#include <cstring>
 
 namespace traktor::hf
 {
-	namespace
-	{
+namespace
+{
 
 Ref< drawing::Image > readRawTerrain(IStream* stream)
 {
@@ -42,8 +44,7 @@ Ref< drawing::Image > readRawTerrain(IStream* stream)
 	Ref< drawing::Image > image = new drawing::Image(
 		drawing::PixelFormat::getR16(),
 		size,
-		size
-	);
+		size);
 	stream->read(image->getData(), fileSize);
 	stream->close();
 
@@ -65,9 +66,14 @@ std::wstring getUniqueInstanceName(const std::wstring& baseName, db::Group* grou
 	return L"";
 }
 
-	}
+}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.hf.ImportHeightfieldWizardTool", 0, ImportHeightfieldWizardTool, editor::IWizardTool)
+
+bool ImportHeightfieldWizardTool::create(const PropertyGroup* settings)
+{
+	return true;
+}
 
 std::wstring ImportHeightfieldWizardTool::getDescription() const
 {
@@ -113,7 +119,7 @@ bool ImportHeightfieldWizardTool::launch(ui::Widget* parent, editor::IEditor* ed
 
 	// First try reading heightfield as an image.
 	image = drawing::Image::load(file, fileName.getExtension());
-	//if (image)
+	// if (image)
 	//	image->convert(drawing::PixelFormat::getR16());
 
 	// Last we try as a raw image.
@@ -151,8 +157,7 @@ bool ImportHeightfieldWizardTool::launch(ui::Widget* parent, editor::IEditor* ed
 			size,
 			size,
 			drawing::ScaleFilter::MnAverage,
-			drawing::ScaleFilter::MgLinear
-		);
+			drawing::ScaleFilter::MgLinear);
 		image->apply(&scaleFilter);
 	}
 
@@ -169,16 +174,14 @@ bool ImportHeightfieldWizardTool::launch(ui::Widget* parent, editor::IEditor* ed
 
 		heightfield = new Heightfield(
 			size,
-			heightfieldAsset->getWorldExtent()
-		);
+			heightfieldAsset->getWorldExtent());
 	}
 	else
 	{
 		// Create heightfield.
 		heightfield = new Heightfield(
 			size,
-			Vector4(1024.0f, 128.0f, 1024.0f)
-		);
+			Vector4(1024.0f, 128.0f, 1024.0f));
 	}
 
 	const height_t* sourceHeights = static_cast< const height_t* >(image->getData());
@@ -186,15 +189,13 @@ bool ImportHeightfieldWizardTool::launch(ui::Widget* parent, editor::IEditor* ed
 	std::memcpy(
 		destinationHeights,
 		sourceHeights,
-		size * size * sizeof(height_t)
-	);
+		size * size * sizeof(height_t));
 
 	uint8_t* destinationCuts = heightfield->getCuts();
 	std::memset(
 		destinationCuts,
 		0xff,
-		size * size / 8
-	);
+		size * size / 8);
 
 	if (!instance)
 	{

@@ -6,6 +6,8 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Scene/Editor/ScenePipeline.h"
+
 #include "Core/Log/Log.h"
 #include "Core/Serialization/DeepClone.h"
 #include "Core/Serialization/DeepHash.h"
@@ -17,16 +19,14 @@
 #include "Editor/IPipelineDepends.h"
 #include "Editor/IPipelineSettings.h"
 #include "Editor/Pipeline/PipelineProfiler.h"
-#include "Scene/SceneResource.h"
 #include "Scene/Editor/ExternalOperationData.h"
 #include "Scene/Editor/ISceneOperationData.h"
-#include "Scene/Editor/ScenePipeline.h"
 #include "Scene/Editor/SceneAsset.h"
-#include "Scene/Editor/Traverser.h"
-#include "World/IWorldComponentData.h"
-#include "World/WorldRenderSettings.h"
+#include "Scene/SceneResource.h"
 #include "World/Entity/ExternalEntityData.h"
 #include "World/Entity/GroupComponentData.h"
+#include "World/IWorldComponentData.h"
+#include "World/WorldRenderSettings.h"
 
 namespace traktor::scene
 {
@@ -43,7 +43,7 @@ class PipelineTransformContext : public ISceneOperator::TransformContext
 {
 public:
 	explicit PipelineTransformContext(editor::IPipelineCommon* pipelineCommon)
-	:	m_pipelineCommon(pipelineCommon)
+		: m_pipelineCommon(pipelineCommon)
 	{
 	}
 
@@ -135,8 +135,7 @@ bool ScenePipeline::buildDependencies(
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,
 	const std::wstring& outputPath,
-	const Guid& outputGuid
-) const
+	const Guid& outputGuid) const
 {
 	const SceneAsset* sceneAsset = mandatory_non_null_type_cast< const SceneAsset* >(sourceAsset);
 
@@ -177,19 +176,15 @@ bool ScenePipeline::buildDependencies(
 
 	// In case we're building for the editor we also need to add dependencies to the unmodified scene.
 	if (m_targetEditor)
-	{
 		for (const auto& layer : sceneAsset->getLayers())
 			pipelineDepends->addDependency(layer);
-	}
 
 	const world::WorldRenderSettings* wrs = mutableSceneAsset->getWorldRenderSettings();
 	if (wrs)
 	{
 		if (!m_suppressImageProcess)
-		{
 			for (int32_t i = 0; i < sizeof_array(wrs->imageProcess); ++i)
 				pipelineDepends->addDependency(wrs->imageProcess[i], editor::PdfBuild);
-		}
 
 		pipelineDepends->addDependency(wrs->colorGrading, editor::PdfBuild | editor::PdfResource);
 	}
@@ -206,12 +201,11 @@ bool ScenePipeline::buildOutput(
 	const std::wstring& outputPath,
 	const Guid& outputGuid,
 	const Object* buildParams,
-	uint32_t reason
-) const
+	uint32_t reason) const
 {
 	// Create clone of asset which operators can modify.
 	Ref< SceneAsset > sceneAsset = DeepClone(sourceAsset).create< SceneAsset >();
-	T_FATAL_ASSERT (sceneAsset != nullptr);
+	T_FATAL_ASSERT(sceneAsset != nullptr);
 
 	const bool rebuild = (bool)((reason & editor::PbrForced) != 0);
 
@@ -260,8 +254,7 @@ bool ScenePipeline::buildOutput(
 			for (const auto& assetEntityData : layerGroupData->getEntityData())
 			{
 				Ref< world::EntityData > outputEntityData = checked_type_cast< world::EntityData*, true >(
-					pipelineBuilder->buildProduct(sourceInstance, assetEntityData)
-				);
+					pipelineBuilder->buildProduct(sourceInstance, assetEntityData));
 				if (outputEntityData)
 					groupComponentData->addEntityData(outputEntityData);
 			}
@@ -280,10 +273,8 @@ bool ScenePipeline::buildOutput(
 	sceneResource->setEntityData(groupEntityData);
 
 	for (uint32_t i = 0; i < (int32_t)world::Quality::Last; ++i)
-	{
 		if (m_suppressImageProcess)
 			sceneResource->getWorldRenderSettings()->imageProcess[i] = resource::Id< render::ImageGraph >();
-	}
 
 	for (uint32_t i = 0; i < (int32_t)world::Quality::Last; ++i)
 	{
@@ -318,8 +309,7 @@ Ref< ISerializable > ScenePipeline::buildProduct(
 	editor::IPipelineBuilder* pipelineBuilder,
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,
-	const Object* buildParams
-) const
+	const Object* buildParams) const
 {
 	Ref< SceneAsset > sceneAsset = DeepClone(sourceAsset).create< SceneAsset >();
 	if (!sceneAsset)
@@ -337,10 +327,8 @@ const ISceneOperator* ScenePipeline::findOperator(const TypeInfo& operationType)
 	for (const auto sop : m_operators)
 	{
 		for (const auto ts : sop->getOperatorTypes())
-		{
 			if (is_type_a(*ts, operationType))
 				return sop;
-		}
 	}
 	return nullptr;
 }

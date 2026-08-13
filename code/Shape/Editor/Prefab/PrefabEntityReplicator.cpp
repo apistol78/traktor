@@ -6,6 +6,8 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Shape/Editor/Prefab/PrefabEntityReplicator.h"
+
 #include "Core/Io/FileSystem.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/String.h"
@@ -14,34 +16,33 @@
 #include "Core/Settings/PropertyString.h"
 #include "Editor/IPipelineCommon.h"
 #include "Editor/IPipelineSettings.h"
-#include "Mesh/MeshComponentData.h"
 #include "Mesh/Editor/MeshAsset.h"
+#include "Mesh/MeshComponentData.h"
 #include "Model/Model.h"
 #include "Model/ModelCache.h"
 #include "Model/ModelFormat.h"
 #include "Model/Operations/MergeModel.h"
 #include "Model/Operations/Transform.h"
+#include "Physics/Editor/MeshAsset.h"
 #include "Physics/MeshShapeDesc.h"
 #include "Physics/StaticBodyDesc.h"
-#include "Physics/Editor/MeshAsset.h"
 #include "Physics/World/RigidBodyComponentData.h"
 #include "Render/Editor/Shader/ShaderGraph.h"
 #include "Render/Editor/Shader/ShaderGraphPreview.h"
 #include "Render/Editor/Texture/TextureSet.h"
-#include "Scene/Editor/Traverser.h"
 #include "Shape/Editor/Prefab/PrefabComponentData.h"
-#include "Shape/Editor/Prefab/PrefabEntityReplicator.h"
-#include "World/EntityData.h"
+#include "World/Editor/Traverser.h"
 #include "World/Entity/GroupComponentData.h"
+#include "World/EntityData.h"
 
 namespace traktor::shape
 {
-	namespace
-	{
+namespace
+{
 
 const Guid c_shapeMeshAssetSeed(L"{FEC54BB1-1F55-48F5-AB87-58FE1712C42D}");
 
-	}
+}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.shape.PrefabEntityReplicator", 2, PrefabEntityReplicator, world::IEntityReplicator)
 
@@ -59,8 +60,7 @@ TypeInfoSet PrefabEntityReplicator::getSupportedTypes() const
 
 RefArray< const world::IEntityComponentData > PrefabEntityReplicator::getDependentComponents(
 	const world::EntityData* entityData,
-	const world::IEntityComponentData* componentData
-) const
+	const world::IEntityComponentData* componentData) const
 {
 	// We do not include PrefabComponent since it's not relevant for generating models.
 	RefArray< const world::IEntityComponentData > dependentComponentData;
@@ -73,8 +73,7 @@ Ref< model::Model > PrefabEntityReplicator::createModel(
 	editor::IPipelineCommon* pipelineCommon,
 	const world::EntityData* entityData,
 	const world::IEntityComponentData* componentData,
-	Usage usage
-) const
+	Usage usage) const
 {
 	if (usage == Usage::Visual)
 		return createVisualModel(pipelineCommon, entityData, componentData);
@@ -87,8 +86,7 @@ Ref< model::Model > PrefabEntityReplicator::createModel(
 Ref< model::Model > PrefabEntityReplicator::createVisualModel(
 	editor::IPipelineCommon* pipelineCommon,
 	const world::EntityData* entityData,
-	const world::IEntityComponentData* componentData
-) const
+	const world::IEntityComponentData* componentData) const
 {
 	const world::GroupComponentData* groupComponentData = entityData->getComponent< world::GroupComponentData >();
 	if (!groupComponentData)
@@ -98,21 +96,19 @@ Ref< model::Model > PrefabEntityReplicator::createVisualModel(
 	SmallMap< std::wstring, Guid > materialShaders;
 
 	// Collect all models from prefab component.
-	scene::Traverser::visit(groupComponentData, [&](const world::EntityData* inEntityData) -> scene::Traverser::Result
-	{
+	world::Traverser::visit(groupComponentData, [&](const world::EntityData* inEntityData) -> world::Traverser::Result {
 		// Dynamic layers do not get included in prefab.
 		if (!inEntityData->getState().visible || inEntityData->getState().dynamic)
-			return scene::Traverser::Result::Skip;
+			return world::Traverser::Result::Skip;
 
 		if (auto meshComponentData = inEntityData->getComponent< mesh::MeshComponentData >())
 		{
 			Ref< const mesh::MeshAsset > meshAsset = pipelineCommon->getObjectReadOnly< mesh::MeshAsset >(
-				meshComponentData->getMesh()
-			);
+				meshComponentData->getMesh());
 			if (!meshAsset)
 			{
 				log::error << L"Prefab failed; unable to read mesh asset \"" << Guid(meshComponentData->getMesh()).format() << L"\"." << Endl;
-				return scene::Traverser::Result::Failed;
+				return world::Traverser::Result::Failed;
 			}
 
 			// Load the model references by the mesh asset.
@@ -121,17 +117,15 @@ Ref< model::Model > PrefabEntityReplicator::createVisualModel(
 			if (!model)
 			{
 				log::error << L"Prefab failed; unable to read model \"" << filePath.getPathName() << L"\"." << Endl;
-				return scene::Traverser::Result::Failed;
+				return world::Traverser::Result::Failed;
 			}
 
 			// Transform model into world space.
 			model->apply(model::Transform(
 				translate(meshAsset->getOffset()) *
-				scale(meshAsset->getScaleFactor())
-			));
+				scale(meshAsset->getScaleFactor())));
 			model->apply(model::Transform(
-				inEntityData->getTransform().toMatrix44()
-			));
+				inEntityData->getTransform().toMatrix44()));
 
 			model->clear(model::Model::CfColors | model::Model::CfJoints);
 			models.push_back(model);
@@ -141,7 +135,7 @@ Ref< model::Model > PrefabEntityReplicator::createVisualModel(
 				materialShaders[ms.first] = ms.second;
 		}
 
-		return scene::Traverser::Result::Continue;
+		return world::Traverser::Result::Continue;
 	});
 
 	log::info << L"Prefab replicator collected " << models.size() << L" models to be merged." << Endl;
@@ -152,8 +146,7 @@ Ref< model::Model > PrefabEntityReplicator::createVisualModel(
 		outputModel->apply(model::MergeModel(*mdl, Transform::identity(), 0.001f));
 
 	outputModel->apply(model::Transform(
-		entityData->getTransform().inverse().toMatrix44()
-	));
+		entityData->getTransform().inverse().toMatrix44()));
 
 	// Bind texture references in material maps.
 	for (auto& material : outputModel->getMaterials())
@@ -164,13 +157,13 @@ Ref< model::Model > PrefabEntityReplicator::createVisualModel(
 			const Ref< const render::ShaderGraph > materialShaderGraph = pipelineCommon->getObjectReadOnly< render::ShaderGraph >(it->second);
 			if (!materialShaderGraph)
 				continue;
-		
+
 			Ref< drawing::Image > image = render::ShaderGraphPreview(m_assetPath, pipelineCommon->getSourceDatabase()).generate(materialShaderGraph, 128, 128);
 			if (!image)
 				continue;
 
 			auto diffuseMap = material.getDiffuseMap();
-			diffuseMap.image = image;			
+			diffuseMap.image = image;
 			material.setDiffuseMap(diffuseMap);
 		}
 	}
@@ -187,8 +180,7 @@ Ref< model::Model > PrefabEntityReplicator::createVisualModel(
 Ref< model::Model > PrefabEntityReplicator::createCollisionModel(
 	editor::IPipelineCommon* pipelineCommon,
 	const world::EntityData* entityData,
-	const world::IEntityComponentData* componentData
-) const
+	const world::IEntityComponentData* componentData) const
 {
 	const world::GroupComponentData* groupComponentData = entityData->getComponent< world::GroupComponentData >();
 	if (!groupComponentData)
@@ -203,27 +195,26 @@ Ref< model::Model > PrefabEntityReplicator::createCollisionModel(
 	float margin = 0.0f;
 
 	// Collect all models from prefab component.
-	scene::Traverser::visit(groupComponentData, [&](const world::EntityData* inEntityData) -> scene::Traverser::Result
-	{
+	world::Traverser::visit(groupComponentData, [&](const world::EntityData* inEntityData) -> world::Traverser::Result {
 		// Dynamic layers do not get included in prefab.
 		if (!inEntityData->getState().visible || inEntityData->getState().dynamic)
-			return scene::Traverser::Result::Skip;
+			return world::Traverser::Result::Skip;
 
 		if (auto rigidBodyComponentData = inEntityData->getComponent< physics::RigidBodyComponentData >())
 		{
 			auto bodyDesc = dynamic_type_cast< const physics::StaticBodyDesc* >(rigidBodyComponentData->getBodyDesc());
 			if (!bodyDesc)
-				return scene::Traverser::Result::Continue;
+				return world::Traverser::Result::Continue;
 
 			auto meshShape = dynamic_type_cast< const physics::MeshShapeDesc* >(rigidBodyComponentData->getBodyDesc()->getShape());
 			if (!meshShape)
-				return scene::Traverser::Result::Continue;
+				return world::Traverser::Result::Continue;
 
 			Ref< const physics::MeshAsset > meshAsset = pipelineCommon->getObjectReadOnly< physics::MeshAsset >(meshShape->getMesh());
 			if (!meshAsset)
 			{
 				log::error << L"Prefab failed; unable to read collision mesh \"" << Guid(meshShape->getMesh()).format() << L"\"." << Endl;
-				return scene::Traverser::Result::Failed;
+				return world::Traverser::Result::Failed;
 			}
 
 			// Load the model references by the mesh asset.
@@ -232,13 +223,12 @@ Ref< model::Model > PrefabEntityReplicator::createCollisionModel(
 			if (!shapeModel)
 			{
 				log::error << L"Prefab failed; unable to read collision model \"" << filePath.getPathName() << L"\"." << Endl;
-				return scene::Traverser::Result::Failed;
+				return world::Traverser::Result::Failed;
 			}
 
 			// Transform model into world space.
 			shapeModel->apply(model::Transform(
-				inEntityData->getTransform().toMatrix44()
-			));
+				inEntityData->getTransform().toMatrix44()));
 
 			models.push_back(shapeModel);
 
@@ -253,7 +243,7 @@ Ref< model::Model > PrefabEntityReplicator::createCollisionModel(
 			margin = std::max(margin, meshAsset->getMargin());
 		}
 
-		return scene::Traverser::Result::Continue;
+		return world::Traverser::Result::Continue;
 	});
 
 	if (models.empty())
@@ -269,14 +259,13 @@ Ref< model::Model > PrefabEntityReplicator::createCollisionModel(
 		outputModel->apply(model::MergeModel(*mdl, Transform::identity(), 0.001f));
 
 	outputModel->apply(model::Transform(
-		entityData->getTransform().inverse().toMatrix44()
-	));
+		entityData->getTransform().inverse().toMatrix44()));
 
 	// Create shape descriptor; used by bake pipeline to set appropriate collision materials.
- 	Ref< physics::MeshAsset > outputShapeMeshAsset = new physics::MeshAsset();
- 	outputShapeMeshAsset->setCalculateConvexHull(false);
+	Ref< physics::MeshAsset > outputShapeMeshAsset = new physics::MeshAsset();
+	outputShapeMeshAsset->setCalculateConvexHull(false);
 	outputShapeMeshAsset->setMargin(margin);
- 	outputShapeMeshAsset->setMaterials(materialPhysics);
+	outputShapeMeshAsset->setMaterials(materialPhysics);
 	outputModel->setProperty< PropertyObject >(type_name(outputShapeMeshAsset), outputShapeMeshAsset);
 
 	Ref< physics::ShapeDesc > outputShapeDesc = new physics::ShapeDesc();

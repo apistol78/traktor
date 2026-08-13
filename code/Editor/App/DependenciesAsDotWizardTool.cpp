@@ -1,27 +1,34 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include <limits>
+#include "Editor/App/DependenciesAsDotWizardTool.h"
+
 #include "Core/Io/StringOutputStream.h"
 #include "Database/Instance.h"
 #include "Editor/IEditor.h"
 #include "Editor/IPipelineDepends.h"
 #include "Editor/PipelineDependency.h"
 #include "Editor/PipelineDependencySet.h"
-#include "Editor/App/DependenciesAsDotWizardTool.h"
 #include "I18N/Text.h"
 #include "Ui/Application.h"
 #include "Ui/Clipboard.h"
+
+#include <limits>
 
 namespace traktor::editor
 {
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.editor.DependenciesAsDotWizardToolTool", 0, DependenciesAsDotWizardTool, IWizardTool)
+
+bool DependenciesAsDotWizardTool::create(const PropertyGroup* settings)
+{
+	return true;
+}
 
 std::wstring DependenciesAsDotWizardTool::getDescription() const
 {

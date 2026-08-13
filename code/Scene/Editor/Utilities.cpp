@@ -6,8 +6,9 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include "Scene/Editor/Traverser.h"
 #include "Scene/Editor/Utilities.h"
+
+#include "World/Editor/Traverser.h"
 #include "World/EntityData.h"
 
 namespace traktor::scene
@@ -16,10 +17,9 @@ namespace traktor::scene
 void generateEntityIds(world::EntityData* entityData)
 {
 	entityData->setId(Guid::create());
-	Traverser::visit(entityData, [](world::EntityData* ed) -> Traverser::Result
-	{
+	world::Traverser::visit(entityData, [](world::EntityData* ed) -> world::Traverser::Result {
 		ed->setId(Guid::create());
-		return Traverser::Result::Continue;
+		return world::Traverser::Result::Continue;
 	});
 }
 

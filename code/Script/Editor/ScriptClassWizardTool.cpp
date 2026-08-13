@@ -1,11 +1,13 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Script/Editor/ScriptClassWizardTool.h"
+
 #include "Core/Io/StringOutputStream.h"
 #include "Database/Database.h"
 #include "Database/Group.h"
@@ -14,21 +16,20 @@
 #include "Editor/IEditor.h"
 #include "I18N/Text.h"
 #include "Script/Editor/Script.h"
-#include "Script/Editor/ScriptClassWizardTool.h"
 #include "Ui/CharacterSetEditValidator.h"
-#include "Ui/StyleBitmap.h"
 #include "Ui/InputDialog.h"
+#include "Ui/StyleBitmap.h"
 
 namespace traktor::script
 {
-	namespace
-	{
+namespace
+{
 
 class ClassValueEnumerator : public RefCountImpl< ui::InputDialog::IValueEnumerator >
 {
 public:
-	ClassValueEnumerator(const RefArray< db::Instance >& instances)
-	:	m_instances(instances)
+	explicit ClassValueEnumerator(const RefArray< db::Instance >& instances)
+		: m_instances(instances)
 	{
 	}
 
@@ -53,9 +54,14 @@ private:
 	const RefArray< db::Instance >& m_instances;
 };
 
-	}
+}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.script.ScriptClassWizardTool", 0, ScriptClassWizardTool, editor::IWizardTool)
+
+bool ScriptClassWizardTool::create(const PropertyGroup* settings)
+{
+	return true;
+}
 
 std::wstring ScriptClassWizardTool::getDescription() const
 {
@@ -89,20 +95,15 @@ bool ScriptClassWizardTool::launch(ui::Widget* parent, editor::IEditor* editor, 
 	classNameValidator.add(L'.');
 
 	ui::InputDialog inputDialog;
-	ui::InputDialog::Field fields[] =
-	{
-		{
-			i18n::Text(L"SCRIPT_CLASS_WIZARDTOOL_CLASS_NAME"),
+	ui::InputDialog::Field fields[] = {
+		{ i18n::Text(L"SCRIPT_CLASS_WIZARDTOOL_CLASS_NAME"),
 			L"",
 			&classNameValidator,
-			nullptr
-		},
-		{
-			i18n::Text(L"SCRIPT_CLASS_WIZARDTOOL_INHERIT_CLASS_NAME"),
+			nullptr },
+		{ i18n::Text(L"SCRIPT_CLASS_WIZARDTOOL_INHERIT_CLASS_NAME"),
 			L"",
 			&classNameValidator,
-			new ClassValueEnumerator(scriptInstances)
-		}
+			new ClassValueEnumerator(scriptInstances) }
 	};
 
 	inputDialog.create(
@@ -110,8 +111,7 @@ bool ScriptClassWizardTool::launch(ui::Widget* parent, editor::IEditor* editor, 
 		i18n::Text(L"SCRIPT_CLASS_WIZARDTOOL_DIALOG_TITLE"),
 		i18n::Text(L"SCRIPT_CLASS_WIZARDTOOL_DIALOG_MESSAGE"),
 		fields,
-		sizeof_array(fields)
-	);
+		sizeof_array(fields));
 
 	inputDialog.setIcon(new ui::StyleBitmap(L"Editor.Icon"));
 
@@ -155,8 +155,7 @@ bool ScriptClassWizardTool::launch(ui::Widget* parent, editor::IEditor* editor, 
 	// Create database instance.
 	Ref< db::Instance > scriptInstance = group->createInstance(
 		className,
-		db::CifReplaceExisting | db::CifKeepExistingGuid
-	);
+		db::CifReplaceExisting | db::CifKeepExistingGuid);
 	if (!scriptInstance)
 		return false;
 

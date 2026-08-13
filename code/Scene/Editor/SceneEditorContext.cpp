@@ -6,8 +6,8 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include <limits>
-#include <stack>
+#include "Scene/Editor/SceneEditorContext.h"
+
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
 #include "Core/Misc/ObjectStore.h"
@@ -21,21 +21,11 @@
 #include "Render/IRenderSystem.h"
 #include "Render/ITexture.h"
 #include "Resource/IResourceManager.h"
-#include "Scene/Scene.h"
 #include "Scene/Editor/Camera.h"
 #include "Scene/Editor/DefaultEntityEditor.h"
 #include "Scene/Editor/EntityAdapter.h"
 #include "Scene/Editor/EntityAdapterBuilder.h"
 #include "Scene/Editor/EntityTransformAnchor.h"
-#include "Scene/Editor/IComponentEditorFactory.h"
-#include "Scene/Editor/IEntityEditorFactory.h"
-#include "Scene/Editor/IModifier.h"
-#include "Scene/Editor/ISceneEditorUIExtension.h"
-#include "Scene/Editor/ISceneEditorPlugin.h"
-#include "Scene/Editor/SceneAsset.h"
-#include "Scene/Editor/SceneEditorContext.h"
-#include "Scene/Editor/Traverser.h"
-#include "Scene/Editor/Utilities.h"
 #include "Scene/Editor/Events/CameraMovedEvent.h"
 #include "Scene/Editor/Events/MeasurementEvent.h"
 #include "Scene/Editor/Events/ModifierChangedEvent.h"
@@ -45,24 +35,36 @@
 #include "Scene/Editor/Events/PreModifyEvent.h"
 #include "Scene/Editor/Events/RedrawEvent.h"
 #include "Scene/Editor/Events/SceneSelectionChangeEvent.h"
+#include "Scene/Editor/IComponentEditorFactory.h"
+#include "Scene/Editor/IEntityEditorFactory.h"
+#include "Scene/Editor/IModifier.h"
+#include "Scene/Editor/ISceneEditorPlugin.h"
+#include "Scene/Editor/ISceneEditorUIExtension.h"
+#include "Scene/Editor/SceneAsset.h"
+#include "Scene/Editor/Utilities.h"
+#include "Scene/Scene.h"
 #include "Script/IScriptContext.h"
 #include "Ui/Events/SelectionChangeEvent.h"
+#include "World/Editor/Traverser.h"
 #include "World/Entity.h"
+#include "World/Entity/EventManagerComponent.h"
+#include "World/Entity/GroupComponent.h"
 #include "World/EntityBuilder.h"
 #include "World/EntityData.h"
 #include "World/EntityFactory.h"
 #include "World/World.h"
-#include "World/Entity/EventManagerComponent.h"
-#include "World/Entity/GroupComponent.h"
+
+#include <limits>
+#include <stack>
 
 namespace traktor::scene
 {
-	namespace
-	{
+namespace
+{
 
 const int32_t c_autoRedrawFrames = 10;
 
-	}
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.scene.SceneEditorContext", SceneEditorContext, ui::EventSubject)
 
@@ -74,27 +76,26 @@ SceneEditorContext::SceneEditorContext(
 	resource::IResourceManager* resourceManager,
 	render::IRenderSystem* renderSystem,
 	physics::PhysicsManager* physicsManager,
-	script::IScriptContext* scriptContext
-)
-:	m_editor(editor)
-,	m_document(document)
-,	m_resourceDb(resourceDb)
-,	m_sourceDb(sourceDb)
-,	m_resourceManager(resourceManager)
-,	m_renderSystem(renderSystem)
-,	m_physicsManager(physicsManager)
-,	m_scriptContext(scriptContext)
-,	m_guideSize(1.0f)
-,	m_pickEnable(true)
-,	m_snapMode(SmNone)
-,	m_snapSpacing(0.0f)
-,	m_physicsEnable(false)
-,	m_playing(false)
-,	m_timeScale(1.0f)
-,	m_time(0.0f)
-,	m_redrawUntilStop(60)
-,	m_buildCount(0)
-,	m_entityCount(0)
+	script::IScriptContext* scriptContext)
+	: m_editor(editor)
+	, m_document(document)
+	, m_resourceDb(resourceDb)
+	, m_sourceDb(sourceDb)
+	, m_resourceManager(resourceManager)
+	, m_renderSystem(renderSystem)
+	, m_physicsManager(physicsManager)
+	, m_scriptContext(scriptContext)
+	, m_guideSize(1.0f)
+	, m_pickEnable(true)
+	, m_snapMode(SmNone)
+	, m_snapSpacing(0.0f)
+	, m_physicsEnable(false)
+	, m_playing(false)
+	, m_timeScale(1.0f)
+	, m_time(0.0f)
+	, m_redrawUntilStop(60)
+	, m_buildCount(0)
+	, m_entityCount(0)
 {
 	for (int i = 0; i < sizeof_array(m_cameras); ++i)
 		m_cameras[i] = new Camera();
@@ -366,7 +367,7 @@ void SceneEditorContext::setSceneAsset(SceneAsset* sceneAsset)
 			}
 			usedIds.insert(layer->getId());
 
-			Traverser::visit(layer, [&](Ref< world::EntityData >& entityData) {
+			world::Traverser::visit(layer, [&](Ref< world::EntityData >& entityData) {
 				if (entityData->getId().isNull())
 				{
 					log::warning << L"Entity \"" << entityData->getName() << L"\" has no ID, new ID added." << Endl;
@@ -378,7 +379,7 @@ void SceneEditorContext::setSceneAsset(SceneAsset* sceneAsset)
 					entityData->setId(Guid::create());
 				}
 				usedIds.insert(entityData->getId());
-				return Traverser::Result::Continue;
+				return world::Traverser::Result::Continue;
 			});
 		}
 	}
@@ -462,12 +463,10 @@ void SceneEditorContext::buildEntities(bool rebuildWorld)
 			RefArray< world::IEntityFactory > entityFactories;
 			plugin->createEntityFactories(this, entityFactories);
 			for (auto factory : entityFactories)
-			{
 				if (factory->initialize(objectStore))
 					entityFactory->addFactory(factory);
 				else
 					log::error << L"Failed to initialize entity factory \"" << type_name(factory) << L"\"." << Endl;
-			}
 		}
 
 		Ref< world::World > world = m_scene ? m_scene->getWorld() : nullptr;
@@ -497,8 +496,7 @@ void SceneEditorContext::buildEntities(bool rebuildWorld)
 		RefArray< world::EntityData > layers = m_sceneAsset->getLayers();
 		layers.erase(
 			std::remove(layers.begin(), layers.end(), (world::EntityData*)nullptr),
-			layers.end()
-		);
+			layers.end());
 
 		m_layerEntityAdapters.resize(layers.size());
 		for (uint32_t i = 0; i < layers.size(); ++i)
@@ -520,8 +518,7 @@ void SceneEditorContext::buildEntities(bool rebuildWorld)
 		// Create our scene.
 		m_scene = new Scene(
 			m_sceneAsset->getWorldRenderSettings(),
-			world
-		);
+			world);
 	}
 	else
 		m_scene = nullptr;
@@ -564,12 +561,10 @@ void SceneEditorContext::buildController()
 		RefArray< world::IEntityFactory > entityFactories;
 		plugin->createEntityFactories(this, entityFactories);
 		for (auto factory : entityFactories)
-		{
 			if (factory->initialize(objectStore))
 				entityFactory->addFactory(factory);
 			else
 				log::error << L"Failed to initialize entity factory \"" << type_name(factory) << L"\"." << Endl;
-		}
 	}
 
 	// Create all world components.
@@ -685,8 +680,7 @@ uint32_t SceneEditorContext::findAdaptersOfType(const TypeInfo& entityType, RefA
 
 			if (
 				is_type_of(entityType, type_of(entityAdapter->getEntity())) ||
-				entityAdapter->getComponent(entityType) != nullptr
-			)
+				entityAdapter->getComponent(entityType) != nullptr)
 			{
 				bool include = true;
 
@@ -741,8 +735,7 @@ EntityAdapter* SceneEditorContext::queryRay(const Vector4& worldRayOrigin, const
 			entityAdapter->isPrivate() ||
 			entityAdapter->isLocked() ||
 			!entityAdapter->isVisible() ||
-			entityAdapter->isChildOfExternal()
-		)
+			entityAdapter->isChildOfExternal())
 			continue;
 
 		IEntityEditor* entityEditor = entityAdapter->getEntityEditor();
@@ -782,8 +775,7 @@ RefArray< EntityAdapter > SceneEditorContext::queryFrustum(const Frustum& worldF
 			entityAdapter->isPrivate() ||
 			entityAdapter->isLocked() ||
 			!entityAdapter->isVisible() ||
-			entityAdapter->isChildOfExternal()
-		)
+			entityAdapter->isChildOfExternal())
 			continue;
 
 		IEntityEditor* entityEditor = entityAdapter->getEntityEditor();
@@ -833,10 +825,8 @@ void SceneEditorContext::cloneSelected()
 ISceneEditorUIExtension* SceneEditorContext::getUIExtensionOf(const TypeInfo& extensionType) const
 {
 	for (auto uiExtension : m_uiExtensions)
-	{
 		if (&type_of(uiExtension) == &extensionType)
 			return uiExtension;
-	}
 	return nullptr;
 }
 

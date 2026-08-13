@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2023 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -13,7 +13,7 @@
 
 // import/export mechanism.
 #undef T_DLLCLASS
-#if defined(T_SCENE_EDITOR_EXPORT)
+#if defined(T_WORLD_EDITOR_EXPORT)
 #	define T_DLLCLASS T_DLLEXPORT
 #else
 #	define T_DLLCLASS T_DLLIMPORT
@@ -31,13 +31,8 @@ namespace traktor::world
 
 class EntityData;
 
-}
-
-namespace traktor::scene
-{
-
-/*! Scene/entity data traverser.
- * \ingroup Scene
+/*! Entity data traverser.
+ * \ingroup World
  */
 class T_DLLCLASS Traverser
 {
@@ -49,9 +44,9 @@ public:
 		Failed
 	};
 
-	static bool visit(const ISerializable* object, const std::function< Result (const world::EntityData*) >& visitor);
+	static bool visit(const ISerializable* object, const std::function< Result (const EntityData*) >& visitor);
 
-	static bool visit(ISerializable* object, const std::function< Result (Ref< world::EntityData >&) >& visitor);
+	static bool visit(ISerializable* object, const std::function< Result (Ref< EntityData >&) >& visitor);
 };
 
 }

@@ -1,13 +1,14 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include <limits>
-#include <functional>
+#include "Shape/Editor/Bake/BakeOperator.h"
+
+#include "Core/Containers/SmallMap.h"
 #include "Core/Io/FileOutputStream.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/Utf8Encoding.h"
@@ -18,7 +19,6 @@
 #include "Core/Math/Quasirandom.h"
 #include "Core/Math/Range.h"
 #include "Core/Math/Winding3.h"
-#include "Core/Containers/SmallMap.h"
 #include "Core/Misc/Key.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/String.h"
@@ -35,21 +35,21 @@
 #include "Database/Database.h"
 #include "Database/Instance.h"
 #include "Drawing/CubeMap.h"
-#include "Drawing/Image.h"
-#include "Drawing/PixelFormat.h"
 #include "Drawing/Filters/ConvolutionFilter.h"
 #include "Drawing/Filters/GammaFilter.h"
 #include "Drawing/Filters/MirrorFilter.h"
 #include "Drawing/Filters/ScaleFilter.h"
 #include "Drawing/Filters/TransformFilter.h"
+#include "Drawing/Image.h"
+#include "Drawing/PixelFormat.h"
 #include "Editor/DataAccessCache.h"
 #include "Editor/IPipelineBuilder.h"
 #include "Editor/IPipelineDepends.h"
 #include "Editor/IPipelineSettings.h"
 #include "Editor/Pipeline/PipelineProfiler.h"
+#include "Mesh/Editor/MeshAsset.h"
 #include "Mesh/MeshComponentData.h"
 #include "Mesh/MeshParameterComponentData.h"
-#include "Mesh/Editor/MeshAsset.h"
 #include "Model/Model.h"
 #include "Model/ModelCache.h"
 #include "Model/ModelFormat.h"
@@ -58,20 +58,17 @@
 #include "Model/Operations/CleanDuplicates.h"
 #include "Model/Operations/Triangulate.h"
 #include "Model/Operations/UnwrapUV.h"
+#include "Physics/Editor/MeshAsset.h"
 #include "Physics/MeshShapeDesc.h"
 #include "Physics/StaticBodyDesc.h"
-#include "Physics/Editor/MeshAsset.h"
 #include "Physics/World/RigidBodyComponentData.h"
-#include "Render/Types.h"
 #include "Render/Editor/Shader/Nodes.h"
 #include "Render/Editor/Shader/ShaderGraph.h"
 #include "Render/Editor/Texture/TextureAsset.h"
 #include "Render/Resource/AliasTextureResource.h"
-#include "World/Editor/IEntityReplicator.h"
+#include "Render/Types.h"
 #include "Scene/Editor/SceneAsset.h"
-#include "Scene/Editor/Traverser.h"
 #include "Shape/Editor/Bake/BakeOperationData.h"
-#include "Shape/Editor/Bake/BakeOperator.h"
 #include "Shape/Editor/Bake/IblProbe.h"
 #include "Shape/Editor/Bake/SkyProbe.h"
 #include "Shape/Editor/Bake/TracerCamera.h"
@@ -82,22 +79,27 @@
 #include "Shape/Editor/Bake/TracerOutput.h"
 #include "Shape/Editor/Bake/TracerProcessor.h"
 #include "Shape/Editor/Bake/TracerTask.h"
-#include "World/EntityData.h"
-#include "World/IrradianceGridResource.h"
-#include "World/WorldRenderSettings.h"
+#include "Weather/Sky/SkyComponentData.h"
+#include "World/Editor/IEntityReplicator.h"
 #include "World/Editor/ResolveExternal.h"
+#include "World/Editor/Traverser.h"
 #include "World/Entity/CameraComponentData.h"
 #include "World/Entity/ExternalEntityData.h"
 #include "World/Entity/GroupComponentData.h"
 #include "World/Entity/IrradianceGridComponentData.h"
 #include "World/Entity/LightComponentData.h"
 #include "World/Entity/VolumeComponentData.h"
-#include "Weather/Sky/SkyComponentData.h"
+#include "World/EntityData.h"
+#include "World/IrradianceGridResource.h"
+#include "World/WorldRenderSettings.h"
+
+#include <functional>
+#include <limits>
 
 namespace traktor::shape
 {
-	namespace
-	{
+namespace
+{
 
 const Guid c_lightmapProxyId(L"{A5F6E00A-6291-D640-825C-99006197AF49}");
 const Guid c_lightmapDiffuseIdSeed(L"{A5A16214-0A01-4D6D-A509-6A5A16ACB6A3}");
@@ -108,10 +110,9 @@ const Guid c_shapeMeshAssetSeed(L"{FEC54BB1-1F55-48F5-AB87-58FE1712C42D}");
 void describeEntity(OutputStream& os, const world::EntityData* entityData)
 {
 	RefArray< const world::EntityData > children;
-	scene::Traverser::visit(entityData, [&](const world::EntityData* childEntityData) -> scene::Traverser::Result
-	{
+	world::Traverser::visit(entityData, [&](const world::EntityData* childEntityData) -> world::Traverser::Result {
 		children.push_back(childEntityData);
-		return scene::Traverser::Result::Skip;
+		return world::Traverser::Result::Skip;
 	});
 
 	os << entityData->getName() << L" " << entityData->getId().format() << Endl;
@@ -194,16 +195,14 @@ void addSky(
 	const world::EntityData* entityData,
 	const weather::SkyComponentData* skyComponentData,
 	const Transform& skyTransform,
-	TracerTask* tracerTask
-)
+	TracerTask* tracerTask)
 {
 	const Vector4 sunDirection = entityData->getTransform().axisY();
 	tracerTask->addTracerEnvironment(new TracerEnvironment(new SkyProbe(
 		skyComponentData->getSkyOverHorizon(),
 		skyComponentData->getSkyUnderHorizon(),
 		skyComponentData->getIntensity(),
-		skyComponentData->getSaturation()
-	)));
+		skyComponentData->getSaturation())));
 
 	/*
 	const auto& textureId = skyComponentData->getTexture();
@@ -274,7 +273,7 @@ void addSky(
 			}
 
 			log::info << L"Sun intensity : " << sunIntensity << Endl;
-			
+
 			Vector4 sunU, sunV;
 			orthogonalFrame(sunDirection, sunU, sunV);
 			const Matrix44 M(sunU, sunV, sunDirection, Vector4::zero());
@@ -298,7 +297,7 @@ void addSky(
 							for (int32_t i = 0; i < 5000; ++i)
 							{
 								const Vector2 uv = Quasirandom::hammersley(i, 5000, random);
-								
+
 								// Calculate direction; approximate radiance angle with the lerp construct.
 								Vector4 direction = Quasirandom::uniformHemiSphere(uv, d);
 								direction = lerp(d, direction, 0.125_simd).normalized();
@@ -355,7 +354,7 @@ void addSky(
 	*/
 }
 
-	}
+}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.shape.BakeOperator", 0, BakeOperator, scene::ISceneOperator)
 
@@ -393,7 +392,7 @@ bool BakeOperator::create(const editor::IPipelineSettings* settings)
 	{
 		Ref< world::IEntityReplicator > entityReplicator = mandatory_non_null_type_cast< world::IEntityReplicator* >(entityReplicatorType->createInstance());
 		if (!entityReplicator->create(settings))
-			return false;	
+			return false;
 
 		auto supportedTypes = entityReplicator->getSupportedTypes();
 		for (auto supportedType : supportedTypes)
@@ -423,8 +422,7 @@ TypeInfoSet BakeOperator::getOperatorTypes() const
 
 void BakeOperator::addDependencies(
 	editor::IPipelineDepends* pipelineDepends,
-	const ISerializable* operatorData
-) const
+	const ISerializable* operatorData) const
 {
 	pipelineDepends->addDependency(c_lightmapProxyId, editor::PdfBuild);
 }
@@ -432,8 +430,7 @@ void BakeOperator::addDependencies(
 bool BakeOperator::transform(
 	const scene::ISceneOperator::TransformContext& context,
 	const ISerializable* operatorData,
-	scene::SceneAsset* inoutSceneAsset
-) const
+	scene::SceneAsset* inoutSceneAsset) const
 {
 	const auto configuration = mandatory_non_null_type_cast< const BakeOperationData* >(operatorData);
 
@@ -459,29 +456,25 @@ bool BakeOperator::transform(
 		// entities which are inlines in scene, only those referenced from an external entity should be re-assigned IDs.
 		Ref< world::EntityData > flattenedLayer = checked_type_cast< world::EntityData* >(world::resolveExternal(
 			[&](const Guid& objectId) -> Ref< const ISerializable > {
-				return context.getObjectReadOnly(objectId);
-			},
+			return context.getObjectReadOnly(objectId);
+		},
 			layer,
 			Guid::null,
-			nullptr
-		));
+			nullptr));
 		if (!flattenedLayer)
 			return false;
 
 		// Collect all entities from layer which do not get baked.
-		scene::Traverser::visit(flattenedLayer, [&](Ref< world::EntityData >& inoutEntityData) -> scene::Traverser::Result
-		{
+		world::Traverser::visit(flattenedLayer, [&](Ref< world::EntityData >& inoutEntityData) -> world::Traverser::Result {
 			// "Unnamed" entities do not bake.
 			if (inoutEntityData->getId().isNull())
-				return scene::Traverser::Result::Continue;
+				return world::Traverser::Result::Continue;
 
 			// Transform and keep entities which isn't included in bake.
 			RefArray< world::IEntityComponentData > componentDatas = inoutEntityData->getComponents();
-			componentDatas.sort([](world::IEntityComponentData* lh, world::IEntityComponentData* rh)
-				{
-					return lh->getOrdinal() < rh->getOrdinal();
-				}
-			);
+			componentDatas.sort([](world::IEntityComponentData* lh, world::IEntityComponentData* rh) {
+				return lh->getOrdinal() < rh->getOrdinal();
+			});
 			for (auto componentData : componentDatas)
 			{
 				const world::IEntityReplicator* entityReplicator = m_entityReplicators[&type_of(componentData)];
@@ -496,10 +489,10 @@ bool BakeOperator::transform(
 				for (auto cd : dependentComponentData)
 					inoutEntityData->removeComponent(cd);
 
-				return scene::Traverser::Result::Skip;
+				return world::Traverser::Result::Skip;
 			}
 
-			return scene::Traverser::Result::Continue;
+			return world::Traverser::Result::Continue;
 		});
 
 		// Replace with modified layer in output scene.
@@ -515,8 +508,7 @@ bool BakeOperator::build(
 	const ISerializable* operatorData,
 	const db::Instance* sourceInstance,
 	scene::SceneAsset* inoutSceneAsset,
-	bool rebuild
-) const
+	bool rebuild) const
 {
 	const auto configuration = mandatory_non_null_type_cast< const BakeOperationData* >(operatorData);
 
@@ -533,13 +525,11 @@ bool BakeOperator::build(
 	log::info << L"Creating lightmap tasks..." << Endl;
 	Ref< TracerTask > tracerTask = new TracerTask(
 		sourceInstance->getGuid(),
-		configuration
-	);
+		configuration);
 
 	Aabb3 irradianceBoundingBox(
 		Vector4(-100.0f, -100.0f, -100.0f),
-		Vector4( 100.0f,  100.0f,  100.0f)
-	);
+		Vector4(100.0f, 100.0f, 100.0f));
 	bool irradianceBoundingBoxExplicit = false;
 
 	{
@@ -553,8 +543,7 @@ bool BakeOperator::build(
 		// of one prefab would otherwise retain hundreds of copies for the whole bake.
 		SmallMap< Key, Ref< model::Model > > sharedModels;
 
-		const auto readSharedModel = [&](const Key& key, const std::function< Ref< model::Model >() >& create) -> Ref< model::Model >
-		{
+		const auto readSharedModel = [&](const Key& key, const std::function< Ref< model::Model >() >& create) -> Ref< model::Model > {
 			const auto it = sharedModels.find(key);
 			if (it != sharedModels.end())
 				return it->second;
@@ -579,12 +568,11 @@ bool BakeOperator::build(
 			pipelineBuilder->getProfiler()->begin(L"BakeOperator resolveExternal");
 			Ref< world::EntityData > flattenedLayer = checked_type_cast< world::EntityData* >(world::resolveExternal(
 				[&](const Guid& objectId) -> Ref< const ISerializable > {
-					return pipelineBuilder->getObjectReadOnly(objectId);
-				},
+				return pipelineBuilder->getObjectReadOnly(objectId);
+			},
 				layer,
 				Guid::null,
-				nullptr
-			));
+				nullptr));
 			pipelineBuilder->getProfiler()->end();
 			if (!flattenedLayer)
 				return false;
@@ -592,26 +580,24 @@ bool BakeOperator::build(
 			// Collect all entities from layer which we will include in bake.
 			RefArray< world::EntityData > bakeEntityData;
 			pipelineBuilder->getProfiler()->begin(L"BakeOperator collect entities");
-			scene::Traverser::visit(flattenedLayer, [&](Ref< world::EntityData >& inoutEntityData) -> scene::Traverser::Result
-			{
+			world::Traverser::visit(flattenedLayer, [&](Ref< world::EntityData >& inoutEntityData) -> world::Traverser::Result {
 				// Check if we should include entity.
 				if (!inoutEntityData->getState().visible || inoutEntityData->getState().dynamic)
-					return scene::Traverser::Result::Skip;
+					return world::Traverser::Result::Skip;
 
 				// We only bake "named" entities.
 				if (inoutEntityData->getId().isNull())
-					return scene::Traverser::Result::Continue;
+					return world::Traverser::Result::Continue;
 
 				// Add entities which always be included.
 				if (
 					inoutEntityData->getComponent< world::LightComponentData >() != nullptr ||
 					inoutEntityData->getComponent< weather::SkyComponentData >() != nullptr ||
 					inoutEntityData->getComponent< world::CameraComponentData >() != nullptr ||
-					inoutEntityData->getName() == L"Irradiance"
-				)
+					inoutEntityData->getName() == L"Irradiance")
 				{
 					bakeEntityData.push_back(inoutEntityData);
-					return scene::Traverser::Result::Continue;
+					return world::Traverser::Result::Continue;
 				}
 
 				// Include in bake.
@@ -621,11 +607,11 @@ bool BakeOperator::build(
 					if (m_entityReplicators.find(&type_of(componentData)) != m_entityReplicators.end())
 					{
 						bakeEntityData.push_back(inoutEntityData);
-						return scene::Traverser::Result::Skip;
+						return world::Traverser::Result::Skip;
 					}
 				}
 
-				return scene::Traverser::Result::Continue;
+				return world::Traverser::Result::Continue;
 			});
 			pipelineBuilder->getProfiler()->end();
 
@@ -640,8 +626,7 @@ bool BakeOperator::build(
 				{
 					if (
 						addLight(lightComponentData, inoutEntityData->getTransform(), tracerTask) &&
-						configuration->getEnableLightmaps()
-					)
+						configuration->getEnableLightmaps())
 						inoutEntityData->removeComponent(lightComponentData);
 				}
 
@@ -657,8 +642,7 @@ bool BakeOperator::build(
 							inoutEntityData->getTransform(),
 							cameraComponentData->getFieldOfView(),
 							1280,
-							720
-						));
+							720));
 				}
 
 				// Get volume for irradiance grid.
@@ -677,19 +661,16 @@ bool BakeOperator::build(
 
 				// Find model synthesizer which can generate from components.
 				RefArray< world::IEntityComponentData > componentDatas = inoutEntityData->getComponents();
-				componentDatas.sort([](world::IEntityComponentData* lh, world::IEntityComponentData* rh)
-					{
-						return lh->getOrdinal() < rh->getOrdinal();
-					}
-				);
+				componentDatas.sort([](world::IEntityComponentData* lh, world::IEntityComponentData* rh) {
+					return lh->getOrdinal() < rh->getOrdinal();
+				});
 				for (auto componentData : componentDatas)
 				{
 					// Check so this component still exist in the inoutEntityData; might have already been consumed.
 					if (std::find(
-						inoutEntityData->getComponents().begin(),
-						inoutEntityData->getComponents().end(),
-						componentData
-					) == inoutEntityData->getComponents().end())
+							inoutEntityData->getComponents().begin(),
+							inoutEntityData->getComponents().end(),
+							componentData) == inoutEntityData->getComponents().end())
 						continue;
 
 					const world::IEntityReplicator* entityReplicator = m_entityReplicators[&type_of(componentData)];
@@ -712,96 +693,92 @@ bool BakeOperator::build(
 					Ref< model::Model > visualModel = readSharedModel(
 						Key(0x00000020, 0x00000000, type_of(entityReplicator).getVersion(), modelHash),
 						[&]() -> Ref< model::Model > {
+						pipelineBuilder->getProfiler()->begin(type_of(entityReplicator));
+						Ref< model::Model > model = entityReplicator->createModel(pipelineBuilder, inoutEntityData, componentData, world::IEntityReplicator::Usage::Visual);
+						pipelineBuilder->getProfiler()->end();
+						if (!model)
+							return nullptr;
+
+						// Prepare model for baking.
+						model->clear(model::Model::CfJoints);
+						model->apply(model::Triangulate());
+						model->apply(model::CalculateNormals(false));
+
+						if (configuration->getEnableLightmaps())
+						{
+							// Check if model already contain lightmap UV or if we need to unwrap.
+							uint32_t channel = model->getTexCoordChannel(L"Lightmap");
+							bool generated = false;
+							if (channel == model::c_InvalidIndex)
+							{
+								// No lightmap UV channel, need to add and unwrap automatically.
+								channel = model->addUniqueTexCoordChannel(L"Lightmap");
+								model->apply(model::UnwrapUV(channel, /*lightmapSize*/ 1024));
+								generated = true;
+							}
+
+							// Evaluate lightmap size by measuring each edge ratio.
+							double ratio = 0.0;
+							for (int32_t i = 0; i < model->getPolygonCount(); ++i)
+							{
+								const auto& polygon = model->getPolygon(i);
+								T_FATAL_ASSERT(polygon.getVertexCount() == 3);
+
+								Vector4 pt[3];
+								Vector2 uv[3];
+
+								for (int32_t j = 0; j < 3; ++j)
+								{
+									const auto& vertex = model->getVertex(polygon.getVertex(j));
+									pt[j] = model->getPosition(vertex.getPosition());
+									uv[j] = model->getTexCoord(vertex.getTexCoord(channel));
+								}
+
+								for (int32_t j = 0; j < 3; ++j)
+								{
+									const float ptl = (pt[(j + 1) % 3] - pt[j]).length();
+									const float uvl = (uv[(j + 1) % 3] - uv[j]).length();
+									if (ptl > 0.0f)
+										ratio += (double)(uvl / ptl);
+								}
+							}
+							ratio /= (double)(model->getPolygonCount() * 3);
+
+							const int32_t lightmapDesiredSize = configuration->getLumelDensity() / ratio;
+
+							int32_t lightmapSize = lightmapDesiredSize;
+							lightmapSize = std::max< int32_t >(configuration->getMinimumLightMapSize(), lightmapSize);
+							lightmapSize = std::min< int32_t >(configuration->getMaximumLightMapSize(), lightmapSize);
+							lightmapSize = alignUp(lightmapSize, 4);
+
+							// Re-run UV unwrapping with proper lightmap size.
+							if (generated)
+								model->apply(model::UnwrapUV(channel, lightmapSize));
+
+							model->setProperty< PropertyInteger >(L"LightmapDesiredSize", lightmapDesiredSize);
+							model->setProperty< PropertyInteger >(L"LightmapSize", lightmapSize);
+						}
+
+						// Attach an unique ID for this mesh; since visual model is cached this will get reused automatically.
+						model->setProperty< PropertyString >(L"ID", Guid::create().format());
+						return model;
+					});
+
+					Ref< model::Model > collisionModel;
+					if (configuration->getEnableLightmaps())
+						collisionModel = readSharedModel(
+							Key(0x00000030, 0x00000000, type_of(entityReplicator).getVersion(), modelHash),
+							[&]() -> Ref< model::Model > {
 							pipelineBuilder->getProfiler()->begin(type_of(entityReplicator));
-							Ref< model::Model > model = entityReplicator->createModel(pipelineBuilder, inoutEntityData, componentData, world::IEntityReplicator::Usage::Visual);
+							Ref< model::Model > model = entityReplicator->createModel(pipelineBuilder, inoutEntityData, componentData, world::IEntityReplicator::Usage::Collision);
 							pipelineBuilder->getProfiler()->end();
 							if (!model)
 								return nullptr;
 
-							// Prepare model for baking.
-							model->clear(model::Model::CfJoints);
-							model->apply(model::Triangulate());
-							model->apply(model::CalculateNormals(false));
-
-							if (configuration->getEnableLightmaps())
-							{
-								// Check if model already contain lightmap UV or if we need to unwrap.
-								uint32_t channel = model->getTexCoordChannel(L"Lightmap");
-								bool generated = false;
-								if (channel == model::c_InvalidIndex)
-								{
-									// No lightmap UV channel, need to add and unwrap automatically.
-									channel = model->addUniqueTexCoordChannel(L"Lightmap");
-									model->apply(model::UnwrapUV(channel, /*lightmapSize*/1024));
-									generated = true;
-								}
-
-								// Evaluate lightmap size by measuring each edge ratio.
-								double ratio = 0.0;
-								for (int32_t i = 0; i < model->getPolygonCount(); ++i)
-								{
-									const auto& polygon = model->getPolygon(i);
-									T_FATAL_ASSERT(polygon.getVertexCount() == 3);
-
-									Vector4 pt[3];
-									Vector2 uv[3];
-
-									for (int32_t j = 0; j < 3; ++j)
-									{
-										const auto& vertex = model->getVertex(polygon.getVertex(j));
-										pt[j] = model->getPosition(vertex.getPosition());
-										uv[j] = model->getTexCoord(vertex.getTexCoord(channel));
-									}
-
-									for (int32_t j = 0; j < 3; ++j)
-									{
-										const float ptl = (pt[(j + 1) % 3] - pt[j]).length();
-										const float uvl = (uv[(j + 1) % 3] - uv[j]).length();
-										if (ptl > 0.0f)
-											ratio += (double)(uvl / ptl);
-									}
-								}
-								ratio /= (double)(model->getPolygonCount() * 3);
-
-								const int32_t lightmapDesiredSize = configuration->getLumelDensity() / ratio;
-
-								int32_t lightmapSize = lightmapDesiredSize;
-								lightmapSize = std::max< int32_t >(configuration->getMinimumLightMapSize(), lightmapSize);
-								lightmapSize = std::min< int32_t >(configuration->getMaximumLightMapSize(), lightmapSize);
-								lightmapSize = alignUp(lightmapSize, 4);
-
-								// Re-run UV unwrapping with proper lightmap size.
-								if (generated)
-									model->apply(model::UnwrapUV(channel, lightmapSize));
-
-								model->setProperty< PropertyInteger >(L"LightmapDesiredSize", lightmapDesiredSize);
-								model->setProperty< PropertyInteger >(L"LightmapSize", lightmapSize);
-							}
-
-							// Attach an unique ID for this mesh; since visual model is cached this will get reused automatically.
+							// Attach an unique ID for this mesh; since collision model is cached this will get reused automatically.
 							model->setProperty< PropertyString >(L"ID", Guid::create().format());
 							return model;
-						}
-					);
-
-					Ref< model::Model > collisionModel;
-					if (configuration->getEnableLightmaps())
-					{
-						collisionModel = readSharedModel(
-							Key(0x00000030, 0x00000000, type_of(entityReplicator).getVersion(), modelHash),
-							[&]() -> Ref< model::Model > {
-								pipelineBuilder->getProfiler()->begin(type_of(entityReplicator));
-								Ref< model::Model > model = entityReplicator->createModel(pipelineBuilder, inoutEntityData, componentData, world::IEntityReplicator::Usage::Collision);
-								pipelineBuilder->getProfiler()->end();
-								if (!model)
-									return nullptr;
-
-								// Attach an unique ID for this mesh; since collision model is cached this will get reused automatically.
-								model->setProperty< PropertyString >(L"ID", Guid::create().format());
-								return model;
-							}
-						);
-					}
+						});
 
 					// Remove components from entity which was used to create the models.
 					inoutEntityData->removeComponent(componentData);
@@ -819,9 +796,7 @@ bool BakeOperator::build(
 							const int32_t lightmapSize = visualModel->getProperty< int32_t >(L"LightmapSize", 0);
 							const int32_t lightmapDesiredSize = visualModel->getProperty< int32_t >(L"LightmapDesiredSize", 0);
 
-							log::debug <<
-								L"Lightmap ID " << lightmapDiffuseId.format() << L", " <<
-								L"Lightmap size " << lightmapSize << L" (" << lightmapDesiredSize << L")" << Endl;
+							log::debug << L"Lightmap ID " << lightmapDiffuseId.format() << L", " << L"Lightmap size " << lightmapSize << L" (" << lightmapDesiredSize << L")" << Endl;
 
 							// Register lightmap ID as being built.
 							pipelineBuilder->buildAdHocOutput(lightmapDiffuseId);
@@ -837,14 +812,12 @@ bool BakeOperator::build(
 								lightmapDiffuseInstance,
 								visualModel,
 								inoutEntityData->getTransform(),
-								lightmapSize
-							));
+								lightmapSize));
 						}
 
 						tracerTask->addTracerModel(new TracerModel(
 							visualModel,
-							inoutEntityData->getTransform()
-						));
+							inoutEntityData->getTransform()));
 
 						// Expand irradiance grid bounding box.
 						if (!irradianceBoundingBoxExplicit)
@@ -862,8 +835,7 @@ bool BakeOperator::build(
 							const Guid outputMeshId = Guid(visualModel->getProperty< std::wstring >(L"ID"));
 
 							Ref< const mesh::MeshAsset > meshAsset = dynamic_type_cast< const mesh::MeshAsset* >(
-								visualModel->getProperty< ISerializable >(type_name< mesh::MeshAsset >())
-							);
+								visualModel->getProperty< ISerializable >(type_name< mesh::MeshAsset >()));
 
 							// Create and build a new mesh asset referencing the modified model.
 							Ref< mesh::MeshAsset > outputMeshAsset = new mesh::MeshAsset();
@@ -885,8 +857,7 @@ bool BakeOperator::build(
 							pipelineBuilder->buildAdHocOutput(
 								outputMeshAsset,
 								outputMeshId,
-								visualModel
-							);
+								visualModel);
 						}
 
 						if (collisionModel)
@@ -894,16 +865,13 @@ bool BakeOperator::build(
 							const Guid outputShapeId = Guid(collisionModel->getProperty< std::wstring >(L"ID"));
 
 							Ref< const physics::MeshAsset > meshAsset = dynamic_type_cast< const physics::MeshAsset* >(
-								collisionModel->getProperty< ISerializable >(type_name< physics::MeshAsset >())
-							);
+								collisionModel->getProperty< ISerializable >(type_name< physics::MeshAsset >()));
 
 							Ref< const physics::ShapeDesc > shapeDesc = dynamic_type_cast< const physics::ShapeDesc* >(
-								collisionModel->getProperty< ISerializable >(type_name< physics::ShapeDesc >())
-							);
+								collisionModel->getProperty< ISerializable >(type_name< physics::ShapeDesc >()));
 
 							Ref< const physics::StaticBodyDesc > bodyDesc = dynamic_type_cast< const physics::StaticBodyDesc* >(
-								collisionModel->getProperty< ISerializable >(type_name< physics::StaticBodyDesc >())
-							);
+								collisionModel->getProperty< ISerializable >(type_name< physics::StaticBodyDesc >()));
 
 							// Build collision shape mesh.
 							Ref< physics::MeshAsset > outputMeshAsset = new physics::MeshAsset();
@@ -938,8 +906,7 @@ bool BakeOperator::build(
 							pipelineBuilder->buildAdHocOutput(
 								outputMeshAsset,
 								outputShapeId,
-								collisionModel
-							);
+								collisionModel);
 						}
 					}
 
@@ -971,8 +938,7 @@ bool BakeOperator::build(
 		// Create irradiance instance.
 		Ref< db::Instance > outputInstance = pipelineBuilder->createOutputInstance(
 			L"Generated/" + irradianceGridId.format(),
-			irradianceGridId
-		);
+			irradianceGridId);
 		if (!outputInstance)
 		{
 			log::error << L"BakeOperator failed; unable to create output instance." << Endl;
@@ -993,15 +959,15 @@ bool BakeOperator::build(
 
 		Writer writer(stream);
 		writer << uint32_t(2);
-		writer << (uint32_t)1;	// width
-		writer << (uint32_t)1;	// height
-		writer << (uint32_t)1;	// depth
+		writer << (uint32_t)1; // width
+		writer << (uint32_t)1; // height
+		writer << (uint32_t)1; // depth
 		writer << -10000.0f;
 		writer << -10000.0f;
 		writer << -10000.0f;
-		writer <<  10000.0f;
-		writer <<  10000.0f;
-		writer <<  10000.0f;
+		writer << 10000.0f;
+		writer << 10000.0f;
+		writer << 10000.0f;
 
 		for (int32_t i = 0; i < 9; ++i)
 		{
@@ -1020,13 +986,11 @@ bool BakeOperator::build(
 
 		tracerTask->addTracerIrradiance(new TracerIrradiance(
 			outputInstance,
-			irradianceBoundingBox
-		));
+			irradianceBoundingBox));
 
 		// Modify scene with our generated irradiance grid resource.
 		inoutSceneAsset->setWorldComponent(new world::IrradianceGridComponentData(
-			resource::Id< world::IrradianceGrid >(irradianceGridId)
-		));
+			resource::Id< world::IrradianceGrid >(irradianceGridId)));
 	}
 
 	// Finally enqueue task to tracer processor.

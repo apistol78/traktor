@@ -1,27 +1,33 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include "Core/Log/Log.h"
+#include "Heightfield/Editor/NewHeightfieldWizardTool.h"
+
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/IStream.h"
+#include "Core/Log/Log.h"
 #include "Database/Group.h"
 #include "Database/Instance.h"
-#include "I18N/Text.h"
+#include "Heightfield/Editor/HeightfieldAsset.h"
+#include "Heightfield/Editor/NewHeightfieldDialog.h"
 #include "Heightfield/Heightfield.h"
 #include "Heightfield/HeightfieldFormat.h"
-#include "Heightfield/Editor/NewHeightfieldDialog.h"
-#include "Heightfield/Editor/NewHeightfieldWizardTool.h"
-#include "Heightfield/Editor/HeightfieldAsset.h"
+#include "I18N/Text.h"
 
 namespace traktor::hf
 {
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.hf.NewHeightfieldWizardTool", 0, NewHeightfieldWizardTool, editor::IWizardTool)
+
+bool NewHeightfieldWizardTool::create(const PropertyGroup* settings)
+{
+	return true;
+}
 
 std::wstring NewHeightfieldWizardTool::getDescription() const
 {

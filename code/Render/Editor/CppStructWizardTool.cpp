@@ -63,6 +63,11 @@ const Std430Type c_std430Types[] = {
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.CppStructWizardTool", 0, CppStructWizardTool, editor::IWizardTool)
 
+bool CppStructWizardTool::create(const PropertyGroup* settings)
+{
+	return true;
+}
+
 std::wstring CppStructWizardTool::getDescription() const
 {
 	return i18n::Text(L"CPP_STRUCT_WIZARDTOOL_DESCRIPTION");
