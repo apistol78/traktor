@@ -26,8 +26,9 @@ const int32_t c_depthOffset = -16384;
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spark.DisplayList", DisplayList, Object)
 
-DisplayList::DisplayList(Context* context)
+DisplayList::DisplayList(Context* context, CharacterInstance* owner)
 :	m_context(context)
+,	m_owner(owner)
 {
 	reset();
 }
@@ -35,7 +36,17 @@ DisplayList::DisplayList(Context* context)
 void DisplayList::reset()
 {
 	m_backgroundColor = Color4f(1.0f, 1.0f, 1.0f, 1.0f);
-	m_layers.clear();
+	if (!m_layers.empty())
+	{
+		m_layers.clear();
+		invalidateOwner();
+	}
+}
+
+void DisplayList::invalidateOwner()
+{
+	if (m_owner)
+		m_owner->invalidateCache();
 }
 
 void DisplayList::updateBegin(bool reset)
@@ -60,6 +71,7 @@ void DisplayList::updateEnd()
 				i->second.instance->clearCacheObject();
 			}
 			i = m_layers.erase(i);
+			invalidateOwner();
 		}
 		else
 			i++;
@@ -68,6 +80,10 @@ void DisplayList::updateEnd()
 
 void DisplayList::updateFrame(CharacterInstance* ownerInstance, const Frame* frame)
 {
+	// Any placement or removal alter what the owner draw.
+	if (!frame->getRemoveObjects().empty() || !frame->getPlaceObjects().empty())
+		invalidateOwner();
+
 	// Update background color.
 	if (frame->hasBackgroundColorChanged())
 		m_backgroundColor = frame->getBackgroundColor();
@@ -223,6 +239,8 @@ void DisplayList::showObject(int32_t depth, CharacterInstance* characterInstance
 	layer.id = 0;
 	layer.instance = characterInstance;
 	layer.immutable = immutable;
+
+	invalidateOwner();
 }
 
 bool DisplayList::removeObject(CharacterInstance* characterInstance)
@@ -239,6 +257,7 @@ bool DisplayList::removeObject(CharacterInstance* characterInstance)
 	characterInstance->clearCacheObject();
 
 	m_layers.erase(it);
+	invalidateOwner();
 	return true;
 }
 
@@ -255,6 +274,7 @@ bool DisplayList::removeObject(int32_t depth)
 	}
 
 	m_layers.erase(it);
+	invalidateOwner();
 	return true;
 }
 
@@ -309,6 +329,11 @@ void DisplayList::swap(int32_t depth1, int32_t depth2)
 		m_layers.erase(it2);
 		m_layers[depth1] = layer;
 	}
+	else
+		return;
+
+	// Draw order changed.
+	invalidateOwner();
 }
 
 void DisplayList::getObjects(RefArray< CharacterInstance >& outCharacterInstances) const

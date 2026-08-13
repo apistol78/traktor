@@ -56,7 +56,7 @@ public:
 		const Aabb2& dirtyRegion
 	) override final;
 
-	virtual void beginSprite(const SpriteInstance& sprite, const Matrix33& transform) override final;
+	virtual bool beginSprite(const SpriteInstance& sprite, const Matrix33& transform, ColorTransform& inoutCxform) override final;
 
 	virtual void endSprite(const SpriteInstance& sprite, const Matrix33& transform) override final;
 

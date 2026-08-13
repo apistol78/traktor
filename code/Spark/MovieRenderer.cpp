@@ -116,10 +116,15 @@ void MovieRenderer::renderSpriteDefault(
 	const DisplayList::layer_map_t& layers = displayList.getLayers();
 	const uint8_t blendMode = spriteInstance->getBlendMode();
 
-	m_displayRenderer->beginSprite(
-		*spriteInstance,
-		transform
-	);
+	// Color transform of our content; renderer may neutralize it in case the
+	// sprite is captured into a cached representation.
+	ColorTransform cxContent = cxTransform;
+
+	if (!m_displayRenderer->beginSprite(*spriteInstance, transform, cxContent))
+	{
+		m_displayRenderer->endSprite(*spriteInstance, transform);
+		return;
+	}
 
 	for (DisplayList::layer_map_t::const_iterator i = layers.begin(); i != layers.end(); )
 	{
@@ -136,7 +141,7 @@ void MovieRenderer::renderSpriteDefault(
 				layer.instance,
 				transform,
 				clipBounds,
-				cxTransform,
+				cxContent,
 				renderAsMask,
 				blendMode
 			);
@@ -150,7 +155,7 @@ void MovieRenderer::renderSpriteDefault(
 				layer.instance,
 				transform,
 				clipBounds,
-				cxTransform,
+				cxContent,
 				true,
 				blendMode
 			);
@@ -170,7 +175,7 @@ void MovieRenderer::renderSpriteDefault(
 					clippedLayer.instance,
 					transform,
 					clipBounds,
-					cxTransform,
+					cxContent,
 					renderAsMask,
 					blendMode
 				);
@@ -182,7 +187,7 @@ void MovieRenderer::renderSpriteDefault(
 				layer.instance,
 				transform,
 				clipBounds,
-				cxTransform,
+				cxContent,
 				true,
 				blendMode
 			);
@@ -195,7 +200,7 @@ void MovieRenderer::renderSpriteDefault(
 		m_displayRenderer->renderCanvas(
 			transform,
 			*canvas,
-			cxTransform,
+			cxContent,
 			blendMode
 		);
 
@@ -217,10 +222,13 @@ void MovieRenderer::renderSpriteLayered(
 	const DisplayList::layer_map_t& layers = displayList.getLayers();
 	const uint8_t blendMode = spriteInstance->getBlendMode();
 
-	m_displayRenderer->beginSprite(
-		*spriteInstance,
-		transform
-	);
+	ColorTransform cxContent = cxTransform;
+
+	if (!m_displayRenderer->beginSprite(*spriteInstance, transform, cxContent))
+	{
+		m_displayRenderer->endSprite(*spriteInstance, transform);
+		return;
+	}
 
 	DisplayList::layer_map_t::const_iterator is = layers.begin();
 	while (is != layers.end())
@@ -256,7 +264,7 @@ void MovieRenderer::renderSpriteLayered(
 					layer.instance,
 					transform,
 					clipBounds,
-					cxTransform,
+					cxContent,
 					renderAsMask,
 					SbmAlpha
 				);
@@ -271,7 +279,7 @@ void MovieRenderer::renderSpriteLayered(
 					ie->second.instance,
 					transform,
 					clipBounds,
-					cxTransform,
+					cxContent,
 					renderAsMask,
 					blendMode
 				);
@@ -290,7 +298,7 @@ void MovieRenderer::renderSpriteLayered(
 					layer.instance,
 					transform,
 					clipBounds,
-					cxTransform,
+					cxContent,
 					renderAsMask,
 					blendMode
 				);
@@ -313,7 +321,7 @@ void MovieRenderer::renderSpriteLayered(
 					layer.instance,
 					transform,
 					clipBounds,
-					cxTransform,
+					cxContent,
 					renderAsMask,
 					SbmDefault
 				);
@@ -327,7 +335,7 @@ void MovieRenderer::renderSpriteLayered(
 		m_displayRenderer->renderCanvas(
 			transform,
 			*canvas,
-			cxTransform,
+			cxContent,
 			blendMode
 		);
 
@@ -396,10 +404,13 @@ void MovieRenderer::renderSpriteWithScalingGrid(
 		{ Vector2(dfx1, dfy1), Vector2(1.0f, 1.0f) }
 	};
 
-	m_displayRenderer->beginSprite(
-		*spriteInstance,
-		transform
-	);
+	ColorTransform cxContent = cxTransform;
+
+	if (!m_displayRenderer->beginSprite(*spriteInstance, transform, cxContent))
+	{
+		m_displayRenderer->endSprite(*spriteInstance, transform);
+		return;
+	}
 
 	for (int32_t i = 0; i < sizeof_array(destinationGrid); ++i)
 	{
@@ -444,7 +455,7 @@ void MovieRenderer::renderSpriteWithScalingGrid(
 					layer.instance,
 					T,
 					subClipBounds,
-					cxTransform,
+					cxContent,
 					renderAsMask,
 					blendMode
 				);
@@ -458,7 +469,7 @@ void MovieRenderer::renderSpriteWithScalingGrid(
 					layer.instance,
 					T,
 					subClipBounds,
-					cxTransform,
+					cxContent,
 					true,
 					blendMode
 				);
@@ -478,7 +489,7 @@ void MovieRenderer::renderSpriteWithScalingGrid(
 						clippedLayer.instance,
 						T,
 						subClipBounds,
-						cxTransform,
+						cxContent,
 						renderAsMask,
 						blendMode
 					);
@@ -490,7 +501,7 @@ void MovieRenderer::renderSpriteWithScalingGrid(
 					layer.instance,
 					T,
 					subClipBounds,
-					cxTransform,
+					cxContent,
 					true,
 					blendMode
 				);
@@ -509,7 +520,7 @@ void MovieRenderer::renderSpriteWithScalingGrid(
 		m_displayRenderer->renderCanvas(
 			transform,
 			*canvas,
-			cxTransform,
+			cxContent,
 			blendMode
 		);
 

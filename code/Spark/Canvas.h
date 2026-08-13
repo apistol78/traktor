@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -28,6 +28,7 @@ namespace traktor::spark
 {
 
 class Bitmap;
+class CharacterInstance;
 
 /*! Dynamic canvas.
  * \ingroup Spark
@@ -42,8 +43,16 @@ class T_DLLCLASS Canvas : public Object
 public:
 	Canvas();
 
+	/*! Set character which own this canvas.
+	 *
+	 * Owner is invalidated whenever the canvas change.
+	 */
+	void setOwner(CharacterInstance* owner) { m_owner = owner; }
+
+	/*! */
 	int32_t getCacheTag() const;
 
+	/*! */
 	int32_t getDirtyTag() const;
 
 	/*! Clear canvas. */
@@ -85,6 +94,7 @@ public:
 	const AlignedVector< FillStyle >& getFillStyles() const { return m_fillStyles; }
 
 private:
+	CharacterInstance* m_owner = nullptr;
 	int32_t m_cacheTag;
 	int32_t m_dirtyTag;
 	Aabb2 m_bounds;

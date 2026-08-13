@@ -32,7 +32,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.spark.SpriteInstance", SpriteInstance, Characte
 SpriteInstance::SpriteInstance(Context* context, Dictionary* dictionary, CharacterInstance* parent, const Sprite* sprite)
 :	CharacterInstance(context, dictionary, parent)
 ,	m_sprite(sprite)
-,	m_displayList(context)
+,	m_displayList(context, this)
 ,	m_mask(nullptr)
 ,	m_mouseX(0)
 ,	m_mouseY(0)
@@ -59,7 +59,11 @@ void SpriteInstance::destroy()
 
 	m_sprite = nullptr;
 	m_mask = nullptr;
-	m_canvas = nullptr;
+	if (m_canvas)
+	{
+		m_canvas->setOwner(nullptr);
+		m_canvas = nullptr;
+	}
 	m_playing = false;
 
 	for (const auto& it : m_displayList.getLayers())
@@ -88,6 +92,8 @@ void SpriteInstance::destroy()
 
 void SpriteInstance::setCacheAsBitmap(bool cacheAsBitmap)
 {
+	if (cacheAsBitmap != m_cacheAsBitmap)
+		invalidateCache();
 	m_cacheAsBitmap = cacheAsBitmap;
 }
 
@@ -471,7 +477,7 @@ Aabb2 SpriteInstance::getVisibleLocalBounds() const
 
 void SpriteInstance::setMask(SpriteInstance* mask)
 {
-	clearCacheObject();
+	invalidateCache();
 	if ((m_mask = mask) != nullptr)
 		m_mask->setVisible(false);
 }
@@ -488,16 +494,22 @@ CharacterInstance* SpriteInstance::getMember(const std::string& childName) const
 
 Canvas* SpriteInstance::createCanvas()
 {
-	clearCacheObject();
+	invalidateCache();
 	if (!m_canvas)
+	{
 		m_canvas = new Canvas();
+		m_canvas->setOwner(this);
+	}
 	return m_canvas;
 }
 
 void SpriteInstance::clearCacheObject()
 {
 	CharacterInstance::clearCacheObject();
-	m_displayList.forEachVisibleObjectDirect([] (CharacterInstance* instance) {
+
+	// Note; traverse all objects, not only visible ones, since an invisible
+	// object would otherwise retain a stale cache until it become visible again.
+	m_displayList.forEachObjectDirect([] (CharacterInstance* instance) {
 		instance->clearCacheObject();
 	});
 }

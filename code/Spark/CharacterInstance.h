@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -89,17 +89,28 @@ public:
 	 */
 	const std::string& getName() const;
 
-	/*! Set cache object.
-	 */
-	void setCacheObject(IRefCount* cacheObject);
+	/*! Set cache object. */
+	void setCacheObject(IRefCount* cacheObject) const;
 
-	/*! Clear cache object.
-	 */
+	/*! Clear cache object. */
 	virtual void clearCacheObject();
 
-	/*! Set cache object.
+	/*! Invalidate cached representation of this character. */
+	void invalidateCache();
+
+	/*! Invalidate cached representations of this character's ancestors. */
+	void invalidateParentCache();
+
+	/*! Get cache version.
+	 *
+	 * Incremented every time the character's appearance change; a cached
+	 * representation stamped with an older version is stale.
 	 */
-	IRefCount* getCacheObject() { return m_cacheObject; }
+	uint32_t getCacheVersion() const { return m_cacheVersion; }
+
+	/*! Get cache object.
+	 */
+	IRefCount* getCacheObject() const { return m_cacheObject; }
 
 	/*! Set user defined object.
 	 */
@@ -271,7 +282,8 @@ private:
 	Ref< Context > m_context;
 	Ref< Dictionary > m_dictionary;
 	CharacterInstance* m_parent;
-	Ref< IRefCount > m_cacheObject;
+	mutable Ref< IRefCount > m_cacheObject;
+	uint32_t m_cacheVersion = 0;
 	Ref< IRefCount > m_userObject;
 	Color4f m_filterColor;
 	uint8_t m_filter;

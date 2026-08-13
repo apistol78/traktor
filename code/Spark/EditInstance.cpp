@@ -247,6 +247,7 @@ Vector2 EditInstance::measureText(const std::wstring& text, float width) const
 void EditInstance::setTextBounds(const Aabb2& textBounds)
 {
 	m_textBounds = textBounds;
+	invalidateCache();
 }
 
 void EditInstance::setTextColor(const Color4f& textColor)
@@ -317,6 +318,8 @@ void EditInstance::setPassword(bool password)
 
 void EditInstance::setScroll(int32_t scroll)
 {
+	if (scroll != m_scroll)
+		invalidateCache();
 	m_scroll = scroll;
 }
 
@@ -353,10 +356,13 @@ Ref< TextLayout > EditInstance::prepareTextLayout() const
 void EditInstance::setTextLayout(TextLayout* layout)
 {
 	m_layout = layout;
+	invalidateCache();
 }
 
 void EditInstance::setRenderClipMask(bool renderClipMask)
 {
+	if (renderClipMask != m_renderClipMask)
+		invalidateCache();
 	m_renderClipMask = renderClipMask;
 }
 
@@ -604,6 +610,7 @@ bool EditInstance::internalParseText(const std::wstring& text)
 	m_htmlText.clear();
 	m_html = false;
 
+	invalidateCache();
 	return true;
 }
 
@@ -642,6 +649,7 @@ bool EditInstance::internalParseHtml(const std::wstring& html)
 	m_htmlText = html;
 	m_html = true;
 
+	invalidateCache();
 	return true;
 }
 

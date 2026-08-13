@@ -8,6 +8,7 @@
  */
 #include "Spark/Bitmap.h"
 #include "Spark/Canvas.h"
+#include "Spark/CharacterInstance.h"
 #include "Spark/Triangulator.h"
 #include "Spark/Types.h"
 
@@ -42,6 +43,9 @@ void Canvas::clear()
 	m_fillStyles.resize(0);
 	m_lineStyles.resize(0);
 	++m_dirtyTag;
+
+	if (m_owner)
+		m_owner->invalidateCache();
 }
 
 void Canvas::beginFill(const Color4f& color)
@@ -86,6 +90,9 @@ void Canvas::endFill()
 
 	m_drawing = false;
 	++m_dirtyTag;
+
+	if (m_owner)
+		m_owner->invalidateCache();
 }
 
 void Canvas::moveTo(float x, float y)

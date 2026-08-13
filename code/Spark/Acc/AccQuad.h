@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -64,6 +64,18 @@ public:
 		uint8_t maskReference
 	) const;
 
+	void renderCached(
+		render::RenderPass* renderPass,
+		const Aabb2& bounds,
+		const Matrix33& transform,
+		const Vector4& frameSize,
+		const Vector4& frameTransform,
+		const ColorTransform& cxform,
+		render::ITexture* texture,
+		const Vector4& textureOffset,
+		uint8_t maskReference
+	) const;
+
 	void blit(
 		render::RenderPass* renderPass,
 		render::ITexture* texture
@@ -74,6 +86,7 @@ private:
 	resource::Proxy< render::Shader > m_shaderTextured;
 	resource::Proxy< render::Shader > m_shaderIncrementMask;
 	resource::Proxy< render::Shader > m_shaderDecrementMask;
+	resource::Proxy< render::Shader > m_shaderCached;
 	resource::Proxy< render::Shader > m_shaderBlit;
 	Ref< const render::IVertexLayout > m_vertexLayout;
 	Ref< render::Buffer > m_vertexBuffer;

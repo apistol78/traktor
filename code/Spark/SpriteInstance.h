@@ -101,7 +101,7 @@ public:
 
 	void setMask(SpriteInstance* maskInstance);
 
-	SpriteInstance* getMask() { return m_mask; }
+	SpriteInstance* getMask() const { return m_mask; }
 
 	CharacterInstance* getMember(const std::string& childName) const;
 

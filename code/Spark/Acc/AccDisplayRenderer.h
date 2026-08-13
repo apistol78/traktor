@@ -11,6 +11,7 @@
 #include "Core/Containers/SmallMap.h"
 #include "Core/RefArray.h"
 #include "Render/Frame/RenderGraphTypes.h"
+#include "Spark/ColorTransform.h"
 #include "Spark/IDisplayRenderer.h"
 
 // import/export mechanism.
@@ -41,6 +42,7 @@ class RenderPass;
 namespace traktor::spark
 {
 
+class AccCachedSprite;
 class AccGlyph;
 class AccGradientCache;
 class AccQuad;
@@ -48,6 +50,7 @@ class AccShape;
 class AccShapeResources;
 class AccShapeVertexPool;
 class AccTextureCache;
+class Packer;
 
 /*! Accelerated display renderer.
  * \ingroup Spark
@@ -94,7 +97,7 @@ public:
 		float viewHeight,
 		const Aabb2& dirtyRegion) override final;
 
-	virtual void beginSprite(const SpriteInstance& sprite, const Matrix33& transform) override final;
+	virtual bool beginSprite(const SpriteInstance& sprite, const Matrix33& transform, ColorTransform& inoutCxform) override final;
 
 	virtual void endSprite(const SpriteInstance& sprite, const Matrix33& transform) override final;
 
@@ -142,7 +145,8 @@ private:
 	struct GlyphCache
 	{
 		Ref< AccShape > shape;
-		int32_t index;
+		int32_t index = -1;
+		int32_t lastFrame = -1;	//!< Frame the cell was last referenced by a queued glyph.
 	};
 
 	resource::IResourceManager* m_resourceManager;
@@ -150,6 +154,7 @@ private:
 	Ref< render::RenderGraph > m_renderGraph;
 	Ref< render::RenderPass > m_renderPassOutput;
 	Ref< render::RenderPass > m_renderPassGlyph;
+	Ref< render::RenderPass > m_renderPassSprite;
 	Ref< AccShapeResources > m_shapeResources;
 	Ref< AccShapeVertexPool > m_fillVertexPool;
 	Ref< AccShapeVertexPool > m_lineVertexPool;
@@ -157,11 +162,15 @@ private:
 	Ref< AccTextureCache > m_textureCache;
 	Ref< AccGlyph > m_glyph;
 	Ref< render::IRenderTargetSet > m_glyphTargetSet;
+	Ref< render::IRenderTargetSet > m_spriteTargetSet;
 	Ref< AccQuad > m_quad;
+	Ref< Packer > m_spritePacker;
 	SmallMap< int32_t, ShapeCache > m_shapeCache;
 	SmallMap< int32_t, GlyphCache > m_glyphCache;
 	render::RGTargetSet m_glyphsTargetSetId;
+	render::RGTargetSet m_spritesTargetSetId;
 	int32_t m_nextIndex;
+	int32_t m_frameCount = 0;	//!< Incremented per rendered frame; stamps glyph cells in use.
 	Vector4 m_frameBounds;		//!< [left, top, right, bottom] in twips.
 	Vector4 m_frameTransform;	//!< [offset x, offset y, scale x, scale y] in normalized values.
 	Vector4 m_viewSize;			//!< [width, height, 1/width, 1/height] in pixels.
@@ -176,7 +185,30 @@ private:
 	Color4f m_glyphFilterColor;
 	bool m_firstFrame;
 
+	//! \name Sprite bitmap cache.
+	//! \{
+
+	render::RenderPass* m_renderPassTarget = nullptr;
+	Matrix33 m_captureTransformInv = Matrix33::identity();
+	const SpriteInstance* m_captureSprite = nullptr;
+	const SpriteInstance* m_compositeSprite = nullptr;
+	Ref< AccCachedSprite > m_compositeCache;
+	Matrix33 m_compositeTransform = Matrix33::identity();
+	ColorTransform m_compositeCxform;
+	Vector4 m_savedFrameBounds;
+	Vector4 m_savedFrameTransform;
+	uint8_t m_savedMaskReference = 0;
+	bool m_spriteAtlasFull = false;
+
+	//! \}
+
 	void renderEnqueuedGlyphs();
+
+	float spriteAtlasScale(const Matrix33& transform) const;
+
+	Ref< AccCachedSprite > allocateCachedSprite(const Aabb2& bounds, float scale);
+
+	void compositeCachedSprite();
 };
 
 }

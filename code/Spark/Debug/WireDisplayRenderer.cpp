@@ -102,7 +102,7 @@ void WireDisplayRenderer::begin(
 	m_wireEnable.push(false);
 }
 
-void WireDisplayRenderer::beginSprite(const SpriteInstance& sprite, const Matrix33& transform)
+bool WireDisplayRenderer::beginSprite(const SpriteInstance& sprite, const Matrix33& transform, ColorTransform& inoutCxform)
 {
 	const bool parentWireEnable = m_wireEnable.top();
 	m_wireEnable.push(sprite.getWireOutline());
@@ -148,6 +148,8 @@ void WireDisplayRenderer::beginSprite(const SpriteInstance& sprite, const Matrix
 			m_wireEnable.top() ? Color4ub(255, 0, 0, 255) : Color4ub(255, 255, 0, 255)
 		);
 	}
+
+	return true;
 }
 
 void WireDisplayRenderer::endSprite(const SpriteInstance& sprite, const Matrix33& transform)

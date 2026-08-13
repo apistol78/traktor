@@ -71,8 +71,9 @@ void SwDisplayRenderer::begin(
 	m_frameTransform = frameTransform;
 }
 
-void SwDisplayRenderer::beginSprite(const SpriteInstance& sprite, const Matrix33& transform)
+bool SwDisplayRenderer::beginSprite(const SpriteInstance& sprite, const Matrix33& transform, ColorTransform& inoutCxform)
 {
+	return true;
 }
 
 void SwDisplayRenderer::endSprite(const SpriteInstance& sprite, const Matrix33& transform)

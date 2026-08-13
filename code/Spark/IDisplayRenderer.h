@@ -66,8 +66,19 @@ public:
 	) = 0;
 
 	/*! Begin rendering sprite.
+	 *
+	 * \param sprite Sprite instance.
+	 * \param transform Sprite transformation.
+	 * \param inoutCxform Color transform of the sprite's content. A renderer which
+	 *                    capture the sprite into a cached representation replace this
+	 *                    with an identity transform, and instead apply the original
+	 *                    when the cache is composited, so that color transformations
+	 *                    alone never invalidate the cache.
+	 * \return False if the sprite's content should not be traversed; it has already
+	 *         been composited from a cached representation. endSprite must be called
+	 *         regardless of the return value.
 	 */
-	virtual void beginSprite(const SpriteInstance& sprite, const Matrix33& transform) = 0;
+	virtual bool beginSprite(const SpriteInstance& sprite, const Matrix33& transform, ColorTransform& inoutCxform) = 0;
 
 	/*! End rendering sprite.
 	 */

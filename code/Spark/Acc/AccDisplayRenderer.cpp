@@ -16,6 +16,7 @@
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderTargetSet.h"
 #include "Render/IRenderView.h"
+#include "Spark/Acc/AccCachedSprite.h"
 #include "Spark/Acc/AccGlyph.h"
 #include "Spark/Acc/AccGradientCache.h"
 #include "Spark/Acc/AccQuad.h"
@@ -30,11 +31,13 @@
 #include "Spark/Font.h"
 #include "Spark/Frame.h"
 #include "Spark/Movie.h"
+#include "Spark/Packer.h"
 #include "Spark/Shape.h"
 #include "Spark/Sprite.h"
 #include "Spark/SpriteInstance.h"
 
 #include <algorithm>
+#include <cmath>
 #include <cstring>
 
 namespace traktor::spark
@@ -53,6 +56,40 @@ const uint32_t c_cacheGlyphDimX = c_cacheGlyphSize * c_cacheGlyphCountX;
 const uint32_t c_cacheGlyphDimY = c_cacheGlyphSize * c_cacheGlyphCountY;
 
 const render::Handle c_glyphsTargetSetId(L"Spark_GlyphsTargetSet");
+
+const int32_t c_spriteAtlasDim = 2048;		//!< Size of sprite bitmap cache.
+const float c_spriteSupersample = 3.0f;		//!< Cells are rendered at this multiple of their on screen size.
+const int32_t c_spriteMargin = 1;			//!< Transparent border around each cell.
+const int32_t c_spriteMaxCellDim = 1024;	//!< Largest cell we allow, so a single huge sprite can't consume the atlas.
+const float c_spriteScaleTolerance = 1.25f;	//!< Screen scale may drift before we re-capture.
+
+//! Cell size, in atlas pixels, needed to hold given bounds at given scale.
+void cellSize(const Aabb2& bounds, float scale, int32_t& outWidth, int32_t& outHeight)
+{
+	outWidth = (int32_t)std::ceil((bounds.mx.x - bounds.mn.x) * scale) + 2 * c_spriteMargin;
+	outHeight = (int32_t)std::ceil((bounds.mx.y - bounds.mn.y) * scale) + 2 * c_spriteMargin;
+}
+
+//! True if an already allocated cell can hold given bounds at given scale.
+bool cellFits(const Packer::Rectangle& rect, const Aabb2& bounds, float scale)
+{
+	int32_t width, height;
+	cellSize(bounds, scale, width, height);
+	return width <= rect.width && height <= rect.height;
+}
+
+//! Resolution a cell actually afford for given bounds; the axis which fit worst, since
+//! that is what limits how much detail survive.
+float cellScale(const Packer::Rectangle& rect, const Aabb2& bounds)
+{
+	const float width = bounds.mx.x - bounds.mn.x;
+	const float height = bounds.mx.y - bounds.mn.y;
+	if (width <= FUZZY_EPSILON || height <= FUZZY_EPSILON)
+		return 0.0f;
+	return std::min(
+		(rect.width - 2 * c_spriteMargin) / width,
+		(rect.height - 2 * c_spriteMargin) / height);
+}
 
 const ColorTransform c_cxfZero(Color4f(0.0f, 0.0f, 0.0f, 0.0f), Color4f(0.0f, 0.0f, 0.0f, 0.0f));
 const ColorTransform c_cxfWhite(Color4f(0.0f, 0.0f, 0.0f, 0.0f), Color4f(1.0f, 1.0f, 1.0f, 1.0f));
@@ -166,6 +203,25 @@ bool AccDisplayRenderer::create(
 	};
 	m_glyphTargetSet = renderSystem->createRenderTargetSet(rtscd, nullptr, T_FILE_LINE_W);
 
+	// Create sprite cache atlas; need stencil since captured sprites may contain masks.
+	const render::RenderTargetSetCreateDesc rtscds = {
+		.count = 1,
+		.width = c_spriteAtlasDim,
+		.height = c_spriteAtlasDim,
+		.createDepthStencil = true,
+		.ignoreStencil = false,
+		.targets = {
+			{ .format = render::TfR8G8B8A8 } }
+	};
+	m_spriteTargetSet = renderSystem->createRenderTargetSet(rtscds, nullptr, T_FILE_LINE_W);
+	if (!m_spriteTargetSet)
+	{
+		log::error << L"Unable to create accelerated display renderer; failed to create sprite cache atlas." << Endl;
+		return false;
+	}
+
+	m_spritePacker = new Packer(c_spriteAtlasDim, c_spriteAtlasDim);
+
 	m_quad = new AccQuad();
 	if (!m_quad->create(resourceManager, renderSystem))
 	{
@@ -182,7 +238,11 @@ void AccDisplayRenderer::destroy()
 
 	safeDestroy(m_glyph);
 	safeDestroy(m_glyphTargetSet);
+	safeDestroy(m_spriteTargetSet);
 	safeDestroy(m_quad);
+
+	m_spritePacker = nullptr;
+	m_compositeCache = nullptr;
 	safeDestroy(m_gradientCache);
 	safeDestroy(m_textureCache);
 
@@ -204,8 +264,10 @@ void AccDisplayRenderer::beginSetup(render::RenderGraph* renderGraph)
 {
 	m_renderGraph = renderGraph;
 	m_glyphsTargetSetId = m_renderGraph->addExplicitTargetSet(L"Spark glyphs", m_glyphTargetSet);
+	m_spritesTargetSetId = m_renderGraph->addExplicitTargetSet(L"Spark sprites", m_spriteTargetSet);
 	m_renderPassOutput = new render::RenderPass(L"Spark");
 	m_renderPassOutput->addInput(m_glyphsTargetSetId);
+	m_renderPassOutput->addInput(m_spritesTargetSetId);
 
 	if (m_clearBackground)
 	{
@@ -238,6 +300,17 @@ void AccDisplayRenderer::beginSetup(render::RenderGraph* renderGraph)
 		m_renderPassGlyph->setOutput(m_glyphsTargetSetId, cl, render::TfNone, render::TfColor);
 	}
 
+	m_renderPassSprite = new render::RenderPass(L"Spark sprites");
+	m_renderPassSprite->addInput(m_glyphsTargetSetId);
+
+	const render::Clear cl = {
+		.mask = render::CfStencil,
+		.stencil = 0
+	};
+	m_renderPassSprite->setOutput(m_spritesTargetSetId, cl, render::TfColor, render::TfColor);
+
+	m_renderPassTarget = m_renderPassOutput;
+
 	m_frameTransform.set(0.0f, 0.0f, 1.0f, 1.0f);
 }
 
@@ -245,12 +318,16 @@ void AccDisplayRenderer::endSetup()
 {
 	if (!m_renderPassGlyph->getBuilds().empty() || m_firstFrame)
 		m_renderGraph->addPass(m_renderPassGlyph);
+	if (!m_renderPassSprite->getBuilds().empty())
+		m_renderGraph->addPass(m_renderPassSprite);
 	if (!m_renderPassOutput->getBuilds().empty())
 		m_renderGraph->addPass(m_renderPassOutput);
 
 	m_renderGraph = nullptr;
 	m_renderPassOutput = nullptr;
 	m_renderPassGlyph = nullptr;
+	m_renderPassSprite = nullptr;
+	m_renderPassTarget = nullptr;
 
 	m_firstFrame = false;
 }
@@ -270,6 +347,13 @@ void AccDisplayRenderer::flushCaches()
 	m_glyphCache.clear();
 
 	m_nextIndex = 0;
+
+	m_spritePacker->reset();
+	m_spriteAtlasFull = false;
+	m_compositeSprite = nullptr;
+	m_compositeCache = nullptr;
+	m_captureSprite = nullptr;
+	m_captureTransformInv = Matrix33::identity();
 }
 
 void AccDisplayRenderer::setClearBackground(bool clearBackground)
@@ -293,6 +377,14 @@ void AccDisplayRenderer::begin(
 	float viewHeight,
 	const Aabb2& dirtyRegion)
 {
+	m_frameCount++;
+
+	if (m_spriteAtlasFull)
+	{
+		m_spritePacker->reset();
+		m_spriteAtlasFull = false;
+	}
+
 	m_frameBounds.set(frameBounds.mn.x, frameBounds.mn.y, frameBounds.mx.x, frameBounds.mx.y);
 	m_frameTransform = frameTransform;
 	m_viewSize.set(viewWidth, viewHeight, 1.0f / viewWidth, 1.0f / viewHeight);
@@ -308,17 +400,221 @@ void AccDisplayRenderer::begin(
 	m_maskIncrement = false;
 	m_maskReference = 0;
 
+	// Drawing start out targeting the output pass; a sprite capture redirect it.
+	m_renderPassTarget = m_renderPassOutput;
+	m_captureSprite = nullptr;
+	m_captureTransformInv = Matrix33::identity();
+	m_compositeSprite = nullptr;
+	m_compositeCache = nullptr;
+
 	// Dirty regions not used but set region to entire frame so we can
 	// cull shapes trivially later.
 	m_dirtyRegion = m_frameBoundsVisible;
 }
 
-void AccDisplayRenderer::beginSprite(const SpriteInstance& sprite, const Matrix33& transform)
+bool AccDisplayRenderer::beginSprite(const SpriteInstance& sprite, const Matrix33& transform, ColorTransform& inoutCxform)
 {
+	// Check if caching is allowed/suitable for this sprite.
+	if (
+		!sprite.getCacheAsBitmap() ||
+		m_captureSprite != nullptr ||
+		m_maskWrite ||
+		sprite.getBlendMode() != SbmDefault ||
+		sprite.getMask() != nullptr)
+		return true;
+
+	const float scale = spriteAtlasScale(transform);
+	if (scale <= 0.0f)
+		return true;
+
+	Ref< AccCachedSprite > cached = static_cast< AccCachedSprite* >(sprite.getCacheObject());
+	if (cached != nullptr && (cached->packer != m_spritePacker || cached->epoch != m_spritePacker->getEpoch()))
+		cached = nullptr;
+
+	if (
+		cached != nullptr &&
+		cached->valid &&
+		cached->version == sprite.getCacheVersion() &&
+		scale <= cached->scale * c_spriteScaleTolerance &&
+		scale >= cached->scale / c_spriteScaleTolerance)
+	{
+		m_compositeSprite = &sprite;
+		m_compositeCache = cached;
+		m_compositeTransform = transform;
+		m_compositeCxform = inoutCxform;
+		return false;
+	}
+
+	const Aabb2 bounds = sprite.getVisibleLocalBounds();
+	if (bounds.empty())
+		return true;
+
+	// Re-capture into the same cell if possible.
+	Ref< AccCachedSprite > allocated = cached;
+	if (allocated != nullptr && !cellFits(allocated->rect, bounds, scale))
+		allocated = nullptr;
+
+	if (allocated == nullptr)
+	{
+		allocated = allocateCachedSprite(bounds, scale);
+		if (!allocated)
+			return true;
+		sprite.setCacheObject(allocated);
+	}
+	else
+	{
+		allocated->bounds = bounds;
+		allocated->scale = cellScale(allocated->rect, bounds);
+	}
+
+	allocated->version = sprite.getCacheVersion();
+	allocated->valid = false;
+
+	// Queued glyphs belong to the enclosing pass; flush before we redirect drawing.
+	renderEnqueuedGlyphs();
+
+	m_compositeSprite = &sprite;
+	m_compositeCache = allocated;
+	m_compositeTransform = transform;
+	m_compositeCxform = inoutCxform;
+
+	m_captureSprite = &sprite;
+	m_captureTransformInv = transform.inverse();
+	inoutCxform = c_cxfIdentity;
+
+	m_savedFrameBounds = m_frameBounds;
+	m_savedFrameTransform = m_frameTransform;
+	m_savedMaskReference = m_maskReference;
+	m_renderPassTarget = m_renderPassSprite;
+	m_maskReference = 0;
+
+	const float invDim = 1.0f / c_spriteAtlasDim;
+	const Vector4 localBounds(bounds.mn.x, bounds.mn.y, bounds.mx.x, bounds.mx.y);
+
+	// Clear cell.
+	m_quad->render(
+		m_renderPassSprite,
+		bounds,
+		Matrix33::identity(),
+		localBounds,
+		Vector4(
+			allocated->rect.x * invDim,
+			allocated->rect.y * invDim,
+			allocated->rect.width * invDim,
+			allocated->rect.height * invDim),
+		c_cxfZero,
+		nullptr,
+		Vector4::zero(),
+		false,
+		false,
+		0);
+
+	// Map the sprite's local bounds onto the cell, inside the margin.
+	m_frameBounds = localBounds;
+	m_frameTransform.set(
+		(allocated->rect.x + c_spriteMargin) * invDim,
+		(allocated->rect.y + c_spriteMargin) * invDim,
+		(allocated->rect.width - 2 * c_spriteMargin) * invDim,
+		(allocated->rect.height - 2 * c_spriteMargin) * invDim);
+
+	return true;
 }
 
 void AccDisplayRenderer::endSprite(const SpriteInstance& sprite, const Matrix33& transform)
 {
+	if (&sprite == m_captureSprite)
+	{
+		// Flush glyphs drawn into the cell before restoring state.
+		renderEnqueuedGlyphs();
+
+		m_frameBounds = m_savedFrameBounds;
+		m_frameTransform = m_savedFrameTransform;
+		m_maskReference = m_savedMaskReference;
+		m_renderPassTarget = m_renderPassOutput;
+
+		m_captureSprite = nullptr;
+		m_captureTransformInv = Matrix33::identity();
+
+		m_compositeCache->valid = true;
+		compositeCachedSprite();
+	}
+	else if (&sprite == m_compositeSprite)
+		compositeCachedSprite();
+}
+
+float AccDisplayRenderer::spriteAtlasScale(const Matrix33& transform) const
+{
+	// Visible part of the frame maps onto the entire view, giving pixels per twip.
+	const Vector2 frameSize = m_frameBoundsVisible.mx - m_frameBoundsVisible.mn;
+	if (frameSize.x <= FUZZY_EPSILON || frameSize.y <= FUZZY_EPSILON)
+		return 0.0f;
+
+	const float px = m_viewSize.x() / frameSize.x;
+	const float py = m_viewSize.y() / frameSize.y;
+
+	// Length of the transform's basis vectors; take the larger so a non-uniformly
+	// scaled sprite is never under-sampled along its major axis.
+	const float sx = Vector2(transform.e11, transform.e21).length() * px;
+	const float sy = Vector2(transform.e12, transform.e22).length() * py;
+
+	const float scale = std::max(sx, sy) * c_spriteSupersample;
+	return scale > FUZZY_EPSILON ? scale : 0.0f;
+}
+
+Ref< AccCachedSprite > AccDisplayRenderer::allocateCachedSprite(const Aabb2& bounds, float scale)
+{
+	int32_t width, height;
+	cellSize(bounds, scale, width, height);
+
+	if (width <= 2 * c_spriteMargin || height <= 2 * c_spriteMargin)
+		return nullptr;
+	if (width > c_spriteMaxCellDim || height > c_spriteMaxCellDim)
+		return nullptr;
+
+	Packer::Rectangle rect;
+	if (!m_spritePacker->insert(width, height, rect))
+	{
+		m_spriteAtlasFull = true;
+		return nullptr;
+	}
+
+	Ref< AccCachedSprite > cached = new AccCachedSprite();
+	cached->packer = m_spritePacker;
+	cached->epoch = m_spritePacker->getEpoch();
+	cached->rect = rect;
+	cached->bounds = bounds;
+	cached->scale = scale;
+	cached->valid = false;
+	return cached;
+}
+
+void AccDisplayRenderer::compositeCachedSprite()
+{
+	T_ASSERT(m_compositeCache);
+
+	// Ordered relative to queued glyphs just like any other shape.
+	renderEnqueuedGlyphs();
+
+	const float invDim = 1.0f / c_spriteAtlasDim;
+	const Packer::Rectangle& rect = m_compositeCache->rect;
+
+	m_quad->renderCached(
+		m_renderPassOutput,
+		m_compositeCache->bounds,
+		m_compositeTransform,
+		m_frameBounds,
+		m_frameTransform,
+		m_compositeCxform,
+		m_spriteTargetSet->getColorTexture(0),
+		Vector4(
+			(rect.x + c_spriteMargin) * invDim,
+			(rect.y + c_spriteMargin) * invDim,
+			(rect.width - 2 * c_spriteMargin) * invDim,
+			(rect.height - 2 * c_spriteMargin) * invDim),
+		m_maskReference);
+
+	m_compositeSprite = nullptr;
+	m_compositeCache = nullptr;
 }
 
 void AccDisplayRenderer::beginEdit(const EditInstance& edit, const Matrix33& transform)
@@ -400,8 +696,8 @@ void AccDisplayRenderer::renderShape(const Dictionary& dictionary, const Matrix3
 	renderEnqueuedGlyphs();
 
 	accShape->render(
-		m_renderPassOutput,
-		transform,
+		m_renderPassTarget,
+		m_captureTransformInv * transform,
 		Vector4(clipBounds.mn.x, clipBounds.mn.y, clipBounds.mx.x, clipBounds.mx.y),
 		m_frameBounds,
 		m_frameTransform,
@@ -438,8 +734,8 @@ void AccDisplayRenderer::renderGlyph(
 	const Matrix33 glyphTransform = transform * scale(fontScale, fontScale);
 	const Color4f glyphColor = color * cxform.mul + cxform.add;
 
-	// Check if shape is within frame bounds.
-	if (!rectangleVisible(m_dirtyRegion, glyphTransform * glyph->getShapeBounds()))
+	// Check if shape is within frame bounds; see renderQuad regarding capturing.
+	if (m_captureSprite == nullptr && !rectangleVisible(m_dirtyRegion, glyphTransform * glyph->getShapeBounds()))
 		return;
 
 	if (m_glyphFilter != filter || !colorsEqual(glyphColor, m_glyphColor))
@@ -481,10 +777,34 @@ void AccDisplayRenderer::renderGlyph(
 	// Get cached glyph target.
 	if (it1->second.index < 0)
 	{
-		// Glyph not cached; pick index by cycling which means oldest glyph get discarded.
-		const int32_t index = m_nextIndex++;
-		if (m_nextIndex >= c_cacheGlyphCount)
-			m_nextIndex = 0;
+		// Glyph not cached; pick a cell by cycling, which means the oldest glyph get
+		// discarded not referenced in this frame.
+		int32_t index = -1;
+		for (uint32_t i = 0; i < c_cacheGlyphCount; ++i)
+		{
+			const int32_t candidate = m_nextIndex;
+			if (++m_nextIndex >= (int32_t)c_cacheGlyphCount)
+				m_nextIndex = 0;
+
+			bool referencedThisFrame = false;
+			for (const auto& cache : m_glyphCache)
+			{
+				if (cache.second.index == candidate && cache.second.lastFrame == m_frameCount)
+				{
+					referencedThisFrame = true;
+					break;
+				}
+			}
+
+			if (!referencedThisFrame)
+			{
+				index = candidate;
+				break;
+			}
+		}
+
+		if (index < 0)
+			return;
 
 		for (auto& cache : m_glyphCache)
 			if (cache.second.index == index)
@@ -530,12 +850,15 @@ void AccDisplayRenderer::renderGlyph(
 		it1->second.index = index;
 	}
 
+	// Stamp the cell so nothing else claim it before our draw has sampled it.
+	it1->second.lastFrame = m_frameCount;
+
 	const int32_t column = it1->second.index & (c_cacheGlyphCountX - 1);
 	const int32_t row = it1->second.index / c_cacheGlyphCountX;
 
 	m_glyph->add(
 		bounds,
-		glyphTransform,
+		m_captureTransformInv * glyphTransform,
 		Vector4(
 			float(column) / c_cacheGlyphCountX,
 			float(row) / c_cacheGlyphCountY,
@@ -545,13 +868,13 @@ void AccDisplayRenderer::renderGlyph(
 
 void AccDisplayRenderer::renderQuad(const Matrix33& transform, const Aabb2& bounds, const ColorTransform& cxform)
 {
-	if (!rectangleVisible(m_dirtyRegion, transform * bounds))
+	if (m_captureSprite == nullptr && !rectangleVisible(m_dirtyRegion, transform * bounds))
 		return;
 
 	m_quad->render(
-		m_renderPassOutput,
+		m_renderPassTarget,
 		bounds,
-		transform,
+		m_captureTransformInv * transform,
 		m_frameBounds,
 		m_frameTransform,
 		cxform,
@@ -593,14 +916,14 @@ void AccDisplayRenderer::renderCanvas(const Matrix33& transform, const Canvas& c
 		accShape = it->second.shape;
 	}
 
-	if (!rectangleVisible(m_dirtyRegion, transform * accShape->getBounds()))
+	if (m_captureSprite == nullptr && !rectangleVisible(m_dirtyRegion, transform * accShape->getBounds()))
 		return;
 
 	renderEnqueuedGlyphs();
 
 	accShape->render(
-		m_renderPassOutput,
-		transform,
+		m_renderPassTarget,
+		m_captureTransformInv * transform,
 		m_frameBounds,
 		m_frameBounds,
 		m_frameTransform,
@@ -646,7 +969,7 @@ void AccDisplayRenderer::end()
 void AccDisplayRenderer::renderEnqueuedGlyphs()
 {
 	m_glyph->render(
-		m_renderPassOutput,
+		m_renderPassTarget,
 		m_glyphsTargetSetId,
 		m_frameBounds,
 		m_frameTransform,

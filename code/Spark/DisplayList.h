@@ -48,7 +48,15 @@ public:
 
 	typedef SmallMap< int32_t, Layer > layer_map_t;
 
-	explicit DisplayList(Context* context);
+	/*! Construct display list.
+	 *
+	 * \param context Movie context.
+	 * \param owner Character owning this display list; invalidated whenever the
+	 *              list change so cached representations of the owner, and its
+	 *              ancestors, are discarded. Raw pointer since the owner contain
+	 *              the display list.
+	 */
+	explicit DisplayList(Context* context, CharacterInstance* owner);
 
 	/*! Reset display list. */
 	void reset();
@@ -225,9 +233,14 @@ public:
 
 private:
 	Context* m_context;
+	CharacterInstance* m_owner;
 	Color4f m_backgroundColor;
 	layer_map_t m_layers;
 	mutable RefArray< CharacterInstance > m_gather;
+
+	/*! Invalidate owner's cached representation; called whenever the set of
+	 *  characters, or their ordering, change. */
+	void invalidateOwner();
 };
 
 }

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -97,7 +97,7 @@ void ButtonInstance::eventMouseDown(int x, int y, int button)
 	if (m_inside && !m_pushed)
 	{
 		m_eventPress.issue();
-		m_state = Button::SmDown;
+		setState(Button::SmDown);
 		m_pushed = true;
 	}
 }
@@ -107,13 +107,13 @@ void ButtonInstance::eventMouseUp(int x, int y, int button)
 	if (m_inside && m_pushed)
 	{
 		m_eventRelease.issue();
-		m_state = Button::SmOver;
+		setState(Button::SmOver);
 		m_pushed = false;
 	}
 	else if (!m_inside && m_pushed)
 	{
 		m_eventReleaseOutside.issue();
-		m_state = Button::SmUp;
+		setState(Button::SmUp);
 		m_pushed = false;
 	}
 }
@@ -133,20 +133,20 @@ void ButtonInstance::eventMouseMove(int x, int y, int button)
 			if (button == 0)
 			{
 				m_eventRollOver.issue();
-				m_state = Button::SmOver;
+				setState(Button::SmOver);
 			}
 			else
-				m_state = Button::SmDown;
+				setState(Button::SmDown);
 		}
 		else
 		{
 			if (button == 0)
 			{
 				m_eventRollOut.issue();
-				m_state = Button::SmUp;
+				setState(Button::SmUp);
 			}
 			else
-				m_state = Button::SmOver;
+				setState(Button::SmOver);
 		}
 		m_inside = inside;
 	}
@@ -155,6 +155,15 @@ void ButtonInstance::eventMouseMove(int x, int y, int button)
 Aabb2 ButtonInstance::getBounds() const
 {
 	return getTransform() * getLocalBounds();
+}
+
+void ButtonInstance::setState(uint8_t state)
+{
+	if (state != m_state)
+	{
+		m_state = state;
+		invalidateCache();
+	}
 }
 
 }
