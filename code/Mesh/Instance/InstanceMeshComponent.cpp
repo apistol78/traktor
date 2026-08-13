@@ -84,11 +84,6 @@ void InstanceMeshComponent::setState(const world::EntityState& state, const worl
 void InstanceMeshComponent::setTransform(const Transform& transform)
 {
 	MeshComponent::setTransform(transform);
-
-	if (m_rtwInstance)
-		m_rtwInstance->setTransform(transform);
-	if (m_cullingInstance)
-		m_cullingInstance->setTransform(transform);
 }
 
 Aabb3 InstanceMeshComponent::getBoundingBox() const
@@ -96,14 +91,14 @@ Aabb3 InstanceMeshComponent::getBoundingBox() const
 	return m_mesh->getBoundingBox();
 }
 
-void InstanceMeshComponent::build(
-	const world::WorldBuildContext& context,
-	const world::WorldRenderView& worldRenderView,
-	const world::IWorldRenderPass& worldRenderPass)
+void InstanceMeshComponent::setup(
+	const world::WorldSetupContext& context,
+	const world::WorldRenderView& worldRenderView)
 {
 	// Recreate RT and culling if mesh has been reloaded.
 	if (m_mesh.changed())
 	{
+		const Transform worldTransform = m_transform.get(worldRenderView.getInterval());
 		if (m_rtwInstance)
 		{
 			safeDestroy(m_rtwInstance);
@@ -112,7 +107,7 @@ void InstanceMeshComponent::build(
 			if (rtw != nullptr && m_mesh->getAccelerationStructure() != nullptr)
 			{
 				m_rtwInstance = rtw->createInstance(m_mesh->getAccelerationStructure(), m_mesh->getRTVertexAttributes());
-				m_rtwInstance->setTransform(m_transform.get0());
+				m_rtwInstance->setTransform(worldTransform);
 			}
 		}
 		if (m_cullingInstance)
@@ -121,9 +116,21 @@ void InstanceMeshComponent::build(
 
 			world::CullingComponent* culling = m_world->getComponent< world::CullingComponent >();
 			m_cullingInstance = culling->createInstance(m_mesh, (intptr_t)m_mesh.getResource(), m_dynamic);
-			m_cullingInstance->setTransform(m_transform.get0());
+			m_cullingInstance->setTransform(worldTransform);
 		}
 		m_mesh.consume();
+	}
+
+	if (m_cullingInstance)
+	{
+		const Transform worldTransform = m_transform.get(worldRenderView.getInterval());
+		if (!fuzzyEqual(worldTransform, m_cullingInstance->transform))
+		{
+			if (m_rtwInstance)
+				m_rtwInstance->setTransform(worldTransform);
+
+			m_cullingInstance->setTransform(worldTransform);
+		}
 	}
 }
 

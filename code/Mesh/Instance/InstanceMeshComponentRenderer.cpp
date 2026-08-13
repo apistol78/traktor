@@ -32,6 +32,11 @@ void InstanceMeshComponentRenderer::setup(
 	const world::WorldRenderView& worldRenderView,
 	const AlignedVector< Object* >& renderables)
 {
+	for (Object* renderable : renderables)
+	{
+		InstanceMeshComponent* meshComponent = static_cast< InstanceMeshComponent* >(renderable);
+		meshComponent->setup(context, worldRenderView);
+	}
 }
 
 void InstanceMeshComponentRenderer::build(
@@ -40,11 +45,6 @@ void InstanceMeshComponentRenderer::build(
 	const world::IWorldRenderPass& worldRenderPass,
 	const AlignedVector< Object* >& renderables)
 {
-	for (Object* renderable : renderables)
-	{
-		InstanceMeshComponent* meshComponent = static_cast< InstanceMeshComponent* >(renderable);
-		meshComponent->build(context, worldRenderView, worldRenderPass);
-	}
 }
 
 }

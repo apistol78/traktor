@@ -130,4 +130,18 @@ Transform lerp(const Transform& a, const Transform& b, const Scalar& c)
 	);
 }
 
+T_MATH_INLINE bool fuzzyEqual(const Transform& a, const Transform& b, float translationTolerance, float rotationTolerance)
+{
+	if ((a.translation() - b.translation()).absolute().max() > translationTolerance)
+		return false;
+
+	// Quaternions double cover rotations; compare against the nearest of the
+	// two representations of b's rotation.
+	const Vector4 br = (dot4(a.rotation().e, b.rotation().e) >= 0.0_simd) ? b.rotation().e : -b.rotation().e;
+	if ((a.rotation().e - br).absolute().max() > rotationTolerance)
+		return false;
+
+	return true;
+}
+
 }

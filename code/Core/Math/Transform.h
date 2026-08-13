@@ -78,6 +78,13 @@ private:
 
 T_MATH_INLINE T_DLLCLASS Transform lerp(const Transform& a, const Transform& b, const Scalar& c);
 
+/*! Compare transforms for approximate equality.
+ *
+ * \param translationTolerance Per component translation tolerance, in world units.
+ * \param rotationTolerance Per component quaternion tolerance.
+ */
+T_MATH_INLINE T_DLLCLASS bool fuzzyEqual(const Transform& a, const Transform& b, float translationTolerance = 1e-4f, float rotationTolerance = 1e-5f);
+
 }
 
 #if defined(T_MATH_USE_INLINE)

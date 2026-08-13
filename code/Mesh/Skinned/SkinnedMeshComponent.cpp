@@ -151,7 +151,7 @@ void SkinnedMeshComponent::build(const world::WorldBuildContext& context, const 
 	// Skip rendering velocities if mesh hasn't moved since last frame.
 	if (worldRenderPass.getTechnique() == s_techniqueVelocityWrite)
 	{
-		if (worldTransform == lastWorldTransform)
+		if (fuzzyEqual(worldTransform, lastWorldTransform))
 			return;
 	}
 

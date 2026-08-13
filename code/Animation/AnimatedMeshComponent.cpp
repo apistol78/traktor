@@ -229,7 +229,7 @@ void AnimatedMeshComponent::setupSkin(const world::WorldRenderView& worldRenderV
 
 		mesh::SkinnedMeshComponent::setupSkin(worldRenderView, renderContext, lodRank);
 	}
-	else if (m_rtwInstance && m_lastWorldTransform[1] != worldTransform)
+	else if (m_rtwInstance && !fuzzyEqual(m_lastWorldTransform[1], worldTransform))
 	{
 		// Update RT instance transform only.
 		m_rtwInstance->setTransform(worldTransform);
