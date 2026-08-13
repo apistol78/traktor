@@ -6650,6 +6650,11 @@
 											<link>LnkYes</link>
 											<project ref="/object/projects/item/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
 										</item>
+										<item type="traktor.sb.ProjectDependency" version="3">
+											<inheritIncludePaths>true</inheritIncludePaths>
+											<link>LnkYes</link>
+											<project ref="/object/projects/item[1]/dependencies/item[6]/project/dependencies/item[13]/project/dependencies/item[6]/project/dependencies/item[6]/project"/>
+										</item>
 									</dependencies>
 								</project>
 							</item>
@@ -19094,7 +19099,7 @@
 					<link>LnkYes</link>
 					<project ref="/object/projects/item[18]"/>
 				</item>
-			<item type="traktor.sb.ProjectDependency" version="3">
+				<item type="traktor.sb.ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
 					<project ref="/object/projects/item/dependencies/item/project"/>
