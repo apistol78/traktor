@@ -77,13 +77,12 @@ public:
 	enum VisualizeMode
 	{
 		VmDefault = 0,
-		VmSurfaceLod = 1,
-		VmPatchLod = 2,
-		VmColorMap = 3,
-		VmNormalMap = 4,
-		VmHeightMap = 5,
-		VmSplatMap = 6,
-		VmCutMap = 7
+		VmPatchLod = 1,
+		VmColorMap = 2,
+		VmNormalMap = 3,
+		VmHeightMap = 4,
+		VmSplatMap = 5,
+		VmCutMap = 6
 	};
 
 	struct Patch
@@ -151,7 +150,6 @@ private:
 	struct ViewPatch
 	{
 		int32_t lastPatchLod = 0;
-		int32_t lastSurfaceLod = 0;
 		Vector4 surfaceOffset = Vector4::zero();
 	};
 
@@ -186,12 +184,6 @@ private:
 	RefArray< render::Buffer > m_rtVertexBuffers;
 	AlignedVector< world::RTWorldComponent::Part > m_rtParts;
 	world::RTWorldComponent::Instance* m_rtwInstance = nullptr;
-	float m_patchLodDistance = 0.0f;
-	float m_patchLodBias = 0.0f;
-	float m_patchLodExponent = 0.0f;
-	float m_surfaceLodDistance = 0.0f;
-	float m_surfaceLodBias = 0.0f;
-	float m_surfaceLodExponent = 0.0f;
 	VisualizeMode m_visualizeMode = VmDefault;
 	View m_view[4];
 

@@ -102,7 +102,6 @@ bool TerrainSceneEditorUIExtension::create(ui::Widget* parent, ui::ToolBar* tool
 
 	m_toolVisualize = new ui::ToolBarDropDown(ui::Command(L"Terrain.Editor.SelectVisualize"), 100_ut, i18n::Text(L"TERRAIN_EDITOR_VISUALIZE"));
 	m_toolVisualize->add(L"Default");
-	m_toolVisualize->add(L"Surface LOD");
 	m_toolVisualize->add(L"Patch LOD");
 	m_toolVisualize->add(L"Color Map");
 	m_toolVisualize->add(L"Normal Map");

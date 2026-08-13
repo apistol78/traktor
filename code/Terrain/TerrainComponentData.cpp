@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -16,7 +16,7 @@
 namespace traktor::terrain
 {
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.terrain.TerrainComponentData", 0, TerrainComponentData, world::IEntityComponentData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.terrain.TerrainComponentData", 1, TerrainComponentData, world::IEntityComponentData)
 
 int32_t TerrainComponentData::getOrdinal() const
 {
@@ -30,12 +30,15 @@ void TerrainComponentData::setTransform(const world::EntityData* owner, const Tr
 void TerrainComponentData::serialize(ISerializer& s)
 {
 	s >> resource::Member< Terrain >(L"terrain", m_terrain);
-	s >> Member< float >(L"patchLodDistance", m_patchLodDistance, AttributeUnit(UnitType::Metres));
-	s >> Member< float >(L"patchLodBias", m_patchLodBias);
-	s >> Member< float >(L"patchLodExponent", m_patchLodExponent);
-	s >> Member< float >(L"surfaceLodDistance", m_surfaceLodDistance, AttributeUnit(UnitType::Metres));
-	s >> Member< float >(L"surfaceLodBias", m_surfaceLodBias);
-	s >> Member< float >(L"surfaceLodExponent", m_surfaceLodExponent);
+	if (s.getVersion< TerrainComponentData >() < 1)
+	{
+		s >> ObsoleteMember< float >(L"patchLodDistance");
+		s >> ObsoleteMember< float >(L"patchLodBias");
+		s >> ObsoleteMember< float >(L"patchLodExponent");
+		s >> ObsoleteMember< float >(L"surfaceLodDistance");
+		s >> ObsoleteMember< float >(L"surfaceLodBias");
+		s >> ObsoleteMember< float >(L"surfaceLodExponent");
+	}
 }
 
 }

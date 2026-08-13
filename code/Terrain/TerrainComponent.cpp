@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -59,7 +59,6 @@ const render::Handle c_handleTerrain_DrawBuffer(L"Terrain_DrawBuffer");
 const render::Handle c_handleTerrain_CulledDrawBuffer(L"Terrain_CulledDrawBuffer");
 
 const int32_t c_patchLodSteps = 3;
-const int32_t c_surfaceLodSteps = 3;
 
 struct CullPatch
 {
@@ -113,13 +112,6 @@ bool TerrainComponent::create(const TerrainComponentData& data)
 		return false;
 
 	m_heightfield = m_terrain->getHeightfield();
-
-	m_patchLodDistance = data.getPatchLodDistance();
-	m_patchLodBias = data.getPatchLodBias();
-	m_patchLodExponent = data.getPatchLodExponent();
-	m_surfaceLodDistance = data.getSurfaceLodDistance();
-	m_surfaceLodBias = data.getSurfaceLodBias();
-	m_surfaceLodExponent = data.getSurfaceLodExponent();
 
 	if (!createPatches())
 		return false;
@@ -272,7 +264,6 @@ void TerrainComponent::setup(
 			{
 				ViewPatch& viewPatch = m_view[viewIndex].viewPatches[patchId];
 				viewPatch.lastPatchLod = c_patchLodSteps;
-				viewPatch.lastSurfaceLod = c_surfaceLodSteps;
 			}
 
 			patchOrigin += patchDeltaX;
@@ -296,19 +287,6 @@ void TerrainComponent::setup(
 
 		ViewPatch& viewPatch = m_view[viewIndex].viewPatches[visiblePatch.patchId];
 
-		// Calculate which surface lod to use based one distance to patch center.
-		const float distance = max(visiblePatch.distance - detailDistance, 0.0f);
-		const float surfaceLodDistance = std::pow(clamp(distance / m_surfaceLodDistance + m_surfaceLodBias, 0.0f, 1.0f), m_surfaceLodExponent);
-		const float surfaceLodF = surfaceLodDistance * c_surfaceLodSteps;
-		int32_t surfaceLod = int32_t(surfaceLodF + 0.5f);
-
-		const float c_lodHysteresisThreshold = 0.5f;
-		if (surfaceLod != viewPatch.lastSurfaceLod)
-		{
-			if (std::abs(surfaceLodF - viewPatch.lastSurfaceLod) < c_lodHysteresisThreshold)
-				surfaceLod = viewPatch.lastSurfaceLod;
-		}
-
 		// Find patch lod based on screen space error.
 		int32_t patchLod = 0;
 		for (int32_t j = 3; j > 0; --j)
@@ -321,7 +299,6 @@ void TerrainComponent::setup(
 		}
 
 		viewPatch.lastPatchLod = patchLod;
-		viewPatch.lastSurfaceLod = surfaceLod;
 		viewPatch.surfaceOffset = Vector4::zero();
 
 		// Queue patch instance.
@@ -401,7 +378,7 @@ void TerrainComponent::build(
 
 	shader->setCombination(c_handleTerrain_CutEnable, m_terrain->getCutMap(), perm);
 
-	if (m_visualizeMode >= VmSurfaceLod && m_visualizeMode <= VmPatchLod)
+	if (m_visualizeMode == VmPatchLod)
 		shader->setCombination(c_handleTerrain_VisualizeLods, true, perm);
 	else if (m_visualizeMode >= VmColorMap && m_visualizeMode <= VmCutMap)
 		shader->setCombination(c_handleTerrain_VisualizeMap, true, perm);
@@ -684,7 +661,7 @@ bool TerrainComponent::createPatches()
 				{ 0.0f, 0.0f, { 0.0f, 0.0f, 0.0f, 0.0f } });
 			for (int32_t i = 0; i < sizeof_array(m_view); ++i)
 				m_view[i].viewPatches.push_back(
-					{ c_patchLodSteps, c_surfaceLodSteps, Vector4::zero() });
+					{ c_patchLodSteps, Vector4::zero() });
 		}
 	}
 

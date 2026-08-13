@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -41,26 +41,8 @@ public:
 
 	const resource::Id< Terrain >& getTerrain() const { return m_terrain; }
 
-	float getPatchLodDistance() const { return m_patchLodDistance; }
-
-	float getPatchLodBias() const { return m_patchLodBias; }
-
-	float getPatchLodExponent() const { return m_patchLodExponent; }
-
-	float getSurfaceLodDistance() const { return m_surfaceLodDistance; }
-
-	float getSurfaceLodBias() const { return m_surfaceLodBias; }
-
-	float getSurfaceLodExponent() const { return m_surfaceLodExponent; }
-
 private:
 	resource::Id< Terrain > m_terrain;
-	float m_patchLodDistance = 100.0f;
-	float m_patchLodBias = 0.0f;
-	float m_patchLodExponent = 1.0f;
-	float m_surfaceLodDistance = 100.0f;
-	float m_surfaceLodBias = 0.0f;
-	float m_surfaceLodExponent = 1.0f;
 };
 
 }
