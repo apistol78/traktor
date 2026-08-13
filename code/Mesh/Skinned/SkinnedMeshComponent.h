@@ -68,10 +68,21 @@ public:
 	bool haveAccelerationStructure() const { return m_rtwInstance != nullptr; }
 
 protected:
+	/*! Number of skin buffer ring slots.
+	 *
+	 * The skin is written on the asynchronous compute queue while up to the swap
+	 * chain's image count (at most 4) of prior frames' graphics may still be
+	 * reading their slots; the previous frame's slot is additionally bound for
+	 * velocities, so a slot is read for up to five frames after being written.
+	 * Writing a slot an in-flight frame still reads shows up as z-fighting
+	 * between the z pre-pass and the g-buffer pass, or as skin corruption.
+	 */
+	constexpr static int32_t SkinBufferCount = 6;
+
 	resource::Proxy< SkinnedMesh > m_mesh;
 	world::World* m_world = nullptr;
 	Ref< render::Buffer > m_jointBuffer;
-	Ref< render::Buffer > m_skinBuffer[2];
+	Ref< render::Buffer > m_skinBuffer[SkinBufferCount];
 	Ref< render::IAccelerationStructure > m_rtAccelerationStructure;
 	world::RTWorldComponent::Instance* m_rtwInstance = nullptr;
 	int32_t m_rtUpdates = 0;

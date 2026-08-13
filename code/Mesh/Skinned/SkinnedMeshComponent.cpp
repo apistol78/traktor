@@ -39,9 +39,9 @@ SkinnedMeshComponent::SkinnedMeshComponent(const resource::Proxy< SkinnedMesh >&
 	// Create buffer to contain the joint matrix palette.
 	m_jointBuffer = SkinnedMesh::createJointBuffer(renderSystem, skinJointCount);
 
-	// Create skin buffers.
-	m_skinBuffer[0] = m_mesh->createSkinBuffer(renderSystem);
-	m_skinBuffer[1] = m_mesh->createSkinBuffer(renderSystem);
+	// Create skin buffer ring.
+	for (int32_t i = 0; i < SkinBufferCount; ++i)
+		m_skinBuffer[i] = m_mesh->createSkinBuffer(renderSystem);
 
 	// Create our instance's acceleration structure.
 	m_rtAccelerationStructure = m_mesh->createAccelerationStructure(renderSystem);
@@ -55,8 +55,8 @@ void SkinnedMeshComponent::destroy()
 {
 	m_mesh.clear();
 	safeDestroy(m_jointBuffer);
-	safeDestroy(m_skinBuffer[0]);
-	safeDestroy(m_skinBuffer[1]);
+	for (int32_t i = 0; i < SkinBufferCount; ++i)
+		safeDestroy(m_skinBuffer[i]);
 	safeDestroy(m_rtwInstance);
 	safeDestroy(m_rtAccelerationStructure);
 	MeshComponent::destroy();
@@ -101,7 +101,14 @@ Aabb3 SkinnedMeshComponent::getBoundingBox() const
 
 void SkinnedMeshComponent::setupSkin(const world::WorldRenderView& worldRenderView, render::RenderContext* renderContext, int32_t lodRank)
 {
-	std::swap(m_skinBuffer[0], m_skinBuffer[1]);
+	// Advance the ring so the skin is written into the oldest slot; prior, still
+	// in-flight, frames' graphics may be reading the newer slots. Slot 0 is the
+	// current skin and slot 1 the previous frame's, read for velocities.
+	Ref< render::Buffer > oldest = m_skinBuffer[SkinBufferCount - 1];
+	for (int32_t i = SkinBufferCount - 1; i > 0; --i)
+		m_skinBuffer[i] = m_skinBuffer[i - 1];
+	m_skinBuffer[0] = oldest;
+
 	m_mesh->buildSkin(renderContext, m_jointBuffer, m_skinBuffer[0]);
 	m_setupBuiltSkin = true;
 }
