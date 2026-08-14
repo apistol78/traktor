@@ -13,9 +13,6 @@
 #include "Core/Misc/SafeDestroy.h"
 #include "Render/IAccelerationStructure.h"
 #include "Render/IRenderSystem.h"
-#include "Render/IRenderView.h"
-#include "Render/Context/RenderContext.h"
-#include "World/WorldBuildContext.h"
 #include "World/Entity/RTWorldComponent.h"
 
 namespace traktor::world
@@ -73,7 +70,7 @@ RTWorldComponent::Instance* RTWorldComponent::createInstance(const AlignedVector
 	return instance;
 }
 
-void RTWorldComponent::writeAccelerationStructure(render::IRenderView* renderView, const Vector4& eyePosition, float farDistance, bool asynchronous)
+render::IAccelerationStructure* RTWorldComponent::gatherTopLevelInstances(const Vector4& eyePosition, float farDistance, AlignedVector< render::IAccelerationStructure::Instance >& outInstances)
 {
 	// Distance culling depends on the camera, so re-dirty when the eye moves; otherwise the
 	// culled set would never refresh on a static scene with a moving camera.
@@ -84,32 +81,34 @@ void RTWorldComponent::writeAccelerationStructure(render::IRenderView* renderVie
 		m_instanceBufferDirty = true;
 	}
 
-	if (m_instanceBufferDirty)
+	if (!m_instanceBufferDirty || m_tlas == nullptr)
+		return nullptr;
+
+	const Scalar cullDistance(farDistance * 0.5f);
+
+	outInstances.resize(0);
+	outInstances.reserve(m_instances.size() * 2); // Assume 2 parts per instance on average.
+
+	for (const auto& instance : m_instances)
 	{
-		const Scalar cullDistance(farDistance * 0.5f);
-
-		AlignedVector< render::IAccelerationStructure::Instance > tlasInstances;
-		for (const auto& instance : m_instances)
+		if (instance->cullingEnable)
 		{
-			if (instance->cullingEnable)
-			{
-				const Scalar distance = (instance->transform.translation().xyz0() - eyePosition.xyz0()).length();
-				if (distance > cullDistance)
-					continue;
-			}
-			for (auto part : instance->parts)
-			{
-				tlasInstances.push_back({
-					.blas = part.blas,
-					.perVertexData = part.perVertexData,
-					.transform = instance->transform.toMatrix44()
-				});
-			}
+			const Scalar distance = (instance->transform.translation().xyz0() - eyePosition.xyz0()).length();
+			if (distance > cullDistance)
+				continue;
 		}
-
-		renderView->writeAccelerationStructure(m_tlas, tlasInstances, asynchronous);
-		m_instanceBufferDirty = false;
+		for (auto part : instance->parts)
+		{
+			outInstances.push_back({
+				.blas = part.blas,
+				.perVertexData = part.perVertexData,
+				.transform = instance->transform.toMatrix44()
+			});
+		}
 	}
+
+	m_instanceBufferDirty = false;
+	return m_tlas;
 }
 
 void RTWorldComponent::destroyInstance(Instance* instance)

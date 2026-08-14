@@ -71,6 +71,19 @@ VkPipelineStageFlagBits convertStage(Stage st)
 	return (VkPipelineStageFlagBits)ps;
 }
 
+Image* resolveImage(ITexture* texture)
+{
+	ITexture* resolved = texture->resolve();
+	if (is_a< TextureVk >(resolved))
+		return static_cast< TextureVk* >(resolved)->getImage();
+	else if (is_a< RenderTargetVk >(resolved))
+		return static_cast< RenderTargetVk* >(resolved)->getImageResolved();
+	else if (is_a< RenderTargetDepthVk >(resolved))
+		return static_cast< RenderTargetDepthVk* >(resolved)->getImage();
+	else
+		return nullptr;
+}
+
 }
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderViewVk", RenderViewVk, IRenderView)
@@ -1293,56 +1306,48 @@ void RenderViewVk::barrier(Stage from, Stage to, ITexture* written, uint32_t wri
 {
 	const auto& frame = m_frames[m_currentImageIndex];
 	CommandBuffer* commandBuffer = asynchronous ? frame.computeCommandBuffer : frame.graphicsCommandBuffer;
-	if (from == Stage::Compute && to == Stage::Indirect)
-	{
-		VkMemoryBarrier mb = {};
-		mb.sType = VK_STRUCTURE_TYPE_MEMORY_BARRIER;
-		mb.pNext = nullptr;
-		mb.srcAccessMask = VK_ACCESS_SHADER_WRITE_BIT;
-		mb.dstAccessMask = VK_ACCESS_INDIRECT_COMMAND_READ_BIT;
 
+	VkAccessFlags srcAccessMask = 0;
+	if ((from & (Stage::Vertex | Stage::Fragment | Stage::Compute)) != Stage::Invalid)
+		srcAccessMask |= VK_ACCESS_SHADER_WRITE_BIT;
+	if ((from & Stage::AccelerationStructureUpdate) != Stage::Invalid)
+		srcAccessMask |= VK_ACCESS_ACCELERATION_STRUCTURE_WRITE_BIT_KHR;
+
+	VkAccessFlags dstAccessMask = 0;
+	if ((to & (Stage::Vertex | Stage::Fragment | Stage::Compute)) != Stage::Invalid)
+		dstAccessMask |= VK_ACCESS_SHADER_READ_BIT;
+	if ((to & Stage::Indirect) != Stage::Invalid)
+		dstAccessMask |= VK_ACCESS_INDIRECT_COMMAND_READ_BIT;
+	if ((to & Stage::AccelerationStructureUpdate) != Stage::Invalid)
+		dstAccessMask |= VK_ACCESS_ACCELERATION_STRUCTURE_READ_BIT_KHR;
+
+	Image* img = (written != nullptr) ? resolveImage(written) : nullptr;
+
+	if (srcAccessMask == 0 || dstAccessMask == 0)
+	{
+		// No memory access; only add an execution barrier.
 		vkCmdPipelineBarrier(
 			*commandBuffer,
 			convertStage(from),
 			convertStage(to),
 			0,
-			1,
-			&mb,
+			0,
+			nullptr,
 			0,
 			nullptr,
 			0,
 			nullptr);
 	}
-	else if (from == Stage::Compute && to == Stage::Compute && written == nullptr)
+	else if (img != nullptr)
 	{
-		VkMemoryBarrier mb = {};
-		mb.sType = VK_STRUCTURE_TYPE_MEMORY_BARRIER;
-		mb.pNext = nullptr;
-		mb.srcAccessMask = VK_ACCESS_SHADER_WRITE_BIT;
-		mb.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
-
-		vkCmdPipelineBarrier(
-			*commandBuffer,
-			convertStage(from),
-			convertStage(to),
-			0,
-			1,
-			&mb,
-			0,
-			nullptr,
-			0,
-			nullptr);
-	}
-	else if (from == Stage::Compute && to == Stage::Compute && written != nullptr)
-	{
-		const Image* img = mandatory_non_null_type_cast< TextureVk* >(written)->getImage();
+		const VkImageLayout imageLayout = img->getVkImageLayout(writtenMip, 0);
 
 		VkImageMemoryBarrier imb = {};
 		imb.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
-		imb.srcAccessMask = VK_ACCESS_SHADER_WRITE_BIT;
-		imb.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
-		imb.oldLayout = VK_IMAGE_LAYOUT_GENERAL;
-		imb.newLayout = VK_IMAGE_LAYOUT_GENERAL;
+		imb.srcAccessMask = srcAccessMask;
+		imb.dstAccessMask = dstAccessMask;
+		imb.oldLayout = imageLayout;
+		imb.newLayout = imageLayout;
 		imb.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
 		imb.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
 		imb.image = img->getVkImage();
@@ -1364,60 +1369,21 @@ void RenderViewVk::barrier(Stage from, Stage to, ITexture* written, uint32_t wri
 			1,
 			&imb);
 	}
-	else if (from == Stage::Compute && to == Stage::AccelerationStructureUpdate)
-	{
-		VkMemoryBarrier mb = {};
-		mb.sType = VK_STRUCTURE_TYPE_MEMORY_BARRIER;
-		mb.pNext = nullptr;
-		mb.srcAccessMask = VK_ACCESS_SHADER_WRITE_BIT;
-		mb.dstAccessMask = VK_ACCESS_ACCELERATION_STRUCTURE_READ_BIT_KHR;
-
-		vkCmdPipelineBarrier(
-			*commandBuffer,
-			convertStage(from),
-			convertStage(to),
-			0,
-			1,
-			&mb,
-			0,
-			nullptr,
-			0,
-			nullptr);
-	}
-	else if (from == Stage::AccelerationStructureUpdate)
-	{
-		// Acceleration structure build (top or bottom level) made visible to subsequent reads
-		// in the destination shader stage(s). Used to fence a TLAS/BLAS build on the graphics
-		// queue ahead of the ray tracing passes that read it; without this a consumer can read
-		// the previous frame's structure.
-		VkMemoryBarrier mb = {};
-		mb.sType = VK_STRUCTURE_TYPE_MEMORY_BARRIER;
-		mb.pNext = nullptr;
-		mb.srcAccessMask = VK_ACCESS_ACCELERATION_STRUCTURE_WRITE_BIT_KHR;
-		mb.dstAccessMask = VK_ACCESS_ACCELERATION_STRUCTURE_READ_BIT_KHR;
-
-		vkCmdPipelineBarrier(
-			*commandBuffer,
-			VK_PIPELINE_STAGE_ACCELERATION_STRUCTURE_BUILD_BIT_KHR,
-			convertStage(to),
-			0,
-			1,
-			&mb,
-			0,
-			nullptr,
-			0,
-			nullptr);
-	}
 	else
 	{
-		// No memory access; only add an execution barrier.
+		VkMemoryBarrier mb = {};
+		mb.sType = VK_STRUCTURE_TYPE_MEMORY_BARRIER;
+		mb.pNext = nullptr;
+		mb.srcAccessMask = srcAccessMask;
+		mb.dstAccessMask = dstAccessMask;
+
 		vkCmdPipelineBarrier(
 			*commandBuffer,
 			convertStage(from),
 			convertStage(to),
 			0,
-			0,
-			nullptr,
+			1,
+			&mb,
 			0,
 			nullptr,
 			0,

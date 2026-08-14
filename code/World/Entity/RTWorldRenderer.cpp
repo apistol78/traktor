@@ -10,9 +10,13 @@
 
 #include "Render/Context/RenderContext.h"
 #include "Render/Frame/RenderGraph.h"
+#include "Render/IAccelerationStructure.h"
+#include "Render/IRenderView.h"
 #include "World/Entity/RTWorldComponent.h"
 #include "World/WorldRenderView.h"
 #include "World/WorldSetupContext.h"
+
+#include <utility>
 
 namespace traktor::world
 {
@@ -48,15 +52,22 @@ void RTWorldRenderer::setup(
 	rp->setOutput(context.getRTWorldDependency());
 	rp->addBuild([=, this](const render::RenderGraph&, render::RenderContext* renderContext) {
 		const bool asynchronous = renderContext->isAsyncCompute();
-		auto rb = renderContext->allocNamed< render::LambdaRenderBlock >(L"RTWorldRenderer");
-		rb->lambda = [=](render::IRenderView* renderView) {
-			for (Object* renderable : renderables)
-			{
-				auto rtWorldComponent = static_cast< RTWorldComponent* >(renderable);
-				rtWorldComponent->writeAccelerationStructure(renderView, eyePosition, farDistance, asynchronous);
-			}
-		};
-		renderContext->compute(rb);
+		for (Object* renderable : renderables)
+		{
+			auto rtWorldComponent = static_cast< RTWorldComponent* >(renderable);
+
+			// Gather here, while the frame is being built, and not from the render block.
+			AlignedVector< render::IAccelerationStructure::Instance > instances;
+			Ref< render::IAccelerationStructure > tlas = rtWorldComponent->gatherTopLevelInstances(eyePosition, farDistance, instances);
+			if (!tlas)
+				continue;
+
+			auto rb = renderContext->allocNamed< render::LambdaRenderBlock >(L"RTWorldRenderer");
+			rb->lambda = [tlas, instances = std::move(instances), asynchronous](render::IRenderView* renderView) {
+				renderView->writeAccelerationStructure(tlas, instances, asynchronous);
+			};
+			renderContext->compute(rb);
+		}
 	});
 	context.getRenderGraph().addPass(rp);
 }

@@ -12,6 +12,7 @@
 #include "Core/RefArray.h"
 #include "Core/Math/Transform.h"
 #include "Core/Math/Vector4.h"
+#include "Render/IAccelerationStructure.h"
 #include "World/IWorldComponent.h"
 
 // import/export mechanism.
@@ -26,10 +27,8 @@ namespace traktor::render
 {
 
 class Buffer;
-class IAccelerationStructure;
 class IProgram;
 class IRenderSystem;
-class IRenderView;
 
 }
 
@@ -84,7 +83,7 @@ public:
 
 	Instance* createInstance(const AlignedVector< Part >& parts, bool cullingEnable);
 
-	void writeAccelerationStructure(render::IRenderView* renderView, const Vector4& eyePosition, float farDistance, bool asynchronous);
+	render::IAccelerationStructure* gatherTopLevelInstances(const Vector4& eyePosition, float farDistance, AlignedVector< render::IAccelerationStructure::Instance >& outInstances);
 
 	const render::IAccelerationStructure* getTopLevel() const { return m_tlas; }
 
