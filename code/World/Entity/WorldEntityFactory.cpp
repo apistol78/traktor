@@ -219,10 +219,7 @@ Ref< IEntityComponent > WorldEntityFactory::createEntityComponent(const IEntityB
 
 	if (auto facadeComponentData = dynamic_type_cast< const FacadeComponentData* >(&entityComponentData))
 	{
-		Ref< FacadeComponent > facadeComponent = new FacadeComponent();
-		//if (!facadeComponentData->getShow().empty())
-		//	facadeComponent->show(facadeComponentData->getShow());
-		return facadeComponent;
+		return new FacadeComponent(facadeComponentData->getShow());
 	}
 
 	if (auto groupComponentData = dynamic_type_cast< const GroupComponentData* >(&entityComponentData))

@@ -353,6 +353,7 @@ void WorldClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	auto classFacadeComponent = new AutoRuntimeClass< FacadeComponent >();
 	classFacadeComponent->addMethod("show", &FacadeComponent::show);
 	classFacadeComponent->addMethod("showOnly", &FacadeComponent::showOnly);
+	classFacadeComponent->addMethod("showAll", &FacadeComponent::showAll);
 	classFacadeComponent->addMethod("hide", &FacadeComponent::hide);
 	classFacadeComponent->addMethod("hideAll", &FacadeComponent::hideAll);
 	classFacadeComponent->addMethod("isVisible", &FacadeComponent::isVisible);

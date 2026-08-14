@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -36,6 +36,8 @@ class T_DLLCLASS FacadeComponent : public IEntityComponent
 	T_RTTI_CLASS;
 
 public:
+	explicit FacadeComponent(const std::wstring& initialShow);
+
 	virtual void destroy() override final;
 
 	virtual void setOwner(Entity* owner) override final;
@@ -50,6 +52,8 @@ public:
 
 	bool showOnly(const std::wstring& id);
 
+	void showAll();
+
     bool hide(const std::wstring& id);
 
     void hideAll();
@@ -58,6 +62,7 @@ public:
 
 private:
 	Entity* m_owner = nullptr;
+	std::wstring m_initialShow;
 };
 
 }

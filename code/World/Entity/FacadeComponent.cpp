@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -15,13 +15,24 @@ namespace traktor::world
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.FacadeComponent", FacadeComponent, IEntityComponent)
 
+FacadeComponent::FacadeComponent(const std::wstring& initialShow)
+	: m_initialShow(initialShow)
+{
+}
+
 void FacadeComponent::destroy()
 {
 }
 
 void FacadeComponent::setOwner(Entity* owner)
 {
-	m_owner = owner;
+	if ((m_owner = owner) != nullptr)
+	{
+		if (!m_initialShow.empty())
+			showOnly(m_initialShow);
+		else
+			hideAll();
+	}
 }
 
 void FacadeComponent::update(const UpdateParams& update)
@@ -55,6 +66,16 @@ bool FacadeComponent::showOnly(const std::wstring& id)
 {
 	hideAll();
 	return show(id);
+}
+
+void FacadeComponent::showAll()
+{
+	auto group = m_owner->getComponent< GroupComponent >();
+	if (!group)
+		return;
+
+	for (auto entity : group->getEntities())
+		entity->setVisible(true);
 }
 
 bool FacadeComponent::hide(const std::wstring& id)
