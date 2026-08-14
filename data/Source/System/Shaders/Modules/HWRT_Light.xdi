@@ -47,24 +47,21 @@ vec4 HWRT_Light_CalculateIncidentLight(
 	lightAttenuation *= max(dot(lightDirection, normal), 0.0f);
 
 	[[branch]]
-	if (lightAttenuation > 0.0f)
+	if (traceShadow && lightAttenuation > 0.0f)
 	{
-		const bool shadowed = traceShadow && HWRT_TraceShadow(
+		const bool shadowed = HWRT_TraceShadow(
 			AS,
 			position + normal * 0.1f,
 			lightDirection,
 			lightDistance - 0.1f
 		);
 		if (!shadowed)
-		{
-			return vec4(
-				light.Color.xyz * lightAttenuation,
-				1.0f
-			);
-		}
+			return vec4(light.Color.xyz * lightAttenuation, 1.0f);
+		else
+			return vec4(0.0f, 0.0f, 0.0f, 1.0f);
 	}
-
-	return vec4(0.0f);
+	else
+		return vec4(light.Color.xyz * lightAttenuation, 1.0f);
 }
 ]]></text>
 	<samplers/>

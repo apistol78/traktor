@@ -309,7 +309,7 @@ $Output = BlueNoise(seed);
 				<first>2062</first>
 				<second>1389</second>
 			</position>
-			<value>8</value>
+			<value>2</value>
 		</item>
 	</nodes>
 	<edges>

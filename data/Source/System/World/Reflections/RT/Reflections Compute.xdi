@@ -249,7 +249,7 @@ if (pt.x < sz.x && pt.y < sz.y)
 									light,
 									hit,
 									m.normal.xyz,
-									true
+									false
 								);
 								Tincident += (incident.xyz * attenuate * phi * PI).xyz;
 							}
