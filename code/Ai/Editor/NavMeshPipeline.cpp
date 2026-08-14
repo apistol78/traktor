@@ -193,6 +193,7 @@ bool NavMeshPipeline::buildOutput(
 		nullptr);
 
 	AlignedVector< NavMeshSourceModel > navModels;
+	Semaphore navModelsLock;
 	Aabb3 navMaximumBounds;
 	float oceanHeight = -std::numeric_limits< float >::max();
 	bool oceanClip = false;
@@ -203,7 +204,7 @@ bool NavMeshPipeline::buildOutput(
 		if (!entityData->getState().visible || entityData->getState().dynamic)
 			return world::Traverser::Result::Skip;
 
-		Ref< Job > job = JobManager::getInstance().add([=, this, &navModels, &navMaximumBounds, &oceanHeight, &oceanClip]() {
+		Ref< Job > job = JobManager::getInstance().add([=, this, &navModels, &navModelsLock, &navMaximumBounds, &oceanHeight, &oceanClip]() {
 			Ref< model::Model > model;
 			for (auto componentData : entityData->getComponents())
 			{
@@ -233,9 +234,12 @@ bool NavMeshPipeline::buildOutput(
 			if (model)
 			{
 				model->apply(model::Triangulate());
-				navModels.push_back(NavMeshSourceModel(
-					model,
-					entityData->getTransform()));
+				{
+					T_ANONYMOUS_VAR(Acquire< Semaphore >)(navModelsLock);
+					navModels.push_back(NavMeshSourceModel(
+						model,
+						entityData->getTransform()));
+				}
 			}
 		});
 		if (!job)
