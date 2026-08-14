@@ -46,7 +46,7 @@ const Scalar p(1.0f / (2.0f * PI));
 const Scalar c_emissiveBoost(2.0f);
 const Scalar c_lightSourceRadius(0.1f);
 const float c_epsilonOffset = 0.00001f;
-const int32_t c_valid[16] = { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 };
+alignas(64) const int32_t c_valid[16] = { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 };
 const RTCFeatureFlags c_featureFlags = (RTCFeatureFlags)(RTC_FEATURE_FLAG_TRIANGLE | RTC_FEATURE_FLAG_INSTANCE);
 
 class WrappedSHFunction : public render::SHFunction
@@ -469,10 +469,10 @@ RayTracerEmbree::Geometry* RayTracerEmbree::createGeometry(const model::Model* m
 	geometry->model = model;
 
 	// Allocate buffers with positions and texCoords.
-	float* positions = (float*)Alloc::acquireAlign(vertexCount * 3 * sizeof(float), 16, T_FILE_LINE);
-	float* normals = (float*)Alloc::acquireAlign(vertexCount * 3 * sizeof(float), 16, T_FILE_LINE);
-	float* texCoords = (float*)Alloc::acquireAlign(vertexCount * 2 * sizeof(float), 16, T_FILE_LINE); // Allocating tuples of 3 instead of two; seems embree read outside of range.
-	float* colors = (float*)Alloc::acquireAlign(vertexCount * 4 * sizeof(float), 16, T_FILE_LINE);
+	float* positions = (float*)Alloc::acquireAlign(vertexCount * 3 * sizeof(float) + 16, 16, T_FILE_LINE);
+	float* normals = (float*)Alloc::acquireAlign(vertexCount * 3 * sizeof(float) + 16, 16, T_FILE_LINE);
+	float* texCoords = (float*)Alloc::acquireAlign(vertexCount * 2 * sizeof(float) + 16, 16, T_FILE_LINE); // Allocating tuples of 3 instead of two; seems embree read outside of range.
+	float* colors = (float*)Alloc::acquireAlign(vertexCount * 4 * sizeof(float) + 16, 16, T_FILE_LINE);
 
 	geometry->buffers.push_back(positions);
 	geometry->buffers.push_back(normals);
