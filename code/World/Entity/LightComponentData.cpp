@@ -135,7 +135,7 @@ void LightComponentData::serialize(ISerializer& s)
 
 	s >> Member< float >(L"radius", m_radius, AttributeUnit(UnitType::Radians));
 	s >> Member< float >(L"flickerAmount", m_flickerAmount, AttributeRange(0.0f, 1.0f) | AttributeUnit(UnitType::Percent));
-	s >> Member< float >(L"flickerFilter", m_flickerFilter, AttributeRange(0.0f, 1.0f) | AttributeUnit(UnitType::Percent));
+	s >> Member< float >(L"flickerFilter", m_flickerFilter, AttributeRange(0.0f));
 
 	if (s.getVersion< LightComponentData >() >= 8 && s.getVersion< LightComponentData >() < 9)
 	{

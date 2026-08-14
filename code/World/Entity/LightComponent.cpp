@@ -1,23 +1,26 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2023 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "World/Entity/LightComponent.h"
+
 #include "Core/Math/Random.h"
 #include "World/Entity.h"
-#include "World/Entity/LightComponent.h"
+
+#include <algorithm>
 
 namespace traktor::world
 {
-	namespace
-	{
+namespace
+{
 
 Random s_random;
-		
-	}
+
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.LightComponent", LightComponent, IEntityComponent)
 
@@ -29,19 +32,18 @@ LightComponent::LightComponent(
 	float farRange,
 	float radius,
 	float flickerAmount,
-	float flickerFilter
-)
-:	m_owner(nullptr)
-,	m_lightType(lightType)
-,	m_color(color)
-,	m_castShadow(castShadow)
-,	m_nearRange(nearRange)
-,	m_farRange(farRange)
-,	m_radius(radius)
-,	m_flickerAmount(flickerAmount)
-,	m_flickerFilter(flickerFilter)
-,	m_flickerValue(0.0f)
-,	m_flickerCoeff(0.0f)
+	float flickerFilter)
+	: m_owner(nullptr)
+	, m_lightType(lightType)
+	, m_color(color)
+	, m_castShadow(castShadow)
+	, m_nearRange(nearRange)
+	, m_farRange(farRange)
+	, m_radius(radius)
+	, m_flickerAmount(flickerAmount)
+	, m_flickerFilter(flickerFilter)
+	, m_flickerValue(0.0f)
+	, m_flickerCoeff(0.0f)
 {
 }
 
@@ -56,7 +58,8 @@ void LightComponent::setOwner(Entity* owner)
 
 void LightComponent::update(const UpdateParams& update)
 {
-	m_flickerValue = s_random.nextFloat() * (1.0f - m_flickerFilter) + m_flickerValue * m_flickerFilter;
+	const float flickerFilter = (update.deltaTime > FUZZY_EPSILON) ? std::min< float >(m_flickerFilter * (1.0f / 60.0f) / update.deltaTime, 1.0f) : 1.0f;
+	m_flickerValue = s_random.nextFloat() * (1.0f - flickerFilter) + m_flickerValue * flickerFilter;
 	m_flickerCoeff = 1.0f - m_flickerValue * m_flickerAmount;
 }
 
