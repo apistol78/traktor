@@ -90,6 +90,34 @@ public:
 		uint32_t layerLevel,
 		uint32_t layerCount);
 
+	/*! Record a layout transition with an explicit source layout.
+	 *
+	 * The tracked layout is neither read nor updated. Intended for deferred uploads which
+	 * record into a command buffer submitted ahead of frame work, and are thus out of order
+	 * with respect to the tracked, record time, layout. \sa Context::performUploads
+	 */
+	void changeLayoutExplicit(
+		CommandBuffer* commandBuffer,
+		VkImageLayout oldLayout,
+		VkImageLayout newLayout,
+		VkImageAspectFlags aspectMask,
+		uint32_t mipLevel,
+		uint32_t mipCount,
+		uint32_t layerLevel,
+		uint32_t layerCount);
+
+	/*! Set tracked layout without recording a transition.
+	 *
+	 * Used to advance the tracked layout to the one a queued deferred upload will have
+	 * established by the time any frame work observes the image.
+	 */
+	void setVkImageLayout(
+		VkImageLayout layout,
+		uint32_t mipLevel,
+		uint32_t mipCount,
+		uint32_t layerLevel,
+		uint32_t layerCount);
+
 	VkImage getVkImage() const { return m_image; }
 
 	VkImageLayout getVkImageLayout(uint32_t mipLevel, uint32_t layerLevel) const { return m_imageLayouts[layerLevel * m_mipCount + mipLevel]; }

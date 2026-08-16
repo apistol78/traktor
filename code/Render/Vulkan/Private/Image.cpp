@@ -579,9 +579,36 @@ bool Image::changeLayout(
 	if (imageLayout == VK_IMAGE_LAYOUT_PRESENT_SRC_KHR)
 		imageLayout = VK_IMAGE_LAYOUT_UNDEFINED;
 
+	changeLayoutExplicit(
+		commandBuffer,
+		imageLayout,
+		newLayout,
+		aspectMask,
+		mipLevel,
+		mipCount,
+		layerLevel,
+		layerCount);
+
+	setVkImageLayout(newLayout, mipLevel, mipCount, layerLevel, layerCount);
+	return true;
+}
+
+void Image::changeLayoutExplicit(
+	CommandBuffer* commandBuffer,
+	VkImageLayout oldLayout,
+	VkImageLayout newLayout,
+	VkImageAspectFlags aspectMask,
+	uint32_t mipLevel,
+	uint32_t mipCount,
+	uint32_t layerLevel,
+	uint32_t layerCount)
+{
+	T_ASSERT(mipLevel + mipCount <= m_mipCount);
+	T_ASSERT(layerLevel + layerCount <= m_layerCount);
+
 	VkImageMemoryBarrier imb = {};
 	imb.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
-	imb.oldLayout = imageLayout;
+	imb.oldLayout = oldLayout;
 	imb.newLayout = newLayout;
 	imb.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
 	imb.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
@@ -605,12 +632,21 @@ bool Image::changeLayout(
 		nullptr,
 		1,
 		&imb);
+}
+
+void Image::setVkImageLayout(
+	VkImageLayout layout,
+	uint32_t mipLevel,
+	uint32_t mipCount,
+	uint32_t layerLevel,
+	uint32_t layerCount)
+{
+	T_ASSERT(mipLevel + mipCount <= m_mipCount);
+	T_ASSERT(layerLevel + layerCount <= m_layerCount);
 
 	for (uint32_t layer = 0; layer < layerCount; ++layer)
 		for (uint32_t mip = 0; mip < mipCount; ++mip)
-			m_imageLayouts[(layerLevel + layer) * m_mipCount + (mipLevel + mip)] = imb.newLayout;
-
-	return true;
+			m_imageLayouts[(layerLevel + layer) * m_mipCount + (mipLevel + mip)] = layout;
 }
 
 bool Image::updateSampledResource()

@@ -93,17 +93,25 @@ bool TextureVk::create(
 
 	m_stagingBuffer->unlock();
 
+	// Layout the deferred upload leaves the image in, and thus the layout it is in as
+	// far as any frame work which consumes this texture is concerned.
+	const VkImageLayout uploadedLayout = desc.shaderStorage ? VK_IMAGE_LAYOUT_GENERAL : VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+
 	Ref< ITexture > self = this;
 	m_context->addDeferredUpload(
-		[desc, self, this](Context* cx, CommandBuffer* commandBuffer) {
+		[desc, uploadedLayout, self, this](Context* cx, CommandBuffer* commandBuffer) {
 
 			// Drop out if no texture image still exist; this texture
 			// has been destroyed while the upload was in the queue.
 			if (!m_textureImage)
 				return;
 
-			// Change layout of texture to be able to copy staging buffer into texture.
-			m_textureImage->changeLayout(commandBuffer, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_ASPECT_COLOR_BIT, 0, desc.mipCount, 0, 1);
+			// Transitions are explicit as the tracked layout was already advanced to
+			// uploadedLayout when this upload was queued; the upload command buffer is
+			// submitted, and waited upon, ahead of any frame work which consumes this
+			// texture, so the image is still UNDEFINED here regardless of what has been
+			// recorded against it since. \sa Context::performUploads
+			m_textureImage->changeLayoutExplicit(commandBuffer, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_ASPECT_COLOR_BIT, 0, desc.mipCount, 0, 1);
 
 			// Copy staging buffer into texture.
 			uint32_t offset = 0;
@@ -138,9 +146,10 @@ bool TextureVk::create(
 			}
 
 			// Change layout of texture to optimal sampling.
-			m_textureImage->changeLayout(
+			m_textureImage->changeLayoutExplicit(
 				commandBuffer,
-				desc.shaderStorage ? VK_IMAGE_LAYOUT_GENERAL : VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+				VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+				uploadedLayout,
 				VK_IMAGE_ASPECT_COLOR_BIT,
 				0,
 				desc.mipCount,
@@ -150,6 +159,11 @@ bool TextureVk::create(
 			if (desc.immutable)
 				safeDestroy(m_stagingBuffer);
 		});
+
+	// Track the layout the queued upload will have established; the upload is guaranteed
+	// to execute before any frame work which consumes this texture, so the image must not
+	// read as UNDEFINED for the remainder of the frame in which it was created.
+	m_textureImage->setVkImageLayout(uploadedLayout, 0, desc.mipCount, 0, 1);
 
 	m_size = { desc.width, desc.height, 1, desc.mipCount };
 	m_format = desc.format;
@@ -428,6 +442,11 @@ bool TextureVk::lock(int32_t side, int32_t level, Lock& lock)
 void TextureVk::unlock(int32_t side, int32_t level)
 {
 	m_stagingBuffer->unlock();
+
+	// This submits ahead of endFrame; a texture created this frame still has its initial
+	// layout transition pending in the upload command buffer, which must execute first for
+	// the transition recorded below to start from the layout the image is actually in.
+	m_context->performUploads();
 
 	auto commandBuffer = m_context->getGraphicsQueue()->acquireCommandBuffer(L"TextureVk::unlock");
 

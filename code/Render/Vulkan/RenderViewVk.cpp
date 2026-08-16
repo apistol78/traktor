@@ -1323,6 +1323,12 @@ void RenderViewVk::barrier(Stage from, Stage to, ITexture* written, uint32_t wri
 
 	Image* img = (written != nullptr) ? resolveImage(written) : nullptr;
 
+	// An image barrier is only used to scope the memory dependency to a single subresource;
+	// it never transitions, so an image whose layout is not yet known falls back to a global
+	// memory barrier rather than being dropped. An UNDEFINED newLayout is not permitted.
+	if (img != nullptr && img->getVkImageLayout(writtenMip, 0) == VK_IMAGE_LAYOUT_UNDEFINED)
+		img = nullptr;
+
 	if (srcAccessMask == 0 || dstAccessMask == 0)
 	{
 		// No memory access; only add an execution barrier.
