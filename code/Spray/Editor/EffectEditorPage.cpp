@@ -79,6 +79,9 @@ namespace traktor::spray
 	namespace
 	{
 
+/*! Index of layer visibility toggle button; state set means layer is hidden. */
+const int32_t c_layerVisibleButton = 1;
+
 class SequenceDataKey : public Object
 {
 	T_RTTI_CLASS;
@@ -439,7 +442,7 @@ void EffectEditorPage::updateEffectPreview()
 		for (auto sequencerLayer : m_sequencer->getSequenceItems(ui::SequencerControl::GfDefault))
 		{
 			ui::Sequence* layerItem = checked_type_cast< ui::Sequence*, false >(sequencerLayer);
-			if (!layerItem->getButtonState(1))
+			if (!layerItem->getButtonState(c_layerVisibleButton))
 			{
 				EffectLayerData* effectLayerData = layerItem->getData< EffectLayerData >(L"LAYERDATA");
 				T_ASSERT(effectLayerData);
@@ -491,7 +494,7 @@ void EffectEditorPage::updateEffectPreview()
 void EffectEditorPage::updateSequencer()
 {
 	// Get map of layer visibility.
-	std::map< const EffectLayerData*, bool > visibleStates;
+	std::map< const EffectLayerData*, bool > hiddenStates;
 	for (auto sequencerLayer : m_sequencer->getSequenceItems(ui::SequencerControl::GfDefault))
 	{
 		ui::Sequence* layerItem = checked_type_cast< ui::Sequence*, false >(sequencerLayer);
@@ -499,7 +502,7 @@ void EffectEditorPage::updateSequencer()
 		EffectLayerData* effectLayerData = layerItem->getData< EffectLayerData >(L"LAYERDATA");
 		T_ASSERT(effectLayerData);
 
-		visibleStates[effectLayerData] = layerItem->getButtonState(1);
+		hiddenStates[effectLayerData] = layerItem->getButtonState(c_layerVisibleButton);
 	}
 
 	// Remember scroll offset.
@@ -525,7 +528,7 @@ void EffectEditorPage::updateSequencer()
 		Ref< ui::Sequence > layerItem = new ui::Sequence(layer->getName());
 		layerItem->addButton(layerDelete, layerDelete, ui::Command(L"Effect.Editor.DeleteLayer"));
 		layerItem->addButton(layerVisible, layerHidden, ui::Command(L"Effect.Editor.ToggleLayerVisible"), true);
-		layerItem->setButtonState(0, visibleStates[layer]);
+		layerItem->setButtonState(c_layerVisibleButton, hiddenStates[layer]);
 		layerItem->setData(L"LAYERDATA", layer);
 
 		float start = layer->getTime();
