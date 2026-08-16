@@ -29,9 +29,16 @@ class T_DLLCLASS StatusBar : public Widget
 	T_RTTI_CLASS;
 
 public:
+	enum class AlertLevel
+	{
+		None,
+		Warning,
+		Error
+	};
+
 	bool create(Widget* parent, uint32_t style = WsNone);
 
-	void setAlert(bool alert);
+	void setAlert(AlertLevel alertLevel);
 
 	void addColumn(int32_t width);
 
@@ -47,7 +54,7 @@ private:
 	};
 
 	AlignedVector< Column > m_columns;
-	bool m_alert = false;
+	AlertLevel m_alertLevel = AlertLevel::None;
 
 	void eventSize(SizeEvent* event);
 

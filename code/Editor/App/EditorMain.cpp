@@ -146,8 +146,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 			Ref< LogStreamTarget > logTarget = new LogStreamTarget(logStream);
 
 			Ref< ILogTarget > defaultInfoLog = log::info.getGlobalTarget();
-			Ref< ILogTarget > defaultWarningLog = log::info.getGlobalTarget();
-			Ref< ILogTarget > defaultErrorLog = log::info.getGlobalTarget();
+			Ref< ILogTarget > defaultWarningLog = log::warning.getGlobalTarget();
+			Ref< ILogTarget > defaultErrorLog = log::error.getGlobalTarget();
 
 			log::info.setGlobalTarget(new LogRedirectTarget(defaultInfoLog, logTarget));
 			log::warning.setGlobalTarget(new LogRedirectTarget(defaultWarningLog, logTarget));

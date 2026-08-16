@@ -815,7 +815,11 @@
 					<second>19</second>
 				</item>
 				<item>
-					<first>background-color-alert</first>
+					<first>background-color-error</first>
+					<second>40</second>
+				</item>
+				<item>
+					<first>background-color-warning</first>
 					<second>58</second>
 				</item>
 				<item>

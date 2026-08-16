@@ -32,11 +32,11 @@ bool StatusBar::create(Widget* parent, uint32_t style)
 	return true;
 }
 
-void StatusBar::setAlert(bool alert)
+void StatusBar::setAlert(AlertLevel alertLevel)
 {
-	if (alert != m_alert)
+	if (alertLevel != m_alertLevel)
 	{
-		m_alert = alert;
+		m_alertLevel = alertLevel;
 		update();
 	}
 }
@@ -91,7 +91,22 @@ void StatusBar::eventPaint(PaintEvent* event)
 	Rect rc = getInnerRect();
 	const StyleSheet* ss = getStyleSheet();
 
-	canvas.setBackground(ss->getColor(this, m_alert ? L"background-color-alert" : L"background-color"));
+	const wchar_t* backgroundColor = L"background-color";
+	switch (m_alertLevel)
+	{
+	case AlertLevel::Warning:
+		backgroundColor = L"background-color-warning";
+		break;
+
+	case AlertLevel::Error:
+		backgroundColor = L"background-color-error";
+		break;
+
+	default:
+		break;
+	}
+
+	canvas.setBackground(ss->getColor(this, backgroundColor));
 	canvas.fillRect(rc);
 
 	if (!m_columns.empty())

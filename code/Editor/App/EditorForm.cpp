@@ -401,8 +401,8 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.EditorForm", EditorForm, ui::Form)
 bool EditorForm::create(const CommandLine& cmdLine)
 {
 	Ref< ILogTarget > defaultInfoLog = log::info.getGlobalTarget();
-	Ref< ILogTarget > defaultWarningLog = log::info.getGlobalTarget();
-	Ref< ILogTarget > defaultErrorLog = log::info.getGlobalTarget();
+	Ref< ILogTarget > defaultWarningLog = log::warning.getGlobalTarget();
+	Ref< ILogTarget > defaultErrorLog = log::error.getGlobalTarget();
 
 	// Record logging occurring before log view has been properly initialized.
 	Ref< LogRecordTarget > infoLog = new LogRecordTarget();
@@ -3163,10 +3163,12 @@ void EditorForm::eventTimer(ui::TimerEvent* /*event*/)
 	else
 		m_statusBar->setText(2, L"");
 
-	if (m_logView->haveWarnings() || m_logView->haveErrors())
-		m_statusBar->setAlert(true);
+	if (m_logView->haveErrors())
+		m_statusBar->setAlert(ui::StatusBar::AlertLevel::Error);
+	else if (m_logView->haveWarnings())
+		m_statusBar->setAlert(ui::StatusBar::AlertLevel::Warning);
 	else
-		m_statusBar->setAlert(false);
+		m_statusBar->setAlert(ui::StatusBar::AlertLevel::None);
 
 	if (m_pipelineCache)
 	{

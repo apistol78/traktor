@@ -816,11 +816,15 @@
 			<colors>
 				<item>
 					<first>background-color</first>
-					<second>20</second>
+					<second>13</second>
 				</item>
 				<item>
-					<first>background-color-alert</first>
+					<first>background-color-error</first>
 					<second>44</second>
+				</item>
+				<item>
+					<first>background-color-warning</first>
+					<second>20</second>
 				</item>
 				<item>
 					<first>color</first>
