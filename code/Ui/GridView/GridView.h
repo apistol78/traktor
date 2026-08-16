@@ -122,6 +122,7 @@ private:
 	sort_fn_t m_sortFn;
 	bool m_autoEdit;
 	bool m_multiSelect;
+	bool m_stickyRows;
 	Ref< Edit > m_itemEditor;
 	Ref< GridItem > m_editItem;
 	SmallMap< std::wstring, Ref< IBitmap > > m_bitmaps;
@@ -139,6 +140,8 @@ private:
 	void eventButtonUp(MouseButtonUpEvent* event);
 
 	void eventDoubleClick(MouseDoubleClickEvent* event);
+
+	void eventScroll(ScrollEvent* event);
 };
 
 }

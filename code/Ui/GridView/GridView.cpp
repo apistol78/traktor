@@ -7,6 +7,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include <stack>
+#include "Core/Containers/AlignedVector.h"
 #include "Core/Misc/String.h"
 #include "Ui/Application.h"
 #include "Ui/Edit.h"
@@ -87,6 +88,16 @@ int32_t indexOf(const RefArray< GridRow >& rows, const GridRow* row)
 		return -1;
 }
 
+bool isDescendantOf(const GridRow* row, const GridRow* parent)
+{
+	for (const GridRow* r = row->getParent(); r != nullptr; r = r->getParent())
+	{
+		if (r == parent)
+			return true;
+	}
+	return false;
+}
+
 std::wstring getRowPath(GridRow* row)
 {
 	if (row->get().empty())
@@ -108,6 +119,7 @@ GridView::GridView()
 ,	m_sortMode(SmLexical)
 ,	m_autoEdit(false)
 ,	m_multiSelect(false)
+,	m_stickyRows(false)
 {
 }
 
@@ -122,6 +134,7 @@ bool GridView::create(Widget* parent, uint32_t style)
 	addEventHandler< MouseButtonDownEvent >(this, &GridView::eventButtonDown);
 	addEventHandler< MouseButtonUpEvent >(this, &GridView::eventButtonUp);
 	addEventHandler< MouseDoubleClickEvent >(this, &GridView::eventDoubleClick);
+	addEventHandler< ScrollEvent >(this, &GridView::eventScroll);
 
 	m_itemEditor = new Edit();
 	m_itemEditor->create(this, L"", WsBorder | WsWantAllInput);
@@ -272,6 +285,11 @@ void GridView::scrollToRow(const GridRow* row)
 	updateLayout();
 	const Rect rc = row->getRect();
 	scrollTo(Point(0, rc.top));
+
+	// Scrolling doesn't re-place cells; sticky rows need it as they're placed
+	// relative to the scroll offset.
+	if (m_stickyRows)
+		updateLayout();
 }
 
 void GridView::selectAll()
@@ -399,14 +417,61 @@ void GridView::layoutCells(const Rect& rc)
 	if (m_sortFn)
 		rows.sort(m_sortFn);
 
+	const uint32_t nrows = (uint32_t)rows.size();
+
+	AlignedVector< Rect > rowRects(nrows);
 	Rect rcRow(rcLayout.left, rcLayout.top, rcLayout.right, rcLayout.top);
-	for (auto row : rows)
+	for (uint32_t i = 0; i < nrows; ++i)
 	{
-		const int32_t rowHeight = row->getHeight();
-		rcRow.bottom = rcRow.top + rowHeight;
-		placeCell(row, rcRow);
+		rcRow.bottom = rcRow.top + rows[i]->getHeight();
+		rowRects[i] = rcRow;
 		rcRow.top = rcRow.bottom;
 	}
+
+	// Pin sticky rows to top of view for as long as any of their children remain
+	// visible; nested sticky rows stack below their parent.
+	m_stickyRows = false;
+	int32_t stickyTop = rcLayout.top - getScrollOffset().cy;
+	for (uint32_t i = 0; i < nrows; ++i)
+	{
+		GridRow* row = rows[i];
+
+		row->m_pinned = false;
+		if (!row->getSticky())
+			continue;
+
+		m_stickyRows = true;
+
+		// Rows are placed depth first so a row's children follow it directly;
+		// sorting may however have separated them.
+		uint32_t last = i;
+		while (last + 1 < nrows && isDescendantOf(rows[last + 1], row))
+			++last;
+		if (last == i)
+			continue;
+
+		const int32_t height = rowRects[i].getHeight();
+		const int32_t childrenBottom = rowRects[last].bottom;
+
+		if (rowRects[i].top >= stickyTop || childrenBottom <= stickyTop)
+			continue;
+
+		// Push the row back out of view as its last child scrolls past.
+		const int32_t top = std::min(stickyTop, childrenBottom - height);
+		rowRects[i] = Rect(rowRects[i].left, top, rowRects[i].right, top + height);
+		row->m_pinned = true;
+
+		stickyTop = top + height;
+	}
+
+	// Place pinned rows last so they're painted over, and hit tested before, the
+	// rows they float above.
+	for (uint32_t i = 0; i < nrows; ++i)
+		if (!rows[i]->isPinned())
+			placeCell(rows[i], rowRects[i]);
+	for (uint32_t i = 0; i < nrows; ++i)
+		if (rows[i]->isPinned())
+			placeCell(rows[i], rowRects[i]);
 }
 
 IBitmap* GridView::getBitmap(const wchar_t* const name)
@@ -585,6 +650,17 @@ void GridView::eventDoubleClick(MouseDoubleClickEvent* event)
 			getColumnIndex(position.x)
 		);
 		raiseEvent(&rowDoubleClick);
+	}
+}
+
+void GridView::eventScroll(ScrollEvent* event)
+{
+	// Sticky rows are placed relative to the scroll offset thus need to be re-placed
+	// when view is scrolled.
+	if (m_stickyRows)
+	{
+		updateLayout();
+		update();
 	}
 }
 

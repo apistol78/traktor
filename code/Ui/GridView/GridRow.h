@@ -60,6 +60,12 @@ public:
 
 	const ColorReference& getBackground() const { return m_background; }
 
+	void setSticky(bool sticky);
+
+	bool getSticky() const { return m_sticky; }
+
+	bool isPinned() const { return m_pinned; }
+
 	void setMinimumHeight(int32_t minimumHeight);
 
 	const int32_t getMinimumHeight() const { return m_minimumHeight; }
@@ -100,6 +106,8 @@ public:
 
 	GridRow* getParent() { return m_parent; }
 
+	const GridRow* getParent() const { return m_parent; }
+
 	const RefArray< GridRow >& getChildren() const { return m_children; }
 
 private:
@@ -109,6 +117,8 @@ private:
 	uint32_t m_state;
 	ColorReference m_background;
 	int32_t m_minimumHeight;
+	bool m_sticky;
+	bool m_pinned;
 	RefArray< GridItem > m_items;
 	GridRow* m_parent;
 	RefArray< GridRow > m_children;

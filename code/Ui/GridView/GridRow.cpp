@@ -29,6 +29,8 @@ GridRow::GridRow(uint32_t initialState)
 :	m_editable(true)
 ,	m_state(initialState)
 ,	m_minimumHeight(0)
+,	m_sticky(false)
+,	m_pinned(false)
 ,	m_parent(0)
 ,	m_editMode(0)
 {
@@ -75,6 +77,11 @@ void GridRow::setBackground(const ColorReference& background)
 void GridRow::setMinimumHeight(int32_t minimumHeight)
 {
 	m_minimumHeight = minimumHeight;
+}
+
+void GridRow::setSticky(bool sticky)
+{
+	m_sticky = sticky;
 }
 
 int32_t GridRow::getHeight() const
@@ -343,6 +350,14 @@ void GridRow::paint(Canvas& canvas, const Rect& rect)
 	const RefArray< GridColumn >& columns = view->getColumns();
 	const int32_t depth = getDepth();
 	const bool enabled = view->isEnable(true);
+
+	// Pinned rows float above the rows they're scrolled over; paint an opaque
+	// backdrop as neither depth nor custom backgrounds are guaranteed to cover.
+	if (m_pinned)
+	{
+		canvas.setBackground(ss->getColor(view, enabled ? L"background-color" : L"background-color-disabled"));
+		canvas.fillRect(rect);
+	}
 
 	// Paint custom background.
 	if (m_background)

@@ -1242,6 +1242,7 @@ Ref< ui::GridRow > SceneEditorPage::createInstanceGridRow(EntityAdapter* entityA
 	{
 		row->setMinimumHeight(32);
 		row->setBackground(ui::ColorReference(this, L"background-color-layer"));
+		row->setSticky(true);
 	}
 
 	std::wstring entityName = entityAdapter->getName();
