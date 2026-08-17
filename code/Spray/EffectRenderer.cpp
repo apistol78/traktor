@@ -8,11 +8,13 @@
  */
 #include "Spray/EffectRenderer.h"
 
+#include <algorithm>
 #include "Render/Frame/RenderGraph.h"
 #include "Spray/Effect.h"
 #include "Spray/EffectComponent.h"
 #include "Spray/MeshRenderer.h"
 #include "Spray/PointRenderer.h"
+#include "Spray/TrailComponent.h"
 #include "Spray/TrailRenderer.h"
 #include "World/IWorldRenderPass.h"
 #include "World/WorldBuildContext.h"
@@ -43,7 +45,10 @@ bool EffectRenderer::initialize(const ObjectStore& objectStore)
 
 const TypeInfoSet EffectRenderer::getRenderableTypes() const
 {
-	return makeTypeInfoSet< EffectComponent >();
+	return makeTypeInfoSet<
+		EffectComponent,
+		TrailComponent
+	>();
 }
 
 void EffectRenderer::setup(
@@ -51,13 +56,19 @@ void EffectRenderer::setup(
 	const world::WorldRenderView& worldRenderView,
 	const AlignedVector< Object* >& renderables)
 {
+	// Only effect components need to be setup; skip pass entirely if there are none.
+	if (std::none_of(renderables.begin(), renderables.end(), [](const Object* renderable) {
+			return is_a< EffectComponent >(renderable);
+		}))
+		return;
+
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Spray setup");
 	rp->addInput(render::RGDependency::First);
 	rp->addBuild([=](const render::RenderGraph&, render::RenderContext* renderContext) {
 		for (Object* renderable : renderables)
 		{
-			const EffectComponent* effectComponent = static_cast< const EffectComponent* >(renderable);
-			effectComponent->setup(renderContext);
+			if (auto effectComponent = dynamic_type_cast< const EffectComponent* >(renderable))
+				effectComponent->setup(renderContext);
 		}
 	});
 	context.getRenderGraph().addPass(rp);
@@ -71,28 +82,34 @@ void EffectRenderer::build(
 {
 	for (Object* renderable : renderables)
 	{
-		const EffectComponent* effectComponent = static_cast< const EffectComponent* >(renderable);
+		if (auto effectComponent = dynamic_type_cast< const EffectComponent* >(renderable))
+		{
+			// const Aabb3 boundingBox = effectComponent->getWorldBoundingBox();
+			// if (boundingBox.empty())
+			//	return;
 
-		// const Aabb3 boundingBox = effectComponent->getWorldBoundingBox();
-		// if (boundingBox.empty())
-		//	return;
+			//// Early out of bounding sphere is outside of frustum.
+			// const Vector4 center = worldRenderView.getView() * boundingBox.getCenter().xyz1();
+			// const Scalar radius = boundingBox.getExtent().length();
+			// if (worldRenderView.getCullFrustum().inside(center, radius) == Frustum::Result::Outside)
+			//	return;
 
-		//// Early out of bounding sphere is outside of frustum.
-		// const Vector4 center = worldRenderView.getView() * boundingBox.getCenter().xyz1();
-		// const Scalar radius = boundingBox.getExtent().length();
-		// if (worldRenderView.getCullFrustum().inside(center, radius) == Frustum::Result::Outside)
-		//	return;
+			// const Vector4 cameraPosition = worldRenderView.getEyePosition();
+			// const Plane cameraPlane(worldRenderView.getEyeDirection(), cameraPosition);
 
-		// const Vector4 cameraPosition = worldRenderView.getEyePosition();
-		// const Plane cameraPlane(worldRenderView.getEyeDirection(), cameraPosition);
-
-		effectComponent->build(
-			worldRenderView,
-			worldRenderPass,
-			context.getRenderContext(),
-			m_pointRenderer,
-			m_meshRenderer,
-			m_trailRenderer);
+			effectComponent->build(
+				worldRenderView,
+				worldRenderPass,
+				context.getRenderContext(),
+				m_pointRenderer,
+				m_meshRenderer,
+				m_trailRenderer);
+		}
+		else if (auto trailComponent = dynamic_type_cast< const TrailComponent* >(renderable))
+			trailComponent->build(
+				worldRenderView,
+				worldRenderPass,
+				m_trailRenderer);
 	}
 
 	m_pointRenderer->flush(context.getRenderContext(), worldRenderPass);

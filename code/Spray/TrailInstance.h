@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -44,6 +44,8 @@ class TrailInstance : public Object
 	T_RTTI_CLASS;
 
 public:
+	typedef CircularVector< Vector4, 256 > T_MATH_ALIGN16 points_t;
+
 	explicit TrailInstance(
 		const resource::Proxy< render::Shader >& shader,
 		float width,
@@ -53,6 +55,13 @@ public:
 	);
 
 	void update(Context& context, const Transform& transform, bool enable);
+
+	/*! Add point to trail.
+	 *
+	 * \param context Effect context.
+	 * \param position Position of point, in world space.
+	 */
+	void addPoint(Context& context, const Vector4& worldPosition);
 
 	void build(const world::WorldRenderView& worldRenderView, const world::IWorldRenderPass& worldRenderPass, TrailRenderer* trailRenderer, const Transform& transform);
 
@@ -64,7 +73,7 @@ private:
 	float m_age;
 	float m_lengthThreshold;
 	float m_breakThreshold;
-	CircularVector< Vector4, 64 > T_MATH_ALIGN16 m_points;
+	points_t m_points;
 	Vector4 m_last;
 	Vector4 m_time;
 	Aabb3 m_boundingBox;

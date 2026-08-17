@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2026 Anders Pistol.
+ * Copyright (c) 2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,9 +8,8 @@
  */
 #pragma once
 
-#include "Core/Ref.h"
-#include "Core/Serialization/ISerializable.h"
-#include "Resource/Id.h"
+#include "Spray/TrailData.h"
+#include "World/IEntityComponentData.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -19,13 +18,6 @@
 #else
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
-
-namespace traktor::render
-{
-
-class Shader;
-
-}
 
 namespace traktor::resource
 {
@@ -37,28 +29,28 @@ class IResourceManager;
 namespace traktor::spray
 {
 
-class Trail;
+class TrailComponent;
 
-/*! Ribbon trail persistent data.
+/*! Ribbon trail component persistent data.
  * \ingroup Spray
  */
-class TrailData : public ISerializable
+class T_DLLCLASS TrailComponentData : public world::IEntityComponentData
 {
 	T_RTTI_CLASS;
 
 public:
-	Ref< Trail > createTrail(resource::IResourceManager* resourceManager) const;
+	Ref< TrailComponent > createComponent(resource::IResourceManager* resourceManager) const;
+
+	virtual int32_t getOrdinal() const override final;
+
+	virtual void setTransform(const world::EntityData* owner, const Transform& transform) override final;
 
 	virtual void serialize(ISerializer& s) override final;
 
-	const resource::Id< render::Shader >& getShader() const { return m_shader; }
+	const TrailData& getTrail() const { return m_trail; }
 
 private:
-	resource::Id< render::Shader > m_shader;
-	float m_width = 1.0f;
-	float m_age = 1.0f;
-	float m_lengthThreshold = 1.0f;
-	float m_breakThreshold = 0.0f;
+	TrailData m_trail;
 };
 
 }

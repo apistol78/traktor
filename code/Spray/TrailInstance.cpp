@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -52,72 +52,73 @@ void TrailInstance::update(Context& context, const Transform& transform, bool en
 	}
 
 	if (enable)
-	{
-		const Vector4 position = transform.translation().xyz1();
+		addPoint(context, transform.translation());
 
-		if (m_points.empty())
+	m_time += Vector4(0.0f, 0.0f, 0.0f, context.deltaTime);
+}
+
+void TrailInstance::addPoint(Context& context, const Vector4& worldPosition)
+{
+	const Vector4 position = worldPosition.xyz1();
+
+	if (m_points.empty())
+	{
+		m_last = position;
+		m_points.push_back(position.xyz0() + m_time);
+		m_boundingBox.contain(position);
+	}
+
+	if (m_breakThreshold > FUZZY_EPSILON && m_lengthThreshold > FUZZY_EPSILON)	// Breakable
+	{
+		const Scalar ln = (position - m_last).length2();
+		if (ln >= m_lengthThreshold * m_lengthThreshold)
 		{
-			m_last = position;
+			if (ln >= m_breakThreshold * m_breakThreshold)
+				m_points.clear();
+
 			m_points.push_back(position.xyz0() + m_time);
 			m_boundingBox.contain(position);
-		}
-
-		if (m_breakThreshold > FUZZY_EPSILON && m_lengthThreshold > FUZZY_EPSILON)	// Breakable
-		{
-			const Scalar ln = (position - m_last).length2();
-			if (ln >= m_lengthThreshold * m_lengthThreshold)
-			{
-				if (ln >= m_breakThreshold * m_breakThreshold)
-					m_points.clear();
-
-				m_points.push_back(position.xyz0() + m_time);
-				m_boundingBox.contain(position);
-
-				m_last = position;
-			}
-			else
-				m_points.back() = position.xyz0() + m_time;
-		}
-		else if (m_lengthThreshold > FUZZY_EPSILON)	// Segmented by distance
-		{
-			const Vector4 direction = (position - m_last).xyz0();
-			Scalar ln = direction.length();
-
-			const int32_t nsteps = int32_t(ln / m_lengthThreshold);
-			if (nsteps > 0)
-			{
-				m_points.pop_back();
-
-				const Scalar lnt(m_lengthThreshold);
-				const Vector4 step = direction * lnt / ln;
-				for (int32_t i = 0; i < nsteps; ++i)
-				{
-					m_points.push_back(m_last.xyz0() + m_time + Vector4(0.0f, 0.0f, 0.0f, (context.deltaTime * i) / nsteps));
-					m_boundingBox.contain(m_last);
-					m_last += step;
-					ln -= lnt;
-				}
-
-				m_last -= step;
-			}
-
-			m_points.back() = position.xyz0() + m_time;
-		}
-		else // Always add points.
-		{
-			const Vector4 direction = (position - m_last).xyz0();
-			const Scalar ln = direction.length();
-
-			if (ln > FUZZY_EPSILON)
-				m_points.push_back(position.xyz0() + m_time);
 
 			m_last = position;
 		}
-
-		m_time += Vector4(0.0f, 0.0f, 0.0f, context.deltaTime);
+		else
+			m_points.back() = position.xyz0() + m_time;
 	}
-	else
-		m_time += Vector4(0.0f, 0.0f, 0.0f, context.deltaTime);
+	else if (m_lengthThreshold > FUZZY_EPSILON)	// Segmented by distance
+	{
+		const Vector4 direction = (position - m_last).xyz0();
+		Scalar ln = direction.length();
+
+		const int32_t nsteps = int32_t(ln / m_lengthThreshold);
+		if (nsteps > 0)
+		{
+			m_points.pop_back();
+
+			const Scalar lnt(m_lengthThreshold);
+			const Vector4 step = direction * lnt / ln;
+			for (int32_t i = 0; i < nsteps; ++i)
+			{
+				m_points.push_back(m_last.xyz0() + m_time + Vector4(0.0f, 0.0f, 0.0f, (context.deltaTime * i) / nsteps));
+				m_boundingBox.contain(m_last);
+				m_last += step;
+				ln -= lnt;
+			}
+
+			m_last -= step;
+		}
+
+		m_points.back() = position.xyz0() + m_time;
+	}
+	else // Always add points.
+	{
+		const Vector4 direction = (position - m_last).xyz0();
+		const Scalar ln = direction.length();
+
+		if (ln > FUZZY_EPSILON)
+			m_points.push_back(position.xyz0() + m_time);
+
+		m_last = position;
+	}
 }
 
 void TrailInstance::build(const world::WorldRenderView& worldRenderView, const world::IWorldRenderPass& worldRenderPass, TrailRenderer* trailRenderer, const Transform& transform)

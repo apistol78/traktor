@@ -1,59 +1,61 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include <limits>
+#include "Spray/TrailRenderer.h"
+
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
 #include "Core/Math/Format.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Render/Buffer.h"
+#include "Render/Context/RenderContext.h"
 #include "Render/IRenderSystem.h"
 #include "Render/Shader.h"
 #include "Render/VertexElement.h"
-#include "Render/Context/RenderContext.h"
-#include "Spray/TrailRenderer.h"
 #include "Spray/Vertex.h"
 #include "World/IWorldRenderPass.h"
 #include "World/WorldRenderView.h"
 
+#include <limits>
+
 namespace traktor::spray
 {
-	namespace
-	{
+namespace
+{
 
-const uint32_t c_stripeLength = 64;
+const uint32_t c_stripeLength = 256;
 const uint32_t c_trailCount = 16;
 
 render::Handle s_handleTimeAndAge(L"TimeAndAge");
 
-	}
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.TrailRenderer", TrailRenderer, Object)
 
 TrailRenderer::TrailRenderer(render::IRenderSystem* renderSystem)
-:	m_count(0)
-,	m_vertex(nullptr)
+	: m_count(0)
+	, m_vertex(nullptr)
 {
 	AlignedVector< render::VertexElement > vertexElements;
 	vertexElements.push_back(render::VertexElement(render::DataUsage::Position, render::DtFloat4, offsetof(TrailVertex, position), 0));
 	vertexElements.push_back(render::VertexElement(render::DataUsage::Custom, render::DtFloat4, offsetof(TrailVertex, direction), 0));
 	vertexElements.push_back(render::VertexElement(render::DataUsage::Custom, render::DtFloat4, offsetof(TrailVertex, uv), 1));
-	T_ASSERT_M (render::getVertexSize(vertexElements) == sizeof(TrailVertex), L"Incorrect size of vertex");
+	T_ASSERT_M(render::getVertexSize(vertexElements) == sizeof(TrailVertex), L"Incorrect size of vertex");
 	m_vertexLayout = renderSystem->createVertexLayout(vertexElements);
 
 	for (uint32_t i = 0; i < sizeof_array(m_vertexBuffers); ++i)
 	{
 		m_vertexBuffers[i] = renderSystem->createBuffer(render::BuVertex, c_trailCount * c_stripeLength * 2 * sizeof(TrailVertex), true, T_FILE_LINE_W);
-		T_ASSERT_M (m_vertexBuffers[i], L"Unable to create vertex buffer");
+		T_ASSERT_M(m_vertexBuffers[i], L"Unable to create vertex buffer");
 	}
 
 	m_indexBuffer = renderSystem->createBuffer(render::BuIndex, c_trailCount * c_stripeLength * 2 * sizeof(uint16_t), false, T_FILE_LINE_W);
-	T_ASSERT_M (m_indexBuffer, L"Unable to create index buffer");
+	T_ASSERT_M(m_indexBuffer, L"Unable to create index buffer");
 
 	uint16_t* index = (uint16_t*)m_indexBuffer->lock();
 	for (uint32_t i = 0; i < c_trailCount * c_stripeLength * 2; ++i)
@@ -78,11 +80,10 @@ void TrailRenderer::destroy()
 void TrailRenderer::render(
 	const world::WorldRenderView& worldRenderView,
 	render::Shader* shader,
-	const CircularVector< Vector4, 64 >& points,
+	const TrailInstance::points_t& points,
 	float width,
 	float time,
-	float age
-)
+	float age)
 {
 	const int32_t pointCount = (int32_t)points.size();
 	if (pointCount < 2)
@@ -188,8 +189,7 @@ void TrailRenderer::render(
 
 void TrailRenderer::flush(
 	render::RenderContext* renderContext,
-	const world::IWorldRenderPass& worldRenderPass
-)
+	const world::IWorldRenderPass& worldRenderPass)
 {
 	if (!m_vertex)
 		return;

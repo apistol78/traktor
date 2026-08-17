@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -22,6 +22,8 @@
 #include "Spray/SoundEventData.h"
 #include "Spray/SpawnEffectEvent.h"
 #include "Spray/SpawnEffectEventData.h"
+#include "Spray/TrailComponent.h"
+#include "Spray/TrailComponentData.h"
 #include "Spray/Feedback/EnvelopeFeedbackEvent.h"
 #include "Spray/Feedback/EnvelopeFeedbackEventData.h"
 #include "Spray/Feedback/OscillateFeedbackEvent.h"
@@ -52,10 +54,11 @@ const TypeInfoSet EffectEntityFactory::getEntityEventTypes() const
 
 const TypeInfoSet EffectEntityFactory::getEntityComponentTypes() const
 {
-	return makeTypeInfoSet< 
+	return makeTypeInfoSet<
 		EffectComponentData,
 		ListenerComponentData,
-		SoundComponentData
+		SoundComponentData,
+		TrailComponentData
 	>();
 }
 
@@ -102,6 +105,8 @@ Ref< world::IEntityComponent > EffectEntityFactory::createEntityComponent(const 
 		return listenerComponentData->createComponent(m_soundPlayer);
 	else if (auto soundComponentData = dynamic_type_cast< const SoundComponentData* >(&entityComponentData))
 		return soundComponentData->createComponent(m_resourceManager, m_soundPlayer);
+	else if (auto trailComponentData = dynamic_type_cast< const TrailComponentData* >(&entityComponentData))
+		return trailComponentData->createComponent(m_resourceManager);
 	else
 		return nullptr;
 }

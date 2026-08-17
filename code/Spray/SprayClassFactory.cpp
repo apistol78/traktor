@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,10 +8,12 @@
  */
 #include "Core/Class/AutoRuntimeClass.h"
 #include "Core/Class/IRuntimeClassRegistrar.h"
+#include "Core/Class/Boxes/BoxedVector4.h"
 #include "Spray/EffectComponent.h"
 #include "Spray/ListenerComponent.h"
 #include "Spray/SoundComponent.h"
 #include "Spray/SprayClassFactory.h"
+#include "Spray/TrailComponent.h"
 
 namespace traktor::spray
 {
@@ -38,6 +40,11 @@ void SprayClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classSoundComponent->addMethod("setPitch", &SoundComponent::setPitch);
 	classSoundComponent->addMethod("setParameter", &SoundComponent::setParameter);
 	registrar->registerClass(classSoundComponent);
+
+	auto classTrailComponent = new AutoRuntimeClass< TrailComponent >();
+	classTrailComponent->addProperty("enable", &TrailComponent::setEnable, &TrailComponent::isEnable);
+	classTrailComponent->addMethod("addPoint", &TrailComponent::addPoint);
+	registrar->registerClass(classTrailComponent);
 }
 
 }

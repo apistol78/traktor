@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,10 +8,10 @@
  */
 #pragma once
 
-#include "Core/Object.h"
 #include "Core/Containers/AlignedVector.h"
-#include "Core/Containers/CircularVector.h"
 #include "Core/Math/Plane.h"
+#include "Core/Object.h"
+#include "Spray/TrailInstance.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -62,16 +62,14 @@ public:
 	void render(
 		const world::WorldRenderView& worldRenderView,
 		render::Shader* shader,
-		const CircularVector< Vector4, 64 >& points,
+		const TrailInstance::points_t& points,
 		float width,
 		float time,
-		float age
-	);
+		float age);
 
 	void flush(
 		render::RenderContext* renderContext,
-		const world::IWorldRenderPass& worldRenderPass
-	);
+		const world::IWorldRenderPass& worldRenderPass);
 
 private:
 	struct Batch

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -11,6 +11,7 @@
 #include "Spray/SoundComponentData.h"
 #include "Spray/SoundEventData.h"
 #include "Spray/SpawnEffectEventData.h"
+#include "Spray/TrailComponentData.h"
 #include "Spray/Editor/EffectEntityPipeline.h"
 
 namespace traktor::spray
@@ -24,7 +25,8 @@ TypeInfoSet EffectEntityPipeline::getAssetTypes() const
 		EffectComponentData,
 		SoundComponentData,
 		SoundEventData,
-		SpawnEffectEventData
+		SpawnEffectEventData,
+		TrailComponentData
 	>();
 }
 
@@ -44,6 +46,8 @@ bool EffectEntityPipeline::buildDependencies(
 		pipelineDepends->addDependency(soundEventData->m_sound, editor::PdfBuild | editor::PdfResource);
 	else if (auto spawnEventData = dynamic_type_cast< const SpawnEffectEventData* >(sourceAsset))
 		pipelineDepends->addDependency(spawnEventData->getEffect(), editor::PdfBuild | editor::PdfResource);
+	else if (auto trailComponentData = dynamic_type_cast< const TrailComponentData* >(sourceAsset))
+		pipelineDepends->addDependency(trailComponentData->getTrail().getShader(), editor::PdfBuild | editor::PdfResource);
 
 	return true;
 }
