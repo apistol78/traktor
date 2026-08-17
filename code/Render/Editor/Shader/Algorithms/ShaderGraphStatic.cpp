@@ -281,6 +281,59 @@ Ref< ShaderGraph > ShaderGraphStatic::getConnectedPermutation() const
 	return shaderGraph;
 }
 
+Ref< ShaderGraph > ShaderGraphStatic::getConstantPermutation() const
+{
+	T_IMMUTABLE_CHECK(m_shaderGraph);
+
+	Ref< ShaderGraph > shaderGraph = new ShaderGraph(
+		m_shaderGraph->getNodes(),
+		m_shaderGraph->getEdges());
+	T_VALIDATE_SHADERGRAPH(shaderGraph);
+
+	RefArray< IsConstant > constantNodes = shaderGraph->findNodesOf< IsConstant >();
+	if (constantNodes.empty())
+		return shaderGraph;
+
+	for (const auto constantNode : constantNodes)
+	{
+		// Constant folding resolves nodes which have a constant input, thus any node
+		// remaining cannot be constantly evaluated and must take the "False" path.
+		const InputPin* inputPin = constantNode->findInputPin(L"False");
+		T_ASSERT(inputPin);
+
+		const OutputPin* sourceOutputPin = nullptr;
+
+		Ref< Edge > sourceEdge = shaderGraph->findEdge(inputPin);
+		if (sourceEdge)
+		{
+			sourceOutputPin = sourceEdge->getSource();
+			shaderGraph->removeEdge(sourceEdge);
+		}
+		else
+		{
+			Ref< Scalar > scalarNode = new Scalar(0.0f);
+			shaderGraph->addNode(scalarNode);
+			sourceOutputPin = scalarNode->getOutputPin(0);
+		}
+
+		const OutputPin* outputPin = constantNode->findOutputPin(L"Output");
+		T_ASSERT(outputPin);
+
+		for (const auto destinationEdge : shaderGraph->findEdges(outputPin))
+		{
+			shaderGraph->removeEdge(destinationEdge);
+			shaderGraph->addEdge(new Edge(
+				sourceOutputPin,
+				destinationEdge->getDestination()));
+		}
+
+		shaderGraph->removeNode(constantNode);
+	}
+
+	T_VALIDATE_SHADERGRAPH(shaderGraph);
+	return shaderGraph;
+}
+
 Ref< ShaderGraph > ShaderGraphStatic::getTypePermutation() const
 {
 	T_IMMUTABLE_CHECK(m_shaderGraph);

@@ -904,6 +904,9 @@ bool ShaderGraphEditorPage::handleCommand(const ui::Command& command)
 			m_shaderGraph = ShaderGraphStatic(m_shaderGraph, Guid()).getConstantFolded();
 			T_ASSERT(m_shaderGraph);
 
+			m_shaderGraph = ShaderGraphStatic(m_shaderGraph, Guid()).getConstantPermutation();
+			T_ASSERT(m_shaderGraph);
+
 			m_document->setObject(0, m_shaderGraph);
 
 			createEditorGraph();

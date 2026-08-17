@@ -51,8 +51,8 @@
 			<id>{4B914422-AF25-104D-A6A0-8FC54E7AAD97}</id>
 			<comment><![CDATA[Tag_Roughness]]></comment>
 			<position>
-				<first>348</first>
-				<second>-25</second>
+				<first>636</first>
+				<second>24</second>
 			</position>
 			<value>0.8</value>
 		</item>
@@ -84,15 +84,6 @@
 			</position>
 			<name>T_Attributes</name>
 			<optional>false</optional>
-		</item>
-		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{6643A0CE-48B0-9849-AA7F-8608192831C1}</id>
-			<comment/>
-			<position>
-				<first>599</first>
-				<second>18</second>
-			</position>
-			<parameterDeclaration>{D77238B3-3655-7A45-B645-CC7921C7A623}</parameterDeclaration>
 		</item>
 	</nodes>
 	<edges>
@@ -158,22 +149,12 @@
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[8]"/>
-				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[5]"/>
-				<id>{69997292-C813-490C-910C-620B9AD3A2BB}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
 				<node ref="/object/nodes/item[4]"/>
 				<id>{D33F8931-C90C-4EBA-8A04-A31D3E08FAB7}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[8]"/>
-				<id>{CDD51665-CD39-444D-8D5C-5FD37C1646B7}</id>
+				<node ref="/object/nodes/item[5]"/>
+				<id>{69997292-C813-490C-910C-620B9AD3A2BB}</id>
 			</destination>
 		</item>
 	</edges>

@@ -1340,6 +1340,26 @@ Interpolator::Interpolator()
 
 /*---------------------------------------------------------------------------*/
 
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.IsConstant", 0, IsConstant, ImmutableNode)
+
+const ImmutableNode::InputPinDesc c_IsConstant_i[] = {
+	{ L"Input", L"{40A63B45-2239-48B6-A8BE-52CC8990A889}", true },
+	{ L"True", L"{869F5AA7-AB71-4297-8A7E-184F37120B86}", true },
+	{ L"False", L"{C3F2468E-94AC-43EF-873C-FD41E15A5BF6}", true },
+	{ 0 }
+};
+const ImmutableNode::OutputPinDesc c_IsConstant_o[] = {
+	{ L"Output", L"{6EEAB21A-24A6-4013-A7BA-920E84B13D51}" },
+	{ 0 }
+};
+
+IsConstant::IsConstant()
+	: ImmutableNode(c_IsConstant_i, c_IsConstant_o)
+{
+}
+
+/*---------------------------------------------------------------------------*/
+
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Iterate", 0, Iterate, ImmutableNode)
 
 const ImmutableNode::InputPinDesc c_Iterate_i[] = {

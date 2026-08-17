@@ -44,6 +44,9 @@ public:
 	/*! Replace all "Connected" nodes with direct connections. */
 	Ref< ShaderGraph > getConnectedPermutation() const;
 
+	/*! Replace all remaining "IsConstant" nodes with direct connections. */
+	Ref< ShaderGraph > getConstantPermutation() const;
+
 	/*! Replace all "Type" nodes with direct connections based on input type. */
 	Ref< ShaderGraph > getTypePermutation() const;
 

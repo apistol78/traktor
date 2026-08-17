@@ -1,20 +1,19 @@
-#pragma optimize( "", off )
-
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Render/Editor/Shader/Algorithms/ShaderGraphEvaluator.h"
+
 #include "Core/Containers/SmallMap.h"
 #include "Render/Editor/Edge.h"
 #include "Render/Editor/GraphTraverse.h"
-#include "Render/Editor/Shader/Nodes.h"
 #include "Render/Editor/Shader/INodeTraits.h"
+#include "Render/Editor/Shader/Nodes.h"
 #include "Render/Editor/Shader/ShaderGraph.h"
-#include "Render/Editor/Shader/Algorithms/ShaderGraphEvaluator.h"
 
 namespace traktor::render
 {
@@ -22,7 +21,7 @@ namespace traktor::render
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ShaderGraphEvaluator", ShaderGraphEvaluator, Object)
 
 ShaderGraphEvaluator::ShaderGraphEvaluator(const ShaderGraph* shaderGraph)
-:	m_shaderGraph(shaderGraph)
+	: m_shaderGraph(shaderGraph)
 {
 	RefArray< Node > roots;
 	m_shaderGraph->findNodesOf(type_of< PreviewOutput >(), roots);
@@ -80,8 +79,7 @@ Constant ShaderGraphEvaluator::evaluate(const OutputPin* outputPin) const
 					m_shaderGraph,
 					node,
 					outputPin,
-					inputPinTypes.c_ptr()
-				);
+					inputPinTypes.c_ptr());
 
 				evaluatedConstants[outputPin] = Constant(outputPinType);
 
@@ -90,8 +88,7 @@ Constant ShaderGraphEvaluator::evaluate(const OutputPin* outputPin) const
 					node,
 					outputPin,
 					inputConstants.c_ptr(),
-					evaluatedConstants[outputPin]
-				);
+					evaluatedConstants[outputPin]);
 			}
 			else
 				evaluatedConstants[outputPin] = it->second;

@@ -530,6 +530,15 @@ public:
 	Interpolator();
 };
 
+/*! Constant, check if input is a constant value. */
+class T_DLLCLASS IsConstant : public ImmutableNode
+{
+	T_RTTI_CLASS;
+
+public:
+	IsConstant();
+};
+
 /*! Iterate. */
 class T_DLLCLASS Iterate : public ImmutableNode
 {

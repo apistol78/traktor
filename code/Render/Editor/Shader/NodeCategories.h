@@ -54,6 +54,7 @@ const NodeCategory c_nodeCategories[] =
 	{ type_of< InputPort >(), L"SHADERGRAPH_VALUE", L"Input connection port into shader fragment" },
 	{ type_of< Instance >(), L"SHADERGRAPH_VALUE", L"Instance index" },
 	{ type_of< Interpolator >(), L"SHADERGRAPH_VALUE", L"Interpolator passing of value from vertex into pixel shader" },
+	{ type_of< IsConstant >(), L"SHADERGRAPH_CONDITIONAL", L"Check if input is a constant value" },
 	{ type_of< Iterate >(), L"SHADERGRAPH_MISCELLANEOUS", L"Iterate" },
 	{ type_of< Iterate2 >(), L"SHADERGRAPH_MISCELLANEOUS", L"Iterate (2)" },
 	{ type_of< Iterate2d >(), L"SHADERGRAPH_MISCELLANEOUS", L"Iterate 2d" },

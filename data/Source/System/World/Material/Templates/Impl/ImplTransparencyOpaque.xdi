@@ -11,28 +11,6 @@
 			<name>T_Attributes</name>
 			<optional>false</optional>
 		</item>
-		<item type="traktor.render.External" version="3,traktor.render.Node:1">
-			<id>{E1049F44-E016-0D4C-9975-822204322D87}</id>
-			<comment/>
-			<position>
-				<first>889</first>
-				<second>905</second>
-			</position>
-			<fragmentGuid>{FD6737C4-582B-0C41-B1C8-9D4E91B93DD2}</fragmentGuid>
-			<inputPins>
-				<item>
-					<id>{CDFE7478-7B61-6146-9C00-871B63C36BDC}</id>
-					<name>T_Attributes</name>
-					<optional>false</optional>
-				</item>
-			</inputPins>
-			<outputPins>
-				<item>
-					<id>{5F0DE021-A3D8-3949-A580-75D95070530A}</id>
-					<name>T_Transparency</name>
-				</item>
-			</outputPins>
-		</item>
 		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
 			<id>{F11D2453-AC1C-5C40-8C41-C39987E463F5}</id>
 			<comment/>
@@ -73,21 +51,21 @@
 	<edges>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[3]"/>
+				<node ref="/object/nodes/item[2]"/>
 				<id>{D33F8931-C90C-4EBA-8A04-A31D3E08FAB7}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[2]"/>
+				<node ref="/object/nodes/item[1]"/>
 				<id>{731844D4-AFDC-4EAA-8B41-C4BA2455898F}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[4]"/>
+				<node ref="/object/nodes/item[3]"/>
 				<id>{D33F8931-C90C-4EBA-8A04-A31D3E08FAB7}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[5]"/>
+				<node ref="/object/nodes/item[4]"/>
 				<id>{731844D4-AFDC-4EAA-8B41-C4BA2455898F}</id>
 			</destination>
 		</item>

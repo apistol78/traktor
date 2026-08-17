@@ -42,6 +42,7 @@
 #include "Render/Editor/Edge.h"
 #include "Render/Editor/IProgramCompiler.h"
 #include "Render/Editor/Shader/Algorithms/ShaderGraphCombinations.h"
+#include "Render/Editor/Shader/Algorithms/ShaderGraphEvaluator.h"
 #include "Render/Editor/Shader/Algorithms/ShaderGraphHash.h"
 #include "Render/Editor/Shader/Algorithms/ShaderGraphOptimizer.h"
 #include "Render/Editor/Shader/Algorithms/ShaderGraphStatic.h"
@@ -412,7 +413,7 @@ bool ShaderPipeline::buildOutput(
 	{
 		log::error << L"ShaderPipeline failed; unable to freeze types." << Endl;
 		return false;
-	}	
+	}
 
 	// Remove unused branches from shader graph.
 	pipelineBuilder->getProfiler()->begin(L"ShaderPipeline removeUnusedBranches");
@@ -535,6 +536,17 @@ bool ShaderPipeline::buildOutput(
 					return;
 				}
 
+				// Resolve remaining constant nodes, i.e. those which couldn't be constantly evaluated.
+				pipelineBuilder->getProfiler()->begin(L"ShaderPipeline getConstantPermutation");
+				programGraph = ShaderGraphStatic(programGraph, shaderGraphId).getConstantPermutation();
+				pipelineBuilder->getProfiler()->end();
+				if (!programGraph)
+				{
+					log::error << L"ShaderPipeline failed; unable to resolve constant permutation of \"" << path << L"\"." << Endl;
+					status = false;
+					return;
+				}
+
 				// Get output state resolved.
 				pipelineBuilder->getProfiler()->begin(L"ShaderPipeline getStateResolved");
 				programGraph = ShaderGraphStatic(programGraph, shaderGraphId).getStateResolved();
@@ -602,62 +614,58 @@ bool ShaderPipeline::buildOutput(
 				}
 
 				// Extract parameter initial values and add to initialization block in shader resource.
-				for (const auto parameterNode : programGraph->findNodesOf< Parameter >())
 				{
-					const OutputPin* outputPin = programGraph->findSourcePin(parameterNode->getInputPin(0));
-					if (!outputPin)
-						continue;
+					const ShaderGraphEvaluator evaluator(programGraph);
 
-					const Node* outputNode = outputPin->getNode();
-					T_ASSERT(outputNode);
+					for (const auto parameterNode : programGraph->findNodesOf< Parameter >())
+					{
+						const OutputPin* outputPin = programGraph->findSourcePin(parameterNode->getInputPin(0));
+						if (!outputPin)
+							continue;
 
-					if (const Scalar* scalarNode = dynamic_type_cast< const Scalar* >(outputNode))
-					{
-						shaderCombination.initializeUniformScalar.push_back(ShaderResource::InitializeUniformScalar(parameterNode->getParameterName(), scalarNode->get()));
+						const Constant value = evaluator.evaluate(outputPin);
+						if (value.isAllConst())
+						{
+							if (value.getWidth() == 1)
+								shaderCombination.initializeUniformScalar.push_back(ShaderResource::InitializeUniformScalar(parameterNode->getParameterName(), value.x()));
+							else
+							{
+								const Constant v4f = value.cast(PinType::Scalar4);
+								shaderCombination.initializeUniformVector.push_back(ShaderResource::InitializeUniformVector(parameterNode->getParameterName(), Vector4(v4f.x(), v4f.y(), v4f.z(), v4f.w())));
+							}
+						}
+						else
+						{
+							log::error << L"ShaderPipeline failed; initial value of parameter \"" << parameterNode->getParameterName() << L"\" must be constant." << Endl;
+							status = false;
+							return;
+						}
 					}
-					else if (const Vector* vectorNode = dynamic_type_cast< const Vector* >(outputNode))
-					{
-						shaderCombination.initializeUniformVector.push_back(ShaderResource::InitializeUniformVector(parameterNode->getParameterName(), vectorNode->get()));
-					}
-					else if (const Color* colorNode = dynamic_type_cast< const Color* >(outputNode))
-					{
-						shaderCombination.initializeUniformVector.push_back(ShaderResource::InitializeUniformVector(parameterNode->getParameterName(), colorNode->getColor()));
-					}
-					else
-					{
-						log::error << L"ShaderPipeline failed; initial value of parameter \"" << parameterNode->getParameterName() << L"\" must be constant." << Endl;
-						status = false;
-						return;
-					}
-				}
 
-				// Extract uniform initial values and add to initialization block in shader resource.
-				for (const auto uniformNode : programGraph->findNodesOf< Uniform >())
-				{
-					const OutputPin* outputPin = programGraph->findSourcePin(uniformNode->getInputPin(0));
-					if (!outputPin)
-						continue;
+					// Extract uniform initial values and add to initialization block in shader resource.
+					for (const auto uniformNode : programGraph->findNodesOf< Uniform >())
+					{
+						const OutputPin* outputPin = programGraph->findSourcePin(uniformNode->getInputPin(0));
+						if (!outputPin)
+							continue;
 
-					const Node* outputNode = outputPin->getNode();
-					T_ASSERT(outputNode);
-
-					if (const Scalar* scalarNode = dynamic_type_cast< const Scalar* >(outputNode))
-					{
-						shaderCombination.initializeUniformScalar.push_back(ShaderResource::InitializeUniformScalar(uniformNode->getParameterName(), scalarNode->get()));
-					}
-					else if (const Vector* vectorNode = dynamic_type_cast< const Vector* >(outputNode))
-					{
-						shaderCombination.initializeUniformVector.push_back(ShaderResource::InitializeUniformVector(uniformNode->getParameterName(), vectorNode->get()));
-					}
-					else if (const Color* colorNode = dynamic_type_cast< const Color* >(outputNode))
-					{
-						shaderCombination.initializeUniformVector.push_back(ShaderResource::InitializeUniformVector(uniformNode->getParameterName(), colorNode->getColor()));
-					}
-					else
-					{
-						log::error << L"ShaderPipeline failed; initial value of uniform must be constant." << Endl;
-						status = false;
-						return;
+						const Constant value = evaluator.evaluate(outputPin);
+						if (value.isAllConst())
+						{
+							if (value.getWidth() == 1)
+								shaderCombination.initializeUniformScalar.push_back(ShaderResource::InitializeUniformScalar(uniformNode->getParameterName(), value.x()));
+							else
+							{
+								const Constant v4f = value.cast(PinType::Scalar4);
+								shaderCombination.initializeUniformVector.push_back(ShaderResource::InitializeUniformVector(uniformNode->getParameterName(), Vector4(v4f.x(), v4f.y(), v4f.z(), v4f.w())));
+							}
+						}
+						else
+						{
+							log::error << L"ShaderPipeline failed; initial value of uniform \"" << uniformNode->getParameterName() << L"\" must be constant." << Endl;
+							status = false;
+							return;
+						}
 					}
 				}
 

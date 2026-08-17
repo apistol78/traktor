@@ -500,6 +500,9 @@ void ShaderViewer::jobReflect(Ref< ShaderGraph > shaderGraph, Ref< const IProgra
 				programGraph = ShaderGraphStatic(programGraph, Guid()).getConstantFolded();
 
 			if (programGraph)
+				programGraph = ShaderGraphStatic(programGraph, Guid()).getConstantPermutation();
+
+			if (programGraph)
 				programGraph = ShaderGraphStatic(programGraph, Guid()).getStateResolved();
 
 			if (programGraph)
