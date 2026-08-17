@@ -8,6 +8,7 @@
  */
 #include "Drawing/Formats/ImageFormatTga.h"
 
+#include <cstring>
 #include "Core/Io/Reader.h"
 #include "Drawing/Filters/MirrorFilter.h"
 #include "Drawing/Image.h"
@@ -38,6 +39,42 @@ struct TGAHEADER
 };
 
 #pragma pack()
+
+const char c_footerSignature[] = "TRUEVISION-XFILE";
+
+const uint32_t c_footerSize = 26;				//!< Size of TGA 2.0 file footer.
+const uint32_t c_footerSignatureOffset = 8;		//!< Offset of signature within footer.
+const uint32_t c_extensionSize = 495;			//!< Size of TGA 2.0 extension area.
+const uint32_t c_extensionSoftwareOffset = 426;	//!< Offset of software ID within extension area.
+const uint32_t c_extensionGammaOffset = 478;	//!< Offset of gamma value within extension area.
+const uint32_t c_extensionAttributesOffset = 494;	//!< Offset of attributes type within extension area.
+
+/*! Default gamma when image doesn't specify one; assume sRGB as most TGAs are authored as such. */
+const float c_defaultGamma = 2.2f;
+
+uint16_t readU16(const uint8_t* p)
+{
+	return (uint16_t)(p[0] | (p[1] << 8));
+}
+
+uint32_t readU32(const uint8_t* p)
+{
+	return (uint32_t)p[0] | ((uint32_t)p[1] << 8) | ((uint32_t)p[2] << 16) | ((uint32_t)p[3] << 24);
+}
+
+void writeU16(uint8_t* p, uint16_t v)
+{
+	p[0] = (uint8_t)v;
+	p[1] = (uint8_t)(v >> 8);
+}
+
+void writeU32(uint8_t* p, uint32_t v)
+{
+	p[0] = (uint8_t)v;
+	p[1] = (uint8_t)(v >> 8);
+	p[2] = (uint8_t)(v >> 16);
+	p[3] = (uint8_t)(v >> 24);
+}
 
 }
 
@@ -111,19 +148,40 @@ Ref< Image > ImageFormatTga::read(IStream* stream)
 		}
 	}
 
-	stream->seek(IStream::SeekEnd, -26);
-	uint16_t gammaNumerator, gammaDenom;
-	reader >> gammaNumerator;
-	reader >> gammaDenom;
-
 	Ref< ImageInfo > imageInfo = new ImageInfo();
 	imageInfo->setAuthor(L"Unknown");
 	imageInfo->setCopyright(L"Unknown");
 	imageInfo->setFormat(L"TGA");
-	imageInfo->setGamma(1.0f);
+	imageInfo->setGamma(c_defaultGamma);
 
-	if (gammaDenom != 0)
-		imageInfo->setGamma(clamp(float(gammaNumerator) / gammaDenom, 1.0f, 3.0f));
+	// Gamma is stored in the TGA 2.0 extension area, which is located through
+	// the offset in the file footer. Both are optional; TGA 1.0 files have neither.
+	if (stream->canSeek())
+	{
+		uint8_t footer[c_footerSize];
+		stream->seek(IStream::SeekEnd, -(int64_t)c_footerSize);
+		if (
+			stream->read(footer, c_footerSize) == c_footerSize &&
+			std::memcmp(&footer[c_footerSignatureOffset], c_footerSignature, sizeof(c_footerSignature) - 1) == 0)
+		{
+			const uint32_t extensionOffset = readU32(&footer[0]);
+			if (extensionOffset != 0)
+			{
+				uint8_t extension[c_extensionSize];
+				stream->seek(IStream::SeekSet, extensionOffset);
+				if (
+					stream->read(extension, c_extensionSize) == c_extensionSize &&
+					readU16(&extension[0]) == c_extensionSize)
+				{
+					// Gamma is stored as a numerator/denominator pair, ex 22/10 for gamma 2.2.
+					const uint16_t gammaNumerator = readU16(&extension[c_extensionGammaOffset]);
+					const uint16_t gammaDenom = readU16(&extension[c_extensionGammaOffset + 2]);
+					if (gammaNumerator != 0 && gammaDenom != 0)
+						imageInfo->setGamma(clamp(float(gammaNumerator) / gammaDenom, 0.0f, 10.0f));
+				}
+			}
+		}
+	}
 
 	image->setImageInfo(imageInfo);
 
@@ -174,9 +232,41 @@ bool ImageFormatTga::write(IStream* stream, const Image* image)
 	if (stream->write(&header, sizeof(header)) != sizeof(header))
 		return false;
 
-	stream->write(
-		clone->getData(),
-		clone->getWidth() * clone->getHeight() * clone->getPixelFormat().getByteSize());
+	const int64_t imageDataSize = clone->getWidth() * clone->getHeight() * clone->getPixelFormat().getByteSize();
+	if (stream->write(clone->getData(), imageDataSize) != imageDataSize)
+		return false;
+
+	// Write TGA 2.0 extension area, carrying the gamma value, followed by the file footer
+	// which locates the extension area.
+	const int64_t extensionOffset = stream->tell();
+
+	uint8_t extension[c_extensionSize] = { 0 };
+	writeU16(&extension[0], c_extensionSize);
+	std::memcpy(&extension[c_extensionSoftwareOffset], "Traktor", 7);
+
+	// Gamma is stored as a numerator/denominator pair, ex 22/10 for gamma 2.2; left
+	// zeroed, ie unspecified, if the image doesn't carry a gamma value.
+	const ImageInfo* imageInfo = image->getImageInfo();
+	if (imageInfo != nullptr && imageInfo->getGamma() > 0.0f)
+	{
+		writeU16(&extension[c_extensionGammaOffset], (uint16_t)(clamp(imageInfo->getGamma(), 0.0f, 10.0f) * 10.0f + 0.5f));
+		writeU16(&extension[c_extensionGammaOffset + 2], 10);
+	}
+
+	// Attributes type; 3 = useful alpha channel data, 0 = no alpha data included.
+	extension[c_extensionAttributesOffset] = (image->getPixelFormat().getAlphaBits() > 0) ? 3 : 0;
+
+	if (stream->write(extension, c_extensionSize) != c_extensionSize)
+		return false;
+
+	uint8_t footer[c_footerSize] = { 0 };
+	writeU32(&footer[0], (uint32_t)extensionOffset);
+	writeU32(&footer[4], 0);	// No developer directory.
+	std::memcpy(&footer[c_footerSignatureOffset], c_footerSignature, sizeof(c_footerSignature) - 1);
+	footer[24] = '.';			// Reserved character, must be a period.
+
+	if (stream->write(footer, c_footerSize) != c_footerSize)
+		return false;
 
 	return true;
 }
