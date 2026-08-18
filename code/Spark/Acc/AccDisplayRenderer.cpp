@@ -260,16 +260,53 @@ void AccDisplayRenderer::destroy()
 	safeDestroy(m_lineVertexPool);
 }
 
-void AccDisplayRenderer::beginSetup(render::RenderGraph* renderGraph)
+void AccDisplayRenderer::beginSetup(render::RenderGraph* renderGraph, bool hdr)
 {
 	m_renderGraph = renderGraph;
+	m_hdr = hdr;
 	m_glyphsTargetSetId = m_renderGraph->addExplicitTargetSet(L"Spark glyphs", m_glyphTargetSet);
 	m_spritesTargetSetId = m_renderGraph->addExplicitTargetSet(L"Spark sprites", m_spriteTargetSet);
 	m_renderPassOutput = new render::RenderPass(L"Spark");
 	m_renderPassOutput->addInput(m_glyphsTargetSetId);
 	m_renderPassOutput->addInput(m_spritesTargetSetId);
 
-	if (m_clearBackground)
+	if (m_hdr)
+	{
+		// An HDR output holds PQ encoded values, which cannot be meaningfully
+		// blended against. Composite the UI into an offscreen target in Spark's
+		// own space instead - so every blend mode behaves exactly as it does in
+		// SDR - and encode it in a single pass afterwards.
+		const render::RenderGraphTargetSetDesc rgtsd = {
+			.count = 1,
+			.createDepthStencil = true,
+			.targets = { { .colorFormat = render::TfR8G8B8A8 } }
+		};
+		m_uiTargetSetId = m_renderGraph->addTransientTargetSet(L"Spark UI", rgtsd);
+
+		const render::Clear cl = {
+			.mask = render::CfColor | render::CfDepth | render::CfStencil,
+			.colors = { Color4f(0.0f, 0.0f, 0.0f, 0.0f) },
+			.depth = 1.0f,
+			.stencil = 0
+		};
+		m_renderPassOutput->setOutput(m_uiTargetSetId, cl, render::TfNone, render::TfColor | render::TfDepth);
+
+		m_renderPassComposite = new render::RenderPass(L"Spark composite");
+		m_renderPassComposite->addInput(m_uiTargetSetId);
+		if (m_clearBackground)
+		{
+			// Nothing rendered behind the UI, so clear to black; the output holds
+			// PQ encoded values where zero is the darkest the display can go.
+			const render::Clear cl = {
+				.mask = render::CfColor,
+				.colors = { Color4f(0.0f, 0.0f, 0.0f, 0.0f) }
+			};
+			m_renderPassComposite->setOutput(render::RGTargetSet::Output, cl, render::TfNone, render::TfColor);
+		}
+		else
+			m_renderPassComposite->setOutput(render::RGTargetSet::Output, render::TfColor, render::TfColor);
+	}
+	else if (m_clearBackground)
 	{
 		const render::Clear cl = {
 			.mask = render::CfColor | render::CfDepth | render::CfStencil,
@@ -321,12 +358,20 @@ void AccDisplayRenderer::endSetup()
 	if (!m_renderPassSprite->getBuilds().empty())
 		m_renderGraph->addPass(m_renderPassSprite);
 	if (!m_renderPassOutput->getBuilds().empty())
+	{
 		m_renderGraph->addPass(m_renderPassOutput);
+		if (m_renderPassComposite)
+		{
+			m_quad->compositeHDR(m_renderPassComposite, m_uiTargetSetId);
+			m_renderGraph->addPass(m_renderPassComposite);
+		}
+	}
 
 	m_renderGraph = nullptr;
 	m_renderPassOutput = nullptr;
 	m_renderPassGlyph = nullptr;
 	m_renderPassSprite = nullptr;
+	m_renderPassComposite = nullptr;
 	m_renderPassTarget = nullptr;
 
 	m_firstFrame = false;

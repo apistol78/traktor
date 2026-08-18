@@ -1884,15 +1884,17 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, uint32_t multiSample,
 		{
 			for (uint32_t i = 0; i < surfaceFormatCount; ++i)
 			{
-				if (surfaceFormats[i].colorSpace == VK_COLOR_SPACE_HDR10_ST2084_EXT || surfaceFormats[i].colorSpace == VK_COLOR_SPACE_HDR10_HLG_EXT)
+				if (surfaceFormats[i].colorSpace == VK_COLOR_SPACE_HDR10_ST2084_EXT)
 				{
-					log::debug << L"Using HDR swap chain color space." << Endl;
+					log::debug << L"Using HDR10 PQ swap chain color space." << Endl;
 					colorFormat = surfaceFormats[i].format;
 					colorSpace = surfaceFormats[i].colorSpace;
 					hdr = true;
 					break;
 				}
 			}
+			if (!hdr)
+				log::debug << L"HDR allowed but no HDR10 PQ surface format available." << Endl;
 		}
 		if (colorFormat == VK_FORMAT_UNDEFINED)
 		{

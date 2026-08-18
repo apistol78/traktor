@@ -414,7 +414,8 @@ void SparkLayer::setup(const runtime::UpdateInfo& info, render::RenderGraph& ren
 	if (!m_movieRenderer)
 		return;
 
-	m_displayRenderer->beginSetup(&renderGraph);
+	const bool hdr = m_environment->getRender()->getRenderView()->isHDR();
+	m_displayRenderer->beginSetup(&renderGraph, hdr);
 	m_moviePlayer->render(m_movieRenderer);
 	m_displayRenderer->endSetup();
 }

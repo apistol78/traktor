@@ -11,6 +11,7 @@
 #include "Core/Object.h"
 #include "Core/Math/Aabb2.h"
 #include "Core/Math/Matrix33.h"
+#include "Render/Frame/RenderGraphTypes.h"
 #include "Resource/Proxy.h"
 
 namespace traktor::resource
@@ -81,6 +82,12 @@ public:
 		render::ITexture* texture
 	) const;
 
+	/*! Composite an offscreen UI target onto an HDR (ST2084) output. */
+	void compositeHDR(
+		render::RenderPass* renderPass,
+		render::RGTargetSet uiTargetSetId
+	) const;
+
 private:
 	resource::Proxy< render::Shader > m_shaderSolid;
 	resource::Proxy< render::Shader > m_shaderTextured;
@@ -88,6 +95,7 @@ private:
 	resource::Proxy< render::Shader > m_shaderDecrementMask;
 	resource::Proxy< render::Shader > m_shaderCached;
 	resource::Proxy< render::Shader > m_shaderBlit;
+	resource::Proxy< render::Shader > m_shaderCompositeHDR;
 	Ref< const render::IVertexLayout > m_vertexLayout;
 	Ref< render::Buffer > m_vertexBuffer;
 };

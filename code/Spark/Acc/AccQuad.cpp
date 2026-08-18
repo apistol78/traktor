@@ -14,6 +14,8 @@
 #include "Render/VertexElement.h"
 #include "Render/Context/RenderContext.h"
 #include "Render/Frame/RenderPass.h"
+#include "Render/Frame/RenderGraph.h"
+#include "Render/IRenderTargetSet.h"
 #include "Resource/IResourceManager.h"
 #include "Spark/ColorTransform.h"
 #include "Spark/Acc/AccQuad.h"
@@ -29,6 +31,7 @@ const resource::Id< render::Shader > c_idShaderIncrementMask(Guid(L"{16868DF6-A6
 const resource::Id< render::Shader > c_idShaderDecrementMask(Guid(L"{D6821007-47BB-D748-9E29-20829ED09C70}"));
 const resource::Id< render::Shader > c_idShaderCached(Guid(L"{7B3F1C24-9A5E-4D18-B6C0-2E8A1F73D905}"));
 const resource::Id< render::Shader > c_idShaderBlit(Guid(L"{34029EA0-112D-D74B-94CA-9C32FF319BB0}"));
+const resource::Id< render::Shader > c_idShaderCompositeHDR(Guid(L"{AD890332-5565-6D48-BF7F-75CF169B3B7F}"));
 
 #pragma pack(1)
 struct Vertex
@@ -64,6 +67,8 @@ bool AccQuad::create(
 	if (!resourceManager->bind(c_idShaderCached, m_shaderCached))
 		return false;
 	if (!resourceManager->bind(c_idShaderBlit, m_shaderBlit))
+		return false;
+	if (!resourceManager->bind(c_idShaderCompositeHDR, m_shaderCompositeHDR))
 		return false;
 
 	AlignedVector< render::VertexElement > vertexElements;
@@ -233,6 +238,33 @@ void AccQuad::renderCached(
 		renderBlock->programParams->setStencilReference(maskReference);
 		renderBlock->programParams->setTextureParameter(s_handleTexture, texture);
 		renderBlock->programParams->setVectorParameter(s_handleTextureOffset, textureOffset);
+		renderBlock->programParams->endParameters(renderContext);
+
+		renderContext->draw(renderBlock);
+
+	});
+}
+
+void AccQuad::compositeHDR(
+	render::RenderPass* renderPass,
+	render::RGTargetSet uiTargetSetId
+) const
+{
+	renderPass->addBuild([=, this](const render::RenderGraph& renderGraph, render::RenderContext* renderContext) {
+
+		render::ITexture* texture = renderGraph.getTargetSet(uiTargetSetId)->getColorTexture(0);
+
+		auto renderBlock = renderContext->allocNamed< render::NonIndexedRenderBlock >(L"Flash AccQuad (composite HDR)");
+		renderBlock->program = m_shaderCompositeHDR->getProgram().program;
+		renderBlock->vertexBuffer = m_vertexBuffer->getBufferView();
+		renderBlock->vertexLayout = m_vertexLayout;
+		renderBlock->primitive = render::PrimitiveType::TriangleStrip;
+		renderBlock->offset = 0;
+		renderBlock->count = 2;
+
+		renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
+		renderBlock->programParams->beginParameters(renderContext);
+		renderBlock->programParams->setTextureParameter(s_handleTexture, texture);
 		renderBlock->programParams->endParameters(renderContext);
 
 		renderContext->draw(renderBlock);

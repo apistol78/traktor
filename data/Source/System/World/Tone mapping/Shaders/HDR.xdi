@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.render.ShaderModule" version="2">
+	<text><![CDATA[
+// HDR display output; luminance targets and transfer functions.
+//
+// The tone mapper needs the headroom and the gamma correction pass needs the
+// paper white. They have to agree, so both come from here.
+
+// Diffuse white; the luminance the tone mapper resolves 1.0 to. 200 nits is
+// the usual HDR reference white.
+const float c_hdrPaperWhiteNits = 200.0f;
+
+// Display peak. Anything above this the display clips on its own.
+const float c_hdrPeakNits = 1000.0f;
+
+// Display peak in multiples of paper white. 1.0 means no headroom at all,
+// which reproduces the SDR result.
+const float c_hdrHeadroom = c_hdrPeakNits / c_hdrPaperWhiteNits;
+
+// Rec.709 (sRGB primaries) into Rec.2020, as required by the ST2084 swap chain
+// color space. Without this the display reads 709 code values as the much
+// wider 2020 primaries and everything comes out oversaturated.
+vec3 Rec709ToRec2020(vec3 c)
+{
+	return vec3(
+		dot(c, vec3(0.6274039f, 0.3292830f, 0.0433131f)),
+		dot(c, vec3(0.0690970f, 0.9195400f, 0.0113633f)),
+		dot(c, vec3(0.0163914f, 0.0880132f, 0.8955953f)));
+}
+
+// ST2084 inverse EOTF. Input is absolute luminance normalized to the PQ 10000
+// nit range.
+vec3 PQEncode(vec3 Y)
+{
+	const float m1 = 0.1593017578125f;
+	const float m2 = 78.84375f;
+
+	const float c1 = 0.8359375f;
+	const float c2 = 18.8515625f;
+	const float c3 = 18.6975f;
+
+	const vec3 Yc = clamp(Y, 0.0f.xxx, 1.0f.xxx);
+	const vec3 Ym = pow(Yc, m1.xxx);
+
+	return pow((c1 + c2 * Ym) / (1.0f + c3 * Ym), m2.xxx);
+}
+]]></text>
+	<samplers/>
+	<structDeclarations/>
+</object>

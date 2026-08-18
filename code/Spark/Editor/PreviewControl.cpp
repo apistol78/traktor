@@ -271,7 +271,7 @@ void PreviewControl::eventPaint(ui::PaintEvent* event)
 			m_renderView->reset(sz.cx, sz.cy);
 
 	// Add passes to render graph.
-	m_displayRenderer->beginSetup(m_renderGraph);
+	m_displayRenderer->beginSetup(m_renderGraph, m_renderView->isHDR());
 	m_moviePlayer->render(m_movieRenderer);
 	m_displayRenderer->endSetup();
 

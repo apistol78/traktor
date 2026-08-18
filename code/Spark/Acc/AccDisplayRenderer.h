@@ -75,7 +75,14 @@ public:
 
 	void destroy();
 
-	void beginSetup(render::RenderGraph* renderGraph);
+	/*! Begin render graph setup.
+	 *
+	 * \param renderGraph Render graph to add passes to.
+	 * \param hdr Output is an HDR (ST2084) target, in which case the UI is
+	 *            composited offscreen and encoded in a final pass; blending
+	 *            directly against a PQ encoded output would be meaningless.
+	 */
+	void beginSetup(render::RenderGraph* renderGraph, bool hdr = false);
 
 	void endSetup();
 
@@ -155,6 +162,7 @@ private:
 	Ref< render::RenderPass > m_renderPassOutput;
 	Ref< render::RenderPass > m_renderPassGlyph;
 	Ref< render::RenderPass > m_renderPassSprite;
+	Ref< render::RenderPass > m_renderPassComposite;
 	Ref< AccShapeResources > m_shapeResources;
 	Ref< AccShapeVertexPool > m_fillVertexPool;
 	Ref< AccShapeVertexPool > m_lineVertexPool;
@@ -169,6 +177,7 @@ private:
 	SmallMap< int32_t, GlyphCache > m_glyphCache;
 	render::RGTargetSet m_glyphsTargetSetId;
 	render::RGTargetSet m_spritesTargetSetId;
+	render::RGTargetSet m_uiTargetSetId = render::RGTargetSet::Invalid;
 	int32_t m_nextIndex;
 	int32_t m_frameCount = 0;	//!< Incremented per rendered frame; stamps glyph cells in use.
 	Vector4 m_frameBounds;		//!< [left, top, right, bottom] in twips.
@@ -177,6 +186,7 @@ private:
 	Aabb2 m_frameBoundsVisible; //!< Part of frame visible on screen, in twips and in "frame" space.
 	Aabb2 m_dirtyRegion;
 	bool m_clearBackground;
+	bool m_hdr = false;
 	bool m_maskWrite;
 	bool m_maskIncrement;
 	uint8_t m_maskReference;

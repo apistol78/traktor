@@ -96,57 +96,6 @@
 			<swizzle>xyz</swizzle>
 		</item>
 		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
-			<id>{9D43F549-DFE4-8D4A-838B-CB7BADAE3C33}</id>
-			<comment/>
-			<position>
-				<first>849</first>
-				<second>368</second>
-			</position>
-			<name>HLG</name>
-			<technique/>
-			<domain>Undefined</domain>
-			<localSize>
-				<X>1</X>
-				<Y>1</Y>
-				<Z>1</Z>
-			</localSize>
-			<useRayTracing>false</useRayTracing>
-			<include/>
-			<inputPins>
-				<item>
-					<id>{C84B8F16-7F17-C74C-B524-DADC92E1F7F9}</id>
-					<name>Input</name>
-				</item>
-			</inputPins>
-			<outputPins>
-				<item>
-					<id>{9E72BE61-98B9-FE40-BF04-1D8B819647FB}</id>
-					<name>Output</name>
-					<type>Vector</type>
-				</item>
-			</outputPins>
-			<script><![CDATA[
-const float wb = 0.5f;
-
-vec3 E = clamp($Input.xyz * wb, 0.0f.xxx, 12.0f.xxx);
-
-const float e = (E.x + E.y + E.z) / 3.0f;
-if (e < 1.0f / 12.0f)
-{
-	E = sqrt(3.0f * E);
-}
-else
-{
-	const float a = 0.17883277f;
-	const float b = 0.28466892f;
-	const float c = 0.55991073f;
-	E = a * log(12.0f * E - b) + c;
-}
-
-$Output = vec4(E.xyz, 0.0f);
-]]></script>
-		</item>
-		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
 			<id>{0C8ADFE0-1EB9-EC4B-B0FD-1396469814EE}</id>
 			<comment/>
 			<position>
@@ -162,7 +111,9 @@ $Output = vec4(E.xyz, 0.0f);
 				<Z>1</Z>
 			</localSize>
 			<useRayTracing>false</useRayTracing>
-			<include/>
+			<include>
+				<item>{3EF0BFCA-5F1E-CF48-BDD8-2FDE306A9696}</item>
+			</include>
 			<inputPins>
 				<item>
 					<id>{C84B8F16-7F17-C74C-B524-DADC92E1F7F9}</id>
@@ -177,21 +128,13 @@ $Output = vec4(E.xyz, 0.0f);
 				</item>
 			</outputPins>
 			<script><![CDATA[
-const float m1 = 0.1593017578125;
-const float m2 = 78.84375f;
+// The tone mapper hands us display linear Rec.709, where 1.0 is paper white and
+// values above that are highlights sitting in the display headroom. Convert to
+// the Rec.2020 primaries the ST2084 swap chain expects, scale to absolute
+// luminance, and encode.
+const vec3 c2020 = Rec709ToRec2020($Input.xyz);
 
-const float c1 = 0.8359375f;
-const float c2 = 18.8515625f;
-const float c3 = 18.6975f;
-
-const vec3 Y = $Input.xyz / 30.0f;
-
-const vec3 dividend = c1 + c2 * pow(Y, m1.xxx);
-const vec3 denom = 1.0f + c3 * pow(Y, m1.xxx);
-
-const vec3 E = pow(dividend / denom, m2.xxx);
-
-$Output = vec4(E.xyz, 0.0f);
+$Output = vec4(PQEncode(c2020 * (c_hdrPaperWhiteNits / 10000.0f)), 0.0f);
 ]]></script>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
@@ -237,17 +180,7 @@ $Output = vec4(E.xyz, 0.0f);
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item"/>
-				<id>{AF6C971B-D67A-42EE-A12B-97D36927C89F}</id>
-			</source>
-			<destination>
 				<node ref="/object/nodes/item[5]"/>
-				<id>{C84B8F16-7F17-C74C-B524-DADC92E1F7F9}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[6]"/>
 				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
 			</source>
 			<destination>
@@ -257,7 +190,7 @@ $Output = vec4(E.xyz, 0.0f);
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[5]"/>
+				<node ref="/object/nodes/item[4]"/>
 				<id>{9E72BE61-98B9-FE40-BF04-1D8B819647FB}</id>
 			</source>
 			<destination>

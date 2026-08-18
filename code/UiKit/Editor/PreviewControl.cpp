@@ -373,7 +373,7 @@ void PreviewControl::eventPaint(ui::PaintEvent* event)
 	// Add passes to render graph.
 	{
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lockProcess);
-		m_displayRenderer->beginSetup(m_renderGraph);
+		m_displayRenderer->beginSetup(m_renderGraph, m_renderView->isHDR());
 		m_moviePlayer->render(m_movieRenderer);
 		m_displayRenderer->endSetup();
 	}

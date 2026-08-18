@@ -19,12 +19,20 @@ const mat3 c_agxOutset = mat3(
 const float c_agxMinEv = -12.47393f;
 const float c_agxMaxEv = 4.026069f;
 
-// Scene referred, exposed color into AgX log space, sigmoid compressed.
-vec3 AgXEncode(vec3 color)
+// Scene referred, exposed color into normalized AgX log space, where 0 is
+// c_agxMinEv and 1 is c_agxMaxEv. Deliberately not clamped at the top; HDR
+// output needs to know how far above the white point the scene went.
+vec3 AgXLog(vec3 color)
 {
 	vec3 v = c_agxInset * max(color, vec3(0.0f));
 	v = log2(max(v, vec3(1e-10f)));
-	v = clamp((v - c_agxMinEv) / (c_agxMaxEv - c_agxMinEv), vec3(0.0f), vec3(1.0f));
+	return (v - c_agxMinEv) / (c_agxMaxEv - c_agxMinEv);
+}
+
+// Normalized AgX log space, sigmoid compressed into display range.
+vec3 AgXSigmoid(vec3 logT)
+{
+	const vec3 v = clamp(logT, vec3(0.0f), vec3(1.0f));
 
 	// Sigmoid, 6th order polynomial approximation.
 	const vec3 v2 = v * v;
@@ -36,6 +44,12 @@ vec3 AgXEncode(vec3 color)
 		+ 0.4298f * v2
 		+ 0.1191f * v
 		- 0.00232f;
+}
+
+// Scene referred, exposed color into AgX log space, sigmoid compressed.
+vec3 AgXEncode(vec3 color)
+{
+	return AgXSigmoid(AgXLog(color));
 }
 
 // ASC CDL style grade of an AgX encoded color; this is what defines a look.
@@ -51,6 +65,31 @@ vec3 AgXDecode(vec3 color)
 {
 	const vec3 v = pow(max(c_agxOutset * color, vec3(0.0f)), vec3(2.2f));
 	return clamp(v, vec3(0.0f), vec3(1.0f));
+}
+
+// As AgXDecode, but the scene detail that fell above the AgX white point is
+// spread into HDR headroom instead of clipped against display white.
+//
+// "logT" is the unclamped AgXLog value the encode started from and "headroom"
+// is display peak in multiples of paper white. Channels at or below the white
+// point come out identical to AgXDecode, so the SDR rendering of shadows and
+// midtones is preserved exactly and only the highlights change.
+vec3 AgXDecodeHDR(vec3 color, vec3 logT, float headroom)
+{
+	const vec3 v = pow(max(c_agxOutset * color, vec3(0.0f)), vec3(2.2f));
+	if (headroom <= 1.0f)
+		return clamp(v, vec3(0.0f), vec3(1.0f));
+
+	// Stops of scene detail above the white point, which AgXEncode clipped.
+	const vec3 over = max(logT - 1.0f, vec3(0.0f)) * (c_agxMaxEv - c_agxMinEv);
+
+	// Spread them across the headroom, approaching peak asymptotically. Zero at
+	// the white point so the handover from the sigmoid stays continuous, and it
+	// cannot overshoot peak no matter how bright the scene got.
+	const float stops = log2(headroom);
+	const vec3 lift = (headroom - 1.0f) * (1.0f - exp2(-over / stops));
+
+	return clamp(v + lift, vec3(0.0f), vec3(headroom));
 }
 ]]></text>
 	<samplers/>
