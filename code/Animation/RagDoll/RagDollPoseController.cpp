@@ -40,12 +40,6 @@ bool RagDollPoseController::create(
 	m_joints = joints;
 	m_jointBindings = jointBindings;
 	m_worldTransform = worldTransform;
-
-	// Out of the physics world until the rag doll is actually used. Done here rather than by
-	// creating the bodies disabled, because the joints between them are built first and a
-	// constraint wants both of its bodies in the world; taking the limbs out afterwards removes
-	// their constraints with them, and putting them back restores both.
-	enableLimbs(false);
 	return true;
 }
 
@@ -102,8 +96,6 @@ void RagDollPoseController::reset(
 			limb->setActive(true);
 		}
 	}
-
-	enableLimbs(true);
 }
 
 bool RagDollPoseController::evaluate(
@@ -115,8 +107,6 @@ bool RagDollPoseController::evaluate(
 	AlignedVector< Transform >& outPoseTransforms
 )
 {
-	enableLimbs(true);
-
 	const Transform worldTransformInv = worldTransform.inverse();
 	const uint32_t jointCount = skeleton->getJointCount();
 
@@ -256,15 +246,6 @@ void RagDollPoseController::addImpulseAt(const Vector4& at, const Vector4& impul
 	{
 		nearest->addImpulse(at.xyz1(), impulse.xyz0(), false);
 		nearest->setActive(true);
-	}
-}
-
-void RagDollPoseController::enableLimbs(bool enable)
-{
-	for (auto limb : m_limbs)
-	{
-		if (limb)
-			limb->setEnable(enable);
 	}
 }
 

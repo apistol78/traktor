@@ -120,8 +120,6 @@ private:
 	RefArray< physics::Joint > m_joints;
 	AlignedVector< AlignedVector< Binding > > m_jointBindings;
 	Transform m_worldTransform = Transform::identity();
-
-	void enableLimbs(bool enable);
 };
 
 }

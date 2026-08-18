@@ -168,7 +168,7 @@ bool PlayGrain::getBlock(IAudioBufferCursor* cursor, const IAudioMixer* mixer, A
 	const uint32_t nfilters = (uint32_t)m_filters.size();
 	for (uint32_t i = 0; i < nfilters; ++i)
 	{
-		if (m_filters[i])
+		if (m_filters[i] && playCursor->m_filterInstances[i])
 		{
 			m_filters[i]->apply(
 				playCursor->m_filterInstances[i],
