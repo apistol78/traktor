@@ -425,18 +425,18 @@ PACKAGES =
 		type = "GET",
 		name = "renderdoc",
 		os = "linux",
-		url = "https://renderdoc.org/stable/1.43/renderdoc_1.43.tar.gz",
+		url = "https://renderdoc.org/stable/1.45/renderdoc_1.45.tar.gz",
 		patch = function()
-			run:execute(TAR .. " -xf renderdoc_1.43.tar.gz")
+			run:execute(TAR .. " -xf renderdoc_1.45.tar.gz")
 		end
 	},
 	{
 		type = "GET",
 		name = "renderdoc",
 		os = "windows",
-		url = "https://renderdoc.org/stable/1.43/RenderDoc_1.43_64.zip",
+		url = "https://renderdoc.org/stable/1.45/RenderDoc_1.45_64.zip",
 		patch = function()
-			run:execute(UNZIP .. " -qq RenderDoc_1.43_64.zip")
+			run:execute(UNZIP .. " -qq RenderDoc_1.45_64.zip")
 		end
 	},
 

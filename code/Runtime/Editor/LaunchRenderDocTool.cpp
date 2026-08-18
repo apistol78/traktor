@@ -41,7 +41,7 @@ bool LaunchRenderDocTool::launch(ui::Widget* parent, editor::IEditor* runtime, c
 		if (!OS::getInstance().getRegistry(L"HKEY_LOCAL_MACHINE", L"SOFTWARE\\Classes\\RenderDoc.RDCCapture.1\\DefaultIcon", L"", iconPath))
 			return false;
 
-		renderDocPath = Path(iconPath).getPathOnlyOS() + L"/renderdocui";
+		renderDocPath = Path(iconPath).getPathOnlyOS() + L"/qrenderdoc";
 #else
 		return false;
 #endif
