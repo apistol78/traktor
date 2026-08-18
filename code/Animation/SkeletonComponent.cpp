@@ -56,6 +56,8 @@ void SkeletonComponent::destroy()
 
 void SkeletonComponent::setOwner(world::Entity* owner)
 {
+	if (m_poseController)
+		m_poseController->setOwner(owner);
 }
 
 void SkeletonComponent::setTransform(const Transform& transform)

@@ -21,6 +21,13 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
+namespace traktor::world
+{
+
+class Entity;
+
+}
+
 namespace traktor::animation
 {
 
@@ -36,6 +43,8 @@ class T_DLLCLASS IPoseController : public Object
 
 public:
 	virtual void destroy() = 0;
+
+	virtual void setOwner(world::Entity* owner) = 0;
 
 	virtual void setTransform(const Transform& transform) = 0;
 

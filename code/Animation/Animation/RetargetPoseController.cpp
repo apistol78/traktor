@@ -6,23 +6,23 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Animation/Animation/RetargetPoseController.h"
+
 #include "Animation/Joint.h"
 #include "Animation/Skeleton.h"
 #include "Animation/SkeletonUtils.h"
-#include "Animation/Animation/RetargetPoseController.h"
 #include "Core/Misc/SafeDestroy.h"
 
 namespace traktor::animation
 {
-	namespace
-	{
+namespace
+{
 
 // Calculate delta transforms from object space pose transforms.
 void calculateDeltaTransforms(
 	const Skeleton* skeleton,
 	const AlignedVector< Transform >& poseTransforms,
-	AlignedVector< Transform >& outDeltaTransforms
-)
+	AlignedVector< Transform >& outDeltaTransforms)
 {
 	outDeltaTransforms.resize(skeleton->getJointCount(), Transform::identity());
 	for (uint32_t i = 0; i < skeleton->getJointCount(); ++i)
@@ -38,8 +38,7 @@ void calculateDeltaTransforms(
 void calculatePoseTransforms(
 	const Skeleton* skeleton,
 	const AlignedVector< Transform >& localPoseTransforms,
-	AlignedVector< Transform >& outPoseTransforms
-)
+	AlignedVector< Transform >& outPoseTransforms)
 {
 	outPoseTransforms.resize(skeleton->getJointCount());
 	for (uint32_t i = 0; i < skeleton->getJointCount(); ++i)
@@ -50,21 +49,19 @@ void calculatePoseTransforms(
 	}
 }
 
-
-	}
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.RetargetPoseController", RetargetPoseController, IPoseController)
 
 RetargetPoseController::RetargetPoseController(const resource::Proxy< Skeleton >& animationSkeleton, IPoseController* poseController)
-:	m_animationSkeleton(animationSkeleton)
-,	m_poseController(poseController)
+	: m_animationSkeleton(animationSkeleton)
+	, m_poseController(poseController)
 {
 	if (m_animationSkeleton)
 	{
 		calculateJointTransforms(
 			m_animationSkeleton,
-			m_jointTransforms
-		);
+			m_jointTransforms);
 		m_poseTransforms.reserve(m_jointTransforms.size());
 	}
 }
@@ -72,6 +69,10 @@ RetargetPoseController::RetargetPoseController(const resource::Proxy< Skeleton >
 void RetargetPoseController::destroy()
 {
 	safeDestroy(m_poseController);
+}
+
+void RetargetPoseController::setOwner(world::Entity* owner)
+{
 }
 
 void RetargetPoseController::setTransform(const Transform& transform)
@@ -86,8 +87,7 @@ bool RetargetPoseController::evaluate(
 	const Transform& worldTransform,
 	const Skeleton* skeleton,
 	const AlignedVector< Transform >& jointTransforms,
-	AlignedVector< Transform >& outPoseTransforms
-)
+	AlignedVector< Transform >& outPoseTransforms)
 {
 	if (!m_animationSkeleton || !m_poseController)
 		return false;
@@ -120,8 +120,7 @@ bool RetargetPoseController::evaluate(
 			const Scalar l2 = m_deltaPoseTransforms[i].translation().length();
 			m_deltaPoseTransforms[i] = Transform(
 				m_deltaPoseTransforms[i].translation() * (l1 / l2),
-				m_deltaPoseTransforms[i].rotation()
-			);
+				m_deltaPoseTransforms[i].rotation());
 		}
 	}
 
@@ -137,7 +136,7 @@ IPoseController* RetargetPoseController::getActivePoseController()
 
 void RetargetPoseController::getPoseControllersOf(const TypeInfo& type, RefArray< IPoseController >& outControllers)
 {
-	if (is_type_of< RetargetPoseController >(type))
+	if (is_type_of(type, type_of< RetargetPoseController >()))
 		outControllers.push_back(this);
 	else if (m_poseController)
 		m_poseController->getPoseControllersOf(type, outControllers);

@@ -68,6 +68,8 @@ public:
 
 	virtual void destroy() override final;
 
+	virtual void setOwner(world::Entity* owner) override final;
+
 	virtual void setTransform(const Transform& transform) override final;
 
 	virtual void reset(
@@ -118,6 +120,8 @@ private:
 	RefArray< physics::Joint > m_joints;
 	AlignedVector< AlignedVector< Binding > > m_jointBindings;
 	Transform m_worldTransform = Transform::identity();
+
+	void enableLimbs(bool enable);
 };
 
 }

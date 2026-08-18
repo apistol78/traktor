@@ -58,6 +58,8 @@ public:
 
 	void getPoseControllersOf(const TypeInfo& type, RefArray< IPoseController >& outControllers) const;
 
+	const RefArray< RtState >& getStates() const { return m_states; }
+
 private:
 	friend class RtStateGraphData;
 	friend class RtStateTransitionData;

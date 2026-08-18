@@ -42,6 +42,10 @@ void SimpleAnimationController::destroy()
 {
 }
 
+void SimpleAnimationController::setOwner(world::Entity* owner)
+{
+}
+
 void SimpleAnimationController::setTransform(const Transform& transform)
 {
 }
@@ -83,7 +87,7 @@ IPoseController* SimpleAnimationController::getActivePoseController()
 
 void SimpleAnimationController::getPoseControllersOf(const TypeInfo& type, RefArray< IPoseController >& outControllers)
 {
-	if (is_type_of< SimpleAnimationController >(type))
+	if (is_type_of(type, type_of< SimpleAnimationController >()))
 		outControllers.push_back(this);
 }
 
