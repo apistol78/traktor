@@ -35,6 +35,19 @@
 namespace traktor::render
 {
 
+namespace
+{
+
+/*! Amount of staging memory queued uploads may hold back before being flushed.
+ *
+ * Uploads are normally performed once per frame; a loading thread can create
+ * resources far quicker than that, so without a cap every staging buffer created
+ * between two frames would be alive at once.
+ */
+constexpr uint32_t c_maxPendingUploadSize = 32 * 1024 * 1024;
+
+}
+
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.Context", Context, Object)
 
 Context::Context(
@@ -436,11 +449,19 @@ uint64_t Context::getCompletedEpoch()
 		return m_nextSubmissionEpoch - 1;
 }
 
-void Context::addDeferredUpload(const upload_fn_t& fn)
+void Context::addDeferredUpload(const upload_fn_t& fn, uint32_t uploadSize)
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_updateLock);
-	m_uploadFns.push_back(fn);
-	if (m_views <= 0)
+	bool flush;
+	{
+		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_updateLock);
+		m_uploadFns.push_back(fn);
+		m_pendingUploadSize += uploadSize;
+		flush = (m_pendingUploadSize >= c_maxPendingUploadSize);
+	}
+
+	// Flush outside of the update lock; performUploads takes the queue locks first
+	// and must not be entered with the update lock already held.
+	if (m_views <= 0 || flush)
 		performUploads();
 }
 
@@ -454,19 +475,38 @@ void Context::performUploads()
 
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_graphicsQueue->m_lock);
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_computeQueue->m_lock);
-		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_updateLock);
+
+		// Take over the queued uploads before recording; the flush is waited upon and
+		// threads creating resources must not be held back for its duration. Uploads
+		// added in the meantime are picked up by the next flush, and since the queue
+		// locks are held no other flush can interleave, so order is retained.
+		AlignedVector< upload_fn_t > uploadFns;
+		uint32_t uploadSize;
+		{
+			T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_updateLock);
+			uploadFns.swap(m_uploadFns);
+			uploadSize = m_pendingUploadSize;
+			m_pendingUploadSize = 0;
+		}
+		if (uploadFns.empty())
+			return;
 
 		auto commandBuffer = m_graphicsQueue->acquireCommandBuffer(L"Context::performUploads");
 		if (!commandBuffer)
+		{
+			// Hand the uploads back so a later flush performs them; they go in front
+			// of anything added while we held them.
+			T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_updateLock);
+			m_uploadFns.insert(m_uploadFns.begin(), uploadFns.begin(), uploadFns.end());
+			m_pendingUploadSize += uploadSize;
 			return;
+		}
 
-		for (const upload_fn_t& fn : m_uploadFns)
+		for (const upload_fn_t& fn : uploadFns)
 			fn(this, commandBuffer);
 
 		commandBuffer->submitAndWait();
 		commandBuffer = nullptr;
-
-		m_uploadFns.resize(0);
 	}
 }
 

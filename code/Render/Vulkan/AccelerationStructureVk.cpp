@@ -181,6 +181,12 @@ Ref< AccelerationStructureVk > AccelerationStructureVk::createTopLevel(Context* 
 
 Ref< AccelerationStructureVk > AccelerationStructureVk::createBottomLevel(Context* context, const Buffer* vertexBuffer, const IVertexLayout* vertexLayout, const Buffer* indexBuffer, IndexType indexType, const AlignedVector< RaytracingPrimitives >& primitives, bool dynamic, uint32_t inFlightCount)
 {
+	// The hierarchy is built from the contents of the vertex and index buffers, and
+	// this is submitted ahead of, and independently of, any frame work; buffers
+	// created for this structure may still have their uploads queued so those have
+	// to be performed first. \sa Context::performUploads
+	context->performUploads();
+
 	auto commandBuffer = context->getGraphicsQueue()->acquireCommandBuffer(L"AccelerationStructureVk::createBottomLevel");
 
 	Ref< AccelerationStructureVk > as = new AccelerationStructureVk(context, dynamic);

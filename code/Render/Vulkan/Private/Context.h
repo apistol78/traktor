@@ -134,7 +134,17 @@ public:
 
 	//@}
 
-	void addDeferredUpload(const upload_fn_t& fn);
+	/*! Add a deferred upload.
+	 *
+	 * Uploads are recorded into a single command buffer, and performed, by the
+	 * thread which ends a frame; \sa performUploads. Resources creating an upload
+	 * must keep their staging memory alive until it has been performed, thus the
+	 * queue is flushed early when too much is pending.
+	 *
+	 * \param fn Records the upload into the flush's command buffer.
+	 * \param uploadSize Amount of staging memory held back by this upload, in bytes.
+	 */
+	void addDeferredUpload(const upload_fn_t& fn, uint32_t uploadSize = 0);
 
 	void performUploads();
 
@@ -236,6 +246,7 @@ private:
 	AlignedVector< DeferredCleanup > m_cleanupFns;
 	AlignedVector< ICleanupListener* > m_cleanupListeners;
 	AlignedVector< upload_fn_t > m_uploadFns;
+	uint32_t m_pendingUploadSize = 0;	//!< Staging memory held back by queued uploads.
 	VkDescriptorSetLayout m_bindlessTexturesDescriptorLayout = 0;
 	VkDescriptorSet m_bindlessTexturesDescriptorSet = 0;
 	VkDescriptorSetLayout m_bindlessImagesDescriptorLayout = 0;

@@ -158,7 +158,8 @@ bool TextureVk::create(
 
 			if (desc.immutable)
 				safeDestroy(m_stagingBuffer);
-		});
+		},
+		desc.immutable ? imageSize : 0);
 
 	// Track the layout the queued upload will have established; the upload is guaranteed
 	// to execute before any frame work which consumes this texture, so the image must not
