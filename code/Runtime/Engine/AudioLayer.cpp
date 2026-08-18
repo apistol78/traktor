@@ -193,7 +193,8 @@ void AudioLayer::update(const UpdateInfo& info)
 
 				m_handle->setParameter(it.first, tween.lastValue);
 
-				tween.time += info.getFrameDeltaTime();
+				// Fixed step update; \sa Stage::update.
+				tween.time += info.getSimulationDeltaTime();
 			}
 		}
 	}
