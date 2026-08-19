@@ -75,22 +75,12 @@ void BufferStaticVk::unlock()
 {
 	m_stageBuffer->unlock();
 
-	// Queue the copy instead of submitting it here; a synchronous round trip costs
-	// whatever work is already queued on the graphics queue, which while loading is
-	// an entire frame's worth of GPU time for every single buffer.
-	//
-	// Ownership of the staging buffer is handed over to the upload so this buffer
-	// can be locked again before the upload has been performed; queued uploads are
-	// performed in the order they were added.
 	Ref< Buffer > self = this;
 	Ref< ApiBuffer > stageBuffer = m_stageBuffer;
 	m_stageBuffer = nullptr;
 
 	m_context->addDeferredUpload(
 		[self, stageBuffer, this](Context* cx, CommandBuffer* commandBuffer) mutable {
-
-			// Drop out if the buffer has gone away; only the copy is skipped as the
-			// staging buffer still has to be released.
 			if (m_buffer)
 			{
 				const VkBufferCopy bc =
@@ -105,10 +95,6 @@ void BufferStaticVk::unlock()
 					&bc
 				);
 			}
-
-			// The upload command buffer is submitted, and waited upon, before the
-			// queue locks are released, so the staging buffer's deferred cleanup
-			// cannot outrun the copy recorded above. \sa Context::performUploads
 			safeDestroy(stageBuffer);
 		},
 		m_size);

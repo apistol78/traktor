@@ -181,10 +181,8 @@ Ref< AccelerationStructureVk > AccelerationStructureVk::createTopLevel(Context* 
 
 Ref< AccelerationStructureVk > AccelerationStructureVk::createBottomLevel(Context* context, const Buffer* vertexBuffer, const IVertexLayout* vertexLayout, const Buffer* indexBuffer, IndexType indexType, const AlignedVector< RaytracingPrimitives >& primitives, bool dynamic, uint32_t inFlightCount)
 {
-	// The hierarchy is built from the contents of the vertex and index buffers, and
-	// this is submitted ahead of, and independently of, any frame work; buffers
-	// created for this structure may still have their uploads queued so those have
-	// to be performed first. \sa Context::performUploads
+	// The BLAS are commonly build from vertex/index buffers when meshes are loaded. And since
+	// those buffers are most likely queueud for upload we need to flush the upload queue.
 	context->performUploads();
 
 	auto commandBuffer = context->getGraphicsQueue()->acquireCommandBuffer(L"AccelerationStructureVk::createBottomLevel");
@@ -192,13 +190,11 @@ Ref< AccelerationStructureVk > AccelerationStructureVk::createBottomLevel(Contex
 	Ref< AccelerationStructureVk > as = new AccelerationStructureVk(context, dynamic);
 	as->m_scratchAlignment = getScratchAlignment(context);
 
-	// A dynamic structure is rebuilt every frame so it is ring buffered to the in-flight
-	// count; a static structure is built once and never updated, so a single slot suffices.
 	const uint32_t count = dynamic ? inFlightCount : 1;
 	as->m_hierarchyBuffers.resize(count);
 	as->m_scratchBuffers.resize(count);
 	as->m_as.resize(count, 0);
-	as->m_index = count - 1;	// First writeGeometry advances to slot 0.
+	as->m_index = count - 1;
 
 	as->writeGeometry(commandBuffer, vertexBuffer->getBufferView(), vertexLayout, indexBuffer->getBufferView(), indexType, primitives, true);
 

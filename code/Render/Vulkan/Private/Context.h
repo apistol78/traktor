@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2025 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -137,9 +137,7 @@ public:
 	/*! Add a deferred upload.
 	 *
 	 * Uploads are recorded into a single command buffer, and performed, by the
-	 * thread which ends a frame; \sa performUploads. Resources creating an upload
-	 * must keep their staging memory alive until it has been performed, thus the
-	 * queue is flushed early when too much is pending.
+	 * thread which ends a frame.
 	 *
 	 * \param fn Records the upload into the flush's command buffer.
 	 * \param uploadSize Amount of staging memory held back by this upload, in bytes.
@@ -246,7 +244,7 @@ private:
 	AlignedVector< DeferredCleanup > m_cleanupFns;
 	AlignedVector< ICleanupListener* > m_cleanupListeners;
 	AlignedVector< upload_fn_t > m_uploadFns;
-	uint32_t m_pendingUploadSize = 0;	//!< Staging memory held back by queued uploads.
+	uint32_t m_pendingUploadSize = 0;
 	VkDescriptorSetLayout m_bindlessTexturesDescriptorLayout = 0;
 	VkDescriptorSet m_bindlessTexturesDescriptorSet = 0;
 	VkDescriptorSetLayout m_bindlessImagesDescriptorLayout = 0;

@@ -197,11 +197,7 @@ bool Stage::update(IStateManager* stateManager, const UpdateInfo& info)
 
 	bool updateValid = false;
 
-	// This is a fixed step update, thus the fade advances by the simulation delta;
-	// the frame delta is the time of a rendered frame, of which there can be any
-	// number per step, so using it makes the fade take frameRate/simulationRate
-	// times longer than it should.
-	const float deltaTime = clamp((float)info.getSimulationDeltaTime(), 0.0f, 1.0f / 30.0f);
+	const float deltaTime = (float)info.getSimulationDeltaTime();
 
 	if (!m_pendingStage)
 	{

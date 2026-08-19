@@ -332,13 +332,8 @@ void RenderViewVk::close()
 {
 	vkDeviceWaitIdle(m_context->getLogicalDevice());
 
-	// Perform queued uploads; they hold staging memory which has to be released
-	// while the device is still up, and once this view is gone there might be no
-	// frame left to flush them. \sa Context::performUploads
+	// Perform queued uploads, pending cleanups etc.
 	m_context->performUploads();
-
-	// Ensure any pending cleanups are performed before closing render view.
-	// Rendering is idle so retired resources can be destroyed right away.
 	m_context->savePipelineCache();
 	ResourceMorgue::getInstance().flush();
 	m_context->performCleanupAll();

@@ -458,9 +458,6 @@ void Context::addDeferredUpload(const upload_fn_t& fn, uint32_t uploadSize)
 		m_pendingUploadSize += uploadSize;
 		flush = (m_pendingUploadSize >= c_maxPendingUploadSize);
 	}
-
-	// Flush outside of the update lock; performUploads takes the queue locks first
-	// and must not be entered with the update lock already held.
 	if (m_views <= 0 || flush)
 		performUploads();
 }
@@ -476,10 +473,7 @@ void Context::performUploads()
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_graphicsQueue->m_lock);
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_computeQueue->m_lock);
 
-		// Take over the queued uploads before recording; the flush is waited upon and
-		// threads creating resources must not be held back for its duration. Uploads
-		// added in the meantime are picked up by the next flush, and since the queue
-		// locks are held no other flush can interleave, so order is retained.
+		// Grab the deferred upload queue.
 		AlignedVector< upload_fn_t > uploadFns;
 		uint32_t uploadSize;
 		{
@@ -491,11 +485,11 @@ void Context::performUploads()
 		if (uploadFns.empty())
 			return;
 
+		// Create command buffer and execute the upload queue.
 		auto commandBuffer = m_graphicsQueue->acquireCommandBuffer(L"Context::performUploads");
 		if (!commandBuffer)
 		{
-			// Hand the uploads back so a later flush performs them; they go in front
-			// of anything added while we held them.
+			// Failed to create command buffer; put back deferred uploads to queue.
 			T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_updateLock);
 			m_uploadFns.insert(m_uploadFns.begin(), uploadFns.begin(), uploadFns.end());
 			m_pendingUploadSize += uploadSize;
