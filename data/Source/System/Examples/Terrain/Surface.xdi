@@ -5,8 +5,8 @@
 			<id>{057AA239-119A-6C4A-9E84-0B8F92FFA509}</id>
 			<comment/>
 			<position>
-				<first>-470</first>
-				<second>-571</second>
+				<first>-461</first>
+				<second>-869</second>
 			</position>
 			<fragmentGuid>{0524A94E-4377-42AC-8A13-26FFE3491CC3}</fragmentGuid>
 			<inputPins>
@@ -61,6 +61,11 @@
 					<optional>true</optional>
 				</item>
 				<item>
+					<id>{ECADF42E-FB90-4F53-9B99-7129FF825B9A}</id>
+					<name>VertexAttributes</name>
+					<optional>true</optional>
+				</item>
+				<item>
 					<id>{E17C87D4-085A-409D-9642-1926DBAADBBC}</id>
 					<name>World position offset</name>
 					<optional>true</optional>
@@ -77,8 +82,8 @@
 			<id>{0B9E6CDB-FEB5-D041-8D49-42C83DCBE220}</id>
 			<comment/>
 			<position>
-				<first>-108</first>
-				<second>-553</second>
+				<first>-150</first>
+				<second>-869</second>
 			</position>
 			<name>SurfaceAttributes</name>
 		</item>
@@ -96,8 +101,8 @@
 			<id>{00B2BAD1-DA19-6246-83CE-B3F2A506F9FB}</id>
 			<comment/>
 			<position>
-				<first>-982</first>
-				<second>-537</second>
+				<first>-1024</first>
+				<second>-853</second>
 			</position>
 			<color>0.062745, 0.278431, 0, 1</color>
 			<linear>true</linear>
@@ -212,8 +217,8 @@
 			<id>{F20128F6-2554-5542-9DE7-35C900176BC8}</id>
 			<comment/>
 			<position>
-				<first>-947</first>
-				<second>-473</second>
+				<first>-989</first>
+				<second>-789</second>
 			</position>
 			<name>L_Slope</name>
 		</item>
@@ -221,16 +226,16 @@
 			<id>{07CFC82C-B0D6-6D43-9296-06A05C3EFF20}</id>
 			<comment/>
 			<position>
-				<first>-703</first>
-				<second>-571</second>
+				<first>-745</first>
+				<second>-887</second>
 			</position>
 		</item>
 		<item type="traktor.render.Color" version="2,traktor.render.Node:1">
 			<id>{3B51DC48-DFA8-344F-ABE1-6DEAC66583F6}</id>
 			<comment/>
 			<position>
-				<first>-982</first>
-				<second>-601</second>
+				<first>-1024</first>
+				<second>-917</second>
 			</position>
 			<color>0.423529, 0.133333, 0, 1</color>
 			<linear>true</linear>
@@ -239,10 +244,19 @@
 			<id>{4E0C3AF2-DDC2-114E-8B91-A845B3300F98}</id>
 			<comment/>
 			<position>
-				<first>-683</first>
-				<second>-411</second>
+				<first>-760</first>
+				<second>-756</second>
 			</position>
 			<value>0.85</value>
+		</item>
+		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+			<id>{2F68C4BD-657B-6D42-A196-81D291BB33D9}</id>
+			<comment/>
+			<position>
+				<first>-755</first>
+				<second>-716</second>
+			</position>
+			<value>0</value>
 		</item>
 	</nodes>
 	<edges>
@@ -354,6 +368,26 @@
 			<destination>
 				<node ref="/object/nodes/item"/>
 				<id>{90D3E596-1415-4837-89CF-F3507AAAE050}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[13]"/>
+				<id>{D33F8931-C90C-4EBA-8A04-A31D3E08FAB7}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item"/>
+				<id>{B3745189-7FD6-48F0-A2AC-E5769DA17166}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[2]"/>
+				<id>{9AE16BB1-EB68-45A0-A878-8D01C210082B}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item"/>
+				<id>{ECADF42E-FB90-4F53-9B99-7129FF825B9A}</id>
 			</destination>
 		</item>
 	</edges>
