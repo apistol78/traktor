@@ -20,6 +20,7 @@
 #include "Spray/SourceData.h"
 #include "Spray/Vertex.h"
 #include "World/IWorldRenderPass.h"
+#include "World/WorldRenderView.h"
 
 namespace traktor::spray
 {
@@ -220,13 +221,18 @@ void EmitterInstanceGPU::build(
 	TrailRenderer* trailRenderer,
 	const Transform& transform)
 {
-	const float distance = 0.0f;
 	if (m_emitter->getShader()->hasTechnique(worldRenderPass.getTechnique()))
+	{
+		const Vector4 cameraPosition = worldRenderView.getEyePosition();
+		const Plane cameraPlane(worldRenderView.getEyeDirection(), cameraPosition);
+		const float distance = cameraPlane.distance(transform.translation());
+
 		pointRenderer->batchUntilFlush(
 			m_emitter->getShader(),
 			m_headBuffer,
 			m_pointBuffer,
 			distance);
+	}
 }
 
 void EmitterInstanceGPU::synchronize() const
