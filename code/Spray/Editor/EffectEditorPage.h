@@ -116,6 +116,8 @@ private:
 
 	void eventSliderExtraVelocityChange(ui::ContentChangeEvent* event);
 
+	void eventPreviewTimeChange(ui::ContentChangeEvent* event);
+
 	void eventToolBarClick(ui::ToolBarButtonClickEvent* event);
 
 	void eventToolBarLayersClick(ui::ToolBarButtonClickEvent* event);

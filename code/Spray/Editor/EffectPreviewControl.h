@@ -101,17 +101,21 @@ public:
 
 	uint32_t getEffectLayerPoints(const EffectLayer* effectLayer) const;
 
-	void setTimeScale(float timeScale);
+	void setTimeScale(float timeScale) { m_timeScale = timeScale; }
+
+	float getTimeScale() const { return m_timeScale; }
 
 	void setTotalTime(float totalTime);
 
-	void setExtraVelocity(float extraVelocity);
+	float getTotalTime() const;
 
-	void showGuide(bool guideVisible);
+	void setExtraVelocity(float extraVelocity) { m_extraVelocity = extraVelocity; }
 
-	void showGrid(bool gridVisible);
+	void showGuide(bool guideVisible) { m_guideVisible = guideVisible; }
 
-	void showVelocity(bool velocityVisible);
+	void showGrid(bool gridVisible) { m_gridVisible = gridVisible; }
+
+	void showVelocity(bool velocityVisible) { m_velocityVisible = velocityVisible; }
 
 	void randomizeSeed();
 

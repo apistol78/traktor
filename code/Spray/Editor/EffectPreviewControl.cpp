@@ -18,8 +18,8 @@
 #include "Core/Settings/PropertyString.h"
 #include "Editor/IEditor.h"
 #include "I18N/Text.h"
-#include "Mesh/Static/StaticMeshComponentRenderer.h"
 #include "Mesh/Skinned/SkinnedMeshComponentRenderer.h"
+#include "Mesh/Static/StaticMeshComponentRenderer.h"
 #include "Render/Context/RenderContext.h"
 #include "Render/Frame/RenderGraph.h"
 #include "Render/IRenderSystem.h"
@@ -57,6 +57,7 @@
 #include "Spray/Sources/QuadSourceData.h"
 #include "Spray/Sources/SphereSourceData.h"
 #include "Ui/Application.h"
+#include "Ui/Events/ContentChangeEvent.h"
 #include "Ui/Itf/IWidget.h"
 #include "Ui/Menu.h"
 #include "Ui/MenuItem.h"
@@ -95,7 +96,7 @@ EffectPreviewControl::EffectPreviewControl(editor::IEditor* editor)
 	, m_effectPosition(0.0f, -2.0f, 7.0f, 1.0f)
 	, m_angleHead(0.0f)
 	, m_anglePitch(0.0f)
-	, m_timeScale(1.0f)
+	, m_timeScale(0.0f)
 	, m_extraVelocity(0.0f)
 	, m_lastDeltaTime(1.0 / c_updateInterval)
 	, m_guideVisible(true)
@@ -226,11 +227,6 @@ uint32_t EffectPreviewControl::getEffectLayerPoints(const EffectLayer* effectLay
 	return 0;
 }
 
-void EffectPreviewControl::setTimeScale(float timeScale)
-{
-	m_timeScale = timeScale;
-}
-
 void EffectPreviewControl::setTotalTime(float totalTime)
 {
 	if (!m_effectEntity)
@@ -246,24 +242,19 @@ void EffectPreviewControl::setTotalTime(float totalTime)
 	effectInstance->setTime(totalTime);
 }
 
-void EffectPreviewControl::setExtraVelocity(float extraVelocity)
+float EffectPreviewControl::getTotalTime() const
 {
-	m_extraVelocity = extraVelocity;
-}
+	if (!m_effectEntity)
+		return 0.0f;
 
-void EffectPreviewControl::showGuide(bool guideVisible)
-{
-	m_guideVisible = guideVisible;
-}
+	auto effectComponent = m_effectEntity->getComponent< EffectComponent >();
+	T_ASSERT(effectComponent != nullptr);
 
-void EffectPreviewControl::showGrid(bool gridVisible)
-{
-	m_gridVisible = gridVisible;
-}
+	auto effectInstance = effectComponent->getEffectInstance();
+	if (!effectInstance)
+		return 0.0f;
 
-void EffectPreviewControl::showVelocity(bool velocityVisible)
-{
-	m_velocityVisible = velocityVisible;
+	return effectInstance->getTime();
 }
 
 void EffectPreviewControl::randomizeSeed()
@@ -479,6 +470,14 @@ void EffectPreviewControl::eventPaint(ui::PaintEvent* event)
 	update.alternateTime = time;
 	update.deltaTime = deltaTime * m_timeScale;
 	m_sceneInstance->update(update);
+
+	// Notify owner about effect time being advanced, such as
+	// timeline cursor can track playback.
+	if (m_timeScale > 0.0f)
+	{
+		ui::ContentChangeEvent contentChangeEvent(this);
+		raiseEvent(&contentChangeEvent);
+	}
 
 	// Setup world render passes.
 	const world::WorldRenderSettings* worldRenderSettings = m_sceneInstance->getWorldRenderSettings();

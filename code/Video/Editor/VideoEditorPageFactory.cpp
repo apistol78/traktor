@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -38,10 +38,6 @@ Ref< editor::IEditorPage > VideoEditorPageFactory::createEditorPage(editor::IEdi
 
 void VideoEditorPageFactory::getCommands(std::list< ui::Command >& outCommands) const
 {
-	outCommands.push_back(ui::Command(L"Video.Editor.Rewind"));
-	outCommands.push_back(ui::Command(L"Video.Editor.Play"));
-	outCommands.push_back(ui::Command(L"Video.Editor.Stop"));
-	outCommands.push_back(ui::Command(L"Video.Editor.Forward"));
 }
 
 Ref< ISerializable > VideoEditorPageFactory::cloneAsset(const ISerializable* asset) const

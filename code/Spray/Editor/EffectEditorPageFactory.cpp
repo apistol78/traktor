@@ -42,7 +42,7 @@ void EffectEditorPageFactory::getCommands(std::list< ui::Command >& outCommands)
 	outCommands.push_back(ui::Command(L"Effect.Editor.Rewind"));
 	outCommands.push_back(ui::Command(L"Effect.Editor.Play"));
 	outCommands.push_back(ui::Command(L"Effect.Editor.Stop"));
-	outCommands.push_back(ui::Command(L"Effect.Editor.Reset"));
+	outCommands.push_back(ui::Command(L"Effect.Editor.TogglePlay"));
 	outCommands.push_back(ui::Command(L"Effect.Editor.ToggleGuide"));
 	outCommands.push_back(ui::Command(L"Effect.Editor.ToggleVelocity"));
 	outCommands.push_back(ui::Command(L"Effect.Editor.ToggleGroundClip"));

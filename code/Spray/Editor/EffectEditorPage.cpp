@@ -203,6 +203,7 @@ bool EffectEditorPage::create(ui::Container* parent)
 	m_previewControl = new EffectPreviewControl(m_editor);
 	m_previewControl->create(container, ui::WsNone, m_resourceManager, renderSystem, m_audioSystem);
 	m_previewControl->showGuide(m_guideVisible);
+	m_previewControl->addEventHandler< ui::ContentChangeEvent >(this, &EffectEditorPage::eventPreviewTimeChange);
 
 	m_containerSequencer = new ui::Container();
 	m_containerSequencer->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0_ut, 0_ut));
@@ -293,20 +294,24 @@ bool EffectEditorPage::handleCommand(const ui::Command& command)
 		updateSequencer();
 		updateEffectPreview();
 	}
-	else if (command == L"Effect.Editor.Reset")
-	{
-		m_previewControl->setTotalTime(0.0f);
-		m_previewControl->syncEffect();
-	}
 	else if (command == L"Effect.Editor.Rewind")
 	{
 		m_previewControl->setTotalTime(0.0f);
 		m_previewControl->syncEffect();
+		m_sequencer->setCursor(0);
+		m_sequencer->update();
 	}
 	else if (command == L"Effect.Editor.Play")
 		m_previewControl->setTimeScale(1.0f);
 	else if (command == L"Effect.Editor.Stop")
 		m_previewControl->setTimeScale(0.0f);
+	else if (command == L"Effect.Editor.TogglePlay")
+	{
+		if (m_previewControl->getTimeScale() <= 0.0f)
+			m_previewControl->setTimeScale(1.0f);
+		else
+			m_previewControl->setTimeScale(0.0f);
+	}
 	else if (command == L"Effect.Editor.ToggleGuide")
 	{
 		m_guideVisible = !m_guideVisible;
@@ -422,6 +427,8 @@ bool EffectEditorPage::handleCommand(const ui::Command& command)
 			updateEffectPreview();
 		}
 	}
+	else
+		return false;
 
 	return true;
 }
@@ -597,6 +604,16 @@ void EffectEditorPage::updateProfile()
 void EffectEditorPage::eventSliderExtraVelocityChange(ui::ContentChangeEvent* event)
 {
 	updateEffectPreview();
+}
+
+void EffectEditorPage::eventPreviewTimeChange(ui::ContentChangeEvent* event)
+{
+	const int32_t cursorTick = (int32_t)(m_previewControl->getTotalTime() * 1000.0f);
+	if (m_sequencer->getCursor() != cursorTick)
+	{
+		m_sequencer->setCursor(cursorTick);
+		m_sequencer->update();
+	}
 }
 
 void EffectEditorPage::eventToolBarClick(ui::ToolBarButtonClickEvent* event)
