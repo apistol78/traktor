@@ -6607,6 +6607,10 @@
 																			<sourceFile>$(AFTERMATH_SDK)/lib/x64/*.dll</sourceFile>
 																			<targetPath>debugshared</targetPath>
 																		</item>
+																		<item type="traktor.sb.AggregationItem">
+																			<sourceFile>$(RENDERDOC_SDK)/renderdoc.dll</sourceFile>
+																			<targetPath>debugshared</targetPath>
+																		</item>
 																	</aggregationItems>
 																	<consumerLibraryPath>debugshared</consumerLibraryPath>
 																</item>
@@ -6652,6 +6656,10 @@
 																			<sourceFile>$(AFTERMATH_SDK)/lib/x64/*.dll</sourceFile>
 																			<targetPath>releaseshared</targetPath>
 																		</item>
+																		<item type="traktor.sb.AggregationItem">
+																			<sourceFile>$(RENDERDOC_SDK)/renderdoc.dll</sourceFile>
+																			<targetPath>releaseshared</targetPath>
+																		</item>
 																	</aggregationItems>
 																	<consumerLibraryPath>releaseshared</consumerLibraryPath>
 																</item>
@@ -6693,6 +6701,10 @@
 																			<sourceFile>$(AFTERMATH_SDK)/lib/x64/*.dll</sourceFile>
 																			<targetPath>debugstatic</targetPath>
 																		</item>
+																		<item type="traktor.sb.AggregationItem">
+																			<sourceFile>$(RENDERDOC_SDK)/renderdoc.dll</sourceFile>
+																			<targetPath>debugstatic</targetPath>
+																		</item>
 																	</aggregationItems>
 																	<consumerLibraryPath>debugstatic</consumerLibraryPath>
 																</item>
@@ -6732,6 +6744,10 @@
 																		</item>
 																		<item type="traktor.sb.AggregationItem">
 																			<sourceFile>$(AFTERMATH_SDK)/lib/x64/*.dll</sourceFile>
+																			<targetPath>releasestatic</targetPath>
+																		</item>
+																		<item type="traktor.sb.AggregationItem">
+																			<sourceFile>$(RENDERDOC_SDK)/renderdoc.dll</sourceFile>
 																			<targetPath>releasestatic</targetPath>
 																		</item>
 																	</aggregationItems>
