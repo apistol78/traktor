@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.script.Script" version="2">
-	<text>
-	<![CDATA[
+	<text><![CDATA[
+	
 #using \{7947759C-88DB-794E-8D09-7F30A40B6669}
 
 -- Dialog
@@ -23,31 +23,40 @@ function Dialog:place(x, y, width, height)
 	local p < const > = self:getPlacement()
 	self._background_mc.width = p.width
 	self._background_mc.height = p.height
-	self._border_mc.width = p.width
-	self._border_mc.height = p.height
 
-	local p < const > = self:getAncestor():getPlacement()
-	local tl < const > = self:globalToLocal({ x = 0, y = 0 })
+	if self._border_mc ~= nil then
+		self._border_mc.width = p.width
+		self._border_mc.height = p.height
+	end
 
-	self._shadow_mc.X = tl.x
-	self._shadow_mc.Y = tl.y
-	self._shadow_mc.width = p.width
-	self._shadow_mc.height = p.height
+	if self._shadow_mc ~= nil then
+		local p < const > = self:getAncestor():getPlacement()
+		local tl < const > = self:globalToLocal({ x = 0, y = 0 })
+	
+		self._shadow_mc.X = tl.x
+		self._shadow_mc.Y = tl.y
+		self._shadow_mc.width = p.width
+		self._shadow_mc.height = p.height
+	end
 end
 
 function Dialog:setColor(color)
-	self._background_mc.colorTransform = traktor.spark.ColorTransform(
-		color,
-		traktor.Color4f(0, 0, 0, 0)
-	)
+	if self._background_mc ~= nil then
+		self._background_mc.colorTransform = traktor.spark.ColorTransform(
+			color,
+			traktor.Color4f(0, 0, 0, 0)
+		)
+	end
 	return self
 end
 
 function Dialog:setBorderColor(color)
-	self._border_mc.colorTransform = traktor.spark.ColorTransform(
-		color,
-		traktor.Color4f(0, 0, 0, 0)
-	)
+	if self._border_mc ~= nil then
+		self._border_mc.colorTransform = traktor.spark.ColorTransform(
+			color,
+			traktor.Color4f(0, 0, 0, 0)
+		)
+	end
 	return self
 end
 
@@ -99,6 +108,6 @@ function Dialog:_getInnerClip()
 	return self._inner_mc
 end
 
-	]]>
-	</text>
+	
+	]]></text>
 </object>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.script.Script" version="2">
-	<text>
-	<![CDATA[
+	<text><![CDATA[
+	
 #using \{40191BBE-DDD0-0E47-92A9-66AF2CEC0F6F}
 
 -- PushButton
@@ -34,11 +34,7 @@ function PushButton:place(x, y, width, height)
 	self._background_mc.width = p.width
 	self._background_mc.height = p.height
 
-	local sz = self._caption_tb.textSize
-	local mx = p.width - sz.x
-	local my = p.height - sz.y
-	self._caption_tb.X = mx / 2
-	self._caption_tb.Y = my / 2
+	self:_layoutCaption()
 end
 
 function PushButton:setColor(color)
@@ -69,6 +65,7 @@ function PushButton:setTextSize(size)
 	tf.size = size * 20
 	self._caption_tb:setTextFormat(tf)
 	self._preferredSize.height = size + self._textSizeMargin
+	self:_layoutCaption()
 	return self
 end
 
@@ -81,9 +78,10 @@ function PushButton:setCaption(s)
 	self._caption_tb.textBounds = self._originalBounds
 	self._caption_tb:parseText(s)
 
-	local sz = self._caption_tb.textSize
+	local sz < const > = self._caption_tb.textSize
 	self._preferredSize.width = math.max(sz.x + self._margin * 2, self._minimumWidth)
 
+	self:_layoutCaption()
 	return self
 end
 
@@ -130,6 +128,23 @@ function PushButton:isToggled()
 end
 
 -- Private
+
+-- Center the caption within the button.
+--
+-- Called from everywhere the two things it depends on can change -- the placement,
+-- and the size of the text sitting in it -- rather than from place() alone, which
+-- is what it used to be. A caption changed after the button had been laid out kept
+-- the offset worked out for the string before it, so a shorter one sat right of
+-- center and a longer one hung off the edge until something forced a re-layout.
+--
+-- Safe before the button is ever placed: Widget._initialize starts the placement at
+-- zero, so this simply centers against nothing and place() puts it right.
+function PushButton:_layoutCaption()
+	local p = self:getPlacement()
+	local sz = self._caption_tb.textSize
+	self._caption_tb.X = (p.width - sz.x) / 2
+	self._caption_tb.Y = (p.height - sz.y) / 2
+end
 
 function PushButton:_initialize(parent, mc, caption, mode)
 	Widget._initialize(self, parent, mc)
@@ -245,6 +260,6 @@ function PushButton:_onMouseLeave(event)
 	self:_updateState()
 	return true
 end
-	]]>
-	</text>
+	
+	]]></text>
 </object>
