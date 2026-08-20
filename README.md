@@ -26,7 +26,15 @@ Traktor isn't just another game engine; it's a meticulously crafted toolkit desi
 Traktor currently offers full support for Windows and Linux platforms. While mobile versions for Android and iOS are available, they are not officially tested but are regularly updated to maintain compatibility.
 
 # Prebuilt binaries
-See [releases](https://github.com/apistol78/traktor/releases) for prebuilt binaries. However the releases should not be expected to be latest and therefor we recommend building the engine from source for latest bug fixes and features.
+See [releases](https://github.com/apistol78/traktor/releases) for prebuilt binaries.
+
+A nightly release is built automatically from master every night and contains:
+
+- **Traktor-nightly-win64.msi:** Windows installer.
+- **Traktor-nightly-win64.zip:** Windows portable archive.
+- **Traktor-nightly-linux-x64.tar.gz:** Linux x64 portable archive.
+
+Only the latest successful nightly is kept, so the releases page always offers a current build. Note that these are untested automated builds of the release configurations; if you need a specific fix, or want to follow development closely, we still recommend building the engine from source.
 
 # How to build
 **Linux:** Refer to [Build Linux](resources/documentation/markdown/Build%20Linux.md) for detailed instructions.
