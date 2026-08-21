@@ -60,6 +60,8 @@ public:
 
 	virtual void setTransform(const Transform& transform) override final;
 
+	virtual void moveKinematic(const Transform& transform, float deltaTime) override final;
+
 	virtual Transform getTransform() const override final;
 
 	virtual Transform getCenterTransform() const override final;

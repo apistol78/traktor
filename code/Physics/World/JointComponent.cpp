@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -37,6 +37,12 @@ void JointComponent::setOwner(world::Entity* owner)
 	m_owner = owner;
 }
 
+void JointComponent::setWorld(world::World* world)
+{
+	if (world != nullptr)
+		createJoint();
+}
+
 void JointComponent::setTransform(const Transform& transform)
 {
 }
@@ -48,40 +54,45 @@ Aabb3 JointComponent::getBoundingBox() const
 
 void JointComponent::update(const world::UpdateParams& update)
 {
-	// Lazy create joint.
-	if (!m_joint)
-	{
-		StaticVector< Body*, 2 > bodies;
+	// Fallback in case the bodies weren't available when the entity entered the world.
+	createJoint();
+}
 
-		auto groupComponent = m_owner->getComponent< world::GroupComponent >();
-		if (groupComponent)
+void JointComponent::createJoint()
+{
+	if (m_joint || m_owner == nullptr)
+		return;
+
+	StaticVector< Body*, 2 > bodies;
+
+	auto groupComponent = m_owner->getComponent< world::GroupComponent >();
+	if (groupComponent)
+	{
+		// Gather rigid bodies.
+		for (auto entity : groupComponent->getEntities())
 		{
-			// Gather rigid bodies.
-			for (auto entity : groupComponent->getEntities())
+			auto rigidBodyComponent = entity->getComponent< RigidBodyComponent >();
+			if (rigidBodyComponent)
 			{
-				auto rigidBodyComponent = entity->getComponent< RigidBodyComponent >();
-				if (rigidBodyComponent)
-				{
-					bodies.push_back(rigidBodyComponent->getBody());
-					if (bodies.full())
-						break;
-				}
+				bodies.push_back(rigidBodyComponent->getBody());
+				if (bodies.full())
+					break;
 			}
 		}
-		else
-		{
-			// No group component, use body with world.
-			auto rigidBodyComponent = m_owner->getComponent< RigidBodyComponent >();
-			if (rigidBodyComponent)
-				bodies.push_back(rigidBodyComponent->getBody());
-		}
-
-		while (!bodies.full())
-			bodies.push_back(nullptr);
-
-		if (bodies[0])
-			m_joint = m_physicsManager->createJoint(m_jointDesc, m_owner->getTransform(), bodies[0], bodies[1]);
 	}
+	else
+	{
+		// No group component, use body with world.
+		auto rigidBodyComponent = m_owner->getComponent< RigidBodyComponent >();
+		if (rigidBodyComponent)
+			bodies.push_back(rigidBodyComponent->getBody());
+	}
+
+	while (!bodies.full())
+		bodies.push_back(nullptr);
+
+	if (bodies[0])
+		m_joint = m_physicsManager->createJoint(m_jointDesc, m_owner->getTransform(), bodies[0], bodies[1]);
 }
 
 }

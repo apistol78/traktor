@@ -220,9 +220,13 @@ void CharacterComponent::update(const world::UpdateParams& update)
 
 	const Quaternion rotation = Quaternion::fromEulerAngles(m_headAngle, 0.0f, 0.0f);
 
-	m_bodyWide->setTransform(Transform(
+	// Carried rather than teleported, so the capsule has a velocity while it walks and
+	// hands momentum to the pushable bodies it leans on -- a door shoved this way keeps
+	// swinging after the character stops, instead of only being nudged aside as long as
+	// it is being penetrated.
+	m_bodyWide->moveKinematic(Transform(
 		position,
-		rotation));
+		rotation), update.deltaTime);
 	if (m_owner)
 		m_owner->setTransform(Transform(
 			position - Vector4(0.0f, m_data->getHeight() / 2.0f, 0.0f),

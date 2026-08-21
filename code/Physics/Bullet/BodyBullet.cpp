@@ -87,6 +87,39 @@ void BodyBullet::setTransform(const Transform& transform)
 		m_body->getMotionState()->setWorldTransform(bt);
 }
 
+void BodyBullet::moveKinematic(const Transform& transform, float deltaTime)
+{
+	if (!m_body)
+		return;
+
+	// Only a kinematic body can be driven by velocity; anything else is placed as before.
+	if (!m_body->isKinematicObject() || deltaTime <= 0.0f)
+	{
+		setTransform(transform);
+		return;
+	}
+
+	const btTransform from = m_body->getWorldTransform();
+	const btTransform to = toBtTransform(transform * Transform(m_centerOfGravity));
+
+	// Same derivation Bullet performs in btRigidBody::saveKinematicState, done here so the
+	// velocity is that of the move being asked for rather than of whatever sub-stepping the
+	// world happens to settle on, and so it is in place for the step which follows.
+	btVector3 linearVelocity, angularVelocity;
+	btTransformUtil::calculateVelocity(from, to, deltaTime, linearVelocity, angularVelocity);
+
+	m_body->setWorldTransform(to);
+	if (m_body->getMotionState())
+		m_body->getMotionState()->setWorldTransform(to);
+
+	m_body->setLinearVelocity(linearVelocity);
+	m_body->setAngularVelocity(angularVelocity);
+
+	// The interpolation transform is deliberately left at "from": it is what
+	// saveKinematicState measures the next move against, and moving it up to the new
+	// transform here would make that re-derivation come out as a standstill.
+}
+
 Transform BodyBullet::getTransform() const
 {
 	if (m_body)

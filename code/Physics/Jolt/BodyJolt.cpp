@@ -97,6 +97,28 @@ void BodyJolt::setTransform(const Transform& transform)
 		isKinematic() ? JPH::EActivation::Activate : JPH::EActivation::DontActivate);
 }
 
+void BodyJolt::moveKinematic(const Transform& transform, float deltaTime)
+{
+	if (!m_body)
+		return;
+
+	// Only a kinematic body can be driven by velocity; anything else is placed as before.
+	if (!m_body->IsKinematic() || deltaTime <= 0.0f)
+	{
+		setTransform(transform);
+		return;
+	}
+
+	const Transform ct = transform * Transform(m_centerOfGravity);
+
+	JPH::BodyInterface& bodyInterface = m_physicsSystem->GetBodyInterface();
+	bodyInterface.MoveKinematic(
+		m_body->GetID(),
+		convertToJolt(ct.translation()),
+		convertToJolt(ct.rotation()),
+		deltaTime);
+}
+
 Transform BodyJolt::getTransform() const
 {
 	if (!m_body)
