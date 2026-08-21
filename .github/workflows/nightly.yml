@@ -1,11 +1,17 @@
 name: Nightly Release
 
-# Builds the release configurations of Traktor every night and publishes them as
-# a single GitHub release.
+# Builds the release configurations of Traktor every night and publishes them
+# through a single, permanent pre-release tagged "nightly".
 #
-# Only the latest successful nightly is kept - once the new release is published
-# every older "nightly-*" release (and its tag) is deleted. If a build fails no
-# release is created and the previous nightly stays available for download.
+# That release is created once and only ever edited afterwards; the rolling
+# "nightly" tag is moved onto the new commit and the assets are replaced in
+# place. Deleting and recreating it would republish it instead, and GitHub
+# raises a release event on every publish - watchers subscribed to releases
+# would be notified each night and the release would reappear in the dashboard
+# feed of everyone who starred the repository. Editing raises no such event.
+#
+# Nights where master has not moved are skipped entirely, and a failed build
+# replaces no assets, so the previous nightly stays available for download.
 #
 # The Windows Debug (DebugShared) configuration is intentionally never built or
 # published here; it is only validated by build-windows-debug.yml on push.
@@ -25,8 +31,48 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  check:
+    name: Check for new commits
+    runs-on: ubuntu-latest
+    outputs:
+      build: ${{ steps.check.outputs.build }}
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        # The nightly tag is needed below, and a shallow clone omits it.
+        fetch-depth: 0
+    - name: Compare master against the published nightly
+      id: check
+      env:
+        MANUAL: ${{ github.event_name == 'workflow_dispatch' }}
+      run: |
+        set -euo pipefail
+
+        if [ "$MANUAL" = "true" ]; then
+          echo "Manual run, building regardless of history."
+          echo "build=true" >> "$GITHUB_OUTPUT"
+          exit 0
+        fi
+
+        # The rolling tag points at the commit the current nightly was built
+        # from, so an unmoved master means there is nothing new to publish.
+        if previous="$(git rev-parse -q --verify 'refs/tags/nightly^{commit}')"; then
+          if [ "$previous" = "$GITHUB_SHA" ]; then
+            echo "master is still at $previous, skipping tonight's build."
+            echo "build=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          echo "master moved from $previous to $GITHUB_SHA."
+        else
+          echo "No nightly tag yet, building the first nightly."
+        fi
+
+        echo "build=true" >> "$GITHUB_OUTPUT"
+
   windows:
     name: Windows (ReleaseShared)
+    needs: check
+    if: needs.check.outputs.build == 'true'
     runs-on: windows-2025-vs2026
     steps:
     - uses: actions/checkout@v4
@@ -94,6 +140,8 @@ jobs:
 
   linux:
     name: Linux (ReleaseShared)
+    needs: check
+    if: needs.check.outputs.build == 'true'
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
@@ -167,7 +215,7 @@ jobs:
       run: |
         set -euo pipefail
 
-        TAG="nightly-$(date -u +'%Y%m%d')"
+        TAG="nightly"
         SHORT_SHA="$(echo "$GITHUB_SHA" | cut -c1-8)"
 
         echo "Assets to publish:"
@@ -183,31 +231,44 @@ jobs:
         | Traktor-nightly-linux-x64.tar.gz | Linux x64 portable archive, ReleaseShared plus editor data. |
 
         Debug configurations are not published. These are untested automated
-        builds, and only the most recent nightly is kept.
+        builds, and this release is replaced in place every night.
 
         Built from $GITHUB_SHA by [run #$GITHUB_RUN_NUMBER]($GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID).
         NOTES
 
-        # A manual re-run on the same day replaces that day's release.
-        if gh release view "$TAG" >/dev/null 2>&1; then
-          echo "Replacing existing release $TAG"
-          gh release delete "$TAG" --yes --cleanup-tag
+        # Move the rolling tag onto tonight's commit, creating it the first time.
+        if ! gh api -X PATCH "repos/$GH_REPO/git/refs/tags/$TAG" \
+               -f sha="$GITHUB_SHA" -F force=true >/dev/null 2>&1; then
+          gh api -X POST "repos/$GH_REPO/git/refs" \
+            -f ref="refs/tags/$TAG" -f sha="$GITHUB_SHA" >/dev/null
         fi
 
-        # Publish first, then prune, so there is never a window without a
-        # downloadable nightly.
-        gh release create "$TAG" \
-          --target "$GITHUB_SHA" \
-          --title "Traktor nightly $(date -u +'%Y-%m-%d')" \
-          --notes-file notes.md \
-          dist/*
+        # Edit in place, never delete and recreate, so that only the very first
+        # publish of this release is ever announced. The asset names are fixed,
+        # so --clobber leaves nothing stale behind.
+        if gh release view "$TAG" >/dev/null 2>&1; then
+          echo "Updating the existing $TAG release"
+          gh release upload "$TAG" dist/* --clobber
+          gh release edit "$TAG" \
+            --title "Traktor nightly $(date -u +'%Y-%m-%d')" \
+            --notes-file notes.md \
+            --prerelease
+        else
+          echo "Creating the $TAG release"
+          # A pre-release, so an untested build never becomes the repository's
+          # "Latest release".
+          gh release create "$TAG" \
+            --prerelease \
+            --title "Traktor nightly $(date -u +'%Y-%m-%d')" \
+            --notes-file notes.md \
+            dist/*
+        fi
 
-        # Drop every superseded nightly release and its tag. Only "nightly-*"
-        # tags are considered, so hand made releases are left alone.
+        # Clean up the dated releases the previous scheme left behind. The
+        # "nightly-" prefix never matches the rolling "nightly" tag itself.
         gh release list --limit 200 --json tagName --jq '.[].tagName' \
           | { grep -E '^nightly-' || true; } \
-          | { grep -vFx "$TAG" || true; } \
           | while read -r old; do
-              echo "Removing superseded nightly release $old"
+              echo "Removing legacy dated nightly release $old"
               gh release delete "$old" --yes --cleanup-tag
             done
