@@ -374,6 +374,74 @@ struct ClosestRayExcludeAndCullResultCallback : public btCollisionWorld::RayResu
 	}
 };
 
+/*! Collects every filtered contact of a placed shape.
+ *
+ * Near duplicates against a triangle mesh are the caller's to reduce -- see
+ * CharacterComponent, which does exactly that.
+ */
+struct QueryContactResultCallback : public btCollisionWorld::ContactResultCallback
+{
+	const btCollisionObject* m_self;
+	const btCollisionObject* m_ignore;
+	const QueryFilter& m_queryFilter;
+	AlignedVector< ContactResult >& m_outResult;
+
+	QueryContactResultCallback(const btCollisionObject* self, const btCollisionObject* ignore, const QueryFilter& queryFilter, AlignedVector< ContactResult >& outResult)
+	:	m_self(self)
+	,	m_ignore(ignore)
+	,	m_queryFilter(queryFilter)
+	,	m_outResult(outResult)
+	{
+	}
+
+	virtual bool needsCollision(btBroadphaseProxy* proxy0) const override final
+	{
+		const btCollisionObject* collisionObject = reinterpret_cast< const btCollisionObject* >(proxy0->m_clientObject);
+		if (!collisionObject || collisionObject == m_ignore)
+			return false;
+
+		const BodyBullet* bodyBullet = static_cast< const BodyBullet* >(collisionObject->getUserPointer());
+		if (!bodyBullet)
+			return false;
+
+		if (m_queryFilter.ignoreClusterId != 0 && bodyBullet->getClusterId() == m_queryFilter.ignoreClusterId)
+			return false;
+
+		const uint32_t group = bodyBullet->getCollisionGroup();
+		if ((group & m_queryFilter.includeGroup) == 0 || (group & m_queryFilter.ignoreGroup) != 0)
+			return false;
+
+		return true;
+	}
+
+	virtual btScalar addSingleResult(
+		btManifoldPoint& cp,
+		const btCollisionObjectWrapper* colObj0Wrap, int, int,
+		const btCollisionObjectWrapper* colObj1Wrap, int, int
+	) override final
+	{
+		// Bullet decides the order of the pair itself, so which side the queried shape
+		// landed on has to be established before anything is read off the manifold.
+		const bool selfIsA = (colObj0Wrap->getCollisionObject() == m_self);
+		const btCollisionObject* other = selfIsA ? colObj1Wrap->getCollisionObject() : colObj0Wrap->getCollisionObject();
+
+		BodyBullet* bodyBullet = static_cast< BodyBullet* >(other->getUserPointer());
+		if (!bodyBullet)
+			return 0.0f;
+
+		ContactResult& contact = m_outResult.push_back();
+		contact.body = bodyBullet;
+		contact.position = fromBtVector3(selfIsA ? cp.getPositionWorldOnA() : cp.getPositionWorldOnB(), 1.0f);
+		// m_normalWorldOnB points out of B towards A; flipped when the queried shape is B
+		// so the normal always points out of the *hit* body, as the Jolt backend reports it.
+		contact.normal = fromBtVector3(selfIsA ? cp.m_normalWorldOnB : -cp.m_normalWorldOnB, 0.0f);
+		// Already negative when penetrating, which is the convention of ContactResult.
+		contact.distance = cp.getDistance();
+		contact.material = bodyBullet->getMaterial();
+		return 0.0f;
+	}
+};
+
 struct ConvexExcludeResultCallback : public btCollisionWorld::ConvexResultCallback
 {
 	const QueryFilter& m_queryFilter;
@@ -1504,18 +1572,34 @@ void PhysicsManagerBullet::querySweep(
 	);
 }
 
-void PhysicsManagerBullet::queryOverlap(
+void PhysicsManagerBullet::queryContacts(
 	const Body* body,
-	RefArray< Body >& outResult
+	const Transform& transform,
+	float maxSeparation,
+	const QueryFilter& queryFilter,
+	AlignedVector< ContactResult >& outResult
 ) const
 {
-	//++m_queryCount;
+	++m_queryCount;
 
-	//btRigidBody* rigidBody = checked_type_cast< const BodyBullet* >(body)->getBtRigidBody();
-	//T_ASSERT(rigidBody);
+	outResult.resize(0);
 
-	//ContactResultCallback callback(rigidBody, outResult);
-	//m_dynamicsWorld->contactTest(rigidBody, callback);
+	const BodyBullet* bb = mandatory_non_null_type_cast< const BodyBullet* >(body);
+	btRigidBody* rigidBody = bb->getBtRigidBody();
+	if (!rigidBody || !rigidBody->getCollisionShape())
+		return;
+
+	// A scratch object carrying the body's shape rather than the body itself, so asking
+	// where the shape *would* touch never moves the body which owns it. contactTest only
+	// AABB-tests the broadphase, so the object it is handed need not be in the world.
+	btCollisionObject probe;
+	probe.setCollisionShape(rigidBody->getCollisionShape());
+	probe.setWorldTransform(toBtTransform(transform));
+
+	QueryContactResultCallback callback(&probe, rigidBody, queryFilter, outResult);
+	callback.m_closestDistanceThreshold = maxSeparation;
+
+	m_dynamicsWorld->contactTest(&probe, callback);
 }
 
 void PhysicsManagerBullet::queryTriangles(const Vector4& center, float radius, AlignedVector< TriangleResult >& outTriangles) const

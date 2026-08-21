@@ -470,6 +470,54 @@ private:
 	bool m_anyHit = false;
 };
 
+/*! Collects every filtered contact of a placed shape.
+ *
+ * Reports contacts as they come; near duplicates against a triangle mesh are the
+ * caller's to reduce -- see CharacterComponent, which does exactly that.
+ */
+class ContactCollector final : public JPH::CollideShapeCollector
+{
+public:
+	ContactCollector(const PhysicsManagerJolt* outer, const BodyJolt* ignoreBody, const QueryFilter& queryFilter, AlignedVector< ContactResult >& outResult)
+		: m_outer(outer)
+		, m_ignoreBody(ignoreBody)
+		, m_queryFilter(queryFilter)
+		, m_outResult(outResult)
+	{
+	}
+
+	virtual void AddHit(const JPH::CollideShapeResult& result) override
+	{
+		// A zero penetration axis carries no direction to resolve along, so there is
+		// nothing a caller could do with the contact.
+		if (result.mPenetrationAxis.IsNearZero())
+			return;
+
+		JPH::BodyLockRead lock(m_outer->getJPhysicsSystem()->GetBodyLockInterface(), result.mBodyID2);
+		if (!lock.Succeeded())
+			return;
+
+		BodyJolt* unwrappedBody = (BodyJolt*)lock.GetBody().GetUserData();
+		if (!unwrappedBody || unwrappedBody == m_ignoreBody || !passesQueryFilter(unwrappedBody, m_queryFilter))
+			return;
+
+		ContactResult& contact = m_outResult.push_back();
+		contact.body = unwrappedBody;
+		contact.position = convertFromJolt(result.mContactPointOn1, 1.0f);
+		contact.normal = convertFromJolt(-result.mPenetrationAxis.Normalized(), 0.0f);
+		// Jolt measures penetration as positive; separation is the negative of it and
+		// only appears at all when mMaxSeparationDistance is set.
+		contact.distance = -result.mPenetrationDepth;
+		contact.material = unwrappedBody->getMaterial();
+	}
+
+private:
+	const PhysicsManagerJolt* m_outer;
+	const BodyJolt* m_ignoreBody;
+	const QueryFilter& m_queryFilter;
+	AlignedVector< ContactResult >& m_outResult;
+};
+
 class SweepCollectorBase : public JPH::CastShapeCollector
 {
 public:
@@ -1262,23 +1310,36 @@ void PhysicsManagerJolt::querySweep(
 		result.distance = dot3(result.position - at, direction);
 }
 
-void PhysicsManagerJolt::queryOverlap(
+void PhysicsManagerJolt::queryContacts(
 	const Body* body,
-	RefArray< Body >& outResult) const
+	const Transform& transform,
+	float maxSeparation,
+	const QueryFilter& queryFilter,
+	AlignedVector< ContactResult >& outResult) const
 {
+	++m_queryCount;
+
+	outResult.resize(0);
+
 	const BodyJolt* bj = mandatory_non_null_type_cast< const BodyJolt* >(body);
 	const JPH::Shape* shape = bj->getJBody()->GetShape();
-	const JPH::RMat44 transform = bj->getJBody()->GetWorldTransform();
 
 	JPH::CollideShapeSettings settings;
+	settings.mMaxSeparationDistance = maxSeparation;
 	settings.mActiveEdgeMode = JPH::EActiveEdgeMode::CollideOnlyWithActive;
 	settings.mCollectFacesMode = JPH::ECollectFacesMode::NoFaces;
 
-	OverlapCollector collector(this, bj, outResult);
-	m_physicsSystem->GetNarrowPhaseQuery().CollideShape(
+	ContactCollector collector(this, bj, queryFilter, outResult);
+
+	// The internal edge removing variant, deliberately: a capsule walking across a
+	// triangle mesh otherwise catches on the shared edge between two coplanar triangles,
+	// which is reported as a contact whose normal faces along the surface rather than out
+	// of it. Reducing near duplicate contacts does not help there -- the ghost normal is
+	// not a near duplicate of anything, it is simply wrong.
+	m_physicsSystem->GetNarrowPhaseQuery().CollideShapeWithInternalEdgeRemoval(
 		shape,
 		JPH::Vec3::sReplicate(1.0f),
-		transform,
+		JPH::RMat44::sRotationTranslation(convertToJolt(transform.rotation()), convertToJolt(transform.translation())),
 		settings,
 		JPH::Vec3::sZero(),
 		collector);

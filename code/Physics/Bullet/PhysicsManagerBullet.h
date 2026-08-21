@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -132,9 +132,12 @@ public:
 		AlignedVector< QueryResult >& outResult
 	) const override final;
 
-	virtual void queryOverlap(
+	virtual void queryContacts(
 		const Body* body,
-		RefArray< Body >& outResult
+		const Transform& transform,
+		float maxSeparation,
+		const QueryFilter& queryFilter,
+		AlignedVector< ContactResult >& outResult
 	) const override final;
 
 	void queryTriangles(

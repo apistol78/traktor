@@ -56,6 +56,20 @@ struct QueryResult
 	int32_t material = 0;
 };
 
+/*! Contact result.
+ * \ingroup Physics
+ *
+ * A single surface a shape is touching, or is within reach of, at one placement.
+ */
+struct ContactResult
+{
+	Ref< Body > body;
+	Vector4 position = Vector4::zero();
+	Vector4 normal = Vector4::zero();
+	float distance = 0.0f;
+	int32_t material = 0;
+};
+
 /*! Triangle result-
  * \ingroup Physics
  */
@@ -410,14 +424,24 @@ public:
 		AlignedVector< QueryResult >& outResult
 	) const = 0;
 
-	/*! Get overlapping bodies.
+	/*! Get all contacts of a body's shape placed at a transform.
 	 *
-	 * \param body Check body; using body's shape when performing query.
-	 * \param outResult Overlapping bodies result.
+	 * Reports every surface the shape touches at a single placement, each with its own normal and
+	 * separation. Contacts against a triangle mesh routinely include many near
+	 * duplicates so callers are expected to reduce the list before acting on it.
+	 *
+	 * \param body Body whose shape is used for the query.
+	 * \param transform World transform to place the shape at.
+	 * \param maxSeparation Also report surfaces within this distance, not only penetrating ones.
+	 * \param queryFilter Query group and cluster filter.
+	 * \param outResult Contacts found; cleared by the query.
 	 */
-	virtual void queryOverlap(
+	virtual void queryContacts(
 		const Body* body,
-		RefArray< Body >& outResult
+		const Transform& transform,
+		float maxSeparation,
+		const QueryFilter& queryFilter,
+		AlignedVector< ContactResult >& outResult
 	) const = 0;
 
 	/*! Get triangles inside sphere.

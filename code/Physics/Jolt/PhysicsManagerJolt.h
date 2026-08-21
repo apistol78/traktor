@@ -136,9 +136,12 @@ public:
 		AlignedVector< QueryResult >& outResult
 	) const override final;
 
-	virtual void queryOverlap(
+	virtual void queryContacts(
 		const Body* body,
-		RefArray< Body >& outResult
+		const Transform& transform,
+		float maxSeparation,
+		const QueryFilter& queryFilter,
+		AlignedVector< ContactResult >& outResult
 	) const override final;
 
 	void queryTriangles(
