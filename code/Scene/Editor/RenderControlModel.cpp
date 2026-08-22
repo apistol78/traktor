@@ -164,6 +164,10 @@ void RenderControlModel::eventButtonDown(ISceneRenderControl* renderControl, ui:
 
 void RenderControlModel::eventButtonUp(ISceneRenderControl* renderControl, ui::Widget* renderWidget, ui::MouseButtonUpEvent* event, SceneEditorContext* context, const TransformChain& transformChain)
 {
+	// Modification has finished; previews deferred during the modification,
+	// such as scene operators, are evaluated from here on.
+	context->setModifyInProgress(false);
+
 	if (m_modify == MtModifier && m_modifyBegun)
 	{
 		IModifier* modifier = context->getModifier();
@@ -283,6 +287,11 @@ void RenderControlModel::eventMouseMove(ISceneRenderControl* renderControl, ui::
 
 		if (!m_modifyBegun)
 		{
+			// Suspend expensive previews, such as scene operators, until the
+			// modification has finished; entities are moved continuously while
+			// the modification is in progress.
+			context->setModifyInProgress(true);
+
 			// Clone selection set; clones will become selected.
 			if (m_modifyClone)
 				context->cloneSelected();

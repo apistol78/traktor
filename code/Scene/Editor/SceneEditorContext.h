@@ -171,6 +171,16 @@ public:
 
 	bool getPhysicsEnable() const;
 
+	/*! Set if an interactive modification is in progress.
+	 *
+	 * Expensive previews, such as scene operators, are suspended while a
+	 * modification is in progress since they would otherwise be evaluated
+	 * for each intermediate state.
+	 */
+	void setModifyInProgress(bool modifyInProgress);
+
+	bool isModifyInProgress() const;
+
 	void resetPhysics();
 
 	//@}
@@ -344,6 +354,7 @@ private:
 	SnapMode m_snapMode;
 	float m_snapSpacing;
 	bool m_physicsEnable;
+	bool m_modifyInProgress;
 	bool m_playing;
 	float m_timeScale;
 	double m_time;

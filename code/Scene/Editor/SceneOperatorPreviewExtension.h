@@ -8,13 +8,17 @@
  */
 #pragma once
 
+#include "Core/Guid.h"
 #include "Core/Ref.h"
+#include "Core/Containers/SmallMap.h"
+#include "Core/Math/Transform.h"
 #include "Scene/Editor/ISceneEditorUIExtension.h"
 
 namespace traktor::scene
 {
 
 class PostBuildEvent;
+class PostFrameEvent;
 class PostModifyEvent;
 class SceneEditorContext;
 class SceneOperatorChain;
@@ -34,10 +38,16 @@ public:
 private:
 	SceneEditorContext* m_context;
 	Ref< scene::SceneOperatorChain > m_chain;
+	SmallMap< Guid, Transform > m_transforms;
+	bool m_pending = false;
 
 	void apply();
 
+	void updateEntities();
+
 	void eventPostBuild(PostBuildEvent* event);
+
+	void eventPostFrame(PostFrameEvent* event);
 
 	void eventPostModify(PostModifyEvent* event);
 };

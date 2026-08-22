@@ -90,6 +90,7 @@ SceneEditorContext::SceneEditorContext(
 	, m_snapMode(SmNone)
 	, m_snapSpacing(0.0f)
 	, m_physicsEnable(false)
+	, m_modifyInProgress(false)
 	, m_playing(false)
 	, m_timeScale(1.0f)
 	, m_time(0.0f)
@@ -249,6 +250,16 @@ void SceneEditorContext::setPhysicsEnable(bool physicsEnable)
 bool SceneEditorContext::getPhysicsEnable() const
 {
 	return m_physicsEnable;
+}
+
+void SceneEditorContext::setModifyInProgress(bool modifyInProgress)
+{
+	m_modifyInProgress = modifyInProgress;
+}
+
+bool SceneEditorContext::isModifyInProgress() const
+{
+	return m_modifyInProgress;
 }
 
 void SceneEditorContext::resetPhysics()
@@ -809,6 +820,11 @@ void SceneEditorContext::cloneSelected()
 		T_ASSERT(clonedEntityData);
 
 		generateEntityIds(clonedEntityData);
+
+		// Place the clone where the source entity is actually rendered; previews,
+		// such as scene operators, are applied to entities only, thus the source
+		// entity data might be placed elsewhere.
+		clonedEntityData->setTransform(selectedEntityAdapter->getTransform());
 
 		Ref< EntityAdapter > clonedEntityAdapter = new EntityAdapter(this);
 		clonedEntityAdapter->prepare(clonedEntityData, nullptr);

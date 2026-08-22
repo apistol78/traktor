@@ -79,6 +79,7 @@ bool SceneOperatorPreviewExtension::create(ui::Widget* parent, ui::ToolBar* tool
 	}
 
 	m_context->addEventHandler< PostBuildEvent >(this, &SceneOperatorPreviewExtension::eventPostBuild);
+	m_context->addEventHandler< PostFrameEvent >(this, &SceneOperatorPreviewExtension::eventPostFrame);
 	m_context->addEventHandler< PostModifyEvent >(this, &SceneOperatorPreviewExtension::eventPostModify);
 	return true;
 }
@@ -97,6 +98,18 @@ void SceneOperatorPreviewExtension::apply()
 	if (!authored || authored->getOperationData().empty())
 		return;
 
+	// Running the chain is expensive; while the user is modifying entities it
+	// would be re-evaluated for each intermediate state, such as when entities
+	// are cloned at the start of a duplicating drag. Defer until the
+	// modification has finished so movement remains responsive.
+	if (m_context->isModifyInProgress())
+	{
+		m_pending = true;
+		return;
+	}
+
+	m_pending = false;
+
 	EditorTransformContext context(m_context->getSourceDatabase());
 
 	// Run geometric operators on a throwaway clone; always clone fresh from the
@@ -108,16 +121,23 @@ void SceneOperatorPreviewExtension::apply()
 	if (!m_chain->apply(working, context))
 		return;
 
-	// Collect the resulting transforms by entity id.
-	SmallMap< Guid, Transform > transforms;
+	// Collect the resulting transforms by entity id; kept so they can be
+	// restored without running the chain again, such as when entities have been
+	// recreated in the middle of a modification.
+	m_transforms.clear();
 	for (auto layer : working->getLayers())
 		world::Traverser::visit(layer, [&](const world::EntityData* entityData) -> world::Traverser::Result {
 			const Guid& id = entityData->getId();
 			if (id.isNotNull())
-				transforms[id] = entityData->getTransform();
+				m_transforms[id] = entityData->getTransform();
 			return world::Traverser::Result::Continue;
 		});
 
+	updateEntities();
+}
+
+void SceneOperatorPreviewExtension::updateEntities()
+{
 	// Copy transforms onto the live rendered entities only; the authored scene
 	// asset and its EntityData are left untouched.
 	bool anyChanged = false;
@@ -127,12 +147,16 @@ void SceneOperatorPreviewExtension::apply()
 		if (!entity)
 			continue;
 
-		const auto it = transforms.find(adapter->getId());
-		if (it == transforms.end())
+		const auto it = m_transforms.find(adapter->getId());
+		if (it == m_transforms.end())
 			continue;
 
 		const Transform& target = it->second;
-		if ((entity->getTransform().translation() - target.translation()).length() > c_positionEpsilon)
+		const Transform current = entity->getTransform();
+		if (
+			(current.translation() - target.translation()).length() > c_positionEpsilon ||
+			current.rotation() != target.rotation()
+		)
 		{
 			entity->setTransform(target);
 			anyChanged = true;
@@ -146,6 +170,21 @@ void SceneOperatorPreviewExtension::apply()
 void SceneOperatorPreviewExtension::eventPostBuild(PostBuildEvent* event)
 {
 	apply();
+
+	// Entities have been recreated from the authored scene asset and thus lost
+	// the transforms calculated by the operators; if the chain was deferred then
+	// restore the last calculated transforms, otherwise the scene would snap
+	// back to its authored placement until the modification has finished.
+	if (m_pending)
+		updateEntities();
+}
+
+void SceneOperatorPreviewExtension::eventPostFrame(PostFrameEvent* event)
+{
+	// Catch up with an apply which was deferred during a modification, in case
+	// the modification ended without a post modify event being raised.
+	if (m_pending)
+		apply();
 }
 
 void SceneOperatorPreviewExtension::eventPostModify(PostModifyEvent* event)
