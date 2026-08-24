@@ -10,6 +10,8 @@
 
 #include "Core/Log/Log.h"
 #include "Core/Math/Aabb3.h"
+#include "Core/Containers/AlignedVector.h"
+#include "Core/Thread/JobManager.h"
 #include "Heightfield/Heightfield.h"
 #include "Physics/AxisJoint.h"
 #include "Physics/AxisJointDesc.h"
@@ -47,12 +49,15 @@
 #include <algorithm>
 #include <cstring>
 #include <mutex>
+#include <chrono>
 #include <thread>
 #include <unordered_map>
 
 // Keep Jolt includes here, Jolt.h must be first.
 #include <Jolt/Core/Factory.h>
+#include <Jolt/Core/FixedSizeFreeList.h>
 #include <Jolt/Core/JobSystemThreadPool.h>
+#include <Jolt/Core/JobSystemWithBarrier.h>
 #include <Jolt/Core/TempAllocator.h>
 #include <Jolt/Jolt.h>
 #include <Jolt/Physics/Body/Body.h>
@@ -89,7 +94,6 @@ namespace traktor::physics
 {
 namespace
 {
-
 namespace Layers
 {
 constexpr JPH::ObjectLayer NON_MOVING = 0;
@@ -103,6 +107,90 @@ constexpr JPH::BroadPhaseLayer NON_MOVING(0);
 constexpr JPH::BroadPhaseLayer MOVING(1);
 constexpr JPH::uint NUM_LAYERS(2);
 }
+
+class JobSystemTraktor : public JPH::JobSystemWithBarrier
+{
+public:
+	using AvailableJobs = JPH::FixedSizeFreeList< Job >;
+
+	JobSystemTraktor(JPH::uint maxJobs, JPH::uint maxBarriers)
+	:	JPH::JobSystemWithBarrier(maxBarriers)
+	{
+		m_freeJobs.Init(maxJobs, maxJobs);
+	}
+
+	virtual int GetMaxConcurrency() const override final
+	{
+		return (int)(JobManager::getInstance().getWorkerCount() + 1);
+	}
+
+	virtual JobHandle CreateJob(const char* name, JPH::ColorArg color, const JobFunction& jobFunction, JPH::uint32 numDependencies) override final
+	{
+		JPH::uint32 index;
+		for (;;)
+		{
+			index = m_freeJobs.ConstructObject(name, color, this, jobFunction, numDependencies);
+			if (index != AvailableJobs::cInvalidObjectIndex)
+				break;
+			JPH_ASSERT(false, "No jobs available!");
+			std::this_thread::sleep_for(std::chrono::microseconds(100));
+		}
+
+		Job* job = &m_freeJobs.Get(index);
+
+		// Take our reference before queuing; the job may finish immediately.
+		JobHandle handle(job);
+
+		if (numDependencies == 0)
+			QueueJob(job);
+
+		return handle;
+	}
+
+	virtual void QueueJob(Job* job) override final
+	{
+		// Reference owned by the queued task, released once it has run.
+		job->AddRef();
+		JobManager::getInstance().add([job]() {
+			job->Execute();
+			job->Release();
+		});
+	}
+
+	virtual void QueueJobs(Job** jobs, JPH::uint numJobs) override final
+	{
+		if (numJobs == 0)
+			return;
+
+		// Hand Jolt's whole array over in one call so each worker is woken once
+		// instead of once per job. Physics submits jobs in bursts, so queuing them
+		// one at a time made every burst cost a wake syscall per job.
+		AlignedVector< traktor::Job::task_t > tasks;
+		tasks.reserve(numJobs);
+
+		for (JPH::uint i = 0; i < numJobs; ++i)
+		{
+			Job* job = jobs[i];
+
+			// Reference owned by the queued task, released once it has run.
+			job->AddRef();
+			tasks.push_back([job]() {
+				job->Execute();
+				job->Release();
+			});
+		}
+
+		JobManager::getInstance().add(tasks.c_ptr(), tasks.size());
+	}
+
+	virtual void FreeJob(Job* job) override final
+	{
+		m_freeJobs.DestructObject(job);
+	}
+
+private:
+	AvailableJobs m_freeJobs;
+};
 
 class ObjectLayerPairFilterImpl : public JPH::ObjectLayerPairFilter
 {
@@ -711,7 +799,7 @@ bool PhysicsManagerJolt::create(const PhysicsCreateDesc& desc)
 	JPH::RegisterTypes();
 
 	m_tempAllocator.reset(new JPH::TempAllocatorImpl(32 * 1024 * 1024));
-	m_jobSystem.reset(new JPH::JobSystemThreadPool(JPH::cMaxPhysicsJobs, JPH::cMaxPhysicsBarriers, std::thread::hardware_concurrency() - 1));
+	m_jobSystem.reset(new JobSystemTraktor(JPH::cMaxPhysicsJobs, JPH::cMaxPhysicsBarriers));
 
 	const JPH::uint cMaxBodies = 16384;
 	const JPH::uint cNumBodyMutexes = 0;

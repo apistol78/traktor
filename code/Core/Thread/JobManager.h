@@ -44,6 +44,12 @@ public:
 	 */
 	Ref< Job > add(const Job::task_t& functor) { return m_queue.add(functor); }
 
+	/*! Enqueue several jobs at once.
+	 *
+	 * Wakes each worker which receives work once, rather than once per task.
+	 */
+	void add(const Job::task_t* tasks, size_t ntasks) { m_queue.add(tasks, ntasks); }
+
 	/*! Enqueue jobs and wait for all to finish.
 	 *
 	 * Add jobs to internal worker queue, one job
@@ -64,6 +70,9 @@ public:
 
 	/*! Get job queue. */
 	JobQueue& getQueue() { return m_queue; }
+
+	/*! Number of worker threads available to fork across. */
+	uint32_t getWorkerCount() const { return m_queue.getWorkerCount(); }
 
 protected:
 	virtual void destroy();

@@ -1,23 +1,31 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include <algorithm>
-#include "Core/System.h"
+#include "Core/Thread/ThreadManager.h"
+
 #include "Core/Singleton/SingletonManager.h"
+#include "Core/System.h"
 #include "Core/Thread/Acquire.h"
 #include "Core/Thread/Thread.h"
-#include "Core/Thread/ThreadManager.h"
+
+#include <algorithm>
 
 namespace traktor
 {
+namespace
+{
+
+thread_local Thread* s_currentThread = nullptr;
+
+}
 
 ThreadManager::ThreadManager()
-:	m_threadBase(new Thread(nullptr, L"Main", -1))
+	: m_threadBase(new Thread(nullptr, L"Main", -1))
 {
 }
 
@@ -44,35 +52,8 @@ ThreadManager& ThreadManager::getInstance()
 
 Thread* ThreadManager::getCurrentThread()
 {
-	T_ANONYMOUS_VAR(Acquire< CriticalSection >)(m_threadsLock);
-
-	Thread* current = nullptr;
-
-#if defined(_WIN32)
-	const uint32_t currentId = GetCurrentThreadId();
-	for (auto thread : m_threads)
-	{
-		if (thread->id() == currentId)
-		{
-			current = thread;
-			break;
-		}
-	}
-#else
-	for (auto thread : m_threads)
-	{
-		if (thread->current())
-		{
-			current = thread;
-			break;
-		}
-	}
-#endif
-
-	if (!current)
-		current = m_threadBase;
-
-	return current;
+	Thread* current = s_currentThread;
+	return current ? current : m_threadBase;
 }
 
 Thread* ThreadManager::getMainThread()
@@ -89,6 +70,12 @@ Thread* ThreadManager::create(const threadFn_t& fn, const wchar_t* const name, i
 {
 	T_ANONYMOUS_VAR(Acquire< CriticalSection >)(m_threadsLock);
 	Thread* thread = new Thread(fn, name, hardwareCore);
+
+	thread->m_fn = [thread, fn]() {
+		s_currentThread = thread;
+		fn();
+	};
+
 	m_threads.push_back(thread);
 	return thread;
 }

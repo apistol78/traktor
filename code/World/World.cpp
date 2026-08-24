@@ -182,18 +182,41 @@ void World::update(const UpdateParams& update)
 	m_update = true;
 
 #if defined(T_USE_UPDATE_JOBS)
-	AlignedVector< Job::task_t > jobs;
-	jobs.reserve(m_entities.size());
+	AlignedVector< Entity* > concurrent;
+	concurrent.reserve(m_entities.size());
 
 	for (auto entity : m_entities)
 	{
 		if (entity->getWorld() != nullptr && entity->needConcurrentUpdate())
-			jobs.push_back([&, entity](){
-				entity->update(update, true);
-			});
+			concurrent.push_back(entity);
 	}
 
-	JobManager::getInstance().fork(jobs.c_ptr(), jobs.size());
+	if (!concurrent.empty())
+	{
+		const uint32_t c_minEntitiesPerChunk = 8;
+		const uint32_t count = (uint32_t)concurrent.size();
+		const uint32_t workers = JobManager::getInstance().getWorkerCount();
+		const uint32_t byWork = (count + c_minEntitiesPerChunk - 1) / c_minEntitiesPerChunk;
+
+		uint32_t chunks = (workers > 0) ? workers : 1;
+		if (byWork < chunks)
+			chunks = byWork;
+
+		AlignedVector< Job::task_t > jobs;
+		jobs.reserve(chunks);
+
+		for (uint32_t i = 0; i < chunks; ++i)
+		{
+			const uint32_t begin = (count * i) / chunks;
+			const uint32_t end = (count * (i + 1)) / chunks;
+			jobs.push_back([&concurrent, &update, begin, end](){
+				for (uint32_t j = begin; j < end; ++j)
+					concurrent[j]->update(update, true);
+			});
+		}
+
+		JobManager::getInstance().fork(jobs.c_ptr(), jobs.size());
+	}
 
 	for (auto entity : m_entities)
 	{

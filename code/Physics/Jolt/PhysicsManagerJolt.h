@@ -29,7 +29,7 @@ class BroadPhaseLayerInterface;
 class Constraint;
 class ContactListener;
 class GroupFilter;
-class JobSystemThreadPool;
+class JobSystem;
 class ObjectLayerPairFilter;
 class ObjectVsBroadPhaseLayerFilter;
 class PhysicsSystem;
@@ -156,7 +156,7 @@ public:
 
 private:
 	AutoPtr< JPH::TempAllocatorImpl > m_tempAllocator;
-	AutoPtr< JPH::JobSystemThreadPool > m_jobSystem;
+	AutoPtr< JPH::JobSystem > m_jobSystem;
 	AutoPtr< JPH::BroadPhaseLayerInterface > m_broadPhaseLayerInterface;
 	AutoPtr< JPH::ObjectVsBroadPhaseLayerFilter > m_objectVsBroadPhaseLayerFilter;
 	AutoPtr< JPH::ObjectLayerPairFilter > m_objectVsObjectLayerFilter;

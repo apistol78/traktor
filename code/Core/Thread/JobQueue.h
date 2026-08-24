@@ -59,6 +59,15 @@ public:
 	 */
 	Ref< Job > add(const Job::task_t& task);
 
+	/*! Enqueue several jobs at once.
+	 *
+	 * Equivalent to calling add for each task, except that every worker which
+	 * receives work is woken once instead of once per task. Handing out a whole
+	 * batch before waking anybody is what keeps a burst of small jobs from
+	 * costing a wake syscall each.
+	 */
+	void add(const Job::task_t* tasks, size_t ntasks);
+
 	/*! Enqueue jobs and wait for all to finish.
 	 *
 	 * Add jobs to internal worker queue, one job
@@ -84,14 +93,41 @@ public:
 	/*! Stop all worker threads. */
 	void stop();
 
+	/*! Number of worker threads.
+	 *
+	 * Useful for sizing a fork: handing out many more tasks than there are
+	 * workers costs a job each without buying any more parallelism.
+	 */
+	uint32_t getWorkerCount() const { return (uint32_t)m_workers.size(); }
+
 private:
+	/*! Per worker queue and wakeup.
+	 *
+	 * Each worker owns its own queue so enqueueing and dequeueing do not put
+	 * every thread on one lock, and its own event so an idle worker parks
+	 * without touching anything shared. Defined in the implementation.
+	 */
+	struct Worker;
+
 	AlignedVector< Thread* > m_workerThreads;
-	ThreadsafeFifo< Job* > m_jobQueue;
-	Event m_jobQueuedEvent;
+	AlignedVector< Worker* > m_workers;
 	Event m_jobFinishedEvent;
 	std::atomic< int32_t > m_pending;
+	std::atomic< uint32_t > m_nextWorker;
 
-	void threadWorker();
+	void threadWorker(uint32_t index);
+
+	/*! Hand a job to a worker, round robin. */
+	void enqueue(Job* job);
+
+	/*! Put a job on the worker at the given round robin slot, without waking it. */
+	void place(uint32_t slot, Job* job);
+
+	/*! Wake the workers a batch starting at the given slot was spread over. */
+	void wake(uint32_t base, uint32_t count);
+
+	/*! Take a job from this worker's own queue, else steal from another. */
+	bool dequeue(uint32_t index, Job*& outJob);
 };
 
 }

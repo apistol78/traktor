@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,9 +8,11 @@
  */
 #pragma once
 
-#include <functional>
 #include "Core/Ref.h"
 #include "Core/Thread/IWaitable.h"
+
+#include <atomic>
+#include <functional>
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -29,11 +31,13 @@ class Event;
  * \ingroup Core
  */
 class T_DLLCLASS Job
-:	public RefCountImpl< IRefCount >
-,	public IWaitable
+	: public RefCountImpl< IRefCount >
+	, public IWaitable
 {
 public:
 	typedef std::function< void() > task_t;
+
+	static std::atomic< int32_t > waiters;
 
 	virtual bool wait(int32_t timeout = -1) override final;
 
@@ -43,9 +47,9 @@ public:
 
 	bool stopped() const;
 
-	void* operator new (size_t size);
+	void* operator new(size_t size);
 
-	void operator delete (void* ptr);
+	void operator delete(void* ptr);
 
 private:
 	friend class JobQueue;
