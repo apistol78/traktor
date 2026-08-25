@@ -182,39 +182,26 @@ void UndergrowthComponent::update(const world::UpdateParams& update)
 	TerrainLayerComponent::update(update);
 }
 
-void UndergrowthComponent::setup(const world::WorldRenderView& worldRenderView)
+bool UndergrowthComponent::updatePlantBuffer()
 {
+	m_plantBuffer = nullptr;
+
 	if (!m_plantsCount)
-		return;
+		return true;
 
-	const Matrix44 view = worldRenderView.getView();
-	const Matrix44 viewInv = view.inverse();
-	const Vector4 eye = viewInv.translation();
+	m_plantBuffer = m_renderSystem->createBuffer(render::BufferUsage::BuStructured, m_plantsCount * sizeof(PlantData), false, T_FILE_LINE_W);
+	if (!m_plantBuffer)
+		return false;
 
-	// Get plant state for current view.
-	ViewState& vs = m_viewState[worldRenderView.getIndex()];
-	if (vs.plantBuffer == nullptr || vs.plantBuffer->getBufferSize() / sizeof(PlantData) != m_plantsCount)
+	PlantData* plantData = (PlantData*)m_plantBuffer->lock();
+	if (!plantData)
 	{
-		vs.plantBuffer = m_renderSystem->createBuffer(render::BufferUsage::BuStructured, m_plantsCount * sizeof(PlantData), true, T_FILE_LINE_W);
-		vs.orderBuffer = m_renderSystem->createBuffer(render::BufferUsage::BuStructured, m_plantsCount * sizeof(int32_t), true, T_FILE_LINE_W);
+		m_plantBuffer = nullptr;
+		return false;
 	}
 
-	Frustum viewFrustum = worldRenderView.getViewFrustum();
-	viewFrustum.setFarZ(Scalar(m_layerData.m_spreadDistance + m_clusterSize));
-
-	vs.drawInstanceCount = 0;
-
-	PlantData* plantData = (PlantData*)vs.plantBuffer->lock();
-	int32_t* orderPtr = (int32_t*)vs.orderBuffer->lock();
-
-	const Scalar clusterSize(m_clusterSize);
-	for (uint32_t i = 0; i < m_clusters.size(); ++i)
+	for (const Cluster& cluster : m_clusters)
 	{
-		const Cluster& cluster = m_clusters[i];
-
-		if (viewFrustum.inside(view * cluster.center, clusterSize) == Frustum::Result::Outside)
-			continue;
-
 		RandomGeometry random(int32_t(cluster.center.x() * 919.0f + cluster.center.z() * 463.0f));
 		for (int32_t j = cluster.from; j < cluster.to; ++j)
 		{
@@ -230,16 +217,63 @@ void UndergrowthComponent::setup(const world::WorldRenderView& worldRenderView)
 			pd.positionX = px;
 			pd.positionZ = pz;
 			pd.plant = float(cluster.plant);
+			pd.dummy1 = 0.0f;
 			pd.scale = cluster.plantScale * (random.nextFloat() * 0.5f + 0.5f);
 			pd.random = random.nextFloat();
-
-			*orderPtr++ = j;
+			pd.dummy2 = 0.0f;
+			pd.dummy3 = 0.0f;
 		}
+	}
+
+	m_plantBuffer->unlock();
+	return true;
+}
+
+void UndergrowthComponent::setup(const world::WorldRenderView& worldRenderView)
+{
+	if (!m_plantsCount)
+		return;
+
+	// Plant data is view independent and constant over time; build it on demand,
+	// it's invalidated when the clusters are rebuilt.
+	if (m_plantBuffer == nullptr && !updatePlantBuffer())
+		return;
+
+	const Matrix44 view = worldRenderView.getView();
+
+	// Get plant state for current view.
+	ViewState& vs = m_viewState[worldRenderView.getIndex()];
+	if (vs.orderBuffer == nullptr || vs.orderBuffer->getBufferSize() / sizeof(int32_t) != m_plantsCount)
+	{
+		vs.drawInstanceCount = 0;
+		vs.orderBuffer = m_renderSystem->createBuffer(render::BufferUsage::BuStructured, m_plantsCount * sizeof(int32_t), true, T_FILE_LINE_W);
+		if (!vs.orderBuffer)
+			return;
+	}
+
+	Frustum viewFrustum = worldRenderView.getViewFrustum();
+	viewFrustum.setFarZ(Scalar(m_layerData.m_spreadDistance + m_clusterSize));
+
+	vs.drawInstanceCount = 0;
+
+	int32_t* orderPtr = (int32_t*)vs.orderBuffer->lock();
+	if (!orderPtr)
+		return;
+
+	// Compact indices of visible plants; the plant data itself is already resident
+	// and indexed through this list.
+	const Scalar clusterSize(m_clusterSize);
+	for (const Cluster& cluster : m_clusters)
+	{
+		if (viewFrustum.inside(view * cluster.center, clusterSize) == Frustum::Result::Outside)
+			continue;
+
+		for (int32_t j = cluster.from; j < cluster.to; ++j)
+			*orderPtr++ = j;
 
 		vs.drawInstanceCount += cluster.to - cluster.from;
 	}
 
-	vs.plantBuffer->unlock();
 	vs.orderBuffer->unlock();
 }
 
@@ -265,7 +299,12 @@ void UndergrowthComponent::build(
 	if (!sp)
 		return;
 
+	if (!m_plantBuffer)
+		return;
+
 	ViewState& vs = m_viewState[worldRenderView.getIndex()];
+	if (!vs.orderBuffer || vs.drawInstanceCount <= 0)
+		return;
 
 	render::RenderContext* renderContext = context.getRenderContext();
 
@@ -290,7 +329,7 @@ void UndergrowthComponent::build(
 	renderBlock->programParams->setVectorParameter(s_handleTerrain_WorldExtent, terrain->getHeightfield()->getWorldExtent());
 	renderBlock->programParams->setVectorParameter(s_handleUndergrowth_Eye, eye);
 	renderBlock->programParams->setFloatParameter(s_handleUndergrowth_MaxDistance, m_layerData.m_spreadDistance + m_clusterSize);
-	renderBlock->programParams->setBufferViewParameter(s_handleUndergrowth_Plants, vs.plantBuffer->getBufferView());
+	renderBlock->programParams->setBufferViewParameter(s_handleUndergrowth_Plants, m_plantBuffer->getBufferView());
 	renderBlock->programParams->setBufferViewParameter(s_handleUndergrowth_Order, vs.orderBuffer->getBufferView());
 	renderBlock->programParams->endParameters(renderContext);
 
@@ -303,6 +342,10 @@ void UndergrowthComponent::updatePatches()
 {
 	m_clusters.resize(0);
 	m_plantsCount = 0;
+
+	// Plant buffer is built from the clusters; invalidate it and let setup rebuild
+	// it on the next frame.
+	m_plantBuffer = nullptr;
 
 	auto terrainComponent = m_owner->getComponent< TerrainComponent >();
 	if (!terrainComponent)

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -48,6 +48,29 @@ VkShaderStageFlags getShaderStageFlags(uint8_t resourceStages)
 		flags |= VK_SHADER_STAGE_COMPUTE_BIT;
 	T_ASSERT(flags != 0);
 	return flags;
+}
+
+struct ResolvedImage
+{
+	Image* image = nullptr;
+	bool depth = false;
+};
+
+ResolvedImage resolveImage(ITexture* texture)
+{
+	ITexture* resolved = texture->resolve();
+	if (!resolved)
+		return {};
+
+	const TypeInfo& ti = type_of(resolved);
+	if (&ti == &type_of< TextureVk >())
+		return { static_cast< TextureVk* >(resolved)->getImage(), false };
+	else if (&ti == &type_of< RenderTargetVk >())
+		return { static_cast< RenderTargetVk* >(resolved)->getImageResolved(), false };
+	else if (&ti == &type_of< RenderTargetDepthVk >())
+		return { static_cast< RenderTargetDepthVk* >(resolved)->getImage(), true };
+	else
+		return {};
 }
 
 std::wstring getShaderStageNames(uint8_t resourceStages)
@@ -322,7 +345,7 @@ bool ProgramVk::create(
 		m_accelerationStructures.push_back({ resourceAS.name + L" (" + getShaderStageNames(resourceAS.stages) + L")", resourceAS.binding });
 
 	// Setup parameter mapping.
-	for (auto p : resource->m_parameters)
+	for (const auto& p : resource->m_parameters)
 	{
 		auto& pm = m_parameterMap[getParameterHandle(p.name)];
 		pm.name = p.name;
@@ -333,6 +356,22 @@ bool ProgramVk::create(
 		pm.imageIndex = p.imageIndex;
 		pm.sbufferIndex = p.sbufferIndex;
 		pm.accelerationStructureIndex = p.accelerationStructureIndex;
+	}
+
+	for (const auto& it : m_parameterMap)
+	{
+		const ParameterMap& pm = it.second;
+		if (pm.ubuffer < 0)
+			continue;
+		if (pm.textureIndex < 0 && pm.imageIndex < 0)
+			continue;
+
+		m_bindlessResources.push_back({
+			.parameter = it.first,
+			.ubuffer = pm.ubuffer,
+			.ubufferOffset = pm.ubufferOffset,
+			.textureIndex = pm.textureIndex,
+			.imageIndex = pm.imageIndex });
 	}
 
 	return true;
@@ -357,66 +396,28 @@ bool ProgramVk::validate(
 	}
 
 	// Set bindless resource indices.
-	for (auto it : m_parameterMap)
+	for (const auto& br : m_bindlessResources)
 	{
-		const ParameterMap& pm = it.second;
-		if (pm.ubuffer < 0)
-			continue;
-
-		if (pm.textureIndex >= 0)
+		ITexture* const texture = (br.textureIndex >= 0) ? m_textures[br.textureIndex].texture.ptr() : m_images[br.imageIndex].texture.ptr();
+		if (!texture)
 		{
-			ITexture* texture = m_textures[pm.textureIndex].texture;
-			if (!texture)
-			{
-				log::error << L"No bound texture for parameter \"" << pm.name << L"\"." << Endl;
-				return false;
-			}
-
-			ITexture* resolved = texture->resolve();
-			T_ASSERT(resolved);
-
-			uint32_t resourceIndex = ~0U;
-			if (is_a< TextureVk >(resolved))
-				resourceIndex = static_cast< TextureVk* >(resolved)->getImage()->getSampledResourceIndex();
-			else if (is_a< RenderTargetVk >(resolved))
-				resourceIndex = static_cast< RenderTargetVk* >(resolved)->getImageResolved()->getSampledResourceIndex();
-			else if (is_a< RenderTargetDepthVk >(resolved))
-				resourceIndex = static_cast< RenderTargetDepthVk* >(resolved)->getImage()->getSampledResourceIndex();
-
-			T_FATAL_ASSERT(resourceIndex != ~0U);
-
-			auto& ub = m_uniformBuffers[pm.ubuffer];
-			if (storeIfNotEqual((const float*)&resourceIndex, 1, &ub.data[pm.ubufferOffset]))
-				ub.dirty = true;
+			const auto it = m_parameterMap.find(br.parameter);
+			const std::wstring name = (it != m_parameterMap.end()) ? it->second.name : L"<unknown>";
+			log::error << L"No bound texture for parameter \"" << name << L"\"." << Endl;
+			return false;
 		}
-		else if (pm.imageIndex >= 0)
-		{
-			ITexture* texture = m_images[pm.imageIndex].texture;
-			if (!texture)
-			{
-				log::error << L"No bound texture for parameter \"" << pm.name << L"\"." << Endl;
-				return false;
-			}
 
-			const int32_t mip = m_images[pm.imageIndex].mip;
+		const ResolvedImage resolved = resolveImage(texture);
+		T_FATAL_ASSERT(resolved.image);
 
-			ITexture* resolved = texture->resolve();
-			T_ASSERT(resolved);
+		const uint32_t resourceIndex = (br.textureIndex >= 0)
+			? resolved.image->getSampledResourceIndex()
+			: resolved.image->getStorageResourceIndex(m_images[br.imageIndex].mip);
+		T_FATAL_ASSERT(resourceIndex != ~0U);
 
-			uint32_t resourceIndex = ~0U;
-			if (is_a< TextureVk >(resolved))
-				resourceIndex = static_cast< TextureVk* >(resolved)->getImage()->getStorageResourceIndex(mip);
-			else if (is_a< RenderTargetVk >(resolved))
-				resourceIndex = static_cast< RenderTargetVk* >(resolved)->getImageResolved()->getStorageResourceIndex(mip);
-			else if (is_a< RenderTargetDepthVk >(resolved))
-				resourceIndex = static_cast< RenderTargetDepthVk* >(resolved)->getImage()->getStorageResourceIndex(mip);
-
-			T_FATAL_ASSERT(resourceIndex != ~0U);
-
-			auto& ub = m_uniformBuffers[pm.ubuffer];
-			if (storeIfNotEqual((const float*)&resourceIndex, 1, &ub.data[pm.ubufferOffset]))
-				ub.dirty = true;
-		}
+		auto& ub = m_uniformBuffers[br.ubuffer];
+		if (storeIfNotEqual((const float*)&resourceIndex, 1, &ub.data[br.ubufferOffset]))
+			ub.dirty = true;
 	}
 
 	// Update content of uniform buffers.
@@ -524,7 +525,7 @@ void ProgramVk::teardown()
 		m_uniformBuffers[i].range.ptr = nullptr;
 	}
 
-	for (auto it : m_descriptorSets)
+	for (const auto& it : m_descriptorSets)
 		m_context->addDeferredCleanup(
 			[descriptorSet = it.second](Context* cx) {
 			vkFreeDescriptorSets(cx->getLogicalDevice(), cx->getDescriptorPool(), 1, &descriptorSet);
@@ -774,27 +775,13 @@ bool ProgramVk::validateDescriptorSet()
 			continue;
 
 		T_ASSERT(texture.texture);
-		auto resolved = texture.texture->resolve();
-		T_ASSERT(resolved);
+		const ResolvedImage resolved = resolveImage(texture.texture);
+		T_FATAL_ASSERT(resolved.image);
 
 		auto& imageInfo = imageInfos.push_back();
 		imageInfo.sampler = 0;
-
-		if (is_a< TextureVk >(resolved))
-		{
-			imageInfo.imageView = static_cast< TextureVk* >(resolved)->getImage()->getVkImageView();
-			imageInfo.imageLayout = static_cast< TextureVk* >(resolved)->getImage()->getVkImageLayout(0, 0);
-		}
-		else if (is_a< RenderTargetVk >(resolved))
-		{
-			imageInfo.imageView = static_cast< RenderTargetVk* >(resolved)->getImageResolved()->getVkImageView();
-			imageInfo.imageLayout = static_cast< RenderTargetVk* >(resolved)->getImageResolved()->getVkImageLayout(0, 0);
-		}
-		else if (is_a< RenderTargetDepthVk >(resolved))
-		{
-			imageInfo.imageView = static_cast< RenderTargetDepthVk* >(resolved)->getImage()->getVkImageView();
-			imageInfo.imageLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL;
-		}
+		imageInfo.imageView = resolved.image->getVkImageView();
+		imageInfo.imageLayout = resolved.depth ? VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL : resolved.image->getVkImageLayout(0, 0);
 
 		writes.push_back({ .sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
 			.pNext = nullptr,
@@ -812,27 +799,13 @@ bool ProgramVk::validateDescriptorSet()
 			continue;
 
 		T_ASSERT(image.texture);
-		auto resolved = image.texture->resolve();
-		T_ASSERT(resolved);
+		const ResolvedImage resolved = resolveImage(image.texture);
+		T_FATAL_ASSERT(resolved.image);
 
 		auto& imageInfo = imageInfos.push_back();
 		imageInfo.sampler = 0;
-
-		if (is_a< TextureVk >(resolved))
-		{
-			imageInfo.imageView = static_cast< TextureVk* >(resolved)->getImage()->getStorageVkImageView(image.mip);
-			imageInfo.imageLayout = VK_IMAGE_LAYOUT_GENERAL;
-		}
-		else if (is_a< RenderTargetVk >(resolved))
-		{
-			imageInfo.imageView = static_cast< RenderTargetVk* >(resolved)->getImageResolved()->getStorageVkImageView(image.mip);
-			imageInfo.imageLayout = VK_IMAGE_LAYOUT_GENERAL;
-		}
-		else if (is_a< RenderTargetDepthVk >(resolved))
-		{
-			imageInfo.imageView = static_cast< RenderTargetDepthVk* >(resolved)->getImage()->getStorageVkImageView(image.mip);
-			imageInfo.imageLayout = VK_IMAGE_LAYOUT_GENERAL;
-		}
+		imageInfo.imageView = resolved.image->getStorageVkImageView(image.mip);
+		imageInfo.imageLayout = VK_IMAGE_LAYOUT_GENERAL;
 
 		writes.push_back({ .sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
 			.pNext = nullptr,
@@ -898,7 +871,7 @@ void ProgramVk::postCleanup()
 	// of our cached descriptor sets, thus we need to rebuild every set.
 	AlignedVector< VkDescriptorSet > descriptorSets;
 	descriptorSets.reserve(m_descriptorSets.size());
-	for (auto it : m_descriptorSets)
+	for (const auto& it : m_descriptorSets)
 		descriptorSets.push_back(it.second);
 
 	// Drop the cache before the sets are handed over for cleanup; adding a
@@ -926,6 +899,11 @@ bool ProgramVk::DescriptorSetKey::operator<(const DescriptorSetKey& rh) const
 	if (size() > rh.size())
 		return false;
 
+	if (m_hash < rh.m_hash)
+		return true;
+	if (m_hash > rh.m_hash)
+		return false;
+
 	for (uint32_t i = 0; i < size(); ++i)
 		if ((*this)[i] < rh[i])
 			return true;
@@ -942,6 +920,11 @@ bool ProgramVk::DescriptorSetKey::operator>(const DescriptorSetKey& rh) const
 	if (size() > rh.size())
 		return true;
 
+	if (m_hash < rh.m_hash)
+		return false;
+	if (m_hash > rh.m_hash)
+		return true;
+
 	for (uint32_t i = 0; i < size(); ++i)
 		if ((*this)[i] > rh[i])
 			return true;
@@ -954,6 +937,9 @@ bool ProgramVk::DescriptorSetKey::operator>(const DescriptorSetKey& rh) const
 bool ProgramVk::DescriptorSetKey::operator==(const DescriptorSetKey& rh) const
 {
 	if (size() != rh.size())
+		return false;
+
+	if (m_hash != rh.m_hash)
 		return false;
 
 	for (uint32_t i = 0; i < size(); ++i)

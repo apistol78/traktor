@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -30,22 +30,35 @@ class ShaderModuleCache;
  * \ingroup Render
  */
 class ProgramVk
-:	public IProgram
-,	public Context::ICleanupListener
+	: public IProgram
+	, public Context::ICleanupListener
 {
 	T_RTTI_CLASS;
 
 public:
+	/*! Key of a cached descriptor set. */
 	class DescriptorSetKey : public StaticVector< intptr_t, 32 >
 	{
 	public:
-		bool operator < (const DescriptorSetKey& rh) const;
+		void push_back(intptr_t value)
+		{
+			const uint64_t v = (uint64_t)(uintptr_t)value;
+			m_hash = (m_hash ^ (uint32_t)v ^ (uint32_t)(v >> 32)) * 16777619U;
+			StaticVector< intptr_t, 32 >::push_back(value);
+		}
 
-		bool operator > (const DescriptorSetKey& rh) const;
+		uint32_t getHash() const { return m_hash; }
 
-		bool operator == (const DescriptorSetKey& rh) const;
+		bool operator<(const DescriptorSetKey& rh) const;
 
-		bool operator != (const DescriptorSetKey& rh) const;
+		bool operator>(const DescriptorSetKey& rh) const;
+
+		bool operator==(const DescriptorSetKey& rh) const;
+
+		bool operator!=(const DescriptorSetKey& rh) const;
+
+	private:
+		uint32_t m_hash = 2166136261U;
 	};
 
 	explicit ProgramVk(Context* context, uint32_t& instances);
@@ -103,12 +116,21 @@ private:
 	{
 		std::wstring name;
 		int32_t ubuffer = -1;		//!< Uniform buffer index.
-		uint32_t ubufferOffset = 0;	//!< Offset into uniform buffer's data.
+		uint32_t ubufferOffset = 0; //!< Offset into uniform buffer's data.
 		uint32_t ubufferSize = 0;	//!< Number of floats.
 		int32_t textureIndex = -1;
 		int32_t imageIndex = -1;
 		int32_t sbufferIndex = -1;
 		int32_t accelerationStructureIndex = -1;
+	};
+
+	struct BindlessResource
+	{
+		handle_t parameter = 0; //!< Parameter handle; for diagnostics only.
+		int32_t ubuffer = -1;
+		uint32_t ubufferOffset = 0;
+		int32_t textureIndex = -1;
+		int32_t imageIndex = -1;
 	};
 
 	struct UniformBuffer
@@ -169,6 +191,7 @@ private:
 	VkDescriptorSet m_descriptorSet = 0;
 	UniformBuffer m_uniformBuffers[3];
 	SmallMap< handle_t, ParameterMap > m_parameterMap;
+	AlignedVector< BindlessResource > m_bindlessResources;
 	AlignedVector< Sampler > m_samplers;
 	AlignedVector< Texture > m_textures;
 	AlignedVector< Image > m_images;

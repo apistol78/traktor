@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,9 +8,9 @@
  */
 #pragma once
 
+#include "Core/Containers/AlignedVector.h"
 #include "Core/Object.h"
 #include "Core/Ref.h"
-#include "Core/Memory/BlockAllocator.h"
 
 namespace traktor::render
 {
@@ -29,7 +29,7 @@ struct UniformBufferRange
 	void* ptr = nullptr;
 };
 
-/*!
+/*! Chain of equally sized uniform buffer blocks.
  * \ingroup Render
  */
 class UniformBufferChain : public Object
@@ -47,7 +47,9 @@ public:
 
 private:
 	Ref< ApiBuffer > m_buffer;
-	BlockAllocator m_allocator;
+	uint8_t* m_top = nullptr;
+	uint32_t m_blockSize = 0;
+	AlignedVector< uint32_t > m_free;	//!< Indices of free blocks, last is allocated first.
 
 	explicit UniformBufferChain(ApiBuffer* buffer, void* top, uint32_t blockCount, uint32_t blockSize);
 };

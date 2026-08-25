@@ -35,7 +35,7 @@ void UniformBufferPool::flush()
 
 	SmallMap< uint32_t, RefArray< UniformBufferChain > > chains;
 	chains.swap(m_chains);
-	for (auto it : chains)
+	for (const auto& it : chains)
 	{
 		for (auto chain : it.second)
 			chain->destroy();

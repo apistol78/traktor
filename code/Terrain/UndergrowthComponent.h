@@ -76,9 +76,8 @@ private:
 
 	struct ViewState
 	{
-		Ref< render::Buffer > plantBuffer;
 		Ref< render::Buffer > orderBuffer;
-		int32_t drawInstanceCount;
+		int32_t drawInstanceCount = 0;
 	};
 
 	world::Entity* m_owner = nullptr;
@@ -87,11 +86,20 @@ private:
 	Ref< const render::IVertexLayout > m_vertexLayout;
 	Ref< render::Buffer > m_vertexBuffer;
 	Ref< render::Buffer > m_indexBuffer;
+	Ref< render::Buffer > m_plantBuffer;
 	resource::Proxy< render::Shader > m_shader;
 	AlignedVector< Cluster > m_clusters;
 	SmallMap< int32_t, ViewState > m_viewState;
 	float m_clusterSize = 0.0f;
 	uint32_t m_plantsCount = 0;
+
+	/*! Create and fill the plant buffer from the current set of clusters.
+	 *
+	 * Plant data is a pure function of the clusters, thus view independent and
+	 * constant over time; it's built once and only invalidated when the clusters
+	 * are rebuilt.
+	 */
+	bool updatePlantBuffer();
 };
 
 }

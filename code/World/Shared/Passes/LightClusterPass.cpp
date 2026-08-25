@@ -8,6 +8,7 @@
  */
 #include "Core/Math/Range.h"
 #include "Core/Misc/SafeDestroy.h"
+#include "Core/Thread/JobManager.h"
 #include "Core/Timer/Profiler.h"
 #include "Render/Buffer.h"
 #include "Render/IRenderSystem.h"
@@ -75,7 +76,6 @@ void LightClusterPass::setup(
 	LightIndexShaderData* lightIndexShaderData = (LightIndexShaderData*)m_lightIndexSBuffer->lock();
 
 	StaticVector< Vector4, c_maxLightCount > lightPositions;
-	StaticVector< int32_t, c_maxLightCount > sliceLights;
 
 	// Calculate positions of lights in view space.
 	for (const auto& light : gatheredView.lights)
@@ -92,7 +92,6 @@ void LightClusterPass::setup(
 	// Update tile data.
 	const Scalar dx(1.0f / ClusterDimXY);
 	const Scalar dy(1.0f / ClusterDimXY);
-	const Scalar dz(1.0f / ClusterDimZ);
 
 	const Vector4& tl = viewFrustum.corners[0];
 	const Vector4& tr = viewFrustum.corners[1];
@@ -104,8 +103,9 @@ void LightClusterPass::setup(
 	const Scalar vnz = viewFrustum.getNearZ();
 	const Scalar vfz = viewFrustum.getFarZ();
 
-	// Calculate XY tile frustums.
-	Frustum tileFrustums[ClusterDimXY * ClusterDimXY];
+	// Calculate XY tile side planes; they are independent of the depth slice and
+	// are thus shared, read only, by all slices.
+	Plane tileSidePlanes[ClusterDimXY * ClusterDimXY][4];
 	for (int32_t y = 0; y < ClusterDimXY; ++y)
 	{
 		const Scalar fy = Scalar((float)y) * dy;
@@ -118,25 +118,26 @@ void LightClusterPass::setup(
 			const Vector4 c = tl + vx * (fx + dx) + vy * (fy + dy);
 			const Vector4 d = tl + vx * fx + vy * (fy + dy);
 
-			auto& tileFrustum = tileFrustums[x + y * ClusterDimXY];
-			tileFrustum.planes.resize(6);
-			tileFrustum.planes[Frustum::Left] = Plane(Vector4::zero(), d, a);
-			tileFrustum.planes[Frustum::Right] = Plane(Vector4::zero(), b, c);
-			tileFrustum.planes[Frustum::Bottom] = Plane(Vector4::zero(), c, d);
-			tileFrustum.planes[Frustum::Top] = Plane(Vector4::zero(), a, b);
+			Plane* sidePlanes = tileSidePlanes[x + y * ClusterDimXY];
+			sidePlanes[Frustum::Left] = Plane(Vector4::zero(), d, a);
+			sidePlanes[Frustum::Right] = Plane(Vector4::zero(), b, c);
+			sidePlanes[Frustum::Bottom] = Plane(Vector4::zero(), c, d);
+			sidePlanes[Frustum::Top] = Plane(Vector4::zero(), a, b);
 		}
 	}
 
-	// Group lights per cluster.
-	uint32_t lightOffset = 0;
-	for (int32_t z = 0; z < ClusterDimZ; ++z)
-	{
+	// Group lights per cluster. Each tile owns a fixed region of the light index
+	// buffer, thus depth slices write disjoint regions of both buffers and can be
+	// filled concurrently.
+	const auto setupSlice = [&](int32_t z) {
+		const uint32_t sliceTileOffset = (uint32_t)z * ClusterDimXY * ClusterDimXY;
+
 		const float fz = (float)z;
 		const Scalar snz = vnz * power(vfz / vnz, Scalar(fz) / Scalar(ClusterDimZ));
 		const Scalar sfz = vnz * power(vfz / vnz, Scalar(fz + 1.0f) / Scalar(ClusterDimZ));
 
 		// Gather all lights intersecting slice.
-		sliceLights.clear();
+		StaticVector< int32_t, c_maxLightCount > sliceLights;
 		for (uint32_t i = 0; i < gatheredView.lights.size(); ++i)
 		{
 			const auto light = gatheredView.lights[i];
@@ -198,16 +199,39 @@ void LightClusterPass::setup(
 			}
 		}
 
+		// Tiles of a slice without lights must still be written; the tile buffer is
+		// multiple buffered so they would otherwise retain the offset and count of an
+		// earlier frame and reference lights which are not in the slice.
 		if (sliceLights.empty())
-			continue;
+		{
+			for (uint32_t i = 0; i < ClusterDimXY * ClusterDimXY; ++i)
+			{
+				const uint32_t tileOffset = sliceTileOffset + i;
+				tileShaderData[tileOffset].lightOffsetAndCount[0] = (int32_t)(tileOffset * MaxLightsPerCluster);
+				tileShaderData[tileOffset].lightOffsetAndCount[1] = 0;
+			}
+			return;
+		}
+
+		// Near and far planes only depend on the slice; side planes are assigned per
+		// tile from the shared set.
+		Frustum tileFrustum;
+		tileFrustum.planes.resize(6);
+		tileFrustum.planes[Frustum::Near] = Plane(Vector4(0.0f, 0.0f, 1.0f), snz);
+		tileFrustum.planes[Frustum::Far] = Plane(Vector4(0.0f, 0.0f, -1.0f), -sfz);
 
 		for (int32_t y = 0; y < ClusterDimXY; ++y)
 		{
 			for (int32_t x = 0; x < ClusterDimXY; ++x)
 			{
-				auto& tileFrustum = tileFrustums[x + y * ClusterDimXY];
-				tileFrustum.planes[Frustum::Near] = Plane(Vector4(0.0f, 0.0f, 1.0f), snz);
-				tileFrustum.planes[Frustum::Far] = Plane(Vector4(0.0f, 0.0f, -1.0f), -sfz);
+				const Plane* sidePlanes = tileSidePlanes[x + y * ClusterDimXY];
+				tileFrustum.planes[Frustum::Left] = sidePlanes[Frustum::Left];
+				tileFrustum.planes[Frustum::Right] = sidePlanes[Frustum::Right];
+				tileFrustum.planes[Frustum::Bottom] = sidePlanes[Frustum::Bottom];
+				tileFrustum.planes[Frustum::Top] = sidePlanes[Frustum::Top];
+
+				const uint32_t tileOffset = sliceTileOffset + x + y * ClusterDimXY;
+				const uint32_t lightOffset = tileOffset * MaxLightsPerCluster;
 
 				int32_t count = 0;
 				for (uint32_t i = 0; i < sliceLights.size(); ++i)
@@ -240,14 +264,17 @@ void LightClusterPass::setup(
 						break;
 				}
 
-				const uint32_t tileOffset = x + y * ClusterDimXY + z * ClusterDimXY * ClusterDimXY;
 				tileShaderData[tileOffset].lightOffsetAndCount[0] = (int32_t)lightOffset;
 				tileShaderData[tileOffset].lightOffsetAndCount[1] = count;
-
-				lightOffset += count;
 			}
 		}
-	}
+	};
+
+	// Fill each depth slice concurrently.
+	Job::task_t tasks[ClusterDimZ];
+	for (int32_t z = 0; z < ClusterDimZ; ++z)
+		tasks[z] = [&, z]() { setupSlice(z); };
+	JobManager::getInstance().fork(tasks, ClusterDimZ);
 
 	m_lightIndexSBuffer->unlock();
 	m_tileSBuffer->unlock();
