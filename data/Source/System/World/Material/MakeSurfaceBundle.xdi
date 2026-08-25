@@ -151,6 +151,14 @@
 			<name>VertexAttributes</name>
 			<optional>true</optional>
 		</item>
+		<item type="traktor.render.PreviewOutput" version="traktor.render.Node:1">
+			<id>{59C24733-BF4E-4ED1-8010-CACA142B115C}</id>
+			<comment/>
+			<position>
+				<first>578</first>
+				<second>-96</second>
+			</position>
+		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge" version="1">
@@ -281,6 +289,16 @@
 			<destination>
 				<node ref="/object/nodes/item"/>
 				<id>{731844D4-AFDC-4EAA-8B41-C4BA2455898F}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[2]"/>
+				<id>{9AE16BB1-EB68-45A0-A878-8D01C210082B}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[14]"/>
+				<id>{BDB32F7B-599C-42C8-A2CE-2B1BD0738E8B}</id>
 			</destination>
 		</item>
 	</edges>
