@@ -966,8 +966,8 @@ $Output = vec4(texCoord, 0.0f, 0.0f);
 			<id>{98B4C16A-14F1-E049-8BE8-ABDA94466F57}</id>
 			<comment/>
 			<position>
-				<first>-1255</first>
-				<second>958</second>
+				<first>-1222</first>
+				<second>967</second>
 			</position>
 			<parameterDeclaration>{3BA38C4D-AFA6-E14D-BF1D-E7B22CEE64F6}</parameterDeclaration>
 		</item>
@@ -975,8 +975,8 @@ $Output = vec4(texCoord, 0.0f, 0.0f);
 			<id>{DA939656-CF10-8449-90CE-AD3899B1F042}</id>
 			<comment/>
 			<position>
-				<first>-1218</first>
-				<second>1025</second>
+				<first>-1187</first>
+				<second>1018</second>
 			</position>
 			<parameterDeclaration>{C5FE5E84-7112-A047-8C1C-10A884ABCF5F}</parameterDeclaration>
 		</item>
@@ -1194,8 +1194,8 @@ $Output = vec4(texCoord, 0.0f, 0.0f);
 			<id>{5B0F7A2E-6C41-4F0D-9E8A-31C6A7D4E902}</id>
 			<comment><![CDATA[Sky is beyond the fog volume, so the distance fog covers the whole ray.]]></comment>
 			<position>
-				<first>-1186</first>
-				<second>960</second>
+				<first>-1689</first>
+				<second>1044</second>
 			</position>
 			<value>0</value>
 		</item>
@@ -1970,16 +1970,6 @@ $Output = vec4(texCoord, 0.0f, 0.0f);
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[47]"/>
-				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[46]"/>
-				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
 				<node ref="/object/nodes/item[79]"/>
 				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
 			</source>
@@ -2156,6 +2146,16 @@ $Output = vec4(texCoord, 0.0f, 0.0f);
 			<destination>
 				<node ref="/object/nodes/item[50]"/>
 				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[47]"/>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[46]"/>
+				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
 			</destination>
 		</item>
 	</edges>

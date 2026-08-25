@@ -18,6 +18,8 @@
 #include "World/IrradianceGrid.h"
 #include "World/Entity/CameraComponent.h"
 #include "World/Entity/CameraComponentData.h"
+#include "World/Entity/BillboardComponent.h"
+#include "World/Entity/BillboardComponentData.h"
 #include "World/Entity/DecalComponent.h"
 #include "World/Entity/DecalComponentData.h"
 #include "World/Entity/DecalEvent.h"
@@ -84,6 +86,7 @@ const TypeInfoSet WorldEntityFactory::getEntityEventTypes() const
 const TypeInfoSet WorldEntityFactory::getEntityComponentTypes() const
 {
 	TypeInfoSet typeSet;
+	typeSet.insert< BillboardComponentData >();
 	typeSet.insert< CameraComponentData >();
 	typeSet.insert< DecalComponentData >();
 	typeSet.insert< EventSetComponentData >();
@@ -194,6 +197,24 @@ Ref< IEntityComponent > WorldEntityFactory::createEntityComponent(const IEntityB
 {
 	if (auto cameraComponentData = dynamic_type_cast< const CameraComponentData* >(&entityComponentData))
 		return new CameraComponent(cameraComponentData);
+
+	if (auto billboardComponentData = dynamic_type_cast< const BillboardComponentData* >(&entityComponentData))
+	{
+		resource::Proxy< render::Shader > shader;
+		if (!m_resourceManager->bind(billboardComponentData->getShader(), shader))
+			return nullptr;
+
+		return new BillboardComponent(
+			shader,
+			billboardComponentData->getAngles(),
+			billboardComponentData->getElevations(),
+			billboardComponentData->getElevationFrom(),
+			billboardComponentData->getElevationTo(),
+			billboardComponentData->getSize(),
+			billboardComponentData->getOffset(),
+			billboardComponentData->getStartDistance(),
+			billboardComponentData->getCullDistance());
+	}
 
 	if (auto decalComponentData = dynamic_type_cast< const DecalComponentData* >(&entityComponentData))
 	{

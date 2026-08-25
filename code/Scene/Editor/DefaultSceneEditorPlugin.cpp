@@ -30,6 +30,7 @@
 #include "World/Entity/WorldEntityFactory.h"
 
 // Entity renderers
+#include "World/Entity/BillboardComponentRenderer.h"
 #include "World/Entity/ComputeTextureRenderer.h"
 #include "World/Entity/CullingRenderer.h"
 #include "World/Entity/DecalRenderer.h"
@@ -102,6 +103,7 @@ void DefaultSceneEditorPlugin::createEntityRenderers(
 	RefArray< world::IEntityRenderer >& outEntityRenderers
 ) const
 {
+	outEntityRenderers.push_back(new world::BillboardComponentRenderer(context->getRenderSystem()));
 	outEntityRenderers.push_back(new world::ComputeTextureRenderer());
 	outEntityRenderers.push_back(new world::CullingRenderer());
 	outEntityRenderers.push_back(new world::DecalRenderer(context->getRenderSystem()));
