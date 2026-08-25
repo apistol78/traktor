@@ -10,11 +10,11 @@
 
 #include <map>
 #include "Core/Timer/Timer.h"
+#include "Render/Editor/RenderControl.h"
 #include "Resource/Id.h"
 #include "Resource/Proxy.h"
 #include "Spray/Point.h"
 #include "Spray/Types.h"
-#include "Ui/Widget.h"
 #include "World/WorldRenderView.h"
 
 // import/export mechanism.
@@ -42,11 +42,8 @@ class IResourceManager;
 namespace traktor::render
 {
 
-class IRenderSystem;
-class IRenderView;
 class RenderContext;
 class RenderGraph;
-class PrimitiveRenderer;
 
 }
 
@@ -80,7 +77,7 @@ class EffectData;
 class EffectLayer;
 class SourceRenderer;
 
-class T_DLLCLASS EffectPreviewControl : public ui::Widget
+class T_DLLCLASS EffectPreviewControl : public render::RenderControl
 {
 	T_RTTI_CLASS;
 
@@ -89,9 +86,7 @@ public:
 
 	bool create(
 		ui::Widget* parent,
-		int style,
 		resource::IResourceManager* resourceManager,
-		render::IRenderSystem* renderSystem,
 		sound::AudioSystem* audioSystem
 	);
 
@@ -126,12 +121,8 @@ public:
 private:
 	editor::IEditor* m_editor;
 	Ref< ui::EventSubject::IEventHandler > m_idleEventHandler;
-	Ref< resource::IResourceManager > m_resourceManager;
-	Ref< render::IRenderSystem > m_renderSystem;
-	Ref< render::IRenderView > m_renderView;
 	Ref< render::RenderGraph > m_renderGraph;
 	Ref< render::RenderContext > m_renderContext;
-	Ref< render::PrimitiveRenderer > m_primitiveRenderer;
 	Ref< sound::AudioSystem > m_audioSystem;
 	Ref< sound::SoundPlayer > m_soundPlayer;
 	resource::Proxy< scene::Scene > m_sceneInstance;
@@ -141,31 +132,19 @@ private:
 	Ref< Effect > m_effect;
 	Ref< world::Entity > m_effectEntity;
 	Color4ub m_colorClear;
-	Color4ub m_colorGrid;
 	uint32_t m_randomSeed;
 	Timer m_timer;
 	std::map< const TypeInfo*, Ref< SourceRenderer > > m_sourceRenderers;
-	Vector4 m_effectPosition;
-	float m_angleHead;
-	float m_anglePitch;
-	ui::Point m_lastMousePosition;
 	float m_timeScale;
 	float m_extraVelocity;
 	double m_lastDeltaTime;
 	bool m_guideVisible;
 	bool m_gridVisible;
 	bool m_velocityVisible;
-	ui::Size m_dirtySize = ui::Size(0, 0);
 
 	void updateWorldRenderer();
 
-	void eventButtonDown(ui::MouseButtonDownEvent* event);
-
-	void eventButtonUp(ui::MouseButtonUpEvent* event);
-
-	void eventMouseMove(ui::MouseMoveEvent* event);
-
-	void eventPaint(ui::PaintEvent* event);
+	virtual bool renderFrame() override final;
 
 	void eventIdle(ui::IdleEvent* event);
 };

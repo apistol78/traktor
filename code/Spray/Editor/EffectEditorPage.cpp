@@ -201,7 +201,7 @@ bool EffectEditorPage::create(ui::Container* parent)
 	m_toolBar->addEventHandler< ui::ToolBarButtonClickEvent >(this, &EffectEditorPage::eventToolBarClick);
 
 	m_previewControl = new EffectPreviewControl(m_editor);
-	m_previewControl->create(container, ui::WsNone, m_resourceManager, renderSystem, m_audioSystem);
+	m_previewControl->create(container, m_resourceManager, m_audioSystem);
 	m_previewControl->showGuide(m_guideVisible);
 	m_previewControl->addEventHandler< ui::ContentChangeEvent >(this, &EffectEditorPage::eventPreviewTimeChange);
 

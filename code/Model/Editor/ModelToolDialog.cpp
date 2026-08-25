@@ -47,8 +47,9 @@
 #include "Model/Operations/Unweld.h"
 #include "Model/Operations/UnwrapUV.h"
 #include "Model/Pose.h"
+#include "Render/Editor/RenderControl.h"
+#include "Render/Editor/RenderControlEvent.h"
 #include "Render/IRenderSystem.h"
-#include "Render/IRenderView.h"
 #include "Render/ITexture.h"
 #include "Render/PrimitiveRenderer.h"
 #include "Resource/IResourceManager.h"
@@ -119,11 +120,7 @@ ModelToolDialog::ModelToolDialog(
 	: m_editor(editor)
 	, m_resourceManager(resourceManager)
 	, m_renderSystem(renderSystem)
-	, m_cameraHead(0.0f)
-	, m_cameraPitch(0.0f)
-	, m_cameraZ(10.0f)
 	, m_normalScale(1.0f)
-	, m_lastMousePosition(0, 0)
 {
 }
 
@@ -285,29 +282,13 @@ bool ModelToolDialog::create(ui::Widget* parent, const std::wstring& fileName, c
 	m_modelChildPopup->add(new ui::MenuItem(ui::Command(L"ModelTool.SaveAs"), i18n::Text(L"MODEL_TOOL_SAVE_AS")));
 	m_modelChildPopup->add(new ui::MenuItem(ui::Command(L"ModelTool.Remove"), i18n::Text(L"MODEL_TOOL_REMOVE")));
 
-	m_renderWidget = new ui::Widget();
-	m_renderWidget->create(splitter, ui::WsFocus | ui::WsNoCanvas);
-	m_renderWidget->addEventHandler< ui::MouseButtonDownEvent >(this, &ModelToolDialog::eventMouseDown);
-	m_renderWidget->addEventHandler< ui::MouseButtonUpEvent >(this, &ModelToolDialog::eventMouseUp);
-	m_renderWidget->addEventHandler< ui::MouseMoveEvent >(this, &ModelToolDialog::eventMouseMove);
-	m_renderWidget->addEventHandler< ui::SizeEvent >(this, &ModelToolDialog::eventRenderSize);
-	m_renderWidget->addEventHandler< ui::PaintEvent >(this, &ModelToolDialog::eventRenderPaint);
-
-	render::RenderViewEmbeddedDesc desc;
-	desc.depthBits = 16;
-	desc.stencilBits = 0;
-	desc.multiSample = 4;
-	desc.allowHDR = false;
-	desc.waitVBlanks = 1;
-	desc.syswin = m_renderWidget->getIWidget()->getSystemWindow();
-
-	m_renderView = m_renderSystem->createRenderView(desc);
-	if (!m_renderView)
+	m_renderControl = new render::RenderControl();
+	if (!m_renderControl->create(splitter, m_editor, m_resourceManager))
 		return false;
 
-	m_primitiveRenderer = new render::PrimitiveRenderer();
-	if (!m_primitiveRenderer->create(m_resourceManager, m_renderSystem, 1))
-		return false;
+	m_renderControl->setPerspective(80.0f * PI / 180.0f, 0.01f, 1000.0f);
+	m_renderControl->setView({ .position = Vector4(0.0f, 0.0f, 10.0f, 1.0f) });
+	m_renderControl->addEventHandler< render::RenderControlEvent >(this, &ModelToolDialog::eventRender);
 
 	m_resourceManager->bind(c_textureDebug, m_textureDebug);
 
@@ -339,9 +320,8 @@ bool ModelToolDialog::create(ui::Widget* parent, const std::wstring& fileName, c
 
 void ModelToolDialog::destroy()
 {
-	safeDestroy(m_primitiveRenderer);
+	safeDestroy(m_renderControl);
 	safeDestroy(m_texturePreview);
-	safeClose(m_renderView);
 
 	m_textureDebug.clear();
 
@@ -573,7 +553,7 @@ void ModelToolDialog::updateModel()
 		updateSkeletonTree(m_model, m_skeletonTree, nullptr, c_InvalidIndex);
 	}
 
-	m_renderWidget->update();
+	m_renderControl->update();
 }
 
 void ModelToolDialog::updateOperations(ui::TreeViewItem* itemModel)
@@ -648,7 +628,7 @@ void ModelToolDialog::eventToolBarClick(ui::ToolBarButtonClickEvent* event)
 	else if (command == L"ModelTool.LoadTexture")
 		loadTexture();
 
-	m_renderWidget->update();
+	m_renderControl->update();
 }
 
 void ModelToolDialog::eventModelTreeButtonDown(ui::MouseButtonDownEvent* event)
@@ -828,7 +808,7 @@ void ModelToolDialog::eventModelTreeButtonDown(ui::MouseButtonDownEvent* event)
 				m_model = nullptr;
 				m_modelTris = nullptr;
 				m_modelAdjacency = nullptr;
-				m_renderWidget->update();
+				m_renderControl->update();
 			}
 		}
 	}
@@ -855,7 +835,7 @@ void ModelToolDialog::eventModelTreeButtonDown(ui::MouseButtonDownEvent* event)
 				m_model = nullptr;
 				m_modelTris = nullptr;
 				m_modelAdjacency = nullptr;
-				m_renderWidget->update();
+				m_renderControl->update();
 			}
 		}
 	}
@@ -866,524 +846,426 @@ void ModelToolDialog::eventModelTreeSelect(ui::SelectionChangeEvent* event)
 	updateModel();
 }
 
-void ModelToolDialog::eventMouseDown(ui::MouseButtonDownEvent* event)
+void ModelToolDialog::eventRender(render::RenderControlEvent* event)
 {
-	m_lastMousePosition = event->getPosition();
-	m_renderWidget->setCapture();
-	m_renderWidget->setFocus();
-}
+	render::PrimitiveRenderer* primitiveRenderer = event->getPrimitiveRenderer();
 
-void ModelToolDialog::eventMouseUp(ui::MouseButtonUpEvent* event)
-{
-	if (m_renderWidget->hasCapture())
-		m_renderWidget->releaseCapture();
-}
-
-void ModelToolDialog::eventMouseMove(ui::MouseMoveEvent* event)
-{
-	if (!m_renderWidget->hasCapture())
-		return;
-
-	ui::Point mousePosition = event->getPosition();
-
-	Vector2 mouseDelta(
-		float(m_lastMousePosition.x - mousePosition.x),
-		float(m_lastMousePosition.y - mousePosition.y));
-
-	if (event->getButton() != ui::MbtRight)
-	{
-		m_cameraHead += mouseDelta.x / 100.0f;
-		m_cameraPitch += mouseDelta.y / 100.0f;
-	}
-	else
-		m_cameraZ -= mouseDelta.y * 0.1f;
-
-	m_lastMousePosition = mousePosition;
-
-	m_renderWidget->update();
-}
-
-void ModelToolDialog::eventRenderSize(ui::SizeEvent* event)
-{
-	if (!m_renderView)
-		return;
-
-	ui::Size sz = event->getSize();
-	m_renderView->reset(sz.cx, sz.cy);
-}
-
-void ModelToolDialog::eventRenderPaint(ui::PaintEvent* event)
-{
-	ui::Rect rc = m_renderWidget->getInnerRect();
-
-	T_ASSERT(m_renderView);
-	T_ASSERT(m_primitiveRenderer);
-
-	// Render view events; reset view if it has become lost.
-	render::RenderEvent re;
-	while (m_renderView->nextEvent(re))
-		if (re.type == render::RenderEventType::Lost)
-			m_renderView->reset(rc.getWidth(), rc.getHeight());
-
-	if (!m_renderView->beginFrame())
-		return;
-
-	render::Clear cl;
-	cl.mask = render::CfColor | render::CfDepth | render::CfStencil;
-	cl.colors[0] = Color4f(46 / 255.0f, 56 / 255.0f, 92 / 255.0f, 1.0f);
-	cl.depth = 1.0f;
-	cl.stencil = 0;
-
-	if (!m_renderView->beginPass(&cl, render::TfAll, render::TfAll))
-		return;
-
-	float aspect = float(rc.getWidth()) / rc.getHeight();
-
-	Matrix44 viewTransform = translate(0.0f, 0.0f, m_cameraZ) * rotateX(m_cameraPitch) * rotateY(m_cameraHead);
-	Matrix44 projectionTransform = perspectiveLh(
-		80.0f * PI / 180.0f,
-		aspect,
-		0.01f,
-		1000.0f);
+	const ui::Rect rc = m_renderControl->getInnerRect();
+	const float aspect = float(rc.getWidth()) / rc.getHeight();
+	const Matrix44 viewTransform = m_renderControl->getViewTransform();
 
 	auto texture = (m_texturePreview != nullptr) ? m_texturePreview.ptr() : m_textureDebug.getResource();
 
-	if (m_primitiveRenderer->begin(0, projectionTransform))
+	m_renderControl->drawGrid(primitiveRenderer, 10.0f, 1.0f);
+
+	if (m_model)
 	{
-		m_primitiveRenderer->pushView(viewTransform);
+		T_ASSERT(m_modelTris);
 
-		for (int x = -10; x <= 10; ++x)
+		RefArray< ui::TreeViewItem > selectedItems = m_skeletonTree->getItems(ui::TreeView::GfDescendants | ui::TreeView::GfSelectedOnly);
+		const int32_t channel = m_toolChannel->getSelected();
+
+		int32_t weightJoint = -1;
+		if (selectedItems.size() == 1)
+			weightJoint = *selectedItems.front()->getData< PropertyInteger >(L"JOINT");
+
+		// Get selection state of materials.
+		const auto& rows = m_materialGrid->getRows();
+		BitVector materialSelections(rows.size(), false);
+		for (uint32_t i = 0; i < rows.size(); ++i)
+			if ((rows[i]->getState() & ui::GridRow::Selected) != 0)
+				materialSelections.set(i);
+
+		// Render solid.
+		if (m_toolSolid->isToggled())
 		{
-			m_primitiveRenderer->drawLine(
-				Vector4(float(x), 0.0f, -10.0f, 1.0f),
-				Vector4(float(x), 0.0f, 10.0f, 1.0f),
-				(x == 0) ? 2.0f : 0.0f,
-				Color4ub(0, 0, 0, 80));
-			m_primitiveRenderer->drawLine(
-				Vector4(-10.0f, 0.0f, float(x), 1.0f),
-				Vector4(10.0f, 0.0f, float(x), 1.0f),
-				(x == 0) ? 2.0f : 0.0f,
-				Color4ub(0, 0, 0, 80));
-		}
+			bool cull = m_toolCull->isToggled();
 
-		if (m_model)
-		{
-			T_ASSERT(m_modelTris);
+			Vector4 eyePosition = viewTransform.inverse().translation().xyz1(); // Eye position in object space.
+			Vector4 lightDir = viewTransform.inverse().axisZ();					// Light direction in object space.
 
-			RefArray< ui::TreeViewItem > selectedItems = m_skeletonTree->getItems(ui::TreeView::GfDescendants | ui::TreeView::GfSelectedOnly);
-			const int32_t channel = m_toolChannel->getSelected();
+			const AlignedVector< Vertex >& vertices = m_modelTris->getVertices();
+			const AlignedVector< Polygon >& polygons = m_modelTris->getPolygons();
+			const AlignedVector< Vector4 >& positions = m_modelTris->getPositions();
 
-			int32_t weightJoint = -1;
-			if (selectedItems.size() == 1)
-				weightJoint = *selectedItems.front()->getData< PropertyInteger >(L"JOINT");
-
-			// Get selection state of materials.
-			const auto& rows = m_materialGrid->getRows();
-			BitVector materialSelections(rows.size(), false);
-			for (uint32_t i = 0; i < rows.size(); ++i)
-				if ((rows[i]->getState() & ui::GridRow::Selected) != 0)
-					materialSelections.set(i);
-
-			// Render solid.
-			if (m_toolSolid->isToggled())
+			primitiveRenderer->pushDepthState(true, true, false);
+			for (const auto& polygon : polygons)
 			{
-				bool cull = m_toolCull->isToggled();
+				const auto& indices = polygon.getVertices();
+				T_ASSERT(indices.size() == 3);
 
-				Vector4 eyePosition = viewTransform.inverse().translation().xyz1(); // Eye position in object space.
-				Vector4 lightDir = viewTransform.inverse().axisZ();					// Light direction in object space.
-
-				const AlignedVector< Vertex >& vertices = m_modelTris->getVertices();
-				const AlignedVector< Polygon >& polygons = m_modelTris->getPolygons();
-				const AlignedVector< Vector4 >& positions = m_modelTris->getPositions();
-
-				m_primitiveRenderer->pushDepthState(true, true, false);
-				for (const auto& polygon : polygons)
+				Vector4 p[3];
+				for (uint32_t i = 0; i < indices.size(); ++i)
 				{
-					const auto& indices = polygon.getVertices();
-					T_ASSERT(indices.size() == 3);
+					const Vertex& vx0 = vertices[indices[i]];
+					p[i] = positions[vx0.getPosition()];
+				}
 
-					Vector4 p[3];
-					for (uint32_t i = 0; i < indices.size(); ++i)
+				Vector4 N = cross(p[0] - p[1], p[2] - p[1]).normalized();
+				if (cull)
+				{
+					if (dot3(eyePosition - p[0], N) < 0)
+						continue;
+				}
+
+				float diffuse = 1.0f;
+				if (m_toolShading->isToggled())
+					diffuse = abs(dot3(lightDir, N)) * 0.5f + 0.5f;
+
+				Color4ub shading(
+					int32_t(diffuse * 255),
+					int32_t(diffuse * 255),
+					int32_t(diffuse * 255),
+					255);
+
+				if (!m_toolWeight->isToggled())
+				{
+					bool selected = false;
+					if (polygon.getMaterial() != c_InvalidIndex)
+						selected = materialSelections[polygon.getMaterial()];
+
+					if (vertices[indices[0]].getTexCoordCount() > channel)
 					{
-						const Vertex& vx0 = vertices[indices[i]];
-						p[i] = positions[vx0.getPosition()];
-					}
+						Color4ub color =
+							selected ? Color4ub(180, 180, 255, 255) : Color4ub(255, 255, 255, 255);
 
-					Vector4 N = cross(p[0] - p[1], p[2] - p[1]).normalized();
-					if (cull)
-					{
-						if (dot3(eyePosition - p[0], N) < 0)
-							continue;
-					}
-
-					float diffuse = 1.0f;
-					if (m_toolShading->isToggled())
-						diffuse = abs(dot3(lightDir, N)) * 0.5f + 0.5f;
-
-					Color4ub shading(
-						int32_t(diffuse * 255),
-						int32_t(diffuse * 255),
-						int32_t(diffuse * 255),
-						255);
-
-					if (!m_toolWeight->isToggled())
-					{
-						bool selected = false;
-						if (polygon.getMaterial() != c_InvalidIndex)
-							selected = materialSelections[polygon.getMaterial()];
-
-						if (vertices[indices[0]].getTexCoordCount() > channel)
-						{
-							Color4ub color =
-								selected ? Color4ub(180, 180, 255, 255) : Color4ub(255, 255, 255, 255);
-
-							m_primitiveRenderer->drawTextureTriangle(
-								p[2],
-								m_modelTris->getTexCoord(vertices[indices[2]].getTexCoord(channel)),
-								p[1],
-								m_modelTris->getTexCoord(vertices[indices[1]].getTexCoord(channel)),
-								p[0],
-								m_modelTris->getTexCoord(vertices[indices[0]].getTexCoord(channel)),
-								color * shading,
-								texture);
-						}
-						else
-						{
-							Color4ub color =
-								selected ? Color4ub(180, 180, 255, 255) : Color4ub(81, 105, 195, 255);
-
-							m_primitiveRenderer->drawSolidTriangle(p[2], p[1], p[0], color * shading);
-						}
+						primitiveRenderer->drawTextureTriangle(
+							p[2],
+							m_modelTris->getTexCoord(vertices[indices[2]].getTexCoord(channel)),
+							p[1],
+							m_modelTris->getTexCoord(vertices[indices[1]].getTexCoord(channel)),
+							p[0],
+							m_modelTris->getTexCoord(vertices[indices[0]].getTexCoord(channel)),
+							color * shading,
+							texture);
 					}
 					else
 					{
-						const Color4ub c_errorWeight(0, 0, 255, 255);
-						const Color4ub c_noWeight(0, 255, 0, 255);
-						const Color4ub c_fullWeight(255, 0, 0, 255);
+						Color4ub color =
+							selected ? Color4ub(180, 180, 255, 255) : Color4ub(81, 105, 195, 255);
 
-						m_primitiveRenderer->drawSolidTriangle(
-							p[2],
-							(vertices[indices[2]].getJointInfluenceCount() > 0) ? lerp(c_noWeight, c_fullWeight, vertices[indices[2]].getJointInfluence(weightJoint)) : c_errorWeight,
-							p[1],
-							(vertices[indices[1]].getJointInfluenceCount() > 0) ? lerp(c_noWeight, c_fullWeight, vertices[indices[1]].getJointInfluence(weightJoint)) : c_errorWeight,
-							p[0],
-							(vertices[indices[0]].getJointInfluenceCount() > 0) ? lerp(c_noWeight, c_fullWeight, vertices[indices[0]].getJointInfluence(weightJoint)) : c_errorWeight);
+						primitiveRenderer->drawSolidTriangle(p[2], p[1], p[0], color * shading);
 					}
 				}
-				m_primitiveRenderer->popDepthState();
-			}
-
-			const auto& vertices = m_model->getVertices();
-			const auto& polygons = m_model->getPolygons();
-			const auto& positions = m_model->getPositions();
-			const auto& normals = m_model->getNormals();
-			const auto& texCoords = m_model->getTexCoords();
-			const auto& joints = m_model->getJoints();
-
-			// Render wire-frame.
-			if (m_toolWire->isToggled())
-			{
-				m_primitiveRenderer->pushDepthState(true, false, false);
-				for (const auto& polygon : polygons)
+				else
 				{
-					const auto& indices = polygon.getVertices();
-					for (uint32_t i = 0; i < indices.size(); ++i)
-					{
-						const Vertex& vx0 = vertices[indices[i]];
-						const Vertex& vx1 = vertices[indices[(i + 1) % indices.size()]];
-						const Vector4& p0 = positions[vx0.getPosition()];
-						const Vector4& p1 = positions[vx1.getPosition()];
-						m_primitiveRenderer->drawLine(p0, p1, Color4ub(255, 255, 255, 200));
-					}
+					const Color4ub c_errorWeight(0, 0, 255, 255);
+					const Color4ub c_noWeight(0, 255, 0, 255);
+					const Color4ub c_fullWeight(255, 0, 0, 255);
+
+					primitiveRenderer->drawSolidTriangle(
+						p[2],
+						(vertices[indices[2]].getJointInfluenceCount() > 0) ? lerp(c_noWeight, c_fullWeight, vertices[indices[2]].getJointInfluence(weightJoint)) : c_errorWeight,
+						p[1],
+						(vertices[indices[1]].getJointInfluenceCount() > 0) ? lerp(c_noWeight, c_fullWeight, vertices[indices[1]].getJointInfluence(weightJoint)) : c_errorWeight,
+						p[0],
+						(vertices[indices[0]].getJointInfluenceCount() > 0) ? lerp(c_noWeight, c_fullWeight, vertices[indices[0]].getJointInfluence(weightJoint)) : c_errorWeight);
 				}
-				m_primitiveRenderer->popDepthState();
 			}
+			primitiveRenderer->popDepthState();
+		}
 
-			// Render non-shared edges.
-			if (m_toolNonSharedEdges->isToggled())
+		const auto& vertices = m_model->getVertices();
+		const auto& polygons = m_model->getPolygons();
+		const auto& positions = m_model->getPositions();
+		const auto& normals = m_model->getNormals();
+		const auto& texCoords = m_model->getTexCoords();
+		const auto& joints = m_model->getJoints();
+
+		// Render wire-frame.
+		if (m_toolWire->isToggled())
+		{
+			primitiveRenderer->pushDepthState(true, false, false);
+			for (const auto& polygon : polygons)
 			{
-				// Lazy create adjacency information as it's pretty costly.
-				if (!m_modelAdjacency)
-					m_modelAdjacency = new ModelAdjacency(m_model, ModelAdjacency::Mode::ByPosition);
-
-				m_primitiveRenderer->pushDepthState(true, false, false);
-				for (uint32_t i = 0; i < (uint32_t)polygons.size(); ++i)
+				const auto& indices = polygon.getVertices();
+				for (uint32_t i = 0; i < indices.size(); ++i)
 				{
-					const auto& polygon = polygons[i];
-					const auto& indices = polygon.getVertices();
-					for (uint32_t j = 0; j < indices.size(); ++j)
-					{
-						uint32_t share = m_modelAdjacency->getSharedEdgeCount(i, j);
-						if (share == 0)
-						{
-							const Vertex& vx0 = vertices[indices[j]];
-							const Vertex& vx1 = vertices[indices[(j + 1) % indices.size()]];
-							const Vector4& p0 = positions[vx0.getPosition()];
-							const Vector4& p1 = positions[vx1.getPosition()];
-							m_primitiveRenderer->drawLine(p0, p1, Color4ub(255, 40, 40, 200));
-						}
-					}
+					const Vertex& vx0 = vertices[indices[i]];
+					const Vertex& vx1 = vertices[indices[(i + 1) % indices.size()]];
+					const Vector4& p0 = positions[vx0.getPosition()];
+					const Vector4& p1 = positions[vx1.getPosition()];
+					primitiveRenderer->drawLine(p0, p1, Color4ub(255, 255, 255, 200));
 				}
-				m_primitiveRenderer->popDepthState();
 			}
+			primitiveRenderer->popDepthState();
+		}
 
-			if (m_toolNormals->isToggled())
+		// Render non-shared edges.
+		if (m_toolNonSharedEdges->isToggled())
+		{
+			// Lazy create adjacency information as it's pretty costly.
+			if (!m_modelAdjacency)
+				m_modelAdjacency = new ModelAdjacency(m_model, ModelAdjacency::Mode::ByPosition);
+
+			primitiveRenderer->pushDepthState(true, false, false);
+			for (uint32_t i = 0; i < (uint32_t)polygons.size(); ++i)
 			{
-				m_primitiveRenderer->pushDepthState(true, false, false);
-				for (const auto& vertex : vertices)
+				const auto& polygon = polygons[i];
+				const auto& indices = polygon.getVertices();
+				for (uint32_t j = 0; j < indices.size(); ++j)
 				{
-					if (vertex.getNormal() != c_InvalidIndex)
-					{
-						const Vector4& p = positions[vertex.getPosition()];
-						const Vector4& n = normals[vertex.getNormal()];
-						m_primitiveRenderer->drawLine(p, p + n * Scalar(m_normalScale), Color4ub(0, 0, 255, 200));
-					}
-					if (vertex.getTangent() != c_InvalidIndex)
-					{
-						const Vector4& p = positions[vertex.getPosition()];
-						const Vector4& n = normals[vertex.getTangent()];
-						m_primitiveRenderer->drawLine(p, p + n * Scalar(m_normalScale), Color4ub(255, 0, 0, 200));
-					}
-					if (vertex.getBinormal() != c_InvalidIndex)
-					{
-						const Vector4& p = positions[vertex.getPosition()];
-						const Vector4& n = normals[vertex.getBinormal()];
-						m_primitiveRenderer->drawLine(p, p + n * Scalar(m_normalScale), Color4ub(0, 255, 0, 200));
-					}
-				}
-				m_primitiveRenderer->popDepthState();
-			}
-
-			if (m_toolVertices->isToggled())
-			{
-				m_primitiveRenderer->pushDepthState(true, false, false);
-				for (const auto& position : positions)
-					m_primitiveRenderer->drawSolidPoint(position, 2.0f, Color4ub(255, 255, 0, 200));
-				m_primitiveRenderer->popDepthState();
-			}
-
-			const bool showRest = m_toolRest->isToggled();
-			const bool showPose = m_toolPose->isToggled();
-			if (showRest || showPose)
-			{
-				AlignedVector< uint32_t > childJointIds;
-
-				m_primitiveRenderer->pushDepthState(false, false, false);
-
-				if (showRest)
-				{
-					for (uint32_t i = 0; i < joints.size(); ++i)
-					{
-						const Color4ub colorRest = (i == weightJoint) ? Color4ub(80, 80, 255, 255) : Color4ub(120, 255, 120, 255);
-						const float frameSize = (i == weightJoint) ? 0.5f : 0.25f;
-
-						childJointIds.resize(0);
-						m_modelTris->findChildJoints(i, childJointIds);
-
-						auto Tjoint = m_modelTris->getJointGlobalTransform(i);
-
-						m_primitiveRenderer->drawWireFrame(Tjoint.toMatrix44(), frameSize);
-
-						if (!childJointIds.empty())
-						{
-							for (auto childId : childJointIds)
-							{
-								auto Tchild = m_modelTris->getJointGlobalTransform(childId);
-
-								m_primitiveRenderer->drawLine(
-									Tjoint.translation(),
-									Tchild.translation(),
-									2.0f,
-									colorRest);
-							}
-						}
-						else
-							m_primitiveRenderer->drawSolidPoint(
-								Tjoint.translation(),
-								2.0f,
-								colorRest);
-					}
-				}
-
-				if (showPose && m_modelTris->getAnimationCount() > 0)
-				{
-					const Animation* anim = m_modelTris->getAnimation(0);
-
-					int32_t frame = (int32_t)(m_timer.getElapsedTime() * 10.0f);
-					frame %= anim->getKeyFrameCount();
-
-					const Pose* pose = anim->getKeyFramePose(frame);
-
-					for (uint32_t i = 0; i < joints.size(); ++i)
-					{
-						const Color4ub colorPose = (i == weightJoint) ? Color4ub(255, 255, 80, 255) : Color4ub(255, 180, 120, 255);
-						const float frameSize = (i == weightJoint) ? 0.5f : 0.25f;
-
-						childJointIds.resize(0);
-						m_modelTris->findChildJoints(i, childJointIds);
-
-						const auto TjointPose = pose->getJointGlobalTransform(m_modelTris, i);
-
-						m_primitiveRenderer->drawWireFrame(TjointPose.toMatrix44(), frameSize);
-
-						if (!childJointIds.empty())
-						{
-							for (auto childId : childJointIds)
-							{
-								auto TchildPose = pose->getJointGlobalTransform(m_modelTris, childId);
-
-								m_primitiveRenderer->drawLine(
-									TjointPose.translation(),
-									TchildPose.translation(),
-									2.0f,
-									colorPose);
-							}
-						}
-						else
-							m_primitiveRenderer->drawSolidPoint(
-								TjointPose.translation(),
-								2.0f,
-								colorPose);
-					}
-				}
-
-				m_primitiveRenderer->popDepthState();
-			}
-
-			if (m_toolUV->isToggled())
-			{
-				int32_t channel = m_toolChannel->getSelected();
-
-				m_primitiveRenderer->setProjection(orthoLh(-2.0f, 2.0f, 2.0f, -2.0f, 0.0f, 1.0f));
-				m_primitiveRenderer->pushView(Matrix44::identity());
-				m_primitiveRenderer->pushDepthState(false, false, false);
-
-				m_primitiveRenderer->drawTextureQuad(
-					Vector4(0.0f, 0.0f, 0.5f, 1.0f),
-					Vector2(0.0f, 0.0f),
-					Vector4(1.0f, 0.0f, 0.5f, 1.0f),
-					Vector2(1.0f, 0.0f),
-					Vector4(1.0f, 1.0f, 0.5f, 1.0f),
-					Vector2(1.0f, 1.0f),
-					Vector4(0.0f, 1.0f, 0.5f, 1.0f),
-					Vector2(0.0f, 1.0f),
-					Color4ub(255, 255, 255, 200),
-					texture);
-
-				m_primitiveRenderer->drawWireQuad(
-					Vector4(0.0f, 0.0f, 0.5f, 1.0f),
-					Vector4(1.0f, 0.0f, 0.5f, 1.0f),
-					Vector4(1.0f, 1.0f, 0.5f, 1.0f),
-					Vector4(0.0f, 1.0f, 0.5f, 1.0f),
-					Color4ub(255, 255, 255, 200));
-
-				for (uint32_t i = 0; i < polygons.size(); ++i)
-				{
-					const Polygon& polygon = polygons[i];
-					const auto& indices = polygon.getVertices();
-
-					for (uint32_t j = 0; j < indices.size(); ++j)
+					uint32_t share = m_modelAdjacency->getSharedEdgeCount(i, j);
+					if (share == 0)
 					{
 						const Vertex& vx0 = vertices[indices[j]];
 						const Vertex& vx1 = vertices[indices[(j + 1) % indices.size()]];
-
-						if (vx0.getTexCoord(channel) != c_InvalidIndex && vx1.getTexCoord(channel) != c_InvalidIndex)
-						{
-							const Vector2& uv0 = texCoords[vx0.getTexCoord(channel)];
-							const Vector2& uv1 = texCoords[vx1.getTexCoord(channel)];
-
-							m_primitiveRenderer->drawLine(
-								Vector4(uv0.x, uv0.y, 0.5f, 1.0f),
-								Vector4(uv1.x, uv1.y, 0.5f, 1.0f),
-								Color4ub(255, 255, 255, 200));
-						}
+						const Vector4& p0 = positions[vx0.getPosition()];
+						const Vector4& p1 = positions[vx1.getPosition()];
+						primitiveRenderer->drawLine(p0, p1, Color4ub(255, 40, 40, 200));
 					}
 				}
-
-				m_primitiveRenderer->popView();
-				m_primitiveRenderer->popDepthState();
 			}
-
-			{
-				// Draw frame.
-				const float c_arrowLength = 0.4f;
-				const float c_frameSize = 0.2f;
-
-				float w = 2.0f * aspect;
-				float h = 2.0f;
-
-				m_primitiveRenderer->setProjection(orthoLh(-w / 2.0f, -h / 2.0f, w / 2.0f, h / 2.0f, -1.0f, 1.0f));
-				m_primitiveRenderer->pushWorld(Matrix44::identity());
-				m_primitiveRenderer->pushView(
-					translate(w / 2.0f - c_frameSize, h / 2.0f - c_frameSize, 0.0f) *
-					scale(c_frameSize, c_frameSize, c_frameSize));
-
-				m_primitiveRenderer->pushDepthState(false, true, false);
-				m_primitiveRenderer->drawSolidQuad(
-					Vector4(-1.0f, 1.0f, 1.0f, 1.0f),
-					Vector4(1.0f, 1.0f, 1.0f, 1.0f),
-					Vector4(1.0f, -1.0f, 1.0f, 1.0f),
-					Vector4(-1.0f, -1.0f, 1.0f, 1.0f),
-					Color4ub(0, 0, 0, 32));
-				m_primitiveRenderer->popDepthState();
-
-				m_primitiveRenderer->pushDepthState(true, true, false);
-
-				m_primitiveRenderer->drawLine(
-					Vector4::origo(),
-					Vector4::origo() + viewTransform.axisX() * Scalar(1.0f - c_arrowLength),
-					Color4ub(255, 0, 0, 255));
-				m_primitiveRenderer->drawArrowHead(
-					Vector4::origo() + viewTransform.axisX() * Scalar(1.0f - c_arrowLength),
-					Vector4::origo() + viewTransform.axisX(),
-					0.8f,
-					Color4ub(255, 0, 0, 255));
-
-				m_primitiveRenderer->drawLine(
-					Vector4::origo(),
-					Vector4::origo() + viewTransform.axisY() * Scalar(1.0f - c_arrowLength),
-					Color4ub(0, 255, 0, 255));
-				m_primitiveRenderer->drawArrowHead(
-					Vector4::origo() + viewTransform.axisY() * Scalar(1.0f - c_arrowLength),
-					Vector4::origo() + viewTransform.axisY(),
-					0.8f,
-					Color4ub(0, 255, 0, 255));
-
-				m_primitiveRenderer->drawLine(
-					Vector4::origo(),
-					Vector4::origo() + viewTransform.axisZ() * Scalar(1.0f - c_arrowLength),
-					Color4ub(0, 0, 255, 255));
-				m_primitiveRenderer->drawArrowHead(
-					Vector4::origo() + viewTransform.axisZ() * Scalar(1.0f - c_arrowLength),
-					Vector4::origo() + viewTransform.axisZ(),
-					0.8f,
-					Color4ub(0, 0, 255, 255));
-
-				m_primitiveRenderer->popWorld();
-				m_primitiveRenderer->popView();
-				m_primitiveRenderer->popDepthState();
-			}
+			primitiveRenderer->popDepthState();
 		}
 
-		m_primitiveRenderer->end(0);
-		m_primitiveRenderer->render(m_renderView, 0);
+		if (m_toolNormals->isToggled())
+		{
+			primitiveRenderer->pushDepthState(true, false, false);
+			for (const auto& vertex : vertices)
+			{
+				if (vertex.getNormal() != c_InvalidIndex)
+				{
+					const Vector4& p = positions[vertex.getPosition()];
+					const Vector4& n = normals[vertex.getNormal()];
+					primitiveRenderer->drawLine(p, p + n * Scalar(m_normalScale), Color4ub(0, 0, 255, 200));
+				}
+				if (vertex.getTangent() != c_InvalidIndex)
+				{
+					const Vector4& p = positions[vertex.getPosition()];
+					const Vector4& n = normals[vertex.getTangent()];
+					primitiveRenderer->drawLine(p, p + n * Scalar(m_normalScale), Color4ub(255, 0, 0, 200));
+				}
+				if (vertex.getBinormal() != c_InvalidIndex)
+				{
+					const Vector4& p = positions[vertex.getPosition()];
+					const Vector4& n = normals[vertex.getBinormal()];
+					primitiveRenderer->drawLine(p, p + n * Scalar(m_normalScale), Color4ub(0, 255, 0, 200));
+				}
+			}
+			primitiveRenderer->popDepthState();
+		}
+
+		if (m_toolVertices->isToggled())
+		{
+			primitiveRenderer->pushDepthState(true, false, false);
+			for (const auto& position : positions)
+				primitiveRenderer->drawSolidPoint(position, 2.0f, Color4ub(255, 255, 0, 200));
+			primitiveRenderer->popDepthState();
+		}
+
+		const bool showRest = m_toolRest->isToggled();
+		const bool showPose = m_toolPose->isToggled();
+		if (showRest || showPose)
+		{
+			AlignedVector< uint32_t > childJointIds;
+
+			primitiveRenderer->pushDepthState(false, false, false);
+
+			if (showRest)
+			{
+				for (uint32_t i = 0; i < joints.size(); ++i)
+				{
+					const Color4ub colorRest = (i == weightJoint) ? Color4ub(80, 80, 255, 255) : Color4ub(120, 255, 120, 255);
+					const float frameSize = (i == weightJoint) ? 0.5f : 0.25f;
+
+					childJointIds.resize(0);
+					m_modelTris->findChildJoints(i, childJointIds);
+
+					auto Tjoint = m_modelTris->getJointGlobalTransform(i);
+
+					primitiveRenderer->drawWireFrame(Tjoint.toMatrix44(), frameSize);
+
+					if (!childJointIds.empty())
+					{
+						for (auto childId : childJointIds)
+						{
+							auto Tchild = m_modelTris->getJointGlobalTransform(childId);
+
+							primitiveRenderer->drawLine(
+								Tjoint.translation(),
+								Tchild.translation(),
+								2.0f,
+								colorRest);
+						}
+					}
+					else
+						primitiveRenderer->drawSolidPoint(
+							Tjoint.translation(),
+							2.0f,
+							colorRest);
+				}
+			}
+
+			if (showPose && m_modelTris->getAnimationCount() > 0)
+			{
+				const Animation* anim = m_modelTris->getAnimation(0);
+
+				int32_t frame = (int32_t)(m_timer.getElapsedTime() * 10.0f);
+				frame %= anim->getKeyFrameCount();
+
+				const Pose* pose = anim->getKeyFramePose(frame);
+
+				for (uint32_t i = 0; i < joints.size(); ++i)
+				{
+					const Color4ub colorPose = (i == weightJoint) ? Color4ub(255, 255, 80, 255) : Color4ub(255, 180, 120, 255);
+					const float frameSize = (i == weightJoint) ? 0.5f : 0.25f;
+
+					childJointIds.resize(0);
+					m_modelTris->findChildJoints(i, childJointIds);
+
+					const auto TjointPose = pose->getJointGlobalTransform(m_modelTris, i);
+
+					primitiveRenderer->drawWireFrame(TjointPose.toMatrix44(), frameSize);
+
+					if (!childJointIds.empty())
+					{
+						for (auto childId : childJointIds)
+						{
+							auto TchildPose = pose->getJointGlobalTransform(m_modelTris, childId);
+
+							primitiveRenderer->drawLine(
+								TjointPose.translation(),
+								TchildPose.translation(),
+								2.0f,
+								colorPose);
+						}
+					}
+					else
+						primitiveRenderer->drawSolidPoint(
+							TjointPose.translation(),
+							2.0f,
+							colorPose);
+				}
+			}
+
+			primitiveRenderer->popDepthState();
+		}
+
+		if (m_toolUV->isToggled())
+		{
+			int32_t channel = m_toolChannel->getSelected();
+
+			primitiveRenderer->setProjection(orthoLh(-2.0f, 2.0f, 2.0f, -2.0f, 0.0f, 1.0f));
+			primitiveRenderer->pushView(Matrix44::identity());
+			primitiveRenderer->pushDepthState(false, false, false);
+
+			primitiveRenderer->drawTextureQuad(
+				Vector4(0.0f, 0.0f, 0.5f, 1.0f),
+				Vector2(0.0f, 0.0f),
+				Vector4(1.0f, 0.0f, 0.5f, 1.0f),
+				Vector2(1.0f, 0.0f),
+				Vector4(1.0f, 1.0f, 0.5f, 1.0f),
+				Vector2(1.0f, 1.0f),
+				Vector4(0.0f, 1.0f, 0.5f, 1.0f),
+				Vector2(0.0f, 1.0f),
+				Color4ub(255, 255, 255, 200),
+				texture);
+
+			primitiveRenderer->drawWireQuad(
+				Vector4(0.0f, 0.0f, 0.5f, 1.0f),
+				Vector4(1.0f, 0.0f, 0.5f, 1.0f),
+				Vector4(1.0f, 1.0f, 0.5f, 1.0f),
+				Vector4(0.0f, 1.0f, 0.5f, 1.0f),
+				Color4ub(255, 255, 255, 200));
+
+			for (uint32_t i = 0; i < polygons.size(); ++i)
+			{
+				const Polygon& polygon = polygons[i];
+				const auto& indices = polygon.getVertices();
+
+				for (uint32_t j = 0; j < indices.size(); ++j)
+				{
+					const Vertex& vx0 = vertices[indices[j]];
+					const Vertex& vx1 = vertices[indices[(j + 1) % indices.size()]];
+
+					if (vx0.getTexCoord(channel) != c_InvalidIndex && vx1.getTexCoord(channel) != c_InvalidIndex)
+					{
+						const Vector2& uv0 = texCoords[vx0.getTexCoord(channel)];
+						const Vector2& uv1 = texCoords[vx1.getTexCoord(channel)];
+
+						primitiveRenderer->drawLine(
+							Vector4(uv0.x, uv0.y, 0.5f, 1.0f),
+							Vector4(uv1.x, uv1.y, 0.5f, 1.0f),
+							Color4ub(255, 255, 255, 200));
+					}
+				}
+			}
+
+			primitiveRenderer->popView();
+			primitiveRenderer->popDepthState();
+		}
+
+		{
+			// Draw frame.
+			const float c_arrowLength = 0.4f;
+			const float c_frameSize = 0.2f;
+
+			float w = 2.0f * aspect;
+			float h = 2.0f;
+
+			primitiveRenderer->setProjection(orthoLh(-w / 2.0f, -h / 2.0f, w / 2.0f, h / 2.0f, -1.0f, 1.0f));
+			primitiveRenderer->pushWorld(Matrix44::identity());
+			primitiveRenderer->pushView(
+				translate(w / 2.0f - c_frameSize, h / 2.0f - c_frameSize, 0.0f) *
+				scale(c_frameSize, c_frameSize, c_frameSize));
+
+			primitiveRenderer->pushDepthState(false, true, false);
+			primitiveRenderer->drawSolidQuad(
+				Vector4(-1.0f, 1.0f, 1.0f, 1.0f),
+				Vector4(1.0f, 1.0f, 1.0f, 1.0f),
+				Vector4(1.0f, -1.0f, 1.0f, 1.0f),
+				Vector4(-1.0f, -1.0f, 1.0f, 1.0f),
+				Color4ub(0, 0, 0, 32));
+			primitiveRenderer->popDepthState();
+
+			primitiveRenderer->pushDepthState(true, true, false);
+
+			primitiveRenderer->drawLine(
+				Vector4::origo(),
+				Vector4::origo() + viewTransform.axisX() * Scalar(1.0f - c_arrowLength),
+				Color4ub(255, 0, 0, 255));
+			primitiveRenderer->drawArrowHead(
+				Vector4::origo() + viewTransform.axisX() * Scalar(1.0f - c_arrowLength),
+				Vector4::origo() + viewTransform.axisX(),
+				0.8f,
+				Color4ub(255, 0, 0, 255));
+
+			primitiveRenderer->drawLine(
+				Vector4::origo(),
+				Vector4::origo() + viewTransform.axisY() * Scalar(1.0f - c_arrowLength),
+				Color4ub(0, 255, 0, 255));
+			primitiveRenderer->drawArrowHead(
+				Vector4::origo() + viewTransform.axisY() * Scalar(1.0f - c_arrowLength),
+				Vector4::origo() + viewTransform.axisY(),
+				0.8f,
+				Color4ub(0, 255, 0, 255));
+
+			primitiveRenderer->drawLine(
+				Vector4::origo(),
+				Vector4::origo() + viewTransform.axisZ() * Scalar(1.0f - c_arrowLength),
+				Color4ub(0, 0, 255, 255));
+			primitiveRenderer->drawArrowHead(
+				Vector4::origo() + viewTransform.axisZ() * Scalar(1.0f - c_arrowLength),
+				Vector4::origo() + viewTransform.axisZ(),
+				0.8f,
+				Color4ub(0, 0, 255, 255));
+
+			primitiveRenderer->popWorld();
+			primitiveRenderer->popView();
+			primitiveRenderer->popDepthState();
+		}
 	}
-
-	m_renderView->endPass();
-	m_renderView->endFrame();
-	m_renderView->present();
-
-	event->consume();
 }
 
 void ModelToolDialog::eventMaterialSelect(ui::SelectionChangeEvent* event)
 {
-	m_renderWidget->update();
+	m_renderControl->update();
 }
 
 void ModelToolDialog::eventSkeletonSelect(ui::SelectionChangeEvent* event)
 {
-	m_renderWidget->update();
+	m_renderControl->update();
 }
 
 }

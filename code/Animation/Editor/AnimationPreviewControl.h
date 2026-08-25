@@ -9,9 +9,9 @@
 #pragma once
 
 #include "Core/Timer/Timer.h"
+#include "Render/Editor/RenderControl.h"
 #include "Resource/Id.h"
 #include "Resource/Proxy.h"
-#include "Ui/Widget.h"
 #include "World/WorldRenderView.h"
 
 namespace traktor::editor
@@ -31,9 +31,6 @@ class SkinnedMesh;
 namespace traktor::render
 {
 
-class IRenderSystem;
-class IRenderView;
-class PrimitiveRenderer;
 class RenderContext;
 class RenderGraph;
 
@@ -79,18 +76,11 @@ class Skeleton;
 /*! Animation 3d preview control.
  * \ingroup Animation
  */
-class AnimationPreviewControl : public ui::Widget
+class AnimationPreviewControl : public render::RenderControl
 {
 	T_RTTI_CLASS;
 
 public:
-	struct View
-	{
-		Vector4 position = Vector4::origo();
-		float head = 0.0f;
-		float pitch = 0.0f;
-	};
-
 	explicit AnimationPreviewControl(editor::IEditor* editor);
 
 	bool create(ui::Widget* parent);
@@ -105,13 +95,7 @@ public:
 
 	void setParameterValue(const std::wstring& parameterName, bool value);
 
-	void setView(const View& view);
-
-	const View& getView() const { return m_view; }
-
 	void updateSettings();
-
-	resource::IResourceManager* getResourceManager() const { return m_resourceManager; }
 
 	physics::PhysicsManager* getPhysicsManager() const { return m_physicsManager; }
 
@@ -120,13 +104,9 @@ public:
 private:
 	editor::IEditor* m_editor = nullptr;
 	Ref< ui::EventSubject::IEventHandler > m_idleEventHandler;
-	Ref< resource::IResourceManager > m_resourceManager;
 	Ref< physics::PhysicsManager > m_physicsManager;
-	Ref< render::IRenderSystem > m_renderSystem;
-	Ref< render::IRenderView > m_renderView;
 	Ref< render::RenderContext > m_renderContext;
 	Ref< render::RenderGraph > m_renderGraph;
-	Ref< render::PrimitiveRenderer > m_primitiveRenderer;
 	Ref< world::IWorldRenderer > m_worldRenderer;
 	world::WorldRenderView m_worldRenderView;
 	resource::Proxy< scene::Scene > m_sceneInstance;
@@ -135,25 +115,13 @@ private:
 	Ref< IPoseController > m_poseController;
 	Ref< world::Entity > m_entity;
 	Color4ub m_colorClear;
-	Color4ub m_colorGrid;
 	Timer m_timer;
-	View m_view;
-	ui::Point m_lastMousePosition = ui::Point(0, 0);
-	ui::Size m_dirtySize = ui::Size(0, 0);
 
 	void updatePreview();
 
 	void updateWorldRenderer();
 
-	void eventButtonDown(ui::MouseButtonDownEvent* event);
-
-	void eventButtonUp(ui::MouseButtonUpEvent* event);
-
-	void eventMouseMove(ui::MouseMoveEvent* event);
-
-	void eventSize(ui::SizeEvent* event);
-
-	void eventPaint(ui::PaintEvent* event);
+	virtual bool renderFrame() override final;
 
 	void eventIdle(ui::IdleEvent* event);
 };

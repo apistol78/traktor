@@ -45,7 +45,7 @@ class T_DLLCLASS RagDollPreviewControl : public render::RenderControl
 	T_RTTI_CLASS;
 
 public:
-	bool create(ui::Widget* parent, render::IRenderSystem* renderSystem, db::Database* database);
+	bool create(ui::Widget* parent, editor::IEditor* editor);
 
 	/*! Set rag doll asset to preview; the setup is re-evaluated each frame. */
 	void setAsset(const RagDollSkeletonAsset* asset);

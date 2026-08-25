@@ -24,9 +24,9 @@ namespace traktor::render
 {
 
 class IRenderSystem;
-class IRenderView;
 class ITexture;
-class PrimitiveRenderer;
+class RenderControl;
+class RenderControlEvent;
 
 }
 
@@ -76,8 +76,7 @@ private:
 	editor::IEditor* m_editor;
 	Ref< resource::IResourceManager > m_resourceManager;
 	Ref< render::IRenderSystem > m_renderSystem;
-	Ref< render::IRenderView > m_renderView;
-	Ref< render::PrimitiveRenderer > m_primitiveRenderer;
+	Ref< render::RenderControl > m_renderControl;
 	resource::Proxy< render::ITexture > m_textureDebug;
 	Ref< render::ITexture > m_texturePreview;
 	Ref< ui::ToolBarButton > m_toolShading;
@@ -98,15 +97,10 @@ private:
 	Ref< ui::GridView > m_statisticGrid;
 	Ref< ui::Menu > m_modelRootPopup;
 	Ref< ui::Menu > m_modelChildPopup;
-	Ref< ui::Widget > m_renderWidget;
 	Ref< Model > m_model;
 	Ref< Model > m_modelTris;
 	Ref< ModelAdjacency > m_modelAdjacency;
-	float m_cameraHead;
-	float m_cameraPitch;
-	float m_cameraZ;
 	float m_normalScale;
-	ui::Point m_lastMousePosition;
 	Timer m_timer;
 
 	bool loadModel();
@@ -131,15 +125,7 @@ private:
 
 	void eventModelTreeSelect(ui::SelectionChangeEvent* event);
 
-	void eventMouseDown(ui::MouseButtonDownEvent* event);
-
-	void eventMouseUp(ui::MouseButtonUpEvent* event);
-
-	void eventMouseMove(ui::MouseMoveEvent* event);
-
-	void eventRenderSize(ui::SizeEvent* event);
-
-	void eventRenderPaint(ui::PaintEvent* event);
+	void eventRender(render::RenderControlEvent* event);
 
 	void eventMaterialSelect(ui::SelectionChangeEvent* event);
 

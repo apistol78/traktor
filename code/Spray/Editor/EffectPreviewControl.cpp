@@ -82,20 +82,14 @@ const resource::Id< scene::Scene > c_previewScene(L"{84ADD065-E963-9D4D-A28D-FF4
 
 const uint32_t c_initialRandomSeed = 5489UL;
 const int c_updateInterval = 30;
-const float c_deltaMoveScale = 0.025f;
-const float c_deltaScaleHead = 0.015f;
-const float c_deltaScalePitch = 0.005f;
 
 }
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.EffectPreviewControl", EffectPreviewControl, ui::Widget)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.EffectPreviewControl", EffectPreviewControl, render::RenderControl)
 
 EffectPreviewControl::EffectPreviewControl(editor::IEditor* editor)
 	: m_editor(editor)
 	, m_randomSeed(c_initialRandomSeed)
-	, m_effectPosition(0.0f, -2.0f, 7.0f, 1.0f)
-	, m_angleHead(0.0f)
-	, m_anglePitch(0.0f)
 	, m_timeScale(0.0f)
 	, m_extraVelocity(0.0f)
 	, m_lastDeltaTime(1.0 / c_updateInterval)
@@ -115,40 +109,16 @@ EffectPreviewControl::EffectPreviewControl(editor::IEditor* editor)
 
 bool EffectPreviewControl::create(
 	ui::Widget* parent,
-	int style,
 	resource::IResourceManager* resourceManager,
-	render::IRenderSystem* renderSystem,
 	sound::AudioSystem* audioSystem)
 {
-	if (!Widget::create(parent, style | ui::WsFocus | ui::WsNoCanvas))
+	if (!render::RenderControl::create(parent, m_editor, resourceManager))
 		return false;
 
-	ui::Rect innerRect = getInnerRect();
-	int32_t width = innerRect.getWidth();
-	int32_t height = innerRect.getHeight();
-
-	m_resourceManager = resourceManager;
-	m_renderSystem = renderSystem;
-
-	render::RenderViewEmbeddedDesc desc;
-	desc.depthBits = 32;
-	desc.stencilBits = 0;
-	desc.multiSample = m_editor->getSettings()->getProperty< int32_t >(L"Editor.MultiSample", 4);
-	desc.multiSampleShading = m_editor->getSettings()->getProperty< float >(L"Editor.MultiSampleShading", 0.0f);
-	desc.allowHDR = m_editor->getSettings()->getProperty< bool >(L"Editor.HDR", true);
-	desc.waitVBlanks = 1;
-	desc.syswin = getIWidget()->getSystemWindow();
-
-	m_renderView = renderSystem->createRenderView(desc);
-	if (!m_renderView)
-		return false;
-
-	m_primitiveRenderer = new render::PrimitiveRenderer();
-	if (!m_primitiveRenderer->create(resourceManager, renderSystem, 1))
-		return false;
+	setView({ .position = Vector4(0.0f, -2.0f, 7.0f, 1.0f) });
 
 	m_renderContext = new render::RenderContext(16 * 1024 * 1024);
-	m_renderGraph = new render::RenderGraph(renderSystem, desc.multiSample);
+	m_renderGraph = new render::RenderGraph(getRenderSystem(), getMultiSample());
 
 	if ((m_audioSystem = audioSystem) != nullptr)
 	{
@@ -160,11 +130,6 @@ bool EffectPreviewControl::create(
 		return false;
 
 	m_sceneInstance.consume();
-
-	addEventHandler< ui::MouseButtonDownEvent >(this, &EffectPreviewControl::eventButtonDown);
-	addEventHandler< ui::MouseButtonUpEvent >(this, &EffectPreviewControl::eventButtonUp);
-	addEventHandler< ui::MouseMoveEvent >(this, &EffectPreviewControl::eventMouseMove);
-	addEventHandler< ui::PaintEvent >(this, &EffectPreviewControl::eventPaint);
 
 	updateSettings();
 	m_timer.reset();
@@ -178,14 +143,12 @@ void EffectPreviewControl::destroy()
 	ui::Application::getInstance()->removeEventHandler(m_idleEventHandler);
 
 	safeDestroy(m_worldRenderer);
-	safeDestroy(m_primitiveRenderer);
 	safeDestroy(m_renderGraph);
-	safeClose(m_renderView);
 
 	safeDestroy(m_soundPlayer);
 	m_audioSystem = nullptr;
 
-	Widget::destroy();
+	render::RenderControl::destroy();
 }
 
 void EffectPreviewControl::setEffect(const EffectData* effectData, Effect* effect)
@@ -312,7 +275,6 @@ void EffectPreviewControl::updateSettings()
 {
 	Ref< PropertyGroup > colors = m_editor->getSettings()->getProperty< PropertyGroup >(L"Editor.Colors");
 	m_colorClear = colors->getProperty< Color4ub >(L"Background");
-	m_colorGrid = colors->getProperty< Color4ub >(L"Grid");
 }
 
 void EffectPreviewControl::updateWorldRenderer()
@@ -331,12 +293,12 @@ void EffectPreviewControl::updateWorldRenderer()
 	Ref< world::WorldEntityRenderers > entityRenderers = new world::WorldEntityRenderers();
 	entityRenderers->add(new mesh::StaticMeshComponentRenderer());
 	entityRenderers->add(new mesh::SkinnedMeshComponentRenderer());
-	entityRenderers->add(new EffectRenderer(m_renderSystem, 10000.0f, 10000.0f));
+	entityRenderers->add(new EffectRenderer(getRenderSystem(), 10000.0f, 10000.0f));
 	entityRenderers->add(new weather::PrecipitationRenderer());
 	entityRenderers->add(new weather::SkyRenderer());
 	entityRenderers->add(new world::ProbeRenderer(
-		m_resourceManager,
-		m_renderSystem,
+		getResourceManager(),
+		getRenderSystem(),
 		*worldRendererType));
 
 	Ref< world::IWorldRenderer > worldRenderer = dynamic_type_cast< world::IWorldRenderer* >(worldRendererType->createInstance());
@@ -354,12 +316,12 @@ void EffectPreviewControl::updateWorldRenderer()
 	wcd.quality.imageProcess = world::Quality::Ultra;
 	wcd.quality.irradiance = world::Quality::Ultra;
 	wcd.multiSample = 0;
-	wcd.hdr = m_renderView->isHDR();
+	wcd.hdr = getRenderView()->isHDR();
 	wcd.rt = false;
 
 	if (!worldRenderer->create(
-			m_resourceManager,
-			m_renderSystem,
+			getResourceManager(),
+			getRenderSystem(),
 			wcd))
 	{
 		safeDestroy(worldRenderer);
@@ -369,50 +331,7 @@ void EffectPreviewControl::updateWorldRenderer()
 	m_worldRenderer = worldRenderer;
 }
 
-void EffectPreviewControl::eventButtonDown(ui::MouseButtonDownEvent* event)
-{
-	m_lastMousePosition = event->getPosition();
-	setCapture();
-}
-
-void EffectPreviewControl::eventButtonUp(ui::MouseButtonUpEvent* event)
-{
-	releaseCapture();
-}
-
-void EffectPreviewControl::eventMouseMove(ui::MouseMoveEvent* event)
-{
-	if (!hasCapture())
-		return;
-
-	if (event->getButton() == ui::MbtRight)
-	{
-		if ((event->getKeyState() & ui::KsControl) == 0)
-		{
-			// Move X/Z direction.
-			const float dx = -float(m_lastMousePosition.x - event->getPosition().x) * c_deltaMoveScale;
-			const float dz = -float(m_lastMousePosition.y - event->getPosition().y) * c_deltaMoveScale;
-			m_effectPosition += Vector4(dx, 0.0f, dz, 0.0f);
-		}
-		else
-		{
-			// Move X/Y direction.
-			const float dx = -float(m_lastMousePosition.x - event->getPosition().x) * c_deltaMoveScale;
-			const float dy = float(m_lastMousePosition.y - event->getPosition().y) * c_deltaMoveScale;
-			m_effectPosition += Vector4(dx, dy, 0.0f, 0.0f);
-		}
-	}
-	else if (event->getButton() == ui::MbtLeft)
-	{
-		m_angleHead += float(m_lastMousePosition.x - event->getPosition().x) * c_deltaScaleHead;
-		m_anglePitch += float(m_lastMousePosition.y - event->getPosition().y) * c_deltaScalePitch;
-	}
-
-	m_lastMousePosition = event->getPosition();
-	update();
-}
-
-void EffectPreviewControl::eventPaint(ui::PaintEvent* event)
+bool EffectPreviewControl::renderFrame()
 {
 	// Reload scene if changed.
 	if (m_sceneInstance.changed())
@@ -421,30 +340,21 @@ void EffectPreviewControl::eventPaint(ui::PaintEvent* event)
 		m_sceneInstance.consume();
 	}
 
-	if (!m_sceneInstance || !m_renderView)
-		return;
+	if (!m_sceneInstance)
+		return false;
 
 	// Lazy create world renderer.
 	if (!m_worldRenderer)
 	{
 		updateWorldRenderer();
 		if (!m_worldRenderer)
-			return;
+			return false;
 	}
 
-	// Render view events; reset view if it has become lost.
-	bool lost = false;
-	for (render::RenderEvent re = {}; m_renderView->nextEvent(re);)
-		if (re.type == render::RenderEventType::Lost)
-			lost = true;
+	if (!validateRenderView())
+		return false;
 
-	const ui::Size sz = getInnerRect().getSize();
-	if (lost || sz.cx != m_dirtySize.cx || sz.cy != m_dirtySize.cy)
-	{
-		if (!m_renderView->reset(sz.cx, sz.cy))
-			return;
-		m_dirtySize = sz;
-	}
+	const ui::Size sz = getRenderSize();
 
 	const double time = m_timer.getElapsedTime();
 	const double deltaTime = m_timer.getDeltaTime() * 0.9 + m_lastDeltaTime * 0.1;
@@ -453,7 +363,7 @@ void EffectPreviewControl::eventPaint(ui::PaintEvent* event)
 	float tmp[4];
 	m_colorClear.getRGBA32F(tmp);
 
-	const Matrix44 view = translate(m_effectPosition) * rotateX(m_anglePitch) * rotateY(m_angleHead);
+	const Matrix44 view = getViewTransform();
 
 	if (m_effectEntity)
 	{
@@ -499,30 +409,16 @@ void EffectPreviewControl::eventPaint(ui::PaintEvent* event)
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Debug wire");
 	rp->setOutput(render::RGTargetSet::Output, render::TfAll, render::TfAll);
 	rp->addBuild([&](const render::RenderGraph&, render::RenderContext* renderContext) {
-		m_primitiveRenderer->begin(0, m_worldRenderView.getProjection());
-		m_primitiveRenderer->pushView(view);
+		getPrimitiveRenderer()->begin(0, m_worldRenderView.getProjection());
+		getPrimitiveRenderer()->pushView(view);
 
 		if (m_gridVisible)
-		{
-			for (int x = -10; x <= 10; ++x)
-			{
-				m_primitiveRenderer->drawLine(
-					Vector4(float(x), 0.0f, -10.0f, 1.0f),
-					Vector4(float(x), 0.0f, 10.0f, 1.0f),
-					(x == 0) ? 2.0f : 0.0f,
-					m_colorGrid);
-				m_primitiveRenderer->drawLine(
-					Vector4(-10.0f, 0.0f, float(x), 1.0f),
-					Vector4(10.0f, 0.0f, float(x), 1.0f),
-					(x == 0) ? 2.0f : 0.0f,
-					m_colorGrid);
-			}
-		}
+			drawGrid(getPrimitiveRenderer(), 10.0f, 1.0f);
 
 		if (m_effectEntity && m_guideVisible)
 		{
 			const Transform transform = m_effectEntity->getTransform();
-			m_primitiveRenderer->drawWireFrame(transform.toMatrix44(), 1.0f);
+			getPrimitiveRenderer()->drawWireFrame(transform.toMatrix44(), 1.0f);
 
 			auto effectComponent = m_effectEntity->getComponent< EffectComponent >();
 			T_ASSERT(effectComponent != nullptr);
@@ -540,10 +436,10 @@ void EffectPreviewControl::eventPaint(ui::PaintEvent* event)
 							if (pnt.velocity.length() > FUZZY_EPSILON)
 							{
 								const Vector4 tail = pnt.position + pnt.velocity;
-								m_primitiveRenderer->drawLine(pnt.position, tail, Color4ub(255, 255, 255, 255));
-								m_primitiveRenderer->drawArrowHead(tail, tail + pnt.velocity.normalized() * 0.2_simd, 0.8f, Color4ub(255, 255, 255, 255));
+								getPrimitiveRenderer()->drawLine(pnt.position, tail, Color4ub(255, 255, 255, 255));
+								getPrimitiveRenderer()->drawArrowHead(tail, tail + pnt.velocity.normalized() * 0.2_simd, 0.8f, Color4ub(255, 255, 255, 255));
 							}
-							m_primitiveRenderer->drawSolidPoint(pnt.position, 6.0f, Color4ub(255, 255, 255, 255));
+							getPrimitiveRenderer()->drawSolidPoint(pnt.position, 6.0f, Color4ub(255, 255, 255, 255));
 						}
 					}
 				}
@@ -564,15 +460,15 @@ void EffectPreviewControl::eventPaint(ui::PaintEvent* event)
 
 				auto it = m_sourceRenderers.find(&type_of(sourceData));
 				if (it != m_sourceRenderers.end())
-					it->second->render(m_primitiveRenderer, sourceData);
+					it->second->render(getPrimitiveRenderer(), sourceData);
 			}
 		}
 
-		m_primitiveRenderer->end(0);
+		getPrimitiveRenderer()->end(0);
 
 		auto rb = renderContext->allocNamed< render::LambdaRenderBlock >(L"Debug wire");
 		rb->lambda = [&](render::IRenderView* renderView) {
-			m_primitiveRenderer->render(m_renderView, 0);
+			getPrimitiveRenderer()->render(getRenderView(), 0);
 		};
 		renderContext->draw(rb);
 	});
@@ -580,25 +476,26 @@ void EffectPreviewControl::eventPaint(ui::PaintEvent* event)
 
 	// Validate render graph.
 	if (!m_renderGraph->validate())
-		return;
+		return false;
 
 	// Build render context.
 	m_renderContext->flush();
-	m_renderGraph->build(m_renderContext, m_dirtySize.cx, m_dirtySize.cy);
+	m_renderGraph->build(m_renderContext, sz.cx, sz.cy);
 
 	// Render frame.
-	if (m_renderView->beginFrame())
-	{
-		m_renderContext->render(m_renderView);
-		m_renderView->endFrame();
-		m_renderView->present();
-	}
+	render::IRenderView* renderView = getRenderView();
+	if (!renderView->beginFrame())
+		return false;
+
+	m_renderContext->render(renderView);
+	renderView->endFrame();
+	renderView->present();
 
 	// Need to clear all entities from our root group since when our root entity
 	// goes out of scope it's automatically destroyed.
 	// rootGroup->removeAllEntities();
 
-	event->consume();
+	return true;
 }
 
 void EffectPreviewControl::eventIdle(ui::IdleEvent* event)

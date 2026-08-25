@@ -130,7 +130,7 @@ bool RagDollSkeletonEditor::create(ui::Widget* parent, db::Instance* instance, I
 	if (renderSystem)
 	{
 		m_previewControl = new RagDollPreviewControl();
-		if (!m_previewControl->create(containerPreview, renderSystem, m_editor->getOutputDatabase()))
+		if (!m_previewControl->create(containerPreview, m_editor))
 			return false;
 		m_previewControl->setAsset(m_asset);
 	}

@@ -128,10 +128,14 @@ void drawConstraint(render::PrimitiveRenderer* primitiveRenderer, const Transfor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.RagDollPreviewControl", RagDollPreviewControl, render::RenderControl)
 
-bool RagDollPreviewControl::create(ui::Widget* parent, render::IRenderSystem* renderSystem, db::Database* database)
+bool RagDollPreviewControl::create(ui::Widget* parent, editor::IEditor* editor)
 {
-	if (!render::RenderControl::create(parent, renderSystem, database))
+	if (!render::RenderControl::create(parent, editor))
 		return false;
+
+	setView({ .position = Vector4(0.0f, 0.0f, 4.0f, 1.0f),
+		.head = PI / 4.0f,
+		.pitch = -0.4f });
 
 	// Draw our content each time the shared render loop renders a frame.
 	addEventHandler< render::RenderControlEvent >(this, &RagDollPreviewControl::eventRender);
@@ -162,13 +166,7 @@ void RagDollPreviewControl::eventRender(render::RenderControlEvent* event)
 	render::PrimitiveRenderer* primitiveRenderer = event->getPrimitiveRenderer();
 
 	// Ground grid for orientation.
-	for (int32_t i = -10; i <= 10; ++i)
-	{
-		const float f = float(i) * 0.5f;
-		const Color4ub axisColor = (i == 0) ? Color4ub(120, 120, 120, 255) : Color4ub(60, 60, 60, 255);
-		primitiveRenderer->drawLine(Vector4(f, 0.0f, -5.0f, 1.0f), Vector4(f, 0.0f, 5.0f, 1.0f), axisColor);
-		primitiveRenderer->drawLine(Vector4(-5.0f, 0.0f, f, 1.0f), Vector4(5.0f, 0.0f, f, 1.0f), axisColor);
-	}
+	drawGrid(primitiveRenderer, 5.0f, 0.5f);
 
 	// Optional animation skeleton overlay.
 	if (m_skeleton)

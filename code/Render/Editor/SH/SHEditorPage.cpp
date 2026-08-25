@@ -83,12 +83,6 @@ SHEditorPage::SHEditorPage(editor::IEditor* editor)
 
 bool SHEditorPage::create(ui::Container* parent)
 {
-	IRenderSystem* renderSystem = m_editor->getObjectStore()->get< IRenderSystem >();
-	if (!renderSystem)
-		return false;
-
-	Ref< db::Database > database = m_editor->getOutputDatabase();
-
 	m_container = new ui::Container();
 	m_container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"100%", 0_ut, 0_ut));
 
@@ -98,8 +92,12 @@ bool SHEditorPage::create(ui::Container* parent)
 	for (uint32_t i = 0; i < 2; ++i)
 	{
 		m_renderControls[i] = new RenderControl();
-		if (!m_renderControls[i]->create(splitter, renderSystem, database))
+		if (!m_renderControls[i]->create(splitter, m_editor))
 			return false;
+
+		m_renderControls[i]->setView({ .position = Vector4(0.0f, 0.0f, 4.0f, 1.0f),
+			.head = PI / 4.0f,
+			.pitch = -0.4f });
 	}
 
 	m_engine = new SHEngine(3);
@@ -154,25 +152,7 @@ void SHEditorPage::eventRender1(RenderControlEvent* event)
 {
 	PrimitiveRenderer* primitiveRenderer = event->getPrimitiveRenderer();
 
-	const Color4ub colorGrid(0, 0, 0, 120);
-	const float unit = 0.25f;
-
-	for (int32_t x = -4; x <= 4; ++x)
-	{
-		float fx = float(x * unit);
-		primitiveRenderer->drawLine(
-			Vector4(fx, 0.0f, -4.0f * unit, 1.0f),
-			Vector4(fx, 0.0f, 4.0f * unit, 1.0f),
-			0.0f,
-			colorGrid
-		);
-		primitiveRenderer->drawLine(
-			Vector4(-4.0f * unit, 0.0f, fx, 1.0f),
-			Vector4(4.0f * unit, 0.0f, fx, 1.0f),
-			0.0f,
-			colorGrid
-		);
-	}
+	m_renderControls[0]->drawGrid(primitiveRenderer, 1.0f, 0.25f);
 
 	primitiveRenderer->drawWireFrame(Matrix44::identity(), 1.0f);
 
@@ -250,25 +230,7 @@ void SHEditorPage::eventRender2(RenderControlEvent* event)
 {
 	PrimitiveRenderer* primitiveRenderer = event->getPrimitiveRenderer();
 
-	const Color4ub colorGrid(0, 0, 0, 120);
-	const float unit = 0.25f;
-
-	for (int32_t x = -4; x <= 4; ++x)
-	{
-		const float fx = float(x * unit);
-		primitiveRenderer->drawLine(
-			Vector4(fx, 0.0f, -4.0f * unit, 1.0f),
-			Vector4(fx, 0.0f, 4.0f * unit, 1.0f),
-			0.0f,
-			colorGrid
-		);
-		primitiveRenderer->drawLine(
-			Vector4(-4.0f * unit, 0.0f, fx, 1.0f),
-			Vector4(4.0f * unit, 0.0f, fx, 1.0f),
-			0.0f,
-			colorGrid
-		);
-	}
+	m_renderControls[1]->drawGrid(primitiveRenderer, 1.0f, 0.25f);
 
 	primitiveRenderer->drawWireFrame(Matrix44::identity(), 1.0f);
 

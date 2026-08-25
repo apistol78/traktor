@@ -51,6 +51,23 @@
 			</colors>
 		</item>
 		<item>
+			<typeName>traktor.render.RenderControl</typeName>
+			<colors>
+				<item>
+					<first>background-color</first>
+					<second>9</second>
+				</item>
+				<item>
+					<first>color-grid</first>
+					<second>75</second>
+				</item>
+				<item>
+					<first>color-grid-axis</first>
+					<second>38</second>
+				</item>
+			</colors>
+		</item>
+		<item>
 			<typeName>traktor.runtime.DropListCell</typeName>
 			<colors>
 				<item>
@@ -1132,6 +1149,7 @@
 		<item>255, 65, 65, 255</item>
 		<item>255, 151, 151, 255</item>
 		<item>146, 0, 0, 255</item>
+		<item>60, 60, 60, 255</item>
 	</palette>
 	<values>
 		<item>

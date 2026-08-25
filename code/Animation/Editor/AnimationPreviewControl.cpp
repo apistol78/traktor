@@ -79,9 +79,6 @@ namespace
 
 const resource::Id< scene::Scene > c_previewScene(L"{02ABDE03-E9F2-45A8-8FAA-3772EC7568ED}");
 
-const float c_deltaMoveScale = 0.025f;
-const float c_deltaScaleHead = 0.015f;
-const float c_deltaScalePitch = 0.005f;
 
 world::IEntityFactory* initializeFactory(world::IEntityFactory* entityFactory, const ObjectStore& objectStore)
 {
@@ -90,7 +87,7 @@ world::IEntityFactory* initializeFactory(world::IEntityFactory* entityFactory, c
 
 }
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.AnimationPreviewControl", AnimationPreviewControl, ui::Widget)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.AnimationPreviewControl", AnimationPreviewControl, render::RenderControl)
 
 AnimationPreviewControl::AnimationPreviewControl(editor::IEditor* editor)
 	: m_editor(editor)
@@ -99,18 +96,10 @@ AnimationPreviewControl::AnimationPreviewControl(editor::IEditor* editor)
 
 bool AnimationPreviewControl::create(ui::Widget* parent)
 {
-	if (!Widget::create(parent, ui::WsNoCanvas))
+	if (!render::RenderControl::create(parent, m_editor))
 		return false;
 
-	m_renderSystem = m_editor->getObjectStore()->get< render::IRenderSystem >();
-	if (!m_renderSystem)
-		return false;
-
-	Ref< db::Database > resourceDatabase = m_editor->getOutputDatabase();
-	if (!resourceDatabase)
-		return false;
-
-	m_resourceManager = new resource::ResourceManager(resourceDatabase, m_editor->getSettings()->getProperty< bool >(L"Resource.Verbose", false));
+	render::IRenderSystem* renderSystem = getRenderSystem();
 
 	const std::wstring physicsManagerTypeName = m_editor->getSettings()->getProperty< std::wstring >(L"SceneEditor.PhysicsManager");
 	const TypeInfo* physicsManagerType = TypeInfo::find(physicsManagerTypeName.c_str());
@@ -132,9 +121,9 @@ bool AnimationPreviewControl::create(ui::Widget* parent)
 
 	// Setup object store with relevant systems.
 	ObjectStore objectStore;
-	objectStore.set(m_resourceManager);
+	objectStore.set(getResourceManager());
 	objectStore.set(m_physicsManager);
-	objectStore.set(m_renderSystem);
+	objectStore.set(renderSystem);
 
 	Ref< world::EntityFactory > entityFactory = new world::EntityFactory();
 	entityFactory->addFactory(initializeFactory(new world::WorldEntityFactory(true), objectStore));
@@ -142,47 +131,24 @@ bool AnimationPreviewControl::create(ui::Widget* parent)
 	entityFactory->addFactory(initializeFactory(new mesh::MeshEntityFactory(), objectStore));
 	entityFactory->addFactory(initializeFactory(new physics::EntityFactory(), objectStore));
 
-	m_resourceManager->addFactory(new AnimationResourceFactory());
-	m_resourceManager->addFactory(new RagDollResourceFactory());
-	m_resourceManager->addFactory(new RtStateGraphResourceFactory());
-	m_resourceManager->addFactory(new mesh::MeshResourceFactory(m_renderSystem));
-	m_resourceManager->addFactory(new physics::PhysicsFactory());
-	m_resourceManager->addFactory(new render::AliasTextureFactory());
-	m_resourceManager->addFactory(new render::ShaderFactory(m_renderSystem));
-	m_resourceManager->addFactory(new render::TextureFactory(m_renderSystem, 0));
-	m_resourceManager->addFactory(new render::ImageGraphFactory(m_renderSystem));
-	m_resourceManager->addFactory(new scene::SceneFactory(m_renderSystem, entityFactory));
-	m_resourceManager->addFactory(new world::WorldResourceFactory(m_renderSystem, nullptr));
-
-	render::RenderViewEmbeddedDesc desc;
-	desc.depthBits = 16;
-	desc.stencilBits = 0;
-	desc.multiSample = m_editor->getSettings()->getProperty< int32_t >(L"Editor.MultiSample", 4);
-	desc.waitVBlanks = 1;
-	desc.allowHDR = m_editor->getSettings()->getProperty< bool >(L"Editor.HDR", true);
-	desc.syswin = getIWidget()->getSystemWindow();
-
-	m_renderView = m_renderSystem->createRenderView(desc);
-	if (!m_renderView)
-		return false;
+	// Texture and shader factories are already added by the base control.
+	getResourceManager()->addFactory(new AnimationResourceFactory());
+	getResourceManager()->addFactory(new RagDollResourceFactory());
+	getResourceManager()->addFactory(new RtStateGraphResourceFactory());
+	getResourceManager()->addFactory(new mesh::MeshResourceFactory(renderSystem));
+	getResourceManager()->addFactory(new physics::PhysicsFactory());
+	getResourceManager()->addFactory(new render::AliasTextureFactory());
+	getResourceManager()->addFactory(new render::ImageGraphFactory(renderSystem));
+	getResourceManager()->addFactory(new scene::SceneFactory(renderSystem, entityFactory));
+	getResourceManager()->addFactory(new world::WorldResourceFactory(renderSystem, nullptr));
 
 	m_renderContext = new render::RenderContext(4 * 1024 * 1024);
-	m_renderGraph = new render::RenderGraph(m_renderSystem, desc.multiSample);
+	m_renderGraph = new render::RenderGraph(renderSystem, getMultiSample());
 
-	m_primitiveRenderer = new render::PrimitiveRenderer();
-	if (!m_primitiveRenderer->create(m_resourceManager, m_renderSystem, 1))
-		return false;
-
-	if (!m_resourceManager->bind(c_previewScene, m_sceneInstance))
+	if (!getResourceManager()->bind(c_previewScene, m_sceneInstance))
 		return false;
 
 	m_sceneInstance.consume();
-
-	addEventHandler< ui::MouseButtonDownEvent >(this, &AnimationPreviewControl::eventButtonDown);
-	addEventHandler< ui::MouseButtonUpEvent >(this, &AnimationPreviewControl::eventButtonUp);
-	addEventHandler< ui::MouseMoveEvent >(this, &AnimationPreviewControl::eventMouseMove);
-	addEventHandler< ui::SizeEvent >(this, &AnimationPreviewControl::eventSize);
-	addEventHandler< ui::PaintEvent >(this, &AnimationPreviewControl::eventPaint);
 
 	updateSettings();
 	updateWorldRenderer();
@@ -205,24 +171,21 @@ void AnimationPreviewControl::destroy()
 	m_entity = nullptr;
 
 	safeDestroy(m_physicsManager);
-	safeDestroy(m_primitiveRenderer);
-	safeDestroy(m_resourceManager);
 	safeDestroy(m_renderGraph);
 	safeDestroy(m_worldRenderer);
-	safeClose(m_renderView);
 
-	Widget::destroy();
+	render::RenderControl::destroy();
 }
 
 void AnimationPreviewControl::setMesh(const resource::Id< mesh::SkinnedMesh >& mesh)
 {
-	m_resourceManager->bind(mesh, m_mesh);
+	getResourceManager()->bind(mesh, m_mesh);
 	updatePreview();
 }
 
 void AnimationPreviewControl::setSkeleton(const resource::Id< Skeleton >& skeleton)
 {
-	m_resourceManager->bind(skeleton, m_skeleton);
+	getResourceManager()->bind(skeleton, m_skeleton);
 	updatePreview();
 }
 
@@ -244,17 +207,10 @@ void AnimationPreviewControl::setParameterValue(const std::wstring& parameterNam
 		poseController->setParameterValue(render::Handle(parameterName.c_str()), value);
 }
 
-void AnimationPreviewControl::setView(const View& view)
-{
-	m_view = view;
-	updatePreview();
-}
-
 void AnimationPreviewControl::updateSettings()
 {
 	Ref< PropertyGroup > colors = m_editor->getSettings()->getProperty< PropertyGroup >(L"Editor.Colors");
 	m_colorClear = colors->getProperty< Color4ub >(L"Background");
-	m_colorGrid = colors->getProperty< Color4ub >(L"Grid");
 }
 
 void AnimationPreviewControl::updatePreview()
@@ -294,7 +250,7 @@ void AnimationPreviewControl::updatePreview()
 	Ref< AnimatedMeshComponent > meshComponent = new AnimatedMeshComponent(
 		Transform::identity(),
 		m_mesh,
-		m_renderSystem);
+		getRenderSystem());
 
 	m_entity = new world::Entity();
 	m_entity->setComponent(skeletonComponent);
@@ -312,8 +268,8 @@ void AnimationPreviewControl::updateWorldRenderer()
 	worldEntityRenderers->add(new weather::SkyRenderer());
 	worldEntityRenderers->add(new world::CullingRenderer());
 	worldEntityRenderers->add(new world::ProbeRenderer(
-		m_resourceManager,
-		m_renderSystem,
+		getResourceManager(),
+		getRenderSystem(),
 		type_of< world::WorldRendererDeferred >()));
 	worldEntityRenderers->add(new world::RTWorldRenderer());
 
@@ -332,12 +288,12 @@ void AnimationPreviewControl::updateWorldRenderer()
 	wcd.quality.antiAlias = (world::Quality)settings->getProperty< int32_t >(L"SceneEditor.AntiAliasQuality", 4);
 	wcd.quality.irradiance = (world::Quality)settings->getProperty< int32_t >(L"SceneEditor.IrradianceQuality", 4);
 
-	wcd.hdr = m_renderView->isHDR();
+	wcd.hdr = getRenderView()->isHDR();
 
 	Ref< world::IWorldRenderer > worldRenderer = new world::WorldRendererDeferred();
 	if (!worldRenderer->create(
-			m_resourceManager,
-			m_renderSystem,
+			getResourceManager(),
+			getRenderSystem(),
 			wcd))
 	{
 		safeDestroy(worldRenderer);
@@ -347,60 +303,7 @@ void AnimationPreviewControl::updateWorldRenderer()
 	m_worldRenderer = worldRenderer;
 }
 
-void AnimationPreviewControl::eventButtonDown(ui::MouseButtonDownEvent* event)
-{
-	m_lastMousePosition = event->getPosition();
-	setCapture();
-}
-
-void AnimationPreviewControl::eventButtonUp(ui::MouseButtonUpEvent* event)
-{
-	releaseCapture();
-}
-
-void AnimationPreviewControl::eventMouseMove(ui::MouseMoveEvent* event)
-{
-	if (!hasCapture())
-		return;
-
-	if (event->getButton() == ui::MbtLeft)
-	{
-		if ((event->getKeyState() & ui::KsControl) == 0)
-		{
-			// Move X/Z direction.
-			const float dx = -float(m_lastMousePosition.x - event->getPosition().x) * c_deltaMoveScale;
-			const float dz = -float(m_lastMousePosition.y - event->getPosition().y) * c_deltaMoveScale;
-			m_view.position += Vector4(dx, 0.0f, dz, 0.0f);
-		}
-		else
-		{
-			// Move X/Y direction.
-			const float dx = -float(m_lastMousePosition.x - event->getPosition().x) * c_deltaMoveScale;
-			const float dy = float(m_lastMousePosition.y - event->getPosition().y) * c_deltaMoveScale;
-			m_view.position += Vector4(dx, dy, 0.0f, 0.0f);
-		}
-	}
-	else if (event->getButton() == ui::MbtRight)
-	{
-		m_view.head += float(m_lastMousePosition.x - event->getPosition().x) * c_deltaScaleHead;
-		m_view.pitch += float(m_lastMousePosition.y - event->getPosition().y) * c_deltaScalePitch;
-	}
-
-	m_lastMousePosition = event->getPosition();
-
-	update();
-}
-
-void AnimationPreviewControl::eventSize(ui::SizeEvent* event)
-{
-	if (!m_renderView)
-		return;
-
-	const ui::Size sz = event->getSize();
-	m_renderView->reset(sz.cx, sz.cy);
-}
-
-void AnimationPreviewControl::eventPaint(ui::PaintEvent* event)
+bool AnimationPreviewControl::renderFrame()
 {
 	// Reload scene if changed.
 	if (m_sceneInstance.changed())
@@ -409,30 +312,21 @@ void AnimationPreviewControl::eventPaint(ui::PaintEvent* event)
 		m_sceneInstance.consume();
 	}
 
-	if (!m_sceneInstance || !m_renderView)
-		return;
+	if (!m_sceneInstance)
+		return false;
 
 	// Lazy create world renderer.
 	if (!m_worldRenderer)
 	{
 		updateWorldRenderer();
 		if (!m_worldRenderer)
-			return;
+			return false;
 	}
 
-	// Render view events; reset view if it has become lost.
-	bool lost = false;
-	for (render::RenderEvent re = {}; m_renderView->nextEvent(re);)
-		if (re.type == render::RenderEventType::Lost)
-			lost = true;
+	if (!validateRenderView())
+		return false;
 
-	const ui::Size sz = getInnerRect().getSize();
-	if (lost || sz.cx != m_dirtySize.cx || sz.cy != m_dirtySize.cy)
-	{
-		if (!m_renderView->reset(sz.cx, sz.cy))
-			return;
-		m_dirtySize = sz;
-	}
+	const ui::Size sz = getRenderSize();
 
 	const double time = m_timer.getElapsedTime();
 	const double scaledTime = m_timer.getElapsedTime();
@@ -442,7 +336,7 @@ void AnimationPreviewControl::eventPaint(ui::PaintEvent* event)
 	m_colorClear.getRGBA32F(tmp);
 	const Color4f clearColor(tmp[0], tmp[1], tmp[2], tmp[3]);
 
-	const Matrix44 viewTransform = translate(m_view.position) * rotateX(m_view.pitch) * rotateY(m_view.head);
+	const Matrix44 viewTransform = getViewTransform();
 
 	const Matrix44 viewInverse = viewTransform.inverse();
 	const Plane cameraPlane(
@@ -493,35 +387,23 @@ void AnimationPreviewControl::eventPaint(ui::PaintEvent* event)
 		// Use the same projection and view as the world (mesh) render so the debug
 		// skeleton aligns with the mesh. Previously the primitive renderer used a
 		// different field-of-view (65 vs 70 deg) and near/far, offsetting the overlay.
-		m_primitiveRenderer->begin(0, m_worldRenderView.getProjection());
-		m_primitiveRenderer->pushView(m_worldRenderView.getView());
+		getPrimitiveRenderer()->begin(0, m_worldRenderView.getProjection());
+		getPrimitiveRenderer()->pushView(m_worldRenderView.getView());
 
-		for (int x = -10; x <= 10; ++x)
-		{
-			m_primitiveRenderer->drawLine(
-				Vector4(float(x), 0.0f, -10.0f, 1.0f),
-				Vector4(float(x), 0.0f, 10.0f, 1.0f),
-				(x == 0) ? 1.0f : 0.0f,
-				m_colorGrid);
-			m_primitiveRenderer->drawLine(
-				Vector4(-10.0f, 0.0f, float(x), 1.0f),
-				Vector4(10.0f, 0.0f, float(x), 1.0f),
-				(x == 0) ? 1.0f : 0.0f,
-				m_colorGrid);
-		}
+		drawGrid(getPrimitiveRenderer(), 10.0f, 1.0f);
 
 		// Draw skeleton current pose.
 		if (m_entity)
 		{
 			if (const SkeletonComponent* skeletonComponent = m_entity->getComponent< SkeletonComponent >())
-				drawSkeleton(m_primitiveRenderer, skeletonComponent, Matrix44::identity(), false, true);
+				drawSkeleton(getPrimitiveRenderer(), skeletonComponent, Matrix44::identity(), false, true);
 		}
 
-		m_primitiveRenderer->end(0);
+		getPrimitiveRenderer()->end(0);
 
 		auto rb = renderContext->allocNamed< render::LambdaRenderBlock >(L"Debug wire");
 		rb->lambda = [&](render::IRenderView* renderView) {
-			m_primitiveRenderer->render(m_renderView, 0);
+			getPrimitiveRenderer()->render(getRenderView(), 0);
 		};
 		renderContext->draw(rb);
 	});
@@ -529,21 +411,22 @@ void AnimationPreviewControl::eventPaint(ui::PaintEvent* event)
 
 	// Validate render graph.
 	if (!m_renderGraph->validate())
-		return;
+		return false;
 
 	// Build render context.
 	m_renderContext->flush();
-	m_renderGraph->build(m_renderContext, m_dirtySize.cx, m_dirtySize.cy);
+	m_renderGraph->build(m_renderContext, sz.cx, sz.cy);
 
 	// Render frame.
-	if (m_renderView->beginFrame())
-	{
-		m_renderContext->render(m_renderView);
-		m_renderView->endFrame();
-		m_renderView->present();
-	}
+	render::IRenderView* renderView = getRenderView();
+	if (!renderView->beginFrame())
+		return false;
 
-	event->consume();
+	m_renderContext->render(renderView);
+	renderView->endFrame();
+	renderView->present();
+
+	return true;
 }
 
 void AnimationPreviewControl::eventIdle(ui::IdleEvent* event)
