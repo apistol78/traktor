@@ -16,12 +16,6 @@
 
 namespace traktor::ui
 {
-	namespace
-	{
-
-const int TIME_SCALE_DIVISOR = 8;
-
-	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.SequenceGroup", SequenceGroup, SequenceItem)
 
@@ -104,17 +98,17 @@ void SequenceGroup::paint(SequencerControl* sequencer, Canvas& canvas, const Rec
 	// Select images based on the state of this group.
 	IBitmap* imageExpand = m_expanded ? m_imageCollapse : m_imageExpand;
 
+	const bool enabled = sequencer->isEnable(true);
+
 	// Draw sequence background.
-	if (!isSelected())
-	{
-		canvas.setBackground(ss->getColor(this, L"background-color"));
-		canvas.fillRect(Rect(separator, rc.top, rc.right, rc.bottom));
-	}
-	else
-	{
-		canvas.setBackground(ss->getColor(this, L"background-color-selected"));
-		canvas.fillRect(Rect(separator, rc.top, rc.right, rc.bottom));
-	}
+	const wchar_t* background = L"background-color";
+	if (!enabled)
+		background = L"background-color-disabled";
+	else if (isSelected())
+		background = L"background-color-selected";
+
+	canvas.setBackground(ss->getColor(this, background));
+	canvas.fillRect(Rect(separator, rc.top, rc.right, rc.bottom));
 
 	canvas.setForeground(ss->getColor(this, L"line-color"));
 	canvas.drawLine(rc.left, rc.bottom - 1, rc.right, rc.bottom - 1);
@@ -127,7 +121,7 @@ void SequenceGroup::paint(SequencerControl* sequencer, Canvas& canvas, const Rec
 	));
 
 	// Draw sequence group text.
-	canvas.setForeground(ss->getColor(this, L"color"));
+	canvas.setForeground(ss->getColor(this, enabled ? L"color" : L"color-disabled"));
 	const Size ext = canvas.getFontMetric().getExtent(getName());
 	canvas.drawText(
 		Point(
@@ -159,11 +153,13 @@ void SequenceGroup::paint(SequencerControl* sequencer, Canvas& canvas, const Rec
 		rc.bottom
 	));
 
-	const int32_t start = separator + m_start / TIME_SCALE_DIVISOR - scrollOffset;
-	const int32_t end = separator + m_end / TIME_SCALE_DIVISOR - scrollOffset;
+	// The range is in the same time as the keys of the group thus it is scaled the same way.
+	const int32_t timeScale = sequencer->getTimeScale();
+	const int32_t start = separator + m_start / timeScale - scrollOffset;
+	const int32_t end = separator + m_end / timeScale - scrollOffset;
 	const int32_t y = rc.getCenter().y;
 
-	canvas.setForeground(ss->getColor(this, L"color"));
+	canvas.setForeground(ss->getColor(this, enabled ? L"color" : L"color-disabled"));
 	canvas.drawLine(start, y - 2, start, y + 3);
 	canvas.drawLine(start, y, end, y);
 	canvas.drawLine(end, y - 2, end, y + 3);

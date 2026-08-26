@@ -11,6 +11,7 @@
 #include "Ui/Sequencer/Marker.h"
 #include "Ui/Sequencer/Sequence.h"
 #include "Ui/Sequencer/SequencerControl.h"
+#include "Ui/StyleSheet.h"
 
 namespace traktor::ui
 {
@@ -68,14 +69,23 @@ void Marker::paint(SequencerControl* sequencer, ui::Canvas& canvas, const Sequen
 		rcClient.bottom
 	);
 
-	if (sequence->getSelectedKey() != this)
-		canvas.setBackground(Color4ub(230, 230, 180));
+	if (!sequencer->isEnable(true))
+	{
+		const StyleSheet* ss = sequencer->getStyleSheet();
+		canvas.setBackground(ss->getColor(this, L"background-color-disabled"));
+		canvas.setForeground(ss->getColor(this, L"color-disabled"));
+	}
 	else
-		canvas.setBackground(Color4ub(255, 255, 160));
+	{
+		if (sequence->getSelectedKey() != this)
+			canvas.setBackground(Color4ub(230, 230, 180));
+		else
+			canvas.setBackground(Color4ub(255, 255, 160));
+
+		canvas.setForeground(Color4ub(0, 0, 0, 128));
+	}
 
 	canvas.fillRect(rc);
-
-	canvas.setForeground(Color4ub(0, 0, 0, 128));
 	canvas.drawRect(rc);
 
 }

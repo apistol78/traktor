@@ -1017,8 +1017,15 @@ bool SceneEditorPage::handleCommand(const ui::Command& command)
 
 void SceneEditorPage::handleDatabaseEvent(db::Database* database, const Guid& eventId)
 {
-	if (!m_context || database == m_editor->getSourceDatabase())
+	if (!m_context)
 		return;
+
+	if (database == m_editor->getSourceDatabase())
+		return;
+
+	// Notify scene UI extensions.
+	for (auto extension : m_context->getUIExtensions())
+		extension->handleDatabaseEvent(database, eventId);
 
 	bool externalModified = false;
 

@@ -315,7 +315,7 @@ public:
 
 	void raisePreModify();
 
-	void raisePostModify();
+	void raisePostModify(bool transformsChanged);
 
 	void raisePostFrame();
 

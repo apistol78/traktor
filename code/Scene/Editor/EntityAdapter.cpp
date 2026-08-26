@@ -126,6 +126,18 @@ RefArray< world::IEntityComponent > EntityAdapter::getComponents() const
 	return m_entity->getComponents();
 }
 
+void EntityAdapter::invalidateComponentProduct(const world::IEntityComponent* component)
+{
+	for (auto it = m_componentProducts.begin(); it != m_componentProducts.end(); ++it)
+	{
+		if (it->second.component == component)
+		{
+			m_componentProducts.remove(it->first);
+			break;
+		}
+	}
+}
+
 world::IEntityComponentData* EntityAdapter::getComponentData(const TypeInfo& componentDataType) const
 {
 	return m_entityData->getComponent(componentDataType);

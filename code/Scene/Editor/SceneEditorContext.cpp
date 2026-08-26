@@ -14,7 +14,6 @@
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Serialization/DeepClone.h"
 #include "Core/Serialization/DeepHash.h"
-#include "Core/Timer/Timer.h"
 #include "Database/Database.h"
 #include "Physics/Body.h"
 #include "Physics/PhysicsManager.h"
@@ -852,9 +851,9 @@ void SceneEditorContext::raisePreModify()
 	raiseEvent(&preModifyEvent);
 }
 
-void SceneEditorContext::raisePostModify()
+void SceneEditorContext::raisePostModify(bool transformsChanged)
 {
-	PostModifyEvent postModifyEvent(this);
+	PostModifyEvent postModifyEvent(this, transformsChanged);
 	raiseEvent(&postModifyEvent);
 }
 

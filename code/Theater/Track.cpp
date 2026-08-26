@@ -16,14 +16,26 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.theater.Track", Track, Object)
 Track::Track(
 	const Guid& entityId,
 	const Guid& lookAtEntityId,
-	const TransformPath& path,
-	const AlignedVector< EventKey >& events
-)
-:	m_entityId(entityId)
-,	m_lookAtEntityId(lookAtEntityId)
-,	m_path(path)
-,	m_events(events)
+	const AlignedVector< EventKey >& events,
+	const AlignedVector< Property >& properties)
+	: m_entityId(entityId)
+	, m_lookAtEntityId(lookAtEntityId)
+	, m_events(events)
+	, m_properties(properties)
 {
+	for (int32_t i = 0; i < (int32_t)m_properties.size(); ++i)
+	{
+		const Property& property = m_properties[i];
+		if (property.componentType != nullptr)
+			continue;
+
+		const PropertyPath::Property& p = property.path->getProperties()[property.index];
+		if (p.propertyName == PropertyPath::c_transformProperty)
+		{
+			m_transform = i;
+			break;
+		}
+	}
 }
 
 const Guid& Track::getEntityId() const
@@ -36,19 +48,19 @@ const Guid& Track::getLookAtEntityId() const
 	return m_lookAtEntityId;
 }
 
-const TransformPath& Track::getPath() const
-{
-	return m_path;
-}
-
-TransformPath& Track::getPath()
-{
-	return m_path;
-}
-
 const AlignedVector< Track::EventKey >& Track::getEvents() const
 {
 	return m_events;
+}
+
+const AlignedVector< Track::Property >& Track::getProperties() const
+{
+	return m_properties;
+}
+
+const Track::Property* Track::getTransform() const
+{
+	return (m_transform >= 0) ? &m_properties[m_transform] : nullptr;
 }
 
 }

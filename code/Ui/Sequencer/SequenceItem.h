@@ -45,7 +45,8 @@ public:
 
 	const std::wstring& getName() const;
 
-	bool setSelected(bool selected);
+	/*! Select, or deselect, the item; true if the selection changed. */
+	virtual bool setSelected(bool selected);
 
 	bool isSelected() const;
 
@@ -60,6 +61,9 @@ public:
 	RefArray< SequenceItem >& getChildItems();
 
 	int32_t getDepth() const;
+
+	/*! Check if a key of this item is being moved. */
+	virtual bool isTrackingKey() const { return false; }
 
 	virtual void mouseDown(SequencerControl* sequencer, const Point& at, const Rect& rc, int button, int separator, int scrollOffset) = 0;
 

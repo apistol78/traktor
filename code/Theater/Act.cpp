@@ -8,12 +8,16 @@
  */
 #include "Theater/Act.h"
 
+#include "Core/Class/Any.h"
+#include "Core/Class/IRuntimeDispatch.h"
+#include "Core/Class/Boxes/BoxedTransform.h"
 #include "Core/Math/Const.h"
 #include "Core/Math/Transform.h"
 #include "Theater/IEntityResolver.h"
 #include "Theater/Track.h"
 #include "World/Entity.h"
 #include "World/Entity/EventManagerComponent.h"
+#include "World/IEntityComponent.h"
 
 namespace traktor::theater
 {
@@ -39,23 +43,52 @@ bool Act::update(const IEntityResolver& resolver, world::EventManagerComponent* 
 	if (time < 0.0f || time > duration)
 		return false;
 
-	TransformPath::Key key;
+	const float T = clamp(time, 0.0f, duration);
+
 	Transform lookAtTransform;
 	Transform transform;
 
-	// Calculate transforms.
+	// Set properties, of the entities and of their components, animated by the tracks.
 	for (uint32_t i = 0; i < ntracks; ++i)
 	{
 		world::Entity* entity = resolver.findEntity(m_tracks[i]->getEntityId());
 		if (!entity)
 			continue;
 
-		const TransformPath& path = m_tracks[i]->getPath();
+		for (const auto& property : m_tracks[i]->getProperties())
+		{
+			// A property is either of the entity itself or of one of its components.
+			ITypedObject* object = entity;
+			if (property.componentType != nullptr)
+			{
+				object = entity->getComponent(*property.componentType);
+				if (object == nullptr)
+					continue;
+			}
 
-		key = path.evaluate(clamp(time, 0.0f, duration), false);
-		transform = base * key.transform();
+			// Runtime classes do not expose the type of their properties; read it once.
+			if (!property.valueTypeResolved)
+			{
+				property.valueType = PropertyPath::typeOfValue(property.getter->invoke(object, 0, nullptr));
+				property.valueTypeResolved = true;
+			}
+			if (property.valueType == PropertyPath::ValueType::Invalid)
+				continue;
 
-		entity->setTransform(transform);
+			const PropertyPath::Value evaluated = property.path->evaluate(property.index, property.valueType, T);
+
+			// Transforms of the entity itself are relative the performance.
+			Any value;
+			if (property.componentType == nullptr && property.valueType == PropertyPath::ValueType::Transform)
+				value = CastAny< Transform >::set(base * evaluated.transform());
+			else
+				value = PropertyPath::unpack(property.valueType, evaluated);
+
+			if (value.isVoid())
+				continue;
+
+			property.setter->invoke(object, 1, &value);
+		}
 	}
 
 	// Fix-up orientation of "looking" entities.
@@ -92,9 +125,7 @@ bool Act::update(const IEntityResolver& resolver, world::EventManagerComponent* 
 			if (events.empty())
 				continue;
 
-			// Events are issued by the given sender, if any, so a script event
-			// reach the script component of the entity owning the performance.
-			// The track's own entity is otherwise the sender.
+			// Events are issued by the given sender, if any, otherwise the track's own entity.
 			world::Entity* sender = eventSender;
 			if (sender == nullptr)
 			{
@@ -103,18 +134,17 @@ bool Act::update(const IEntityResolver& resolver, world::EventManagerComponent* 
 					continue;
 			}
 
-			const TransformPath& path = m_tracks[i]->getPath();
+			const Track::Property* trackTransform = m_tracks[i]->getTransform();
 
 			for (const auto& eventKey : events)
 			{
 				if (eventKey.T <= timePrevious || eventKey.T > time)
 					continue;
 
-				// Offset the event to where the track is at the time of the event;
-				// relative the sender as that is how offsets are applied.
+				// Offset the event, relative the sender, to where the track is.
 				Transform Toffset = Transform::identity();
-				if (eventSender != nullptr)
-					Toffset = path.evaluate(clamp(eventKey.T, 0.0f, duration), false).transform();
+				if (eventSender != nullptr && trackTransform != nullptr)
+					Toffset = trackTransform->path->evaluate(trackTransform->index, PropertyPath::ValueType::Transform, clamp(eventKey.T, 0.0f, duration)).transform();
 
 				eventManager->raise(eventKey.event, sender, Toffset);
 			}

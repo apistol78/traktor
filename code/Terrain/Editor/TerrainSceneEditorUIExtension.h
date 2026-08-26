@@ -47,6 +47,8 @@ public:
 
 	virtual bool handleCommand(const ui::Command& command) override final;
 
+	virtual void handleDatabaseEvent(db::Database* database, const Guid& eventId) override final;
+
 private:
 	scene::SceneEditorContext* m_context;
 	Ref< TerrainEditModifier > m_terrainEditModifier;

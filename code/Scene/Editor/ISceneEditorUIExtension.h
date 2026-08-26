@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,6 +8,7 @@
  */
 #pragma once
 
+#include "Core/Guid.h"
 #include "Core/Object.h"
 #include "Ui/Command.h"
 
@@ -18,6 +19,13 @@
 #else
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
+
+namespace traktor::db
+{
+
+class Database;
+
+}
 
 namespace traktor::ui
 {
@@ -43,6 +51,8 @@ public:
 	virtual bool create(ui::Widget* parent, ui::ToolBar* toolBar) = 0;
 
 	virtual bool handleCommand(const ui::Command& command) = 0;
+
+	virtual void handleDatabaseEvent(db::Database* database, const Guid& eventId) = 0;
 };
 
 }

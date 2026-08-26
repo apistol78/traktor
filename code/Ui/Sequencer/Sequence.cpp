@@ -16,6 +16,7 @@
 #include "Ui/Sequencer/SequencerControl.h"
 #include "Ui/Sequencer/Key.h"
 #include "Ui/Sequencer/KeyMoveEvent.h"
+#include "Ui/Sequencer/KeySelectEvent.h"
 
 namespace traktor::ui
 {
@@ -87,6 +88,11 @@ Ref< Key > Sequence::getSelectedKey() const
 	return m_selectedKey;
 }
 
+void Sequence::setSelectedKey(Key* key)
+{
+	m_selectedKey = (key != nullptr && containsKey(key)) ? key : nullptr;
+}
+
 int Sequence::clientFromTime(int time) const
 {
 	return time / m_timeScale;
@@ -95,6 +101,20 @@ int Sequence::clientFromTime(int time) const
 int Sequence::timeFromClient(int client) const
 {
 	return client * m_timeScale;
+}
+
+bool Sequence::setSelected(bool selected)
+{
+	// A key is part of the selection of its sequence.
+	if (!selected)
+		m_selectedKey = nullptr;
+
+	return SequenceItem::setSelected(selected);
+}
+
+bool Sequence::isTrackingKey() const
+{
+	return m_trackKey != nullptr;
 }
 
 void Sequence::mouseDown(SequencerControl* sequencer, const Point& at, const Rect& rc, int button, int separator, int scrollOffset)
@@ -120,8 +140,9 @@ void Sequence::mouseDown(SequencerControl* sequencer, const Point& at, const Rec
 	}
 	else
 	{
-		m_selectedKey = 0;
-		m_trackKey = 0;
+		m_selectedKey = nullptr;
+		m_trackKey = nullptr;
+		m_trackKeyMoved = false;
 
 		Rect rcClient(
 			rc.left + separator,
@@ -153,8 +174,18 @@ void Sequence::mouseDown(SequencerControl* sequencer, const Point& at, const Rec
 
 void Sequence::mouseUp(SequencerControl* sequencer, const Point& at, const Rect& rc, int button, int separator, int scrollOffset)
 {
+	// A key is selected by clicking it; a press is also the start of a drag.
+	const bool clicked = (m_trackKey != nullptr && !m_trackKeyMoved);
+
 	m_previousPosition = 0;
-	m_trackKey = 0;
+	m_trackKey = nullptr;
+	m_trackKeyMoved = false;
+
+	if (clicked)
+	{
+		KeySelectEvent keySelectEvent(sequencer, this, m_selectedKey);
+		sequencer->raiseEvent(&keySelectEvent);
+	}
 }
 
 void Sequence::mouseMove(SequencerControl* sequencer, const Point& at, const Rect& rc, int button, int separator, int scrollOffset)
@@ -165,6 +196,7 @@ void Sequence::mouseMove(SequencerControl* sequencer, const Point& at, const Rec
 		if (offset != 0)
 		{
 			m_trackKey->move(offset);
+			m_trackKeyMoved = true;
 
 			KeyMoveEvent keyMoveEvent(sequencer, m_trackKey, offset);
 			sequencer->raiseEvent(&keyMoveEvent);
@@ -177,27 +209,27 @@ void Sequence::paint(SequencerControl* sequencer, Canvas& canvas, const Rect& rc
 {
 	const StyleSheet* ss = sequencer->getStyleSheet();
 
+	const bool enabled = sequencer->isEnable(true);
+
 	// Save time scale here; it's used in client<->time conversion.
 	m_timeScale = sequencer->getTimeScale();
 
 	// Draw sequence background.
-	if (!isSelected())
-	{
-		canvas.setBackground(ss->getColor(this, L"background-color"));
-		canvas.fillRect(Rect(separator, rc.top, rc.right, rc.bottom));
-	}
-	else
-	{
-		canvas.setBackground(ss->getColor(this, L"background-color-selected"));
-		canvas.fillRect(Rect(separator, rc.top, rc.right, rc.bottom));
-	}
+	const wchar_t* background = L"background-color";
+	if (!enabled)
+		background = L"background-color-disabled";
+	else if (isSelected())
+		background = L"background-color-selected";
+
+	canvas.setBackground(ss->getColor(this, background));
+	canvas.fillRect(Rect(separator, rc.top, rc.right, rc.bottom));
 
 	canvas.setForeground(ss->getColor(this, L"line-color"));
 	canvas.drawLine(rc.left, rc.bottom - 1, rc.right, rc.bottom - 1);
 
 	// Draw sequence text.
 	const Size ext = canvas.getFontMetric().getExtent(getName());
-	canvas.setForeground(ss->getColor(this, L"color"));
+	canvas.setForeground(ss->getColor(this, enabled ? L"color" : L"color-disabled"));
 	canvas.drawText(
 		Point(
 			rc.left + sequencer->pixel(Unit(32 + getDepth() * 16)),
@@ -248,7 +280,7 @@ void Sequence::paint(SequencerControl* sequencer, Canvas& canvas, const Rect& rc
 	));
 
 	// Draw tickers.
-	canvas.setForeground(ss->getColor(this, L"tick-color"));
+	canvas.setForeground(ss->getColor(this, enabled ? L"tick-color" : L"color-disabled"));
 	const int32_t cy = (rc.top + rc.bottom) / 2;
 	for (int32_t i = 100; i < sequencer->getLength(); i += 100)
 	{

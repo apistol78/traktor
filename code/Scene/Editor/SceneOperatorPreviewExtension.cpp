@@ -12,6 +12,7 @@
 #include "Core/Log/Log.h"
 #include "Core/Math/Transform.h"
 #include "Core/Serialization/DeepClone.h"
+#include "Core/Serialization/DeepHash.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Database/Database.h"
 #include "Editor/IEditor.h"
@@ -33,9 +34,9 @@ namespace
 {
 
 const Scalar c_positionEpsilon(1e-4f);
+const uint32_t c_maxCachedStates = 8;
 
-/*! Editor-side transform context: reads source objects from the source database
- *  and provides a live (in-memory) ground sampler. */
+/*! Editor-side transform context; reads source objects from the source database. */
 class EditorTransformContext : public ISceneOperator::TransformContext
 {
 public:
@@ -89,6 +90,11 @@ bool SceneOperatorPreviewExtension::handleCommand(const ui::Command& command)
 	return false;
 }
 
+void SceneOperatorPreviewExtension::handleDatabaseEvent(db::Database* database, const Guid& eventId)
+{
+	m_cache.clear();
+}
+
 void SceneOperatorPreviewExtension::apply()
 {
 	if (!m_chain || m_chain->empty())
@@ -98,10 +104,7 @@ void SceneOperatorPreviewExtension::apply()
 	if (!authored || authored->getOperationData().empty())
 		return;
 
-	// Running the chain is expensive; while the user is modifying entities it
-	// would be re-evaluated for each intermediate state, such as when entities
-	// are cloned at the start of a duplicating drag. Defer until the
-	// modification has finished so movement remains responsive.
+	// Defer while the user is modifying entities so movement remains responsive.
 	if (m_context->isModifyInProgress())
 	{
 		m_pending = true;
@@ -110,36 +113,71 @@ void SceneOperatorPreviewExtension::apply()
 
 	m_pending = false;
 
-	EditorTransformContext context(m_context->getSourceDatabase());
+	// Running the chain is expensive while hashing the scene is not; keep what it derive per state.
+	const uint32_t hash = DeepHash(authored).get();
+	if (!useCachedTransforms(hash))
+	{
+		EditorTransformContext context(m_context->getSourceDatabase());
 
-	// Run geometric operators on a throwaway clone; always clone fresh from the
-	// authored asset so operators start from canonical transforms (avoids e.g.
-	// compounding an orientation alignment on repeated runs).
-	Ref< SceneAsset > working = DeepClone(authored).create< SceneAsset >();
-	if (!working)
-		return;
-	if (!m_chain->apply(working, context))
-		return;
+		// Run geometric operators on a throwaway clone so they start from canonical transforms.
+		Ref< SceneAsset > working = DeepClone(authored).create< SceneAsset >();
+		if (!working)
+			return;
+		if (!m_chain->apply(working, context))
+			return;
 
-	// Collect the resulting transforms by entity id; kept so they can be
-	// restored without running the chain again, such as when entities have been
-	// recreated in the middle of a modification.
-	m_transforms.clear();
-	for (auto layer : working->getLayers())
-		world::Traverser::visit(layer, [&](const world::EntityData* entityData) -> world::Traverser::Result {
-			const Guid& id = entityData->getId();
-			if (id.isNotNull())
-				m_transforms[id] = entityData->getTransform();
-			return world::Traverser::Result::Continue;
-		});
+		// Collect the resulting transforms by entity id.
+		m_transforms.clear();
+		for (auto layer : working->getLayers())
+			world::Traverser::visit(layer, [&](const world::EntityData* entityData) -> world::Traverser::Result {
+				const Guid& id = entityData->getId();
+				if (id.isNotNull())
+					m_transforms[id] = entityData->getTransform();
+				return world::Traverser::Result::Continue;
+			});
+
+		cacheTransforms(hash);
+	}
 
 	updateEntities();
 }
 
+bool SceneOperatorPreviewExtension::useCachedTransforms(uint32_t hash)
+{
+	for (uint32_t i = 0; i < (uint32_t)m_cache.size(); ++i)
+	{
+		if (m_cache[i].hash != hash)
+			continue;
+
+		m_transforms = m_cache[i].transforms;
+
+		// Keep the most recently used state first; the last is dropped as the cache fill up.
+		if (i > 0)
+		{
+			const CachedTransforms cached = m_cache[i];
+			m_cache.erase(m_cache.begin() + i);
+			m_cache.insert(m_cache.begin(), cached);
+		}
+
+		return true;
+	}
+	return false;
+}
+
+void SceneOperatorPreviewExtension::cacheTransforms(uint32_t hash)
+{
+	while (m_cache.size() >= c_maxCachedStates)
+		m_cache.pop_back();
+
+	CachedTransforms cached;
+	cached.hash = hash;
+	cached.transforms = m_transforms;
+	m_cache.insert(m_cache.begin(), cached);
+}
+
 void SceneOperatorPreviewExtension::updateEntities()
 {
-	// Copy transforms onto the live rendered entities only; the authored scene
-	// asset and its EntityData are left untouched.
+	// Copy transforms onto the live rendered entities only.
 	bool anyChanged = false;
 	for (auto adapter : m_context->getEntities(SceneEditorContext::GfDescendants))
 	{
@@ -171,25 +209,23 @@ void SceneOperatorPreviewExtension::eventPostBuild(PostBuildEvent* event)
 {
 	apply();
 
-	// Entities have been recreated from the authored scene asset and thus lost
-	// the transforms calculated by the operators; if the chain was deferred then
-	// restore the last calculated transforms, otherwise the scene would snap
-	// back to its authored placement until the modification has finished.
+	// Entities have been recreated and lost the transforms the operators calculated.
 	if (m_pending)
 		updateEntities();
 }
 
 void SceneOperatorPreviewExtension::eventPostFrame(PostFrameEvent* event)
 {
-	// Catch up with an apply which was deferred during a modification, in case
-	// the modification ended without a post modify event being raised.
+	// Catch up with an apply which was deferred during a modification.
 	if (m_pending)
 		apply();
 }
 
 void SceneOperatorPreviewExtension::eventPostModify(PostModifyEvent* event)
 {
-	apply();
+	// Nothing the operators derive change unless something has moved.
+	if (event->transformsChanged())
+		apply();
 }
 
 }

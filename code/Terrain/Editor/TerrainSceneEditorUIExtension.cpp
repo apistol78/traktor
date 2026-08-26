@@ -266,6 +266,10 @@ bool TerrainSceneEditorUIExtension::handleCommand(const ui::Command& command)
 	return false;
 }
 
+void TerrainSceneEditorUIExtension::handleDatabaseEvent(db::Database* database, const Guid& eventId)
+{
+}
+
 void TerrainSceneEditorUIExtension::updateModifierState()
 {
 	if (m_toolToggleMaterial->isToggled())

@@ -22,6 +22,18 @@
       <second>Easy velocity</second>
     </item>
     <item>
+      <first>THEATER_EDITOR_EVENTS</first>
+      <second>Events</second>
+    </item>
+    <item>
+      <first>THEATER_EDITOR_PROPERTIES</first>
+      <second>Properties</second>
+    </item>
+    <item>
+      <first>THEATER_EDITOR_TRANSFORM</first>
+      <second>Transform</second>
+    </item>
+    <item>
       <first>THEATER_EDITOR_GOTO_NEXT_KEY</first>
       <second>Goto next key</second>
     </item>
@@ -32,6 +44,10 @@
     <item>
       <first>THEATER_EDITOR_MESSAGE_REMOVE_ACT</first>
       <second>Are you sure you want to remove selected act?</second>
+    </item>
+    <item>
+      <first>THEATER_EDITOR_MODE</first>
+      <second>Theater mode</second>
     </item>
     <item>
       <first>THEATER_EDITOR_NO_ACT</first>

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -26,7 +26,13 @@ class T_DLLCLASS PostModifyEvent : public ui::Event
 	T_RTTI_CLASS;
 
 public:
-	explicit PostModifyEvent(ui::EventSubject* sender);
+	explicit PostModifyEvent(ui::EventSubject* sender, bool transformsChanged);
+
+	/*! Check if the modification may have moved something of the scene. */
+	bool transformsChanged() const { return m_transformsChanged; }
+
+private:
+	bool m_transformsChanged;
 };
 
 }

@@ -35,6 +35,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.SequencerControl", SequencerControl, Widget)
 
 SequencerControl::SequencerControl()
 :	m_allowDragTracks(false)
+,	m_singleSelection(false)
 ,	m_separator(0)
 ,	m_timeScale(8)
 ,	m_length(5000)
@@ -69,6 +70,7 @@ bool SequencerControl::create(Widget* parent, uint32_t style)
 	addEventHandler< PaintEvent >(this, &SequencerControl::eventPaint);
 
 	m_allowDragTracks = bool((style & WsDragTrack) == WsDragTrack);
+	m_singleSelection = bool((style & WsSingleSelection) == WsSingleSelection);
 	m_separator = pixel(200_ut);
 	return true;
 }
@@ -278,13 +280,13 @@ void SequencerControl::eventButtonDown(MouseButtonDownEvent* event)
 	// Get all items, including descendants.
 	RefArray< SequenceItem > sequenceItems = getSequenceItems(GfDescendants | GfExpandedOnly);
 
-	// Update only selection in left column.
-	if (position.x < rc.left + m_separator)
+	// Update selection in left column; a single selection follow a click anywhere.
+	if (m_singleSelection || position.x < rc.left + m_separator)
 	{
 		bool selectionModified = false;
 
-		// If not shift is down we de-select all items.
-		if (!(event->getKeyState() & KsShift))
+		// If not shift is down we de-select all items; a single selection never extend.
+		if (m_singleSelection || !(event->getKeyState() & KsShift))
 		{
 			for (auto sequenceItem : sequenceItems)
 				selectionModified |= sequenceItem->setSelected(false);
@@ -296,7 +298,17 @@ void SequencerControl::eventButtonDown(MouseButtonDownEvent* event)
 		{
 			auto it = sequenceItems.begin();
 			std::advance(it, sequenceId);
-			selectionModified |= (*it)->setSelected(true);
+
+			// A group stand for what it contain thus clicking it select the first sequence of it.
+			SequenceItem* selectItem = *it;
+			if (m_singleSelection)
+			{
+				while (is_a< SequenceGroup >(selectItem) && !selectItem->getChildItems().empty())
+					selectItem = selectItem->getChildItems().front();
+			}
+
+			if (!m_singleSelection || !is_a< SequenceGroup >(selectItem))
+				selectionModified |= selectItem->setSelected(true);
 		}
 
 		// Issue selection change event.
@@ -335,12 +347,16 @@ void SequencerControl::eventButtonDown(MouseButtonDownEvent* event)
 	{
 		m_moveTrack = 0;
 
-		m_cursor = (position.x - m_separator + m_scrollBarH->getPosition()) * m_timeScale;
-		m_cursor = std::max< int32_t >(m_cursor, 0);
-		m_cursor = std::min< int32_t >(m_cursor, m_length);
+		// The cursor is only moved when no key is grabbed.
+		if (m_mouseTrackItem.item == nullptr || !m_mouseTrackItem.item->isTrackingKey())
+		{
+			m_cursor = (position.x - m_separator + m_scrollBarH->getPosition()) * m_timeScale;
+			m_cursor = std::max< int32_t >(m_cursor, 0);
+			m_cursor = std::min< int32_t >(m_cursor, m_length);
 
-		CursorMoveEvent cursorMoveEvent(this, m_cursor);
-		raiseEvent(&cursorMoveEvent);
+			CursorMoveEvent cursorMoveEvent(this, m_cursor);
+			raiseEvent(&cursorMoveEvent);
+		}
 	}
 	else if (m_allowDragTracks && m_mouseTrackItem.item)
 	{
@@ -451,23 +467,25 @@ void SequencerControl::eventMouseMove(MouseMoveEvent* event)
 	// Editing tickers.
 	if (m_moveTrack == 0)
 	{
-		// Calculate current cursor display position.
-		const int32_t scrollOffsetX = m_scrollBarH->getPosition();
+		// The cursor follow the mouse only when no key is grabbed.
+		if (m_mouseTrackItem.item == nullptr || !m_mouseTrackItem.item->isTrackingKey())
+		{
+			// Calculate current cursor display position.
+			const int32_t scrollOffsetX = m_scrollBarH->getPosition();
 
-		int32_t cursor;
-		cursor = (event->getPosition().x - m_separator + scrollOffsetX) * m_timeScale;
-		cursor = std::max< int32_t >(cursor, 0);
-		cursor = std::min< int32_t >(cursor, m_length);
+			int32_t cursor;
+			cursor = (event->getPosition().x - m_separator + scrollOffsetX) * m_timeScale;
+			cursor = std::max< int32_t >(cursor, 0);
+			cursor = std::min< int32_t >(cursor, m_length);
 
-		if (cursor == m_cursor)
-			return;
+			if (cursor == m_cursor)
+				return;
 
-		m_cursor = cursor;
+			m_cursor = cursor;
 
-		CursorMoveEvent cursorMoveEvent(this, m_cursor);
-		raiseEvent(&cursorMoveEvent);
-
-		update();
+			CursorMoveEvent cursorMoveEvent(this, m_cursor);
+			raiseEvent(&cursorMoveEvent);
+		}
 
 		// Notify track item mouse move.
 		if (m_mouseTrackItem.item)
@@ -484,6 +502,8 @@ void SequencerControl::eventMouseMove(MouseMoveEvent* event)
 				m_scrollBarH->getPosition()
 			);
 		}
+
+		update();
 	}
 }
 
@@ -513,11 +533,13 @@ void SequencerControl::eventPaint(PaintEvent* event)
 	const int32_t scrollOffsetX = m_scrollBarH->getPosition();
 	const int32_t scrollOffsetY = m_scrollBarV->getPosition();
 
+	const bool enabled = isEnable(true);
+
 	// Clear background.
-	canvas.setBackground(ss->getColor(this, L"control-background-color"));
+	canvas.setBackground(ss->getColor(this, enabled ? L"control-background-color" : L"background-color-disabled"));
 	canvas.fillRect(Rect(rc.left + m_separator, rc.top, rc.right, rc.bottom));
 
-	canvas.setBackground(ss->getColor(this, isEnable(true) ? L"background-color" : L"background-color-disabled"));
+	canvas.setBackground(ss->getColor(this, enabled ? L"background-color" : L"background-color-disabled"));
 	canvas.fillRect(Rect(rc.left, rc.top, rc.left + m_separator, rc.bottom));
 
 	// Right sequence edge.
@@ -548,7 +570,7 @@ void SequencerControl::eventPaint(PaintEvent* event)
 	const int32_t x = m_separator + m_cursor / m_timeScale - scrollOffsetX;
 	if (x >= m_separator && x < rc.right)
 	{
-		canvas.setForeground(ss->getColor(this, L"cursor-color"));
+		canvas.setForeground(ss->getColor(this, enabled ? L"cursor-color" : L"color-disabled"));
 		canvas.drawLine(x, rc.top, x, rc.bottom - scrollHeight - 1);
 	}
 

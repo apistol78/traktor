@@ -10,9 +10,10 @@
 
 #include "Core/Guid.h"
 #include "Core/Ref.h"
+#include "Core/RefArray.h"
 #include "Core/Containers/AlignedVector.h"
-#include "Core/Math/TransformPath.h"
 #include "Core/Serialization/ISerializable.h"
+#include "Theater/PropertyPath.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -34,6 +35,9 @@ namespace traktor::theater
 
 /*! Track data.
  * \ingroup Theater
+ *
+ * A track animate a single entity through two paths; one for the transform of
+ * the entity itself and one for the properties of its components.
  */
 class T_DLLCLASS TrackData : public ISerializable
 {
@@ -57,23 +61,31 @@ public:
 
 	const Guid& getLookAtEntityId() const;
 
-	void setPath(const TransformPath& path);
-
-	const TransformPath& getPath() const;
-
-	TransformPath& getPath();
-
 	const AlignedVector< EventKey >& getEvents() const;
 
 	AlignedVector< EventKey >& getEvents();
+
+	/*! Get path animating the transform of the entity; null if it isn't animated. */
+	PropertyPath* getTransform() const { return m_transform; }
+
+	void setTransform(PropertyPath* transform) { m_transform = transform; }
+
+	/*! Get path animating properties of the entity's components; null if none are. */
+	PropertyPath* getProperties() const { return m_properties; }
+
+	void setProperties(PropertyPath* properties) { m_properties = properties; }
+
+	/*! Get a copy of this track, with every path stripped. */
+	Ref< TrackData > stripped() const;
 
 	virtual void serialize(ISerializer& s) override final;
 
 private:
 	Guid m_entityId;
 	Guid m_lookAtEntityId;
-	TransformPath m_path;
 	AlignedVector< EventKey > m_events;
+	Ref< PropertyPath > m_transform;
+	Ref< PropertyPath > m_properties;
 };
 
 }

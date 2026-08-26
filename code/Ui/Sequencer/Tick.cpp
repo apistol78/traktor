@@ -75,10 +75,17 @@ void Tick::paint(SequencerControl* sequencer, ui::Canvas& canvas, const Sequence
 		rcClient.top + sequenceHeight - hh - 1
 	);
 
+	const bool enabled = sequencer->isEnable(true);
 	const bool selected = (sequence->getSelectedKey() == this);
 
-	canvas.setBackground(ss->getColor(this, selected ? L"background-color-selected" : L"background-color"));
-	canvas.setForeground(ss->getColor(this, L"color"));
+	const wchar_t* background = L"background-color";
+	if (!enabled)
+		background = L"background-color-disabled";
+	else if (selected)
+		background = L"background-color-selected";
+
+	canvas.setBackground(ss->getColor(this, background));
+	canvas.setForeground(ss->getColor(this, enabled ? L"color" : L"color-disabled"));
 	canvas.fillRect(rc);
 	canvas.drawRect(rc);
 }

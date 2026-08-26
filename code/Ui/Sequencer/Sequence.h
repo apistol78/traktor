@@ -57,9 +57,16 @@ public:
 
 	Ref< Key > getSelectedKey() const;
 
+	/*! Select a key of the sequence, without notifying about the selection. */
+	void setSelectedKey(Key* key);
+
 	int clientFromTime(int time) const;
 
 	int timeFromClient(int client) const;
+
+	virtual bool setSelected(bool selected) override;
+
+	virtual bool isTrackingKey() const override;
 
 	virtual void mouseDown(SequencerControl* sequencer, const Point& at, const Rect& rc, int button, int separator, int scrollOffset) override;
 
@@ -84,6 +91,7 @@ private:
 	AlignedVector< Button > m_buttons;
 	Ref< Key > m_selectedKey;
 	Ref< Key > m_trackKey;
+	bool m_trackKeyMoved = false;
 	int32_t m_previousPosition;
 	int32_t m_timeScale;
 };

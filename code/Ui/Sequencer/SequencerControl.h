@@ -35,6 +35,13 @@ class T_DLLCLASS SequencerControl : public Widget
 public:
 	constexpr static uint32_t WsDragTrack = (WsUser << 1);
 
+	/*! At most one sequence, and never a group of sequences, is selected.
+	 *
+	 * Selection follow a click anywhere on a sequence, its keys included; a
+	 * group stand for what it contain thus clicking it select the first of them.
+	 */
+	constexpr static uint32_t WsSingleSelection = (WsUser << 2);
+
 	enum GetSequenceFlags
 	{
 		GfDefault = 0,
@@ -88,6 +95,7 @@ private:
 	Ref< ScrollBar > m_scrollBarH;
 	RefArray< SequenceItem > m_sequenceItems;
 	bool m_allowDragTracks;
+	bool m_singleSelection;
 	MouseTrackItem m_mouseTrackItem;
 	int32_t m_separator;
 	int32_t m_timeScale;

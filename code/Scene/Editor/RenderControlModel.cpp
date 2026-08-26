@@ -174,7 +174,7 @@ void RenderControlModel::eventButtonUp(ISceneRenderControl* renderControl, ui::W
 		if (modifier)
 			modifier->end(transformChain);
 
-		context->raisePostModify();
+		context->raisePostModify(true);
 	}
 
 	if (m_modify == MtSelection)

@@ -12,7 +12,7 @@
 #include "Core/Object.h"
 #include "Core/Ref.h"
 #include "Core/Containers/AlignedVector.h"
-#include "Core/Math/TransformPath.h"
+#include "Theater/PropertyPath.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -21,6 +21,13 @@
 #else
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
+
+namespace traktor
+{
+
+class IRuntimeDispatch;
+
+}
 
 namespace traktor::world
 {
@@ -47,28 +54,48 @@ public:
 		Ref< const world::IEntityEvent > event;
 	};
 
+	/*! Property, of the track's entity or one of its components, animated by the track.
+	 *
+	 * Accessors are resolved once from the runtime class of the object; the type
+	 * of the value is resolved from the first object the property is applied to.
+	 */
+	struct Property
+	{
+		Ref< const PropertyPath > path;
+		int32_t index = -1;
+
+		/*! Type of the component owning the property; null if the entity itself. */
+		const TypeInfo* componentType = nullptr;
+		const IRuntimeDispatch* getter = nullptr;
+		const IRuntimeDispatch* setter = nullptr;
+		mutable PropertyPath::ValueType valueType = PropertyPath::ValueType::Invalid;
+		mutable bool valueTypeResolved = false;
+	};
+
 	explicit Track(
 		const Guid& entityId,
 		const Guid& lookAtEntityId,
-		const TransformPath& path,
-		const AlignedVector< EventKey >& events
+		const AlignedVector< EventKey >& events,
+		const AlignedVector< Property >& properties
 	);
 
 	const Guid& getEntityId() const;
 
 	const Guid& getLookAtEntityId() const;
 
-	const TransformPath& getPath() const;
-
-	TransformPath& getPath();
-
 	const AlignedVector< EventKey >& getEvents() const;
+
+	const AlignedVector< Property >& getProperties() const;
+
+	/*! Get property animating the transform of the entity; null if it isn't animated. */
+	const Property* getTransform() const;
 
 private:
 	Guid m_entityId;
 	Guid m_lookAtEntityId;
-	TransformPath m_path;
 	AlignedVector< EventKey > m_events;
+	AlignedVector< Property > m_properties;
+	int32_t m_transform = -1;
 };
 
 }

@@ -76,6 +76,9 @@ public:
 
 	world::IEntityComponent* findComponentProduct(const world::IEntityComponentData* componentData);
 
+	/*! Invalidate cached product of a component which no longer reflect its data. */
+	void invalidateComponentProduct(const world::IEntityComponent* component);
+
 	/*! \name Accessors */
 	//@{
 

@@ -1,53 +1,50 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2026 Anders Pistol.
+ * Copyright (c) 2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include "Theater/Editor/TheaterWorldComponentPipeline.h"
+#include "Theater/Editor/TheaterEntityComponentPipeline.h"
 
-#include "Core/Log/Log.h"
 #include "Core/Serialization/DeepHash.h"
-#include "Editor/IPipelineBuilder.h"
 #include "Editor/IPipelineDepends.h"
 #include "Theater/ActData.h"
-#include "Theater/TheaterWorldComponentData.h"
+#include "Theater/TheaterEntityComponentData.h"
 #include "Theater/TrackData.h"
-#include "World/EntityData.h"
 #include "World/IEntityEventData.h"
 
 namespace traktor::theater
 {
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.theater.TheaterWorldComponentPipeline", 2, TheaterWorldComponentPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.theater.TheaterEntityComponentPipeline", 0, TheaterEntityComponentPipeline, editor::IPipeline)
 
-bool TheaterWorldComponentPipeline::create(const editor::IPipelineSettings* settings, db::Database* database)
+bool TheaterEntityComponentPipeline::create(const editor::IPipelineSettings* settings, db::Database* database)
 {
 	return true;
 }
 
-void TheaterWorldComponentPipeline::destroy()
+void TheaterEntityComponentPipeline::destroy()
 {
 }
 
-TypeInfoSet TheaterWorldComponentPipeline::getAssetTypes() const
+TypeInfoSet TheaterEntityComponentPipeline::getAssetTypes() const
 {
-	return makeTypeInfoSet< TheaterWorldComponentData >();
+	return makeTypeInfoSet< TheaterEntityComponentData >();
 }
 
-bool TheaterWorldComponentPipeline::shouldCache() const
+bool TheaterEntityComponentPipeline::shouldCache() const
 {
 	return false;
 }
 
-uint32_t TheaterWorldComponentPipeline::hashAsset(const ISerializable* sourceAsset) const
+uint32_t TheaterEntityComponentPipeline::hashAsset(const ISerializable* sourceAsset) const
 {
 	return DeepHash(sourceAsset).get();
 }
 
-bool TheaterWorldComponentPipeline::buildDependencies(
+bool TheaterEntityComponentPipeline::buildDependencies(
 	editor::IPipelineDepends* pipelineDepends,
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,
@@ -55,7 +52,7 @@ bool TheaterWorldComponentPipeline::buildDependencies(
 	const Guid& outputGuid
 ) const
 {
-	const TheaterWorldComponentData* componentData = checked_type_cast< const TheaterWorldComponentData*, false >(sourceAsset);
+	const TheaterEntityComponentData* componentData = checked_type_cast< const TheaterEntityComponentData*, false >(sourceAsset);
 
 	// Add dependencies of events issued from tracks.
 	for (auto act : componentData->getActs())
@@ -70,7 +67,7 @@ bool TheaterWorldComponentPipeline::buildDependencies(
 	return true;
 }
 
-bool TheaterWorldComponentPipeline::buildOutput(
+bool TheaterEntityComponentPipeline::buildOutput(
 	editor::IPipelineBuilder* pipelineBuilder,
 	const editor::PipelineDependencySet* dependencySet,
 	const editor::PipelineDependency* dependency,
@@ -85,19 +82,17 @@ bool TheaterWorldComponentPipeline::buildOutput(
 	return false;
 }
 
-Ref< ISerializable > TheaterWorldComponentPipeline::buildProduct(
+Ref< ISerializable > TheaterEntityComponentPipeline::buildProduct(
 	editor::IPipelineBuilder* pipelineBuilder,
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,
 	const Object* buildParams
 ) const
 {
-	const TheaterWorldComponentData* sourceComponentData = checked_type_cast< const TheaterWorldComponentData*, false >(sourceAsset);
-
-	Ref< TheaterWorldComponentData > componentData = new TheaterWorldComponentData();
-	componentData->m_randomizeActs = sourceComponentData->m_randomizeActs;
+	const TheaterEntityComponentData* sourceComponentData = checked_type_cast< const TheaterEntityComponentData*, false >(sourceAsset);
 
 	// Keys captured in the editor remember the state of the component they animate.
+	Ref< TheaterEntityComponentData > componentData = new TheaterEntityComponentData();
 	for (auto act : sourceComponentData->getActs())
 		componentData->getActs().push_back(act->stripped());
 

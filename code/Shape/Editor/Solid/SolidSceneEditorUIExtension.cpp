@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 -2026Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -47,6 +47,10 @@ bool SolidSceneEditorUIExtension::handleCommand(const ui::Command& command)
 	}
 	else
 		return false;
+}
+
+void SolidSceneEditorUIExtension::handleDatabaseEvent(db::Database* database, const Guid& eventId)
+{
 }
 
 void SolidSceneEditorUIExtension::eventModifierChanged(scene::ModifierChangedEvent* event)
