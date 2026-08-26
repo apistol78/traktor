@@ -148,6 +148,15 @@ Ref< Model > ModelFormatFbx::read(const Path& filePath, const std::wstring& filt
 	ufbx_node* skeletonNode = search(scene->root_node, filter, [&](ufbx_node* node) {
 		return (node->children.count > 0 && node->bind_pose != nullptr);
 	});
+	if (!skeletonNode)
+	{
+		// No bind pose found; happens when file contain nothing but a skeleton and
+		// its animations, i.e. no skinned mesh. Use top most bone node as root
+		// of the skeleton instead.
+		skeletonNode = search(scene->root_node, filter, [&](ufbx_node* node) {
+			return (node->bone != nullptr);
+		});
+	}
 	if (skeletonNode)
 	{
 		if (!convertSkeleton(*model, scene, skeletonNode, axisTransform))

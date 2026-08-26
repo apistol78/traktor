@@ -24,7 +24,7 @@ namespace traktor::model
 	namespace
 	{
 
-const static int32_t c_cacheVersion = 1;
+const static int32_t c_cacheVersion = 3;
 
 uint32_t hash(const std::wstring& text)
 {

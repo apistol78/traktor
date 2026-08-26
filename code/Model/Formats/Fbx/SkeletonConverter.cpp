@@ -10,6 +10,7 @@
 #include "Core/Log/Log.h"
 #include "Core/Math/Format.h"
 #include "Core/Misc/TString.h"
+#include "Core/Settings/PropertyBoolean.h"
 #include "Model/Model.h"
 #include "Model/Pose.h"
 #include "Model/Formats/Fbx/Conversion.h"
@@ -73,6 +74,9 @@ std::wstring getJointName(ufbx_node* node)
 
 ufbx_bone_pose* findBonePose(ufbx_pose* bindPose, ufbx_node* node)
 {
+	if (!bindPose || !node)
+		return nullptr;
+
 	for (size_t i = 0; i < bindPose->bone_poses.count; ++i)
 	{
 		ufbx_bone_pose& pose = bindPose->bone_poses.data[i];
@@ -91,15 +95,23 @@ bool convertSkeleton(
 	const Matrix44& axisTransform
 )
 {
+	// Bind pose is optional; files containing nothing but a skeleton and its
+	// animations do not have one.
 	ufbx_pose* bindPose = skeletonNode->bind_pose;
-	T_FATAL_ASSERT(bindPose != nullptr);
+
+	// Record origin of the rest transformations; without a bind pose the rest is merely
+	// the scene's static pose, thus cannot be used as a reference when retargeting.
+	outModel.setProperty< PropertyBoolean >(L"JointsFromBindPose", bindPose != nullptr);
 
 	const Matrix44 Mrx90 = rotateX(deg2rad(-90.0f));
 
 	const bool result = traverse(nullptr, skeletonNode, [&](ufbx_node* parent, ufbx_node* node) {
 		const std::wstring jointName = getJointName(node);
 
-		Matrix44 Mnode = Matrix44::identity();
+		// Determine world transformation of joint; from bind pose since it's the pose
+		// meshes are skinned against, else from the node itself, same as when
+		// evaluating animation poses.
+		Matrix44 Mnode;
 
 		ufbx_bone_pose* pose = findBonePose(bindPose, node);
 		if (pose)
@@ -111,6 +123,8 @@ bool convertSkeleton(
 			pose = findBonePose(bindPose, parent);
 			if (pose)
 				Mnode = convertMatrix(pose->bone_to_world) * convertMatrix(node->node_to_parent);
+			else
+				Mnode = convertMatrix(node->geometry_to_world);
 		}
 
 		// Calculate joint transformation.

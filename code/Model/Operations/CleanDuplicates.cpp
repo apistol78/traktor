@@ -118,6 +118,10 @@ bool CleanDuplicates::apply(Model& model) const
 	for (const auto& animation : model.getAnimations())
 		cleaned.addAnimation(animation);
 
+	// Carry over properties since the cleaned model replaces the model in its entirety.
+	for (const auto& it : model.getValues())
+		cleaned.setProperty(it.first, it.second);
+
 	model = cleaned;
 	return true;
 }
