@@ -40,6 +40,56 @@ namespace traktor::spark
 namespace
 {
 
+/*! Get name of character from SVG shape.
+ *
+ * SVG requires document unique "id" attributes, and editors such as Inkscape
+ * silently rename duplicates, so the instance names the UI scripts look up
+ * (background_mc, caption_tb, ...) cannot be expressed through "id" alone.
+ * Therefore "inkscape:label" is used when available, "id" otherwise.
+ */
+std::wstring characterName(const svg::Shape* shape)
+{
+	const std::wstring label = shape->getAttribute(L"inkscape:label").getWideString();
+	if (!label.empty())
+		return label;
+	else
+		return shape->getAttribute(L"id").getWideString();
+}
+
+/*! Twice the signed area enclosed by an outline; negative when wound the other way. */
+float doubleSignedArea(const AlignedVector< Vector2 >& outline)
+{
+	float area = 0.0f;
+	for (size_t i = 0, n = outline.size(); i < n; ++i)
+	{
+		const Vector2& p0 = outline[i];
+		const Vector2& p1 = outline[(i + 1) % n];
+		area += p0.x * p1.y - p1.x * p0.y;
+	}
+	return area;
+}
+
+/*! Check if an outline enclose a point, by counting crossings of a ray cast from it. */
+bool enclosing(const AlignedVector< Vector2 >& outline, const Vector2& pnt)
+{
+	if (outline.size() < 3)
+		return false;
+
+	bool inside = false;
+	for (size_t i = 0, j = outline.size() - 1; i < outline.size(); j = i++)
+	{
+		const Vector2& p0 = outline[i];
+		const Vector2& p1 = outline[j];
+		if ((p0.y > pnt.y) != (p1.y > pnt.y))
+		{
+			const float x = (p1.x - p0.x) * (pnt.y - p0.y) / (p1.y - p0.y) + p0.x;
+			if (pnt.x < x)
+				inside = !inside;
+		}
+	}
+	return inside;
+}
+
 class ShapeVisitor : public svg::IShapeVisitor
 {
 public:
@@ -115,23 +165,57 @@ Ref< Movie > convertSvg(const traktor::Path& assetPath, const MovieAsset* movieA
 	}
 
 	// Visit all shapes and create sprites and shapes.
+	//
+	// A sprite always has a base frame, frame 0, holding everything which isn't part
+	// of a keyframe. "traktor:frame" groups add keyframes on top of that, the first
+	// one sharing frame 0 so the sprite show it without having to be told to.
 	struct SD
 	{
 		Ref< Sprite > sprite;
-		Ref< Frame > frame;
-		Ref< Shape > shape;
+		Ref< Frame > baseFrame;			//!< Frame 0 of the sprite.
+		Ref< Frame > frame;				//!< Frame which content is currently added to.
+		Ref< Shape > shape;				//!< Paths accumulated for the frame being written.
+		uint16_t nextDepth = 1;			//!< Depths are never reused across the frames of a sprite.
+		uint16_t keyframes = 0;			//!< Number of keyframes added so far.
+		uint16_t keyframeFirstDepth = 0;	//!< First depth used by the keyframe last entered.
+		uint16_t keyframeEndDepth = 0;	//!< Depth beyond the last used by the keyframe last left.
 	};
 
 	AlignedVector< SD > spriteStack;
 	uint32_t characterId = 1;
 	uint16_t fillBitmapId = 1;
 
+	// Map a point from the SVG view box into movie space.
+	const auto toMovie = [&](const Matrix33& transform, const Vector2& pnt) {
+		const Vector2 viewPnt = transform * pnt;						   // Point in view box.
+		const Vector2 normPnt = (viewPnt - viewBox.mn) / viewBox.getSize(); // Normalized point.
+		return normPnt * movieSize;										   // Point in movie.
+	};
+
+	// Place paths accumulated so far, if any, as a shape character onto the frame
+	// being written; called whenever the target frame is about to change.
+	const auto flushShape = [&](SD& sd) {
+		if (sd.shape->getPaths().empty())
+			return;
+
+		movie->defineCharacter(characterId, sd.shape);
+
+		Frame::PlaceObject p;
+		p.hasFlags = Frame::PfHasCharacterId;
+		p.depth = sd.nextDepth++;
+		p.characterId = characterId;
+		sd.frame->placeObject(p);
+
+		characterId++;
+		sd.shape = new Shape();
+	};
+
 	ShapeVisitor createCharactersVisitor(
 		[&](svg::Shape* svg) -> bool {
 		// Begin creating new sprite.
 		if (svg->hasAttribute(L"traktor:sprite"))
 		{
-			const std::wstring id = svg->getAttribute(L"id").getWideString();
+			const std::wstring id = characterName(svg);
 			if (id.empty())
 				return false;
 
@@ -152,18 +236,59 @@ Ref< Movie > convertSvg(const traktor::Path& assetPath, const MovieAsset* movieA
 			{
 				Frame::PlaceObject p;
 				p.hasFlags = Frame::PfHasName | Frame::PfHasCharacterId;
-				p.depth = spriteStack.back().frame->nextUnusedDepth();
+				p.depth = spriteStack.back().nextDepth++;
 				p.name = wstombs(id);
 				p.characterId = characterId;
 				spriteStack.back().frame->placeObject(p);
 			}
 
 			// Add sprite to stack.
-			spriteStack.push_back({ sprite, frame, shape });
+			spriteStack.push_back({ sprite, frame, frame, shape });
 			log::info << L"Enter sprite \"" << id << L"\" (" << (characterId + 1) << L")..." << Endl;
 			log::info << IncreaseIndent;
 
 			characterId++;
+		}
+
+		// Begin a new keyframe of the sprite being created.
+		if (svg->hasAttribute(L"traktor:frame") && !spriteStack.empty())
+		{
+			const std::wstring label = characterName(svg);
+			if (label.empty())
+				return false;
+
+			SD& sd = spriteStack.back();
+
+			// Everything up until now belong to the frame currently being written.
+			flushShape(sd);
+
+			if (sd.keyframes == 0)
+			{
+				// Let the first keyframe share frame 0 with the sprite's common content.
+				sd.frame->setLabel(wstombs(label));
+			}
+			else
+			{
+				Ref< Frame > frame = new Frame();
+				frame->setLabel(wstombs(label));
+				sd.sprite->addFrame(frame);
+				sd.frame = frame;
+
+				// Frames are cumulative, so unless this frame explicitly removes what the
+				// previous keyframe placed both would be shown when stepping forward.
+				for (uint16_t depth = sd.keyframeFirstDepth; depth < sd.keyframeEndDepth; ++depth)
+				{
+					Frame::RemoveObject r;
+					r.depth = depth;
+					frame->removeObject(r);
+				}
+			}
+
+			sd.keyframeFirstDepth = sd.nextDepth;
+			sd.keyframes++;
+
+			log::info << L"Enter frame \"" << label << L"\" (" << sd.keyframes << L")..." << Endl;
+			log::info << IncreaseIndent;
 		}
 
 		if (!spriteStack.empty())
@@ -187,88 +312,139 @@ Ref< Movie > convertSvg(const traktor::Path& assetPath, const MovieAsset* movieA
 				if (subPaths.empty())
 					return false;
 
-				// Get close position; when path is closed.
-				Vector2 closePosition = subPaths.front().points.front();
+				// Split the path into closed loops. svg::Path begin a new sub path on every
+				// change of segment type, so a single loop is usually several sub paths; a
+				// loop end at a closed sub path, or where the next one start somewhere else.
+				AlignedVector< std::pair< uint32_t, uint32_t > > loops;
+				for (uint32_t i = 0, begin = 0; i < (uint32_t)subPaths.size(); ++i)
 				{
-					const Vector2 viewPnt = transform * closePosition;					// Point in view box.
-					const Vector2 normPnt = (viewPnt - viewBox.mn) / viewBox.getSize(); // Normalized point.
-					const Vector2 moviePnt = normPnt * movieSize;						// Point in movie.
-					closePosition = moviePnt;
+					if (i + 1 >= subPaths.size() || subPaths[i].closed || subPaths[i + 1].origin != subPaths[i].origin)
+					{
+						loops.push_back(std::make_pair(begin, i + 1));
+						begin = i + 1;
+					}
+				}
+
+				// Outline of each loop in movie space, so that a mirroring transform is taken
+				// into account. Only on-curve points are needed; control points would bias an
+				// area but never its sign, and never reach outside a loop enclosing them.
+				AlignedVector< AlignedVector< Vector2 > > outlines(loops.size());
+				for (uint32_t i = 0; i < (uint32_t)loops.size(); ++i)
+				{
+					for (uint32_t j = loops[i].first; j < loops[i].second; ++j)
+					{
+						const svg::SubPath& sp = subPaths[j];
+						const uint32_t step = (sp.type == svg::SubPathType::Quadric) ? 2 : ((sp.type == svg::SubPathType::Cubic) ? 3 : 1);
+						for (uint32_t k = 0; k < (uint32_t)sp.points.size(); k += step)
+							outlines[i].push_back(toMovie(transform, sp.points[k]));
+					}
+				}
+
+				// Which side of an edge the fill sit on isn't in the SVG data; it follow from
+				// the winding of the loop and how deeply the loop is nested. A loop enclosed
+				// by an odd number of others is a hole, anything else is solid, and walking a
+				// solid loop should keep the fill to the right the way the primitives (<rect>,
+				// <circle>, ...) are emitted. A loop wound against that has its styles
+				// swapped, without which it fills its outside instead -- which in practice
+				// means it render nothing at all, and do so without any warning.
+				AlignedVector< bool > swapStyles(loops.size(), false);
+				for (uint32_t i = 0; i < (uint32_t)loops.size(); ++i)
+				{
+					if (outlines[i].empty())
+						continue;
+
+					uint32_t enclosedBy = 0;
+					for (uint32_t j = 0; j < (uint32_t)loops.size(); ++j)
+					{
+						if (j != i && enclosing(outlines[j], outlines[i].front()))
+							enclosedBy++;
+					}
+
+					const bool solid = ((enclosedBy & 1) == 0);
+					const bool positive = (doubleSignedArea(outlines[i]) >= 0.0f);
+					swapStyles[i] = (positive != solid);
 				}
 
 				Path path;
-				for (const auto& sp : ps->getPath().getSubPaths())
+				for (uint32_t loop = 0; loop < (uint32_t)loops.size(); ++loop)
 				{
-					AlignedVector< Vector2 > pnts = sp.points;
+					const uint16_t leftFillStyle = swapStyles[loop] ? fillStyle : 0;
+					const uint16_t rightFillStyle = swapStyles[loop] ? 0 : fillStyle;
 
-					// Convert points into document coordinates.
-					for (auto& pnt : pnts)
+					// Position to close back to; every loop has its own, and svg::Path record it
+					// on each of the sub paths it split the loop into.
+					const Vector2 closePosition = toMovie(transform, subPaths[loops[loop].first].origin);
+
+					for (uint32_t subPath = loops[loop].first; subPath < loops[loop].second; ++subPath)
 					{
-						const Vector2 viewPnt = transform * pnt;							// Point in view box.
-						const Vector2 normPnt = (viewPnt - viewBox.mn) / viewBox.getSize(); // Normalized point.
-						const Vector2 moviePnt = normPnt * movieSize;						// Point in movie.
-						pnt = moviePnt;
-					}
+						const svg::SubPath& sp = subPaths[subPath];
 
-					const size_t ln = pnts.size();
-					switch (sp.type)
-					{
-					case svg::SubPathType::Linear:
-						{
-							path.moveTo((int32_t)(pnts[0].x), (int32_t)(pnts[0].y), Path::CmAbsolute);
-							for (size_t i = 1; i < ln; ++i)
-								path.lineTo((int32_t)(pnts[i].x), (int32_t)(pnts[i].y), Path::CmAbsolute);
-						}
-						break;
+						AlignedVector< Vector2 > pnts = sp.points;
 
-					case svg::SubPathType::Quadric:
-						{
-							path.moveTo((int32_t)(pnts[0].x), (int32_t)(pnts[0].y), Path::CmAbsolute);
-							for (size_t i = 1; i < ln; i += 2)
-								path.quadraticTo(
-									(int32_t)(pnts[i].x),
-									(int32_t)(pnts[i].y),
-									(int32_t)(pnts[i + 1].x),
-									(int32_t)(pnts[i + 1].y),
-									Path::CmAbsolute);
-						}
-						break;
+						// Convert points into document coordinates.
+						for (auto& pnt : pnts)
+							pnt = toMovie(transform, pnt);
 
-					case svg::SubPathType::Cubic:
+						const size_t ln = pnts.size();
+						switch (sp.type)
 						{
-							path.moveTo((int32_t)(pnts[0].x), (int32_t)(pnts[0].y), Path::CmAbsolute);
-							for (size_t i = 1; i < ln; i += 3)
+						case svg::SubPathType::Linear:
 							{
-								const Bezier3rd b(
-									pnts[i - 1],
-									pnts[i],
-									pnts[i + 1],
-									pnts[i + 2]);
+								path.moveTo((int32_t)(pnts[0].x), (int32_t)(pnts[0].y), Path::CmAbsolute);
+								for (size_t i = 1; i < ln; ++i)
+									path.lineTo((int32_t)(pnts[i].x), (int32_t)(pnts[i].y), Path::CmAbsolute);
+							}
+							break;
 
-								AlignedVector< Bezier2nd > b2s;
-								b.approximate(
-									1.0f,
-									4,
-									b2s);
-								for (const auto& b2 : b2s)
+						case svg::SubPathType::Quadric:
+							{
+								path.moveTo((int32_t)(pnts[0].x), (int32_t)(pnts[0].y), Path::CmAbsolute);
+								for (size_t i = 1; i < ln; i += 2)
 									path.quadraticTo(
-										(int32_t)(b2.cp1.x),
-										(int32_t)(b2.cp1.y),
-										(int32_t)(b2.cp2.x),
-										(int32_t)(b2.cp2.y),
+										(int32_t)(pnts[i].x),
+										(int32_t)(pnts[i].y),
+										(int32_t)(pnts[i + 1].x),
+										(int32_t)(pnts[i + 1].y),
 										Path::CmAbsolute);
 							}
+							break;
+
+						case svg::SubPathType::Cubic:
+							{
+								path.moveTo((int32_t)(pnts[0].x), (int32_t)(pnts[0].y), Path::CmAbsolute);
+								for (size_t i = 1; i < ln; i += 3)
+								{
+									const Bezier3rd b(
+										pnts[i - 1],
+										pnts[i],
+										pnts[i + 1],
+										pnts[i + 2]);
+
+									AlignedVector< Bezier2nd > b2s;
+									b.approximate(
+										1.0f,
+										4,
+										b2s);
+									for (const auto& b2 : b2s)
+										path.quadraticTo(
+											(int32_t)(b2.cp1.x),
+											(int32_t)(b2.cp1.y),
+											(int32_t)(b2.cp2.x),
+											(int32_t)(b2.cp2.y),
+											Path::CmAbsolute);
+								}
+							}
+							break;
+
+						default:
+							break;
 						}
-						break;
 
-					default:
-						break;
+						if (sp.closed)
+							path.lineTo((int32_t)(closePosition.x), (int32_t)(closePosition.y), Path::CmAbsolute);
+
+						path.end(leftFillStyle, rightFillStyle, lineStyle);
 					}
-
-					if (sp.closed)
-						path.lineTo((int32_t)(closePosition.x), (int32_t)(closePosition.y), Path::CmAbsolute);
-
-					path.end(0, fillStyle, lineStyle);
 				}
 				spriteStack.back().shape->addPath(path);
 			}
@@ -310,7 +486,7 @@ Ref< Movie > convertSvg(const traktor::Path& assetPath, const MovieAsset* movieA
 			}
 			else if (const auto ts = dynamic_type_cast< const svg::TextShape* >(svg))
 			{
-				const std::wstring id = ts->getAttribute(L"id").getWideString();
+				const std::wstring id = characterName(ts);
 				if (id.empty())
 					return false;
 
@@ -351,7 +527,7 @@ Ref< Movie > convertSvg(const traktor::Path& assetPath, const MovieAsset* movieA
 				// Place edit field on sprite.
 				Frame::PlaceObject p;
 				p.hasFlags = Frame::PfHasName | Frame::PfHasCharacterId; // | Frame::PfHasMatrix;
-				p.depth = spriteStack.back().frame->nextUnusedDepth();
+				p.depth = spriteStack.back().nextDepth++;
 				p.name = wstombs(id);
 				p.characterId = characterId;
 				// p.matrix = Matrix33(
@@ -369,23 +545,25 @@ Ref< Movie > convertSvg(const traktor::Path& assetPath, const MovieAsset* movieA
 		return true;
 	},
 		[&](svg::Shape* svg) {
+		// End keyframe; anything following it belong to frame 0 again.
+		if (svg->hasAttribute(L"traktor:frame") && !spriteStack.empty())
+		{
+			SD& sd = spriteStack.back();
+
+			flushShape(sd);
+			sd.keyframeEndDepth = sd.nextDepth;
+			sd.frame = sd.baseFrame;
+
+			log::info << DecreaseIndent;
+			log::info << L"Leave frame \"" << characterName(svg) << L"\"..." << Endl;
+		}
+
 		if (svg->hasAttribute(L"traktor:sprite"))
 		{
-			const std::wstring id = svg->getAttribute(L"id").getWideString();
+			const std::wstring id = characterName(svg);
 
-			// Place the shape onto first frame of sprite.
-			if (!spriteStack.back().shape->getPaths().empty())
-			{
-				movie->defineCharacter(characterId, spriteStack.back().shape);
-
-				Frame::PlaceObject p;
-				p.hasFlags = Frame::PfHasCharacterId;
-				p.depth = spriteStack.back().frame->nextUnusedDepth();
-				p.characterId = characterId;
-				spriteStack.back().frame->placeObject(p);
-
-				characterId++;
-			}
+			// Place remaining paths onto the frame of the sprite still being written.
+			flushShape(spriteStack.back());
 
 			log::info << DecreaseIndent;
 			log::info << L"Leave sprite \"" << id << L"\"..." << Endl;

@@ -32,7 +32,7 @@ function Scaffolding:new(database, resourceManager, root, width, height)
 end
 
 function Scaffolding:getResourceKits()
-	return { "\{B45977D0-3D89-4FA7-BE4C-FAA9ED63A942}", "\{5ABEAE05-EB26-934F-932F-7F3C7C582383}" }
+	return { "\{B45977D0-3D89-4FA7-BE4C-FAA9ED63A942}" }
 end
 
 function Scaffolding:setup(frame)

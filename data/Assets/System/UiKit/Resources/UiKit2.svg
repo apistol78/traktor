@@ -1,6 +1,19 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
+<!--
+  Widget resources for UiKit, imported by Spark/Editor/ConvertSvg.cpp.
+
+  Each layer is one exported movie clip; nested groups marked traktor:sprite are the
+  child clips the scripts look up, and groups marked traktor:frame are the states they
+  gotoAndStop to. Names come from inkscape:label, not id, so the same name can be used
+  in more than one clip.
+
+  Everything is drawn at the origin, layers on top of each other, because the scripts
+  position and size the clips themselves. Fills are white wherever a script tints the
+  clip through a ColorTransform, which multiplies.
+-->
+
 <svg
    width="500pt"
    height="500pt"
@@ -52,6 +65,30 @@
        width="215"
        height="48.375"
        id="rect5" />
+    <rect
+       x="0"
+       y="0"
+       width="110"
+       height="20"
+       id="rect_edit_text" />
+    <rect
+       x="0"
+       y="0"
+       width="140"
+       height="20"
+       id="rect_dropdown_caption" />
+    <rect
+       x="0"
+       y="0"
+       width="88"
+       height="20"
+       id="rect_tab_caption" />
+    <rect
+       x="0"
+       y="0"
+       width="120"
+       height="12"
+       id="rect_debug_position" />
   </defs>
   <g
      inkscape:label="MC_Static"
@@ -92,6 +129,18 @@
          x="-2.8421709e-14"
          y="0"
          inkscape:label="shape" />
+      <g
+         id="pushbutton_state_up"
+         inkscape:label="up"
+         traktor:frame="1" />
+      <g
+         id="pushbutton_state_down"
+         inkscape:label="down"
+         traktor:frame="1" />
+      <g
+         id="pushbutton_state_hover"
+         inkscape:label="hover"
+         traktor:frame="1" />
     </g>
     <text
        xml:space="preserve"
@@ -117,5 +166,613 @@
        height="32"
        x="0"
        y="0" />
+  </g>
+  <g
+     inkscape:label="MC_CheckBox"
+     inkscape:groupmode="layer"
+     id="MC_CheckBox"
+     style="display:none"
+     traktor:sprite="1"
+     sodipodi:insensitive="true">
+    <g
+       id="checkbox_background"
+       inkscape:label="background_mc"
+       traktor:sprite="1">
+      <path
+         style="fill:#ffffff;fill-opacity:1"
+         id="checkbox_frame"
+         d="M 0,4 Q 0,0 4,0 L 20,0 Q 24,0 24,4 L 24,20 Q 24,24 20,24 L 4,24 Q 0,24 0,20 Z
+            M 4,4 L 4,20 L 20,20 L 20,4 Z" />
+      <g
+         id="checkbox_state_off"
+         inkscape:label="off"
+         traktor:frame="1" />
+      <g
+         id="checkbox_state_on"
+         inkscape:label="on"
+         traktor:frame="1">
+        <rect
+           style="fill:#ffffff;fill-opacity:1"
+           id="checkbox_mark"
+           width="12"
+           height="12"
+           x="6"
+           y="6"
+           rx="2"
+           ry="2" />
+      </g>
+    </g>
+  </g>
+  <g
+     inkscape:label="MC_Panel"
+     inkscape:groupmode="layer"
+     id="MC_Panel"
+     style="display:none"
+     traktor:sprite="1"
+     sodipodi:insensitive="true">
+    <g
+       id="panel_background"
+       inkscape:label="background_mc"
+       traktor:sprite="1">
+      <rect
+         style="fill:#ffffff;fill-opacity:1"
+         id="panel_shape"
+         width="100"
+         height="100"
+         x="0"
+         y="0"
+         rx="5"
+         ry="5" />
+    </g>
+    <g
+       id="panel_inner"
+       inkscape:label="innerContainer_mc"
+       traktor:sprite="1">
+      <rect
+         style="fill:#ffffff;fill-opacity:0"
+         id="panel_inner_shape"
+         width="100"
+         height="100"
+         x="0"
+         y="0" />
+    </g>
+  </g>
+  <g
+     inkscape:label="MC_Dialog"
+     inkscape:groupmode="layer"
+     id="MC_Dialog"
+     style="display:none"
+     traktor:sprite="1"
+     sodipodi:insensitive="true">
+    <g
+       id="dialog_shadow"
+       inkscape:label="shadow_mc"
+       traktor:sprite="1">
+      <rect
+         style="fill:#000000;fill-opacity:0.5"
+         id="dialog_shadow_shape"
+         width="100"
+         height="100"
+         x="0"
+         y="0" />
+    </g>
+    <g
+       id="dialog_background"
+       inkscape:label="background_mc"
+       traktor:sprite="1">
+      <rect
+         style="fill:#ffffff;fill-opacity:1"
+         id="dialog_background_shape"
+         width="100"
+         height="100"
+         x="0"
+         y="0"
+         rx="9"
+         ry="9" />
+    </g>
+    <g
+       id="dialog_border"
+       inkscape:label="border_mc"
+       traktor:sprite="1">
+      <path
+         style="fill:#ffffff;fill-opacity:1"
+         id="dialog_border_frame"
+         d="M 0,0 L 100,0 L 100,100 L 0,100 Z
+            M 2,2 L 2,98 L 98,98 L 98,2 Z" />
+    </g>
+    <g
+       id="dialog_inner"
+       inkscape:label="innerContainer_mc"
+       traktor:sprite="1">
+      <rect
+         style="fill:#ffffff;fill-opacity:0"
+         id="dialog_inner_shape"
+         width="100"
+         height="100"
+         x="0"
+         y="0" />
+    </g>
+  </g>
+  <g
+     inkscape:label="MC_Edit"
+     inkscape:groupmode="layer"
+     id="MC_Edit"
+     style="display:none"
+     traktor:sprite="1"
+     sodipodi:insensitive="true">
+    <g
+       id="edit_background"
+       inkscape:label="background_mc"
+       traktor:sprite="1">
+      <rect
+         style="fill:#ffffff;fill-opacity:1"
+         id="edit_background_shape"
+         width="120"
+         height="30"
+         x="0"
+         y="0"
+         rx="8"
+         ry="8" />
+    </g>
+    <text
+       xml:space="preserve"
+       id="edit_text"
+       inkscape:label="text_tb"
+       style="font-size:16px;font-family:Arial;white-space:pre;shape-inside:url(#rect_edit_text);shape-padding:0;display:inline;fill:#000000"><tspan
+         x="0"
+         y="14.4"
+         id="edit_text_span">MC_Edit</tspan></text>
+  </g>
+  <g
+     inkscape:label="MC_DropDown"
+     inkscape:groupmode="layer"
+     id="MC_DropDown"
+     style="display:none"
+     traktor:sprite="1"
+     sodipodi:insensitive="true">
+    <g
+       id="dropdown_background"
+       inkscape:label="background_mc"
+       traktor:sprite="1">
+      <g
+         id="dropdown_background_default"
+         inkscape:label="default"
+         traktor:frame="1">
+        <rect
+           style="fill:#ffffff;fill-opacity:1"
+           id="dropdown_background_shape"
+           width="170"
+           height="30"
+           x="0"
+           y="0"
+           rx="8"
+           ry="8" />
+      </g>
+      <g
+         id="dropdown_background_active"
+         inkscape:label="active"
+         traktor:frame="1">
+        <path
+           style="fill:#ffffff;fill-opacity:1"
+           id="dropdown_background_open_shape"
+           d="M 0,8 Q 0,0 8,0 L 162,0 Q 170,0 170,8 L 170,30 L 0,30 Z" />
+      </g>
+    </g>
+    <g
+       id="dropdown_arrow"
+       inkscape:label="arrow_mc"
+       traktor:sprite="1">
+      <g
+         id="dropdown_arrow_default"
+         inkscape:label="default"
+         traktor:frame="1">
+        <path
+           style="fill:#ffffff;fill-opacity:1"
+           id="dropdown_arrow_shape"
+           d="M 0,0 L 10,0 L 5,6 Z" />
+      </g>
+      <g
+         id="dropdown_arrow_active"
+         inkscape:label="active"
+         traktor:frame="1">
+        <path
+           style="fill:#ffffff;fill-opacity:1"
+           id="dropdown_arrow_open_shape"
+           d="M 0,6 L 10,6 L 5,0 Z" />
+      </g>
+    </g>
+    <text
+       xml:space="preserve"
+       id="dropdown_caption"
+       inkscape:label="caption_tb"
+       style="font-size:16px;font-family:Arial;white-space:pre;shape-inside:url(#rect_dropdown_caption);shape-padding:0;display:inline;fill:#000000"><tspan
+         x="0"
+         y="14.4"
+         id="dropdown_caption_span">MC_DropDown</tspan></text>
+  </g>
+  <g
+     inkscape:label="MC_DropDownListBox"
+     inkscape:groupmode="layer"
+     id="MC_DropDownListBox"
+     style="display:none"
+     traktor:sprite="1"
+     sodipodi:insensitive="true">
+    <g
+       id="dropdownlistbox_background"
+       inkscape:label="background_mc"
+       traktor:sprite="1">
+      <rect
+         style="fill:#ffffff;fill-opacity:1"
+         id="dropdownlistbox_background_shape"
+         width="100"
+         height="100"
+         x="0"
+         y="0"
+         rx="8"
+         ry="8" />
+    </g>
+    <g
+       id="dropdownlistbox_inner"
+       inkscape:label="innerContainer_mc"
+       traktor:sprite="1">
+      <rect
+         style="fill:#ffffff;fill-opacity:0"
+         id="dropdownlistbox_inner_shape"
+         width="100"
+         height="100"
+         x="0"
+         y="0" />
+    </g>
+  </g>
+  <g
+     inkscape:label="MC_ProgressBar"
+     inkscape:groupmode="layer"
+     id="MC_ProgressBar"
+     style="display:none"
+     traktor:sprite="1"
+     sodipodi:insensitive="true">
+    <g
+       id="progressbar_back"
+       inkscape:label="back_mc"
+       traktor:sprite="1">
+      <rect
+         style="fill:#ffffff;fill-opacity:1"
+         id="progressbar_back_shape"
+         width="210"
+         height="16"
+         x="0"
+         y="0"
+         rx="8"
+         ry="8" />
+    </g>
+    <g
+       id="progressbar_front"
+       inkscape:label="front_mc"
+       traktor:sprite="1">
+      <rect
+         style="fill:#ffffff;fill-opacity:1"
+         id="progressbar_front_shape"
+         width="210"
+         height="16"
+         x="0"
+         y="0"
+         rx="8"
+         ry="8" />
+    </g>
+    <g
+       id="progressbar_mask"
+       inkscape:label="mask_mc"
+       traktor:sprite="1">
+      <rect
+         style="fill:#ffffff;fill-opacity:0"
+         id="progressbar_mask_shape"
+         width="16"
+         height="16"
+         x="0"
+         y="0" />
+    </g>
+  </g>
+  <g
+     inkscape:label="MC_Slider"
+     inkscape:groupmode="layer"
+     id="MC_Slider"
+     style="display:none"
+     traktor:sprite="1"
+     sodipodi:insensitive="true">
+    <g
+       id="slider_background"
+       inkscape:label="background_mc"
+       traktor:sprite="1">
+      <rect
+         style="fill:#ffffff;fill-opacity:1"
+         id="slider_background_shape"
+         width="158"
+         height="10"
+         x="0"
+         y="3"
+         rx="5"
+         ry="5" />
+    </g>
+    <g
+       id="slider_knob"
+       inkscape:label="knob_mc"
+       traktor:sprite="1">
+      <rect
+         style="fill:#ffffff;fill-opacity:1"
+         id="slider_knob_shape"
+         width="34"
+         height="16"
+         x="0"
+         y="0"
+         rx="8"
+         ry="8" />
+    </g>
+  </g>
+  <g
+     inkscape:label="MC_ScrollBar_Horizontal"
+     inkscape:groupmode="layer"
+     id="MC_ScrollBar_Horizontal"
+     style="display:none"
+     traktor:sprite="1"
+     sodipodi:insensitive="true">
+    <g
+       id="scrollbarh_background"
+       inkscape:label="background_mc"
+       traktor:sprite="1">
+      <rect
+         style="fill:#ffffff;fill-opacity:1"
+         id="scrollbarh_background_shape"
+         width="210"
+         height="20"
+         x="0"
+         y="0"
+         rx="10"
+         ry="10" />
+    </g>
+    <g
+       id="scrollbarh_knob"
+       inkscape:label="knob_mc"
+       traktor:sprite="1">
+      <rect
+         style="fill:#ffffff;fill-opacity:1"
+         id="scrollbarh_knob_shape"
+         width="46"
+         height="20"
+         x="0"
+         y="0"
+         rx="10"
+         ry="10" />
+    </g>
+  </g>
+  <g
+     inkscape:label="MC_ScrollBar_Vertical"
+     inkscape:groupmode="layer"
+     id="MC_ScrollBar_Vertical"
+     style="display:none"
+     traktor:sprite="1"
+     sodipodi:insensitive="true">
+    <g
+       id="scrollbarv_background"
+       inkscape:label="background_mc"
+       traktor:sprite="1">
+      <rect
+         style="fill:#ffffff;fill-opacity:1"
+         id="scrollbarv_background_shape"
+         width="20"
+         height="210"
+         x="0"
+         y="0"
+         rx="10"
+         ry="10" />
+    </g>
+    <g
+       id="scrollbarv_knob"
+       inkscape:label="knob_mc"
+       traktor:sprite="1">
+      <rect
+         style="fill:#ffffff;fill-opacity:1"
+         id="scrollbarv_knob_shape"
+         width="20"
+         height="46"
+         x="0"
+         y="0"
+         rx="10"
+         ry="10" />
+    </g>
+  </g>
+  <g
+     inkscape:label="MC_ScrollContainer"
+     inkscape:groupmode="layer"
+     id="MC_ScrollContainer"
+     style="display:none"
+     traktor:sprite="1"
+     sodipodi:insensitive="true">
+    <g
+       id="scrollcontainer_inner"
+       inkscape:label="innerContainer_mc"
+       traktor:sprite="1">
+      <rect
+         style="fill:#ffffff;fill-opacity:0"
+         id="scrollcontainer_inner_shape"
+         width="100"
+         height="100"
+         x="0"
+         y="0" />
+    </g>
+    <g
+       id="scrollcontainer_mask"
+       inkscape:label="mask_mc"
+       traktor:sprite="1">
+      <rect
+         style="fill:#ffffff;fill-opacity:0"
+         id="scrollcontainer_mask_shape"
+         width="100"
+         height="100"
+         x="0"
+         y="0" />
+    </g>
+  </g>
+  <g
+     inkscape:label="MC_Carousel"
+     inkscape:groupmode="layer"
+     id="MC_Carousel"
+     style="display:none"
+     traktor:sprite="1"
+     sodipodi:insensitive="true">
+    <g
+       id="carousel_inner"
+       inkscape:label="innerContainer_mc"
+       traktor:sprite="1">
+      <rect
+         style="fill:#ffffff;fill-opacity:0"
+         id="carousel_inner_shape"
+         width="100"
+         height="100"
+         x="0"
+         y="0" />
+    </g>
+    <g
+       id="carousel_mask"
+       inkscape:label="mask_mc"
+       traktor:sprite="1">
+      <rect
+         style="fill:#ffffff;fill-opacity:0"
+         id="carousel_mask_shape"
+         width="100"
+         height="100"
+         x="0"
+         y="0" />
+    </g>
+  </g>
+  <g
+     inkscape:label="MC_Tab"
+     inkscape:groupmode="layer"
+     id="MC_Tab"
+     style="display:none"
+     traktor:sprite="1"
+     sodipodi:insensitive="true">
+    <g
+       id="tab_background"
+       inkscape:label="background_mc"
+       traktor:sprite="1">
+      <g
+         id="tab_background_active"
+         inkscape:label="active"
+         traktor:frame="1">
+        <path
+           style="fill:#ffffff;fill-opacity:1"
+           id="tab_background_shape"
+           d="M 0,8 Q 0,0 8,0 L 112,0 Q 120,0 120,8 L 120,26 L 0,26 Z" />
+      </g>
+      <g
+         id="tab_background_other"
+         inkscape:label="other"
+         traktor:frame="1">
+        <path
+           style="fill:#ffffff;fill-opacity:0.45"
+           id="tab_background_dimmed_shape"
+           d="M 0,8 Q 0,0 8,0 L 112,0 Q 120,0 120,8 L 120,26 L 0,26 Z" />
+      </g>
+    </g>
+    <text
+       xml:space="preserve"
+       id="tab_caption"
+       inkscape:label="caption_tb"
+       style="font-size:16px;font-family:Arial;white-space:pre;shape-inside:url(#rect_tab_caption);shape-padding:0;display:inline;fill:#000000"><tspan
+         x="0"
+         y="14.4"
+         id="tab_caption_span">MC_Tab</tspan></text>
+  </g>
+  <g
+     inkscape:label="MC_TabSeparator"
+     inkscape:groupmode="layer"
+     id="MC_TabSeparator"
+     style="display:none"
+     traktor:sprite="1"
+     sodipodi:insensitive="true">
+    <rect
+       style="fill:#ffffff;fill-opacity:1"
+       id="tabseparator_shape"
+       width="5"
+       height="5"
+       x="0"
+       y="0" />
+  </g>
+  <g
+     inkscape:label="MC_ToolBar"
+     inkscape:groupmode="layer"
+     id="MC_ToolBar"
+     style="display:none"
+     traktor:sprite="1"
+     sodipodi:insensitive="true">
+    <g
+       id="toolbar_background"
+       inkscape:label="background_mc"
+       traktor:sprite="1">
+      <rect
+         style="fill:#ffffff;fill-opacity:0"
+         id="toolbar_background_shape"
+         width="100"
+         height="30"
+         x="0"
+         y="0" />
+    </g>
+    <g
+       id="toolbar_inner"
+       inkscape:label="innerContainer_mc"
+       traktor:sprite="1">
+      <rect
+         style="fill:#ffffff;fill-opacity:0"
+         id="toolbar_inner_shape"
+         width="100"
+         height="30"
+         x="0"
+         y="0" />
+    </g>
+  </g>
+  <g
+     inkscape:label="MC_Clipper"
+     inkscape:groupmode="layer"
+     id="MC_Clipper"
+     style="display:none"
+     traktor:sprite="1"
+     sodipodi:insensitive="true">
+    <rect
+       style="fill:#ffffff;fill-opacity:1"
+       id="clipper_shape"
+       width="40"
+       height="40"
+       x="0"
+       y="0" />
+  </g>
+  <g
+     inkscape:label="MC_DebugMarker"
+     inkscape:groupmode="layer"
+     id="MC_DebugMarker"
+     style="display:none"
+     traktor:sprite="1"
+     sodipodi:insensitive="true">
+    <rect
+       style="fill:#ff0000;fill-opacity:1"
+       id="debugmarker_horizontal"
+       width="40"
+       height="1"
+       x="-20"
+       y="-0.5" />
+    <rect
+       style="fill:#ff0000;fill-opacity:1"
+       id="debugmarker_vertical"
+       width="1"
+       height="40"
+       x="-0.5"
+       y="-20" />
+    <text
+       xml:space="preserve"
+       id="debugmarker_position"
+       inkscape:label="tb_position"
+       style="font-size:10px;font-family:Arial;white-space:pre;shape-inside:url(#rect_debug_position);shape-padding:0;display:inline;fill:#ff0000"><tspan
+         x="0"
+         y="9"
+         id="debugmarker_position_span">0, 0</tspan></text>
   </g>
 </svg>
