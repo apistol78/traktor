@@ -133,5 +133,13 @@
 			<id>{3C960DFE-C220-460C-9CF9-0182B798D4CB}</id>
 			<editorDeployOnly>false</editorDeployOnly>
 		</item>
+		<item>
+			<id>{5A1C7E20-3B4D-4A61-9F2E-11C0D8A45E10}</id>
+			<editorDeployOnly>false</editorDeployOnly>
+		</item>
+		<item>
+			<id>{5A1C7E20-3B4D-4A61-9F2E-11C0D8A45E11}</id>
+			<editorDeployOnly>false</editorDeployOnly>
+		</item>
 	</dependencies>
 </object>

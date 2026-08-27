@@ -6,27 +6,34 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "World/Entity/WorldEntityFactory.h"
+
 #include "Core/Misc/ObjectStore.h"
 #include "Core/Serialization/DeepClone.h"
+#include "Render/Compute/ComputeTexture.h"
 #include "Render/IRenderSystem.h"
 #include "Render/Shader.h"
-#include "Render/Compute/ComputeTexture.h"
 #include "Resource/IResourceManager.h"
 #include "World/Entity.h"
-#include "World/EntityData.h"
-#include "World/IEntityBuilder.h"
-#include "World/IrradianceGrid.h"
 #include "World/Entity/CameraComponent.h"
 #include "World/Entity/CameraComponentData.h"
+#include "World/Entity/ComputeTextureComponent.h"
+#include "World/Entity/ComputeTextureComponentData.h"
 #include "World/Entity/DecalComponent.h"
 #include "World/Entity/DecalComponentData.h"
 #include "World/Entity/DecalEvent.h"
 #include "World/Entity/DecalEventData.h"
+#include "World/Entity/DisplacementEntityComponent.h"
+#include "World/Entity/DisplacementEntityComponentData.h"
+#include "World/Entity/DisplacementWorldComponent.h"
+#include "World/Entity/DisplacementWorldComponentData.h"
 #include "World/Entity/EventSetComponent.h"
 #include "World/Entity/EventSetComponentData.h"
 #include "World/Entity/ExternalEntityData.h"
 #include "World/Entity/FacadeComponent.h"
 #include "World/Entity/FacadeComponentData.h"
+#include "World/Entity/FogComponent.h"
+#include "World/Entity/FogComponentData.h"
 #include "World/Entity/GroupComponent.h"
 #include "World/Entity/GroupComponentData.h"
 #include "World/Entity/IrradianceGridComponent.h"
@@ -45,11 +52,9 @@
 #include "World/Entity/ScriptEventData.h"
 #include "World/Entity/VolumeComponent.h"
 #include "World/Entity/VolumeComponentData.h"
-#include "World/Entity/ComputeTextureComponent.h"
-#include "World/Entity/ComputeTextureComponentData.h"
-#include "World/Entity/FogComponent.h"
-#include "World/Entity/FogComponentData.h"
-#include "World/Entity/WorldEntityFactory.h"
+#include "World/EntityData.h"
+#include "World/IEntityBuilder.h"
+#include "World/IrradianceGrid.h"
 
 namespace traktor::world
 {
@@ -57,7 +62,7 @@ namespace traktor::world
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.WorldEntityFactory", 0, WorldEntityFactory, AbstractEntityFactory)
 
 WorldEntityFactory::WorldEntityFactory(bool editor)
-:	m_editor(editor)
+	: m_editor(editor)
 {
 }
 
@@ -72,8 +77,7 @@ const TypeInfoSet WorldEntityFactory::getEntityTypes() const
 {
 	return makeTypeInfoSet<
 		EntityData,
-		ExternalEntityData
-	>();
+		ExternalEntityData >();
 }
 
 const TypeInfoSet WorldEntityFactory::getEntityEventTypes() const
@@ -86,6 +90,7 @@ const TypeInfoSet WorldEntityFactory::getEntityComponentTypes() const
 	TypeInfoSet typeSet;
 	typeSet.insert< CameraComponentData >();
 	typeSet.insert< DecalComponentData >();
+	typeSet.insert< DisplacementEntityComponentData >();
 	typeSet.insert< EventSetComponentData >();
 	typeSet.insert< FacadeComponentData >();
 	typeSet.insert< GroupComponentData >();
@@ -102,9 +107,9 @@ const TypeInfoSet WorldEntityFactory::getWorldComponentTypes() const
 {
 	return makeTypeInfoSet<
 		ComputeTextureComponentData,
+		DisplacementWorldComponentData,
 		FogComponentData,
-		IrradianceGridComponentData
-	>();
+		IrradianceGridComponentData >();
 }
 
 Ref< Entity > WorldEntityFactory::createEntity(const IEntityBuilder* builder, const EntityData& entityData) const
@@ -163,8 +168,7 @@ Ref< Entity > WorldEntityFactory::createEntity(const IEntityBuilder* builder, co
 			entityData.getName(),
 			entityData.getTransform(),
 			entityData.getState(),
-			components
-		);
+			components);
 	}
 	return nullptr;
 }
@@ -206,21 +210,19 @@ Ref< IEntityComponent > WorldEntityFactory::createEntityComponent(const IEntityB
 			decalComponentData->getThickness(),
 			decalComponentData->getAlpha(),
 			decalComponentData->getCullDistance(),
-			shader
-		);
+			shader);
 
 		return decalComponent;
 	}
 
+	if (auto displacementComponentData = dynamic_type_cast< const DisplacementEntityComponentData* >(&entityComponentData))
+		return displacementComponentData->createComponent();
+
 	if (auto eventSetComponentData = dynamic_type_cast< const EventSetComponentData* >(&entityComponentData))
-	{
 		return eventSetComponentData->createComponent(builder);
-	}
 
 	if (auto facadeComponentData = dynamic_type_cast< const FacadeComponentData* >(&entityComponentData))
-	{
 		return new FacadeComponent(facadeComponentData->getShow());
-	}
 
 	if (auto groupComponentData = dynamic_type_cast< const GroupComponentData* >(&entityComponentData))
 	{
@@ -234,8 +236,7 @@ Ref< IEntityComponent > WorldEntityFactory::createEntityComponent(const IEntityB
 		return groupComponent;
 	}
 
-	if (auto lightComponentData = dynamic_type_cast<const LightComponentData*>(&entityComponentData))
-	{
+	if (auto lightComponentData = dynamic_type_cast< const LightComponentData* >(&entityComponentData))
 		return new LightComponent(
 			lightComponentData->getLightType(),
 			lightComponentData->getColor() * Scalar(lightComponentData->getIntensity()),
@@ -244,23 +245,15 @@ Ref< IEntityComponent > WorldEntityFactory::createEntityComponent(const IEntityB
 			lightComponentData->getFarRange(),
 			lightComponentData->getRadius(),
 			lightComponentData->getFlickerAmount(),
-			lightComponentData->getFlickerFilter()
-		);
-	}
+			lightComponentData->getFlickerFilter());
 
 	if (auto pathComponentData = dynamic_type_cast< const PathComponentData* >(&entityComponentData))
-	{
 		return new PathComponent(
-			pathComponentData->getPath()
-		);
-	}
+			pathComponentData->getPath());
 
 	if (auto persistentIdComponentData = dynamic_type_cast< const PersistentIdComponentData* >(&entityComponentData))
-	{
 		return new PersistentIdComponent(
-			persistentIdComponentData->getId()
-		);
-	}
+			persistentIdComponentData->getId());
 
 	if (auto probeComponentData = dynamic_type_cast< const ProbeComponentData* >(&entityComponentData))
 	{
@@ -280,7 +273,7 @@ Ref< IEntityComponent > WorldEntityFactory::createEntityComponent(const IEntityB
 #else
 			ctcd.side = 256;
 #endif
-			ctcd.mipCount = (int32_t)(log2(ctcd.side ) + 1.0f);
+			ctcd.mipCount = (int32_t)(log2(ctcd.side) + 1.0f);
 #if !defined(__ANDROID__)
 			ctcd.format = render::TfR16G16B16A16F;
 #else
@@ -299,9 +292,8 @@ Ref< IEntityComponent > WorldEntityFactory::createEntityComponent(const IEntityB
 		return new ProbeComponent(
 			texture,
 			probeComponentData->getIntensity(),
-			probeComponentData->getTexture().isNull(),	// Probes with no specified texture should capture it's surrounding dynamically.
-			dirty
-		);
+			probeComponentData->getTexture().isNull(), // Probes with no specified texture should capture it's surrounding dynamically.
+			dirty);
 	}
 
 	if (auto scriptComponentData = dynamic_type_cast< const ScriptComponentData* >(&entityComponentData))
@@ -347,9 +339,12 @@ Ref< IWorldComponent > WorldEntityFactory::createWorldComponent(const IEntityBui
 		return new IrradianceGridComponent(irradianceGrid);
 	}
 
+	if (auto displacementWorldComponentData = dynamic_type_cast< const DisplacementWorldComponentData* >(&worldComponentData))
+		return displacementWorldComponentData->createComponent(m_resourceManager, m_renderSystem);
+
 	if (auto fogComponentData = dynamic_type_cast< const FogComponentData* >(&worldComponentData))
 		return fogComponentData->createComponent();
-		
+
 	return nullptr;
 }
 

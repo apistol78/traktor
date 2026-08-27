@@ -34,6 +34,7 @@
 #include "World/Entity/CullingRenderer.h"
 #include "World/Entity/DecalRenderer.h"
 #include "World/Entity/ProbeRenderer.h"
+#include "World/Entity/DisplacementRenderer.h"
 #include "World/Entity/RTWorldRenderer.h"
 #include "Weather/Precipitation/PrecipitationRenderer.h"
 #include "Weather/Sky/SkyRenderer.h"
@@ -105,6 +106,7 @@ void DefaultSceneEditorPlugin::createEntityRenderers(
 	outEntityRenderers.push_back(new world::ComputeTextureRenderer());
 	outEntityRenderers.push_back(new world::CullingRenderer());
 	outEntityRenderers.push_back(new world::DecalRenderer(context->getRenderSystem()));
+	outEntityRenderers.push_back(new world::DisplacementRenderer());
 	outEntityRenderers.push_back(new world::ProbeRenderer(context->getResourceManager(), context->getRenderSystem(), worldRendererType));
 	outEntityRenderers.push_back(new world::RTWorldRenderer());
 	outEntityRenderers.push_back(new weather::PrecipitationRenderer());

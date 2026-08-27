@@ -24,8 +24,10 @@
 #include "Terrain/TerrainSurfaceCache.h"
 #include "Terrain/UndergrowthComponentData.h"
 #include "World/Entity.h"
+#include "World/Entity/DisplacementWorldComponent.h"
 #include "World/IWorldRenderPass.h"
 #include "World/WorldBuildContext.h"
+#include "World/World.h"
 #include "World/WorldRenderView.h"
 
 #include <limits>
@@ -295,7 +297,15 @@ void UndergrowthComponent::build(
 	const Matrix44 viewInv = view.inverse();
 	const Vector4 eye = viewInv.translation();
 
-	auto sp = worldRenderPass.getProgram(m_shader);
+	const world::World* world = m_owner->getWorld();
+	const world::DisplacementWorldComponent* displacement = world ? world->getComponent< world::DisplacementWorldComponent >() : nullptr;
+	if (displacement != nullptr && displacement->getMask() == nullptr)
+		displacement = nullptr;
+
+	render::Shader::Permutation perm = worldRenderPass.getPermutation(m_shader);
+	world::DisplacementWorldComponent::getPermutation(displacement, m_shader, perm);
+
+	auto sp = m_shader->getProgram(perm);
 	if (!sp)
 		return;
 
@@ -331,6 +341,7 @@ void UndergrowthComponent::build(
 	renderBlock->programParams->setFloatParameter(s_handleUndergrowth_MaxDistance, m_layerData.m_spreadDistance + m_clusterSize);
 	renderBlock->programParams->setBufferViewParameter(s_handleUndergrowth_Plants, m_plantBuffer->getBufferView());
 	renderBlock->programParams->setBufferViewParameter(s_handleUndergrowth_Order, vs.orderBuffer->getBufferView());
+	world::DisplacementWorldComponent::setSharedParameters(displacement, renderBlock->programParams);
 	renderBlock->programParams->endParameters(renderContext);
 
 	renderContext->draw(

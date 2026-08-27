@@ -9,6 +9,9 @@
 #if defined(T_STATIC)
 #	include "World/Entity/ComputeTextureComponentData.h"
 #	include "World/Entity/ComputeTextureRenderer.h"
+#	include "World/Entity/DisplacementEntityComponentData.h"
+#	include "World/Entity/DisplacementRenderer.h"
+#	include "World/Entity/DisplacementWorldComponentData.h"
 #	include "World/WorldClassFactory.h"
 #	include "World/Deferred/WorldRendererDeferred.h"
 #	include "World/Forward/WorldRendererForward.h"
@@ -21,6 +24,9 @@ extern "C" void __module__Traktor_World()
 {
 	T_FORCE_LINK_REF(ComputeTextureComponentData);
 	T_FORCE_LINK_REF(ComputeTextureRenderer);
+	T_FORCE_LINK_REF(DisplacementEntityComponentData);
+	T_FORCE_LINK_REF(DisplacementRenderer);
+	T_FORCE_LINK_REF(DisplacementWorldComponentData);
 	T_FORCE_LINK_REF(WorldClassFactory);
 	T_FORCE_LINK_REF(WorldRendererDeferred);
 	T_FORCE_LINK_REF(WorldRendererForward);
