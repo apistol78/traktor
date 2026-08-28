@@ -47,7 +47,6 @@
 #include "Ui/Application.h"
 #include "Ui/Itf/IWidget.h"
 #include "UiKit/Editor/Scaffolding.h"
-#include "Render/Compute/ComputeTextureFactory.h"
 #include "Video/VideoFactory.h"
 
 namespace traktor::uikit
@@ -144,7 +143,6 @@ bool PreviewControl::create(ui::Widget* parent)
 	m_resourceManager->addFactory(new render::TextureFactory(renderSystem, 0));
 	m_resourceManager->addFactory(new script::ScriptFactory(scriptManager));
 	m_resourceManager->addFactory(new spark::MovieResourceFactory());
-	m_resourceManager->addFactory(new render::ComputeTextureFactory(renderSystem));
 	m_resourceManager->addFactory(new video::VideoFactory(renderSystem));
 
 	// Create an empty flash movie.

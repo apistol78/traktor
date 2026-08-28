@@ -19,15 +19,10 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor::render
+namespace traktor::world
 {
 
 class ComputeTexture;
-
-}
-
-namespace traktor::world
-{
 
 /*! Compute texture world component.
  * \ingroup World
@@ -40,18 +35,18 @@ class T_DLLCLASS ComputeTextureComponent : public IWorldComponent
 	T_RTTI_CLASS;
 
 public:
-	void add(render::ComputeTexture* texture);
+	void add(ComputeTexture* texture);
 
-	void remove(render::ComputeTexture* texture);
+	void remove(ComputeTexture* texture);
 
-	const RefArray< render::ComputeTexture >& getTextures() const { return m_textures; }
+	const RefArray< ComputeTexture >& getTextures() const { return m_textures; }
 
 	virtual void destroy() override final;
 
 	virtual void update(World* world, const UpdateParams& update) override final;
 
 private:
-	RefArray< render::ComputeTexture > m_textures;
+	RefArray< ComputeTexture > m_textures;
 };
 
 }

@@ -8,11 +8,11 @@
  */
 #include "World/Entity/ComputeTextureRenderer.h"
 
-#include "Render/Compute/ComputeTexture.h"
 #include "Render/Frame/RenderGraph.h"
+#include "World/Entity/ComputeTexture.h"
+#include "World/Entity/ComputeTextureComponent.h"
 #include "World/World.h"
 #include "World/WorldSetupContext.h"
-#include "World/Entity/ComputeTextureComponent.h"
 
 namespace traktor::world
 {
@@ -32,27 +32,21 @@ const TypeInfoSet ComputeTextureRenderer::getRenderableTypes() const
 void ComputeTextureRenderer::setup(
 	const WorldSetupContext& context,
 	const WorldRenderView& worldRenderView,
-	const AlignedVector< Object* >& renderables
-)
+	const AlignedVector< Object* >& renderables)
 {
 	const auto* computeTextureComponent = context.getWorld()->getComponent< ComputeTextureComponent >();
 	if (!computeTextureComponent)
 		return;
 
 	for (auto texture : computeTextureComponent->getTextures())
-	{
-		const render::RGDependency dependency = texture->setup(context.getRenderGraph());
-		if (dependency != render::RGDependency::Invalid)
-			context.addVisualAttachment(dependency);
-	}
+		texture->setup(context.getRenderGraph());
 }
 
 void ComputeTextureRenderer::build(
 	const WorldBuildContext& context,
 	const WorldRenderView& worldRenderView,
 	const IWorldRenderPass& worldRenderPass,
-	const AlignedVector< Object* >& renderables
-)
+	const AlignedVector< Object* >& renderables)
 {
 }
 

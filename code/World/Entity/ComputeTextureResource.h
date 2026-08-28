@@ -14,7 +14,7 @@
 
 // import/export mechanism.
 #undef T_DLLCLASS
-#if defined(T_RENDER_EXPORT)
+#if defined(T_WORLD_EXPORT)
 #	define T_DLLCLASS T_DLLEXPORT
 #else
 #	define T_DLLCLASS T_DLLIMPORT
@@ -24,6 +24,11 @@ namespace traktor::render
 {
 
 class Shader;
+
+}
+
+namespace traktor::world
+{
 
 /*! Compute texture resource.
  * \ingroup Render
@@ -35,23 +40,23 @@ class T_DLLCLASS ComputeTextureResource : public ISerializable
 public:
 	virtual void serialize(ISerializer& s) override final;
 
-	const resource::Id< Shader >& getShader() const { return m_shader; }
+	const resource::Id< render::Shader >& getShader() const { return m_shader; }
 
 	int32_t getWidth() const { return m_width; }
 
 	int32_t getHeight() const { return m_height; }
 
-	TextureFormat getFormat() const { return m_format; }
+	render::TextureFormat getFormat() const { return m_format; }
 
 	bool isContinuous() const { return m_continuous; }
 
 private:
 	friend class ComputeTexturePipeline;
 
-	resource::Id< Shader > m_shader;
+	resource::Id< render::Shader > m_shader;
 	int32_t m_width = 256;
 	int32_t m_height = 256;
-	TextureFormat m_format = TfR8G8B8A8;
+	render::TextureFormat m_format = render::TfR8G8B8A8;
 	bool m_continuous = true;	//!< If true, compute shader is dispatched every frame.
 };
 

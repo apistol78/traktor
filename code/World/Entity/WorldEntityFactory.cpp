@@ -10,13 +10,13 @@
 
 #include "Core/Misc/ObjectStore.h"
 #include "Core/Serialization/DeepClone.h"
-#include "Render/Compute/ComputeTexture.h"
 #include "Render/IRenderSystem.h"
 #include "Render/Shader.h"
 #include "Resource/IResourceManager.h"
 #include "World/Entity.h"
 #include "World/Entity/CameraComponent.h"
 #include "World/Entity/CameraComponentData.h"
+#include "World/Entity/ComputeTexture.h"
 #include "World/Entity/ComputeTextureComponent.h"
 #include "World/Entity/ComputeTextureComponentData.h"
 #include "World/Entity/DecalComponent.h"
@@ -322,7 +322,7 @@ Ref< IWorldComponent > WorldEntityFactory::createWorldComponent(const IEntityBui
 			if (!m_resourceManager->bind(textureId, texture))
 				return nullptr;
 
-			auto* computeTexture = dynamic_type_cast< render::ComputeTexture* >(texture.getResource());
+			auto* computeTexture = dynamic_type_cast< ComputeTexture* >(texture.getResource());
 			if (computeTexture)
 				component->add(computeTexture);
 		}

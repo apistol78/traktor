@@ -6,20 +6,21 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include "Render/Compute/ComputeTexture.h"
 #include "World/Entity/ComputeTextureComponent.h"
+
+#include "World/Entity/ComputeTexture.h"
 
 namespace traktor::world
 {
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.ComputeTextureComponent", ComputeTextureComponent, IWorldComponent)
 
-void ComputeTextureComponent::add(render::ComputeTexture* texture)
+void ComputeTextureComponent::add(ComputeTexture* texture)
 {
 	m_textures.push_back(texture);
 }
 
-void ComputeTextureComponent::remove(render::ComputeTexture* texture)
+void ComputeTextureComponent::remove(ComputeTexture* texture)
 {
 	m_textures.remove(texture);
 }

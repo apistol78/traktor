@@ -6,17 +6,17 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include "Render/Editor/Texture/ComputeTexturePipeline.h"
+#include "World/Editor/ComputeTexturePipeline.h"
 
 #include "Editor/IPipelineBuilder.h"
 #include "Editor/IPipelineDepends.h"
-#include "Render/Compute/ComputeTextureResource.h"
-#include "Render/Editor/Texture/ComputeTextureAsset.h"
+#include "World/Editor/ComputeTextureAsset.h"
+#include "World/Entity/ComputeTextureResource.h"
 
-namespace traktor::render
+namespace traktor::world
 {
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ComputeTexturePipeline", 0, ComputeTexturePipeline, editor::DefaultPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.ComputeTexturePipeline", 0, ComputeTexturePipeline, editor::DefaultPipeline)
 
 TypeInfoSet ComputeTexturePipeline::getAssetTypes() const
 {
@@ -33,11 +33,10 @@ bool ComputeTexturePipeline::buildDependencies(
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,
 	const std::wstring& outputPath,
-	const Guid& outputGuid
-) const
+	const Guid& outputGuid) const
 {
-    const ComputeTextureAsset* asset = mandatory_non_null_type_cast< const ComputeTextureAsset* >(sourceAsset);
-    pipelineDepends->addDependency(asset->getShader(), editor::PdfBuild);
+	const ComputeTextureAsset* asset = mandatory_non_null_type_cast< const ComputeTextureAsset* >(sourceAsset);
+	pipelineDepends->addDependency(asset->getShader(), editor::PdfBuild);
 	return true;
 }
 
@@ -50,23 +49,21 @@ bool ComputeTexturePipeline::buildOutput(
 	const std::wstring& outputPath,
 	const Guid& outputGuid,
 	const Object* buildParams,
-	uint32_t reason
-) const
+	uint32_t reason) const
 {
 	const ComputeTextureAsset* asset = mandatory_non_null_type_cast< const ComputeTextureAsset* >(sourceAsset);
 
 	Ref< ComputeTextureResource > resource = new ComputeTextureResource();
-    resource->m_shader = asset->getShader();
-    resource->m_width = asset->getWidth();
-    resource->m_height = asset->getHeight();
-    resource->m_format = asset->getFormat();
-    resource->m_continuous = asset->isContinuous();
+	resource->m_shader = asset->getShader();
+	resource->m_width = asset->getWidth();
+	resource->m_height = asset->getHeight();
+	resource->m_format = asset->getFormat();
+	resource->m_continuous = asset->isContinuous();
 
 	return pipelineBuilder->buildAdHocOutput(
 		resource,
 		outputPath,
-		outputGuid
-	);
+		outputGuid);
 }
 
 }

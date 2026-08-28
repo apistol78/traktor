@@ -12,7 +12,7 @@
 
 // import/export mechanism.
 #undef T_DLLCLASS
-#if defined(T_RENDER_EXPORT)
+#if defined(T_WORLD_EXPORT)
 #	define T_DLLCLASS T_DLLEXPORT
 #else
 #	define T_DLLCLASS T_DLLIMPORT
@@ -23,8 +23,13 @@ namespace traktor::render
 
 class IRenderSystem;
 
+}
+
+namespace traktor::world
+{
+
 /*! Compute texture resource factory.
- * \ingroup Render
+ * \ingroup World
  */
 class T_DLLCLASS ComputeTextureFactory : public resource::IResourceFactory
 {
@@ -33,7 +38,7 @@ class T_DLLCLASS ComputeTextureFactory : public resource::IResourceFactory
 public:
 	ComputeTextureFactory() = default;
 
-	explicit ComputeTextureFactory(IRenderSystem* renderSystem);
+	explicit ComputeTextureFactory(render::IRenderSystem* renderSystem);
 
 	virtual bool initialize(const ObjectStore& objectStore) override final;
 
@@ -48,7 +53,7 @@ public:
 	virtual void destroy(Object* resource) const override final;
 
 private:
-	Ref< IRenderSystem > m_renderSystem;
+	Ref< render::IRenderSystem > m_renderSystem;
 };
 
 }
