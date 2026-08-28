@@ -86,6 +86,10 @@
 			<editorDeployOnly>false</editorDeployOnly>
 		</item>
 		<item>
+			<id>{9E0C0BBA-662E-4231-A4D1-FB4AF0064757}</id>
+			<editorDeployOnly>false</editorDeployOnly>
+		</item>
+		<item>
 			<id>{06BE4DF8-8D5D-8246-805E-B2A70B6DDB66}</id>
 			<editorDeployOnly>false</editorDeployOnly>
 		</item>

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2025 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -15,6 +15,7 @@
 #include "Render/Shader.h"
 #include "Resource/IResourceManager.h"
 #include "World/Shared/WorldRendererShared.h"
+#include "World/WorldRenderView.h"
 
 namespace traktor::world
 {
@@ -74,11 +75,12 @@ void SliceOverlay::setup(render::RenderGraph& renderGraph, render::ScreenRendere
 		if (!gbufferTargetSet)
 			return;
 
+		const auto& state = wrf->m_state[worldRenderView.getIndex()];
 		const Vector4 slicePositions(
-			wrf->m_slicePositions[1],
-			wrf->m_slicePositions[2],
-			wrf->m_slicePositions[3],
-			wrf->m_slicePositions[4]);
+			state.slicePositions[1],
+			state.slicePositions[2],
+			state.slicePositions[3],
+			state.slicePositions[4]);
 
 		auto pp = renderContext->alloc< render::ProgramParameters >();
 		pp->beginParameters(renderContext);

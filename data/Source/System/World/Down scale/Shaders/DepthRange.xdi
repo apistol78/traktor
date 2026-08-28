@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
+	<nodes>
+		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
+			<id>{D1FB12A0-E19D-437A-BC73-419B064686ED}</id>
+			<comment/>
+			<position>
+				<first>270</first>
+				<second>487</second>
+			</position>
+			<name>Output</name>
+			<technique>Default</technique>
+			<domain>Compute</domain>
+			<localSize>
+				<X>8</X>
+				<Y>8</Y>
+				<Z>1</Z>
+			</localSize>
+			<useRayTracing>false</useRayTracing>
+			<include/>
+			<inputPins>
+				<item>
+					<id>{FDC7F5BD-307E-4518-A684-5247DC3D9883}</id>
+					<name>Input</name>
+				</item>
+				<item>
+					<id>{0F2BD19A-1D94-445A-90B9-EBA0762446CC}</id>
+					<name>Buffer</name>
+				</item>
+				<item>
+					<id>{FB424B1F-E0B2-48CD-A7EB-ED222C34FAB3}</id>
+					<name>Params</name>
+				</item>
+			</inputPins>
+			<outputPins/>
+			<script><![CDATA[
+const ivec2 sz = ivec2($Params.xy);
+const float maxValidZ = $Params.z;
+const int slot = int($Params.w);
+
+// One invocation reduces a whole block of pixels in registers so only a couple of
+// atomics per block reach the single accumulator slot.
+const ivec2 base = ivec2(gl_GlobalInvocationID.xy) * 8;
+
+if (base.x < sz.x && base.y < sz.y)
+{
+	float mnz = 3.402823466e+38f;
+	float mxz = 0.0f;
+
+	for (int y = 0; y < 8; ++y)
+	{
+		for (int x = 0; x < 8; ++x)
+		{
+			const ivec2 pt = base + ivec2(x, y);
+			if (pt.x >= sz.x || pt.y >= sz.y)
+				continue;
+
+			// GBufferA.x holds linear view space depth.
+			const float z = imageLoad($Input, pt).x;
+			if (z <= 0.0f || z >= maxValidZ)
+				continue;
+
+			mnz = min(mnz, z);
+			mxz = max(mxz, z);
+		}
+	}
+
+	// Every depth which reaches here is positive, and for positive floats the IEEE bit
+	// pattern is monotonic when compared as a signed integer, so integer atomics order
+	// them exactly as the floats would be ordered.
+	if (mxz > 0.0f)
+	{
+		atomicMin($Buffer[slot].minZ, floatBitsToInt(mnz));
+		atomicMax($Buffer[slot].maxZ, floatBitsToInt(mxz));
+	}
+}
+]]></script>
+		</item>
+		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
+			<id>{BADEC536-8FC9-45DC-93BB-62C53ABD7FCA}</id>
+			<comment/>
+			<position>
+				<first>-21</first>
+				<second>476</second>
+			</position>
+			<parameterDeclaration>{4E96EB1F-C649-4126-B852-F817BC770043}</parameterDeclaration>
+		</item>
+		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
+			<id>{E2EBF413-73FC-43B4-9F07-239F85ACCFD2}</id>
+			<comment/>
+			<position>
+				<first>-21</first>
+				<second>546</second>
+			</position>
+			<parameterDeclaration>{68D2E50E-7505-4038-B15D-D53A4219A64A}</parameterDeclaration>
+		</item>
+		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
+			<id>{F3FA756D-5015-48A9-80E2-D2BC3CEFFA73}</id>
+			<comment/>
+			<position>
+				<first>-21</first>
+				<second>616</second>
+			</position>
+			<parameterDeclaration>{ECA3D4F9-8D07-407D-8234-8F670D45D51A}</parameterDeclaration>
+		</item>
+	</nodes>
+	<edges>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[1]"/>
+				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item"/>
+				<id>{FDC7F5BD-307E-4518-A684-5247DC3D9883}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[2]"/>
+				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item"/>
+				<id>{0F2BD19A-1D94-445A-90B9-EBA0762446CC}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[3]"/>
+				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item"/>
+				<id>{FB424B1F-E0B2-48CD-A7EB-ED222C34FAB3}</id>
+			</destination>
+		</item>
+	</edges>
+	<groups/>
+</object>

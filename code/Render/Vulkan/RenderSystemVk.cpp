@@ -22,6 +22,7 @@
 #include "Render/VertexElement.h"
 #include "Render/Vulkan/AccelerationStructureVk.h"
 #include "Render/Vulkan/BufferDynamicVk.h"
+#include "Render/Vulkan/BufferReadBackVk.h"
 #include "Render/Vulkan/BufferStaticVk.h"
 #include "Render/Vulkan/Private/ApiLoader.h"
 #include "Render/Vulkan/Private/CommandBuffer.h"
@@ -417,9 +418,9 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 	bool pluginSupported = true;
 	for (const char* pluginDeviceExtension : pluginDeviceExtensions)
 	{
-		const auto it = std::find_if(availableExtensions.begin(), availableExtensions.end(), [&](const VkExtensionProperties& ext){
+		const auto it = std::find_if(availableExtensions.begin(), availableExtensions.end(), [&](const VkExtensionProperties& ext) {
 			return std::strcmp(pluginDeviceExtension, ext.extensionName) == 0;
-			});
+		});
 		if (it == availableExtensions.end())
 		{
 			log::debug << L"Plugin \"RenderPluginXeSS\" require \"" << mbstows(pluginDeviceExtension) << L"\" but is not supported on device; plugin disabled." << Endl;
@@ -879,7 +880,13 @@ Ref< Buffer > RenderSystemVk::createBuffer(uint32_t usage, uint32_t bufferSize, 
 			usageBits |= VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_BUILD_INPUT_READ_ONLY_BIT_KHR;
 	}
 
-	if (dynamic)
+	if ((usage & BuReadBack) != 0)
+	{
+		Ref< BufferReadBackVk > buffer = new BufferReadBackVk(m_context, bufferSize, m_statistics.buffers);
+		if (buffer->create(usageBits))
+			return buffer;
+	}
+	else if (dynamic)
 	{
 		Ref< BufferDynamicVk > buffer = new BufferDynamicVk(m_context, bufferSize, m_statistics.buffers);
 		if (buffer->create(usageBits, 3 * 4))

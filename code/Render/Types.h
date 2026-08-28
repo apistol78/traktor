@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2025 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -51,7 +51,7 @@ namespace traktor::render
  */
 struct ComputeHandle
 {
-	uint64_t value = 0;	//!< Backend specific completion value; 0 denotes no asynchronous work.
+	uint64_t value = 0; //!< Backend specific completion value; 0 denotes no asynchronous work.
 
 	explicit operator bool() const { return value != 0; }
 };
@@ -221,7 +221,8 @@ enum BufferUsage
 	BuVertex = 1,
 	BuIndex = 2,
 	BuStructured = 4,
-	BuIndirect = 8
+	BuIndirect = 8,
+	BuReadBack = 16
 };
 
 /*! Clear target flags. */

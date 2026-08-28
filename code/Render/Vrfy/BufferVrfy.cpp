@@ -11,6 +11,7 @@
 #include "Core/Debug/CallStack.h"
 #include "Core/Memory/Alloc.h"
 #include "Core/Misc/SafeDestroy.h"
+#include "Render/Types.h"
 #include "Render/Vrfy/Error.h"
 #include "Render/Vrfy/ResourceTracker.h"
 
@@ -29,7 +30,7 @@ constexpr int32_t c_guardBytes = 16;
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.BufferVrfy", BufferVrfy, Buffer)
 
-BufferVrfy::BufferVrfy(ResourceTracker* resourceTracker, Buffer* buffer, uint32_t bufferSize, const wchar_t* const tag)
+BufferVrfy::BufferVrfy(ResourceTracker* resourceTracker, Buffer* buffer, uint32_t usage, uint32_t bufferSize, const wchar_t* const tag)
 	: Buffer(bufferSize)
 	, m_resourceTracker(resourceTracker)
 	, m_buffer(buffer)
@@ -37,8 +38,11 @@ BufferVrfy::BufferVrfy(ResourceTracker* resourceTracker, Buffer* buffer, uint32_
 {
 	m_resourceTracker->add(this);
 
-	m_shadow = (uint8_t*)Alloc::acquireAlign(bufferSize + 2 * c_guardBytes, 16, T_FILE_LINE);
-	std::memset(m_shadow, 0, bufferSize + 2 * c_guardBytes);
+	if ((usage & BuReadBack) == 0)
+	{
+		m_shadow = (uint8_t*)Alloc::acquireAlign(bufferSize + 2 * c_guardBytes, 16, T_FILE_LINE);
+		std::memset(m_shadow, 0, bufferSize + 2 * c_guardBytes);
+	}
 
 	getCallStack(8, m_callstack, 2);
 
@@ -50,7 +54,8 @@ BufferVrfy::~BufferVrfy()
 {
 	verifyGuard();
 	verifyUntouched();
-	Alloc::freeAlign(m_shadow);
+	if (m_shadow)
+		Alloc::freeAlign(m_shadow);
 	m_resourceTracker->remove(this);
 }
 
@@ -73,14 +78,16 @@ void* BufferVrfy::lock()
 		return nullptr;
 
 	m_device = (uint8_t*)m_buffer->lock();
-	if (m_device)
-	{
-		m_locked = true;
-		std::memset(m_shadow, 0, getBufferSize() + 2 * c_guardBytes);
-		return m_shadow + c_guardBytes;
-	}
-	else
+	if (!m_device)
 		return nullptr;
+
+	m_locked = true;
+
+	if (!m_shadow)
+		return m_device;
+
+	std::memset(m_shadow, 0, getBufferSize() + 2 * c_guardBytes);
+	return m_shadow + c_guardBytes;
 }
 
 void BufferVrfy::unlock()
@@ -95,8 +102,11 @@ void BufferVrfy::unlock()
 	if (!m_buffer)
 		return;
 
-	std::memcpy(m_device, m_shadow + c_guardBytes, getBufferSize());
-	std::memset(m_shadow, 0, getBufferSize() + 2 * c_guardBytes);
+	if (m_shadow)
+	{
+		std::memcpy(m_device, m_shadow + c_guardBytes, getBufferSize());
+		std::memset(m_shadow, 0, getBufferSize() + 2 * c_guardBytes);
+	}
 
 	m_buffer->unlock();
 }
@@ -112,6 +122,9 @@ const IBufferView* BufferVrfy::getBufferView() const
 
 void BufferVrfy::verifyGuard() const
 {
+	if (!m_shadow)
+		return;
+
 	const uint32_t bufferSize = getBufferSize();
 	for (uint32_t i = 0; i < c_guardBytes; ++i)
 	{
@@ -123,6 +136,9 @@ void BufferVrfy::verifyGuard() const
 void BufferVrfy::verifyUntouched() const
 {
 #if T_VRFY_CHECK_UNTOUCHED
+	if (!m_shadow)
+		return;
+
 	const uint32_t bufferSize = getBufferSize();
 	for (uint32_t i = 0; i < bufferSize; ++i)
 		T_CAPTURE_ASSERT(m_shadow[i + c_guardBytes] == 0x00, L"Memory touched outside of lock/unlock region (" << m_tag << L").");

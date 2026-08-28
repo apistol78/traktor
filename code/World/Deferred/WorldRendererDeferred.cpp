@@ -190,16 +190,16 @@ void WorldRendererDeferred::setup(
 	const auto gbufferTargetSetId = m_gbufferPass->setup(worldRenderView, m_gatheredView, ShaderTechnique::DeferredGBufferWrite, renderGraph, hizTextureId, zprepassTargetSetId, visualTargetSetId.current);
 	const auto dbufferTargetSetId = m_dbufferPass->setup(worldRenderView, m_gatheredView, renderGraph, gbufferTargetSetId, visualTargetSetId.current);
 	const auto velocityTargetSetId = m_velocityPass->setup(worldRenderView, m_gatheredView, count, renderGraph, gbufferTargetSetId, visualTargetSetId.current);
+	const auto halfResDepthTextureId = m_downScalePass->setup(worldRenderView, renderGraph, gbufferTargetSetId);
 	const auto shadowMapAtlasTargetSetId = setupLightPass(worldRenderView, renderGraph);
 
 	// ... using gbuffer only.
-	const auto halfResDepthTextureId = m_downScalePass->setup(worldRenderView, renderGraph, gbufferTargetSetId);
 	m_hiZPass->setup(worldRenderView, renderGraph, gbufferTargetSetId, hizTextureId);
 
 	// ... using RT TLAS.
 	const auto irradianceTargetSetId = m_irradiancePass->setup(worldRenderView, m_gatheredView, lightSBuffer, needJitter, count, renderGraph, gbufferTargetSetId, velocityTargetSetId, halfResDepthTextureId, visualTargetSetId.current);
 	const auto ambientOcclusionTargetSetId = m_ambientOcclusionPass->setup(worldRenderView, m_gatheredView, needJitter, count, renderGraph, gbufferTargetSetId, halfResDepthTextureId, visualTargetSetId.current);
-	const auto fogVolumeTextureId = m_volumetricFogPass->setup(worldRenderView, m_gatheredView, lightSBuffer, tileSBuffer, lightIndexSBuffer, m_whiteTexture, count, m_slicePositions, renderGraph, shadowMapAtlasTargetSetId);
+	const auto fogVolumeTextureId = m_volumetricFogPass->setup(worldRenderView, m_gatheredView, lightSBuffer, tileSBuffer, lightIndexSBuffer, m_whiteTexture, count, m_state[worldRenderView.getIndex()].slicePositions, renderGraph, shadowMapAtlasTargetSetId);
 	const auto contactShadowsTargetSetId = m_contactShadowsPass->setup(worldRenderView, m_gatheredView, renderGraph, gbufferTargetSetId, visualTargetSetId.current);
 	const auto reflectionsTargetSetId = m_reflectionsPass->setup(worldRenderView, m_gatheredView, lightSBuffer, m_blackCubeTexture, needJitter, count, renderGraph, gbufferTargetSetId, dbufferTargetSetId, visualTargetSetId.previous, velocityTargetSetId, halfResDepthTextureId, visualTargetSetId.current);
 
@@ -321,7 +321,7 @@ void WorldRendererDeferred::setupVisualPass(
 			sharedParams->setFloatParameter(ShaderParameter::Random, s_random.nextFloat());
 			sharedParams->setVectorParameter(ShaderParameter::Jitter, Vector4(jrp.x, -jrp.y, jrc.x, -jrc.y)); // Texture space.
 			sharedParams->setVectorParameter(ShaderParameter::ViewDistance, Vector4(viewNearZ, viewFarZ, viewSliceScale, viewSliceBias));
-			sharedParams->setVectorParameter(ShaderParameter::SlicePositions, Vector4(m_slicePositions[1], m_slicePositions[2], m_slicePositions[3], m_slicePositions[4]));
+			sharedParams->setVectorParameter(ShaderParameter::SlicePositions, Vector4::loadUnaligned(&m_state[worldRenderView.getIndex()].slicePositions[1]));
 			sharedParams->setMatrixParameter(ShaderParameter::Projection, projection);
 			sharedParams->setMatrixParameter(ShaderParameter::View, view);
 			sharedParams->setMatrixParameter(ShaderParameter::ViewInverse, view.inverse());
@@ -475,7 +475,7 @@ void WorldRendererDeferred::setupVisualPass(
 			sharedParams->setFloatParameter(ShaderParameter::Time, (float)worldRenderView.getTime());
 			sharedParams->setFloatParameter(ShaderParameter::Random, s_random.nextFloat());
 			sharedParams->setVectorParameter(ShaderParameter::ViewDistance, Vector4(viewNearZ, viewFarZ, viewSliceScale, viewSliceBias));
-			sharedParams->setVectorParameter(ShaderParameter::SlicePositions, Vector4(m_slicePositions[1], m_slicePositions[2], m_slicePositions[3], m_slicePositions[4]));
+			sharedParams->setVectorParameter(ShaderParameter::SlicePositions, Vector4::loadUnaligned(&m_state[worldRenderView.getIndex()].slicePositions[1]));
 			sharedParams->setMatrixParameter(ShaderParameter::Projection, projection);
 			sharedParams->setMatrixParameter(ShaderParameter::View, view);
 			sharedParams->setMatrixParameter(ShaderParameter::ViewInverse, view.inverse());

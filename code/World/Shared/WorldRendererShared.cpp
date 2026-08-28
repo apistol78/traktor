@@ -68,6 +68,16 @@ const resource::Id< render::Shader > c_clearDepthShader(L"{0135F7CC-FC65-4FD9-BB
 const Scalar c_shadowSliceMarginFactor(0.02f);
 const Scalar c_shadowSliceMarginMin(1.0f);
 
+// Factor by which the fitted cascade range is widened beyond the measured depth range.
+// The reduction is a few frames old, so geometry may have come into view since it was
+// taken; the margin is what covers that.
+const float c_sliceFitMargin = 1.25f;
+
+// How far the measured range may shrink inside the fitted range before the splits are
+// refitted. Refitting moves every split, which invalidates every cached cascade slice,
+// so it is only worth doing once there is real resolution to win back.
+const float c_sliceRefitSlack = 1.5f;
+
 Ref< render::ITexture > create1x1Texture(render::IRenderSystem* renderSystem, uint32_t value)
 {
 	render::SimpleTextureCreateDesc stcd = {};
@@ -158,14 +168,21 @@ bool WorldRendererShared::create(
 	if (!resourceManager->bind(c_clearDepthShader, m_clearDepthShader))
 		return false;
 
-	// Determine slice distances.
-	for (int32_t i = 0; i < shadowSettings.cascadingSlices; ++i)
+	// Determine initial slice distances.
+	for (int32_t i = 0; i < sizeof_array(m_state); ++i)
 	{
-		const float ii = float(i) / shadowSettings.cascadingSlices;
-		const float log = powf(ii, shadowSettings.cascadingLambda);
-		m_slicePositions[i] = lerp(m_settings.viewNearZ, shadowSettings.farZ, log);
+		for (int32_t j = 0; j <= shadowSettings.cascadingSlices; ++j)
+		{
+			const float ii = float(i) / shadowSettings.cascadingSlices;
+			const float log = powf(ii, shadowSettings.cascadingLambda);
+			m_state[i].slicePositions[j] = lerp(m_settings.viewNearZ, shadowSettings.farZ, log);
+		}
+		for (int32_t j = shadowSettings.cascadingSlices + 1; j <= MaxSliceCount; ++j)
+			m_state[i].slicePositions[j] = shadowSettings.farZ;
+
+		m_state[i].fittedNearZ = m_settings.viewNearZ;
+		m_state[i].fittedFarZ = shadowSettings.farZ;
 	}
-	m_slicePositions[shadowSettings.cascadingSlices] = shadowSettings.farZ;
 
 	// Create shared passes.
 	m_lightClusterPass = new LightClusterPass(m_settings);
@@ -177,7 +194,7 @@ bool WorldRendererShared::create(
 	m_dbufferPass = new DBufferPass(m_settings);
 
 	m_downScalePass = new DownScalePass();
-	if (!m_downScalePass->create(resourceManager))
+	if (!m_downScalePass->create(resourceManager, renderSystem))
 		return false;
 
 	m_hiZPass = new HiZPass();
@@ -345,6 +362,64 @@ void WorldRendererShared::gather(const World* world, const std::function< bool(c
 	}
 }
 
+void WorldRendererShared::setupSlicePositions(
+	const WorldRenderView& worldRenderView,
+	State& state)
+{
+	T_PROFILER_SCOPE(L"WorldRendererShared setupSlicePositions");
+
+	if (m_shadowsQuality == Quality::Disabled)
+		return;
+
+	const auto& shadowSettings = m_settings.shadowSettings[(int32_t)m_shadowsQuality];
+
+	float measuredNearZ = 0.0f;
+	float measuredFarZ = 0.0f;
+	const bool measured = m_downScalePass->getDepthRange(worldRenderView, measuredNearZ, measuredFarZ);
+
+	// Without a measurement - which is the case for the first few frames, and whenever
+	// nothing but background is in view - the splits have to cover everything.
+	float fittedNearZ = m_settings.viewNearZ;
+	float fittedFarZ = shadowSettings.farZ;
+
+	if (measured)
+	{
+		// Only refit once the measured range has left the range the current splits were
+		// fitted for, or has shrunk far enough inside it to be worth refitting for.
+		const bool escaped = (bool)(measuredNearZ < state.fittedNearZ || measuredFarZ > state.fittedFarZ);
+		const bool slack = (bool)(measuredNearZ > state.fittedNearZ * c_sliceRefitSlack || measuredFarZ < state.fittedFarZ / c_sliceRefitSlack);
+		if (escaped || slack)
+		{
+			fittedNearZ = std::max(measuredNearZ / c_sliceFitMargin, m_settings.viewNearZ);
+			fittedFarZ = std::min(measuredFarZ * c_sliceFitMargin, shadowSettings.farZ);
+		}
+		else
+		{
+			fittedNearZ = state.fittedNearZ;
+			fittedFarZ = state.fittedFarZ;
+		}
+	}
+
+	// Guard against a degenerate range; a single visible surface measures as a zero
+	// width range, which would collapse every split onto the same distance.
+	fittedNearZ = std::min(fittedNearZ, shadowSettings.farZ);
+	fittedFarZ = std::max(fittedFarZ, fittedNearZ * c_sliceFitMargin);
+	fittedFarZ = std::min(fittedFarZ, shadowSettings.farZ);
+
+	state.fittedNearZ = fittedNearZ;
+	state.fittedFarZ = fittedFarZ;
+
+	// Same distribution as the configured splits, just over the fitted range.
+	for (int32_t i = 0; i < shadowSettings.cascadingSlices; ++i)
+	{
+		const float ii = float(i) / shadowSettings.cascadingSlices;
+		const float log = powf(ii, shadowSettings.cascadingLambda);
+		state.slicePositions[i] = lerp(fittedNearZ, fittedFarZ, log);
+	}
+	for (int32_t i = shadowSettings.cascadingSlices; i <= MaxSliceCount; ++i)
+		state.slicePositions[i] = fittedFarZ;
+}
+
 render::RGTargetSet WorldRendererShared::setupLightPass(
 	const WorldRenderView& worldRenderView,
 	render::RenderGraph& renderGraph)
@@ -358,6 +433,9 @@ render::RGTargetSet WorldRendererShared::setupLightPass(
 
 	T_FATAL_ASSERT(worldRenderView.getIndex() < sizeof_array(m_state));
 	State& state = m_state[worldRenderView.getIndex()];
+
+	// Narrow the cascade splits to the depth actually visible before any of them are used.
+	setupSlicePositions(worldRenderView, state);
 
 	LightShaderData* lightShaderData = (LightShaderData*)m_state[worldRenderView.getIndex()].lightSBuffer->lock();
 	if (!lightShaderData)
@@ -469,8 +547,8 @@ render::RGTargetSet WorldRendererShared::setupLightPass(
 			for (int32_t i = 0; i < shadowSettings.cascadingSlices; ++i)
 			{
 				const int32_t slice = i;
-				const Scalar zn(max(m_slicePositions[slice], m_settings.viewNearZ));
-				const Scalar zf(min(m_slicePositions[slice + 1], shadowSettings.farZ));
+				const Scalar zn(max(state.slicePositions[slice], m_settings.viewNearZ));
+				const Scalar zf(min(state.slicePositions[slice + 1], shadowSettings.farZ));
 				const bool staticOnly = bool(slice >= shadowSettings.cascadingSlices - 2);
 
 				// Create sliced view frustum.

@@ -91,12 +91,14 @@ protected:
 		Frustum shadowSlices[4];
 		Matrix44 sliceViews[4];			//!< View transform of the frame each slice was last rendered; used to test whether the cached slice still covers the current view.
 		Matrix44 shadowLightViews[4];
+		float slicePositions[MaxSliceCount + 1];	//!< Cascade splits, fitted to the depth range measured for this view.
+		float fittedNearZ = 0.0f;		//!< Depth range the splits above were fitted for; they are only refitted once the measured range leaves it.
+		float fittedFarZ = 0.0f;
 		uint32_t count = 0;
 	};
 
 	WorldRenderSettings m_settings;
 	Quality m_shadowsQuality = Quality::Disabled;
-	float m_slicePositions[MaxSliceCount + 1];
 	bool m_rayTracingEnabled = true;
 
 	/*! \name Render passes. */
@@ -129,6 +131,10 @@ protected:
 	State m_state[4];
 
 	void gather(const World* world, const std::function< bool(const EntityState& state) >& filter);
+
+	void setupSlicePositions(
+		const WorldRenderView& worldRenderView,
+		State& state);
 
 	render::RGTargetSet setupLightPass(
 		const WorldRenderView& worldRenderView,
