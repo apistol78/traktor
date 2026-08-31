@@ -339,27 +339,39 @@ bool MeshPipeline::buildOutput(
 		translate(asset->getOffset()) *
 		scale(asset->getScaleFactor())));
 
-	// Recalculate normals regardless if already exist in model.
-	if (asset->getRenormalize())
-	{
-		commonOperations.push_back(new model::CalculateNormals(true));
-		commonOperations.push_back(new model::CalculateTangents(true));
-	}
-	else
-	{
-		commonOperations.push_back(new model::CalculateNormals(false));
-		commonOperations.push_back(new model::CalculateTangents(false));
-	}
-
 	RefArray< const model::IModelOperation > operations;
 	if (asset->getReduce() < 1.0f)
 		operations.push_back(new model::Reduce(asset->getReduce()));
+	if (asset->getRenormalize())
+	{
+		operations.push_back(new model::CalculateNormals(true));
+		operations.push_back(new model::CalculateTangents(true));
+	}
+	else
+	{
+		operations.push_back(new model::CalculateNormals(false));
+		operations.push_back(new model::CalculateTangents(false));
+	}
 	for (auto operation : commonOperations)
 		operations.push_back(operation);
 
 	RefArray< const model::IModelOperation > rtOperations;
 	if (asset->getRaytracingReduce() < 1.0f)
+	{
 		rtOperations.push_back(new model::Reduce(asset->getRaytracingReduce()));
+		rtOperations.push_back(new model::CalculateNormals(true));
+		rtOperations.push_back(new model::CalculateTangents(true));
+	}
+	else if (asset->getRenormalize())
+	{
+		rtOperations.push_back(new model::CalculateNormals(true));
+		rtOperations.push_back(new model::CalculateTangents(true));
+	}
+	else
+	{
+		rtOperations.push_back(new model::CalculateNormals(false));
+		rtOperations.push_back(new model::CalculateTangents(false));
+	}
 	for (auto operation : commonOperations)
 		rtOperations.push_back(operation);
 
