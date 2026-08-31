@@ -198,6 +198,15 @@ void EndPassRenderBlock::render(IRenderView* renderView) const
 	T_CONTEXT_POP_MARKER(renderView, false);
 }
 
+void ClearRenderBlock::render(IRenderView* renderView) const
+{
+	T_CONTEXT_PUSH_MARKER(renderView, false, name);
+
+	renderView->clear(&clear, rect);
+
+	T_CONTEXT_POP_MARKER(renderView, false);
+}
+
 void PresentRenderBlock::render(IRenderView* renderView) const
 {
 	T_CONTEXT_PUSH_MARKER(renderView, false, name);

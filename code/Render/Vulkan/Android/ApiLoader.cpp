@@ -121,6 +121,7 @@ T_DEFINE_VK(vkDestroyCommandPool);
 T_DEFINE_VK(vkDestroyDescriptorPool);
 T_DEFINE_VK(vkCmdClearColorImage);
 T_DEFINE_VK(vkCmdClearDepthStencilImage);
+T_DEFINE_VK(vkCmdClearAttachments);
 T_DEFINE_VK(vkCmdSetStencilReference);
 T_DEFINE_VK(vkCreateQueryPool);
 T_DEFINE_VK(vkDestroyQueryPool);
@@ -270,6 +271,7 @@ bool initializeVulkanApi()
 	T_RESOLVE_VK(vkDestroyDescriptorPool);
 	T_RESOLVE_VK(vkCmdClearColorImage);
 	T_RESOLVE_VK(vkCmdClearDepthStencilImage);
+	T_RESOLVE_VK(vkCmdClearAttachments);
 	T_RESOLVE_VK(vkCmdSetStencilReference);
 	T_RESOLVE_VK(vkCreateQueryPool);
 	T_RESOLVE_VK(vkDestroyQueryPool);

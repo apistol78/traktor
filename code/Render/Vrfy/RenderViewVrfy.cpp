@@ -248,6 +248,23 @@ void RenderViewVrfy::endPass()
 	m_insidePass = false;
 }
 
+void RenderViewVrfy::clear(const Clear* clear, const Rectangle& rectangle)
+{
+	T_CAPTURE_TRACE(L"clear");
+	T_CAPTURE_ASSERT(m_insidePass, L"Cannot clear outside of beginPass/endPass.");
+	T_CAPTURE_ASSERT(ThreadManager::getInstance().getCurrentThread() == m_threadFrame, L"Call thread inconsistent.");
+
+	T_CAPTURE_ASSERT(clear != nullptr, L"No clear parameters.");
+	if (!clear)
+		return;
+
+	T_CAPTURE_ASSERT(clear->mask != 0, L"Clear mask empty.");
+	T_CAPTURE_ASSERT(rectangle.left >= 0 && rectangle.top >= 0, L"Invalid clear rectangle origin.");
+	T_CAPTURE_ASSERT(rectangle.width > 0 && rectangle.height > 0, L"Invalid clear rectangle size.");
+
+	m_renderView->clear(clear, rectangle);
+}
+
 void RenderViewVrfy::draw(const IBufferView* vertexBuffer, const IVertexLayout* vertexLayout, const IBufferView* indexBuffer, IndexType indexType, IProgram* program, const Primitives& primitives, uint32_t instanceCount)
 {
 	T_CAPTURE_TRACE(L"draw");

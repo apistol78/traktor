@@ -227,6 +227,21 @@ public:
 	virtual void render(IRenderView* renderView) const override;
 };
 
+/*! Clear region of current pass's targets render block.
+ * \ingroup Render
+ *
+ * Uses IRenderView::clear so "fast clear" HW paths can be
+ * utilized when clearing parts of the bound targets.
+ */
+class T_DLLCLASS ClearRenderBlock : public RenderBlock
+{
+public:
+	Clear clear;
+	Rectangle rect;
+
+	virtual void render(IRenderView* renderView) const override final;
+};
+
 /*! Present backbuffer.
  * \ingroup Render
  */

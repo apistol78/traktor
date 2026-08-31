@@ -146,6 +146,13 @@ public:
 	/*! End rendering to pass. */
 	virtual void endPass() = 0;
 
+	/*! Clear regions of targets in the current pass.
+	 * 
+	 * This should be used when clearing parts of the
+	 * targets so "fast clear" HW paths can be utilized.
+	 */
+	virtual void clear(const Clear* clear, const Rectangle& rectangle) = 0;
+
 	/*! Draw primitives.
 	 *
 	 * \param vertexBuffer View of buffer containing geometry.

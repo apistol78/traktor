@@ -123,7 +123,6 @@ protected:
 	Ref< render::ITexture > m_blackTexture;
 	Ref< render::ITexture > m_whiteTexture;
 	Ref< render::ITexture > m_blackCubeTexture;
-	resource::Proxy< render::Shader > m_clearDepthShader;
 
 	GatherView m_gatheredView;
 	Ref< Packer > m_shadowAtlasPacker;

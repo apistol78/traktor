@@ -1124,6 +1124,88 @@ void RenderViewVk::endPass()
 	m_targetFrameBuffer = 0;
 }
 
+void RenderViewVk::clear(const Clear* clear, const Rectangle& rectangle)
+{
+	T_FATAL_ASSERT_M(m_targetRenderPass != 0, L"Cannot clear outside of an active pass.");
+	T_FATAL_ASSERT(clear != nullptr);
+
+	const auto& frame = m_frames[m_currentImageIndex];
+
+	// Clearing attachments inside the pass lets the driver use its "fast clear"
+	// path (clearing tile or compression meta data) instead of rasterizing a
+	// depth or color filling primitive.
+	StaticVector< VkClearAttachment, 16 + 1 > attachments;
+	if ((clear->mask & CfColor) != 0)
+	{
+		// Clear attachment index refer to the subpass's color attachments, so when
+		// a single target of the set is bound it's attachment 0.
+		const int32_t colorCount = (m_targetColorIndex >= 0) ? 1 : (int32_t)m_targetSet->getColorTargetCount();
+		for (int32_t i = 0; i < colorCount; ++i)
+		{
+			auto& ca = attachments.push_back();
+			ca.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+			ca.colorAttachment = (uint32_t)i;
+			clear->colors[i].storeUnaligned(ca.clearValue.color.float32);
+		}
+	}
+	if ((clear->mask & (CfDepth | CfStencil)) != 0)
+	{
+		RenderTargetDepthVk* depthTarget = m_targetSet->getDepthTargetVk();
+		if (!depthTarget && m_targetSet->usingPrimaryDepthStencil())
+			depthTarget = frame.primaryTarget->getDepthTargetVk();
+		if (depthTarget)
+		{
+			// Only request aspects which are present in the attachment's format.
+			const VkFormat format = depthTarget->getVkFormat();
+			const bool haveDepth = (format != VK_FORMAT_S8_UINT);
+			const bool haveStencil =
+				format == VK_FORMAT_S8_UINT ||
+				format == VK_FORMAT_D16_UNORM_S8_UINT ||
+				format == VK_FORMAT_D24_UNORM_S8_UINT ||
+				format == VK_FORMAT_D32_SFLOAT_S8_UINT;
+
+			VkImageAspectFlags aspectMask = 0;
+			if ((clear->mask & CfDepth) != 0 && haveDepth)
+				aspectMask |= VK_IMAGE_ASPECT_DEPTH_BIT;
+			if ((clear->mask & CfStencil) != 0 && haveStencil)
+				aspectMask |= VK_IMAGE_ASPECT_STENCIL_BIT;
+
+			if (aspectMask != 0)
+			{
+				auto& ca = attachments.push_back();
+				ca.aspectMask = aspectMask;
+				ca.colorAttachment = 0;
+				ca.clearValue.depthStencil.depth = clear->depth;
+				ca.clearValue.depthStencil.stencil = (uint32_t)clear->stencil;
+			}
+		}
+	}
+	if (attachments.empty())
+		return;
+
+	// Clamp rectangle to target since clear rects must be inside the render area.
+	const int32_t left = std::max< int32_t >(rectangle.left, 0);
+	const int32_t top = std::max< int32_t >(rectangle.top, 0);
+	const int32_t width = std::min< int32_t >(rectangle.width, m_targetSet->getWidth() - left);
+	const int32_t height = std::min< int32_t >(rectangle.height, m_targetSet->getHeight() - top);
+	if (width <= 0 || height <= 0)
+		return;
+
+	const VkClearRect rc = {
+		.rect = {
+			.offset = { .x = left, .y = top },
+			.extent = { .width = (uint32_t)width, .height = (uint32_t)height } },
+		.baseArrayLayer = 0,
+		.layerCount = 1
+	};
+	vkCmdClearAttachments(
+		*frame.graphicsCommandBuffer,
+		(uint32_t)attachments.size(),
+		attachments.c_ptr(),
+		1,
+		&rc);
+}
+
 void RenderViewVk::draw(const IBufferView* vertexBuffer, const IVertexLayout* vertexLayout, const IBufferView* indexBuffer, IndexType indexType, IProgram* program, const Primitives& primitives, uint32_t instanceCount)
 {
 	const BufferViewVk* vbv = static_cast< const BufferViewVk* >(vertexBuffer);

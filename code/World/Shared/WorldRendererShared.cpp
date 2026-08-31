@@ -58,8 +58,6 @@ namespace traktor::world
 namespace
 {
 
-const resource::Id< render::Shader > c_clearDepthShader(L"{0135F7CC-FC65-4FD9-BBD5-CCE0C003B540}");
-
 // Margin (world units) by which a cached shadow slice is expanded before it is rendered,
 // so the camera can move a little before the cached slice no longer covers the view and
 // must be re-rendered. Scaled with the slice's far distance - far cascades are low
@@ -164,10 +162,6 @@ bool WorldRendererShared::create(
 		shadowSettings.resolution,
 		shadowSettings.resolution);
 
-	// Create "clear depth" shader.
-	if (!resourceManager->bind(c_clearDepthShader, m_clearDepthShader))
-		return false;
-
 	// Determine initial slice distances.
 	for (int32_t i = 0; i < sizeof_array(m_state); ++i)
 	{
@@ -257,7 +251,6 @@ void WorldRendererShared::destroy()
 	safeDestroy(m_lightClusterPass);
 
 	m_entityRenderers = nullptr;
-	m_clearDepthShader.clear();
 	m_gatheredView = {};
 }
 
@@ -534,7 +527,7 @@ render::RGTargetSet WorldRendererShared::setupLightPass(
 		Ref< render::RenderPass > rp = new render::RenderPass(L"Shadow map");
 		for (const auto& attachment : m_gatheredView.setupAttachments)
 			rp->addInput(attachment);
-		rp->setOutput(shadowMapAtlasTargetSetId, render::TfNone, render::TfDepth);
+		rp->setOutput(shadowMapAtlasTargetSetId, render::TfDepth, render::TfDepth);
 
 		if (m_gatheredView.cascadingDirectionalLight != nullptr)
 		{
@@ -657,10 +650,14 @@ render::RGTargetSet WorldRendererShared::setupLightPass(
 
 					T_ASSERT(!renderContext->havePendingDraws());
 
-					// Clear cascade shadow map.
+					// Clear cascade shadow map slice; use a region clear so the HW
+					// "fast clear" path is utilized instead of a fill primitive.
 					{
-						const render::Shader::Permutation perm;
-						m_screenRenderer->draw(renderContext, m_clearDepthShader, perm, nullptr);
+						auto crb = renderContext->allocNamed< render::ClearRenderBlock >(L"Clear shadow map slice");
+						crb->clear.mask = render::CfDepth;
+						crb->clear.depth = 1.0f;
+						crb->rect = render::Rectangle(slice * sliceDim, 0, sliceDim, sliceDim);
+						renderContext->draw(crb);
 					}
 
 					for (auto it : m_gatheredView.renderables)
@@ -803,10 +800,14 @@ render::RGTargetSet WorldRendererShared::setupLightPass(
 
 				T_ASSERT(!renderContext->havePendingDraws());
 
-				// Clear shadow map tile.
+				// Clear shadow map tile; use a region clear so the HW "fast clear"
+				// path is utilized instead of a fill primitive.
 				{
-					const render::Shader::Permutation perm;
-					m_screenRenderer->draw(renderContext, m_clearDepthShader, perm, nullptr);
+					auto crb = renderContext->allocNamed< render::ClearRenderBlock >(L"Clear shadow map tile");
+					crb->clear.mask = render::CfDepth;
+					crb->clear.depth = 1.0f;
+					crb->rect = render::Rectangle(atlasOffset + atlasRect.x, atlasRect.y, atlasRect.width, atlasRect.height);
+					renderContext->draw(crb);
 				}
 
 				for (auto it : m_gatheredView.renderables)
