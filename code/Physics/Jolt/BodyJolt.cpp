@@ -39,7 +39,8 @@ BodyJolt::BodyJolt(
 	uint32_t collisionGroup,
 	uint32_t collisionMask,
 	int32_t material,
-	const resource::Proxy< Mesh >& mesh)
+	const resource::Proxy< Mesh >& mesh,
+	bool initiallyActive)
 :	Body(tag)
 ,	m_callback(callback)
 ,	m_physicsSystem(physicsSystem)
@@ -50,6 +51,7 @@ BodyJolt::BodyJolt(
 ,	m_collisionMask(collisionMask)
 ,	m_material(material)
 ,	m_mesh(mesh)
+,	m_activateOnEnable(initiallyActive)
 {
 	m_body->SetUserData((JPH::uint64)this);
 }
@@ -158,6 +160,12 @@ void BodyJolt::setActive(bool active)
 {
 	if (!m_body)
 		return;
+	if (!m_enabled)
+	{
+		// Not in the world; defer to when the body gets enabled.
+		m_activateOnEnable = active;
+		return;
+	}
 	JPH::BodyInterface& bodyInterface = m_physicsSystem->GetBodyInterface();
 	if (active)
 		bodyInterface.ActivateBody(m_body->GetID());
@@ -178,16 +186,19 @@ void BodyJolt::setEnable(bool enable)
 	JPH::BodyInterface& bodyInterface = m_physicsSystem->GetBodyInterface();
 	if (enable)
 	{
-		bodyInterface.AddBody(m_body->GetID(), m_body->IsStatic() ? JPH::EActivation::DontActivate : JPH::EActivation::Activate);
+		const bool activate = !m_body->IsStatic() && m_activateOnEnable;
+		bodyInterface.AddBody(m_body->GetID(), activate ? JPH::EActivation::Activate : JPH::EActivation::DontActivate);
 		for (auto constraint : m_constraints)
 			m_callback->insertConstraint(constraint);
 	}
 	else
 	{
+		m_activateOnEnable = m_body->IsActive();
 		for (auto constraint : m_constraints)
 			m_callback->removeConstraint(constraint);
 		bodyInterface.RemoveBody(m_body->GetID());
 	}
+
 	m_enabled = enable;
 }
 

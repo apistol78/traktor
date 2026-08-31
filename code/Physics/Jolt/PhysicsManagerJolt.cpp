@@ -478,6 +478,7 @@ bool buildBodyCreationSettings(const BodyDesc* desc, JPH::ShapeRefC shape, JPH::
 		outSettings.mFriction = dynamicDesc->getFriction();
 		outSettings.mRestitution = dynamicDesc->getRestitution();
 		outSettings.mAllowSleeping = dynamicDesc->getAutoDeactivate();
+		T_ASSERT_M(dynamicDesc->getActive() || dynamicDesc->getAutoDeactivate(), L"If body is initially disabled then auto deactivate must be set as well");
 		// Use the authored mass, deriving inertia from the shape (like Bullet's
 		// calculateLocalInertia). Otherwise Jolt defaults to volume * density
 		// (1000 kg/m^3) and ignores getMass(), producing far too heavy bodies.
@@ -1584,7 +1585,7 @@ Ref< Body > PhysicsManagerJolt::createBody(resource::IResourceManager* resourceM
 
 		const float inverseMass = mass > 0.0f ? 1.0f / mass : 0.0f;
 
-		Ref< BodyJolt > bj = new BodyJolt(tag, this, m_physicsSystem.ptr(), body, inverseMass, centerOfGravity, collisionGroup, collisionMask, shapeDesc->getMaterial(), meshProxy);
+		Ref< BodyJolt > bj = new BodyJolt(tag, this, m_physicsSystem.ptr(), body, inverseMass, centerOfGravity, collisionGroup, collisionMask, shapeDesc->getMaterial(), meshProxy, dynamicDesc->getActive());
 		m_bodies.push_back(bj);
 		return bj;
 	}
@@ -1610,13 +1611,15 @@ Ref< Body > PhysicsManagerJolt::createBodyFromShape(JPH::ShapeSettings& shapeSet
 	// Keep the wrapper's inverse mass in sync with Jolt; getInverseMass() is used by
 	// gameplay (e.g. VehicleComponent).
 	float inverseMass = 0.0f;
+	bool initiallyActive = true;
 	if (auto dynamicDesc = dynamic_type_cast< const DynamicBodyDesc* >(desc))
 	{
 		const float mass = dynamicDesc->getMass();
 		inverseMass = mass > 0.0f ? 1.0f / mass : 0.0f;
+		initiallyActive = dynamicDesc->getActive();
 	}
 
-	Ref< BodyJolt > bj = new BodyJolt(tag, this, m_physicsSystem.ptr(), body, inverseMass, centerOfGravity, collisionGroup, collisionMask, shapeDesc->getMaterial(), mesh);
+	Ref< BodyJolt > bj = new BodyJolt(tag, this, m_physicsSystem.ptr(), body, inverseMass, centerOfGravity, collisionGroup, collisionMask, shapeDesc->getMaterial(), mesh, initiallyActive);
 	m_bodies.push_back(bj);
 	return bj;
 }

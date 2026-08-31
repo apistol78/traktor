@@ -54,7 +54,8 @@ public:
 		uint32_t collisionGroup,
 		uint32_t collisionMask,
 		int32_t material,
-		const resource::Proxy< Mesh >& mesh);
+		const resource::Proxy< Mesh >& mesh,
+		bool initiallyActive);
 
 	virtual void destroy() override final;
 
@@ -142,6 +143,7 @@ private:
 	resource::Proxy< Mesh > m_mesh;
 	AlignedVector< JPH::Constraint* > m_constraints;
 	bool m_enabled = false;
+	bool m_activateOnEnable = true;
 };
 
 }
