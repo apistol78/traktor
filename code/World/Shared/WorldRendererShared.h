@@ -91,9 +91,8 @@ protected:
 		Frustum shadowSlices[4];
 		Matrix44 sliceViews[4];			//!< View transform of the frame each slice was last rendered; used to test whether the cached slice still covers the current view.
 		Matrix44 shadowLightViews[4];
-		float slicePositions[MaxSliceCount + 1];	//!< Cascade splits, fitted to the depth range measured for this view.
-		float fittedNearZ = 0.0f;		//!< Depth range the splits above were fitted for; they are only refitted once the measured range leaves it.
-		float fittedFarZ = 0.0f;
+		float slicePositions[MaxSliceCount + 1];	//!< Cascade splits, always as configured.
+		float sliceCullFarZ = 0.0f;		//!< Furthest measured depth (with margin); slice updates entirely beyond it are culled and the last visible slice's far is clamped to it.
 		uint32_t count = 0;
 	};
 
@@ -131,7 +130,7 @@ protected:
 
 	void gather(const World* world, const std::function< bool(const EntityState& state) >& filter);
 
-	void setupSlicePositions(
+	void setupSliceCullDistance(
 		const WorldRenderView& worldRenderView,
 		State& state);
 
