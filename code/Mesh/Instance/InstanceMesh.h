@@ -92,7 +92,27 @@ public:
 
 	virtual Aabb3 cullableGetBoundingBox() const override final { return getBoundingBox(); }
 
-	virtual void cullableBuild(
+	virtual void cullableBuildSetup(
+		const world::WorldBuildContext& context,
+		const world::WorldRenderView& worldRenderView,
+		const world::IWorldRenderPass& worldRenderPass,
+		render::Buffer* instanceBuffer,
+		render::Buffer* visibilityBuffer,
+		uint32_t start,
+		uint32_t count
+	) override final;
+
+	virtual void cullableBuildCompact(
+		const world::WorldBuildContext& context,
+		const world::WorldRenderView& worldRenderView,
+		const world::IWorldRenderPass& worldRenderPass,
+		render::Buffer* instanceBuffer,
+		render::Buffer* visibilityBuffer,
+		uint32_t start,
+		uint32_t count
+	) override final;
+
+	virtual void cullableBuildDraw(
 		const world::WorldBuildContext& context,
 		const world::WorldRenderView& worldRenderView,
 		const world::IWorldRenderPass& worldRenderPass,
@@ -121,7 +141,7 @@ private:
 	resource::Proxy< render::Shader > m_shaderCompact;
 
 	// One indirect command per part, and one compacted instance index list, per
-	// shadow map cascade (index 0 being the primary view). \sa cullableBuild
+	// shadow map cascade (index 0 being the primary view). \sa cullableBuildSetup
 	RefArray< render::Buffer > m_drawBuffers;
 	RefArray< render::Buffer > m_compactBuffers;
 	uint32_t m_allocatedCount = 0;

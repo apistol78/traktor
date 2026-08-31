@@ -65,11 +65,49 @@ public:
 	};
 #pragma pack()
 
+	/*! Cullable batch of instances.
+	 *
+	 * Building is split into three phases which the culling component invokes for
+	 * all cullables before advancing to the next phase, with a single barrier
+	 * between the phases. This keeps the number of barriers constant regardless
+	 * of the number of cullables, so implementations must not emit barriers of
+	 * their own between the phases.
+	 */
 	struct T_DLLCLASS ICullable
 	{
 		virtual Aabb3 cullableGetBoundingBox() const = 0;
 
-		virtual void cullableBuild(
+		/*! Emit compute blocks which prepare drawing, e.g. initialize indirect
+		 * draw commands.
+		 *
+		 * Culling results are not yet available when the emitted blocks execute
+		 * so they must not access the visibility buffer.
+		 */
+		virtual void cullableBuildSetup(
+			const WorldBuildContext& context,
+			const world::WorldRenderView& worldRenderView,
+			const world::IWorldRenderPass& worldRenderPass,
+			render::Buffer* instanceBuffer,
+			render::Buffer* visibilityBuffer,
+			uint32_t start,
+			uint32_t count
+		) = 0;
+
+		/*! Emit compute blocks which consume the visibility buffer, e.g. compact
+		 * visible instances into the indirect draw commands.
+		 */
+		virtual void cullableBuildCompact(
+			const WorldBuildContext& context,
+			const world::WorldRenderView& worldRenderView,
+			const world::IWorldRenderPass& worldRenderPass,
+			render::Buffer* instanceBuffer,
+			render::Buffer* visibilityBuffer,
+			uint32_t start,
+			uint32_t count
+		) = 0;
+
+		/*! Emit draw blocks using the buffers written by the previous phases. */
+		virtual void cullableBuildDraw(
 			const WorldBuildContext& context,
 			const world::WorldRenderView& worldRenderView,
 			const world::IWorldRenderPass& worldRenderPass,

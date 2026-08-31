@@ -132,6 +132,25 @@ void CullingComponent::build(
 		m_velocityDirty = false;
 	}
 
+	// A static only pass with no static instances emits no runs at all; skip the
+	// cull dispatch and the barriers entirely since the visibility buffer is only
+	// consumed by blocks emitted from the same pass.
+	const bool staticOnly = worldRenderView.getStaticOnly();
+	if (staticOnly)
+	{
+		bool anyStatic = false;
+		for (const auto instance : m_instances)
+		{
+			if (!instance->dynamic)
+			{
+				anyStatic = true;
+				break;
+			}
+		}
+		if (!anyStatic)
+			return;
+	}
+
 	render::Buffer* visibilityBuffer = m_visibilityBuffers[worldRenderView.getShadowMapIndex()];
 
 	// Every pass which culls (g-buffer, shadow, velocity, ...) reuses the same set of
@@ -198,45 +217,58 @@ void CullingComponent::build(
 		renderBlock->workSize[0] = (int32_t)m_instances.size();
 
 		renderContext->compute(renderBlock);
-
-		// The visibility buffer is consumed by the cullables' own compute passes,
-		// not by an indirect read, so this has to be a shader read barrier.
-		renderContext->compute< render::BarrierRenderBlock >(render::Stage::Compute, render::Stage::Compute, nullptr, 0);
 	}
 
-	// Batch draw instances; assumes m_instances are sorted by "ordinal" so we can scan for run length.
-	const bool staticOnly = worldRenderView.getStaticOnly();
-	for (uint32_t i = 0; i < (uint32_t)m_instances.size();)
+	// Invoke a build phase on each batch run of instances; assumes m_instances are
+	// sorted by "ordinal" so we can scan for run length.
+	const auto forEachRun = [&](auto&& phase)
 	{
-		uint32_t j = i + 1;
-		for (; j < (uint32_t)m_instances.size(); ++j)
-			if (m_instances[i]->ordinal != m_instances[j]->ordinal)
-				break;
-
-		// Instances are sorted static before dynamic within each run so a static only
-		// pass need only draw the leading part of the run.
-		uint32_t k = j;
-		if (staticOnly)
+		for (uint32_t i = 0; i < (uint32_t)m_instances.size();)
 		{
-			for (k = i; k < j; ++k)
-				if (m_instances[k]->dynamic)
+			uint32_t j = i + 1;
+			for (; j < (uint32_t)m_instances.size(); ++j)
+				if (m_instances[i]->ordinal != m_instances[j]->ordinal)
 					break;
-		}
 
-		if (k > i)
-		{
-			m_instances[i]->cullable->cullableBuild(
-				context,
-				worldRenderView,
-				worldRenderPass,
-				m_instanceBuffer,
-				visibilityBuffer,
-				i,
-				(k - i));
-		}
+			// Instances are sorted static before dynamic within each run so a static only
+			// pass need only draw the leading part of the run.
+			uint32_t k = j;
+			if (staticOnly)
+			{
+				for (k = i; k < j; ++k)
+					if (m_instances[k]->dynamic)
+						break;
+			}
 
-		i = j;
-	}
+			if (k > i)
+				phase(m_instances[i]->cullable, i, k - i);
+
+			i = j;
+		}
+	};
+
+	// Emit each phase for all runs before a single barrier and the next phase, so
+	// the number of barriers stays constant instead of two per run.
+	forEachRun([&](ICullable* cullable, uint32_t start, uint32_t count) {
+		cullable->cullableBuildSetup(context, worldRenderView, worldRenderPass, m_instanceBuffer, visibilityBuffer, start, count);
+	});
+
+	// The visibility buffer written by the cull dispatch and the draw commands
+	// initialized by the setup phase are both consumed by the compact phase's
+	// compute blocks, not by an indirect read, so this has to be a shader read barrier.
+	renderContext->compute< render::BarrierRenderBlock >(render::Stage::Compute, render::Stage::Compute, nullptr, 0);
+
+	forEachRun([&](ICullable* cullable, uint32_t start, uint32_t count) {
+		cullable->cullableBuildCompact(context, worldRenderView, worldRenderPass, m_instanceBuffer, visibilityBuffer, start, count);
+	});
+
+	// The compacted draw commands are consumed by the indirect draws emitted in the
+	// draw phase.
+	renderContext->compute< render::BarrierRenderBlock >(render::Stage::Compute, render::Stage::Indirect, nullptr, 0);
+
+	forEachRun([&](ICullable* cullable, uint32_t start, uint32_t count) {
+		cullable->cullableBuildDraw(context, worldRenderView, worldRenderPass, m_instanceBuffer, visibilityBuffer, start, count);
+	});
 }
 
 CullingComponent::Instance* CullingComponent::createInstance(ICullable* cullable, intptr_t ordinal, bool dynamic)

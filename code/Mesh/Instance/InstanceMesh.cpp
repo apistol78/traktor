@@ -74,7 +74,7 @@ const render::Buffer* InstanceMesh::getRTVertexAttributes() const
 	return m_renderMesh->getAuxBuffer(c_fccRayTracingVertexAttributes);
 }
 
-void InstanceMesh::cullableBuild(
+void InstanceMesh::cullableBuildSetup(
 	const world::WorldBuildContext& context,
 	const world::WorldRenderView& worldRenderView,
 	const world::IWorldRenderPass& worldRenderPass,
@@ -126,11 +126,10 @@ void InstanceMesh::cullableBuild(
 	}
 
 	render::Buffer* drawBuffer = m_drawBuffers[shadowMapIndex];
-	render::Buffer* compactBuffer = m_compactBuffers[shadowMapIndex];
 
 	// Initialize the indirect command of each part with the static geometry range
-	// and a zeroed instance count; the compaction pass below accumulates that count
-	// with atomics, so this must be dispatched first.
+	// and a zeroed instance count; the compact phase accumulates that count with
+	// atomics after the culling component's setup to compact barrier.
 	// Compute blocks are executed before render pass, so draws for shadow map rendering all cascades
 	// are dispatched at the same time.
 	for (uint32_t i = 0; i < parts.size(); ++i)
@@ -162,38 +161,78 @@ void InstanceMesh::cullableBuild(
 
 		renderContext->compute(renderBlock);
 	}
+}
 
-	renderContext->compute< render::BarrierRenderBlock >(render::Stage::Compute, render::Stage::Compute, nullptr, 0);
+void InstanceMesh::cullableBuildCompact(
+	const world::WorldBuildContext& context,
+	const world::WorldRenderView& worldRenderView,
+	const world::IWorldRenderPass& worldRenderPass,
+	render::Buffer* instanceBuffer,
+	render::Buffer* visibilityBuffer,
+	uint32_t start,
+	uint32_t count)
+{
+	const auto it = m_parts.find(worldRenderPass.getTechnique());
+	if (it == m_parts.end())
+		return;
+
+	render::RenderContext* renderContext = context.getRenderContext();
+
+	const AlignedVector< Part >& parts = it->second;
+	const int32_t shadowMapIndex = worldRenderView.getShadowMapIndex();
+
+	render::Buffer* drawBuffer = m_drawBuffers[shadowMapIndex];
+	render::Buffer* compactBuffer = m_compactBuffers[shadowMapIndex];
 
 	// Compact the visible instances of this batch into a dense list, and accumulate
 	// the instance count shared by every part's command.
-	{
-		auto renderBlock = renderContext->allocNamed< render::ComputeRenderBlock >(
-			str(L"InstanceMesh compact %d", shadowMapIndex));
+	auto renderBlock = renderContext->allocNamed< render::ComputeRenderBlock >(
+		str(L"InstanceMesh compact %d", shadowMapIndex));
 
-		renderBlock->program = m_shaderCompact->getProgram().program;
+	renderBlock->program = m_shaderCompact->getProgram().program;
 
-		renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
-		renderBlock->programParams->beginParameters(renderContext);
-		renderBlock->programParams->setFloatParameter(s_handleInstanceOffset, start + 0.5f);
-		renderBlock->programParams->setFloatParameter(s_handleInstanceCount, count + 0.5f);
-		renderBlock->programParams->setFloatParameter(s_handlePartCount, parts.size() + 0.5f);
-		renderBlock->programParams->setBufferViewParameter(world::ShaderParameter::Visibility, visibilityBuffer->getBufferView());
-		renderBlock->programParams->setBufferViewParameter(s_handleDraw, drawBuffer->getBufferView());
-		renderBlock->programParams->setBufferViewParameter(s_handleCompact, compactBuffer->getBufferView());
-		renderBlock->programParams->endParameters(renderContext);
+	renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
+	renderBlock->programParams->beginParameters(renderContext);
+	renderBlock->programParams->setFloatParameter(s_handleInstanceOffset, start + 0.5f);
+	renderBlock->programParams->setFloatParameter(s_handleInstanceCount, count + 0.5f);
+	renderBlock->programParams->setFloatParameter(s_handlePartCount, parts.size() + 0.5f);
+	renderBlock->programParams->setBufferViewParameter(world::ShaderParameter::Visibility, visibilityBuffer->getBufferView());
+	renderBlock->programParams->setBufferViewParameter(s_handleDraw, drawBuffer->getBufferView());
+	renderBlock->programParams->setBufferViewParameter(s_handleCompact, compactBuffer->getBufferView());
+	renderBlock->programParams->endParameters(renderContext);
 
-		renderBlock->workSize[0] = (int32_t)count;
+	renderBlock->workSize[0] = (int32_t)count;
 
-		renderContext->compute(renderBlock);
-	}
+	renderContext->compute(renderBlock);
+}
 
-	renderContext->compute< render::BarrierRenderBlock >(render::Stage::Compute, render::Stage::Indirect, nullptr, 0);
+void InstanceMesh::cullableBuildDraw(
+	const world::WorldBuildContext& context,
+	const world::WorldRenderView& worldRenderView,
+	const world::IWorldRenderPass& worldRenderPass,
+	render::Buffer* instanceBuffer,
+	render::Buffer* visibilityBuffer,
+	uint32_t start,
+	uint32_t count)
+{
+	const auto it = m_parts.find(worldRenderPass.getTechnique());
+	if (it == m_parts.end())
+		return;
+
+	render::RenderContext* renderContext = context.getRenderContext();
+
+	const AlignedVector< Part >& parts = it->second;
+	const auto& meshPrimitives = m_renderMesh->getPrimitives();
+	const int32_t shadowMapIndex = worldRenderView.getShadowMapIndex();
+
+	render::Buffer* drawBuffer = m_drawBuffers[shadowMapIndex];
+	render::Buffer* compactBuffer = m_compactBuffers[shadowMapIndex];
 
 	// Add a single indirect draw for each mesh part.
 	for (uint32_t i = 0; i < parts.size(); ++i)
 	{
 		const auto& part = parts[i];
+		const bool depthStream = part.depthStream && m_renderMesh->getDepthVertexBuffer() != nullptr;
 
 		auto permutation = worldRenderPass.getPermutation(m_shader);
 		permutation.technique = part.shaderTechnique;
@@ -205,12 +244,8 @@ void InstanceMesh::cullableBuild(
 			str(L"InstanceMesh draw %d %d", shadowMapIndex, i));
 		renderBlock->distance = 10000.0f;
 		renderBlock->program = sp.program;
-		renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
 		renderBlock->indexBuffer = m_renderMesh->getIndexBuffer()->getBufferView();
 		renderBlock->indexType = m_renderMesh->getIndexType();
-		// Parts of depth-only techniques are rendered from the packed depth stream; it
-		// carry the same positions but only a fraction of the vertex data.
-		const bool depthStream = part.depthStream && m_renderMesh->getDepthVertexBuffer() != nullptr;
 		renderBlock->vertexBuffer = depthStream ? m_renderMesh->getDepthVertexBuffer()->getBufferView() : m_renderMesh->getVertexBuffer()->getBufferView();
 		renderBlock->vertexLayout = depthStream ? m_renderMesh->getDepthVertexLayout() : m_renderMesh->getVertexLayout();
 		renderBlock->primitive = meshPrimitives[part.meshPart].type;
@@ -218,10 +253,8 @@ void InstanceMesh::cullableBuild(
 		renderBlock->drawOffset = i * (uint32_t)sizeof(render::IndexedIndirectDraw);
 		renderBlock->drawCount = 1;
 
+		renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
 		renderBlock->programParams->beginParameters(renderContext);
-
-		// if (extraParameters)
-		//	renderBlock->programParams->attachParameters(extraParameters);
 
 		worldRenderPass.setProgramParameters(
 			renderBlock->programParams,
