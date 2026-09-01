@@ -343,7 +343,7 @@ Ref< IWorldComponent > WorldEntityFactory::createWorldComponent(const IEntityBui
 		return displacementWorldComponentData->createComponent(m_resourceManager, m_renderSystem);
 
 	if (auto fogComponentData = dynamic_type_cast< const FogComponentData* >(&worldComponentData))
-		return fogComponentData->createComponent();
+		return fogComponentData->createComponent(m_resourceManager);
 
 	return nullptr;
 }

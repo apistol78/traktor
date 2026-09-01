@@ -48,15 +48,21 @@ class T_DLLCLASS FogComponentData : public IWorldComponentData
 	T_RTTI_CLASS;
 
 public:
-	Ref< FogComponent > createComponent() const;
+	Ref< FogComponent > createComponent(resource::IResourceManager* resourceManager) const;
 
 	virtual void serialize(ISerializer& s) override final;
 
 private:
 	friend class FogComponent;
+	friend class FogComponentEntityPipeline;
+
+	//! Seed permuted with m_mediumShader to name the generated, complete scattering
+	//! shader; the pipeline builds it under that guid and createComponent binds it.
+	static const Guid ms_generatedShaderSeed;
 
 	Color4f m_mediumColor = Color4f(1.0f, 1.0f, 1.0f, 1.0f);
 	float m_mediumDensity = 0.2f;
+	Guid m_mediumShader = Guid(L"{B9E1127F-C81B-AF40-8989-368748993908}");
 
 	// Distance fog.
 	bool m_distanceFogEnable = false;

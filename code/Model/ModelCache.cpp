@@ -118,7 +118,7 @@ Ref< const Model > ModelCache::get(const Path& cachePath, const Path& fileName, 
 
 			if (!ModelFormat::writeAny(intermediateFileName, model))
 			{
-				log::error << L"Unable to write model into cache directory." << Endl;
+				log::error << L"Unable to write model into cache directory \"" << intermediateFileName.getOriginal() << L"\"." << Endl;
 				return;
 			}
 

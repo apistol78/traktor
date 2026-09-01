@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.render.ShaderModule" version="2">
+	<text><![CDATA[
+// 3D Perlin gradient noise.
+
+vec3 PerlinGradient(vec3 p)
+{
+	p = fract(p * vec3(0.1031f, 0.1030f, 0.0973f));
+	p += dot(p, p.yxz + 19.19f);
+	return -1.0f + 2.0f * fract((p.xxy + p.yxx) * p.zyx);
+}
+
+float PerlinNoise3(vec3 p)
+{
+	const vec3 i = floor(p);
+	const vec3 f = fract(p);
+
+	// Quintic fade; C2 continuous so derivatives don't seam at cell borders.
+	const vec3 u = f * f * f * (f * (f * 6.0f - 15.0f) + 10.0f);
+
+	const float n000 = dot(PerlinGradient(i + vec3(0.0f, 0.0f, 0.0f)), f - vec3(0.0f, 0.0f, 0.0f));
+	const float n100 = dot(PerlinGradient(i + vec3(1.0f, 0.0f, 0.0f)), f - vec3(1.0f, 0.0f, 0.0f));
+	const float n010 = dot(PerlinGradient(i + vec3(0.0f, 1.0f, 0.0f)), f - vec3(0.0f, 1.0f, 0.0f));
+	const float n110 = dot(PerlinGradient(i + vec3(1.0f, 1.0f, 0.0f)), f - vec3(1.0f, 1.0f, 0.0f));
+	const float n001 = dot(PerlinGradient(i + vec3(0.0f, 0.0f, 1.0f)), f - vec3(0.0f, 0.0f, 1.0f));
+	const float n101 = dot(PerlinGradient(i + vec3(1.0f, 0.0f, 1.0f)), f - vec3(1.0f, 0.0f, 1.0f));
+	const float n011 = dot(PerlinGradient(i + vec3(0.0f, 1.0f, 1.0f)), f - vec3(0.0f, 1.0f, 1.0f));
+	const float n111 = dot(PerlinGradient(i + vec3(1.0f, 1.0f, 1.0f)), f - vec3(1.0f, 1.0f, 1.0f));
+
+	return mix(
+		mix(mix(n000, n100, u.x), mix(n010, n110, u.x), u.y),
+		mix(mix(n001, n101, u.x), mix(n011, n111, u.x), u.y),
+		u.z);
+}
+
+// Fractal sum of Perlin octaves, normalized so the range stays roughly [-1, 1]
+// regardless of octave count. Lacunarity slightly off 2 to keep octave lattices
+// from aligning.
+float PerlinFbm3(vec3 p, int octaves)
+{
+	float sum = 0.0f;
+	float amplitude = 0.5f;
+	float total = 0.0f;
+	for (int i = 0; i < octaves; ++i)
+	{
+		sum += amplitude * PerlinNoise3(p);
+		total += amplitude;
+		p *= 2.02f;
+		amplitude *= 0.5f;
+	}
+	return sum / total;
+}
+]]></text>
+	<samplers/>
+	<structDeclarations/>
+</object>

@@ -8,19 +8,30 @@
  */
 #include "Core/Serialization/AttributeHdr.h"
 #include "Core/Serialization/AttributeRange.h"
+#include "Core/Serialization/AttributeType.h"
 #include "Core/Serialization/AttributeUnit.h"
 #include "Core/Serialization/ISerializer.h"
+#include "Render/Shader.h"
+#include "Resource/IResourceManager.h"
 #include "World/Entity/FogComponent.h"
 #include "World/Entity/FogComponentData.h"
 
 namespace traktor::world
 {
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.world.FogComponentData", 4, FogComponentData, IWorldComponentData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.world.FogComponentData", 5, FogComponentData, IWorldComponentData)
 
-Ref< FogComponent > FogComponentData::createComponent() const
+const Guid FogComponentData::ms_generatedShaderSeed(L"{AB509CD4-793A-4EF4-AEDD-E08909B1FC00}");
+
+Ref< FogComponent > FogComponentData::createComponent(resource::IResourceManager* resourceManager) const
 {
-	return new FogComponent(this);
+	const Guid outputGuid = m_mediumShader.permutation(ms_generatedShaderSeed);
+
+	resource::Proxy< render::Shader > mediumShader;
+	if (!resourceManager->bind(resource::Id< render::Shader >(outputGuid), mediumShader))
+		return nullptr;
+
+	return new FogComponent(this, mediumShader);
 }
 
 void FogComponentData::serialize(ISerializer& s)
@@ -29,6 +40,10 @@ void FogComponentData::serialize(ISerializer& s)
 	{
 		s >> Member< Color4f >(L"mediumColor", m_mediumColor);
 		s >> Member< float >(L"mediumDensity", m_mediumDensity, AttributeRange(0.0f, 1.0f) | AttributeUnit(UnitType::Percent));
+
+		if (s.getVersion< FogComponentData >() >= 5)
+			s >> Member< Guid >(L"mediumShader", m_mediumShader);
+
 		s >> Member< bool >(L"distanceFogEnable", m_distanceFogEnable);
 	}
 

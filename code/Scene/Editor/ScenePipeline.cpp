@@ -77,7 +77,7 @@ Ref< const ISceneOperationData > resolveOperationData(const ISceneOperator::Tran
 
 }
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.scene.ScenePipeline", 20, ScenePipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.scene.ScenePipeline", 21, ScenePipeline, editor::IPipeline)
 
 bool ScenePipeline::create(const editor::IPipelineSettings* settings, db::Database* database)
 {
@@ -266,10 +266,24 @@ bool ScenePipeline::buildOutput(
 	Ref< world::EntityData > groupEntityData = new world::EntityData();
 	groupEntityData->setComponent(groupComponentData);
 
+	// Build world components through pipeline; products replace source components.
+	RefArray< world::IWorldComponentData > worldComponents;
+	for (const auto& worldComponent : sceneAsset->getWorldComponents())
+	{
+		Ref< world::IWorldComponentData > outputWorldComponent = checked_type_cast< world::IWorldComponentData*, true >(
+			pipelineBuilder->buildProduct(sourceInstance, worldComponent));
+		if (!outputWorldComponent)
+		{
+			log::error << L"Scene pipeline failed; unable to build world component " << type_name(worldComponent) << L"." << Endl;
+			return false;
+		}
+		worldComponents.push_back(outputWorldComponent);
+	}
+
 	// Create output scene resource.
 	Ref< SceneResource > sceneResource = new SceneResource();
 	sceneResource->setWorldRenderSettings(sceneAsset->getWorldRenderSettings());
-	sceneResource->setWorldComponents(sceneAsset->getWorldComponents());
+	sceneResource->setWorldComponents(worldComponents);
 	sceneResource->setEntityData(groupEntityData);
 
 	for (uint32_t i = 0; i < (int32_t)world::Quality::Last; ++i)

@@ -305,8 +305,8 @@ $Output = mix(pF, pB, blend);
 			<id>{CDF7AF06-7DDF-1141-BB02-7B528FDA5838}</id>
 			<comment/>
 			<position>
-				<first>64</first>
-				<second>286</second>
+				<first>57</first>
+				<second>491</second>
 			</position>
 			<parameterDeclaration>{A2B819CF-CC4F-124C-AC0F-CE2FD5DB1899}</parameterDeclaration>
 		</item>
@@ -314,8 +314,8 @@ $Output = mix(pF, pB, blend);
 			<id>{239DFEDC-2450-E34B-9392-8F22DB126D09}</id>
 			<comment/>
 			<position>
-				<first>48</first>
-				<second>325</second>
+				<first>41</first>
+				<second>529</second>
 			</position>
 			<parameterDeclaration>{07D82E61-B43F-0E4B-B371-33ED280DDAA6}</parameterDeclaration>
 		</item>
@@ -798,8 +798,8 @@ $Valid = NDCInRange(ndc) ? 1.0f : 0.0f;
 			<id>{6109B324-D87A-BC43-A885-D7E464E2E7B5}</id>
 			<comment/>
 			<position>
-				<first>160</first>
-				<second>364</second>
+				<first>153</first>
+				<second>453</second>
 			</position>
 			<name>L_IterOutput</name>
 		</item>
@@ -820,93 +820,6 @@ $Valid = NDCInRange(ndc) ? 1.0f : 0.0f;
 				<second>-186</second>
 			</position>
 			<value>1</value>
-		</item>
-		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
-			<id>{B2C4A8E8-FF2E-4447-8948-D5A86DDE03B5}</id>
-			<comment/>
-			<position>
-				<first>422</first>
-				<second>343</second>
-			</position>
-			<name>Medium</name>
-			<technique/>
-			<domain>Undefined</domain>
-			<localSize>
-				<X>1</X>
-				<Y>1</Y>
-				<Z>1</Z>
-			</localSize>
-			<useRayTracing>false</useRayTracing>
-			<include/>
-			<inputPins>
-				<item>
-					<id>{6192DB33-6937-4704-807C-D96231D47B72}</id>
-					<name>MediumColor</name>
-				</item>
-				<item>
-					<id>{A729CE37-A211-4BD4-A7F9-CEF50ECEC08F}</id>
-					<name>MediumDensity</name>
-				</item>
-				<item>
-					<id>{71716AB0-1418-4DD8-AE26-DDA8371BA427}</id>
-					<name>InScatter</name>
-				</item>
-				<item>
-					<id>{E76BB877-FB76-4A13-9E66-0F7CE4D04DD9}</id>
-					<name>Ambient</name>
-				</item>
-				<item>
-					<id>{2B5F91C4-8E07-4A63-9D18-70C4E2A5B3F9}</id>
-					<name>WorldPosition</name>
-				</item>
-				<item>
-					<id>{D0417E8B-63A9-4C25-BE71-58F3A906C142}</id>
-					<name>Elevation</name>
-				</item>
-			</inputPins>
-			<outputPins>
-				<item>
-					<id>{0C3E7A11-9D5B-4E3C-8F6A-2B47D1905E84}</id>
-					<name>Output</name>
-					<type>Vector</type>
-				</item>
-			</outputPins>
-			<script><![CDATA[// Medium properties for this froxel, as intensive quantities so the integration
-// pass can weight them by each froxel's real world space thickness, and so that
-// temporal reprojection stays valid.
-//
-// rgb is the in-scattered source term per unit length; it carries the scattering
-// coefficient, which is proportional to density - denser fog scatters more -
-// otherwise the integral saturates at source/extinction and raising the density
-// would make the fog dimmer.
-//
-// a is the extinction coefficient per unit length. Deliberately not divided by
-// the slice count: what a froxel absorbs depends on how thick it is in metres,
-// which only the integration pass knows.
-
-// Height attenuation. The fog has a top: the distance fog only accumulates below
-// FogElevation, so the volume has to agree with it or fog would fill the frustum
-// above the plane while the distance fog correctly leaves it clear.
-//
-// Smoothstepped over a short band rather than cut hard, because a hard plane
-// quantises to the froxel grid - far slices are metres thick under the quadratic
-// depth distribution - and would stair-step visibly where the plane crosses.
-//
-// This is also where heterogeneous density belongs. Anything that modulates the
-// medium per froxel - 3D noise, a density texture, an artist placed volume -
-// multiplies into 'attenuation', since the froxel's world position is already to
-// hand here.
-const float c_elevationFalloff = 2.0f;
-
-const float height = $WorldPosition.y - $Elevation;
-const float attenuation = 1.0f - smoothstep(0.0f, c_elevationFalloff, height);
-
-// Scattering and extinction fall off together, keeping the albedo constant, so
-// the medium simply thins out above the plane rather than changing character.
-const float extinction = $MediumDensity * attenuation;
-
-$Output = vec4($MediumColor.rgb * extinction * ($InScatter.rgb + $Ambient.rgb), extinction);
-]]></script>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
 			<id>{D7F1C4B0-58E2-4A16-9C7D-3F2B806E519A}</id>
@@ -1021,8 +934,8 @@ else
 			<id>{5F3D8A17-4C29-4B60-9E81-A2704D6BC395}</id>
 			<comment/>
 			<position>
-				<first>-946</first>
-				<second>378</second>
+				<first>-1002</first>
+				<second>200</second>
 			</position>
 			<parameterDeclaration>{EA77CECB-1DC2-E340-B4CE-3E94B17C8061}</parameterDeclaration>
 		</item>
@@ -1030,8 +943,8 @@ else
 			<id>{B8E73A29-177B-4407-9884-6CC25245AA77}</id>
 			<comment/>
 			<position>
-				<first>-642</first>
-				<second>426</second>
+				<first>-698</first>
+				<second>248</second>
 			</position>
 			<name>IrradianceAmbient</name>
 			<technique/>
@@ -1126,8 +1039,8 @@ $Output = vec4(dc * 0.2820947917738781f, 1.0f);
 			<id>{0A5C93E1-64BD-4F7A-8C26-D1E4970B58F3}</id>
 			<comment><![CDATA[No irradiance grid in the scene; no ambient in-scattering.]]></comment>
 			<position>
-				<first>-542</first>
-				<second>565</second>
+				<first>-598</first>
+				<second>387</second>
 			</position>
 			<value>0, 0, 0, 0</value>
 		</item>
@@ -1135,8 +1048,8 @@ $Output = vec4(dc * 0.2820947917738781f, 1.0f);
 			<id>{B3E7D52A-08C4-4916-A7F1-6C205E8B94D7}</id>
 			<comment/>
 			<position>
-				<first>-268</first>
-				<second>466</second>
+				<first>-324</first>
+				<second>288</second>
 			</position>
 			<parameterName>World_IrradianceEnable</parameterName>
 		</item>
@@ -1144,8 +1057,8 @@ $Output = vec4(dc * 0.2820947917738781f, 1.0f);
 			<id>{2E9C4B08-71DA-4F35-8C60-19A7E5D3B842}</id>
 			<comment/>
 			<position>
-				<first>-962</first>
-				<second>480</second>
+				<first>-1018</first>
+				<second>302</second>
 			</position>
 			<parameterDeclaration>{B5DD3CAE-937A-014D-B369-DB0468FA5DF9}</parameterDeclaration>
 		</item>
@@ -1153,8 +1066,8 @@ $Output = vec4(dc * 0.2820947917738781f, 1.0f);
 			<id>{7A16C5F3-2D48-4E09-B571-C4980E62A3D1}</id>
 			<comment/>
 			<position>
-				<first>-962</first>
-				<second>531</second>
+				<first>-1018</first>
+				<second>353</second>
 			</position>
 			<parameterDeclaration>{F702C3A1-3468-F141-890D-A677B0CF83BB}</parameterDeclaration>
 		</item>
@@ -1162,8 +1075,8 @@ $Output = vec4(dc * 0.2820947917738781f, 1.0f);
 			<id>{C08B394E-6F52-4A7D-9218-3D5E1BA0C764}</id>
 			<comment/>
 			<position>
-				<first>-930</first>
-				<second>582</second>
+				<first>-986</first>
+				<second>404</second>
 			</position>
 			<parameterDeclaration>{BE897B94-B1E4-6E49-94F9-1E2F10BFC5A3}</parameterDeclaration>
 		</item>
@@ -1180,8 +1093,8 @@ $Output = vec4(dc * 0.2820947917738781f, 1.0f);
 			<id>{206CEA2C-810A-42A0-BD17-244B3EA8DCDD}</id>
 			<comment/>
 			<position>
-				<first>-882</first>
-				<second>429</second>
+				<first>-938</first>
+				<second>251</second>
 			</position>
 			<name>L_WorldPosition</name>
 		</item>
@@ -1279,8 +1192,8 @@ $Output = vec4(dc * 0.2820947917738781f, 1.0f);
 			<id>{A75C2E10-4B86-49DF-8C03-16E9D74B052A}</id>
 			<comment><![CDATA[Top of the fog, world space.]]></comment>
 			<position>
-				<first>96</first>
-				<second>531</second>
+				<first>89</first>
+				<second>415</second>
 			</position>
 			<parameterDeclaration>{84DB5F00-D485-4005-8024-04345325CF79}</parameterDeclaration>
 		</item>
@@ -1288,10 +1201,57 @@ $Output = vec4(dc * 0.2820947917738781f, 1.0f);
 			<id>{A0621D3E-1A45-DD4A-BF86-E697094433FD}</id>
 			<comment/>
 			<position>
-				<first>144</first>
-				<second>477</second>
+				<first>137</first>
+				<second>567</second>
 			</position>
 			<name>L_WorldPosition</name>
+		</item>
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
+			<id>{F4A3CAD2-F144-ED41-86C5-5654A0B2A2E3}</id>
+			<comment><![CDATA[Tag_Medium]]></comment>
+			<position>
+				<first>400</first>
+				<second>377</second>
+			</position>
+			<fragmentGuid>{B9E1127F-C81B-AF40-8989-368748993908}</fragmentGuid>
+			<inputPins>
+				<item>
+					<id>{6DECAABA-2B6D-D047-926D-DA008C599B17}</id>
+					<name>Ambient</name>
+					<optional>false</optional>
+				</item>
+				<item>
+					<id>{8E05D389-1333-8A49-B8A9-9026AE3F8B35}</id>
+					<name>Elevation</name>
+					<optional>false</optional>
+				</item>
+				<item>
+					<id>{3C0B2E5E-CDB3-2244-806F-52EC3A9E340D}</id>
+					<name>InScatter</name>
+					<optional>false</optional>
+				</item>
+				<item>
+					<id>{D910DD1D-529F-D442-89FA-DF66D23072F7}</id>
+					<name>MediumColor</name>
+					<optional>false</optional>
+				</item>
+				<item>
+					<id>{6C75F1B9-06D6-8349-A51C-5378E6ED7AD3}</id>
+					<name>MediumDensity</name>
+					<optional>false</optional>
+				</item>
+				<item>
+					<id>{4AA8A18D-9B46-1241-AEE7-D3C084AB88F3}</id>
+					<name>WorldPosition</name>
+					<optional>false</optional>
+				</item>
+			</inputPins>
+			<outputPins>
+				<item>
+					<id>{6892F876-F28C-B44A-A3BC-0E542F4D9EE1}</id>
+					<name>Output</name>
+				</item>
+			</outputPins>
 		</item>
 	</nodes>
 	<edges>
@@ -1817,7 +1777,7 @@ $Output = vec4(dc * 0.2820947917738781f, 1.0f);
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[67]"/>
+				<node ref="/object/nodes/item[66]"/>
 				<id>{6E0A4F71-3C5D-4A88-9B12-70E1D5C4A833}</id>
 			</source>
 			<destination>
@@ -1877,37 +1837,7 @@ $Output = vec4(dc * 0.2820947917738781f, 1.0f);
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[21]"/>
-				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
-			</source>
-			<destination>
 				<node ref="/object/nodes/item[65]"/>
-				<id>{6192DB33-6937-4704-807C-D96231D47B72}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[22]"/>
-				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[65]"/>
-				<id>{A729CE37-A211-4BD4-A7F9-CEF50ECEC08F}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[62]"/>
-				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[65]"/>
-				<id>{71716AB0-1418-4DD8-AE26-DDA8371BA427}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[66]"/>
 				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
 			</source>
 			<destination>
@@ -1917,42 +1847,42 @@ $Output = vec4(dc * 0.2820947917738781f, 1.0f);
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[65]"/>
-				<id>{0C3E7A11-9D5B-4E3C-8F6A-2B47D1905E84}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[67]"/>
-				<id>{8F4BFB54-EF3E-4DBF-A46B-A7B7D101F31C}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
 				<node ref="/object/nodes/item[46]"/>
 				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[67]"/>
+				<node ref="/object/nodes/item[66]"/>
 				<id>{B0FAC123-6FEA-4450-B8D0-50C5D2A0CA02}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[70]"/>
+				<node ref="/object/nodes/item[69]"/>
 				<id>{D51E6077-37E9-4B1C-86D2-92DA544DC613}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[71]"/>
+				<node ref="/object/nodes/item[70]"/>
 				<id>{92AA3735-BB4C-4541-81DA-AC500930B2E6}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[68]"/>
+				<node ref="/object/nodes/item[67]"/>
 				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[69]"/>
+				<node ref="/object/nodes/item[68]"/>
 				<id>{6CB2FF98-BAD2-43F8-8478-38E770E0563D}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[71]"/>
+				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[68]"/>
+				<id>{01EBE9A6-CFA9-4D00-862F-4A707C203794}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
@@ -1961,8 +1891,8 @@ $Output = vec4(dc * 0.2820947917738781f, 1.0f);
 				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[69]"/>
-				<id>{01EBE9A6-CFA9-4D00-862F-4A707C203794}</id>
+				<node ref="/object/nodes/item[68]"/>
+				<id>{68A5E9F6-A0D5-468E-B9E5-9DD4CC806F3E}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
@@ -1971,27 +1901,17 @@ $Output = vec4(dc * 0.2820947917738781f, 1.0f);
 				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[69]"/>
-				<id>{68A5E9F6-A0D5-468E-B9E5-9DD4CC806F3E}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[74]"/>
-				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[69]"/>
+				<node ref="/object/nodes/item[68]"/>
 				<id>{4705B506-9404-4ECD-B3A8-DAD522CB6552}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[69]"/>
+				<node ref="/object/nodes/item[68]"/>
 				<id>{4A7CC092-4332-4B28-8E2B-CD6D1F68F25B}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[71]"/>
+				<node ref="/object/nodes/item[70]"/>
 				<id>{A1DDB166-9422-45A3-AE93-6702275DAD1C}</id>
 			</destination>
 		</item>
@@ -2001,17 +1921,17 @@ $Output = vec4(dc * 0.2820947917738781f, 1.0f);
 				<id>{70C35B91-1C36-454C-98EC-7514AACF73C8}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[75]"/>
+				<node ref="/object/nodes/item[74]"/>
 				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[76]"/>
+				<node ref="/object/nodes/item[75]"/>
 				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[69]"/>
+				<node ref="/object/nodes/item[68]"/>
 				<id>{69989B50-2621-46B9-8B61-9D184E7CF59C}</id>
 			</destination>
 		</item>
@@ -2021,13 +1941,13 @@ $Output = vec4(dc * 0.2820947917738781f, 1.0f);
 				<id>{70C35B91-1C36-454C-98EC-7514AACF73C8}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[77]"/>
+				<node ref="/object/nodes/item[76]"/>
 				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[78]"/>
+				<node ref="/object/nodes/item[77]"/>
 				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
 			</source>
 			<destination>
@@ -2037,12 +1957,22 @@ $Output = vec4(dc * 0.2820947917738781f, 1.0f);
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
+				<node ref="/object/nodes/item[78]"/>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[66]"/>
+				<id>{9C59542D-226C-4B2C-89FB-B198B2364552}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
 				<node ref="/object/nodes/item[79]"/>
 				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[67]"/>
-				<id>{9C59542D-226C-4B2C-89FB-B198B2364552}</id>
+				<node ref="/object/nodes/item[66]"/>
+				<id>{023B9249-84A3-4723-A23E-5E880B8B122F}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
@@ -2051,8 +1981,8 @@ $Output = vec4(dc * 0.2820947917738781f, 1.0f);
 				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[67]"/>
-				<id>{023B9249-84A3-4723-A23E-5E880B8B122F}</id>
+				<node ref="/object/nodes/item[66]"/>
+				<id>{7CE2FCAB-2A4D-4AFA-95DD-C8867AC710E1}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
@@ -2061,17 +1991,7 @@ $Output = vec4(dc * 0.2820947917738781f, 1.0f);
 				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[67]"/>
-				<id>{7CE2FCAB-2A4D-4AFA-95DD-C8867AC710E1}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[82]"/>
-				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[67]"/>
+				<node ref="/object/nodes/item[66]"/>
 				<id>{223E525F-5CB9-4FEC-A599-B94DC239428F}</id>
 			</destination>
 		</item>
@@ -2081,23 +2001,23 @@ $Output = vec4(dc * 0.2820947917738781f, 1.0f);
 				<id>{72D7AC3C-9B4B-5142-93FB-40DC055DDADE}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[83]"/>
+				<node ref="/object/nodes/item[82]"/>
 				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[84]"/>
+				<node ref="/object/nodes/item[83]"/>
 				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[67]"/>
+				<node ref="/object/nodes/item[66]"/>
 				<id>{0519480B-5A3D-49E7-BAF6-642020C28F79}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[85]"/>
+				<node ref="/object/nodes/item[84]"/>
 				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
 			</source>
 			<destination>
@@ -2107,7 +2027,7 @@ $Output = vec4(dc * 0.2820947917738781f, 1.0f);
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[86]"/>
+				<node ref="/object/nodes/item[85]"/>
 				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
 			</source>
 			<destination>
@@ -2117,32 +2037,72 @@ $Output = vec4(dc * 0.2820947917738781f, 1.0f);
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[71]"/>
-				<id>{9D9FA2FC-9298-4A6F-88A9-A055F8A91F52}</id>
+				<node ref="/object/nodes/item[86]"/>
+				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[65]"/>
-				<id>{E76BB877-FB76-4A13-9E66-0F7CE4D04DD9}</id>
+				<node ref="/object/nodes/item[88]"/>
+				<id>{8E05D389-1333-8A49-B8A9-9026AE3F8B35}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
 				<node ref="/object/nodes/item[87]"/>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[88]"/>
+				<id>{4AA8A18D-9B46-1241-AEE7-D3C084AB88F3}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[70]"/>
+				<id>{9D9FA2FC-9298-4A6F-88A9-A055F8A91F52}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[88]"/>
+				<id>{6DECAABA-2B6D-D047-926D-DA008C599B17}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[62]"/>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[88]"/>
+				<id>{3C0B2E5E-CDB3-2244-806F-52EC3A9E340D}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[22]"/>
 				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[65]"/>
-				<id>{D0417E8B-63A9-4C25-BE71-58F3A906C142}</id>
+				<node ref="/object/nodes/item[88]"/>
+				<id>{6C75F1B9-06D6-8349-A51C-5378E6ED7AD3}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[21]"/>
+				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[88]"/>
+				<id>{D910DD1D-529F-D442-89FA-DF66D23072F7}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
 				<node ref="/object/nodes/item[88]"/>
-				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+				<id>{6892F876-F28C-B44A-A3BC-0E542F4D9EE1}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[65]"/>
-				<id>{2B5F91C4-8E07-4A63-9D18-70C4E2A5B3F9}</id>
+				<node ref="/object/nodes/item[66]"/>
+				<id>{8F4BFB54-EF3E-4DBF-A46B-A7B7D101F31C}</id>
 			</destination>
 		</item>
 	</edges>

@@ -20,6 +20,7 @@
 #include "World/EntityData.h"
 #include "World/IEntityComponentData.h"
 #include "World/IEntityEventData.h"
+#include "World/IWorldComponentData.h"
 #include "World/Editor/EntityPipeline.h"
 
 namespace traktor::world
@@ -60,7 +61,7 @@ void EntityPipeline::destroy()
 
 TypeInfoSet EntityPipeline::getAssetTypes() const
 {
-	return makeTypeInfoSet< EntityData, IEntityEventData, IEntityComponentData >();
+	return makeTypeInfoSet< EntityData, IEntityEventData, IEntityComponentData, IWorldComponentData >();
 }
 
 bool EntityPipeline::shouldCache() const
@@ -239,6 +240,37 @@ Ref< ISerializable > EntityPipeline::buildProduct(
 		}
 
 		return reflection->clone(); 
+	}
+	else if (auto worldComponentData = dynamic_type_cast< const IWorldComponentData* >(sourceAsset))
+	{
+		// World components have no owner entity; only replace nested entities with products.
+		Ref< Reflection > reflection = Reflection::create(sourceAsset);
+		if (!reflection)
+			return nullptr;
+
+		RefArray< ReflectionMember > objectMembers;
+		reflection->findMembers(RfpMemberType(type_of< RfmObject >()), objectMembers);
+		while (!objectMembers.empty())
+		{
+			Ref< RfmObject > objectMember = checked_type_cast< RfmObject*, false >(objectMembers.front());
+			objectMembers.pop_front();
+
+			if (auto entityData = dynamic_type_cast< const EntityData* >(objectMember->get()))
+			{
+				// Build entity trough pipeline; replace entity with product.
+				Ref< ISerializable > product = pipelineBuilder->buildProduct(sourceInstance, entityData);
+				objectMember->set(product);
+			}
+			else if (objectMember->get())
+			{
+				// Scan recursively through object references; add to member list.
+				Ref< Reflection > childReflection = Reflection::create(objectMember->get());
+				if (childReflection)
+					childReflection->findMembers(RfpMemberType(type_of< RfmObject >()), objectMembers);
+			}
+		}
+
+		return reflection->clone();
 	}
 	else if (auto eventData = dynamic_type_cast< const IEntityEventData* >(sourceAsset))
 	{

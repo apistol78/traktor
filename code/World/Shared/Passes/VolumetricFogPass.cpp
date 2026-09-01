@@ -33,7 +33,6 @@ namespace traktor::world
 namespace
 {
 
-const resource::Id< render::Shader > c_injectShader(Guid(L"{FEDA90CE-25C6-BC4D-9767-EA4B45F4A043}"));
 const resource::Id< render::Shader > c_integrateShader(Guid(L"{3C960DFE-C220-460C-9CF9-0182B798D4CB}"));
 const int32_t c_sliceCount = 128;
 
@@ -50,8 +49,6 @@ VolumetricFogPass::VolumetricFogPass(const WorldRenderSettings& settings)
 
 bool VolumetricFogPass::create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem, const WorldCreateDesc& desc)
 {
-	if (!resourceManager->bind(c_injectShader, m_injectShader))
-		return false;
 	if (!resourceManager->bind(c_integrateShader, m_integrateShader))
 		return false;
 
@@ -81,7 +78,6 @@ void VolumetricFogPass::destroy()
 	safeDestroy(m_volumeTextures[0]);
 	safeDestroy(m_volumeTextures[1]);
 	safeDestroy(m_integratedTexture);
-	m_injectShader.clear();
 	m_integrateShader.clear();
 }
 
@@ -100,7 +96,7 @@ render::RGTexture VolumetricFogPass::setup(
 	T_PROFILER_SCOPE(L"VolumetricFogPass::setup");
 
 	Ref< const FogComponent > fog = gatheredView.fog;
-	if (!fog || !fog->m_volumetricFogEnable)
+	if (!fog || !fog->m_volumetricFogEnable || !fog->m_mediumShader)
 		return render::RGTexture::Invalid;
 
 	const auto& shadowSettings = m_settings.shadowSettings[(int32_t)m_shadowsQuality];
@@ -126,9 +122,9 @@ render::RGTexture VolumetricFogPass::setup(
 		// one compiles the term out rather than sampling an absent grid 2M times
 		// per frame.
 		render::Shader::Permutation perm;
-		m_injectShader->setCombination(ShaderPermutation::RayTracingEnable, (bool)(gatheredView.rtWorldTopLevel != nullptr), perm);
-		m_injectShader->setCombination(ShaderPermutation::IrradianceEnable, (bool)(gatheredView.irradianceGrid != nullptr), perm);
-		const auto injectLightsProgram = m_injectShader->getProgram(perm);
+		fog->m_mediumShader->setCombination(ShaderPermutation::RayTracingEnable, (bool)(gatheredView.rtWorldTopLevel != nullptr), perm);
+		fog->m_mediumShader->setCombination(ShaderPermutation::IrradianceEnable, (bool)(gatheredView.irradianceGrid != nullptr), perm);
+		const auto injectLightsProgram = fog->m_mediumShader->getProgram(perm);
 		if (!injectLightsProgram)
 			return;
 

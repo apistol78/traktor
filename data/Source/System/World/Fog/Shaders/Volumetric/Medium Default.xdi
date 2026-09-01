@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
+	<nodes>
+		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
+			<id>{7F3202C3-C84E-874C-83AC-34975EB47EC7}</id>
+			<comment/>
+			<position>
+				<first>264</first>
+				<second>-766</second>
+			</position>
+			<name>Medium</name>
+			<technique/>
+			<domain>Undefined</domain>
+			<localSize>
+				<X>1</X>
+				<Y>1</Y>
+				<Z>1</Z>
+			</localSize>
+			<useRayTracing>false</useRayTracing>
+			<include/>
+			<inputPins>
+				<item>
+					<id>{6192DB33-6937-4704-807C-D96231D47B72}</id>
+					<name>MediumColor</name>
+				</item>
+				<item>
+					<id>{A729CE37-A211-4BD4-A7F9-CEF50ECEC08F}</id>
+					<name>MediumDensity</name>
+				</item>
+				<item>
+					<id>{71716AB0-1418-4DD8-AE26-DDA8371BA427}</id>
+					<name>InScatter</name>
+				</item>
+				<item>
+					<id>{E76BB877-FB76-4A13-9E66-0F7CE4D04DD9}</id>
+					<name>Ambient</name>
+				</item>
+				<item>
+					<id>{2B5F91C4-8E07-4A63-9D18-70C4E2A5B3F9}</id>
+					<name>WorldPosition</name>
+				</item>
+				<item>
+					<id>{D0417E8B-63A9-4C25-BE71-58F3A906C142}</id>
+					<name>Elevation</name>
+				</item>
+			</inputPins>
+			<outputPins>
+				<item>
+					<id>{0C3E7A11-9D5B-4E3C-8F6A-2B47D1905E84}</id>
+					<name>Output</name>
+					<type>Vector</type>
+				</item>
+			</outputPins>
+			<script><![CDATA[// Medium properties for this froxel, as intensive quantities so the integration
+// pass can weight them by each froxel's real world space thickness, and so that
+// temporal reprojection stays valid.
+//
+// rgb is the in-scattered source term per unit length; it carries the scattering
+// coefficient, which is proportional to density - denser fog scatters more -
+// otherwise the integral saturates at source/extinction and raising the density
+// would make the fog dimmer.
+//
+// a is the extinction coefficient per unit length. Deliberately not divided by
+// the slice count: what a froxel absorbs depends on how thick it is in metres,
+// which only the integration pass knows.
+
+// Height attenuation. The fog has a top: the distance fog only accumulates below
+// FogElevation, so the volume has to agree with it or fog would fill the frustum
+// above the plane while the distance fog correctly leaves it clear.
+//
+// Smoothstepped over a short band rather than cut hard, because a hard plane
+// quantises to the froxel grid - far slices are metres thick under the quadratic
+// depth distribution - and would stair-step visibly where the plane crosses.
+//
+// This is also where heterogeneous density belongs. Anything that modulates the
+// medium per froxel - 3D noise, a density texture, an artist placed volume -
+// multiplies into 'attenuation', since the froxel's world position is already to
+// hand here.
+const float c_elevationFalloff = 2.0f;
+
+const float height = $WorldPosition.y - $Elevation;
+const float attenuation = 1.0f - smoothstep(0.0f, c_elevationFalloff, height);
+
+// Scattering and extinction fall off together, keeping the albedo constant, so
+// the medium simply thins out above the plane rather than changing character.
+const float extinction = $MediumDensity * attenuation;
+
+$Output = vec4($MediumColor.rgb * extinction * ($InScatter.rgb + $Ambient.rgb), extinction);
+]]></script>
+		</item>
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
+			<id>{D910DD1D-529F-D442-89FA-DF66D23072F7}</id>
+			<comment/>
+			<position>
+				<first>-69</first>
+				<second>-820</second>
+			</position>
+			<name>MediumColor</name>
+			<optional>false</optional>
+		</item>
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
+			<id>{6C75F1B9-06D6-8349-A51C-5378E6ED7AD3}</id>
+			<comment/>
+			<position>
+				<first>-85</first>
+				<second>-774</second>
+			</position>
+			<name>MediumDensity</name>
+			<optional>false</optional>
+		</item>
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
+			<id>{3C0B2E5E-CDB3-2244-806F-52EC3A9E340D}</id>
+			<comment/>
+			<position>
+				<first>-37</first>
+				<second>-728</second>
+			</position>
+			<name>InScatter</name>
+			<optional>false</optional>
+		</item>
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
+			<id>{6DECAABA-2B6D-D047-926D-DA008C599B17}</id>
+			<comment/>
+			<position>
+				<first>-37</first>
+				<second>-682</second>
+			</position>
+			<name>Ambient</name>
+			<optional>false</optional>
+		</item>
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
+			<id>{4AA8A18D-9B46-1241-AEE7-D3C084AB88F3}</id>
+			<comment/>
+			<position>
+				<first>-69</first>
+				<second>-636</second>
+			</position>
+			<name>WorldPosition</name>
+			<optional>false</optional>
+		</item>
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
+			<id>{8E05D389-1333-8A49-B8A9-9026AE3F8B35}</id>
+			<comment/>
+			<position>
+				<first>-37</first>
+				<second>-590</second>
+			</position>
+			<name>Elevation</name>
+			<optional>false</optional>
+		</item>
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{6892F876-F28C-B44A-A3BC-0E542F4D9EE1}</id>
+			<comment/>
+			<position>
+				<first>661</first>
+				<second>-718</second>
+			</position>
+			<name>Output</name>
+		</item>
+	</nodes>
+	<edges>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[6]"/>
+				<id>{9AE16BB1-EB68-45A0-A878-8D01C210082B}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item"/>
+				<id>{D0417E8B-63A9-4C25-BE71-58F3A906C142}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[5]"/>
+				<id>{9AE16BB1-EB68-45A0-A878-8D01C210082B}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item"/>
+				<id>{2B5F91C4-8E07-4A63-9D18-70C4E2A5B3F9}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[4]"/>
+				<id>{9AE16BB1-EB68-45A0-A878-8D01C210082B}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item"/>
+				<id>{E76BB877-FB76-4A13-9E66-0F7CE4D04DD9}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[3]"/>
+				<id>{9AE16BB1-EB68-45A0-A878-8D01C210082B}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item"/>
+				<id>{71716AB0-1418-4DD8-AE26-DDA8371BA427}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[2]"/>
+				<id>{9AE16BB1-EB68-45A0-A878-8D01C210082B}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item"/>
+				<id>{A729CE37-A211-4BD4-A7F9-CEF50ECEC08F}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[1]"/>
+				<id>{9AE16BB1-EB68-45A0-A878-8D01C210082B}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item"/>
+				<id>{6192DB33-6937-4704-807C-D96231D47B72}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item"/>
+				<id>{0C3E7A11-9D5B-4E3C-8F6A-2B47D1905E84}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[7]"/>
+				<id>{731844D4-AFDC-4EAA-8B41-C4BA2455898F}</id>
+			</destination>
+		</item>
+	</edges>
+	<groups/>
+</object>

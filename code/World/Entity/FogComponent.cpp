@@ -15,10 +15,11 @@ namespace traktor::world
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.FogComponent", FogComponent, IWorldComponent)
 
-FogComponent::FogComponent(const FogComponentData* data)
+FogComponent::FogComponent(const FogComponentData* data, const resource::Proxy< render::Shader >& mediumShader)
 {
 	m_mediumColor = data->m_mediumColor;
 	m_mediumDensity = data->m_mediumDensity;
+	m_mediumShader = mediumShader;
 
 	m_distanceFogEnable = data->m_distanceFogEnable;
 	m_fogDistance = data->m_fogDistance;
@@ -34,6 +35,7 @@ FogComponent::FogComponent(const FogComponentData* data)
 
 void FogComponent::destroy()
 {
+	m_mediumShader.clear();
 }
 
 void FogComponent::update(World* world, const UpdateParams& update)
