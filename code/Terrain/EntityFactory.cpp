@@ -12,6 +12,8 @@
 #include "Terrain/EntityFactory.h"
 #include "Terrain/ForestComponent.h"
 #include "Terrain/ForestComponentData.h"
+#include "Terrain/GrassComponent.h"
+#include "Terrain/GrassComponentData.h"
 #include "Terrain/OceanComponent.h"
 #include "Terrain/OceanComponentData.h"
 #include "Terrain/RiverComponent.h"
@@ -39,6 +41,7 @@ const TypeInfoSet EntityFactory::getEntityComponentTypes() const
 {
 	TypeInfoSet typeSet;
 	typeSet.insert< ForestComponentData >();
+	typeSet.insert< GrassComponentData >();
 	typeSet.insert< OceanComponentData >();
 	typeSet.insert< RiverComponentData >();
 	typeSet.insert< RubbleComponentData >();
@@ -54,6 +57,12 @@ Ref< world::IEntityComponent > EntityFactory::createEntityComponent(const world:
 		Ref< ForestComponent > forestComponent = new ForestComponent();
 		if (forestComponent->create(m_resourceManager, m_renderSystem, *forestComponentData))
 			return forestComponent;
+	}
+	else if (auto grassComponentData = dynamic_type_cast< const GrassComponentData* >(&entityComponentData))
+	{
+		Ref< GrassComponent > grassComponent = new GrassComponent();
+		if (grassComponent->create(m_resourceManager, m_renderSystem, *grassComponentData))
+			return grassComponent;
 	}
 	else if (auto oceanComponentData = dynamic_type_cast< const OceanComponentData* >(&entityComponentData))
 	{

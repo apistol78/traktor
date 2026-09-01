@@ -9,6 +9,7 @@
 #include "Editor/IPipelineDepends.h"
 #include "Terrain/Editor/TerrainEntityPipeline.h"
 #include "Terrain/ForestComponentData.h"
+#include "Terrain/GrassComponentData.h"
 #include "Terrain/OceanComponentData.h"
 #include "Terrain/RiverComponentData.h"
 #include "Terrain/RubbleComponentData.h"
@@ -24,6 +25,7 @@ TypeInfoSet TerrainEntityPipeline::getAssetTypes() const
 {
 	TypeInfoSet typeSet;
 	typeSet.insert< ForestComponentData >();
+	typeSet.insert< GrassComponentData >();
 	typeSet.insert< OceanComponentData >();
 	typeSet.insert< RiverComponentData >();
 	typeSet.insert< RubbleComponentData >();
@@ -45,6 +47,10 @@ bool TerrainEntityPipeline::buildDependencies(
 		pipelineDepends->addDependency(forestComponentData->m_lod0mesh, editor::PdfBuild | editor::PdfResource);
 		pipelineDepends->addDependency(forestComponentData->m_lod1mesh, editor::PdfBuild | editor::PdfResource);
 		pipelineDepends->addDependency(forestComponentData->m_lod2mesh, editor::PdfBuild | editor::PdfResource);
+	}
+	else if (const GrassComponentData* grassComponentData = dynamic_type_cast< const GrassComponentData* >(sourceAsset))
+	{
+		pipelineDepends->addDependency(grassComponentData->m_shader, editor::PdfBuild | editor::PdfResource);
 	}
 	else if (const OceanComponentData* oceanComponentData = dynamic_type_cast< const OceanComponentData* >(sourceAsset))
 	{
