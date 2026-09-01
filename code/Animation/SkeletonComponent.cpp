@@ -52,10 +52,12 @@ void SkeletonComponent::destroy()
 {
 	synchronize();
 	safeDestroy(m_poseController);
+	m_owner = nullptr;
 }
 
 void SkeletonComponent::setOwner(world::Entity* owner)
 {
+	m_owner = owner;
 	if (m_poseController)
 		m_poseController->setOwner(owner);
 }
@@ -106,6 +108,13 @@ void SkeletonComponent::update(const world::UpdateParams& update)
 {
 	synchronize();
 
+#if defined(T_USE_UPDATE_JOBS)
+	// The pose is evaluated in a job which finishes after this update; an entity
+	// transform produced by the previous evaluation must be applied here, back on
+	// the update thread, thus lagging one update behind the pose.
+	applyEntityTransform();
+#endif
+
 	// Calculate original bone transforms in object space.
 	if (m_skeleton.changed())
 	{
@@ -145,6 +154,7 @@ void SkeletonComponent::update(const world::UpdateParams& update)
 	});
 #else
 	updatePoseController(update.alternateTime, deltaTime);
+	applyEntityTransform();
 #endif
 }
 
@@ -265,6 +275,28 @@ void SkeletonComponent::updatePoseController(double time, double deltaTime)
 	const size_t skeletonJointCount = m_jointTransforms.size();
 	for (size_t i = m_poseTransforms.size(); i < skeletonJointCount; ++i)
 		m_poseTransforms.push_back(m_jointTransforms[i]);
+}
+
+void SkeletonComponent::applyEntityTransform()
+{
+	if (m_owner == nullptr || m_poseController == nullptr)
+		return;
+
+	const IPoseController* activePoseController = m_poseController->getActivePoseController();
+	if (activePoseController == nullptr)
+		return;
+
+	Transform entityTransform;
+	if (!activePoseController->getEntityTransform(entityTransform))
+		return;
+	if (fuzzyEqual(entityTransform, m_transform))
+		return;
+
+	// The owner skips the currently updating component when propagating the transform,
+	// so setTransform is not re-entered here; keep our own copy in sync manually. The
+	// controller already accounted for this transform when evaluating the pose.
+	m_transform = entityTransform;
+	m_owner->setTransform(entityTransform);
 }
 
 }

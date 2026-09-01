@@ -48,6 +48,19 @@ public:
 
 	virtual void setTransform(const Transform& transform) = 0;
 
+	/*! Get world transform of the owner entity as driven by this controller.
+	 *
+	 * Pose controllers normally only produce an object space pose and leave the owner
+	 * entity where it is. A controller which moves the entity itself (e.g. a rag doll
+	 * tracking its root limb) reports the new entity world transform through this
+	 * method; the skeleton component applies it to the owner entity after the pose
+	 * has been evaluated.
+	 *
+	 * \param outEntityTransform World transform of owner entity.
+	 * \return True if this controller drives the owner entity's transform.
+	 */
+	virtual bool getEntityTransform(Transform& outEntityTransform) const { return false; }
+
 	/*! Reset controller to match a given pose.
 	 *
 	 * Called when a controller becomes active so it can initialize itself from the

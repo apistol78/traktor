@@ -32,6 +32,7 @@ bool RagDollPoseController::create(
 	const RefArray< const physics::ShapeDesc >& limbShapes,
 	const RefArray< physics::Joint >& joints,
 	const AlignedVector< AlignedVector< Binding > >& jointBindings,
+	const Binding& driveBinding,
 	const Transform& worldTransform
 )
 {
@@ -39,6 +40,7 @@ bool RagDollPoseController::create(
 	m_limbShapes = limbShapes;
 	m_joints = joints;
 	m_jointBindings = jointBindings;
+	m_driveBinding = driveBinding;
 	m_worldTransform = worldTransform;
 	return true;
 }
@@ -70,6 +72,12 @@ void RagDollPoseController::setTransform(const Transform& transform)
 			limb->setTransform(deltaTransform * limb->getTransform());
 	}
 	m_worldTransform = transform;
+}
+
+bool RagDollPoseController::getEntityTransform(Transform& outEntityTransform) const
+{
+	outEntityTransform = m_worldTransform;
+	return true;
 }
 
 void RagDollPoseController::reset(
@@ -107,7 +115,14 @@ bool RagDollPoseController::evaluate(
 	AlignedVector< Transform >& outPoseTransforms
 )
 {
-	const Transform worldTransformInv = worldTransform.inverse();
+	Transform entityTransform = worldTransform;
+	if (m_driveBinding.limb >= 0)
+	{
+		const Transform trackedJointTransform = m_limbs[m_driveBinding.limb]->getTransform() * m_driveBinding.limbToJoint;
+		entityTransform = Transform(trackedJointTransform.translation().xyz1(), worldTransform.rotation());
+	}
+
+	const Transform worldTransformInv = entityTransform.inverse();
 	const uint32_t jointCount = skeleton->getJointCount();
 
 	outPoseTransforms.resize(jointCount);
@@ -176,7 +191,7 @@ bool RagDollPoseController::evaluate(
 	for (uint32_t i = 0; i < jointCount; ++i)
 		resolve(i);
 
-	m_worldTransform = worldTransform;
+	m_worldTransform = entityTransform;
 	return true;
 }
 

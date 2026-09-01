@@ -123,6 +123,7 @@ public:
 	int32_t getUpdatePeriod() const { return m_updatePeriod; }
 
 private:
+	world::Entity* m_owner = nullptr;
 	Transform m_transform;
 	resource::Proxy< Skeleton > m_skeleton;
 	Ref< IPoseController > m_poseController;
@@ -138,6 +139,8 @@ private:
 	double m_deferredDeltaTime = 0.0;
 
 	void updatePoseController(double time, double deltaTime);
+
+	void applyEntityTransform();
 };
 
 }

@@ -63,6 +63,7 @@ public:
 		const RefArray< const physics::ShapeDesc >& limbShapes,
 		const RefArray< physics::Joint >& joints,
 		const AlignedVector< AlignedVector< Binding > >& jointBindings,
+		const Binding& driveBinding,
 		const Transform& worldTransform
 	);
 
@@ -71,6 +72,8 @@ public:
 	virtual void setOwner(world::Entity* owner) override final;
 
 	virtual void setTransform(const Transform& transform) override final;
+
+	virtual bool getEntityTransform(Transform& outEntityTransform) const override final;
 
 	virtual void reset(
 		const Transform& worldTransform,
@@ -119,6 +122,7 @@ private:
 	RefArray< const physics::ShapeDesc > m_limbShapes;
 	RefArray< physics::Joint > m_joints;
 	AlignedVector< AlignedVector< Binding > > m_jointBindings;
+	Binding m_driveBinding;
 	Transform m_worldTransform = Transform::identity();
 };
 
