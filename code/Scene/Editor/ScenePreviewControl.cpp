@@ -472,10 +472,13 @@ void ScenePreviewControl::eventRedraw(RedrawEvent* event)
 		// Use physics; update in steps of 1/60th of a second.
 		if (m_context->getPhysicsEnable())
 		{
-			if (m_lastPhysicsTime > scaledTime)
-				m_lastPhysicsTime = scaledTime;
-
 			const double c_updateDeltaTime = 1.0 / 60.0;
+
+			// Time was reset backwards (rewind); snap to it. A small overshoot from the
+			// previous frame's step is legitimate and must be kept, or steps are
+			// re-simulated whenever the frame rate exceeds the step rate.
+			if (m_lastPhysicsTime > scaledTime + c_updateDeltaTime)
+				m_lastPhysicsTime = scaledTime;
 
 			// Prevent too many iterations in case time has changed too much.
 			if (scaledTime - m_lastPhysicsTime > c_updateDeltaTime * 10.0)
