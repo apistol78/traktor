@@ -81,7 +81,7 @@
 				<first>-800</first>
 				<second>302</second>
 			</position>
-			<value>1</value>
+			<value>2</value>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
 			<id>{0B814E02-1269-496E-A790-3AF872DD72E5}</id>
@@ -90,7 +90,7 @@
 				<first>-808</first>
 				<second>366</second>
 			</position>
-			<value>1</value>
+			<value>0.5</value>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
 			<id>{E0B72036-11E6-4932-9508-3906F676978C}</id>

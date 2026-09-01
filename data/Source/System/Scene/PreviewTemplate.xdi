@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.scene.SceneAsset" version="10">
-	<worldRenderSettings type="traktor.world.WorldRenderSettings" version="40">
+	<worldRenderSettings type="traktor.world.WorldRenderSettings" version="42">
 		<viewNearZ>0.1</viewNearZ>
 		<viewFarZ>10000</viewFarZ>
 		<exposureMode>Fixed</exposureMode>
@@ -13,8 +13,6 @@
 				<cascadingSlices>1</cascadingSlices>
 				<cascadingLambda>1</cascadingLambda>
 				<quantizeProjection>false</quantizeProjection>
-				<maskDenominator>1</maskDenominator>
-				<maskProject>{00000000-0000-0000-0000-000000000000}</maskProject>
 			</disabled>
 			<low>
 				<farZ>70</farZ>
@@ -23,8 +21,6 @@
 				<cascadingSlices>1</cascadingSlices>
 				<cascadingLambda>1.5</cascadingLambda>
 				<quantizeProjection>false</quantizeProjection>
-				<maskDenominator>2</maskDenominator>
-				<maskProject>{D8A7B76E-AB55-8E43-AB60-A35F3135DB3D}</maskProject>
 			</low>
 			<medium>
 				<farZ>80</farZ>
@@ -33,8 +29,6 @@
 				<cascadingSlices>1</cascadingSlices>
 				<cascadingLambda>1.5</cascadingLambda>
 				<quantizeProjection>true</quantizeProjection>
-				<maskDenominator>2</maskDenominator>
-				<maskProject>{D8A7B76E-AB55-8E43-AB60-A35F3135DB3D}</maskProject>
 			</medium>
 			<high>
 				<farZ>120</farZ>
@@ -43,8 +37,6 @@
 				<cascadingSlices>2</cascadingSlices>
 				<cascadingLambda>1.5</cascadingLambda>
 				<quantizeProjection>true</quantizeProjection>
-				<maskDenominator>1</maskDenominator>
-				<maskProject>{D8A7B76E-AB55-8E43-AB60-A35F3135DB3D}</maskProject>
 			</high>
 			<ultra>
 				<farZ>140</farZ>
@@ -53,14 +45,8 @@
 				<cascadingSlices>3</cascadingSlices>
 				<cascadingLambda>1.5</cascadingLambda>
 				<quantizeProjection>true</quantizeProjection>
-				<maskDenominator>1</maskDenominator>
-				<maskProject>{D8A7B76E-AB55-8E43-AB60-A35F3135DB3D}</maskProject>
 			</ultra>
 		</shadowSettings>
-		<fogDistance>90</fogDistance>
-		<fogDensity>0</fogDensity>
-		<fogDensityMax>1</fogDensityMax>
-		<fogColor>1, 1, 1, 1</fogColor>
 		<imageProcess>
 			<disabled>{00000000-0000-0000-0000-000000000000}</disabled>
 			<low>{00000000-0000-0000-0000-000000000000}</low>
@@ -111,10 +97,10 @@
 									<cloudAmbientTop>0.99, 0.98, 1.18, 1</cloudAmbientTop>
 									<cloudAmbientBottom>0.23, 0.39, 0.51, 1</cloudAmbientBottom>
 								</item>
-								<item type="traktor.world.LightComponentData" version="12">
+								<item type="traktor.world.LightComponentData" version="13">
 									<lightType>Directional</lightType>
 									<color>1, 0.976471, 0.952941, 0</color>
-									<intensity>4</intensity>
+									<intensity>40</intensity>
 									<castShadow>true</castShadow>
 									<nearRange>0</nearRange>
 									<farRange>20</farRange>
@@ -138,14 +124,9 @@
 								<rotation>0, 0, 0, 1</rotation>
 							</transform>
 							<components>
-								<item type="traktor.world.ProbeComponentData">
+								<item type="traktor.world.ProbeComponentData" version="1">
 									<texture>{00000000-0000-0000-0000-000000000000}</texture>
 									<intensity>1</intensity>
-									<local>false</local>
-									<volume>
-										<mn>0, 0, 0, 1</mn>
-										<mx>0, 0, 0, 1</mx>
-									</volume>
 								</item>
 							</components>
 						</item>
