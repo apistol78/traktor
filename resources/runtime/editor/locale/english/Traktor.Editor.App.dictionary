@@ -122,10 +122,6 @@
 			<second>Filter</second>
 		</item>
 		<item>
-			<first>DATABASE_FILTER_ASSETS</first>
-			<second>Filter assets</second>
-		</item>
-		<item>
 			<first>DATABASE_FILTER_DEPENDENCIES</first>
 			<second>Filter instance&apos;s dependencies</second>
 		</item>

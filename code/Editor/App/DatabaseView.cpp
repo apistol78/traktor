@@ -33,7 +33,6 @@
 #include "Editor/App/InstanceClipboardData.h"
 #include "Editor/App/NewInstanceDialog.h"
 #include "Editor/Asset.h"
-#include "Editor/Assets.h"
 #include "Editor/IBrowsePreview.h"
 #include "Editor/IEditor.h"
 #include "Editor/IEditorPage.h"
@@ -364,7 +363,6 @@ bool DatabaseView::create(ui::Widget* parent)
 	if (!m_toolSelection->create(this))
 		return false;
 	m_toolSelection->addImage(new ui::StyleBitmap(L"Editor.Database.NameFilter"));
-	m_toolSelection->addImage(new ui::StyleBitmap(L"Editor.Database.TypeFilter"));
 	m_toolSelection->addImage(new ui::StyleBitmap(L"Editor.Database.ShowFiltered"));
 	m_toolSelection->addImage(new ui::StyleBitmap(L"Editor.Database.Favorites"));
 
@@ -375,23 +373,16 @@ bool DatabaseView::create(ui::Widget* parent)
 		ui::ToolBarButton::BsDefaultToggle);
 	m_toolSelection->addItem(m_toolFilterType);
 
-	m_toolFilterAssets = new ui::ToolBarButton(
-		i18n::Text(L"DATABASE_FILTER_ASSETS"),
-		1,
-		ui::Command(L"Database.FilterAssets"),
-		ui::ToolBarButton::BsDefaultToggle);
-	m_toolSelection->addItem(m_toolFilterAssets);
-
 	m_toolFilterShow = new ui::ToolBarButton(
 		i18n::Text(L"DATABASE_FILTER_SHOW_FILTERED"),
-		2,
+		1,
 		ui::Command(L"Database.ShowFiltered"),
 		ui::ToolBarButton::BsDefaultToggle);
 	m_toolSelection->addItem(m_toolFilterShow);
 
 	m_toolFavoritesShow = new ui::ToolBarButton(
 		i18n::Text(L"DATABASE_FILTER_SHOW_FAVORITES"),
-		3,
+		2,
 		ui::Command(L"Database.ShowFavorites"),
 		ui::ToolBarButton::BsDefaultToggle);
 	m_toolSelection->addItem(m_toolFavoritesShow);
@@ -1198,6 +1189,34 @@ Ref< ui::TreeViewItem > DatabaseView::buildTreeItemSplit(ui::TreeView* treeView,
 	for (auto childGroup : childGroups)
 		buildTreeItemSplit(treeView, groupItem, childGroup);
 
+	// Remove group if it doesn't contain any instance accepted by the filter.
+	const bool showFavorites = m_toolFavoritesShow->isToggled();
+	if (parentItem != nullptr && !groupItem->hasChildren() && (showFavorites || !m_filter->acceptEmptyGroups()))
+	{
+		const bool showFiltered = m_toolFilterShow->isToggled();
+
+		bool accept = false;
+
+		RefArray< db::Instance > childInstances;
+		group->getChildInstances(childInstances);
+		for (auto childInstance : childInstances)
+		{
+			if (showFavorites && m_favoriteInstances.find(childInstance->getGuid()) == m_favoriteInstances.end())
+				continue;
+			if (!showFiltered && !m_filter->acceptInstance(childInstance))
+				continue;
+
+			accept = true;
+			break;
+		}
+
+		if (!accept)
+		{
+			treeView->removeItem(groupItem);
+			groupItem = nullptr;
+		}
+	}
+
 	return groupItem;
 }
 
@@ -1307,7 +1326,6 @@ void DatabaseView::filterType(db::Instance* instance)
 	m_editFilter->setText(L"");
 	m_filter.reset(new TypeSetFilter(typeSet));
 	m_toolFilterType->setToggled(true);
-	m_toolFilterAssets->setToggled(false);
 	updateView();
 }
 
@@ -1340,7 +1358,6 @@ void DatabaseView::filterDependencies(db::Instance* instance)
 	m_editFilter->setText(L"");
 	m_filter.reset(new GuidSetFilter(guidSet));
 	m_toolFilterType->setToggled(true);
-	m_toolFilterAssets->setToggled(false);
 
 	updateView();
 }
@@ -1488,52 +1505,11 @@ void DatabaseView::eventToolSelectionClicked(ui::ToolBarButtonClickEvent* event)
 				typeSet.insert(filterType);
 				m_editFilter->setText(L"");
 				m_filter.reset(new TypeSetFilter(typeSet));
-				m_toolFilterAssets->setToggled(false);
 			}
 			else
 				m_toolFilterType->setToggled(false);
 		}
 		if (!m_toolFilterType->isToggled())
-			m_filter.reset(new DefaultFilter());
-	}
-	else if (cmd == L"Database.FilterAssets")
-	{
-		if (m_toolFilterAssets->isToggled())
-		{
-			RefArray< db::Instance > assetsInstances;
-			db::recursiveFindChildInstances(
-				m_db->getRootGroup(),
-				db::FindInstanceByType(type_of< Assets >()),
-				assetsInstances);
-
-			std::set< Guid > guidSet;
-			for (auto assetsInstance : assetsInstances)
-			{
-				guidSet.insert(assetsInstance->getGuid());
-
-				PipelineDependencySet dependencySet;
-				Ref< IPipelineDepends > depends = m_editor->createPipelineDepends(&dependencySet, std::numeric_limits< uint32_t >::max());
-				if (!depends)
-					return;
-
-				depends->addDependency(assetsInstance->getObject());
-				depends->waitUntilFinished();
-
-				for (uint32_t j = 0; j < dependencySet.size(); ++j)
-				{
-					const PipelineDependency* dependency = dependencySet.get(j);
-					T_ASSERT(dependency);
-
-					if (dependency->outputGuid.isNotNull())
-						guidSet.insert(dependency->outputGuid);
-				}
-			}
-
-			m_editFilter->setText(L"");
-			m_filter.reset(new GuidSetFilter(guidSet));
-			m_toolFilterType->setToggled(false);
-		}
-		else
 			m_filter.reset(new DefaultFilter());
 	}
 	else if (cmd == L"Database.ViewSize")
@@ -1576,7 +1552,6 @@ void DatabaseView::eventTimer(ui::TimerEvent* event)
 			m_filter.reset(new DefaultFilter());
 
 		m_toolFilterType->setToggled(false);
-		m_toolFilterAssets->setToggled(false);
 
 		updateView();
 	}

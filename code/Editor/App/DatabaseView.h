@@ -97,7 +97,6 @@ private:
 	IEditor* m_editor;
 	Ref< ui::ToolBar > m_toolSelection;
 	Ref< ui::ToolBarButton > m_toolFilterType;
-	Ref< ui::ToolBarButton > m_toolFilterAssets;
 	Ref< ui::ToolBarButton > m_toolFilterShow;
 	Ref< ui::ToolBarButton > m_toolFavoritesShow;
 	Ref< ui::ToolBarDropDown > m_toolViewSize;
