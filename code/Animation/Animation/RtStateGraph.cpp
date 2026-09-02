@@ -21,6 +21,23 @@ namespace
 
 Random s_random;
 
+/*! Determine if a transition is permitted at the current time. */
+bool transitionPermitted(const RtStateTransition* transition, float timeLeft)
+{
+	switch (transition->getMoment())
+	{
+	case Moment::Immediately:
+		return true;
+
+	case Moment::End:
+		// Slack since the state time accumulate a small error until it reach the duration.
+		return timeLeft <= transition->getDuration() + FUZZY_EPSILON;
+
+	default:
+		return false;
+	}
+}
+
 float easeInOutCubic(float f)
 {
 	if (f < 0.5f)
@@ -168,6 +185,7 @@ bool RtStateGraph::evaluate(
 	{
 		const float timeLeft = max(m_currentStateContext.getDuration() - m_currentStateContext.getTime(), 0.0f);
 		RtStateTransition* selectedTransition = nullptr;
+		RefArray< RtStateTransition > candidateTransitions;
 
 		// First try all transitions with explicit condition.
 		for (auto transition : m_transitions)
@@ -176,63 +194,36 @@ bool RtStateGraph::evaluate(
 				continue;
 
 			// Is transition permitted?
-			bool transitionPermitted = false;
-			switch (transition->getMoment())
-			{
-			case Moment::Immediately:
-				transitionPermitted = true;
-				break;
-
-			case Moment::End:
-				{
-					if (timeLeft <= transition->getDuration())
-						transitionPermitted = true;
-				}
-				break;
-			}
-			if (!transitionPermitted)
+			if (!transitionPermitted(transition, timeLeft))
 				continue;
 
 			// Is condition satisfied?
 			if (!transition->conditionSatisfied(m_values.c_ptr()))
 				continue;
 
-			// Found valid transition.
-			selectedTransition = transition;
-			break;
+			candidateTransitions.push_back(transition);
 		}
 
 		// Still no transition state found, we try all transitions without explicit condition.
-		if (selectedTransition == nullptr)
+		if (candidateTransitions.empty())
 		{
-			RefArray< RtStateTransition > candidateTransitions;
 			for (auto transition : m_transitions)
 			{
 				if (transition->getFrom() != m_currentState || transition->haveConditions())
 					continue;
 
 				// Is transition permitted?
-				switch (transition->getMoment())
-				{
-				case Moment::Immediately:
+				if (transitionPermitted(transition, timeLeft))
 					candidateTransitions.push_back(transition);
-					break;
-
-				case Moment::End:
-					{
-						if (timeLeft <= transition->getDuration())
-							candidateTransitions.push_back(transition);
-					}
-					break;
-				}
 			}
+		}
 
-			// Randomly select one of the found, valid, transitions.
-			if (!candidateTransitions.empty())
-			{
-				const uint32_t i = s_random.next() % candidateTransitions.size();
-				selectedTransition = candidateTransitions[i];
-			}
+		// Randomly select one of the found, valid, transitions; a state which have
+		// been expanded into several animations have one transition per animation.
+		if (!candidateTransitions.empty())
+		{
+			const uint32_t i = s_random.next() % candidateTransitions.size();
+			selectedTransition = candidateTransitions[i];
 		}
 
 		// Still no transition, repeat current state if we're at the end.

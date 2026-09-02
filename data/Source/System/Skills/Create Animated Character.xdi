@@ -24,7 +24,7 @@ model `.tmd` (geometry + joints + weights + animations) → `SkeletonAsset` + on
    - `traktor.animation.SkeletonComponentData { skeleton: <SkeletonAsset guid>, poseController }`
    - `traktor.animation.AnimatedMeshComponentData { mesh: <mesh guid> }`
    - `traktor.physics.CharacterComponentData { radius, height, step, jumpImpulse, ... }`
-6. **Idle/Walk state graph** (optional): a `traktor.animation.StateGraph` with `StateNodeAnimation` states (`animation` = AnimationAsset guid), `StateTransition`s (`condition` string, leading `!` inverts; `moment` = "Immediately"), and `rootState`. Author it with **`import_instance_from_xml`** (see Gotchas). `build_asset` → `RtStateGraph`. Point the pose controller at it: `traktor.animation.AnimationGraphPoseControllerData { stateGraph: <StateGraph guid> }`.
+6. **Idle/Walk state graph** (optional): a `traktor.animation.StateGraph` with `StateNodeAnimation` states (`version="2"`, `animations` = list of AnimationAsset guids — the compiler emits one runtime state per animation so the graph picks one at random each time the state is entered, `loopDuration` = cross fade used by the generated looping transitions), `StateTransition`s (`condition` string, leading `!` inverts; `moment` = "Immediately"), and `rootState`. Author it with **`import_instance_from_xml`** (see Gotchas). `build_asset` → `RtStateGraph`. Point the pose controller at it: `traktor.animation.AnimationGraphPoseControllerData { stateGraph: <StateGraph guid> }`.
 
 ## Gotchas (hard-won)
 - **Winding**: Traktor's front face is **clockwise** — the right-handed face normal points *opposite* the outward surface normal. Auto-orient every quad: if `dot(cross(p1−p0, p2−p0), outwardNormal) > 0`, reverse the vertex order.

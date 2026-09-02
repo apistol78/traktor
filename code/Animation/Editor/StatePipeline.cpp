@@ -45,7 +45,10 @@ bool StatePipeline::buildDependencies(
 		pipelineDepends->addDependency(stateGraph->getPreviewMesh(), editor::PdfBuild);
 	}
 	else if (auto state = dynamic_type_cast< const StateNodeAnimation* >(sourceAsset))
-		pipelineDepends->addDependency(state->getAnimation(), editor::PdfBuild | editor::PdfResource);
+	{
+		for (const auto& animation : state->getAnimations())
+			pipelineDepends->addDependency(animation, editor::PdfBuild | editor::PdfResource);
+	}
 
 	return true;
 }
