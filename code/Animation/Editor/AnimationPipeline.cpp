@@ -35,7 +35,7 @@
 namespace traktor::animation
 {
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.AnimationPipeline", 20, AnimationPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.AnimationPipeline", 22, AnimationPipeline, editor::IPipeline)
 
 bool AnimationPipeline::create(const editor::IPipelineSettings* settings, db::Database* database)
 {
@@ -132,10 +132,21 @@ bool AnimationPipeline::buildOutput(
 		scale(animationAsset->getScale())
 	));
 
-	// Set joint orientations in animation rest/poses to match skeleton.
+	// Match joint rest orientations between the animation's rig and the skeleton.
 	// Orientations are matched in global space; the animation's rig might not have
 	// the same root as the skeleton's, in which case local orientations of the
 	// animation's root joint are expressed relative to another parent.
+	//
+	// Key poses replace joint transforms entirely (model::Pose is absolute, not
+	// bind-relative), so re-orienting the animation rig's bind pose never reaches the
+	// transferred poses. Instead compute, per joint, the rest-orientation delta between
+	// the rigs and apply it while transferring poses below:
+	//
+	//   skeletonGlobal(t) = animGlobal(t) * animRestGlobal^-1 * skeletonRestGlobal
+	//
+	// At rest this lands exactly on the skeleton's bind orientation while following the
+	// animation's global-space rotation over time; for rigs sharing bind conventions the
+	// correction is identity.
 	//
 	// Only possible when the animation's rig has an actual rest pose to measure against.
 	// Rigs imported from files without geometry have no bind pose; their rest is merely
@@ -146,6 +157,7 @@ bool AnimationPipeline::buildOutput(
 	if (!matchOrientations)
 		log::info << L"Animation's rig has no bind pose; assuming it shares rest pose with skeleton." << Endl;
 
+	AlignedVector< Quaternion > restCorrections(modelSkeleton->getJointCount(), Quaternion::identity());
 	for (uint32_t i = 0; i < modelSkeleton->getJointCount(); ++i)
 	{
 		const model::Joint& jointSkeleton = modelSkeleton->getJoint(i);
@@ -160,15 +172,9 @@ bool AnimationPipeline::buildOutput(
 		if (!matchOrientations)
 			continue;
 
-		const Quaternion Qglobal = modelSkeleton->getJointGlobalTransform(i).rotation();
-
-		// Since ancestors are matched before their children the parent's global orientation
-		// is already that of the skeleton's equally named joint, thus for rigs sharing
-		// hierarchy this is identical to the skeleton's local orientation.
-		const uint32_t parentIdx = modelAnimation->getJoint(jointIdx).getParent();
-		const Quaternion Qparent = (parentIdx != model::c_InvalidIndex) ? modelAnimation->getJointGlobalTransform(parentIdx).rotation() : Quaternion::identity();
-
-		modelAnimation->setJointRotation(jointIdx, Qparent.inverse() * Qglobal);
+		const Quaternion QanimRest = modelAnimation->getJointGlobalTransform(jointIdx).rotation();
+		const Quaternion QskeletonRest = modelSkeleton->getJointGlobalTransform(i).rotation();
+		restCorrections[i] = QanimRest.inverse() * QskeletonRest;
 	}
 
 	// Find animation take.
@@ -199,12 +205,39 @@ bool AnimationPipeline::buildOutput(
 	const float maxDuration = animationAsset->getMaxDuration();
 	const float takeAt = (ma->getKeyFrameCount() > 0) ? ma->getKeyFrameTime(0) : 0.0f;
 
+	// Determine which animation joints actually animate their local translation.
+	// Joints that do (typically the hips, carrying locomotion and bob) keep the
+	// animation's translations; all others use the target skeleton's bind translations
+	// so the skeleton's own bone lengths and proportions are preserved when the rigs
+	// differ. For rigs sharing proportions this is a no-op, as a static local
+	// translation equals the bind translation.
+	const AlignedVector< model::Joint >& skeletonMeshJoints = modelSkeleton->getJoints();
+	AlignedVector< uint8_t > translationAnimated(skeletonMeshJoints.size(), 0);
+	if (ma->getKeyFrameCount() > 0)
+	{
+		for (uint32_t j = 0; j < skeletonMeshJoints.size(); ++j)
+		{
+			const uint32_t k = modelAnimation->findJointIndex(skeletonMeshJoints[j].getName());
+			if (k == model::c_InvalidIndex)
+				continue;
+
+			const Vector4 T0 = ma->getKeyFramePose(0)->getJointTransform(k).translation();
+			for (uint32_t i = 1; i < ma->getKeyFrameCount(); ++i)
+			{
+				if ((ma->getKeyFramePose(i)->getJointTransform(k).translation() - T0).length() > 0.0001f)
+				{
+					translationAnimated[j] = 1;
+					break;
+				}
+			}
+		}
+	}
+
 	// Generate key poses; retarget animations onto skeleton mesh.
 	// Poses are transferred in global space since the animation's rig might not share
 	// hierarchy with the skeleton, most commonly by lacking the skeleton's root joint;
 	// local transformations of such a rig's root are relative another parent and thus
 	// cannot be copied verbatim. For rigs sharing hierarchy this is a no-op.
-	const AlignedVector< model::Joint >& skeletonMeshJoints = modelSkeleton->getJoints();
 	AlignedVector< Transform > poseGlobalTransforms(skeletonMeshJoints.size(), Transform::identity());
 	for (uint32_t i = 0; i < ma->getKeyFrameCount(); ++i)
 	{
@@ -230,7 +263,15 @@ bool AnimationPipeline::buildOutput(
 
 			const uint32_t k = modelAnimation->findJointIndex(name);
 			if (k != model::c_InvalidIndex)
-				TposeJoint = Tparent.inverse() * mp->getJointGlobalTransform(modelAnimation, k);
+			{
+				const Transform Tanim = mp->getJointGlobalTransform(modelAnimation, k);
+				TposeJoint = Tparent.inverse() * Transform(Tanim.translation(), Tanim.rotation() * restCorrections[j]);
+
+				// Preserve the skeleton's own bone lengths; only translation-animated
+				// joints (locomotion, bob) keep the animation's translation.
+				if (!translationAnimated[j])
+					TposeJoint = Transform(skeletonMeshJoints[j].getTransform().translation(), TposeJoint.rotation());
+			}
 			else
 			{
 				// Joint is missing from the source animation (already warned about above);

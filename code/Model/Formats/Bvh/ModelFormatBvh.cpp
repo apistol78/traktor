@@ -1,25 +1,26 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Model/Formats/Bvh/ModelFormatBvh.h"
+
 #include "Core/Io/FileSystem.h"
 #include "Core/Log/Log.h"
 #include "Core/Math/Matrix44.h"
 #include "Core/Misc/String.h"
-#include "Model/Model.h"
-#include "Model/Pose.h"
 #include "Model/Formats/Bvh/BvhDocument.h"
 #include "Model/Formats/Bvh/BvhJoint.h"
-#include "Model/Formats/Bvh/ModelFormatBvh.h"
+#include "Model/Model.h"
+#include "Model/Pose.h"
 
 namespace traktor::model
 {
-	namespace
-	{
+namespace
+{
 
 std::wstring getJointName(const BvhJoint* bvhJoint)
 {
@@ -38,17 +39,18 @@ std::wstring getJointName(const BvhJoint* bvhJoint)
 void createJoints(
 	Model* model,
 	const BvhJoint* bvhJoint,
-	uint32_t parent
-)
+	uint32_t parent)
 {
 	const std::wstring jointName = getJointName(bvhJoint);
 
 	Joint joint;
 	joint.setParent(parent);
 	joint.setName(jointName);
+	// Convert right-to-left handed by mirroring X, matching the FBX/glTF importers'
+	// axis convention (Conversion.cpp calculateAxisTransform); mirroring a different
+	// axis would leave BVH content yawed 180 degrees against every other source.
 	joint.setTransform(Transform(
-		bvhJoint->getOffset() * Vector4(1.0f, 1.0f, -1.0f, 1.0f)
-	));
+		bvhJoint->getOffset() * Vector4(-1.0f, 1.0f, 1.0f, 1.0f)));
 
 	const int32_t jointIndex = model->addJoint(joint);
 
@@ -60,8 +62,7 @@ bool convertKeyPose(
 	Pose* outPose,
 	const Model* model,
 	const BvhJoint* bvhJoint,
-	const BvhDocument::cv_t& cv
-)
+	const BvhDocument::cv_t& cv)
 {
 	const std::wstring jointName = getJointName(bvhJoint);
 
@@ -87,42 +88,38 @@ bool convertKeyPose(
 		else if (channel == L"Zposition")
 			P.set(2, Scalar(c));
 
+		// Mirroring X conjugates rotations as X(a)->X(a), Y(a)->Y(-a), Z(a)->Z(-a).
 		else if (channel == L"Xrotation")
-			R = R * rotateX(-deg2rad(c));
+			R = R * rotateX(deg2rad(c));
 		else if (channel == L"Yrotation")
 			R = R * rotateY(-deg2rad(c));
 		else if (channel == L"Zrotation")
-			R = R * rotateZ(deg2rad(c));
+			R = R * rotateZ(-deg2rad(c));
 	}
 
 	if (bvhJoint->getParent() == nullptr)
 		P = bvhJoint->getOffset();
 
 	const Transform Tpose(
-		P * Vector4(1.0f, 1.0f, -1.0f, 1.0f),
-		Quaternion(R)
-	);
+		P * Vector4(-1.0f, 1.0f, 1.0f, 1.0f),
+		Quaternion(R));
 
 	outPose->setJointTransform(
 		jointId,
-		Tpose
-	);
+		Tpose);
 
 	for (const auto childBvhJoint : bvhJoint->getChildren())
-	{
 		if (!convertKeyPose(
-			outPose,
-			model,
-			childBvhJoint,
-			cv
-		))
+				outPose,
+				model,
+				childBvhJoint,
+				cv))
 			return false;
-	}
 
 	return true;
 }
 
-	}
+}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.model.ModelFormatBvh", 0, ModelFormatBvh, ModelFormat)
 
@@ -152,8 +149,7 @@ Ref< Model > ModelFormatBvh::read(const Path& filePath, const std::wstring& filt
 	createJoints(
 		model,
 		document->getRootJoint(),
-		c_InvalidIndex
-	);
+		c_InvalidIndex);
 
 	Ref< Animation > anim = new Animation();
 	anim->setName(L"Animation");
@@ -167,8 +163,7 @@ Ref< Model > ModelFormatBvh::read(const Path& filePath, const std::wstring& filt
 			pose,
 			model,
 			document->getRootJoint(),
-			channelValues
-		);
+			channelValues);
 
 		anim->insertKeyFrame(at, pose);
 		at += document->getFrameTime();

@@ -33,7 +33,11 @@ class T_DLLCLASS AnimationAsset : public editor::Asset
 public:
 	virtual void serialize(ISerializer& s) override final;
 
+	void setTargetSkeleton(const Guid& targetSkeleton) { m_targetSkeleton = targetSkeleton; }
+
 	const Guid& getTargetSkeleton() const { return m_targetSkeleton; }
+
+	void setTake(const std::wstring& take) { m_take = take; }
 
 	const std::wstring& getTake() const { return m_take; }
 
@@ -43,7 +47,11 @@ public:
 
 	const Vector4& getTranslate() const { return m_translate; }
 
+	void setRemoveLocomotion(bool removeLocomotion) { m_removeLocomotion = removeLocomotion; }
+
 	bool getRemoveLocomotion() const { return m_removeLocomotion; }
+
+	void setRemoveLocomotionJoint(const std::wstring& removeLocomotionJoint) { m_removeLocomotionJoint = removeLocomotionJoint; }
 
 	const std::wstring& getRemoveLocomotionJoint() const { return m_removeLocomotionJoint; }
 
