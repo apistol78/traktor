@@ -69,7 +69,6 @@
 #include "Ui/TreeView/TreeViewContentChangeEvent.h"
 #include "Ui/TreeView/TreeViewDragEvent.h"
 #include "Ui/TreeView/TreeViewItem.h"
-#include "Ui/TreeView/TreeViewItemActivateEvent.h"
 #include "Ui/TreeView/TreeViewItemMouseButtonDownEvent.h"
 #include "Ui/TreeView/TreeViewItemStateChangeEvent.h"
 
@@ -406,14 +405,7 @@ bool DatabaseView::create(ui::Widget* parent)
 
 	m_toolSelection->addItem(new ui::ToolBarSeparator());
 
-	m_toolViewMode = new ui::ToolBarDropDown(ui::Command(L"Database.ViewModes"), 80_ut, i18n::Text(L"DATABASE_VIEW_MODE"));
-	m_toolViewMode->add(i18n::Text(L"DATABASE_VIEW_MODE_HIERARCHY"));
-	m_toolViewMode->add(i18n::Text(L"DATABASE_VIEW_MODE_SPLIT"));
-	m_toolViewMode->select(
-		m_editor->getSettings()->getProperty< int32_t >(L"Editor.DatabaseView", 1));
-	m_toolSelection->addItem(m_toolViewMode);
-
-	m_toolViewSize = new ui::ToolBarDropDown(ui::Command(L"Database.ViewSize"), 80_ut, i18n::Text(L"DATABASE_VIEW_MODE"));
+	m_toolViewSize = new ui::ToolBarDropDown(ui::Command(L"Database.ViewSize"), 80_ut, i18n::Text(L"DATABASE_VIEW_SIZE"));
 	m_toolViewSize->add(i18n::Text(L"DATABASE_VIEW_SIZE_SMALL"));
 	m_toolViewSize->add(i18n::Text(L"DATABASE_VIEW_SIZE_NORMAL"));
 	m_toolViewSize->add(i18n::Text(L"DATABASE_VIEW_SIZE_LARGE"));
@@ -435,7 +427,6 @@ bool DatabaseView::create(ui::Widget* parent)
 		m_treeDatabase->addImage(new ui::StyleBitmap(L"Editor.Database.Types", i));
 	for (int32_t i = 0; i < 23; ++i)
 		m_treeDatabase->addImage(new ui::StyleBitmap(L"Editor.Database.TypesHidden", i));
-	m_treeDatabase->addEventHandler< ui::TreeViewItemActivateEvent >(this, &DatabaseView::eventInstanceActivate);
 	m_treeDatabase->addEventHandler< ui::SelectionChangeEvent >(this, &DatabaseView::eventInstanceSelect);
 	m_treeDatabase->addEventHandler< ui::TreeViewItemMouseButtonDownEvent >(this, &DatabaseView::eventTreeInstanceButtonDown);
 	m_treeDatabase->addEventHandler< ui::TreeViewContentChangeEvent >(this, &DatabaseView::eventTreeContentChange);
@@ -597,7 +588,6 @@ void DatabaseView::setDatabase(db::Database* db)
 
 void DatabaseView::updateView()
 {
-	const int32_t viewMode = m_toolViewMode->getSelected();
 	const int32_t viewSize = m_toolViewSize->getSelected();
 	Ref< ui::HierarchicalState > treeState = m_treeDatabase->captureState();
 
@@ -632,13 +622,8 @@ void DatabaseView::updateView()
 		for (const auto& favoriteInstance : m_editor->getSettings()->getProperty< AlignedVector< std::wstring > >(L"Editor.FavoriteInstances"))
 			m_favoriteInstances.insert(Guid(favoriteInstance));
 
-		if (viewMode == 0) // Hierarchy
-			buildTreeItemHierarchy(m_treeDatabase, 0, m_db->getRootGroup());
-		else if (viewMode == 1) // Split
-		{
-			m_listInstances->setVisible(true);
-			buildTreeItemSplit(m_treeDatabase, 0, m_db->getRootGroup());
-		}
+		m_listInstances->setVisible(true);
+		buildTreeItemSplit(m_treeDatabase, 0, m_db->getRootGroup());
 
 		setEnable(true);
 	}
@@ -646,41 +631,23 @@ void DatabaseView::updateView()
 		setEnable(false);
 
 	m_treeDatabase->applyState(treeState);
-	if (viewMode == 1)
-		updateGridInstances(nullptr);
+	updateGridInstances(nullptr);
 
 	m_splitter->update();
 }
 
 bool DatabaseView::highlight(const db::Instance* instance)
 {
-	const int32_t viewMode = m_toolViewMode->getSelected();
-	if (viewMode == 0)
+	for (auto item : m_treeDatabase->getItems(ui::TreeView::GfDescendants))
 	{
-		for (auto item : m_treeDatabase->getItems(ui::TreeView::GfDescendants))
+		if (item->getData< db::Group >(L"GROUP") == instance->getParent())
 		{
-			if (item->getData< db::Instance >(L"INSTANCE") == instance)
-			{
-				item->show();
-				item->select();
-				return true;
-			}
+			item->show();
+			item->select();
 		}
 	}
-	else if (viewMode == 1)
-	{
-		for (auto item : m_treeDatabase->getItems(ui::TreeView::GfDescendants))
-		{
-			if (item->getData< db::Group >(L"GROUP") == instance->getParent())
-			{
-				item->show();
-				item->select();
-			}
-		}
-		updateGridInstances(instance);
-		return true;
-	}
-	return false;
+	updateGridInstances(instance);
+	return true;
 }
 
 bool DatabaseView::handleCommand(const ui::Command& command)
@@ -690,30 +657,16 @@ bool DatabaseView::handleCommand(const ui::Command& command)
 	Ref< db::Group > group;
 	Ref< db::Instance > instance;
 
-	const int32_t viewMode = m_toolViewMode->getSelected();
-	if (viewMode == 0) // Hierarchy
-	{
-		RefArray< ui::TreeViewItem > items = m_treeDatabase->getItems(ui::TreeView::GfDescendants | ui::TreeView::GfSelectedOnly);
-		if (items.size() != 1)
-			return false;
+	RefArray< ui::TreeViewItem > items = m_treeDatabase->getItems(ui::TreeView::GfDescendants | ui::TreeView::GfSelectedOnly);
+	if (items.size() != 1)
+		return false;
 
-		treeItem = items.front();
-		group = treeItem->getData< db::Group >(L"GROUP");
-		instance = treeItem->getData< db::Instance >(L"INSTANCE");
-	}
-	else if (viewMode == 1) // Split
-	{
-		RefArray< ui::TreeViewItem > items = m_treeDatabase->getItems(ui::TreeView::GfDescendants | ui::TreeView::GfSelectedOnly);
-		if (items.size() != 1)
-			return false;
+	treeItem = items.front();
+	group = treeItem->getData< db::Group >(L"GROUP");
 
-		treeItem = items.front();
-		group = treeItem->getData< db::Group >(L"GROUP");
-
-		auto selectedItem = m_listInstances->getSelectedItem();
-		if (selectedItem)
-			instance = selectedItem->getData< db::Instance >(L"INSTANCE");
-	}
+	auto selectedItem = m_listInstances->getSelectedItem();
+	if (selectedItem)
+		instance = selectedItem->getData< db::Instance >(L"INSTANCE");
 
 	if (group && instance)
 	{
@@ -1000,17 +953,8 @@ bool DatabaseView::handleCommand(const ui::Command& command)
 		}
 		else if (command == L"Editor.Rename")
 		{
-			if (viewMode == 0) // Hierarchy
-			{
-				T_FATAL_ASSERT(treeItem != nullptr);
-				treeItem->edit();
-			}
-			else
-			{
-				auto selectedItem = m_listInstances->getSelectedItem();
-				T_FATAL_ASSERT(selectedItem != nullptr);
-				m_listInstances->beginEdit(selectedItem);
-			}
+			T_FATAL_ASSERT(selectedItem != nullptr);
+			m_listInstances->beginEdit(selectedItem);
 		}
 		else
 			return false;
@@ -1227,91 +1171,6 @@ int32_t DatabaseView::getIconIndex(const TypeInfo* instanceType) const
 	return iconIndex;
 }
 
-Ref< ui::TreeViewItem > DatabaseView::buildTreeItemHierarchy(ui::TreeView* treeView, ui::TreeViewItem* parentItem, db::Group* group)
-{
-	Ref< ui::TreeViewItem > groupItem = treeView->createItem(parentItem, group->getName(), 1);
-	groupItem->setImage(0, 0, 1);
-	groupItem->setData(L"GROUP", group);
-
-	// Highlight linked groups and ensure they cannot be renamed.
-	if ((group->getFlags() & db::GfLink) != 0)
-	{
-		groupItem->setEditable(false);
-		groupItem->setTextColor(getStyleSheet()->getColor(this, L"color-link"));
-		groupItem->setBold(true);
-	}
-	else if (parentItem == nullptr)
-		groupItem->setEditable(false);
-	else
-		groupItem->setEditable(true);
-
-	// Expand root groups by default.
-	if (!parentItem)
-		groupItem->expand();
-
-	RefArray< db::Group > childGroups;
-	group->getChildGroups(childGroups);
-	childGroups.sort([](const db::Group* a, const db::Group* b) {
-		return compareIgnoreCase(a->getName(), b->getName()) < 0;
-	});
-
-	for (auto childGroup : childGroups)
-		buildTreeItemHierarchy(treeView, groupItem, childGroup);
-
-	const bool showFiltered = m_toolFilterShow->isToggled();
-	const bool showFavorites = m_toolFavoritesShow->isToggled();
-
-	RefArray< db::Instance > childInstances;
-	group->getChildInstances(childInstances);
-	childInstances.sort([](const db::Instance* a, const db::Instance* b) {
-		return compareIgnoreCase(a->getName(), b->getName()) < 0;
-	});
-
-	for (auto childInstance : childInstances)
-	{
-		const TypeInfo* primaryType = childInstance->getPrimaryType();
-		if (!primaryType)
-			continue;
-
-		if (showFavorites)
-		{
-			if (m_favoriteInstances.find(childInstance->getGuid()) == m_favoriteInstances.end())
-				continue;
-		}
-
-		int32_t iconIndex = getIconIndex(primaryType);
-		if (!showFiltered)
-		{
-			if (!m_filter->acceptInstance(childInstance))
-				continue;
-		}
-		else
-		{
-			if (!m_filter->acceptInstance(childInstance))
-				iconIndex += 23;
-		}
-
-		Ref< ui::TreeViewItem > instanceItem = treeView->createItem(groupItem, childInstance->getName(), 1);
-		instanceItem->setImage(0, iconIndex);
-
-		if (m_rootInstances.find(childInstance->getGuid()) != m_rootInstances.end())
-			instanceItem->setBold(true);
-
-		instanceItem->setEditable(true);
-		instanceItem->setData(L"GROUP", group);
-		instanceItem->setData(L"INSTANCE", childInstance);
-	}
-
-	// Remove group if it's empty.
-	if ((showFavorites || !m_filter->acceptEmptyGroups()) && !groupItem->hasChildren())
-	{
-		treeView->removeItem(groupItem);
-		groupItem = nullptr;
-	}
-
-	return groupItem;
-}
-
 Ref< ui::TreeViewItem > DatabaseView::buildTreeItemSplit(ui::TreeView* treeView, ui::TreeViewItem* parentItem, db::Group* group)
 {
 	Ref< ui::TreeViewItem > groupItem = treeView->createItem(parentItem, group->getName(), 1);
@@ -1345,11 +1204,6 @@ Ref< ui::TreeViewItem > DatabaseView::buildTreeItemSplit(ui::TreeView* treeView,
 void DatabaseView::updateGridInstances(const db::Instance* highlightInstance)
 {
 	cancelPreviewJobs();
-
-	// Grid is only visible in "split" mode.
-	const int32_t viewMode = m_toolViewMode->getSelected();
-	if (viewMode != 1)
-		return;
 
 	m_listInstances->setItems(nullptr);
 
@@ -1682,11 +1536,6 @@ void DatabaseView::eventToolSelectionClicked(ui::ToolBarButtonClickEvent* event)
 		else
 			m_filter.reset(new DefaultFilter());
 	}
-	else if (cmd == L"Database.ViewModes")
-	{
-		const int32_t viewMode = m_toolViewMode->getSelected();
-		m_editor->checkoutGlobalSettings()->setProperty< PropertyInteger >(L"Editor.DatabaseView", viewMode);
-	}
 	else if (cmd == L"Database.ViewSize")
 	{
 		const int32_t viewSize = m_toolViewSize->getSelected();
@@ -1731,17 +1580,6 @@ void DatabaseView::eventTimer(ui::TimerEvent* event)
 
 		updateView();
 	}
-}
-
-void DatabaseView::eventInstanceActivate(ui::TreeViewItemActivateEvent* event)
-{
-	Ref< ui::TreeViewItem > item = event->getItem();
-	Ref< db::Instance > instance = item->getData< db::Instance >(L"INSTANCE");
-	if (!instance)
-		return;
-
-	m_editor->openEditor(instance);
-	event->consume();
 }
 
 void DatabaseView::eventInstanceSelect(ui::SelectionChangeEvent* event)

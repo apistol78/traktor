@@ -525,7 +525,7 @@ uint32_t RenderViewVk::getDisplay() const
 
 int RenderViewVk::getWidth() const
 {
-	if (!m_frames.empty())
+	if (!m_frames.empty() && m_frames.front().primaryTarget != nullptr)
 		return m_frames.front().primaryTarget->getWidth();
 	else
 		return 0;
@@ -533,7 +533,7 @@ int RenderViewVk::getWidth() const
 
 int RenderViewVk::getHeight() const
 {
-	if (!m_frames.empty())
+	if (!m_frames.empty() && m_frames.front().primaryTarget != nullptr)
 		return m_frames.front().primaryTarget->getHeight();
 	else
 		return 0;
@@ -2404,19 +2404,6 @@ bool RenderViewVk::windowListenerEvent(Window* window, UINT message, WPARAM wPar
 		evt.type = RenderEventType::Close;
 		m_eventQueue.push_back(evt);
 	}
-	else if (message == WM_MOVE)
-	{
-		// Remove all pending resize events.
-		m_eventQueue.remove_if([](const RenderEvent& evt) {
-			return evt.type == RenderEventType::Resize;
-		});
-
-		RenderEvent evt;
-		evt.type = RenderEventType::Resize;
-		evt.resize.width = window->getWidth();
-		evt.resize.height = window->getHeight();
-		m_eventQueue.push_back(evt);
-	}
 	else if (message == WM_SIZE)
 	{
 		// Remove all pending resize events.
@@ -2425,8 +2412,8 @@ bool RenderViewVk::windowListenerEvent(Window* window, UINT message, WPARAM wPar
 		});
 
 		// Push new resize event if not matching current size.
-		int32_t width = LOWORD(lParam);
-		int32_t height = HIWORD(lParam);
+		const int32_t width = LOWORD(lParam);
+		const int32_t height = HIWORD(lParam);
 
 		if (width <= 0 || height <= 0)
 			return false;

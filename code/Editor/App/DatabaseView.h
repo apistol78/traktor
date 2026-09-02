@@ -41,7 +41,6 @@ class TreeView;
 class TreeViewContentChangeEvent;
 class TreeViewDragEvent;
 class TreeViewItem;
-class TreeViewItemActivateEvent;
 class TreeViewItemMouseButtonDownEvent;
 class TreeViewItemStateChangeEvent;
 
@@ -101,7 +100,6 @@ private:
 	Ref< ui::ToolBarButton > m_toolFilterAssets;
 	Ref< ui::ToolBarButton > m_toolFilterShow;
 	Ref< ui::ToolBarButton > m_toolFavoritesShow;
-	Ref< ui::ToolBarDropDown > m_toolViewMode;
 	Ref< ui::ToolBarDropDown > m_toolViewSize;
 	Ref< ui::Edit > m_editFilter;
 	Ref< ui::Splitter > m_splitter;
@@ -127,8 +125,6 @@ private:
 
 	int32_t getIconIndex(const TypeInfo* instanceType) const;
 
-	Ref< ui::TreeViewItem > buildTreeItemHierarchy(ui::TreeView* treeView, ui::TreeViewItem* parentItem, db::Group* group);
-
 	Ref< ui::TreeViewItem > buildTreeItemSplit(ui::TreeView* treeView, ui::TreeViewItem* parentItem, db::Group* group);
 
 	void updateGridInstances(const db::Instance* highlightInstance);
@@ -148,8 +144,6 @@ private:
 	void eventSize(ui::SizeEvent* event);
 
 	void eventTimer(ui::TimerEvent* event);
-
-	void eventInstanceActivate(ui::TreeViewItemActivateEvent* event);
 
 	void eventInstanceSelect(ui::SelectionChangeEvent* event);
 

@@ -190,16 +190,8 @@
 			<second>Remove entire group from favorites</second>
 		</item>
 		<item>
-			<first>DATABASE_VIEW_MODE</first>
-			<second>View mode</second>
-		</item>
-		<item>
-			<first>DATABASE_VIEW_MODE_HIERARCHY</first>
-			<second>Hierarchy</second>
-		</item>
-		<item>
-			<first>DATABASE_VIEW_MODE_SPLIT</first>
-			<second>Split</second>
+			<first>DATABASE_VIEW_SIZE</first>
+			<second>View size</second>
 		</item>
 		<item>
 			<first>DATABASE_VIEW_SIZE_SMALL</first>
