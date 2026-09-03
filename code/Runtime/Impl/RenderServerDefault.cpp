@@ -440,7 +440,7 @@ float RenderServerDefault::getViewAspectRatio() const
 
 float RenderServerDefault::getAspectRatio() const
 {
-	return m_renderView->isFullScreen() ? getScreenAspectRatio() : getViewAspectRatio();
+	return getViewAspectRatio();
 }
 
 int32_t RenderServerDefault::getMultiSample() const
