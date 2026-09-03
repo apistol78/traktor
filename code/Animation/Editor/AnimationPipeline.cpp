@@ -13,6 +13,7 @@
 #include "Animation/Animation/Animation.h"
 #include "Animation/Editor/AnimationAsset.h"
 #include "Animation/Editor/AnimationPipeline.h"
+#include "Animation/Editor/RigNameTranslation.h"
 #include "Animation/Editor/SkeletonAsset.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Log/Log.h"
@@ -35,7 +36,7 @@
 namespace traktor::animation
 {
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.AnimationPipeline", 22, AnimationPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.AnimationPipeline", 23, AnimationPipeline, editor::IPipeline)
 
 bool AnimationPipeline::create(const editor::IPipelineSettings* settings, db::Database* database)
 {
@@ -80,6 +81,10 @@ bool AnimationPipeline::buildDependencies(
 	if (animationAsset->getTargetSkeleton().isNotNull())
 		pipelineDepends->addDependency(animationAsset->getTargetSkeleton(), editor::PdfUse);
 
+	// Rig name translation.
+	if (animationAsset->getRigNameTranslation().isNotNull())
+		pipelineDepends->addDependency(animationAsset->getRigNameTranslation(), editor::PdfUse);
+
 	return true;
 }
 
@@ -104,6 +109,26 @@ bool AnimationPipeline::buildOutput(
 	{
 		log::error << L"Unable to build animation; no such file \"" << animationAsset->getFileName().getPathName() << L"\"." << Endl;
 		return false;
+	}
+
+	// Translate the animation rig's joint names into the skeleton's naming
+	// convention; allows importing clips authored on differently named rigs
+	// (e.g. generated SOMA motion onto a Mixamo skeleton). Joints without a
+	// translation keep their name; the retarget below matches by name and
+	// ignores animation joints the skeleton doesn't have.
+	if (animationAsset->getRigNameTranslation().isNotNull())
+	{
+		Ref< const RigNameTranslation > rigNameTranslation = pipelineBuilder->getObjectReadOnly< RigNameTranslation >(animationAsset->getRigNameTranslation());
+		if (!rigNameTranslation)
+		{
+			log::error << L"Unable to build animation; no such rig name translation." << Endl;
+			return false;
+		}
+
+		AlignedVector< model::Joint > joints = modelAnimation->getJoints();
+		for (auto& joint : joints)
+			joint.setName(rigNameTranslation->translate(joint.getName()));
+		modelAnimation->setJoints(joints);
 	}
 
 	// Read skeleton model.

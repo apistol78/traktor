@@ -7,6 +7,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include "Animation/Editor/AnimationAsset.h"
+#include "Animation/Editor/RigNameTranslation.h"
 #include "Animation/Editor/SkeletonAsset.h"
 #include "Core/Serialization/AttributePoint.h"
 #include "Core/Serialization/AttributeRange.h"
@@ -18,7 +19,7 @@
 namespace traktor::animation
 {
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.animation.AnimationAsset", 10, AnimationAsset, editor::Asset)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.animation.AnimationAsset", 11, AnimationAsset, editor::Asset)
 
 void AnimationAsset::serialize(ISerializer& s)
 {
@@ -30,6 +31,9 @@ void AnimationAsset::serialize(ISerializer& s)
 		s >> Member< Guid >(L"targetSkeleton", m_targetSkeleton, AttributeType(type_of< SkeletonAsset >()));
 	else if (s.getVersion() >= 4)
 		s >> Member< Guid >(L"skeleton", m_targetSkeleton, AttributeType(type_of< SkeletonAsset >()));
+
+	if (s.getVersion() >= 11)
+		s >> Member< Guid >(L"rigNameTranslation", m_rigNameTranslation, AttributeType(type_of< RigNameTranslation >()));
 
 	s >> Member< std::wstring >(L"take", m_take);
 

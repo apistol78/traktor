@@ -37,6 +37,10 @@ public:
 
 	const Guid& getTargetSkeleton() const { return m_targetSkeleton; }
 
+	void setRigNameTranslation(const Guid& rigNameTranslation) { m_rigNameTranslation = rigNameTranslation; }
+
+	const Guid& getRigNameTranslation() const { return m_rigNameTranslation; }
+
 	void setTake(const std::wstring& take) { m_take = take; }
 
 	const std::wstring& getTake() const { return m_take; }
@@ -59,6 +63,7 @@ public:
 
 private:
 	Guid m_targetSkeleton;					//!< Target skeleton onto animation are retargeted; if no skeleton provided then assuming to be same as animation skeleton.
+	Guid m_rigNameTranslation;				//!< Optional joint name translation applied to the animation's rig before retargeting; allows importing clips authored on differently named rigs.
 	std::wstring m_take = L"";
 	Vector4 m_scale = Vector4::one();
 	Vector4 m_translate = Vector4::zero();

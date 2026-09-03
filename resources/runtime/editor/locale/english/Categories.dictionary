@@ -42,6 +42,14 @@
 			<second>Animation state graph</second>
 		</item>
 		<item>
+			<first>TRAKTOR_ANIMATION_RAGDOLLSKELETONASSET</first>
+			<second>Rag doll skeleton</second>
+		</item>
+		<item>
+			<first>TRAKTOR_ANIMATION_RIGNAMETRANSLATION</first>
+			<second>Rig name translation</second>
+		</item>
+		<item>
 			<first>TRAKTOR_EDITOR_ASSETS</first>
 			<second>Asset</second>
 		</item>
