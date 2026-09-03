@@ -474,11 +474,23 @@ bool assignValue(db::Database* database, ReflectionMember* target, const Json* s
 				}
 				else if (valueSpec && valueSpec->isString() && Guid(valueSpec->getString()).isValid())
 					pair->addMember(new RfmPrimitiveGuid(L"second", Guid(valueSpec->getString()), nullptr));
+				else if (valueSpec && valueSpec->isString())
+					pair->addMember(new RfmPrimitiveWideString(L"second", valueSpec->getString(), nullptr));
+				else if (valueSpec && valueSpec->isBoolean())
+					pair->addMember(new RfmPrimitiveBoolean(L"second", valueSpec->getBoolean(), nullptr));
+				else if (valueSpec && valueSpec->isNumber())
+				{
+					const double number = valueSpec->getNumber();
+					if (number == (double)(int32_t)number)
+						pair->addMember(new RfmPrimitiveInt32(L"second", (int32_t)number, nullptr));
+					else
+						pair->addMember(new RfmPrimitiveFloat(L"second", (float)number, nullptr));
+				}
 				else if (!valueSpec || valueSpec->isNull())
 					pair->addMember(new RfmObject(L"second", (ISerializable*)nullptr, nullptr));
 				else
 				{
-					outError = L"Map value for key '" + key + L"' must be an object spec ($type/$clone), guid string, or null.";
+					outError = L"Map value for key '" + key + L"' must be a string, number, bool, guid string, object spec ($type/$clone), or null.";
 					return false;
 				}
 				arr->addMember(pair);
