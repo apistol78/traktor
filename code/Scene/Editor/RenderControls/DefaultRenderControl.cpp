@@ -226,6 +226,15 @@ bool DefaultRenderControl::create(ui::Widget* parent, SceneEditorContext* contex
 	m_menuAA->get(settings->getProperty< int32_t >(L"SceneEditor.AntiAliasQuality", 4))->setChecked(true);
 	m_toolQualityMenu->add(m_menuAA);
 
+	m_menuVolumetricFog = new ui::MenuItem(i18n::Text(L"SCENE_EDITOR_VOLUMETRIC_FOG"));
+	m_menuVolumetricFog->add(new ui::MenuItem(ui::Command(0, L"Scene.Editor.VolumetricFogQuality"), L"Disabled", true, 0));
+	m_menuVolumetricFog->add(new ui::MenuItem(ui::Command(1, L"Scene.Editor.VolumetricFogQuality"), L"Low", true, 0));
+	m_menuVolumetricFog->add(new ui::MenuItem(ui::Command(2, L"Scene.Editor.VolumetricFogQuality"), L"Medium", true, 0));
+	m_menuVolumetricFog->add(new ui::MenuItem(ui::Command(3, L"Scene.Editor.VolumetricFogQuality"), L"High", true, 0));
+	m_menuVolumetricFog->add(new ui::MenuItem(ui::Command(4, L"Scene.Editor.VolumetricFogQuality"), L"Ultra", true, 0));
+	m_menuVolumetricFog->get(settings->getProperty< int32_t >(L"SceneEditor.VolumetricFogQuality", 4))->setChecked(true);
+	m_toolQualityMenu->add(m_menuVolumetricFog);
+
 	m_toolWorldRenderer = new ui::ToolBarDropDown(ui::Command(1, L"Scene.Editor.WorldRenderer"), 70_ut, i18n::Text(L"SCENE_EDITOR_WORLD_RENDERER"));
 	m_toolWorldRenderer->add(L"Simple");
 	m_toolWorldRenderer->add(L"Forward");
@@ -515,6 +524,7 @@ bool DefaultRenderControl::createRenderControl(int32_t type)
 	qualitySettings.motionBlur = (world::Quality)getChecked(m_menuMotionBlur)->getCommand().getId();
 	qualitySettings.ambientOcclusion = (world::Quality)getChecked(m_menuAO)->getCommand().getId();
 	qualitySettings.antiAlias = (world::Quality)getChecked(m_menuAA)->getCommand().getId();
+	qualitySettings.volumetricFog = (world::Quality)getChecked(m_menuVolumetricFog)->getCommand().getId();
 	m_renderControl->setQuality(qualitySettings);
 
 	{
@@ -616,6 +626,12 @@ void DefaultRenderControl::eventToolClick(ui::ToolBarButtonClickEvent* event)
 			m_menuAA->get(i)->setChecked(bool(i == event->getCommand().getId()));
 		updateQuality = true;
 	}
+	else if (event->getCommand() == L"Scene.Editor.VolumetricFogQuality")
+	{
+		for (int32_t i = 0; i < m_menuVolumetricFog->count(); ++i)
+			m_menuVolumetricFog->get(i)->setChecked(bool(i == event->getCommand().getId()));
+		updateQuality = true;
+	}
 	else if (event->getCommand() == L"Scene.Editor.WorldRenderer")
 	{
 		const TypeInfo* worldRendererType = TypeInfo::find(c_worldRendererTypes[m_toolWorldRenderer->getSelected()]);
@@ -651,6 +667,7 @@ void DefaultRenderControl::eventToolClick(ui::ToolBarButtonClickEvent* event)
 		qualitySettings.motionBlur = (world::Quality)getChecked(m_menuMotionBlur)->getCommand().getId();
 		qualitySettings.ambientOcclusion = (world::Quality)getChecked(m_menuAO)->getCommand().getId();
 		qualitySettings.antiAlias = (world::Quality)getChecked(m_menuAA)->getCommand().getId();
+		qualitySettings.volumetricFog = (world::Quality)getChecked(m_menuVolumetricFog)->getCommand().getId();
 		m_renderControl->setQuality(qualitySettings);
 	}
 

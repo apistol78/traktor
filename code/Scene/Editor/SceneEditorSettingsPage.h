@@ -68,6 +68,7 @@ private:
 	Ref< ui::DropDown > m_dropDownIrradiance;
 	Ref< ui::DropDown > m_dropDownAmbientOcclusion;
 	Ref< ui::DropDown > m_dropAntialias;
+	Ref< ui::DropDown > m_dropDownVolumetricFog;
 
 	void updateValues();
 

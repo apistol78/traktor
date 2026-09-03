@@ -112,7 +112,6 @@ const render::Handle ShaderParameter::FogVolumeTexture(L"World_FogVolumeTexture"
 const render::Handle ShaderParameter::FogVolumePhase(L"World_FogVolumePhase");
 const render::Handle ShaderParameter::FogVolumeElevation(L"World_FogVolumeElevation");
 const render::Handle ShaderParameter::FogVolumeRange(L"World_FogVolumeRange");
-const render::Handle ShaderParameter::FogVolumeSliceCount(L"World_FogVolumeSliceCount");
 const render::Handle ShaderParameter::FogVolumeSliceUpdate(L"World_FogVolumeSliceUpdate");
 const render::Handle ShaderParameter::FogVolumeMediumColor(L"World_FogVolumeMediumColor");
 const render::Handle ShaderParameter::FogVolumeMediumDensity(L"World_FogVolumeMediumDensity");

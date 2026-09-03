@@ -266,6 +266,10 @@
 			<second>Top</second>
 		</item>
 		<item>
+			<first>SCENE_EDITOR_VOLUMETRIC_FOG</first>
+			<second>Volumetric fog</second>
+		</item>
+		<item>
 			<first>SCENE_EDITOR_NEW_LAYER</first>
 			<second>New layer</second>
 		</item>

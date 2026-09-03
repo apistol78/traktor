@@ -10,6 +10,7 @@
 
 #include "Core/Log/Log.h"
 #include "Core/Math/Random.h"
+#include "Core/Misc/Align.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Timer/Profiler.h"
 #include "Render/Buffer.h"
@@ -38,6 +39,31 @@ const int32_t c_sliceCount = 128;
 
 Random s_random;
 
+//! Size of a froxel in screen pixels, in x and y, for each quality step.
+int32_t pixelsPerFroxel(Quality quality)
+{
+	switch (quality)
+	{
+	case Quality::Low:
+		return 16;
+	default:
+	case Quality::Medium:
+		return 12;
+	case Quality::High:
+		return 8;
+	case Quality::Ultra:
+		return 6;
+	}
+}
+
+int32_t calculateVolumeExtent(float viewExtent, Quality quality)
+{
+	// The scattering and integration dispatches use 8 thread wide workgroups
+	// and store without bounds checks, so the extent must stay a multiple of 8.
+	const int32_t extent = alignUp((int32_t)(viewExtent / pixelsPerFroxel(quality) + 0.5f), 8);
+	return clamp(extent, 64, 512);
+}
+
 }
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.VolumetricFogPass", VolumetricFogPass, Object)
@@ -52,9 +78,21 @@ bool VolumetricFogPass::create(resource::IResourceManager* resourceManager, rend
 	if (!resourceManager->bind(c_integrateShader, m_integrateShader))
 		return false;
 
+	m_renderSystem = renderSystem;
+	m_shadowsQuality = desc.quality.shadows;
+	m_volumetricFogQuality = desc.quality.volumetricFog;
+	return true;
+}
+
+bool VolumetricFogPass::createVolumeTextures(int32_t width, int32_t height)
+{
+	safeDestroy(m_volumeTextures[0]);
+	safeDestroy(m_volumeTextures[1]);
+	safeDestroy(m_integratedTexture);
+
 	const render::VolumeTextureCreateDesc vtcd = {
-		.width = 128,
-		.height = 128,
+		.width = width,
+		.height = height,
 		.depth = c_sliceCount,
 		.mipCount = 1,
 		.format = render::TfR16G16B16A16F,
@@ -62,14 +100,15 @@ bool VolumetricFogPass::create(resource::IResourceManager* resourceManager, rend
 		.immutable = false,
 		.shaderStorage = true
 	};
-	if ((m_volumeTextures[0] = renderSystem->createVolumeTexture(vtcd, T_FILE_LINE_W)) == nullptr)
+	if ((m_volumeTextures[0] = m_renderSystem->createVolumeTexture(vtcd, T_FILE_LINE_W)) == nullptr)
 		return false;
-	if ((m_volumeTextures[1] = renderSystem->createVolumeTexture(vtcd, T_FILE_LINE_W)) == nullptr)
+	if ((m_volumeTextures[1] = m_renderSystem->createVolumeTexture(vtcd, T_FILE_LINE_W)) == nullptr)
 		return false;
-	if ((m_integratedTexture = renderSystem->createVolumeTexture(vtcd, T_FILE_LINE_W)) == nullptr)
+	if ((m_integratedTexture = m_renderSystem->createVolumeTexture(vtcd, T_FILE_LINE_W)) == nullptr)
 		return false;
 
-	m_shadowsQuality = desc.quality.shadows;
+	m_volumeWidth = width;
+	m_volumeHeight = height;
 	return true;
 }
 
@@ -79,6 +118,9 @@ void VolumetricFogPass::destroy()
 	safeDestroy(m_volumeTextures[1]);
 	safeDestroy(m_integratedTexture);
 	m_integrateShader.clear();
+	m_renderSystem = nullptr;
+	m_volumeWidth = 0;
+	m_volumeHeight = 0;
 }
 
 render::RGTexture VolumetricFogPass::setup(
@@ -91,13 +133,23 @@ render::RGTexture VolumetricFogPass::setup(
 	uint32_t frameCount,
 	const float* slicePositions,
 	render::RenderGraph& renderGraph,
-	render::RGTargetSet shadowMapAtlasTargetSetId) const
+	render::RGTargetSet shadowMapAtlasTargetSetId)
 {
 	T_PROFILER_SCOPE(L"VolumetricFogPass::setup");
 
 	Ref< const FogComponent > fog = gatheredView.fog;
 	if (!fog || !fog->m_volumetricFogEnable || !fog->m_mediumShader)
 		return render::RGTexture::Invalid;
+
+	if (m_volumetricFogQuality == Quality::Disabled)
+		return render::RGTexture::Invalid;
+
+	const Vector2 viewSize = worldRenderView.getViewSize();
+	const int32_t volumeWidth = calculateVolumeExtent(viewSize.x, m_volumetricFogQuality);
+	const int32_t volumeHeight = calculateVolumeExtent(viewSize.y, m_volumetricFogQuality);
+	if (volumeWidth != m_volumeWidth || volumeHeight != m_volumeHeight)
+		if (!createVolumeTextures(volumeWidth, volumeHeight))
+			return render::RGTexture::Invalid;
 
 	const auto& shadowSettings = m_settings.shadowSettings[(int32_t)m_shadowsQuality];
 
@@ -155,8 +207,8 @@ render::RGTexture VolumetricFogPass::setup(
 
 		renderBlock->program = injectLightsProgram.program;
 		renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
-		renderBlock->workSize[0] = 128;
-		renderBlock->workSize[1] = 128;
+		renderBlock->workSize[0] = volumeWidth;
+		renderBlock->workSize[1] = volumeHeight;
 		renderBlock->workSize[2] = c_sliceCount;
 
 		renderBlock->programParams->beginParameters(renderContext);
@@ -222,8 +274,6 @@ render::RGTexture VolumetricFogPass::setup(
 			clamp(fog->m_phaseBlend, 0.0f, 1.0f),
 			0.0f));
 
-		renderBlock->programParams->setFloatParameter(ShaderParameter::FogVolumeSliceCount, (float)c_sliceCount);
-
 		renderBlock->programParams->endParameters(renderContext);
 
 		renderContext->compute(renderBlock);
@@ -237,8 +287,8 @@ render::RGTexture VolumetricFogPass::setup(
 		auto integrateBlock = renderContext->allocNamed< render::ComputeRenderBlock >(L"Volumetric fog, integrate");
 
 		integrateBlock->program = integrateProgram.program;
-		integrateBlock->workSize[0] = 128;
-		integrateBlock->workSize[1] = 128;
+		integrateBlock->workSize[0] = volumeWidth;
+		integrateBlock->workSize[1] = volumeHeight;
 		integrateBlock->workSize[2] = 1;
 
 		integrateBlock->programParams = renderContext->alloc< render::ProgramParameters >();
@@ -280,7 +330,6 @@ void VolumetricFogPass::setupSharedParameters(const GatherView& gatheredView, fl
 		}
 
 		// Volumetric fog.
-		parameters->setFloatParameter(ShaderParameter::FogVolumeSliceCount, (float)c_sliceCount);
 		parameters->setVectorParameter(ShaderParameter::FogVolumeRange, fogRange);
 	}
 	else

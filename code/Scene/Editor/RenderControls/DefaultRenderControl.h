@@ -91,6 +91,7 @@ private:
 	Ref< ui::MenuItem > m_menuIrradiance;
 	Ref< ui::MenuItem > m_menuAO;
 	Ref< ui::MenuItem > m_menuAA;
+	Ref< ui::MenuItem > m_menuVolumetricFog;
 	Ref< ISceneRenderControl > m_renderControl;
 
 	bool createRenderControl(int32_t type);

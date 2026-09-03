@@ -1,4 +1,8 @@
 {
     "cmake.configureOnOpen": false,
+    "cmake.configureOnEdit": false,
+    "cmake.autoSelectActiveFolder": false,
+    "cmake.automaticReconfigure": false,
+    "cmake.ignoreCMakeListsMissing": true,
     "task.autoDetect": "off"
 }

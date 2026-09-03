@@ -63,18 +63,25 @@ public:
 		uint32_t frameCount,
 		const float* slicePositions,
 		render::RenderGraph& renderGraph,
-		render::RGTargetSet shadowMapAtlasTargetSetId) const;
+		render::RGTargetSet shadowMapAtlasTargetSetId);
 
 	static void setupSharedParameters(const GatherView& gatheredView, float viewNearZ, float viewFarZ, render::ProgramParameters* parameters);
 
 private:
 	WorldRenderSettings m_settings;
+	Ref< render::IRenderSystem > m_renderSystem;
 	Quality m_shadowsQuality = Quality::Disabled;
+	Quality m_volumetricFogQuality = Quality::Medium;
 	resource::Proxy< render::Shader > m_integrateShader;
 	//! Per froxel source term and extinction, double buffered for temporal reprojection.
 	Ref< render::ITexture > m_volumeTextures[2];
 	//! Accumulated in-scattering and transmittance; consumed in the same frame, so single buffered.
 	Ref< render::ITexture > m_integratedTexture;
+	//! Current x/y size of the volume textures; sized from view resolution and quality on demand.
+	int32_t m_volumeWidth = 0;
+	int32_t m_volumeHeight = 0;
+
+	bool createVolumeTextures(int32_t width, int32_t height);
 };
 
 }

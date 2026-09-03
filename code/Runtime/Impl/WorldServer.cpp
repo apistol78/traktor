@@ -88,6 +88,7 @@ bool WorldServer::create(const PropertyGroup* defaultSettings, const PropertyGro
 	m_particleQuality = (world::Quality)settings->getProperty< int32_t >(L"World.ParticleQuality", (int32_t)world::Quality::Medium);
 	m_terrainQuality = (world::Quality)settings->getProperty< int32_t >(L"World.TerrainQuality", (int32_t)world::Quality::Medium);
 	m_irradianceQuality = (world::Quality)settings->getProperty< int32_t >(L"World.IrradianceQuality", (int32_t)world::Quality::Medium);
+	m_volumetricFogQuality = (world::Quality)settings->getProperty< int32_t >(L"World.VolumetricFogQuality", (int32_t)world::Quality::Medium);
 	m_gamma = settings->getProperty< float >(L"World.Gamma", 2.2f);
 
 	m_renderServer = renderServer;
@@ -202,6 +203,7 @@ int32_t WorldServer::reconfigure(const PropertyGroup* settings)
 	const world::Quality particleQuality = (world::Quality)settings->getProperty< int32_t >(L"World.ParticleQuality", (int32_t)world::Quality::Medium);
 	const world::Quality terrainQuality = (world::Quality)settings->getProperty< int32_t >(L"World.TerrainQuality", (int32_t)world::Quality::Medium);
 	const world::Quality irradianceQuality = (world::Quality)settings->getProperty< int32_t >(L"World.IrradianceQuality", (int32_t)world::Quality::Medium);
+	const world::Quality volumetricFogQuality = (world::Quality)settings->getProperty< int32_t >(L"World.VolumetricFogQuality", (int32_t)world::Quality::Medium);
 	const float gamma = settings->getProperty< float >(L"World.Gamma", 2.2f);
 
 	// Check if we need to be reconfigured.
@@ -215,6 +217,7 @@ int32_t WorldServer::reconfigure(const PropertyGroup* settings)
 		particleQuality == m_particleQuality &&
 		terrainQuality == m_terrainQuality &&
 		irradianceQuality == m_irradianceQuality &&
+		volumetricFogQuality == m_volumetricFogQuality &&
 		gamma == m_gamma)
 		return CrUnaffected;
 
@@ -235,6 +238,7 @@ int32_t WorldServer::reconfigure(const PropertyGroup* settings)
 	m_imageProcessQuality = imageProcessQuality;
 	m_terrainQuality = terrainQuality;
 	m_irradianceQuality = irradianceQuality;
+	m_volumetricFogQuality = volumetricFogQuality;
 	m_gamma = gamma;
 
 	return CrAccepted;
@@ -282,6 +286,7 @@ Ref< world::IWorldRenderer > WorldServer::createWorldRenderer(const world::World
 	wcd.quality.antiAlias = m_antiAliasQuality;
 	wcd.quality.imageProcess = m_imageProcessQuality;
 	wcd.quality.irradiance = m_irradianceQuality;
+	wcd.quality.volumetricFog = m_volumetricFogQuality;
 	wcd.multiSample = m_renderServer->getMultiSample();
 	wcd.gamma = m_gamma;
 	wcd.hdr = m_renderServer->getRenderView()->isHDR();

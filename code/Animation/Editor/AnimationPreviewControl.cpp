@@ -287,6 +287,7 @@ void AnimationPreviewControl::updateWorldRenderer()
 	wcd.quality.ambientOcclusion = (world::Quality)settings->getProperty< int32_t >(L"SceneEditor.AmbientOcclusionQuality", 4);
 	wcd.quality.antiAlias = (world::Quality)settings->getProperty< int32_t >(L"SceneEditor.AntiAliasQuality", 4);
 	wcd.quality.irradiance = (world::Quality)settings->getProperty< int32_t >(L"SceneEditor.IrradianceQuality", 4);
+	wcd.quality.volumetricFog = (world::Quality)settings->getProperty< int32_t >(L"SceneEditor.VolumetricFogQuality", 4);
 
 	wcd.hdr = getRenderView()->isHDR();
 

@@ -194,6 +194,18 @@ bool SceneEditorSettingsPage::create(ui::Container* parent, const PropertyGroup*
 	m_dropAntialias->add(L"Ultra");
 	m_dropAntialias->select(settings->getProperty< int32_t >(L"SceneEditor.AntiAliasQuality", 4));
 
+	Ref< ui::Static > staticVolumetricFog = new ui::Static();
+	staticVolumetricFog->create(containerQuality, i18n::Text(L"SCENE_EDITOR_VOLUMETRIC_FOG"));
+
+	m_dropDownVolumetricFog = new ui::DropDown();
+	m_dropDownVolumetricFog->create(containerQuality);
+	m_dropDownVolumetricFog->add(L"Disabled");
+	m_dropDownVolumetricFog->add(L"Low");
+	m_dropDownVolumetricFog->add(L"Medium");
+	m_dropDownVolumetricFog->add(L"High");
+	m_dropDownVolumetricFog->add(L"Ultra");
+	m_dropDownVolumetricFog->select(settings->getProperty< int32_t >(L"SceneEditor.VolumetricFogQuality", 4));
+
 	parent->setText(i18n::Text(L"SCENE_EDITOR_SETTINGS"));
 
 	// Add available world renderer types.
@@ -235,6 +247,7 @@ bool SceneEditorSettingsPage::apply(PropertyGroup* settings)
 	settings->setProperty< PropertyInteger >(L"SceneEditor.IrradianceQuality", m_dropDownIrradiance->getSelected());
 	settings->setProperty< PropertyInteger >(L"SceneEditor.AmbientOcclusionQuality", m_dropDownAmbientOcclusion->getSelected());
 	settings->setProperty< PropertyInteger >(L"SceneEditor.AntiAliasQuality", m_dropAntialias->getSelected());
+	settings->setProperty< PropertyInteger >(L"SceneEditor.VolumetricFogQuality", m_dropDownVolumetricFog->getSelected());
 	return true;
 }
 

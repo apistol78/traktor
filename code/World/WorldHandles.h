@@ -130,7 +130,6 @@ struct T_DLLCLASS ShaderParameter
 	static const render::Handle FogVolumePhase;
 	static const render::Handle FogVolumeElevation;
 	static const render::Handle FogVolumeRange;
-	static const render::Handle FogVolumeSliceCount;
 	static const render::Handle FogVolumeSliceUpdate;
 	static const render::Handle FogVolumeMediumColor;
 	static const render::Handle FogVolumeMediumDensity;
