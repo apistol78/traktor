@@ -42,7 +42,8 @@ Ref< SkeletonComponent > SkeletonComponentData::createComponent(resource::IResou
 			resourceManager,
 			physicsManager,
 			skeleton,
-			Transform::identity()
+			Transform::identity(),
+			false
 		);
 
 	return new SkeletonComponent(

@@ -25,7 +25,8 @@ Ref< RtState > RtStateData::createInstance(
 	resource::IResourceManager* resourceManager,
 	physics::PhysicsManager* physicsManager,
 	const Skeleton* skeleton,
-	const Transform& worldTransform) const
+	const Transform& worldTransform,
+	bool editor) const
 {
 	Ref< RtState > instance = new RtState();
 
@@ -42,7 +43,7 @@ Ref< RtState > RtStateData::createInstance(
 	}
 	else if (m_poseController)
 	{
-		instance->m_poseController = m_poseController->createInstance(resourceManager, physicsManager, skeleton, worldTransform);
+		instance->m_poseController = m_poseController->createInstance(resourceManager, physicsManager, skeleton, worldTransform, editor);
 		if (instance->m_poseController)
 			return instance;
 	}

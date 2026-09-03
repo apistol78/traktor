@@ -345,7 +345,10 @@ bool AnimationPreviewControl::renderFrame()
 
 	// Temporarily add mesh entity to world.
 	if (m_entity)
+	{
+		m_entity->setTransform(Transform::identity());
 		m_sceneInstance->getWorld()->addEntity(m_entity);
+	}
 
 	// Step the physics simulation.
 	if (m_physicsManager)
@@ -414,7 +417,6 @@ bool AnimationPreviewControl::renderFrame()
 		return false;
 
 	// Build render context.
-	m_renderContext->flush();
 	m_renderGraph->build(m_renderContext, sz.cx, sz.cy);
 
 	// Render frame.
@@ -423,6 +425,8 @@ bool AnimationPreviewControl::renderFrame()
 		return false;
 
 	m_renderContext->render(renderView);
+	m_renderContext->flush();
+
 	renderView->endFrame();
 	renderView->present();
 

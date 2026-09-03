@@ -6,9 +6,10 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Animation/RagDoll/RagDollPoseControllerData.h"
+
 #include "Animation/Joint.h"
 #include "Animation/RagDoll/RagDollPoseController.h"
-#include "Animation/RagDoll/RagDollPoseControllerData.h"
 #include "Animation/RagDoll/RagDollSkeleton.h"
 #include "Animation/Skeleton.h"
 #include "Animation/SkeletonUtils.h"
@@ -27,21 +28,21 @@
 
 namespace traktor::animation
 {
-	namespace
-	{
+namespace
+{
 
 uint32_t s_clusterId = 10000;
 
-	}
+}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.RagDollPoseControllerData", 7, RagDollPoseControllerData, IPoseControllerData)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.RagDollPoseControllerData", 8, RagDollPoseControllerData, IPoseControllerData)
 
 Ref< IPoseController > RagDollPoseControllerData::createInstance(
 	resource::IResourceManager* resourceManager,
 	physics::PhysicsManager* physicsManager,
 	const Skeleton* skeleton,
-	const Transform& worldTransform
-) const
+	const Transform& worldTransform,
+	bool editor) const
 {
 	if (!physicsManager || !skeleton)
 		return nullptr;
@@ -134,28 +135,31 @@ Ref< IPoseController > RagDollPoseControllerData::createInstance(
 
 	// Determine which limb should drive the owner entity's transform.
 	RagDollPoseController::Binding driveBinding;
-	int32_t driveJoint = -1;
-	uint32_t driveJointDepth = ~0U;
-	for (uint32_t i = 0; i < jointBindings.size(); ++i)
+	if (!editor && m_driveOwnerTransform)
 	{
-		if (jointBindings[i].empty())
-			continue;
-
-		uint32_t depth = 0;
-		for (const Joint* joint = skeleton->getJoint(i); joint != nullptr && joint->getParent() >= 0; joint = skeleton->getJoint(joint->getParent()))
-			++depth;
-
-		if (depth < driveJointDepth)
+		int32_t driveJoint = -1;
+		uint32_t driveJointDepth = ~0U;
+		for (uint32_t i = 0; i < jointBindings.size(); ++i)
 		{
-			driveJoint = (int32_t)i;
-			driveJointDepth = depth;
+			if (jointBindings[i].empty())
+				continue;
+
+			uint32_t depth = 0;
+			for (const Joint* joint = skeleton->getJoint(i); joint != nullptr && joint->getParent() >= 0; joint = skeleton->getJoint(joint->getParent()))
+				++depth;
+
+			if (depth < driveJointDepth)
+			{
+				driveJoint = (int32_t)i;
+				driveJointDepth = depth;
+			}
 		}
-	}
-	if (driveJoint >= 0)
-	{
-		for (const auto& binding : jointBindings[driveJoint])
-			if (driveBinding.limb < 0 || binding.weight > driveBinding.weight)
-				driveBinding = binding;
+		if (driveJoint >= 0)
+		{
+			for (const auto& binding : jointBindings[driveJoint])
+				if (driveBinding.limb < 0 || binding.weight > driveBinding.weight)
+					driveBinding = binding;
+		}
 	}
 
 	Ref< RagDollPoseController > poseController = new RagDollPoseController();
@@ -170,6 +174,9 @@ void RagDollPoseControllerData::serialize(ISerializer& s)
 	T_FATAL_ASSERT(s.getVersion< RagDollPoseControllerData >() >= 7);
 
 	s >> resource::Member< RagDollSkeleton >(L"skeleton", m_skeleton);
+
+	if (s.getVersion< RagDollPoseControllerData >() >= 8)
+		s >> Member< bool >(L"driveOwnerTransform", m_driveOwnerTransform);
 }
 
 }

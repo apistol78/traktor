@@ -61,7 +61,8 @@ public:
 		resource::IResourceManager* resourceManager,
 		physics::PhysicsManager* physicsManager,
 		const Skeleton* skeleton,
-		const Transform& worldTransform) const;
+		const Transform& worldTransform,
+		bool editor) const;
 
 	virtual void serialize(ISerializer& s) override final;
 

@@ -26,7 +26,8 @@ Ref< RtStateGraph > RtStateGraphData::createInstance(
 	resource::IResourceManager* resourceManager,
 	physics::PhysicsManager* physicsManager,
 	const Skeleton* skeleton,
-	const Transform& worldTransform) const
+	const Transform& worldTransform,
+	bool editor) const
 {
 	Ref< RtStateGraph > instance = new RtStateGraph();
 
@@ -34,7 +35,7 @@ Ref< RtStateGraph > RtStateGraphData::createInstance(
 	instance->m_states.reserve(m_states.size());
 	for (auto stateData : m_states)
 	{
-		Ref< RtState > state = stateData->createInstance(resourceManager, physicsManager, skeleton, worldTransform);
+		Ref< RtState > state = stateData->createInstance(resourceManager, physicsManager, skeleton, worldTransform, editor);
 		if (state)
 		{
 			instance->m_states.push_back(state);

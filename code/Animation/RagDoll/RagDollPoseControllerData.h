@@ -36,8 +36,8 @@ public:
 		resource::IResourceManager* resourceManager,
 		physics::PhysicsManager* physicsManager,
 		const Skeleton* skeleton,
-		const Transform& worldTransform
-	) const override final;
+		const Transform& worldTransform,
+		bool editor) const override final;
 
 	virtual void serialize(ISerializer& s) override final;
 
@@ -47,6 +47,7 @@ private:
 	friend class RagDollPoseController;
 
 	resource::Id< RagDollSkeleton > m_skeleton;
+	bool m_driveOwnerTransform = true;
 };
 
 }

@@ -28,7 +28,7 @@ AnimationGraphPoseControllerData::AnimationGraphPoseControllerData(const resourc
 {
 }
 
-Ref< IPoseController > AnimationGraphPoseControllerData::createInstance(resource::IResourceManager* resourceManager, physics::PhysicsManager* physicsManager, const Skeleton* skeleton, const Transform& worldTransform) const
+Ref< IPoseController > AnimationGraphPoseControllerData::createInstance(resource::IResourceManager* resourceManager, physics::PhysicsManager* physicsManager, const Skeleton* skeleton, const Transform& worldTransform, bool editor) const
 {
 	// Load the (shared, immutable) compiled state graph data through the resource manager.
 	resource::Proxy< RtStateGraphData > stateGraphData;
@@ -37,7 +37,7 @@ Ref< IPoseController > AnimationGraphPoseControllerData::createInstance(resource
 
 	// Build a per-instance runtime state graph; passing physics/skeleton/transform lets
 	// physics-driven states (e.g. rag doll) create their pose controllers properly.
-	Ref< RtStateGraph > stateGraph = stateGraphData->createInstance(resourceManager, physicsManager, skeleton, worldTransform);
+	Ref< RtStateGraph > stateGraph = stateGraphData->createInstance(resourceManager, physicsManager, skeleton, worldTransform, editor);
 	if (!stateGraph)
 		return nullptr;
 
