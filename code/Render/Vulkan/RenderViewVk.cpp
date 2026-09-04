@@ -428,6 +428,10 @@ void RenderViewVk::close()
 		m_surface = 0;
 	}
 
+#if defined(_WIN32) || defined(__LINUX__) || defined(__RPI__) || defined(__MAC__)
+	m_window = nullptr;
+#endif
+
 	m_presentQueue = nullptr;
 	m_counter = -1;
 }
