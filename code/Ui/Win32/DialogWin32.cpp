@@ -17,6 +17,11 @@ namespace traktor::ui
 
 const UINT WM_ENDMODAL = WM_USER + 2000;
 
+// Tag windows disabled by a modal dialog with the dialog's handle, so only
+// those are re-enabled when the dialog end; widgets disabled by the
+// application must remain disabled.
+const wchar_t* c_modalDisabledProp = L"TRAKTOR_MODAL_DISABLED";
+
 	}
 
 DialogWin32::DialogWin32(EventSubject* owner)
@@ -123,10 +128,14 @@ DialogResult DialogWin32::showModal()
 		// Disable children to ancestor instead of ancestor directly, this
 		// allows us to move the ancestor form.
 		EnumChildWindows(hParentWnd, [](HWND hWnd, LPARAM lParam) -> BOOL {
-			EnableWindow(hWnd, FALSE);
-			RedrawWindow(hWnd, NULL, NULL, RDW_INVALIDATE);
+			if (IsWindowEnabled(hWnd))
+			{
+				EnableWindow(hWnd, FALSE);
+				SetPropW(hWnd, c_modalDisabledProp, (HANDLE)lParam);
+				RedrawWindow(hWnd, NULL, NULL, RDW_INVALIDATE);
+			}
 			return TRUE;
-		}, NULL);
+		}, (LPARAM)(HWND)m_hWnd);
 		EnableWindow(m_hWnd, TRUE);
 	}
 
@@ -177,14 +186,19 @@ DialogResult DialogWin32::showModal()
 		}
 	}
 
-	// Enable parent window.
+	// Enable only the windows disabled by this dialog; others were
+	// disabled by the application and must remain disabled.
 	if (hParentWnd)
 	{
 		EnumChildWindows(hParentWnd, [](HWND hWnd, LPARAM lParam) -> BOOL {
-			EnableWindow(hWnd, TRUE);
-			RedrawWindow(hWnd, NULL, NULL, RDW_INVALIDATE);
+			if (GetPropW(hWnd, c_modalDisabledProp) == (HANDLE)lParam)
+			{
+				RemovePropW(hWnd, c_modalDisabledProp);
+				EnableWindow(hWnd, TRUE);
+				RedrawWindow(hWnd, NULL, NULL, RDW_INVALIDATE);
+			}
 			return TRUE;
-		}, NULL);
+		}, (LPARAM)(HWND)m_hWnd);
 	}
 
 	return m_result;
