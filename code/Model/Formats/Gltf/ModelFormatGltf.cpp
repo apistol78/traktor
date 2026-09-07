@@ -382,7 +382,13 @@ bool ModelFormatGltf::write(const Path& filePath, const Model* model) const
 	const uint32_t vertexCount = model->getVertexCount();
 	const uint32_t polygonCount = model->getPolygonCount();
 
-	if (vertexCount == 0 || polygonCount == 0)
+	const uint32_t jointCount = model->getJointCount();
+	const bool hasSkin = (jointCount > 0);
+
+	// A model without geometry is still writable as a skeleton/animation-only
+	// file; joint nodes, skin and animations carry all of its content.
+	const bool hasMesh = (vertexCount > 0 && polygonCount > 0);
+	if (!hasMesh && !hasSkin)
 	{
 		log::error << L"Unable to write glTF; model contains no geometry." << Endl;
 		return false;
@@ -398,9 +404,6 @@ bool ModelFormatGltf::write(const Path& filePath, const Model* model) const
 	// Transforms are converted by conjugation (A * M * A) so skinning stays
 	// consistent with the reflected vertex positions.
 	const Matrix44 axisTransform = calculateGltfAxisTransform();
-
-	const uint32_t jointCount = model->getJointCount();
-	const bool hasSkin = (jointCount > 0);
 
 	// Detect which optional vertex attributes are present in the model.
 	bool hasNormals = false;
@@ -541,7 +544,7 @@ bool ModelFormatGltf::write(const Path& filePath, const Model* model) const
 	if (!bucketIndices[materialCount].empty())
 		groups.push_back({ -1, &bucketIndices[materialCount] });
 
-	if (groups.empty())
+	if (hasMesh && groups.empty())
 	{
 		log::error << L"Unable to write glTF; model contains no triangles." << Endl;
 		return false;
@@ -688,12 +691,15 @@ bool ModelFormatGltf::write(const Path& filePath, const Model* model) const
 				{
 					// Use the pose's local transform where stored, otherwise fall
 					// back to the joint's bind transform so unposed joints hold.
+					// Renormalize the rotation on both sides of the conversion; a
+					// slightly non-unit quaternion skews the matrix trace, which
+					// the quaternion extraction amplifies badly near 180 degrees.
 					const Transform local = (pose != nullptr && j < poseCount) ? pose->getJointTransform(j) : model->getJoint(j).getTransform();
-					const Matrix44 m = axisTransform * local.toMatrix44() * axisTransform;
+					const Matrix44 m = axisTransform * Transform(local.translation(), local.rotation().normalized()).toMatrix44() * axisTransform;
 
 					m.translation().storeUnaligned3(&ad.translations[j][f * 3]);
 
-					const Quaternion q(m);
+					const Quaternion q = Quaternion(m).normalized();
 					q.e.storeUnaligned(&ad.rotations[j][f * 4]);
 				}
 			}
@@ -703,7 +709,7 @@ bool ModelFormatGltf::write(const Path& filePath, const Model* model) const
 	}
 
 	// --- Count the cgltf objects ------------------------------------------
-	const uint32_t numVertexAccessors = 1 + (hasNormals ? 1 : 0) + (hasTexCoords ? 1 : 0) + (hasColors ? 1 : 0) + (hasSkin ? 2 : 0);
+	const uint32_t numVertexAccessors = hasMesh ? (1 + (hasNormals ? 1 : 0) + (hasTexCoords ? 1 : 0) + (hasColors ? 1 : 0) + (hasSkin ? 2 : 0)) : 0;
 	const uint32_t numGroups = (uint32_t)groups.size();
 
 	uint32_t animAccessorCount = 0;
@@ -715,7 +721,7 @@ bool ModelFormatGltf::write(const Path& filePath, const Model* model) const
 	}
 
 	const uint32_t accessorCount = numVertexAccessors + numGroups + (hasSkin ? 1 : 0) + animAccessorCount;
-	const uint32_t nodeCount = (hasSkin ? jointCount : 0) + 1;
+	const uint32_t nodeCount = (hasSkin ? jointCount : 0) + (hasMesh ? 1 : 0);
 	const uint32_t meshNodeIndex = hasSkin ? jointCount : 0;
 
 	// --- Assemble the binary blob -----------------------------------------
@@ -796,7 +802,7 @@ bool ModelFormatGltf::write(const Path& filePath, const Model* model) const
 	std::vector< cgltf_node > nodes(nodeCount);
 	std::vector< cgltf_node* > childPtrs(childLinkCount);
 	std::vector< cgltf_node* > skinJointPtrs(hasSkin ? jointCount : 0);
-	std::vector< cgltf_node* > sceneNodes(1 + (hasSkin ? (uint32_t)rootJoints.size() : 0));
+	std::vector< cgltf_node* > sceneNodes((hasMesh ? 1 : 0) + (hasSkin ? (uint32_t)rootJoints.size() : 0));
 	std::vector< cgltf_scene > scenes(1);
 	std::vector< cgltf_animation > animations(anims.size());
 	std::vector< cgltf_animation_sampler > animSamplers(animSamplerCount);
@@ -826,45 +832,48 @@ bool ModelFormatGltf::write(const Path& filePath, const Model* model) const
 	// --- Vertex accessors --------------------------------------------------
 	uint32_t ai = 0;
 
-	const uint32_t posAccessor = ai;
-	setupAccessor(ai, posOffset, (uint32_t)(positions.size() * sizeof(float)), cgltf_component_type_r_32f, cgltf_type_vec3, vertexCount);
-	accessors[ai].has_min = 1;
-	accessors[ai].has_max = 1;
-	for (int32_t k = 0; k < 3; ++k)
+	uint32_t posAccessor = 0, nrmAccessor = 0, uvAccessor = 0, colAccessor = 0, jointsAccessor = 0, weightsAccessor = 0;
+	if (hasMesh)
 	{
-		accessors[ai].min[k] = posMin[k];
-		accessors[ai].max[k] = posMax[k];
-	}
-	++ai;
-
-	uint32_t nrmAccessor = 0, uvAccessor = 0, colAccessor = 0, jointsAccessor = 0, weightsAccessor = 0;
-	if (hasNormals)
-	{
-		nrmAccessor = ai;
-		setupAccessor(ai, nrmOffset, (uint32_t)(normals.size() * sizeof(float)), cgltf_component_type_r_32f, cgltf_type_vec3, vertexCount);
-		++ai;
-	}
-	if (hasTexCoords)
-	{
-		uvAccessor = ai;
-		setupAccessor(ai, uvOffset, (uint32_t)(texCoords.size() * sizeof(float)), cgltf_component_type_r_32f, cgltf_type_vec2, vertexCount);
-		++ai;
-	}
-	if (hasColors)
-	{
-		colAccessor = ai;
-		setupAccessor(ai, colOffset, (uint32_t)(colors.size() * sizeof(float)), cgltf_component_type_r_32f, cgltf_type_vec4, vertexCount);
-		++ai;
-	}
-	if (hasSkin)
-	{
-		jointsAccessor = ai;
-		setupAccessor(ai, jointsOffset, (uint32_t)(jointsData.size() * sizeof(uint16_t)), cgltf_component_type_r_16u, cgltf_type_vec4, vertexCount);
+		posAccessor = ai;
+		setupAccessor(ai, posOffset, (uint32_t)(positions.size() * sizeof(float)), cgltf_component_type_r_32f, cgltf_type_vec3, vertexCount);
+		accessors[ai].has_min = 1;
+		accessors[ai].has_max = 1;
+		for (int32_t k = 0; k < 3; ++k)
+		{
+			accessors[ai].min[k] = posMin[k];
+			accessors[ai].max[k] = posMax[k];
+		}
 		++ai;
 
-		weightsAccessor = ai;
-		setupAccessor(ai, weightsOffset, (uint32_t)(weightsData.size() * sizeof(float)), cgltf_component_type_r_32f, cgltf_type_vec4, vertexCount);
-		++ai;
+		if (hasNormals)
+		{
+			nrmAccessor = ai;
+			setupAccessor(ai, nrmOffset, (uint32_t)(normals.size() * sizeof(float)), cgltf_component_type_r_32f, cgltf_type_vec3, vertexCount);
+			++ai;
+		}
+		if (hasTexCoords)
+		{
+			uvAccessor = ai;
+			setupAccessor(ai, uvOffset, (uint32_t)(texCoords.size() * sizeof(float)), cgltf_component_type_r_32f, cgltf_type_vec2, vertexCount);
+			++ai;
+		}
+		if (hasColors)
+		{
+			colAccessor = ai;
+			setupAccessor(ai, colOffset, (uint32_t)(colors.size() * sizeof(float)), cgltf_component_type_r_32f, cgltf_type_vec4, vertexCount);
+			++ai;
+		}
+		if (hasSkin)
+		{
+			jointsAccessor = ai;
+			setupAccessor(ai, jointsOffset, (uint32_t)(jointsData.size() * sizeof(uint16_t)), cgltf_component_type_r_16u, cgltf_type_vec4, vertexCount);
+			++ai;
+
+			weightsAccessor = ai;
+			setupAccessor(ai, weightsOffset, (uint32_t)(weightsData.size() * sizeof(float)), cgltf_component_type_r_32f, cgltf_type_vec4, vertexCount);
+			++ai;
+		}
 	}
 
 	// --- Index accessors ---------------------------------------------------
@@ -918,18 +927,21 @@ bool ModelFormatGltf::write(const Path& filePath, const Model* model) const
 	}
 
 	// --- Shared attribute set ----------------------------------------------
-	uint32_t attr = 0;
-	attributes[attr++] = { const_cast< char* >("POSITION"), cgltf_attribute_type_position, 0, &accessors[posAccessor] };
-	if (hasNormals)
-		attributes[attr++] = { const_cast< char* >("NORMAL"), cgltf_attribute_type_normal, 0, &accessors[nrmAccessor] };
-	if (hasTexCoords)
-		attributes[attr++] = { const_cast< char* >("TEXCOORD_0"), cgltf_attribute_type_texcoord, 0, &accessors[uvAccessor] };
-	if (hasColors)
-		attributes[attr++] = { const_cast< char* >("COLOR_0"), cgltf_attribute_type_color, 0, &accessors[colAccessor] };
-	if (hasSkin)
+	if (hasMesh)
 	{
-		attributes[attr++] = { const_cast< char* >("JOINTS_0"), cgltf_attribute_type_joints, 0, &accessors[jointsAccessor] };
-		attributes[attr++] = { const_cast< char* >("WEIGHTS_0"), cgltf_attribute_type_weights, 0, &accessors[weightsAccessor] };
+		uint32_t attr = 0;
+		attributes[attr++] = { const_cast< char* >("POSITION"), cgltf_attribute_type_position, 0, &accessors[posAccessor] };
+		if (hasNormals)
+			attributes[attr++] = { const_cast< char* >("NORMAL"), cgltf_attribute_type_normal, 0, &accessors[nrmAccessor] };
+		if (hasTexCoords)
+			attributes[attr++] = { const_cast< char* >("TEXCOORD_0"), cgltf_attribute_type_texcoord, 0, &accessors[uvAccessor] };
+		if (hasColors)
+			attributes[attr++] = { const_cast< char* >("COLOR_0"), cgltf_attribute_type_color, 0, &accessors[colAccessor] };
+		if (hasSkin)
+		{
+			attributes[attr++] = { const_cast< char* >("JOINTS_0"), cgltf_attribute_type_joints, 0, &accessors[jointsAccessor] };
+			attributes[attr++] = { const_cast< char* >("WEIGHTS_0"), cgltf_attribute_type_weights, 0, &accessors[weightsAccessor] };
+		}
 	}
 
 	// --- Images, textures and the shared sampler ---------------------------
@@ -1027,8 +1039,11 @@ bool ModelFormatGltf::write(const Path& filePath, const Model* model) const
 			prim.material = &materials[groups[g].material];
 	}
 
-	meshes[0].primitives = primitives.data();
-	meshes[0].primitives_count = numGroups;
+	if (hasMesh)
+	{
+		meshes[0].primitives = primitives.data();
+		meshes[0].primitives_count = numGroups;
+	}
 
 	// --- Joint nodes, skin and mesh node -----------------------------------
 	if (hasSkin)
@@ -1041,7 +1056,10 @@ bool ModelFormatGltf::write(const Path& filePath, const Model* model) const
 			cgltf_node& node = nodes[i];
 			node.name = pool(wstombs(joint.getName()));
 
-			const Matrix44 local = axisTransform * joint.getTransform().toMatrix44() * axisTransform;
+			// Renormalize the rotation on both sides of the conversion (see the
+			// animation pre-pass note).
+			const Transform jointTransform = joint.getTransform();
+			const Matrix44 local = axisTransform * Transform(jointTransform.translation(), jointTransform.rotation().normalized()).toMatrix44() * axisTransform;
 
 			node.has_translation = 1;
 			local.translation().storeUnaligned(tmp4);
@@ -1050,7 +1068,7 @@ bool ModelFormatGltf::write(const Path& filePath, const Model* model) const
 			node.translation[2] = tmp4[2];
 
 			node.has_rotation = 1;
-			const Quaternion q(local);
+			const Quaternion q = Quaternion(local).normalized();
 			q.e.storeUnaligned(tmp4);
 			node.rotation[0] = tmp4[0];
 			node.rotation[1] = tmp4[1];
@@ -1078,14 +1096,18 @@ bool ModelFormatGltf::write(const Path& filePath, const Model* model) const
 			skins[0].skeleton = &nodes[rootJoints.front()];
 	}
 
-	cgltf_node& meshNode = nodes[meshNodeIndex];
-	meshNode.mesh = &meshes[0];
-	if (hasSkin)
-		meshNode.skin = &skins[0];
+	if (hasMesh)
+	{
+		cgltf_node& meshNode = nodes[meshNodeIndex];
+		meshNode.mesh = &meshes[0];
+		if (hasSkin)
+			meshNode.skin = &skins[0];
+	}
 
 	// --- Scene -------------------------------------------------------------
 	uint32_t sceneCursor = 0;
-	sceneNodes[sceneCursor++] = &meshNode;
+	if (hasMesh)
+		sceneNodes[sceneCursor++] = &nodes[meshNodeIndex];
 	if (hasSkin)
 	{
 		for (uint32_t r : rootJoints)
@@ -1142,8 +1164,11 @@ bool ModelFormatGltf::write(const Path& filePath, const Model* model) const
 	data.buffer_views_count = accessorCount;
 	data.buffers = buffers.data();
 	data.buffers_count = 1;
-	data.meshes = meshes.data();
-	data.meshes_count = 1;
+	if (hasMesh)
+	{
+		data.meshes = meshes.data();
+		data.meshes_count = 1;
+	}
 	if (materialCount > 0)
 	{
 		data.materials = materials.data();

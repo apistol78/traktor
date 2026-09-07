@@ -122,8 +122,16 @@
 			<second>[ No texture ]</second>
 		</item>
 		<item>
-			<first>MESHASSET_EDITOR_TEXTURE_EMBEDDED</first>
-			<second>[ Embedded ]</second>
+			<first>MESHASSET_EDITOR_TEXTURE_EMBEDDED_SRGB</first>
+			<second>[ Embedded sRGB ]</second>
+		</item>
+		<item>
+			<first>MESHASSET_EDITOR_TEXTURE_EMBEDDED_LINEAR</first>
+			<second>[ Embedded Linear ]</second>
+		</item>
+		<item>
+			<first>MESHASSET_EDITOR_TEXTURE_EMBEDDED_UNKNOWN</first>
+			<second>[ Embedded {0} ]</second>
 		</item>
 		<item>
 			<first>MESHASSET_EDITOR_TEXTURE_USAGE</first>

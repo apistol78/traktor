@@ -23,6 +23,7 @@
 #include "Drawing/Image.h"
 #include "Drawing/PixelFormat.h"
 #include "Editor/IEditor.h"
+#include "I18N/Format.h"
 #include "I18N/Text.h"
 #include "Mesh/Editor/MeshAsset.h"
 #include "Mesh/Editor/MeshAssetRasterizer.h"
@@ -468,7 +469,19 @@ void MeshAssetEditor::updateMaterialList()
 				textureNames.insert(modelTextures[j].name);
 
 				Ref< db::Instance > materialTextureInstance;
-				std::wstring materialTexture = (modelTextures[j].embedded != nullptr) ? i18n::Text(L"MESHASSET_EDITOR_TEXTURE_EMBEDDED") : i18n::Text(L"MESHASSET_EDITOR_TEXTURE_NOT_ASSIGNED");
+				
+				std::wstring materialTexture;
+				if (modelTextures[j].embedded != nullptr)
+				{
+					if (std::abs(modelTextures[j].embedded->getImageInfo()->getGamma() - 2.2f) < 0.1f)
+						materialTexture = i18n::Text(L"MESHASSET_EDITOR_TEXTURE_EMBEDDED_SRGB");
+					else if (std::abs(modelTextures[j].embedded->getImageInfo()->getGamma() - 1.0f) < 0.1f)
+						materialTexture = i18n::Text(L"MESHASSET_EDITOR_TEXTURE_EMBEDDED_LINEAR");
+					else if (std::abs(modelTextures[j].embedded->getImageInfo()->getGamma() - 1.0f) < 0.1f)
+						materialTexture = i18n::Format(L"MESHASSET_EDITOR_TEXTURE_EMBEDDED_UNKNOWN", modelTextures[j].embedded->getImageInfo()->getGamma());
+				}
+				else
+					materialTexture = i18n::Text(L"MESHASSET_EDITOR_TEXTURE_NOT_ASSIGNED");
 
 				auto it = materialTextures.find(modelTextures[j].name);
 				if (it != materialTextures.end())
