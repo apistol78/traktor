@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2025 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -50,7 +50,7 @@ DateTime::DateTime(uint16_t year, uint8_t month, uint16_t day, uint8_t hour, uin
 	t.tm_sec = second;
 	t.tm_min = minute;
 	t.tm_hour = hour;
-	t.tm_mday = day - 1;
+	t.tm_mday = day;
 	t.tm_mon = month - 1;
 	t.tm_year = year - 1900;
 	t.tm_wday = 0;

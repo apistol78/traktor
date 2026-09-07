@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -24,40 +24,21 @@ namespace traktor
 	namespace
 	{
 
+// 100ns intervals between 1601-01-01 and 1970-01-01.
+constexpr uint64_t c_epochDiff = 116444736000000000ULL;
+
 DateTime createDateTime(const FILETIME& ft)
 {
-	SYSTEMTIME st = {};
-	FileTimeToSystemTime(&ft, &st);
-
-	SYSTEMTIME lt = {};
-	SystemTimeToTzSpecificLocalTime(NULL, &st, &lt);
-
-	return DateTime(
-		lt.wYear,
-		uint8_t(lt.wMonth),
-		lt.wDay,
-		uint8_t(lt.wHour),
-		uint8_t(lt.wMinute),
-		uint8_t(lt.wSecond)
-	);
+	const uint64_t t = (uint64_t(ft.dwHighDateTime) << 32) | ft.dwLowDateTime;
+	return DateTime(t >= c_epochDiff ? (t - c_epochDiff) / 10000000ULL : 0);
 }
 
 FILETIME createFileTime(const DateTime& dt)
 {
-	SYSTEMTIME lt = {};
-	lt.wYear = dt.getYear();
-	lt.wMonth = dt.getMonth();
-	lt.wDayOfWeek = dt.getWeekDay();
-	lt.wDay = dt.getDay();
-	lt.wHour = dt.getHour();
-	lt.wMinute = dt.getMinute();
-	lt.wSecond = dt.getSecond();
-
-	SYSTEMTIME st = {};
-	TzSpecificLocalTimeToSystemTime(NULL, &lt, &st);
-
+	const uint64_t t = dt.getSecondsSinceEpoch() * 10000000ULL + c_epochDiff;
 	FILETIME ft;
-	SystemTimeToFileTime(&st, &ft);
+	ft.dwLowDateTime = (DWORD)(t & 0xffffffffULL);
+	ft.dwHighDateTime = (DWORD)(t >> 32);
 	return ft;
 }
 
