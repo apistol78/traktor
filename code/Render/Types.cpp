@@ -70,8 +70,8 @@ struct TextureFormatInfo
 	{ L"TfR5G6B5", 2, 1 },
 	{ L"TfR5G5B5A1", 2, 1 },
 	{ L"TfR4G4B4A4", 2, 1 },
+	{ L"TfR10G10B10A2", 4, 1 },
 
-	{ L"TfInvalid", 0, 0 },
 	{ L"TfInvalid", 0, 0 },
 	{ L"TfInvalid", 0, 0 },
 	{ L"TfInvalid", 0, 0 },
@@ -105,10 +105,8 @@ struct TextureFormatInfo
 	{ L"TfDXT5", 16, 4 },
 	{ L"TfBC6HU", 16, 4 },
 	{ L"TfBC6HS", 16, 4 },
+	{ L"TfBC5", 16, 4 },
 
-	{ L"TfInvalid", 0, 0 },
-	{ L"TfInvalid", 0, 0 },
-	{ L"TfInvalid", 0, 0 },
 	{ L"TfInvalid", 0, 0 },
 	{ L"TfInvalid", 0, 0 },
 

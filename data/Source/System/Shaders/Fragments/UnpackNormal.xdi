@@ -18,7 +18,7 @@
 				<first>494</first>
 				<second>204</second>
 			</position>
-			<swizzle>wy</swizzle>
+			<swizzle>xy</swizzle>
 		</item>
 		<item type="traktor.render.MulAdd" version="traktor.render.Node:1">
 			<id>{D2C83DCB-1F86-E64C-9373-650A087E77B3}</id>
@@ -101,7 +101,7 @@
 			<id>{174C9CE7-A998-244D-8BD1-5431840638D9}</id>
 			<comment>
 			<![CDATA[
-http://developer.nvidia.com/object/real-time-normal-map-dxt-compression.html
+BC5 stores X and Y only; Z is reconstructed as sqrt(1 - x*x - y*y).
 			]]>
 			</comment>
 			<position>
@@ -345,8 +345,8 @@ http://developer.nvidia.com/object/real-time-normal-map-dxt-compression.html
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[17]"/>
-				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
+				<node ref="/object/nodes/item[9]"/>
+				<id>{32FD3DAA-16C1-44C8-8A1E-E9ECF97F31D2}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[10]"/>
@@ -366,7 +366,7 @@ http://developer.nvidia.com/object/real-time-normal-map-dxt-compression.html
 	</edges>
 	<groups>
 		<item type="traktor.render.Group">
-			<title>DXT5nm unpack</title>
+			<title>BC5 unpack</title>
 			<comment/>
 			<position>
 				<first>375</first>

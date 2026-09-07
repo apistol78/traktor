@@ -341,6 +341,7 @@ enum TextureFormat
 	TfDXT5 = 34,   // BC3
 	TfBC6HU = 35,  // BC6H (unsigned)
 	TfBC6HS = 36,  // BC6H (signed)
+	TfBC5 = 37,    // BC5 (RGTC2, two channel)
 	TfPVRTC1 = 40, // 4bpp, no alpha
 	TfPVRTC2 = 41, // 2bpp, no alpha
 	TfPVRTC3 = 42, // 4bpp, alpha

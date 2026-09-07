@@ -49,6 +49,7 @@
 #include "Editor/Pipeline/PipelineProfiler.h"
 #include "Editor/PipelineDependency.h"
 #include "Render/Editor/Texture/AstcCompressor.h"
+#include "Render/Editor/Texture/Bc5Compressor.h"
 #include "Render/Editor/Texture/Bc6hCompressor.h"
 #include "Render/Editor/Texture/DxtnCompressor.h"
 #include "Render/Editor/Texture/EtcCompressor.h"
@@ -137,7 +138,7 @@ struct ScaleTextureTask : public Object
 
 }
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.TextureOutputPipeline", 39, TextureOutputPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.TextureOutputPipeline", 40, TextureOutputPipeline, editor::IPipeline)
 
 bool TextureOutputPipeline::create(const editor::IPipelineSettings* settings, db::Database* database)
 {
@@ -293,6 +294,9 @@ bool TextureOutputPipeline::buildOutput(
 		case TfBC6HS:
 			pixelFormat = drawing::PixelFormat::getRGBAF32();
 			break;
+		case TfBC5:
+			pixelFormat = drawing::PixelFormat::getR8G8B8A8();
+			break;
 		case TfPVRTC1:
 			pixelFormat = drawing::PixelFormat::getR8G8B8A8();
 			break;
@@ -358,11 +362,10 @@ bool TextureOutputPipeline::buildOutput(
 			{
 				if (textureOutput->m_normalMap)
 				{
-					// log::info << L"Using BC6HU compression." << Endl;
-					// textureFormat = TfBC6HU;
-					log::info << L"Using no compression (should use compression)." << Endl;
-					pixelFormat = drawing::PixelFormat::getABGRF16();
-					textureFormat = TfR16G16B16A16F;
+					// Only X and Y are kept; Z is reconstructed in the shader.
+					log::info << L"Using BC5 compression." << Endl;
+					pixelFormat = drawing::PixelFormat::getR8G8B8A8();
+					textureFormat = TfBC5;
 				}
 				else if (textureOutput->m_encodeAsRGBM)
 				{
@@ -811,23 +814,11 @@ bool TextureOutputPipeline::buildOutput(
 				adjustAlphaCoverage(mipImage, textureOutput->m_alphaCoverageReference, alphaCoverage);
 
 		// Ensure each pixel is renormalized after scaling.
-		if (textureOutput->m_normalMap)
+		if (textureOutput->m_normalMap && abs(textureOutput->m_scaleNormalMap) > FUZZY_EPSILON)
 		{
+			const drawing::NormalizeFilter normalizeFilter(textureOutput->m_scaleNormalMap);
 			for (auto mipImage : mipImages)
-			{
-				if (abs(textureOutput->m_scaleNormalMap) > FUZZY_EPSILON)
-				{
-					const drawing::NormalizeFilter normalizeFilter(textureOutput->m_scaleNormalMap);
-					mipImage->apply(&normalizeFilter);
-				}
-
-				// Prepare for DXT5nm compression, need to swizzle the channels around.
-				if (textureFormat == TfDXT5 && textureOutput->m_enableCompression)
-				{
-					drawing::SwizzleFilter swizzleFilter(textureOutput->m_ignoreAlpha ? L"0g0r" : L"ag0r");
-					mipImage->apply(&swizzleFilter);
-				}
-			}
+				mipImage->apply(&normalizeFilter);
 		}
 
 		// Apply sharpen filter.
@@ -849,6 +840,8 @@ bool TextureOutputPipeline::buildOutput(
 			compressor = new DxtnCompressor();
 		else if (textureFormat >= TfBC6HU && textureFormat <= TfBC6HS)
 			compressor = new Bc6hCompressor();
+		else if (textureFormat == TfBC5)
+			compressor = new Bc5Compressor();
 		else if (textureFormat >= TfPVRTC1 && textureFormat <= TfPVRTC4)
 			compressor = new PvrtcCompressor();
 		else if (textureFormat == TfETC1)
@@ -1012,6 +1005,8 @@ bool TextureOutputPipeline::buildOutput(
 			Ref< ICompressor > compressor;
 			if (textureFormat >= TfDXT1 && textureFormat <= TfDXT5)
 				compressor = new DxtnCompressor();
+			else if (textureFormat == TfBC5)
+				compressor = new Bc5Compressor();
 			else if (textureFormat >= TfPVRTC1 && textureFormat <= TfPVRTC4)
 				compressor = new PvrtcCompressor();
 			else if (textureFormat == TfETC1)

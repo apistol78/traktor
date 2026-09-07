@@ -43,6 +43,7 @@ void TextureOutput::serialize(ISerializer& s)
 			{ L"TfDXT5", TfDXT5 },
 			{ L"TfBC6HU", TfBC6HU },
 			{ L"TfBC6HS", TfBC6HS },
+			{ L"TfBC5", TfBC5 },
 			{ L"TfPVRTC1", TfPVRTC1 },
 			{ L"TfPVRTC2", TfPVRTC2 },
 			{ L"TfPVRTC3", TfPVRTC3 },
