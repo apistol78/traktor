@@ -205,7 +205,7 @@ function update(pkg)
 			run:popd()
 
 			if result ~= 0 then
-				stderr:printLn("GET failed \"" .. url .. "\", error code " .. result)
+				stderr:printLn("GET failed \"" .. (url.url or url) .. "\", error code " .. result)
 				return false
 			end
 		end
