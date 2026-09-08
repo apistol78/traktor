@@ -94,6 +94,10 @@ public:
 	 */
 	bool findRandomPoint(const Vector4& center, float radius, Vector4& outPoint) const;
 
+	/*!
+	 */
+	bool findDistanceToWall(const Vector4& center, float radius, float& outDistance) const;
+
 private:
 	friend class NavMeshFactory;
 	friend class NavMeshComponentEditor;
