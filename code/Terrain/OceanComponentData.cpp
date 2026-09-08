@@ -9,7 +9,7 @@
 #include "Terrain/OceanComponentData.h"
 
 #include "Core/Serialization/AttributePrivate.h"
- #include "Core/Serialization/AttributeRange.h"
+#include "Core/Serialization/AttributeRange.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberComposite.h"
 #include "Core/Serialization/MemberStaticArray.h"
@@ -28,7 +28,7 @@ const resource::Id< render::Shader > c_defaultShader(Guid(L"{FB9B7138-B7B2-E341-
 	
 	}
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.terrain.OceanComponentData", 5, OceanComponentData, world::IEntityComponentData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.terrain.OceanComponentData", 6, OceanComponentData, world::IEntityComponentData)
 
 OceanComponentData::OceanComponentData()
 :	m_shaderWave(c_waveShader)
@@ -62,7 +62,14 @@ void OceanComponentData::serialize(ISerializer& s)
 	s >> Member< float >(L"elevation", m_elevation);
 
 	if (s.getVersion< OceanComponentData >() >= 5)
-		s >>  MemberComposite< Spectrum >(L"spectrum", m_spectrum);
+		s >> MemberComposite< Spectrum >(L"spectrum", m_spectrum);
+
+	if (s.getVersion< OceanComponentData >() >= 6)
+	{
+		s >> Member< int32_t >(L"quality", m_quality, AttributeRange(0, 3));
+		s >> Member< float >(L"tileSize", m_tileSize, AttributeRange(1.0f));
+		s >> Member< int32_t >(L"lodCount", m_lodCount, AttributeRange(1, 12));
+	}
 }
 
 void OceanComponentData::Spectrum::serialize(ISerializer& s)

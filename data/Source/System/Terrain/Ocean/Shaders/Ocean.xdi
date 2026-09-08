@@ -1566,14 +1566,14 @@ $Output = vec4(r * -0.5f, 0.0f);
 				<second>673</second>
 			</position>
 		</item>
-		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{B8655422-628E-394A-B33D-970F754CED96}</id>
 			<comment/>
 			<position>
 				<first>71</first>
 				<second>-546</second>
 			</position>
-			<value>100</value>
+			<swizzle>w</swizzle>
 		</item>
 		<item type="traktor.render.Mul" version="traktor.render.Node:1">
 			<id>{9B89538B-61FE-F345-AF0F-4D1023C50C76}</id>
@@ -1583,14 +1583,14 @@ $Output = vec4(r * -0.5f, 0.0f);
 				<second>-503</second>
 			</position>
 		</item>
-		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+		<item type="traktor.render.Vector" version="traktor.render.Node:1">
 			<id>{72AC5B51-CB6A-A54B-80CD-4F68424A146A}</id>
 			<comment/>
 			<position>
 				<first>265</first>
 				<second>-453</second>
 			</position>
-			<value>200</value>
+			<value>1, 0, 1, 0</value>
 		</item>
 		<item type="traktor.render.Add" version="traktor.render.Node:1">
 			<id>{3275587E-4619-E64E-8011-0536026EAD2D}</id>
@@ -1815,7 +1815,7 @@ $Output = vec4(r * -0.5f, 0.0f);
 				<first>271</first>
 				<second>-507</second>
 			</position>
-			<parameterDeclaration>{01ADCE1F-BB08-7F4D-B38A-3AB41DEA0549}</parameterDeclaration>
+			<parameterDeclaration>{BBF47FE0-9CCB-1041-9491-9C3A59823630}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
 			<id>{845CAF88-3050-1D44-B6CF-1B292F326B34}</id>
@@ -1942,6 +1942,60 @@ $Output = vec4(r * -0.5f, 0.0f);
 			<position>
 				<first>5121</first>
 				<second>1485</second>
+			</position>
+		</item>
+		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
+			<id>{AF13B085-10EA-43CE-8953-7B5EDFF28074}</id>
+			<comment/>
+			<position>
+				<first>271</first>
+				<second>-427</second>
+			</position>
+			<name>Draw index</name>
+			<technique/>
+			<domain>Undefined</domain>
+			<localSize>
+				<X>1</X>
+				<Y>1</Y>
+				<Z>1</Z>
+			</localSize>
+			<useRayTracing>false</useRayTracing>
+			<include/>
+			<inputPins/>
+			<outputPins>
+				<item>
+					<id>{22E25F90-BAD0-4184-B34B-8564CA8CEFC8}</id>
+					<name>Output</name>
+					<type>Scalar</type>
+				</item>
+			</outputPins>
+			<script><![CDATA[
+$Output = gl_DrawID;
+			]]></script>
+		</item>
+		<item type="traktor.render.ArrayElement" version="traktor.render.Node:1">
+			<id>{F61C9C38-7E4E-4C54-812A-E76FA7A51FAE}</id>
+			<comment/>
+			<position>
+				<first>491</first>
+				<second>-507</second>
+			</position>
+		</item>
+		<item type="traktor.render.MemberValue" version="traktor.render.Node:1">
+			<id>{A72C3195-824B-4859-9575-5CA0968E1EAF}</id>
+			<comment/>
+			<position>
+				<first>701</first>
+				<second>-507</second>
+			</position>
+			<memberName>patchOrigin</memberName>
+		</item>
+		<item type="traktor.render.Interpolator" version="traktor.render.Node:1">
+			<id>{473E0D5E-6C67-47AB-BCB5-C1F80E5D65D9}</id>
+			<comment/>
+			<position>
+				<first>901</first>
+				<second>-507</second>
 			</position>
 		</item>
 	</nodes>
@@ -3019,7 +3073,7 @@ $Output = vec4(r * -0.5f, 0.0f);
 		<item type="traktor.render.Edge" version="1">
 			<source>
 				<node ref="/object/nodes/item[134]"/>
-				<id>{D33F8931-C90C-4EBA-8A04-A31D3E08FAB7}</id>
+				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[3]"/>
@@ -3049,7 +3103,7 @@ $Output = vec4(r * -0.5f, 0.0f);
 		<item type="traktor.render.Edge" version="1">
 			<source>
 				<node ref="/object/nodes/item[136]"/>
-				<id>{D33F8931-C90C-4EBA-8A04-A31D3E08FAB7}</id>
+				<id>{D51E6077-37E9-4B1C-86D2-92DA544DC613}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[135]"/>
@@ -3328,8 +3382,8 @@ $Output = vec4(r * -0.5f, 0.0f);
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[157]"/>
-				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
+				<node ref="/object/nodes/item[176]"/>
+				<id>{8FFB3BDB-A00E-4406-994C-0D52FAF04871}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[135]"/>
@@ -3604,6 +3658,56 @@ $Output = vec4(r * -0.5f, 0.0f);
 			<destination>
 				<node ref="/object/nodes/item[37]"/>
 				<id>{5A25771B-894F-4D92-8D1E-FBF8449850E8}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[157]"/>
+				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[174]"/>
+				<id>{C7A7D7C7-5832-4AA0-A820-6A102A6D1D91}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[173]"/>
+				<id>{22E25F90-BAD0-4184-B34B-8564CA8CEFC8}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[174]"/>
+				<id>{B0B4B6F6-BAD2-452F-9E41-0E1A50D2C629}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[174]"/>
+				<id>{C1D22077-14AD-48ED-BDE5-601BEABF62CD}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[175]"/>
+				<id>{EDAE5319-818A-4FFC-8E0D-85CA003EE199}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[176]"/>
+				<id>{8FFB3BDB-A00E-4406-994C-0D52FAF04871}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[134]"/>
+				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[175]"/>
+				<id>{E0CC277C-5538-4F0E-82FC-CC85217F4E53}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[176]"/>
+				<id>{93DEEDC9-D4C7-47F8-8D6A-A79DABD6BA6A}</id>
 			</destination>
 		</item>
 	</edges>

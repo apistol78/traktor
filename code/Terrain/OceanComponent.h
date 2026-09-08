@@ -8,6 +8,8 @@
  */
 #pragma once
 
+#include "Core/Containers/AlignedVector.h"
+#include "Core/Math/Aabb3.h"
 #include "Core/Math/Color4f.h"
 #include "Core/Math/Vector4.h"
 #include "Render/Types.h"
@@ -102,9 +104,26 @@ public:
 	float getOpacity() const { return m_opacity; }
 
 private:
+	/*! Camera centered ocean tile. */
+	struct Tile
+	{
+		Vector4 origin;		//!< World space origin (x, 0, z) of tile and tile size in w.
+		Aabb3 aabb;			//!< World space bounding box, used for HiZ culling.
+		uint32_t stitchMask;	//!< Which edges that need to be stitched to a coarser neighbour.
+		float distance;		//!< Distance from eye, used for front-to-back sorting.
+	};
+
+	struct View
+	{
+		AlignedVector< Tile > tiles;
+		bool culled = false;
+	};
+
 	world::Entity* m_owner = nullptr;
+	Ref< render::IRenderSystem > m_renderSystem;
 	resource::Proxy< Terrain > m_terrain;
 	resource::Proxy< render::Shader > m_shaderWave;	//!< Compute shader to generate wave maps.
+	resource::Proxy< render::Shader > m_shaderCull;	//!< Compute shader to cull tiles against HiZ.
 	resource::Proxy< render::Shader > m_shader;
 	Ref< render::ITexture > m_spectrumTexture;
 	Ref< render::ITexture > m_evolvedSpectrumTextures[4];
@@ -112,13 +131,25 @@ private:
 	Ref< const render::IVertexLayout > m_vertexLayout;
 	Ref< render::Buffer > m_indexBuffer;
 	Ref< render::Buffer > m_vertexBuffer;
-	render::Primitives m_primitives;
+	Ref< render::Buffer > m_drawBuffer;
+	Ref< render::Buffer > m_culledDrawBuffer;
+	Ref< render::Buffer > m_dataBuffer;
+	render::Primitives m_primitives[16];	//!< One set of primitives for each combination of stitched edges.
+	uint32_t m_tileCapacity = 0;
+	View m_view[4];
 	OceanComponentData::Spectrum m_spectrum;
 	Color4f m_shallowTint;
 	Color4f m_deepColor;
 	float m_opacity = 0.5f;
 	float m_elevation = 0.0f;
+	int32_t m_gridCells = 128;
+	float m_tileSize = 64.0f;
+	int32_t m_lodCount = 8;
 	bool m_spectrumDirty = true;
+
+	bool createTileBuffers(uint32_t tileCount);
+
+	void updateTiles(const world::WorldRenderView& worldRenderView);
 };
 
 }
