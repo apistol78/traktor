@@ -480,9 +480,12 @@ void ScenePreviewControl::eventRedraw(RedrawEvent* event)
 			if (m_lastPhysicsTime > scaledTime + c_updateDeltaTime)
 				m_lastPhysicsTime = scaledTime;
 
-			// Prevent too many iterations in case time has changed too much.
-			if (scaledTime - m_lastPhysicsTime > c_updateDeltaTime * 10.0)
-				m_lastPhysicsTime = scaledTime - c_updateDeltaTime * 10.0;
+			// Cap catch-up so a slow physics step cannot multiply itself; when a frame
+			// takes longer than the step rate, drop the excess simulation time rather
+			// than running more steps in the next frame.
+			const double c_maxCatchUpSteps = 2.0;
+			if (scaledTime - m_lastPhysicsTime > c_updateDeltaTime * c_maxCatchUpSteps)
+				m_lastPhysicsTime = scaledTime - c_updateDeltaTime * c_maxCatchUpSteps;
 
 			for (; m_lastPhysicsTime < scaledTime; m_lastPhysicsTime += c_updateDeltaTime)
 			{
