@@ -198,6 +198,7 @@ void PostProcessPass::setup(
 	render::ITexture* whiteTexture,
 	render::RenderGraph& renderGraph,
 	render::RGTargetSet gbufferTargetSetId,
+	render::RGTargetSet postDepthTargetSetId,
 	render::RGTargetSet velocityTargetSetId,
 	const DoubleBufferedTarget& visualTargetSetId,
 	render::RGTargetSet outputTargetSetId) const
@@ -215,7 +216,8 @@ void PostProcessPass::setup(
 	render::ImageGraphContext igctx;
 	igctx.associateTextureTargetSet(ShaderParameter::InputColor, visualTargetSetId.current, 0);
 	igctx.associateTextureTargetSet(ShaderParameter::InputColorLast, visualTargetSetId.previous, 0);
-	igctx.associateTextureTargetSet(ShaderParameter::InputDepth, gbufferTargetSetId, 0);
+	// Depth including non-GBuffer surfaces when available; fall back to GBuffer depth.
+	igctx.associateTextureTargetSet(ShaderParameter::InputDepth, (postDepthTargetSetId != render::RGTargetSet::Invalid) ? postDepthTargetSetId : gbufferTargetSetId, 0);
 	igctx.associateTextureTargetSet(ShaderParameter::InputNormal, gbufferTargetSetId, 1);
 	igctx.associateTextureTargetSet(ShaderParameter::InputVelocity, velocityTargetSetId, 0);
 	igctx.associateExplicitTexture(ShaderParameter::InputColorGrading, (bool)(m_colorGrading != nullptr) ? m_colorGrading.getResource() : whiteTexture);

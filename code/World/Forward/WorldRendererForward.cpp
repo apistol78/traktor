@@ -41,6 +41,7 @@
 #include "World/Shared/Passes/GBufferPass.h"
 #include "World/Shared/Passes/HiZPass.h"
 #include "World/Shared/Passes/LightClusterPass.h"
+#include "World/Shared/Passes/PostDepthPass.h"
 #include "World/Shared/Passes/PostProcessPass.h"
 #include "World/Shared/Passes/ReflectionsPass.h"
 #include "World/Shared/Passes/VelocityPass.h"
@@ -186,7 +187,9 @@ void WorldRendererForward::setup(
 		shadowMapAtlasTargetSetId,
 		fogVolumeTextureId);
 
-	m_postProcessPass->setup(worldRenderView, m_gatheredView, count, m_whiteTexture, renderGraph, gbufferTargetSetId, velocityTargetSetId, visualTargetSetId, outputTargetSetId);
+	const auto postDepthTargetSetId = m_postDepthPass->setup(worldRenderView, m_gatheredView, renderGraph, gbufferTargetSetId, visualTargetSetId.current, outputTargetSetId);
+
+	m_postProcessPass->setup(worldRenderView, m_gatheredView, count, m_whiteTexture, renderGraph, gbufferTargetSetId, postDepthTargetSetId, velocityTargetSetId, visualTargetSetId, outputTargetSetId);
 
 	m_state[worldRenderView.getIndex()].count++;
 }

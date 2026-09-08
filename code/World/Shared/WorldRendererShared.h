@@ -39,6 +39,7 @@ class IrradiancePass;
 class LightClusterPass;
 class LightComponent;
 class Packer;
+class PostDepthPass;
 class PostProcessPass;
 class ProbeComponent;
 class ReflectionsPass;
@@ -114,6 +115,7 @@ protected:
 	Ref< VolumetricFogPass > m_volumetricFogPass;
 	Ref< ContactShadowsPass > m_contactShadowsPass;
 	Ref< ReflectionsPass > m_reflectionsPass;
+	Ref< PostDepthPass > m_postDepthPass;
 	Ref< PostProcessPass > m_postProcessPass;
 	//@}
 

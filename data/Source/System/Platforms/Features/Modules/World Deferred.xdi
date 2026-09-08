@@ -688,6 +688,7 @@
 						<item>World_DepthWrite</item>
 						<item>World_IrradianceWrite</item>
 						<item>World_ReflectionWrite</item>
+						<item>World_PostDepthWrite</item>
 						<item>World_ShadowWrite</item>
 						<item>World_VelocityWrite</item>
 						<item>World_ZPrePassWrite</item>

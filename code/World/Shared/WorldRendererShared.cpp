@@ -38,6 +38,7 @@
 #include "World/Shared/Passes/HiZPass.h"
 #include "World/Shared/Passes/IrradiancePass.h"
 #include "World/Shared/Passes/LightClusterPass.h"
+#include "World/Shared/Passes/PostDepthPass.h"
 #include "World/Shared/Passes/PostProcessPass.h"
 #include "World/Shared/Passes/ReflectionsPass.h"
 #include "World/Shared/Passes/VelocityPass.h"
@@ -214,6 +215,10 @@ bool WorldRendererShared::create(
 	if (!m_reflectionsPass->create(resourceManager, renderSystem, desc))
 		return false;
 
+	m_postDepthPass = new PostDepthPass();
+	if (!m_postDepthPass->create(resourceManager, renderSystem, desc))
+		return false;
+
 	m_postProcessPass = new PostProcessPass(m_settings);
 	if (!m_postProcessPass->create(resourceManager, renderSystem, desc))
 		return false;
@@ -232,6 +237,7 @@ void WorldRendererShared::destroy()
 		safeDestroy(m_state[i].lightSBuffer);
 
 	safeDestroy(m_postProcessPass);
+	safeDestroy(m_postDepthPass);
 	safeDestroy(m_reflectionsPass);
 	safeDestroy(m_contactShadowsPass);
 	safeDestroy(m_volumetricFogPass);

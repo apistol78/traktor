@@ -58,6 +58,7 @@ public:
 		render::ITexture* whiteTexture,
 		render::RenderGraph& renderGraph,
 		render::RGTargetSet gbufferTargetSetId,
+		render::RGTargetSet postDepthTargetSetId,
 		render::RGTargetSet velocityTargetSetId,
 		const DoubleBufferedTarget& visualTargetSetId,
 		render::RGTargetSet outputTargetSetId) const;
