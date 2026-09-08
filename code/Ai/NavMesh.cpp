@@ -361,4 +361,59 @@ bool NavMesh::findRandomPoint(const Vector4& center, float radius, Vector4& outP
 	return true;
 }
 
+bool NavMesh::findDistanceToWall(const Vector4& center, float radius, float& outDistance) const
+{
+	dtNavMeshQuery* navQuery = dtAllocNavMeshQuery();
+	if (!navQuery)
+		return false;
+
+	dtStatus status = navQuery->init(m_navMesh, 2048);
+	if (dtStatusFailed(status))
+		return false;
+
+	AutoPtr< dtQueryFilter > filter(new dtQueryFilter());
+
+	float T_MATH_ALIGN16 centerPos[4];
+	center.storeAligned(centerPos);
+
+	dtPolyRef centerRef;
+	float T_MATH_ALIGN16 centerPosN[4];
+	
+	status = navQuery->findNearestPoly(
+		centerPos,
+		c_searchExtents,
+		filter.ptr(),
+		&centerRef,
+		centerPosN);
+	if (dtStatusFailed(status))
+	{
+		dtFreeNavMeshQuery(navQuery);
+		return false;
+	}
+
+	float hitDist;
+	float hitPos[4];
+	float hitNormal[4];
+
+	status = navQuery->findDistanceToWall(
+		centerRef,
+		centerPos,
+		radius,
+		filter.ptr(),
+		&hitDist,
+		hitPos,
+		hitNormal
+	);
+	if (dtStatusFailed(status))
+	{
+		dtFreeNavMeshQuery(navQuery);
+		return false;
+	}
+
+	outDistance = hitDist;
+
+	dtFreeNavMeshQuery(navQuery);
+	return true;
+}
+
 }

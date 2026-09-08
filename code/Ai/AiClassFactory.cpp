@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -65,6 +65,15 @@ Vector4 NavMesh_findRandomPoint_2(NavMesh* self, const Vector4& center, float ra
 		return Vector4::zero();
 }
 
+Any NavMesh_findDistanceToWall_1(NavMesh* self, const Vector4& center, float radius)
+{
+	float distance;
+	if (self->findDistanceToWall(center, radius, distance))
+		return Any::fromFloat(distance);
+	else
+		return Any();
+}
+
 const NavMesh* NavMeshComponent_get(NavMeshComponent* self)
 {
 	return self->get();
@@ -90,6 +99,7 @@ void AiClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classNavMesh->addMethod("findClosestPointXZ", &NavMesh_findClosestPointXZ);
 	classNavMesh->addMethod("findRandomPoint", &NavMesh_findRandomPoint_1);
 	classNavMesh->addMethod("findRandomPoint", &NavMesh_findRandomPoint_2);
+	classNavMesh->addMethod("findDistanceToWall", &NavMesh_findDistanceToWall_1);
 	registrar->registerClass(classNavMesh);
 
 	auto classNavMeshComponent = new AutoRuntimeClass< NavMeshComponent >();
