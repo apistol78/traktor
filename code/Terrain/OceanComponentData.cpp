@@ -1,19 +1,21 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include "Core/Serialization/AttributeRange.h"
+#include "Terrain/OceanComponentData.h"
+
+#include "Core/Serialization/AttributePrivate.h"
+ #include "Core/Serialization/AttributeRange.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberComposite.h"
 #include "Core/Serialization/MemberStaticArray.h"
 #include "Render/ITexture.h"
 #include "Render/Shader.h"
 #include "Resource/Member.h"
-#include "Terrain/OceanComponentData.h"
 #include "Terrain/Terrain.h"
 
 namespace traktor::terrain
@@ -51,7 +53,7 @@ void OceanComponentData::serialize(ISerializer& s)
 {
 	T_FATAL_ASSERT(s.getVersion< OceanComponentData >() >= 4);
 
-	s >> resource::Member< render::Shader >(L"shaderWave", m_shaderWave);
+	s >> resource::Member< render::Shader >(L"shaderWave", m_shaderWave, AttributePrivate());
 	s >> resource::Member< render::Shader >(L"shader", m_shader);
 
 	s >> Member< Color4f >(L"shallowTint", m_shallowTint);

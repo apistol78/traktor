@@ -62,6 +62,9 @@ const render::Handle s_handleOcean_WaveTexture0(L"Ocean_WaveTexture0");
 const render::Handle s_handleOcean_WaveTexture1(L"Ocean_WaveTexture1");
 const render::Handle s_handleOcean_WaveTexture2(L"Ocean_WaveTexture2");
 const render::Handle s_handleOcean_WaveTexture3(L"Ocean_WaveTexture3");
+const render::Handle s_handleOcean_WaveOutput0(L"Ocean_WaveOutput0");
+const render::Handle s_handleOcean_WaveOutput1(L"Ocean_WaveOutput1");
+const render::Handle s_handleOcean_WaveOutput2(L"Ocean_WaveOutput2");
 const render::Handle s_handleOcean_TileIndex(L"Ocean_TileIndex");
 const render::Handle s_handleOcean_Tile(L"Ocean_Tile");
 const render::Handle s_handleWorld_Time(L"World_Time");
@@ -319,8 +322,8 @@ void OceanComponent::setup(
 			renderBlock->programParams->setFloatParameter(s_handleWorld_Time, worldRenderView.getTime());
 			renderBlock->programParams->setFloatParameter(s_handleOcean_TileIndex, 0);
 			renderBlock->programParams->setImageViewParameter(s_handleOcean_WaveTexture, m_spectrumTexture, 0);
-			renderBlock->programParams->setImageViewParameter(s_handleOcean_WaveTexture0, m_evolvedSpectrumTextures[0], 0);
-			renderBlock->programParams->setImageViewParameter(s_handleOcean_WaveTexture1, m_evolvedSpectrumTextures[1], 0);
+			renderBlock->programParams->setImageViewParameter(s_handleOcean_WaveOutput0, m_evolvedSpectrumTextures[0], 0);
+			renderBlock->programParams->setImageViewParameter(s_handleOcean_WaveOutput1, m_evolvedSpectrumTextures[1], 0);
 			renderBlock->programParams->endParameters(renderContext);
 
 			renderContext->compute(renderBlock);
@@ -354,7 +357,7 @@ void OceanComponent::setup(
 				renderBlock->programParams->setFloatParameter(s_handleWorld_Time, worldRenderView.getTime());
 				renderBlock->programParams->setFloatParameter(s_handleOcean_TileIndex, 0);
 				renderBlock->programParams->setImageViewParameter(s_handleOcean_WaveTexture, m_evolvedSpectrumTextures[i], 0);
-				renderBlock->programParams->setImageViewParameter(s_handleOcean_WaveTexture0, m_evolvedSpectrumTextures[i], 0);
+				renderBlock->programParams->setImageViewParameter(s_handleOcean_WaveOutput0, m_evolvedSpectrumTextures[i], 0);
 				renderBlock->programParams->endParameters(renderContext);
 
 				renderContext->compute(renderBlock);
@@ -382,7 +385,7 @@ void OceanComponent::setup(
 				renderBlock->programParams->setFloatParameter(s_handleWorld_Time, worldRenderView.getTime());
 				renderBlock->programParams->setFloatParameter(s_handleOcean_TileIndex, 0);
 				renderBlock->programParams->setImageViewParameter(s_handleOcean_WaveTexture, m_evolvedSpectrumTextures[i], 0);
-				renderBlock->programParams->setImageViewParameter(s_handleOcean_WaveTexture0, m_evolvedSpectrumTextures[i], 0);
+				renderBlock->programParams->setImageViewParameter(s_handleOcean_WaveOutput0, m_evolvedSpectrumTextures[i], 0);
 				renderBlock->programParams->endParameters(renderContext);
 
 				renderContext->compute(renderBlock);
@@ -414,9 +417,9 @@ void OceanComponent::setup(
 			renderBlock->programParams->beginParameters(renderContext);
 			renderBlock->programParams->setFloatParameter(s_handleWorld_Time, worldRenderView.getTime());
 			renderBlock->programParams->setFloatParameter(s_handleOcean_TileIndex, 0);
-			renderBlock->programParams->setImageViewParameter(s_handleOcean_WaveTexture0, m_evolvedSpectrumTextures[0], 0);
-			renderBlock->programParams->setImageViewParameter(s_handleOcean_WaveTexture1, m_evolvedSpectrumTextures[1], 0);
-			renderBlock->programParams->setImageViewParameter(s_handleOcean_WaveTexture2, m_foamTexture, 0);
+			renderBlock->programParams->setImageViewParameter(s_handleOcean_WaveOutput0, m_evolvedSpectrumTextures[0], 0);
+			renderBlock->programParams->setImageViewParameter(s_handleOcean_WaveOutput1, m_evolvedSpectrumTextures[1], 0);
+			renderBlock->programParams->setImageViewParameter(s_handleOcean_WaveOutput2, m_foamTexture, 0);
 			renderBlock->programParams->endParameters(renderContext);
 
 			renderContext->compute(renderBlock);

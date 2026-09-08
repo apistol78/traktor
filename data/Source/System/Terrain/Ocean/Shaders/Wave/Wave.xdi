@@ -5,8 +5,8 @@
 			<id>{1FCEB2B2-BA09-234B-947F-E99C6B643718}</id>
 			<comment/>
 			<position>
-				<first>-738</first>
-				<second>990</second>
+				<first>-525</first>
+				<second>390</second>
 			</position>
 			<scope>Global</scope>
 		</item>
@@ -14,8 +14,8 @@
 			<id>{C0056A3C-0E63-4642-8376-09BE53451402}</id>
 			<comment/>
 			<position>
-				<first>-490</first>
-				<second>1068</second>
+				<first>-255</first>
+				<second>390</second>
 			</position>
 			<swizzle>xy</swizzle>
 		</item>
@@ -23,8 +23,8 @@
 			<id>{DED29228-A7B4-B94E-92BD-36A536C19837}</id>
 			<comment/>
 			<position>
-				<first>986</first>
-				<second>41</second>
+				<first>475</first>
+				<second>1032</second>
 			</position>
 			<technique>Ocean_Spectrum</technique>
 			<localSize>
@@ -37,8 +37,8 @@
 			<id>{8AC97192-AF20-F74E-AC89-E8C504E23B4F}</id>
 			<comment/>
 			<position>
-				<first>429</first>
-				<second>200</second>
+				<first>1</first>
+				<second>727</second>
 			</position>
 			<name>Spectrum</name>
 			<technique/>
@@ -126,8 +126,8 @@ $Output = CalculateSpectrum(
 			<id>{1E55FCAC-B2CA-5646-992F-91F6EA2E3F5B}</id>
 			<comment/>
 			<position>
-				<first>688</first>
-				<second>659</second>
+				<first>435</first>
+				<second>1176</second>
 			</position>
 			<technique>Ocean_SpectrumPackConjugate</technique>
 			<localSize>
@@ -140,8 +140,8 @@ $Output = CalculateSpectrum(
 			<id>{2270E03A-1B79-8D4F-8171-C50166D59B7E}</id>
 			<comment/>
 			<position>
-				<first>132</first>
-				<second>760</second>
+				<first>49</first>
+				<second>1059</second>
 			</position>
 			<name>PackConjugate</name>
 			<technique/>
@@ -192,24 +192,21 @@ $Output = vec4(h0, h0conj);
 			
 			]]></script>
 		</item>
-		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
+		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
 			<id>{05EC9E4B-B5E0-9B47-AA1A-9E9E45995A89}</id>
 			<comment/>
 			<position>
-				<first>-136</first>
-				<second>902</second>
+				<first>-271</first>
+				<second>1101</second>
 			</position>
-			<declaration>{00000000-0000-0000-0000-000000000000}</declaration>
-			<parameterName>Ocean_WaveTexture0</parameterName>
-			<type>Image2D</type>
-			<frequency>Once</frequency>
+			<parameterDeclaration>{F36763F8-6082-42BB-B33D-BC07D37E2F46}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
 			<id>{E164314D-F74E-B34F-8849-B4EDE073F8D3}</id>
 			<comment/>
 			<position>
-				<first>210</first>
-				<second>922</second>
+				<first>81</first>
+				<second>1222</second>
 			</position>
 			<name>EvolveSpectrum</name>
 			<technique>Ocean_SpectrumEvolve</technique>
@@ -274,8 +271,8 @@ imageStore($OutputSlope, position, slope);
 			<id>{A880A2E3-6968-034C-B650-7C33CA1A1461}</id>
 			<comment/>
 			<position>
-				<first>132</first>
-				<second>1204</second>
+				<first>427</first>
+				<second>854</second>
 			</position>
 			<name>Inverse FFT</name>
 			<technique/>
@@ -322,8 +319,8 @@ $Output = FFT($Index, inputData);
 			<id>{A1979F81-5390-6045-8528-548A43AACA32}</id>
 			<comment/>
 			<position>
-				<first>736</first>
-				<second>1108</second>
+				<first>757</first>
+				<second>768</second>
 			</position>
 			<technique>Ocean_InverseFFT_X</technique>
 			<localSize>
@@ -332,36 +329,30 @@ $Output = FFT($Index, inputData);
 				<Z>1</Z>
 			</localSize>
 		</item>
-		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
+		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
 			<id>{83138D11-0CA2-AA49-8D4E-C68E9809EC9F}</id>
 			<comment/>
 			<position>
-				<first>514</first>
-				<second>1150</second>
+				<first>472</first>
+				<second>790</second>
 			</position>
-			<declaration>{00000000-0000-0000-0000-000000000000}</declaration>
-			<parameterName>Ocean_WaveTexture0</parameterName>
-			<type>Image2D</type>
-			<frequency>Once</frequency>
+			<parameterDeclaration>{F36763F8-6082-42BB-B33D-BC07D37E2F46}</parameterDeclaration>
 		</item>
-		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
+		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
 			<id>{2FCB98ED-A313-174F-A4A0-6B0AC1BFEA50}</id>
 			<comment/>
 			<position>
-				<first>514</first>
-				<second>1330</second>
+				<first>472</first>
+				<second>546</second>
 			</position>
-			<declaration>{00000000-0000-0000-0000-000000000000}</declaration>
-			<parameterName>Ocean_WaveTexture0</parameterName>
-			<type>Image2D</type>
-			<frequency>Once</frequency>
+			<parameterDeclaration>{F36763F8-6082-42BB-B33D-BC07D37E2F46}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.ComputeOutput" version="2,traktor.render.Node:1">
 			<id>{2AE91DBB-57CC-1F42-891A-5DACA4182954}</id>
 			<comment/>
 			<position>
-				<first>736</first>
-				<second>1243</second>
+				<first>757</first>
+				<second>524</second>
 			</position>
 			<technique>Ocean_InverseFFT_Y</technique>
 			<localSize>
@@ -374,8 +365,8 @@ $Output = FFT($Index, inputData);
 			<id>{EE408C1D-72BE-8B4B-97CC-87E0ACC5E211}</id>
 			<comment/>
 			<position>
-				<first>-45</first>
-				<second>1364</second>
+				<first>110</first>
+				<second>343</second>
 			</position>
 			<swizzle>yx</swizzle>
 		</item>
@@ -383,8 +374,8 @@ $Output = FFT($Index, inputData);
 			<id>{83090577-C7BC-464E-8FC8-B7CF8CDDBDE1}</id>
 			<comment/>
 			<position>
-				<first>-45</first>
-				<second>1239</second>
+				<first>110</first>
+				<second>407</second>
 			</position>
 			<swizzle>x</swizzle>
 		</item>
@@ -392,8 +383,8 @@ $Output = FFT($Index, inputData);
 			<id>{F4ADB174-3EE5-5442-B261-8400E435EA74}</id>
 			<comment/>
 			<position>
-				<first>132</first>
-				<second>1400</second>
+				<first>427</first>
+				<second>610</second>
 			</position>
 			<name>Inverse FFT</name>
 			<technique/>
@@ -440,8 +431,8 @@ $Output = FFT($Index, inputData);
 			<id>{4DFB091D-8730-4548-A500-22D99D929C05}</id>
 			<comment/>
 			<position>
-				<first>174</first>
-				<second>1582</second>
+				<first>73</first>
+				<second>1381</second>
 			</position>
 			<name>Generate displacement</name>
 			<technique>Ocean_Generate</technique>
@@ -504,60 +495,48 @@ imageStore($FoamTexture, position, vec4(foam));
 			
 			]]></script>
 		</item>
-		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
+		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
 			<id>{BAE9354B-059B-4513-B205-385F37871512}</id>
 			<comment/>
 			<position>
-				<first>-117</first>
-				<second>1630</second>
+				<first>-271</first>
+				<second>1293</second>
 			</position>
-			<declaration>{00000000-0000-0000-0000-000000000000}</declaration>
-			<parameterName>Ocean_WaveTexture0</parameterName>
-			<type>Image2D</type>
-			<frequency>Once</frequency>
+			<parameterDeclaration>{F36763F8-6082-42BB-B33D-BC07D37E2F46}</parameterDeclaration>
 		</item>
-		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
+		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
 			<id>{DCEFB545-7BE8-D64A-A595-BB39B444FBDC}</id>
 			<comment/>
 			<position>
-				<first>-165</first>
-				<second>948</second>
+				<first>-271</first>
+				<second>1165</second>
 			</position>
-			<declaration>{00000000-0000-0000-0000-000000000000}</declaration>
-			<parameterName>Ocean_WaveTexture1</parameterName>
-			<type>Image2D</type>
-			<frequency>Once</frequency>
+			<parameterDeclaration>{30C8C057-9E75-40B9-BCC9-B063F3938A30}</parameterDeclaration>
 		</item>
-		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
+		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
 			<id>{E1D8EA5F-6F8F-2C47-8DCD-E815CA8CA614}</id>
 			<comment/>
 			<position>
-				<first>-145</first>
-				<second>1694</second>
+				<first>-271</first>
+				<second>1357</second>
 			</position>
-			<declaration>{00000000-0000-0000-0000-000000000000}</declaration>
-			<parameterName>Ocean_WaveTexture1</parameterName>
-			<type>Image2D</type>
-			<frequency>Once</frequency>
+			<parameterDeclaration>{30C8C057-9E75-40B9-BCC9-B063F3938A30}</parameterDeclaration>
 		</item>
-		<item type="traktor.render.Uniform" version="4,traktor.render.Node:1">
+		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
 			<id>{F078BECA-8CA8-304D-AA8F-E44737657B1C}</id>
 			<comment/>
 			<position>
-				<first>-152</first>
-				<second>1764</second>
+				<first>-271</first>
+				<second>1421</second>
 			</position>
-			<declaration>{00000000-0000-0000-0000-000000000000}</declaration>
-			<parameterName>Ocean_WaveTexture2</parameterName>
-			<type>Image2D</type>
-			<frequency>Once</frequency>
+			<parameterDeclaration>{336298B3-CA46-4400-B269-B396DD1CF925}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
 			<id>{C3281378-EC01-A24C-9CB3-A49B3423D48C}</id>
 			<comment/>
 			<position>
-				<first>764</first>
-				<second>66</second>
+				<first>94</first>
+				<second>931</second>
 			</position>
 			<parameterDeclaration>{FD9F6D15-E94B-294D-8016-E5329B719230}</parameterDeclaration>
 		</item>
@@ -565,8 +544,8 @@ imageStore($FoamTexture, position, vec4(foam));
 			<id>{81B847A6-3D66-124D-AC9D-6B5ADD728832}</id>
 			<comment/>
 			<position>
-				<first>-117</first>
-				<second>700</second>
+				<first>-271</first>
+				<second>973</second>
 			</position>
 			<parameterDeclaration>{FD9F6D15-E94B-294D-8016-E5329B719230}</parameterDeclaration>
 		</item>
@@ -574,8 +553,8 @@ imageStore($FoamTexture, position, vec4(foam));
 			<id>{1D2E2268-807D-B844-B262-8B9A1102E965}</id>
 			<comment/>
 			<position>
-				<first>-136</first>
-				<second>868</second>
+				<first>-271</first>
+				<second>1037</second>
 			</position>
 			<parameterDeclaration>{FD9F6D15-E94B-294D-8016-E5329B719230}</parameterDeclaration>
 		</item>
@@ -583,8 +562,8 @@ imageStore($FoamTexture, position, vec4(foam));
 			<id>{5D1C9108-868A-F44C-B956-711E99F42886}</id>
 			<comment/>
 			<position>
-				<first>-69</first>
-				<second>1086</second>
+				<first>-255</first>
+				<second>1229</second>
 			</position>
 			<parameterDeclaration>{C5FE5E84-7112-A047-8C1C-10A884ABCF5F}</parameterDeclaration>
 		</item>
@@ -592,8 +571,8 @@ imageStore($FoamTexture, position, vec4(foam));
 			<id>{33E1CC8F-4545-5848-8130-5CEBCD0BAD78}</id>
 			<comment/>
 			<position>
-				<first>-117</first>
-				<second>1294</second>
+				<first>94</first>
+				<second>471</second>
 			</position>
 			<parameterDeclaration>{FD9F6D15-E94B-294D-8016-E5329B719230}</parameterDeclaration>
 		</item>
@@ -601,8 +580,8 @@ imageStore($FoamTexture, position, vec4(foam));
 			<id>{2CD90413-1D4C-4140-8490-7A62B534D8D5}</id>
 			<comment/>
 			<position>
-				<first>97</first>
-				<second>167</second>
+				<first>-279</first>
+				<second>454</second>
 			</position>
 			<parameterDeclaration>{16B19CE4-6DFA-C442-87F1-1B39A1FFB378}</parameterDeclaration>
 		</item>
@@ -610,8 +589,8 @@ imageStore($FoamTexture, position, vec4(foam));
 			<id>{469F811D-FFD4-2940-A318-12EED8ACD211}</id>
 			<comment/>
 			<position>
-				<first>97</first>
-				<second>203</second>
+				<first>-279</first>
+				<second>518</second>
 			</position>
 			<parameterDeclaration>{6554D310-6CE4-8B44-A496-7B70ADB93411}</parameterDeclaration>
 		</item>
@@ -619,8 +598,8 @@ imageStore($FoamTexture, position, vec4(foam));
 			<id>{9091E80D-1A41-E446-A478-5AB61ED562CD}</id>
 			<comment/>
 			<position>
-				<first>65</first>
-				<second>239</second>
+				<first>-295</first>
+				<second>582</second>
 			</position>
 			<parameterDeclaration>{3CF6FD6F-643A-BC4D-B0D4-B9491D1ADC84}</parameterDeclaration>
 		</item>
@@ -628,8 +607,8 @@ imageStore($FoamTexture, position, vec4(foam));
 			<id>{DF171254-1CBE-2F46-86B7-9B1DAA346D74}</id>
 			<comment/>
 			<position>
-				<first>97</first>
-				<second>275</second>
+				<first>-279</first>
+				<second>646</second>
 			</position>
 			<parameterDeclaration>{371FBAB4-FC9A-6C4C-B01D-7A816C20209E}</parameterDeclaration>
 		</item>
@@ -637,8 +616,8 @@ imageStore($FoamTexture, position, vec4(foam));
 			<id>{6B214A02-B447-0D42-8A2B-0800CB326364}</id>
 			<comment/>
 			<position>
-				<first>49</first>
-				<second>419</second>
+				<first>-303</first>
+				<second>902</second>
 			</position>
 			<parameterDeclaration>{9B8DF2CB-F374-7D4D-8C92-2E75B1A9C4DE}</parameterDeclaration>
 		</item>
@@ -646,8 +625,8 @@ imageStore($FoamTexture, position, vec4(foam));
 			<id>{08B3FDF2-EEB0-184F-88EB-32465E7C3FF8}</id>
 			<comment/>
 			<position>
-				<first>81</first>
-				<second>383</second>
+				<first>-279</first>
+				<second>838</second>
 			</position>
 			<parameterDeclaration>{26B79808-DFC3-E24B-BF90-701D30A426CA}</parameterDeclaration>
 		</item>
@@ -655,8 +634,8 @@ imageStore($FoamTexture, position, vec4(foam));
 			<id>{AC4BCC6E-25BC-B146-98B1-8B5ABE4B88D5}</id>
 			<comment/>
 			<position>
-				<first>65</first>
-				<second>347</second>
+				<first>-295</first>
+				<second>774</second>
 			</position>
 			<parameterDeclaration>{1C8CD1DB-A611-2B47-AEC3-F35856954195}</parameterDeclaration>
 		</item>
@@ -664,8 +643,8 @@ imageStore($FoamTexture, position, vec4(foam));
 			<id>{483880B2-2A17-6446-AA3F-8B461E2B806B}</id>
 			<comment/>
 			<position>
-				<first>97</first>
-				<second>311</second>
+				<first>-279</first>
+				<second>710</second>
 			</position>
 			<parameterDeclaration>{0B4C5025-3A5D-5A43-9C90-89EFF4B868CA}</parameterDeclaration>
 		</item>
@@ -764,7 +743,7 @@ imageStore($FoamTexture, position, vec4(foam));
 		<item type="traktor.render.Edge" version="1">
 			<source>
 				<node ref="/object/nodes/item[10]"/>
-				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
+				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[9]"/>
@@ -794,7 +773,7 @@ imageStore($FoamTexture, position, vec4(foam));
 		<item type="traktor.render.Edge" version="1">
 			<source>
 				<node ref="/object/nodes/item[11]"/>
-				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
+				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[12]"/>
@@ -884,7 +863,7 @@ imageStore($FoamTexture, position, vec4(foam));
 		<item type="traktor.render.Edge" version="1">
 			<source>
 				<node ref="/object/nodes/item[6]"/>
-				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
+				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[7]"/>
@@ -894,7 +873,7 @@ imageStore($FoamTexture, position, vec4(foam));
 		<item type="traktor.render.Edge" version="1">
 			<source>
 				<node ref="/object/nodes/item[18]"/>
-				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
+				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[7]"/>
@@ -904,7 +883,7 @@ imageStore($FoamTexture, position, vec4(foam));
 		<item type="traktor.render.Edge" version="1">
 			<source>
 				<node ref="/object/nodes/item[17]"/>
-				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
+				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[16]"/>
@@ -914,7 +893,7 @@ imageStore($FoamTexture, position, vec4(foam));
 		<item type="traktor.render.Edge" version="1">
 			<source>
 				<node ref="/object/nodes/item[19]"/>
-				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
+				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[16]"/>
@@ -924,7 +903,7 @@ imageStore($FoamTexture, position, vec4(foam));
 		<item type="traktor.render.Edge" version="1">
 			<source>
 				<node ref="/object/nodes/item[20]"/>
-				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
+				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[16]"/>
