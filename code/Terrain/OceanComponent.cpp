@@ -428,7 +428,8 @@ void OceanComponent::setup(
 		context.getRenderGraph().addPass(rp);
 	}
 
-	context.addVisualAttachment(computeDependency);
+	// All passes drawing entities, including the velocity pass, must wait for the wave textures.
+	context.addSetupAttachment(computeDependency);
 }
 
 void OceanComponent::build(
