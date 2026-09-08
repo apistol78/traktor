@@ -127,6 +127,9 @@ private:
 	resource::Proxy< render::Shader > m_shader;
 	Ref< render::ITexture > m_spectrumTexture;
 	Ref< render::ITexture > m_evolvedSpectrumTextures[4];
+	//! Intermediate target for the row pass of the inverse FFT; the pass
+	//! transposes as it stores, so it cannot write back into its own input.
+	Ref< render::ITexture > m_fftScratchTextures[2];
 	Ref< render::ITexture > m_foamTexture;
 	Ref< const render::IVertexLayout > m_vertexLayout;
 	Ref< render::Buffer > m_indexBuffer;

@@ -8,8 +8,15 @@
 
 #using \{921BBC45-4C75-624A-AA78-9B5FEC80645B}
 
-#define SIZE 1024
-#define LOG_SIZE 10
+#define SIZE 256
+#define LOG_SIZE 8
+
+//! Grid size accessor; SIZE is a preprocessor define and is only expanded
+//! inside module text, so script nodes must go through this.
+int fftSize()
+{
+	return SIZE;
+}
 
 #define PI 3.14159265358979323846f
 #define TWO_PI (PI * 2.0f)
@@ -269,7 +276,10 @@ vec4 ComputeTwiddleFactorAndInputIndices(Configuration configuration, uvec2 id)
     return vec4(twiddle, i, i + b);
 }
 
-shared vec4 fftGroupBuffer[2][SIZE];
+//! Ping-pong scratch, one plane per transformed channel; the displacement and
+//! slope spectrums are transformed together so a single set of barriers and a
+//! single twiddle evaluation serve both.
+shared vec4 fftGroupBuffer[2][2][SIZE];
 
 void ButterflyValues(uint step, uint index, out uvec2 indices, out vec2 twiddle)
 {
@@ -286,10 +296,13 @@ void ButterflyValues(uint step, uint index, out uvec2 indices, out vec2 twiddle)
     indices = uvec2(i, i + b);
 }
 
-vec4 FFT(uint threadIndex, vec4 inputData)
+//! In-place inverse FFT of two independent vec4 channels, each holding a pair
+//! of complex values.
+void FFT2(uint threadIndex, inout vec4 data0, inout vec4 data1)
 {
-    fftGroupBuffer[0][threadIndex] = inputData;
-    
+    fftGroupBuffer[0][0][threadIndex] = data0;
+    fftGroupBuffer[0][1][threadIndex] = data1;
+
 	groupMemoryBarrier();
 	barrier();
 
@@ -302,8 +315,11 @@ vec4 FFT(uint threadIndex, vec4 inputData)
         vec2 twiddle;
         ButterflyValues(step, threadIndex, inputsIndices, twiddle);
 
-        vec4 v = fftGroupBuffer[flag][inputsIndices.y];
-        fftGroupBuffer[1 - flag][threadIndex] = fftGroupBuffer[flag][inputsIndices.x] + vec4(ComplexMult(twiddle, v.xy), ComplexMult(twiddle, v.zw));
+        const vec4 v0 = fftGroupBuffer[flag][0][inputsIndices.y];
+        const vec4 v1 = fftGroupBuffer[flag][1][inputsIndices.y];
+
+        fftGroupBuffer[1 - flag][0][threadIndex] = fftGroupBuffer[flag][0][inputsIndices.x] + vec4(ComplexMult(twiddle, v0.xy), ComplexMult(twiddle, v0.zw));
+        fftGroupBuffer[1 - flag][1][threadIndex] = fftGroupBuffer[flag][1][inputsIndices.x] + vec4(ComplexMult(twiddle, v1.xy), ComplexMult(twiddle, v1.zw));
 
         flag = 1 - flag;
 
@@ -311,7 +327,8 @@ vec4 FFT(uint threadIndex, vec4 inputData)
 		barrier();
     }
 
-    return fftGroupBuffer[flag][threadIndex];
+    data0 = fftGroupBuffer[flag][0][threadIndex];
+    data1 = fftGroupBuffer[flag][1][threadIndex];
 }
 
 // Displacement

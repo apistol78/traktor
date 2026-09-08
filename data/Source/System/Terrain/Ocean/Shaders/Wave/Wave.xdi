@@ -174,8 +174,6 @@ $Output = CalculateSpectrum(
 			</outputPins>
 			<script><![CDATA[
 			
-const int _SIZE = 1024;
-
 const ivec2 position = $Position.xy;
 const Configuration configuration = getDefaultConfiguration();
 
@@ -183,8 +181,8 @@ const vec2 h0 = imageLoad($SpectrumTexture, position).rg;
 const vec2 h0conj = imageLoad(
 	$SpectrumTexture,
 	ivec2(
-		_SIZE - position.x - 1,
-		_SIZE - position.y - 1
+		fftSize() - position.x - 1,
+		fftSize() - position.y - 1
 	)
 ).rg;
 
@@ -274,12 +272,12 @@ imageStore($OutputSlope, position, slope);
 				<first>427</first>
 				<second>854</second>
 			</position>
-			<name>Inverse FFT</name>
-			<technique/>
-			<domain>Undefined</domain>
+			<name>Inverse FFT X</name>
+			<technique>Ocean_InverseFFT_X</technique>
+			<domain>Compute</domain>
 			<localSize>
-				<X>16</X>
-				<Y>16</Y>
+				<X>256</X>
+				<Y>1</Y>
 				<Z>1</Z>
 			</localSize>
 			<useRayTracing>false</useRayTracing>
@@ -293,82 +291,42 @@ imageStore($OutputSlope, position, slope);
 				</item>
 				<item>
 					<id>{F69BE5F1-4CA5-7F4E-8E1B-0F2DA5479E48}</id>
-					<name>SpectrumTexture</name>
+					<name>InputDisplacement</name>
 				</item>
 				<item>
 					<id>{A4DF10B1-6E76-6E48-B0A1-5FA0E5B5CBD3}</id>
 					<name>Index</name>
 				</item>
-			</inputPins>
-			<outputPins>
 				<item>
-					<id>{BEA4FC3C-DC18-F842-9721-2BF4E52B8C42}</id>
-					<name>Output</name>
-					<type>Vector</type>
+					<id>{469B3E42-C172-4CC8-8E8C-BE32CA862016}</id>
+					<name>InputSlope</name>
 				</item>
-			</outputPins>
+				<item>
+					<id>{81CFD77B-2187-48A4-90E2-70A54D97F03A}</id>
+					<name>OutputDisplacement</name>
+				</item>
+				<item>
+					<id>{624BBA67-2CC9-4133-87DF-E045433702B9}</id>
+					<name>OutputSlope</name>
+				</item>
+			</inputPins>
+			<outputPins/>
 			<script><![CDATA[
-			
-ivec2 position = $Position.xy;
-const vec4 inputData = imageLoad($SpectrumTexture, position);
-$Output = FFT($Index, inputData);
-			
+
+const ivec2 position = $Position.xy;
+
+vec4 displacement = imageLoad($InputDisplacement, position);
+vec4 slope = imageLoad($InputSlope, position);
+
+FFT2($Index, displacement, slope);
+
+// Transposed store; the column pass reads these back as rows, so neither pass
+// has to stride through memory.
+const ivec2 outPosition = position.yx;
+imageStore($OutputDisplacement, outPosition, displacement);
+imageStore($OutputSlope, outPosition, slope);
+
 			]]></script>
-		</item>
-		<item type="traktor.render.ComputeOutput" version="2,traktor.render.Node:1">
-			<id>{A1979F81-5390-6045-8528-548A43AACA32}</id>
-			<comment/>
-			<position>
-				<first>757</first>
-				<second>768</second>
-			</position>
-			<technique>Ocean_InverseFFT_X</technique>
-			<localSize>
-				<X>1024</X>
-				<Y>1</Y>
-				<Z>1</Z>
-			</localSize>
-		</item>
-		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{83138D11-0CA2-AA49-8D4E-C68E9809EC9F}</id>
-			<comment/>
-			<position>
-				<first>472</first>
-				<second>790</second>
-			</position>
-			<parameterDeclaration>{F36763F8-6082-42BB-B33D-BC07D37E2F46}</parameterDeclaration>
-		</item>
-		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{2FCB98ED-A313-174F-A4A0-6B0AC1BFEA50}</id>
-			<comment/>
-			<position>
-				<first>472</first>
-				<second>546</second>
-			</position>
-			<parameterDeclaration>{F36763F8-6082-42BB-B33D-BC07D37E2F46}</parameterDeclaration>
-		</item>
-		<item type="traktor.render.ComputeOutput" version="2,traktor.render.Node:1">
-			<id>{2AE91DBB-57CC-1F42-891A-5DACA4182954}</id>
-			<comment/>
-			<position>
-				<first>757</first>
-				<second>524</second>
-			</position>
-			<technique>Ocean_InverseFFT_Y</technique>
-			<localSize>
-				<X>1024</X>
-				<Y>1</Y>
-				<Z>1</Z>
-			</localSize>
-		</item>
-		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
-			<id>{EE408C1D-72BE-8B4B-97CC-87E0ACC5E211}</id>
-			<comment/>
-			<position>
-				<first>110</first>
-				<second>343</second>
-			</position>
-			<swizzle>yx</swizzle>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{83090577-C7BC-464E-8FC8-B7CF8CDDBDE1}</id>
@@ -380,18 +338,18 @@ $Output = FFT($Index, inputData);
 			<swizzle>x</swizzle>
 		</item>
 		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
-			<id>{F4ADB174-3EE5-5442-B261-8400E435EA74}</id>
+			<id>{62F17BD2-4B27-4E0A-9F8C-3E24E4E1B9A6}</id>
 			<comment/>
 			<position>
 				<first>427</first>
 				<second>610</second>
 			</position>
-			<name>Inverse FFT</name>
-			<technique/>
-			<domain>Undefined</domain>
+			<name>Inverse FFT Y</name>
+			<technique>Ocean_InverseFFT_Y</technique>
+			<domain>Compute</domain>
 			<localSize>
-				<X>16</X>
-				<Y>16</Y>
+				<X>256</X>
+				<Y>1</Y>
 				<Z>1</Z>
 			</localSize>
 			<useRayTracing>false</useRayTracing>
@@ -405,82 +363,52 @@ $Output = FFT($Index, inputData);
 				</item>
 				<item>
 					<id>{F69BE5F1-4CA5-7F4E-8E1B-0F2DA5479E48}</id>
-					<name>SpectrumTexture</name>
+					<name>InputDisplacement</name>
 				</item>
 				<item>
 					<id>{A4DF10B1-6E76-6E48-B0A1-5FA0E5B5CBD3}</id>
 					<name>Index</name>
 				</item>
-			</inputPins>
-			<outputPins>
 				<item>
-					<id>{BEA4FC3C-DC18-F842-9721-2BF4E52B8C42}</id>
-					<name>Output</name>
-					<type>Vector</type>
-				</item>
-			</outputPins>
-			<script><![CDATA[
-			
-ivec2 position = $Position.xy;
-const vec4 inputData = imageLoad($SpectrumTexture, position);
-$Output = FFT($Index, inputData);
-			
-			]]></script>
-		</item>
-		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
-			<id>{4DFB091D-8730-4548-A500-22D99D929C05}</id>
-			<comment/>
-			<position>
-				<first>73</first>
-				<second>1381</second>
-			</position>
-			<name>Generate displacement</name>
-			<technique>Ocean_Generate</technique>
-			<domain>Compute</domain>
-			<localSize>
-				<X>16</X>
-				<Y>16</Y>
-				<Z>1</Z>
-			</localSize>
-			<useRayTracing>false</useRayTracing>
-			<include>
-				<item>{E21A21CC-F70C-474E-87DD-9D7B89AAC05F}</item>
-			</include>
-			<inputPins>
-				<item>
-					<id>{3528ECFC-7D5A-5B42-93F2-31E805AC690F}</id>
-					<name>Position</name>
+					<id>{AE6E9E2D-9D7C-4BCB-B540-648B31C11D84}</id>
+					<name>InputSlope</name>
 				</item>
 				<item>
-					<id>{A100C668-C7CE-47C8-8EAE-2AADAA14123B}</id>
-					<name>DisplacementTexture</name>
+					<id>{80C9A78C-04BE-400F-8282-F61A48E68B8B}</id>
+					<name>OutputDisplacement</name>
 				</item>
 				<item>
-					<id>{3C518CBE-AC29-7C4A-A4BB-121E71862396}</id>
-					<name>SlopeTexture</name>
+					<id>{B163C8E7-14BA-4A90-881B-572C1486A545}</id>
+					<name>OutputSlope</name>
 				</item>
 				<item>
-					<id>{694740A1-F833-924B-A654-F126DF7FF6CD}</id>
+					<id>{8F4E4D35-CD92-4988-AA56-3891FA8B7533}</id>
 					<name>FoamTexture</name>
 				</item>
 			</inputPins>
 			<outputPins/>
 			<script><![CDATA[
-			
-const ivec2 position = $Position.xy;
 
+const ivec2 position = $Position.xy;
 const Configuration configuration = getDefaultConfiguration();
 
-const vec4 htildeDisplacement = imageLoad($DisplacementTexture, position);
-const vec4 htildeSlope = imageLoad($SlopeTexture, position);
-float foam = imageLoad($FoamTexture, position).x;
+vec4 htildeDisplacement = imageLoad($InputDisplacement, position);
+vec4 htildeSlope = imageLoad($InputSlope, position);
+
+FFT2($Index, htildeDisplacement, htildeSlope);
+
+// Transposing again restores the natural orientation. The displacement
+// assembly is folded in here so the transformed spectrum never has to make a
+// round trip through memory just to be read back by a separate pass.
+const ivec2 outPosition = position.yx;
+
+float foam = imageLoad($FoamTexture, outPosition).x;
 
 vec4 displacement;
 vec4 slope;
-
 GenerateDisplacement(
 	configuration,
-	ivec3(position, 0),
+	ivec3(outPosition, 0),
 	0,
 	htildeDisplacement,
 	htildeSlope,
@@ -489,20 +417,11 @@ GenerateDisplacement(
 	foam
 );
 
-imageStore($DisplacementTexture, position, displacement);
-imageStore($SlopeTexture, position, slope);
-imageStore($FoamTexture, position, vec4(foam));
-			
+imageStore($OutputDisplacement, outPosition, displacement);
+imageStore($OutputSlope, outPosition, slope);
+imageStore($FoamTexture, outPosition, vec4(foam));
+
 			]]></script>
-		</item>
-		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{BAE9354B-059B-4513-B205-385F37871512}</id>
-			<comment/>
-			<position>
-				<first>-271</first>
-				<second>1293</second>
-			</position>
-			<parameterDeclaration>{F36763F8-6082-42BB-B33D-BC07D37E2F46}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
 			<id>{DCEFB545-7BE8-D64A-A595-BB39B444FBDC}</id>
@@ -512,24 +431,6 @@ imageStore($FoamTexture, position, vec4(foam));
 				<second>1165</second>
 			</position>
 			<parameterDeclaration>{30C8C057-9E75-40B9-BCC9-B063F3938A30}</parameterDeclaration>
-		</item>
-		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{E1D8EA5F-6F8F-2C47-8DCD-E815CA8CA614}</id>
-			<comment/>
-			<position>
-				<first>-271</first>
-				<second>1357</second>
-			</position>
-			<parameterDeclaration>{30C8C057-9E75-40B9-BCC9-B063F3938A30}</parameterDeclaration>
-		</item>
-		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
-			<id>{F078BECA-8CA8-304D-AA8F-E44737657B1C}</id>
-			<comment/>
-			<position>
-				<first>-271</first>
-				<second>1421</second>
-			</position>
-			<parameterDeclaration>{336298B3-CA46-4400-B269-B396DD1CF925}</parameterDeclaration>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
 			<id>{C3281378-EC01-A24C-9CB3-A49B3423D48C}</id>
@@ -648,6 +549,69 @@ imageStore($FoamTexture, position, vec4(foam));
 			</position>
 			<parameterDeclaration>{0B4C5025-3A5D-5A43-9C90-89EFF4B868CA}</parameterDeclaration>
 		</item>
+		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
+			<id>{92FDB17B-25B2-4A5F-B88C-8D89F0B506FE}</id>
+			<comment/>
+			<position>
+				<first>900</first>
+				<second>854</second>
+			</position>
+			<parameterDeclaration>{DA2E922E-B3F8-4A8D-ABA7-23242B97D00C}</parameterDeclaration>
+		</item>
+		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
+			<id>{5830A011-9E83-4A29-831B-C5922F6F5D20}</id>
+			<comment/>
+			<position>
+				<first>900</first>
+				<second>900</second>
+			</position>
+			<parameterDeclaration>{F36763F8-6082-42BB-B33D-BC07D37E2F46}</parameterDeclaration>
+		</item>
+		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
+			<id>{37370D7F-DF74-4B07-86C8-6AA69B1BCFE7}</id>
+			<comment/>
+			<position>
+				<first>900</first>
+				<second>946</second>
+			</position>
+			<parameterDeclaration>{30C8C057-9E75-40B9-BCC9-B063F3938A30}</parameterDeclaration>
+		</item>
+		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
+			<id>{DD08AF5D-7F91-4638-838D-BF36BF150C54}</id>
+			<comment/>
+			<position>
+				<first>900</first>
+				<second>610</second>
+			</position>
+			<parameterDeclaration>{DA2E922E-B3F8-4A8D-ABA7-23242B97D00C}</parameterDeclaration>
+		</item>
+		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
+			<id>{C8349704-6B10-48B1-BDD0-C9B3438D9AA3}</id>
+			<comment/>
+			<position>
+				<first>900</first>
+				<second>656</second>
+			</position>
+			<parameterDeclaration>{F36763F8-6082-42BB-B33D-BC07D37E2F46}</parameterDeclaration>
+		</item>
+		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
+			<id>{5ED6BE33-81F5-42E6-B2ED-741E0BB5E8FF}</id>
+			<comment/>
+			<position>
+				<first>900</first>
+				<second>702</second>
+			</position>
+			<parameterDeclaration>{30C8C057-9E75-40B9-BCC9-B063F3938A30}</parameterDeclaration>
+		</item>
+		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
+			<id>{95ADD5C5-82B6-46EA-A7CD-AEC7392FE82A}</id>
+			<comment/>
+			<position>
+				<first>900</first>
+				<second>748</second>
+			</position>
+			<parameterDeclaration>{336298B3-CA46-4400-B269-B396DD1CF925}</parameterDeclaration>
+		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge" version="1">
@@ -742,121 +706,41 @@ imageStore($FoamTexture, position, vec4(foam));
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
+				<node ref="/object/nodes/item[1]"/>
+				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[9]"/>
+				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[9]"/>
+				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[8]"/>
+				<id>{A4DF10B1-6E76-6E48-B0A1-5FA0E5B5CBD3}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[9]"/>
+				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
+			</source>
+			<destination>
 				<node ref="/object/nodes/item[10]"/>
-				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[9]"/>
-				<id>{60D25829-A948-4883-B26F-F2BE12B49891}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[1]"/>
-				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[9]"/>
-				<id>{0907D535-A1B6-409A-A70A-C250D3CDCD58}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[8]"/>
-				<id>{BEA4FC3C-DC18-F842-9721-2BF4E52B8C42}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[9]"/>
-				<id>{4356E929-19D3-45DD-8143-0168015DB701}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[11]"/>
-				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[12]"/>
-				<id>{60D25829-A948-4883-B26F-F2BE12B49891}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[1]"/>
-				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[13]"/>
-				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[13]"/>
-				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[12]"/>
-				<id>{0907D535-A1B6-409A-A70A-C250D3CDCD58}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[1]"/>
-				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[14]"/>
-				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[14]"/>
-				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[8]"/>
 				<id>{A4DF10B1-6E76-6E48-B0A1-5FA0E5B5CBD3}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[14]"/>
-				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[15]"/>
-				<id>{A4DF10B1-6E76-6E48-B0A1-5FA0E5B5CBD3}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[13]"/>
-				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[15]"/>
-				<id>{3528ECFC-7D5A-5B42-93F2-31E805AC690F}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[15]"/>
-				<id>{BEA4FC3C-DC18-F842-9721-2BF4E52B8C42}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[12]"/>
-				<id>{4356E929-19D3-45DD-8143-0168015DB701}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
 				<node ref="/object/nodes/item[1]"/>
 				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[16]"/>
+				<node ref="/object/nodes/item[10]"/>
 				<id>{3528ECFC-7D5A-5B42-93F2-31E805AC690F}</id>
 			</destination>
 		</item>
@@ -872,7 +756,7 @@ imageStore($FoamTexture, position, vec4(foam));
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[18]"/>
+				<node ref="/object/nodes/item[11]"/>
 				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
 			</source>
 			<destination>
@@ -882,37 +766,7 @@ imageStore($FoamTexture, position, vec4(foam));
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[17]"/>
-				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[16]"/>
-				<id>{A100C668-C7CE-47C8-8EAE-2AADAA14123B}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[19]"/>
-				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[16]"/>
-				<id>{3C518CBE-AC29-7C4A-A4BB-121E71862396}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[20]"/>
-				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[16]"/>
-				<id>{694740A1-F833-924B-A654-F126DF7FF6CD}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[21]"/>
+				<node ref="/object/nodes/item[12]"/>
 				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
 			</source>
 			<destination>
@@ -922,7 +776,7 @@ imageStore($FoamTexture, position, vec4(foam));
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[22]"/>
+				<node ref="/object/nodes/item[13]"/>
 				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
 			</source>
 			<destination>
@@ -932,7 +786,7 @@ imageStore($FoamTexture, position, vec4(foam));
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[22]"/>
+				<node ref="/object/nodes/item[13]"/>
 				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
 			</source>
 			<destination>
@@ -942,7 +796,7 @@ imageStore($FoamTexture, position, vec4(foam));
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[23]"/>
+				<node ref="/object/nodes/item[14]"/>
 				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
 			</source>
 			<destination>
@@ -952,7 +806,7 @@ imageStore($FoamTexture, position, vec4(foam));
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[24]"/>
+				<node ref="/object/nodes/item[15]"/>
 				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
 			</source>
 			<destination>
@@ -962,7 +816,7 @@ imageStore($FoamTexture, position, vec4(foam));
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[25]"/>
+				<node ref="/object/nodes/item[16]"/>
 				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
 			</source>
 			<destination>
@@ -972,17 +826,17 @@ imageStore($FoamTexture, position, vec4(foam));
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[25]"/>
+				<node ref="/object/nodes/item[16]"/>
 				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[15]"/>
+				<node ref="/object/nodes/item[10]"/>
 				<id>{F69BE5F1-4CA5-7F4E-8E1B-0F2DA5479E48}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[26]"/>
+				<node ref="/object/nodes/item[17]"/>
 				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
 			</source>
 			<destination>
@@ -992,7 +846,7 @@ imageStore($FoamTexture, position, vec4(foam));
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[27]"/>
+				<node ref="/object/nodes/item[18]"/>
 				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
 			</source>
 			<destination>
@@ -1002,7 +856,7 @@ imageStore($FoamTexture, position, vec4(foam));
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[28]"/>
+				<node ref="/object/nodes/item[19]"/>
 				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
 			</source>
 			<destination>
@@ -1012,7 +866,7 @@ imageStore($FoamTexture, position, vec4(foam));
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[29]"/>
+				<node ref="/object/nodes/item[20]"/>
 				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
 			</source>
 			<destination>
@@ -1022,7 +876,7 @@ imageStore($FoamTexture, position, vec4(foam));
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[30]"/>
+				<node ref="/object/nodes/item[21]"/>
 				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
 			</source>
 			<destination>
@@ -1032,7 +886,7 @@ imageStore($FoamTexture, position, vec4(foam));
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[31]"/>
+				<node ref="/object/nodes/item[22]"/>
 				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
 			</source>
 			<destination>
@@ -1042,7 +896,7 @@ imageStore($FoamTexture, position, vec4(foam));
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[32]"/>
+				<node ref="/object/nodes/item[23]"/>
 				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
 			</source>
 			<destination>
@@ -1052,12 +906,82 @@ imageStore($FoamTexture, position, vec4(foam));
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[33]"/>
+				<node ref="/object/nodes/item[24]"/>
 				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[3]"/>
 				<id>{8A29ACC7-E00B-2348-94C9-096D39A83D34}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[25]"/>
+				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[8]"/>
+				<id>{469B3E42-C172-4CC8-8E8C-BE32CA862016}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[26]"/>
+				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[8]"/>
+				<id>{81CFD77B-2187-48A4-90E2-70A54D97F03A}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[27]"/>
+				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[8]"/>
+				<id>{624BBA67-2CC9-4133-87DF-E045433702B9}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[28]"/>
+				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[10]"/>
+				<id>{AE6E9E2D-9D7C-4BCB-B540-648B31C11D84}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[29]"/>
+				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[10]"/>
+				<id>{80C9A78C-04BE-400F-8282-F61A48E68B8B}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[30]"/>
+				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[10]"/>
+				<id>{B163C8E7-14BA-4A90-881B-572C1486A545}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[31]"/>
+				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[10]"/>
+				<id>{8F4E4D35-CD92-4988-AA56-3891FA8B7533}</id>
 			</destination>
 		</item>
 	</edges>

@@ -43,6 +43,11 @@
 					<optional>true</optional>
 				</item>
 				<item>
+					<id>{D0459366-1874-4789-8E83-1262B61F8D5A}</id>
+					<name>LastPosition</name>
+					<optional>true</optional>
+				</item>
+				<item>
 					<id>{AFE59FA6-25AE-8A48-B0AC-92A5B3CDAFF7}</id>
 					<name>Normal</name>
 					<optional>true</optional>
@@ -79,7 +84,7 @@
 				<first>318</first>
 				<second>377</second>
 			</position>
-			<color>1, 0, 0, 0</color>
+			<color>1, 0, 0, 1</color>
 			<linear>false</linear>
 		</item>
 		<item type="traktor.render.External" version="3,traktor.render.Node:1">
@@ -158,6 +163,11 @@
 				<item>
 					<id>{26E555E1-554E-644E-9D5D-5344AD399B49}</id>
 					<name>Metalness</name>
+					<optional>true</optional>
+				</item>
+				<item>
+					<id>{BA9F8D25-37BA-F44C-A36C-EF85C51CA6BE}</id>
+					<name>Opaque</name>
 					<optional>true</optional>
 				</item>
 				<item>
