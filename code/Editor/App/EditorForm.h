@@ -8,9 +8,8 @@
  */
 #pragma once
 
-#include <list>
-#include <map>
 #include "Core/Guid.h"
+#include "Core/Containers/AlignedVector.h"
 #include "Core/Io/Path.h"
 #include "Core/Library/Library.h"
 #include "Core/Thread/Semaphore.h"
@@ -18,6 +17,9 @@
 #include "Editor/IPipelineBuilder.h"
 #include "Ui/Command.h"
 #include "Ui/Form.h"
+
+#include <list>
+#include <map>
 
 namespace traktor
 {
@@ -84,9 +86,9 @@ class MRU;
  * database view.
  */
 class EditorForm
-:	public ui::Form
-,	public IEditor
-,	public IPipelineBuilder::IListener
+	: public ui::Form
+	, public IEditor
+	, public IPipelineBuilder::IListener
 {
 	T_RTTI_CLASS;
 
@@ -162,7 +164,7 @@ public:
 
 	virtual bool buildSucceeded() const override final;
 
-	virtual Ref< IPipelineDepends> createPipelineDepends(PipelineDependencySet* dependencySet, uint32_t recursionDepth) override final;
+	virtual Ref< IPipelineDepends > createPipelineDepends(PipelineDependencySet* dependencySet, uint32_t recursionDepth) override final;
 
 	virtual ObjectStore* getObjectStore() override final;
 
@@ -206,7 +208,7 @@ private:
 	Ref< ui::ProgressBar > m_buildProgress;
 	Ref< ui::MultiSplitter > m_tabGroupContainer;
 	RefArray< ui::Tab > m_tabGroups;
-	Ref< ui::Tab > m_tabGroupLastFocus;	//!< Tab group which last received focus; only use for determine which group to add new pages.
+	Ref< ui::Tab > m_tabGroupLastFocus; //!< Tab group which last received focus; only use for determine which group to add new pages.
 	Ref< ui::Menu > m_menuTab;
 	Ref< ui::ToolBarMenu > m_menuTools;
 	Ref< DatabaseView > m_dataBaseView;
@@ -221,15 +223,15 @@ private:
 	Semaphore m_lockBuild;
 	Path m_settingsPath;
 	Path m_workspacePath;
-	Ref< PropertyGroup > m_originalSettings;	//!< Traktor.Editor.config + Traktor.Editor.<platform>.config
-	Ref< PropertyGroup > m_globalSettings;		//!< Traktor.Editor.config + Traktor.Editor.<platform>.config + Traktor.Editor.<user>.config
-	Ref< PropertyGroup > m_workspaceSettings;	//!< <Application>.workspace
-	Ref< PropertyGroup > m_mergedSettings;		//!< Traktor.Editor.config + Traktor.Editor.<platform>.config + Traktor.Editor.<user>.config + <Application>.workspace
+	Ref< PropertyGroup > m_originalSettings;  //!< Traktor.Editor.config + Traktor.Editor.<platform>.config
+	Ref< PropertyGroup > m_globalSettings;	  //!< Traktor.Editor.config + Traktor.Editor.<platform>.config + Traktor.Editor.<user>.config
+	Ref< PropertyGroup > m_workspaceSettings; //!< <Application>.workspace
+	Ref< PropertyGroup > m_mergedSettings;	  //!< Traktor.Editor.config + Traktor.Editor.<platform>.config + Traktor.Editor.<user>.config + <Application>.workspace
 	int32_t m_buildStep = 0;
 	std::wstring m_buildStepMessage;
-	bool m_buildSucceeded = false;	//!< Result of the most recently finished build; written by the build thread, read after it is joined.
+	bool m_buildSucceeded = false; //!< Result of the most recently finished build; written by the build thread, read after it is joined.
 	Semaphore m_buildStepMessageLock;
-	std::vector< std::pair< db::Database*, Guid > > m_eventIds;
+	AlignedVector< std::pair< db::Database*, Guid > > m_eventIds;
 	bool m_suppressTabFocusEvent = false;
 
 	ui::TabPage* getActiveTabPage() const;

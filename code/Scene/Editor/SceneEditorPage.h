@@ -101,6 +101,8 @@ public:
 
 	virtual bool handleCommand(const ui::Command& command) override final;
 
+	virtual void handleDatabaseEvents(AlignedVector< std::pair< db::Database*, Guid > >& events) override final;
+
 	virtual void handleDatabaseEvent(db::Database* database, const Guid& eventId) override final;
 
 private:

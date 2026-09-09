@@ -41,6 +41,7 @@ void World::destroy()
 
 	for (auto entity : m_entities)
 	{
+		T_ANONYMOUS_VAR(Ref< Entity >)(entity);
 		entity->setWorld(nullptr);
 		entity->destroy();
 	}

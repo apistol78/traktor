@@ -99,6 +99,15 @@ public:
 	 */
 	virtual bool handleCommand(const ui::Command& command) = 0;
 
+	/*! Database events.
+	 *
+	 * Called when editor encountered a database event.
+	 * Some editors might need to reload dependent instances.
+	 *
+	 * \param eventId Guid of database instance which caused the event.
+	 */
+	virtual void handleDatabaseEvents(AlignedVector< std::pair< db::Database*, Guid > >& events);
+	
 	/*! Database event.
 	 *
 	 * Called when editor encountered a database event.
@@ -106,7 +115,7 @@ public:
 	 *
 	 * \param eventId Guid of database instance which caused the event.
 	 */
-	virtual void handleDatabaseEvent(db::Database* database, const Guid& eventId) = 0;
+	virtual void handleDatabaseEvent(db::Database* database, const Guid& eventId);
 };
 
 }

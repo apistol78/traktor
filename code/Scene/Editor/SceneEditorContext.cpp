@@ -587,6 +587,12 @@ void SceneEditorContext::buildController()
 	}
 }
 
+void SceneEditorContext::invalidateEntityProducts()
+{
+	for (auto entityAdapter : getEntities())
+		entityAdapter->setEntityProductHash(0);
+}
+
 void SceneEditorContext::selectEntity(EntityAdapter* entityAdapter, bool select)
 {
 	if (entityAdapter && entityAdapter->m_selected != select)

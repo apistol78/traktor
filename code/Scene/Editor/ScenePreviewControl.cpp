@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2025 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -223,6 +223,7 @@ bool ScenePreviewControl::handleCommand(const ui::Command& command)
 		m_context->setTime(0.0f);
 		m_context->setPlaying(false);
 		m_context->setPhysicsEnable(false);
+		m_context->invalidateEntityProducts();
 		m_context->buildEntities(false);
 	}
 	else if (command == L"Scene.Editor.Play")
@@ -234,6 +235,7 @@ bool ScenePreviewControl::handleCommand(const ui::Command& command)
 	{
 		m_context->setPlaying(false);
 		m_context->setPhysicsEnable(false);
+		m_context->invalidateEntityProducts();
 		m_context->buildEntities(false);
 	}
 	else if (command == L"Scene.Editor.TogglePlay")

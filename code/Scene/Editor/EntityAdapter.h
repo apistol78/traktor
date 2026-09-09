@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -78,6 +78,15 @@ public:
 
 	/*! Invalidate cached product of a component which no longer reflect its data. */
 	void invalidateComponentProduct(const world::IEntityComponent* component);
+
+	/*! Set hash of the entity data from which the current entity was built. */
+	void setEntityProductHash(uint32_t hash);
+
+	/*! Get hash of the entity data from which the current entity was built. */
+	uint32_t getEntityProductHash() const;
+
+	/*! Invalidate entity product, including ancestors so a build reaches this entity. */
+	void invalidateEntityProduct();
 
 	/*! \name Accessors */
 	//@{
@@ -246,6 +255,7 @@ private:
 	const TypeInfo* m_entityDataType;
 	Ref< world::EntityData > m_entityData;
 	Ref< world::Entity > m_entity;
+	uint32_t m_entityProductHash;
 	SmallMap< const TypeInfo*, ComponentProduct > m_componentProducts;
 	EntityAdapter* m_parent;
 	RefArray< EntityAdapter > m_children;

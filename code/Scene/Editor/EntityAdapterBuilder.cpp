@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,16 +9,19 @@
 #include <limits>
 #include "Core/Log/Log.h"
 #include "Core/Misc/Save.h"
+#include "Core/Serialization/DeepHash.h"
 #include "Scene/Editor/EntityAdapter.h"
 #include "Scene/Editor/EntityAdapterBuilder.h"
 #include "Scene/Editor/IEntityEditorFactory.h"
 #include "Scene/Editor/SceneEditorContext.h"
+#include "World/Editor/Traverser.h"
 #include "World/Entity.h"
 #include "World/EntityBuilder.h"
 #include "World/EntityData.h"
 #include "World/IEntityComponent.h"
 #include "World/IEntityFactory.h"
 #include "World/World.h"
+#include "World/Entity/GroupComponent.h"
 #include "World/Entity/GroupComponentData.h"
 #include "World/Entity/ExternalEntityData.h"
 
@@ -41,6 +44,49 @@ void collectAllAdapters(EntityAdapter* entityAdapter, RefArray< EntityAdapter >&
 bool isComponentCacheable(const world::IEntityComponentData* componentData)
 {
 	return !is_a< world::GroupComponentData >(componentData);
+}
+
+void addToWorld(world::World* world, world::Entity* entity)
+{
+	// Entity might belong to a replaced world when world has been rebuilt.
+	if (entity->getWorld() != nullptr && entity->getWorld() != world)
+		entity->getWorld()->removeEntity(entity);
+
+	world->addEntity(entity);
+
+	if (auto group = entity->getComponent< world::GroupComponent >())
+		for (auto childEntity : group->getEntities())
+			addToWorld(world, childEntity);
+}
+
+void resetFromData(EntityAdapter* entityAdapter)
+{
+	for (auto child : entityAdapter->getChildren())
+		resetFromData(child);
+
+	world::Entity* entity = entityAdapter->getEntity();
+	if (entity != nullptr)
+	{
+		entity->setTransform(entityAdapter->getEntityData()->getTransform());
+		entity->setState(entityAdapter->getEntityData()->getState(), world::EntityState::All, false);
+	}
+}
+
+void rebindEntityData(EntityAdapter* entityAdapter, world::EntityData* entityData)
+{
+	SmallMap< Guid, EntityAdapter* > adapters;
+	RefArray< EntityAdapter > descendants;
+	collectAllAdapters(entityAdapter, descendants);
+	for (auto adapter : descendants)
+		adapters[adapter->getId()] = adapter;
+
+	entityAdapter->prepare(entityData, entityAdapter->getEntity());
+	world::Traverser::visit((const ISerializable*)entityData, [&](const world::EntityData* childData) {
+		auto it = adapters.find(childData->getId());
+		if (it != adapters.end())
+			it->second->prepare(const_cast< world::EntityData* >(childData), it->second->getEntity());
+		return world::Traverser::Result::Continue;
+	});
 }
 
 	}
@@ -86,6 +132,8 @@ Ref< world::Entity > EntityAdapterBuilder::create(const world::EntityData* entit
 		return m_entityFactory->createEntity(&entityBuilder, *entityData);
 	}
 
+	const uint32_t hash = DeepHash(entityData).get();
+
 	// Get adapter; reuse adapters containing same type of entity.
 	Cache& cache = m_cache[entityData->getId()];
 	if (cache.adapter != nullptr)
@@ -108,6 +156,19 @@ Ref< world::Entity > EntityAdapterBuilder::create(const world::EntityData* entit
 		T_FATAL_ASSERT (m_rootAdapter->getParent() == nullptr);
 	}
 
+	// Reuse entire entity, including children, if data is unchanged since last build.
+	if (entityAdapter->getEntity() != nullptr && hash != 0 && entityAdapter->getEntityProductHash() == hash)
+	{
+		// Undo/redo replaces data instances; re-bind adapters to new instances.
+		if (entityAdapter->getEntityData() != entityData)
+			rebindEntityData(entityAdapter, const_cast< world::EntityData* >(entityData));
+
+		addToWorld(m_world, entityAdapter->getEntity());
+		resetFromData(entityAdapter);
+
+		return entityAdapter->getEntity();
+	}
+
 	// Unlink all children first; new children will be added recursively.
 	entityAdapter->unlinkAllChildren();
 	T_FATAL_ASSERT (entityAdapter->getChildren().empty());
@@ -127,6 +188,8 @@ Ref< world::Entity > EntityAdapterBuilder::create(const world::EntityData* entit
 		entity = m_entityFactory->createEntity(this, *entityData);
 	}
 
+	uint32_t entityProductHash = hash;
+
 	// If still no entity then we create a null placeholder.
 	if (!entity)
 	{
@@ -137,6 +200,9 @@ Ref< world::Entity > EntityAdapterBuilder::create(const world::EntityData* entit
 			entityData->getTransform(),
 			entityData->getState()
 		);
+
+		// Do not cache placeholders; retry build every time.
+		entityProductHash = 0;
 	}
 
 	entity->setTransform(entityData->getTransform());
@@ -149,6 +215,7 @@ Ref< world::Entity > EntityAdapterBuilder::create(const world::EntityData* entit
 		const_cast< world::EntityData* >(entityData),
 		entity
 	);
+	entityAdapter->setEntityProductHash(entityProductHash);
 
 	return entity;
 }

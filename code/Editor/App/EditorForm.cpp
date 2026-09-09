@@ -1020,7 +1020,7 @@ bool EditorForm::openEditor(db::Instance* instance)
 	T_ANONYMOUS_VAR(EnterLeave)(
 		[=, this]() {
 		setCursor(ui::Cursor::Wait);
-		},
+	},
 		[=, this]() {
 		resetCursor();
 	});
@@ -1192,7 +1192,7 @@ bool EditorForm::openDefaultEditor(db::Instance* instance)
 	T_ANONYMOUS_VAR(EnterLeave)(
 		[=, this]() {
 		setCursor(ui::Cursor::Wait);
-		},
+	},
 		[=, this]() {
 		resetCursor();
 	});
@@ -1282,7 +1282,7 @@ bool EditorForm::openInNewEditorProcess(db::Instance* instance)
 	T_ANONYMOUS_VAR(EnterLeave)(
 		[=, this]() {
 		setCursor(ui::Cursor::Wait);
-		},
+	},
 		[=, this]() {
 		resetCursor();
 	});
@@ -1550,8 +1550,7 @@ bool EditorForm::openWorkspace(const Path& workspacePath)
 		// Expose servers as stock objects.
 		m_objectStore->set(m_streamServer);
 		m_objectStore->set(m_dbConnectionManager);
-	},
-		L"Open workspace thread");
+	}, L"Open workspace thread");
 	if (!thread)
 		return false;
 
@@ -1585,8 +1584,7 @@ bool EditorForm::openWorkspace(const Path& workspacePath)
 	// Create asset monitor thread.
 	m_threadAssetMonitor = ThreadManager::getInstance().create([=, this]() {
 		threadAssetMonitor();
-	},
-		L"Asset monitor");
+	}, L"Asset monitor");
 	m_threadAssetMonitor->start();
 
 	log::info << L"Workspace opened successfully." << Endl;
@@ -1892,8 +1890,7 @@ void EditorForm::buildAssets(const AlignedVector< Guid >& assetGuids, bool rebui
 	// Create build thread.
 	m_threadBuild = ThreadManager::getInstance().create([=, this]() {
 		buildAssetsThread(assetGuids, rebuild);
-	},
-		L"Pipeline thread");
+	}, L"Pipeline thread");
 	if (m_threadBuild)
 	{
 		m_threadBuild->start(Thread::Above);
@@ -1913,7 +1910,7 @@ void EditorForm::buildAssets(bool rebuild)
 	T_ANONYMOUS_VAR(EnterLeave)(
 		[=, this]() {
 		setCursor(ui::Cursor::Wait);
-		},
+	},
 		[=, this]() {
 		resetCursor();
 	});
@@ -2201,7 +2198,7 @@ void EditorForm::saveCurrentDocument()
 	T_ANONYMOUS_VAR(EnterLeave)(
 		[=, this]() {
 		setCursor(ui::Cursor::Wait);
-		},
+	},
 		[=, this]() {
 		resetCursor();
 	});
@@ -2317,7 +2314,7 @@ void EditorForm::saveAllDocuments()
 	T_ANONYMOUS_VAR(EnterLeave)(
 		[=, this]() {
 		setCursor(ui::Cursor::Wait);
-		},
+	},
 		[=, this]() {
 		resetCursor();
 	});
@@ -2365,7 +2362,7 @@ bool EditorForm::closeEditor(ui::TabPage* tabPage, bool forceCloseIfUnsaved)
 	T_ANONYMOUS_VAR(EnterLeave)(
 		[&]() {
 		m_suppressTabFocusEvent = true;
-		},
+	},
 		[&]() {
 		m_suppressTabFocusEvent = false;
 	});
@@ -3120,8 +3117,7 @@ void EditorForm::eventTimer(ui::TimerEvent* /*event*/)
 				ui::TabPage* tabPage = tab->getPage(i);
 				IEditorPage* editorPage = tabPage->getData< IEditorPage >(L"EDITORPAGE");
 				if (editorPage)
-					for (auto eventId : m_eventIds)
-						editorPage->handleDatabaseEvent(eventId.first, eventId.second);
+					editorPage->handleDatabaseEvents(m_eventIds);
 			}
 		}
 

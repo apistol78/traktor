@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -32,6 +32,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.scene.EntityAdapter", EntityAdapter, Object)
 EntityAdapter::EntityAdapter(SceneEditorContext* context)
 	: m_context(context)
 	, m_entityDataType(nullptr)
+	, m_entityProductHash(0)
 	, m_parent(nullptr)
 	, m_selected(false)
 	, m_expanded(false)
@@ -136,6 +137,25 @@ void EntityAdapter::invalidateComponentProduct(const world::IEntityComponent* co
 			break;
 		}
 	}
+
+	// Entity must be rebuilt for the component to be recreated.
+	invalidateEntityProduct();
+}
+
+void EntityAdapter::setEntityProductHash(uint32_t hash)
+{
+	m_entityProductHash = hash;
+}
+
+uint32_t EntityAdapter::getEntityProductHash() const
+{
+	return m_entityProductHash;
+}
+
+void EntityAdapter::invalidateEntityProduct()
+{
+	for (EntityAdapter* adapter = this; adapter != nullptr; adapter = adapter->m_parent)
+		adapter->m_entityProductHash = 0;
 }
 
 world::IEntityComponentData* EntityAdapter::getComponentData(const TypeInfo& componentDataType) const

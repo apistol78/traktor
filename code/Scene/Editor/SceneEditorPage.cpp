@@ -50,14 +50,14 @@
 #include "Scene/Editor/Events/PostModifyEvent.h"
 #include "Scene/Editor/Events/PreModifyEvent.h"
 #include "Scene/Editor/Events/SceneSelectionChangeEvent.h"
-#include "Scene/Editor/ISceneEditorPlugin.h"
-#include "Scene/Editor/ISceneOperationData.h"
 #include "Scene/Editor/IComponentPanelEditor.h"
 #include "Scene/Editor/IComponentPanelEditorFactory.h"
+#include "Scene/Editor/ISceneEditorPlugin.h"
+#include "Scene/Editor/ISceneOperationData.h"
 #include "Scene/Editor/SceneAsset.h"
 #include "Scene/Editor/SceneEditorContext.h"
-#include "Scene/Editor/ScenePreviewControl.h"
 #include "Scene/Editor/SceneOperatorPreviewExtension.h"
+#include "Scene/Editor/ScenePreviewControl.h"
 #include "Scene/Editor/Utilities.h"
 #include "Scene/Scene.h"
 #include "Scene/SceneFactory.h"
@@ -762,8 +762,7 @@ bool SceneEditorPage::handleCommand(const ui::Command& command)
 			const Transform transform = entityData->getTransform();
 			entityData->setTransform(Transform(
 				transform.translation() + offset,
-				transform.rotation()
-			));
+				transform.rotation()));
 
 			Ref< EntityAdapter > entityAdapter = new EntityAdapter(m_context);
 			entityAdapter->prepare(entityData, nullptr);
@@ -1002,10 +1001,8 @@ bool SceneEditorPage::handleCommand(const ui::Command& command)
 		// command might cause the editors to be recreated.
 		const RefArray< IComponentPanelEditor > componentPanelEditors = m_context->getComponentPanelEditors();
 		for (auto componentPanelEditor : componentPanelEditors)
-		{
 			if ((result = componentPanelEditor->handleCommand(command)) == true)
 				break;
-		}
 
 		// Propagate command to editor control.
 		if (!result)
@@ -1015,44 +1012,63 @@ bool SceneEditorPage::handleCommand(const ui::Command& command)
 	return result;
 }
 
-void SceneEditorPage::handleDatabaseEvent(db::Database* database, const Guid& eventId)
+void SceneEditorPage::handleDatabaseEvents(AlignedVector< std::pair< db::Database*, Guid > >& events)
 {
 	if (!m_context)
 		return;
 
-	if (database == m_editor->getSourceDatabase())
-		return;
+	bool externalResourceModified = false;
+	bool externalEntityModified = false;
 
-	// Notify scene UI extensions.
-	for (auto extension : m_context->getUIExtensions())
-		extension->handleDatabaseEvent(database, eventId);
-
-	bool externalModified = false;
-
-	// Flush resource from manager.
-	if (m_context->getResourceManager()->reload(eventId, false))
-		externalModified = true;
-
-	// Check if guid is used as an external reference.
-	for (auto entityAdapter : m_context->getEntities())
+	for (const auto& event : events)
 	{
-		Guid externalGuid;
-		if (entityAdapter->getExternalGuid(externalGuid))
+		if (event.first == m_editor->getSourceDatabase())
+			return;
+
+		// Notify scene UI extensions.
+		for (auto extension : m_context->getUIExtensions())
+			extension->handleDatabaseEvent(event.first, event.second);
+
+		// Flush resource from manager.
+		if (m_context->getResourceManager()->reload(event.second, false))
+			externalResourceModified = true;
+
+		// Check if guid is used as an external reference.
+		if (!externalEntityModified)
 		{
-			if (externalGuid == eventId)
+			for (auto entityAdapter : m_context->getEntities())
 			{
-				// Modified external entity detected; need to recreate the scene.
-				externalModified = true;
-				break;
+				Guid externalGuid;
+				if (entityAdapter->getExternalGuid(externalGuid))
+				{
+					if (externalGuid == event.second)
+					{
+						// Modified external entity detected; need to recreate the scene.
+						externalEntityModified = true;
+						break;
+					}
+				}
 			}
 		}
 	}
 
-	if (externalModified)
+	if (externalResourceModified || externalEntityModified)
 	{
+		if (externalEntityModified)
+		{
+			for (auto entityAdapter : m_context->getEntities())
+				if (entityAdapter->isExternal())
+					entityAdapter->invalidateEntityProduct();
+		}
+
 		updateScene();
 		createInstanceGrid();
 	}
+}
+
+void SceneEditorPage::handleDatabaseEvent(db::Database* database, const Guid& eventId)
+{
+	// All events handled in handleDatabaseEvents.
 }
 
 bool SceneEditorPage::createSceneAsset()
@@ -1756,14 +1772,12 @@ void SceneEditorPage::eventInstanceClick(ui::GridColumnClickEvent* event)
 		targets.push_back(entityAdapter);
 
 	for (auto target : targets)
-	{
 		if (column == c_instanceGridDynamic)
 			target->setDynamic(newState);
 		else if (column == c_instanceGridVisible)
 			target->setVisible(newState);
 		else if (column == c_instanceGridLocked)
 			target->setLocked(newState);
-	}
 
 	updateInstanceGrid(false);
 	m_context->enqueueRedraw(nullptr);
