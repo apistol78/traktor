@@ -356,14 +356,14 @@ Ref< ISerializable > SplineEntityPipeline::buildProduct(
 			return nullptr;
 		}
 
-		Ref< model::Model > visualModel = m_replicator->createModel(pipelineBuilder, owner, splineComponentData, world::IEntityReplicator::Usage::Visual);
+		Ref< model::Model > visualModel = m_replicator->createModel(pipelineBuilder, owner, splineComponentData, world::IEntityReplicator::Usage::Visual, world::IEntityReplicator::Flags::Default);
 		if (!visualModel)
 		{
 			log::warning << L"Unable to create visual model from spline \"" << owner->getName() << L"\"." << Endl;
 			return nullptr;
 		}
 
-		Ref< model::Model > collisionModel = m_replicator->createModel(pipelineBuilder, owner, splineComponentData, world::IEntityReplicator::Usage::Collision);
+		Ref< model::Model > collisionModel = m_replicator->createModel(pipelineBuilder, owner, splineComponentData, world::IEntityReplicator::Usage::Collision, world::IEntityReplicator::Flags::Default);
 		if (!collisionModel)
 		{
 			log::warning << L"Unable to create collision model from spline \"" << owner->getName() << L"\"." << Endl;

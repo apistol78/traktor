@@ -6,6 +6,8 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Shape/Editor/Solid/SolidComponentPipeline.h"
+
 #include "Core/Io/FileSystem.h"
 #include "Core/Log/Log.h"
 #include "Core/Settings/PropertyBoolean.h"
@@ -13,37 +15,36 @@
 #include "Editor/IPipelineBuilder.h"
 #include "Editor/IPipelineDepends.h"
 #include "Editor/IPipelineSettings.h"
-#include "Mesh/MeshComponentData.h"
 #include "Mesh/Editor/MeshAsset.h"
+#include "Mesh/MeshComponentData.h"
 #include "Model/Model.h"
 #include "Model/ModelFormat.h"
+#include "Physics/Editor/MeshAsset.h"
 #include "Physics/MeshShapeDesc.h"
 #include "Physics/StaticBodyDesc.h"
-#include "Physics/Editor/MeshAsset.h"
 #include "Physics/World/RigidBodyComponentData.h"
 #include "Render/Shader.h"
 #include "Shape/Editor/Solid/PrimitiveComponentData.h"
 #include "Shape/Editor/Solid/SolidComponentData.h"
-#include "Shape/Editor/Solid/SolidComponentPipeline.h"
 #include "Shape/Editor/Solid/SolidComponentReplicator.h"
 #include "World/EntityData.h"
 
 namespace traktor::shape
 {
-	namespace
-	{
+namespace
+{
 
 const resource::Id< render::Shader > c_defaultShader(Guid(L"{F01DE7F1-64CE-4613-9A17-899B44D5414E}"));
 
 const Guid c_renderMeshIdSeed(L"{4082F1E0-F7BD-46DA-96D6-834B8A5E95B1}");
 const Guid c_collisionShapeIdSeed(L"{3E0AF082-5A9D-4C50-86EB-F86EC5D99035}");
 
-	}
+}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.shape.SolidComponentPipeline", 1, SolidComponentPipeline, world::EntityPipeline)
 
 SolidComponentPipeline::SolidComponentPipeline()
-:	m_targetEditor(false)
+	: m_targetEditor(false)
 {
 }
 
@@ -60,8 +61,7 @@ TypeInfoSet SolidComponentPipeline::getAssetTypes() const
 {
 	return makeTypeInfoSet<
 		PrimitiveComponentData,
-		SolidComponentData
-	>();
+		SolidComponentData >();
 }
 
 bool SolidComponentPipeline::buildDependencies(
@@ -69,8 +69,7 @@ bool SolidComponentPipeline::buildDependencies(
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,
 	const std::wstring& outputPath,
-	const Guid& outputGuid
-) const
+	const Guid& outputGuid) const
 {
 	if (m_targetEditor)
 		pipelineDepends->addDependency(c_defaultShader, editor::PdfBuild | editor::PdfResource);
@@ -80,7 +79,7 @@ bool SolidComponentPipeline::buildDependencies(
 		for (auto id : solidComponentData->getCollisionGroup())
 			pipelineDepends->addDependency(id, editor::PdfBuild | editor::PdfResource);
 		for (auto id : solidComponentData->getCollisionMask())
-			pipelineDepends->addDependency(id, editor::PdfBuild | editor::PdfResource);	
+			pipelineDepends->addDependency(id, editor::PdfBuild | editor::PdfResource);
 	}
 	else if (auto primitiveComponentData = dynamic_type_cast< const PrimitiveComponentData* >(sourceAsset))
 	{
@@ -98,14 +97,13 @@ Ref< ISerializable > SolidComponentPipeline::buildProduct(
 	editor::IPipelineBuilder* pipelineBuilder,
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,
-	const Object* buildParams
-) const
+	const Object* buildParams) const
 {
 	if (auto solidComponentData = dynamic_type_cast< const SolidComponentData* >(sourceAsset))
 	{
 		const world::EntityData* entityData = mandatory_non_null_type_cast< const world::EntityData* >(buildParams);
 
-		Ref< model::Model > outputModel = SolidComponentReplicator().createModel(pipelineBuilder, entityData, solidComponentData, world::IEntityReplicator::Usage::Visual);
+		Ref< model::Model > outputModel = SolidComponentReplicator().createModel(pipelineBuilder, entityData, solidComponentData, world::IEntityReplicator::Usage::Visual, world::IEntityReplicator::Flags::Default);
 		if (!outputModel)
 			return nullptr;
 
@@ -132,13 +130,11 @@ Ref< ISerializable > SolidComponentPipeline::buildProduct(
 			visualMeshAsset,
 			outputRenderMeshPath,
 			outputRenderMeshGuid,
-			outputModel
-		);
+			outputModel);
 
 		// Replace mesh component referencing our merged mesh.
 		outputEntityData->setComponent(new mesh::MeshComponentData(
-			resource::Id< mesh::IMesh >(outputRenderMeshGuid)
-		));
+			resource::Id< mesh::IMesh >(outputRenderMeshGuid)));
 
 		// Build output mesh from merged model.
 		Ref< physics::MeshAsset > physicsMeshAsset = new physics::MeshAsset();
@@ -148,8 +144,7 @@ Ref< ISerializable > SolidComponentPipeline::buildProduct(
 			physicsMeshAsset,
 			outputCollisionShapePath,
 			outputCollisionShapeGuid,
-			outputModel
-		);
+			outputModel);
 
 		// Replace mesh component referencing our merged physics mesh.
 		Ref< physics::MeshShapeDesc > outputShapeDesc = new physics::MeshShapeDesc();
@@ -161,8 +156,7 @@ Ref< ISerializable > SolidComponentPipeline::buildProduct(
 		outputBodyDesc->setShape(outputShapeDesc);
 
 		outputEntityData->setComponent(new physics::RigidBodyComponentData(
-			outputBodyDesc
-		));
+			outputBodyDesc));
 
 		return outputEntityData;
 	}
@@ -171,8 +165,7 @@ Ref< ISerializable > SolidComponentPipeline::buildProduct(
 			pipelineBuilder,
 			sourceInstance,
 			sourceAsset,
-			buildParams
-		);
+			buildParams);
 }
 
 }

@@ -66,7 +66,8 @@ Ref< model::Model > PhysicsEntityReplicator::createModel(
 	editor::IPipelineCommon* pipelineCommon,
 	const world::EntityData* entityData,
 	const world::IEntityComponentData* componentData,
-	Usage usage) const
+	Usage usage,
+	uint32_t flags) const
 {
 	if (usage != Usage::Collision)
 		return nullptr;

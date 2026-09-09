@@ -349,7 +349,8 @@ void AlignToTerrainOperator::gatherGeometry(
 			pipelineCommon,
 			entityData,
 			componentData,
-			world::IEntityReplicator::Usage::Visual);
+			world::IEntityReplicator::Usage::Visual,
+			world::IEntityReplicator::Flags::SkipMaterials);
 		if (!model)
 			continue;
 

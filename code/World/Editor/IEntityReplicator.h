@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,10 +8,11 @@
  */
 #pragma once
 
-#include <string>
 #include "Core/Object.h"
 #include "Core/Ref.h"
 #include "Core/RefArray.h"
+
+#include <string>
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -60,7 +61,7 @@ namespace traktor::world
  *
  * Entity replicators are used by editor/pipeline to allow
  * systems to generate a system agnostic 3d model of an entity/component data.
- * 
+ *
  * This is useful for example lightmap ray tracing, AI nav mesh generation etc.
  */
 class T_DLLCLASS IEntityReplicator : public Object
@@ -72,6 +73,15 @@ public:
 	{
 		Visual,
 		Collision
+	};
+
+	struct Flags
+	{
+		enum
+		{
+			Default = 0,
+			SkipMaterials = 1 << 0
+		};
 	};
 
 	/*! */
@@ -88,8 +98,7 @@ public:
 	 */
 	virtual RefArray< const world::IEntityComponentData > getDependentComponents(
 		const world::EntityData* entityData,
-		const world::IEntityComponentData* componentData
-	) const = 0;
+		const world::IEntityComponentData* componentData) const = 0;
 
 	/*! Create model replica from entity or component data.
 	 *
@@ -97,14 +106,15 @@ public:
 	 * \param entityData Owner entity data.
 	 * \param componentData Component data which we want to represent as a model.
 	 * \param usage Usage of replica.
+	 * \param flags Flags to skip materials etc.
 	 * \return Model replica of entity or component.
 	 */
 	virtual Ref< model::Model > createModel(
 		editor::IPipelineCommon* pipelineCommon,
 		const world::EntityData* entityData,
 		const world::IEntityComponentData* componentData,
-		Usage usage
-	) const = 0;
+		Usage usage,
+		uint32_t flags) const = 0;
 };
 
 }

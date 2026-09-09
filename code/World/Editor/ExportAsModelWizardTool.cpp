@@ -127,7 +127,7 @@ bool ExportAsModelWizardTool::launch(ui::Widget* parent, editor::IEditor* editor
 			const world::IEntityReplicator* entityReplicator = m_entityReplicators[&type_of(componentData)];
 			if (entityReplicator)
 			{
-				if ((model = entityReplicator->createModel(&pipelineCommon, sourceData, componentData, IEntityReplicator::Usage::Visual)) != nullptr)
+				if ((model = entityReplicator->createModel(&pipelineCommon, sourceData, componentData, IEntityReplicator::Usage::Visual, IEntityReplicator::Flags::Default)) != nullptr)
 					break;
 			}
 		}
@@ -146,7 +146,7 @@ bool ExportAsModelWizardTool::launch(ui::Widget* parent, editor::IEditor* editor
 			const world::IEntityReplicator* entityReplicator = m_entityReplicators[&type_of(componentData)];
 			if (entityReplicator)
 			{
-				if ((model = entityReplicator->createModel(&pipelineCommon, entityData, componentData, IEntityReplicator::Usage::Visual)) != nullptr)
+				if ((model = entityReplicator->createModel(&pipelineCommon, entityData, componentData, IEntityReplicator::Usage::Visual, IEntityReplicator::Flags::Default)) != nullptr)
 					break;
 			}
 		}

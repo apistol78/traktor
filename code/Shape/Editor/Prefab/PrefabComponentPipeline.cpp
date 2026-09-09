@@ -102,7 +102,7 @@ Ref< ISerializable > PrefabComponentPipeline::buildProduct(
 		Key(0x00000100, 0x00000000, type_of(m_replicator).getVersion(), componentDataHash),
 		[&]() -> Ref< model::Model > {
 			pipelineBuilder->getProfiler()->begin(type_of(m_replicator));
-			Ref< model::Model > model = m_replicator->createModel(pipelineBuilder, resolvedEntityData, prefabComponent, world::IEntityReplicator::Usage::Visual);
+			Ref< model::Model > model = m_replicator->createModel(pipelineBuilder, resolvedEntityData, prefabComponent, world::IEntityReplicator::Usage::Visual, world::IEntityReplicator::Flags::Default);
 			pipelineBuilder->getProfiler()->end();
 			return model;
 		}
@@ -112,7 +112,7 @@ Ref< ISerializable > PrefabComponentPipeline::buildProduct(
 		Key(0x00000200, 0x00000000, type_of(m_replicator).getVersion(), componentDataHash),
 		[&]() -> Ref< model::Model > {
 			pipelineBuilder->getProfiler()->begin(type_of(m_replicator));
-			Ref< model::Model > model = m_replicator->createModel(pipelineBuilder, resolvedEntityData, prefabComponent, world::IEntityReplicator::Usage::Collision);
+			Ref< model::Model > model = m_replicator->createModel(pipelineBuilder, resolvedEntityData, prefabComponent, world::IEntityReplicator::Usage::Collision, world::IEntityReplicator::Flags::Default);
 			pipelineBuilder->getProfiler()->end();
 			return model;
 		}

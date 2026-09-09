@@ -1,11 +1,13 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Shape/Editor/Spline/SplineEntityReplicator.h"
+
 #include "Core/Log/Log.h"
 #include "Core/Math/TransformPath.h"
 #include "Core/Settings/PropertyObject.h"
@@ -15,16 +17,15 @@
 #include "Mesh/Editor/MeshAsset.h"
 #include "Model/Model.h"
 #include "Model/Operations/MergeModel.h"
+#include "Physics/Editor/MeshAsset.h"
 #include "Physics/ShapeDesc.h"
 #include "Physics/StaticBodyDesc.h"
-#include "Physics/Editor/MeshAsset.h"
 #include "Shape/Editor/Spline/ControlPointComponentData.h"
 #include "Shape/Editor/Spline/SplineComponentData.h"
-#include "Shape/Editor/Spline/SplineEntityReplicator.h"
 #include "Shape/Editor/Spline/SplineLayerComponent.h"
 #include "Shape/Editor/Spline/SplineLayerComponentData.h"
-#include "World/EntityData.h"
 #include "World/Entity/GroupComponentData.h"
+#include "World/EntityData.h"
 
 namespace traktor::shape
 {
@@ -45,8 +46,7 @@ TypeInfoSet SplineEntityReplicator::getSupportedTypes() const
 
 RefArray< const world::IEntityComponentData > SplineEntityReplicator::getDependentComponents(
 	const world::EntityData* entityData,
-	const world::IEntityComponentData* componentData
-) const
+	const world::IEntityComponentData* componentData) const
 {
 	auto group = entityData->getComponent< world::GroupComponentData >();
 	if (!group)
@@ -62,8 +62,8 @@ Ref< model::Model > SplineEntityReplicator::createModel(
 	editor::IPipelineCommon* pipelineCommon,
 	const world::EntityData* entityData,
 	const world::IEntityComponentData* componentData,
-	Usage usage
-) const
+	Usage usage,
+	uint32_t flags) const
 {
 	auto splineComponent = entityData->getComponent< SplineComponentData >();
 	TransformPath path;
@@ -73,23 +73,21 @@ Ref< model::Model > SplineEntityReplicator::createModel(
 	if (!group)
 	{
 		log::error << L"Invalid spline; no control points found." << Endl;
-		return nullptr;	
-	}	
+		return nullptr;
+	}
 
 	// Count number of control points as we need to estimate fraction of each.
 	int32_t controlPointCount = 0;
 	for (auto entityData : group->getEntityData())
 	{
 		for (auto componentData : entityData->getComponents())
-		{
 			if (is_a< ControlPointComponentData >(componentData))
 				controlPointCount++;
-		}
 	}
 	if (controlPointCount <= 0)
 	{
 		log::error << L"Invalid spline; no control points found." << Endl;
-		return nullptr;	
+		return nullptr;
 	}
 
 	// Create transformation path.
@@ -137,7 +135,7 @@ Ref< model::Model > SplineEntityReplicator::createModel(
 	}
 
 	// Setup visual mesh information.
-	//if (usage == Usage::Visual)
+	// if (usage == Usage::Visual)
 	//{
 	//	Ref< mesh::MeshAsset > outputMeshAsset = new mesh::MeshAsset();
 	//	outputMeshAsset->setMeshType(mesh::MeshAsset::MtStatic);

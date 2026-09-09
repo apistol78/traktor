@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -73,7 +73,8 @@ Ref< model::Model > PrefabEntityReplicator::createModel(
 	editor::IPipelineCommon* pipelineCommon,
 	const world::EntityData* entityData,
 	const world::IEntityComponentData* componentData,
-	Usage usage) const
+	Usage usage,
+	uint32_t flags) const
 {
 	if (usage == Usage::Visual)
 		return createVisualModel(pipelineCommon, entityData, componentData);

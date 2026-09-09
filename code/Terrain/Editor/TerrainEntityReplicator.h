@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -23,27 +23,26 @@ namespace traktor::terrain
 
 class T_DLLCLASS TerrainEntityReplicator : public world::IEntityReplicator
 {
-    T_RTTI_CLASS;
+	T_RTTI_CLASS;
 
 public:
-    virtual bool create(const editor::IPipelineSettings* settings) override final;
+	virtual bool create(const editor::IPipelineSettings* settings) override final;
 
-    virtual TypeInfoSet getSupportedTypes() const override final;
+	virtual TypeInfoSet getSupportedTypes() const override final;
 
 	virtual RefArray< const world::IEntityComponentData > getDependentComponents(
 		const world::EntityData* entityData,
-		const world::IEntityComponentData* componentData
-	) const override final;
+		const world::IEntityComponentData* componentData) const override final;
 
-    virtual Ref< model::Model > createModel(
-        editor::IPipelineCommon* pipelineCommon,
-	    const world::EntityData* entityData,
-	    const world::IEntityComponentData* componentData,
-		Usage usage
-    ) const override final;
+	virtual Ref< model::Model > createModel(
+		editor::IPipelineCommon* pipelineCommon,
+		const world::EntityData* entityData,
+		const world::IEntityComponentData* componentData,
+		Usage usage,
+		uint32_t flags) const override final;
 
 private:
-    std::wstring m_assetPath;
+	std::wstring m_assetPath;
 };
 
 }

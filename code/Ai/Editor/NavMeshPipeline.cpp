@@ -212,7 +212,7 @@ bool NavMeshPipeline::buildOutput(
 				const world::IEntityReplicator* entityReplicator = m_entityReplicators[&type_of(componentData)];
 				if (entityReplicator)
 				{
-					if ((model = entityReplicator->createModel(pipelineBuilder, entityData, componentData, world::IEntityReplicator::Usage::Collision)) != nullptr)
+					if ((model = entityReplicator->createModel(pipelineBuilder, entityData, componentData, world::IEntityReplicator::Usage::Collision, world::IEntityReplicator::Flags::SkipMaterials)) != nullptr)
 						break;
 				}
 			}

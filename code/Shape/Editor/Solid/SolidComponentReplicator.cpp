@@ -1,37 +1,38 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Shape/Editor/Solid/SolidComponentReplicator.h"
+
 #include "Database/Database.h"
 #include "Editor/IPipelineCommon.h"
-#include "Mesh/MeshComponentData.h"
 #include "Mesh/Editor/MeshAsset.h"
+#include "Mesh/MeshComponentData.h"
 #include "Model/Model.h"
 #include "Model/Operations/Boolean.h"
 #include "Model/Operations/CleanDegenerate.h"
 #include "Model/Operations/MergeCoplanarAdjacents.h"
 #include "Model/Operations/Transform.h"
+#include "Physics/Editor/MeshAsset.h"
 #include "Physics/MeshShapeDesc.h"
 #include "Physics/StaticBodyDesc.h"
-#include "Physics/Editor/MeshAsset.h"
 #include "Physics/World/RigidBodyComponentData.h"
 #include "Shape/Editor/Solid/IShape.h"
 #include "Shape/Editor/Solid/PrimitiveComponentData.h"
 #include "Shape/Editor/Solid/SolidComponentData.h"
-#include "Shape/Editor/Solid/SolidComponentReplicator.h"
-#include "World/EntityData.h"
 #include "World/Entity/GroupComponentData.h"
+#include "World/EntityData.h"
 
 namespace traktor::shape
 {
 //		namespace
 //		{
 //
-//void associateMaterials(
+// void associateMaterials(
 //	db::Database* database,
 //	model::Model* model,
 //	const SmallMap< int32_t, Guid >& materialMap
@@ -52,7 +53,7 @@ namespace traktor::shape
 //		auto& material = materials[m.first];
 //		sm->prepareMaterial(tc, material);
 //	}
-//	model->setMaterials(materials);	
+//	model->setMaterials(materials);
 //}
 //
 //		}
@@ -61,7 +62,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.shape.SolidComponentReplicator", 0, Sol
 
 bool SolidComponentReplicator::create(const editor::IPipelineSettings* settings)
 {
-    return true;
+	return true;
 }
 
 TypeInfoSet SolidComponentReplicator::getSupportedTypes() const
@@ -71,8 +72,7 @@ TypeInfoSet SolidComponentReplicator::getSupportedTypes() const
 
 RefArray< const world::IEntityComponentData > SolidComponentReplicator::getDependentComponents(
 	const world::EntityData* entityData,
-	const world::IEntityComponentData* componentData
-) const
+	const world::IEntityComponentData* componentData) const
 {
 	RefArray< const world::IEntityComponentData > dependentComponentData;
 	dependentComponentData.push_back(componentData);
@@ -81,13 +81,13 @@ RefArray< const world::IEntityComponentData > SolidComponentReplicator::getDepen
 
 Ref< model::Model > SolidComponentReplicator::createModel(
 	editor::IPipelineCommon* pipelineCommon,
-    const world::EntityData* entityData,
-    const world::IEntityComponentData* componentData,
-	Usage usage
-) const
+	const world::EntityData* entityData,
+	const world::IEntityComponentData* componentData,
+	Usage usage,
+	uint32_t flags) const
 {
 	const SolidComponentData* solidComponentData = mandatory_non_null_type_cast< const SolidComponentData* >(componentData);
-	
+
 	auto group = entityData->getComponent< world::GroupComponentData >();
 	if (!group)
 		return nullptr;
@@ -95,10 +95,8 @@ Ref< model::Model > SolidComponentReplicator::createModel(
 	// Get all primitive entities with shape.
 	RefArray< const world::EntityData > primitiveEntityDatas;
 	for (auto entityData : group->getEntityData())
-	{
 		if (entityData->getComponent< PrimitiveComponentData >() != nullptr)
 			primitiveEntityDatas.push_back(entityData);
-	}
 
 	// Merge all primitives.
 	model::Model current;
@@ -113,7 +111,7 @@ Ref< model::Model > SolidComponentReplicator::createModel(
 		if (!model)
 			return nullptr;
 
-		//associateMaterials(
+		// associateMaterials(
 		//	pipelineBuilder->getSourceDatabase(),
 		//	model,
 		//	(*it)->getMaterials()
@@ -131,7 +129,7 @@ Ref< model::Model > SolidComponentReplicator::createModel(
 			if (!other)
 				continue;
 
-			//associateMaterials(
+			// associateMaterials(
 			//	pipelineBuilder->getSourceDatabase(),
 			//	other,
 			//	(*it)->getMaterials()
@@ -148,8 +146,7 @@ Ref< model::Model > SolidComponentReplicator::createModel(
 						Transform::identity(),
 						*other,
 						entityData->getTransform(),
-						model::Boolean::BoUnion
-					));
+						model::Boolean::BoUnion));
 				}
 				break;
 
@@ -160,8 +157,7 @@ Ref< model::Model > SolidComponentReplicator::createModel(
 						Transform::identity(),
 						*other,
 						entityData->getTransform(),
-						model::Boolean::BoIntersection
-					));
+						model::Boolean::BoIntersection));
 				}
 				break;
 
@@ -172,8 +168,7 @@ Ref< model::Model > SolidComponentReplicator::createModel(
 						Transform::identity(),
 						*other,
 						entityData->getTransform(),
-						model::Boolean::BoDifference
-					));
+						model::Boolean::BoDifference));
 				}
 				break;
 			}

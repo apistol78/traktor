@@ -1,11 +1,13 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2023 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Mesh/Editor/MeshEntityReplicator.h"
+
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/IStream.h"
 #include "Core/Settings/PropertyObject.h"
@@ -14,9 +16,8 @@
 #include "Editor/IPipelineCommon.h"
 #include "Editor/IPipelineDepends.h"
 #include "Editor/IPipelineSettings.h"
-#include "Mesh/MeshComponentData.h"
 #include "Mesh/Editor/MeshAsset.h"
-#include "Mesh/Editor/MeshEntityReplicator.h"
+#include "Mesh/MeshComponentData.h"
 #include "Model/Model.h"
 #include "Model/ModelCache.h"
 #include "Model/Operations/Transform.h"
@@ -39,13 +40,12 @@ bool MeshEntityReplicator::create(const editor::IPipelineSettings* settings)
 
 TypeInfoSet MeshEntityReplicator::getSupportedTypes() const
 {
-    return makeTypeInfoSet< MeshComponentData >();
+	return makeTypeInfoSet< MeshComponentData >();
 }
 
 RefArray< const world::IEntityComponentData > MeshEntityReplicator::getDependentComponents(
 	const world::EntityData* entityData,
-	const world::IEntityComponentData* componentData
-) const
+	const world::IEntityComponentData* componentData) const
 {
 	RefArray< const world::IEntityComponentData > dependentComponentData;
 	dependentComponentData.push_back(componentData);
@@ -56,8 +56,8 @@ Ref< model::Model > MeshEntityReplicator::createModel(
 	editor::IPipelineCommon* pipelineCommon,
 	const world::EntityData* entityData,
 	const world::IEntityComponentData* componentData,
-	Usage usage
-) const
+	Usage usage,
+	uint32_t flags) const
 {
 	if (usage != Usage::Visual)
 		return nullptr;
@@ -77,51 +77,53 @@ Ref< model::Model > MeshEntityReplicator::createModel(
 
 	model->apply(model::Transform(
 		translate(meshAsset->getOffset()) *
-		scale(meshAsset->getScaleFactor())
-	));
+		scale(meshAsset->getScaleFactor())));
 
-	// Create a mesh asset; used by bake pipeline to set appropriate materials.
-	Ref< mesh::MeshAsset > outputMeshAsset = new mesh::MeshAsset();
-	outputMeshAsset->setMeshType(mesh::MeshAsset::MeshType::Static);
-	outputMeshAsset->setMaterialShaders(meshAsset->getMaterialShaders());
-
-	const auto& materialTextures = meshAsset->getMaterialTextures();
-	const auto& materialShaders = meshAsset->getMaterialShaders();
-
-	// Bind texture references in material maps.
-	for (auto& material : model->getMaterials())
+	if ((flags & world::IEntityReplicator::Flags::SkipMaterials) == 0)
 	{
-		auto diffuseMap = material.getDiffuseMap();
-		auto it = materialTextures.find(diffuseMap.name);
-		if (it != materialTextures.end())
-		{
-			diffuseMap.texture = it->second;
-			material.setDiffuseMap(diffuseMap);
-		}
-	}
+		// Create a mesh asset; used by bake pipeline to set appropriate materials.
+		Ref< mesh::MeshAsset > outputMeshAsset = new mesh::MeshAsset();
+		outputMeshAsset->setMeshType(mesh::MeshAsset::MeshType::Static);
+		outputMeshAsset->setMaterialShaders(meshAsset->getMaterialShaders());
 
-	for (auto& material : model->getMaterials())
-	{
-		const auto it = materialShaders.find(material.getName());
-		if (it != materialShaders.end())
-		{
-			const Ref< const render::ShaderGraph > materialShaderGraph = pipelineCommon->getObjectReadOnly< render::ShaderGraph >(it->second);
-			if (!materialShaderGraph)
-				continue;
-		
-			Ref< drawing::Image > image = render::ShaderGraphPreview(m_assetPath, pipelineCommon->getSourceDatabase()).generate(materialShaderGraph, 128, 128);
-			if (!image)
-				continue;
+		const auto& materialTextures = meshAsset->getMaterialTextures();
+		const auto& materialShaders = meshAsset->getMaterialShaders();
 
+		// Bind texture references in material maps.
+		for (auto& material : model->getMaterials())
+		{
 			auto diffuseMap = material.getDiffuseMap();
-			diffuseMap.image = image;			
-			material.setDiffuseMap(diffuseMap);
+			auto it = materialTextures.find(diffuseMap.name);
+			if (it != materialTextures.end())
+			{
+				diffuseMap.texture = it->second;
+				material.setDiffuseMap(diffuseMap);
+			}
 		}
+
+		for (auto& material : model->getMaterials())
+		{
+			const auto it = materialShaders.find(material.getName());
+			if (it != materialShaders.end())
+			{
+				const Ref< const render::ShaderGraph > materialShaderGraph = pipelineCommon->getObjectReadOnly< render::ShaderGraph >(it->second);
+				if (!materialShaderGraph)
+					continue;
+
+				Ref< drawing::Image > image = render::ShaderGraphPreview(m_assetPath, pipelineCommon->getSourceDatabase()).generate(materialShaderGraph, 128, 128);
+				if (!image)
+					continue;
+
+				auto diffuseMap = material.getDiffuseMap();
+				diffuseMap.image = image;
+				material.setDiffuseMap(diffuseMap);
+			}
+		}
+
+		outputMeshAsset->setMaterialTextures(materialTextures);
+		model->setProperty< PropertyObject >(type_name< MeshAsset >(), outputMeshAsset);
 	}
 
-	outputMeshAsset->setMaterialTextures(materialTextures);
-
-	model->setProperty< PropertyObject >(type_name< MeshAsset >(), outputMeshAsset);
 	return model;
 }
 

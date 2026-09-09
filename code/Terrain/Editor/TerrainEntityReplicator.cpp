@@ -1,11 +1,13 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Terrain/Editor/TerrainEntityReplicator.h"
+
 #include "Core/Io/IStream.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Settings/PropertyString.h"
@@ -13,16 +15,15 @@
 #include "Database/Instance.h"
 #include "Editor/IPipelineCommon.h"
 #include "Editor/IPipelineSettings.h"
-#include "Heightfield/Heightfield.h"
-#include "Heightfield/HeightfieldFormat.h"
 #include "Heightfield/Editor/ConvertHeightfield.h"
 #include "Heightfield/Editor/HeightfieldAsset.h"
+#include "Heightfield/Heightfield.h"
+#include "Heightfield/HeightfieldFormat.h"
 #include "Model/Model.h"
 #include "Render/Editor/Shader/ShaderGraph.h"
 #include "Render/Editor/Shader/ShaderGraphPreview.h"
-#include "Terrain/TerrainComponentData.h"
 #include "Terrain/Editor/TerrainAsset.h"
-#include "Terrain/Editor/TerrainEntityReplicator.h"
+#include "Terrain/TerrainComponentData.h"
 #include "World/IEntityComponentData.h"
 
 namespace traktor::terrain
@@ -43,8 +44,7 @@ TypeInfoSet TerrainEntityReplicator::getSupportedTypes() const
 
 RefArray< const world::IEntityComponentData > TerrainEntityReplicator::getDependentComponents(
 	const world::EntityData* entityData,
-	const world::IEntityComponentData* componentData
-) const
+	const world::IEntityComponentData* componentData) const
 {
 	RefArray< const world::IEntityComponentData > dependentComponentData;
 	dependentComponentData.push_back(componentData);
@@ -55,8 +55,8 @@ Ref< model::Model > TerrainEntityReplicator::createModel(
 	editor::IPipelineCommon* pipelineCommon,
 	const world::EntityData* entityData,
 	const world::IEntityComponentData* componentData,
-	Usage usage
-) const
+	Usage usage,
+	uint32_t flags) const
 {
 	if (usage != Usage::Visual)
 		return nullptr;
@@ -82,8 +82,7 @@ Ref< model::Model > TerrainEntityReplicator::createModel(
 
 	Ref< hf::Heightfield > heightfield = hf::HeightfieldFormat().read(
 		sourceData,
-		heightfieldAsset->getWorldExtent()
-	);
+		heightfieldAsset->getWorldExtent());
 	if (!heightfield)
 		return nullptr;
 
@@ -93,23 +92,25 @@ Ref< model::Model > TerrainEntityReplicator::createModel(
 	if (!heightfieldModel)
 		return nullptr;
 
-	const uint32_t baseChannel = heightfieldModel->getTexCoordChannel(L"Base");
-
-	Ref< const render::ShaderGraph > surfaceShader = pipelineCommon->getSourceDatabase()->getObjectReadOnly< render::ShaderGraph >(terrainAsset->getSurfaceShader());
-	if (surfaceShader)
+	if ((flags & world::IEntityReplicator::Flags::SkipMaterials) == 0)
 	{
-		Ref< drawing::Image > surfaceImage = render::ShaderGraphPreview(m_assetPath, pipelineCommon->getSourceDatabase()).generate(surfaceShader, 1024, 1024);
-		if (surfaceImage)
+		const uint32_t baseChannel = heightfieldModel->getTexCoordChannel(L"Base");
+
+		Ref< const render::ShaderGraph > surfaceShader = pipelineCommon->getSourceDatabase()->getObjectReadOnly< render::ShaderGraph >(terrainAsset->getSurfaceShader());
+		if (surfaceShader)
 		{
-			AlignedVector< model::Material > materials = heightfieldModel->getMaterials();
-			materials.front().setDiffuseMap(model::Material::Map(
-				L"Diffuse",
-				baseChannel,
-				true,
-				Guid(),
-				surfaceImage
-			));
-			heightfieldModel->setMaterials(materials);
+			Ref< drawing::Image > surfaceImage = render::ShaderGraphPreview(m_assetPath, pipelineCommon->getSourceDatabase()).generate(surfaceShader, 1024, 1024);
+			if (surfaceImage)
+			{
+				AlignedVector< model::Material > materials = heightfieldModel->getMaterials();
+				materials.front().setDiffuseMap(model::Material::Map(
+					L"Diffuse",
+					baseChannel,
+					true,
+					Guid(),
+					surfaceImage));
+				heightfieldModel->setMaterials(materials);
+			}
 		}
 	}
 
