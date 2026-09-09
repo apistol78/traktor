@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.render.ShaderModule">
-	<text>
-	<![CDATA[
+<object type="traktor.render.ShaderModule" version="2">
+	<text><![CDATA[
+	
 const float _HeightModifier = 2.0f;
 const float _WavePeakScatterStrength = 0.25f;
 const float _ScatterStrength = 1.0f;
@@ -24,7 +24,7 @@ vec3 ComputeOceanScattering(float heightDisplacement, vec3 viewDirection, vec3 v
 	const float k3 = _ScatterShadowStrength * NdotL;
 	const float k4 = _BubbleDensity;
 
-	specularCoeff *= vec3(0.25f);
+	//specularCoeff *= vec3(0.25f);
 
 	vec3 scatter = (k1 + k2) * scatterColor * irradiance * specularCoeff; // * (1.0f / (1.0f + lightMask));
 	scatter += k3 * scatterColor * irradiance + k4 * bubbleColor * irradiance;
@@ -32,6 +32,8 @@ vec3 ComputeOceanScattering(float heightDisplacement, vec3 viewDirection, vec3 v
 	return scatter;
 }
 
-	]]>
-	</text>
+	
+	]]></text>
+	<samplers/>
+	<structDeclarations/>
 </object>
