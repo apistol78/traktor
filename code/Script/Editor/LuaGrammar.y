@@ -15,6 +15,12 @@
 using namespace traktor;
 using namespace traktor::script;
 
+// Forward declarations for new node types
+//class VariableNode;
+//class ParameterNode;
+//class TableNode;
+//class FieldAccessNode;
+
 LuaGrammarToken* null()
 {
 	return new LuaGrammarToken();
@@ -120,9 +126,9 @@ laststat(A) ::= BREAK .								{ A = null(); }
 laststat(A) ::= RETURN .							{ A = null(); }
 laststat(A) ::= RETURN explist1(B) .				{ A = copy(B); }
 
-binding(A) ::= LOCAL namelist .						{ A = null(); }
-binding(A) ::= LOCAL namelist EQUAL explist1(B) .	{ A = copy(B); }
-binding(A) ::= LOCAL namelist LESS CONST GREATER EQUAL explist1(B) .	{ A = copy(B); }
+binding(A) ::= LOCAL namelist(B) .						{ A = new LuaGrammarToken(new VariableNode(B->line, B->text, true), B->line); }
+binding(A) ::= LOCAL namelist(B) EQUAL explist1(C) .	{ A = merge(new LuaGrammarToken(new VariableNode(B->line, B->text, true), B->line), C); }
+binding(A) ::= LOCAL namelist(B) LESS CONST GREATER EQUAL explist1(C) .	{ A = merge(new LuaGrammarToken(new VariableNode(B->line, B->text, true), B->line), C); }
 binding(A) ::= LOCAL FUNCTION NAME(B) funcbody(C) .	{ A = new LuaGrammarToken(new IScriptOutline::FunctionNode(B->line, B->text, true, C->node), B->line); }
 
 funcname(A) ::= dottedname(B) .						{ A = copy(B); }
@@ -168,7 +174,7 @@ setlist    ::= setlist COMMA var .
 
 var(A)     ::= NAME(B) .											{ A = copy(B); }
 var(A)     ::= prefixexp(B) LEFT_BRACKET exp(C) RIGHT_BRACKET .		{ A = merge(B, C); }
-var(A)     ::= prefixexp(B) DOT NAME(C) .							{ A = new LuaGrammarToken(as_string(B) + L"." + C->text, C->line); }
+var(A)     ::= prefixexp(B) DOT NAME(C) .							{ A = merge(new LuaGrammarToken(new FieldAccessNode(C->line, as_string(B), C->text), C->line), new LuaGrammarToken(as_string(B) + L"." + C->text, C->line)); }
 
 prefixexp(A)  ::= var(B) .										{ A = copy(B); }
 prefixexp(A)  ::= functioncall(B) .								{ A = copy(B); }
