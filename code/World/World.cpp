@@ -39,13 +39,19 @@ void World::destroy()
 	T_FATAL_ASSERT(m_deferredAdd.empty());
 	T_FATAL_ASSERT(m_deferredRemove.empty());
 
-	for (auto entity : m_entities)
+	m_update = true;
+	do
 	{
-		T_ANONYMOUS_VAR(Ref< Entity >)(entity);
-		entity->setWorld(nullptr);
-		entity->destroy();
+		for (auto entity : m_entities)
+		{
+			T_ANONYMOUS_VAR(Ref< Entity >)(entity);
+			entity->setWorld(nullptr);
+			entity->destroy();
+		}
+		m_entities.clear();
+		m_entities.swap(m_deferredRemove);
 	}
-	m_entities.clear();
+	while (!m_entities.empty());
 
 	for (auto component : m_components)
 		component->destroy();
