@@ -64,7 +64,7 @@ void CheckBox::eventPaint(PaintEvent* event)
 	const Rect rcInner = getInnerRect();
 	const StyleSheet* ss = getStyleSheet();
 
-	canvas.setBackground(ss->getColor(this, L"background-color"));
+	canvas.setBackground(ss->getColor(getParent(), L"background-color"));
 	canvas.fillRect(rcInner);
 
 	IBitmap* image = m_checked ? m_imageChecked : m_imageUnchecked;

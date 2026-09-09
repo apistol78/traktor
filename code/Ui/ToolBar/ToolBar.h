@@ -46,6 +46,9 @@ public:
 
 	Size getImageSize() const;
 
+	/*! Corner radius used when items paint rounded backgrounds. */
+	int32_t getItemRadius() const;
+
 	uint32_t addItem(ToolBarItem* item);
 
 	void setItem(uint32_t id, ToolBarItem* item);

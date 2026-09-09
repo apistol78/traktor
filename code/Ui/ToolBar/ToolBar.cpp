@@ -9,6 +9,7 @@
 #include "Core/Misc/SafeDestroy.h"
 #include "Ui/Application.h"
 #include "Ui/Bitmap.h"
+#include "Ui/StyleConstants.h"
 #include "Ui/StyleSheet.h"
 #include "Ui/ToolBar/ToolBar.h"
 #include "Ui/ToolBar/ToolBarItem.h"
@@ -20,8 +21,8 @@ namespace traktor::ui
 	namespace
 	{
 
-const Unit c_marginWidth = 2_ut;
-const Unit c_marginHeight = 2_ut;
+const Unit c_marginWidth = 4_ut;
+const Unit c_marginHeight = 4_ut;
 const Unit c_itemPad = 4_ut;
 
 	}
@@ -86,6 +87,11 @@ Size ToolBar::getImageSize() const
 		const int32_t sz = pixel(16_ut);
 		return Size(sz, sz);
 	}
+}
+
+int32_t ToolBar::getItemRadius() const
+{
+	return pixel(c_controlRadius);
 }
 
 uint32_t ToolBar::addItem(ToolBarItem* item)

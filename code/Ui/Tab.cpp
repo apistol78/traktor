@@ -13,6 +13,7 @@
 #include "Ui/Bitmap.h"
 #include "Ui/Font.h"
 #include "Ui/StyleBitmap.h"
+#include "Ui/StyleConstants.h"
 #include "Ui/StyleSheet.h"
 #include "Ui/TabPage.h"
 #include "Ui/ToolTip.h"
@@ -22,6 +23,29 @@
 
 namespace traktor::ui
 {
+namespace
+{
+
+const Unit c_tabPad = 20_ut;
+
+/*! Space left above the tabs so they sit slightly inset in the strip. */
+const Unit c_tabOuterGap = 4_ut;
+
+/*! Thickness of the accent bar marking the selected tab. */
+const Unit c_tabAccent = 2_ut;
+
+
+/*! Fill a tab, rounded on the outer edge and square where it meets the content. */
+void fillTabShape(Canvas& canvas, const Rect& rc, int32_t radius, bool bottom)
+{
+	canvas.fillRoundRect(rc, radius);
+	if (!bottom)
+		canvas.fillRect(Rect(rc.left, rc.bottom - radius, rc.right, rc.bottom));
+	else
+		canvas.fillRect(Rect(rc.left, rc.top, rc.right, rc.top + radius));
+}
+
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.Tab", Tab, Widget)
 
@@ -55,7 +79,7 @@ bool Tab::create(Widget* parent, uint32_t style)
 	m_bottom = bool((style & WsBottom) == WsBottom);
 
 	m_bitmapClose = new StyleBitmap(L"UI.TabClose");
-	m_tabHeight = getFont().getSize() + 12_ut;
+	m_tabHeight = getFont().getSize() + 16_ut + c_tabOuterGap;
 
 	m_toolTip = new ToolTip();
 	m_toolTip->create(this);
@@ -446,7 +470,7 @@ void Tab::eventPaint(PaintEvent* event)
 	// Draw tab pages.
 	if (!m_pages.empty())
 	{
-		int32_t left = rcTabs.left;
+		int32_t left = rcTabs.left + pixel(c_surfaceRadius);
 		for (auto& ps : m_pages)
 		{
 			const TabPage* page = ps.page;
@@ -465,7 +489,7 @@ void Tab::eventPaint(PaintEvent* event)
 				tabWidthNoMargin += closeSize.cx + pixel(4_ut);
 			}
 
-			const int32_t tabWidth = tabWidthNoMargin + pixel(12_ut);
+			const int32_t tabWidth = tabWidthNoMargin + pixel(c_tabPad);
 
 			// Save right separator position in vector.
 			ps.right = left + tabWidth;
@@ -479,24 +503,36 @@ void Tab::eventPaint(PaintEvent* event)
 					rcTabs.top,
 					left + tabWidth,
 					rcTabs.bottom);
+				if (!m_bottom)
+					rcTab.top += pixel(c_tabOuterGap);
+				else
+					rcTab.bottom -= pixel(c_tabOuterGap);
 				if (m_drawLine)
 				{
 					if (!m_bottom)
-						rcTab.bottom -= 2;
+						rcTab.bottom -= 1;
 					else
-						rcTab.top += 2;
+						rcTab.top += 1;
 				}
 
 				// Highlight selected tab.
 				if (page == m_selectedPage)
 				{
 					canvas.setBackground(ss->getColor(this, L"tab-background-color"));
-					canvas.fillRect(rcTab);
+					fillTabShape(canvas, rcTab, pixel(c_surfaceRadius), m_bottom);
+
+					// Accent bar along the edge that meets the content.
+					const int32_t accent = pixel(c_tabAccent);
+					canvas.setBackground(ss->getColor(this, L"tab-accent-color"));
+					if (!m_bottom)
+						canvas.fillRect(Rect(rcTab.left, rcTab.bottom - accent, rcTab.right, rcTab.bottom));
+					else
+						canvas.fillRect(Rect(rcTab.left, rcTab.top, rcTab.right, rcTab.top + accent));
 				}
 				else if (page == m_hoverPage)
 				{
 					canvas.setBackground(ss->getColor(this, L"tab-background-color-hover"));
-					canvas.fillRect(rcTab);
+					fillTabShape(canvas, rcTab, pixel(c_surfaceRadius), m_bottom);
 				}
 
 				// Draw icon, offset text if icon is visible.
@@ -505,7 +541,7 @@ void Tab::eventPaint(PaintEvent* event)
 				{
 					const Size bitmapSize = m_bitmapImages->getSize(this);
 					canvas.drawBitmap(
-						Point(left + pixel(4_ut), rcTab.getCenter().y - bitmapSize.cy / 2 + pixel(1_ut)),
+						Point(left + pixel(c_tabPad) / 2, rcTab.getCenter().y - bitmapSize.cy / 2 + pixel(1_ut)),
 						Point(page->getImageIndex() * bitmapSize.cy, 0),
 						Size(bitmapSize.cy, bitmapSize.cy),
 						m_bitmapImages,
@@ -518,7 +554,7 @@ void Tab::eventPaint(PaintEvent* event)
 				{
 					const Size closeSize = m_bitmapClose->getSize(this);
 					canvas.drawBitmap(
-						Point(rcTab.right - closeSize.cx - pixel(4_ut), rcTab.getCenter().y - closeSize.cy / 2 + pixel(1_ut)),
+						Point(rcTab.right - closeSize.cx - pixel(c_tabPad) / 2, rcTab.getCenter().y - closeSize.cy / 2 + pixel(1_ut)),
 						Point(0, 0),
 						closeSize,
 						m_bitmapClose,
@@ -527,9 +563,9 @@ void Tab::eventPaint(PaintEvent* event)
 
 				// Draw text.
 				const Rect rcTabText(
-					left + textOffset + pixel(4_ut),
+					left + textOffset + pixel(c_tabPad) / 2,
 					rcTab.top,
-					left + textOffset + pixel(4_ut) + sizText.cx,
+					left + textOffset + pixel(c_tabPad) / 2 + sizText.cx,
 					rcTab.bottom);
 				if (isEnable(true))
 				{
@@ -558,20 +594,15 @@ void Tab::eventPaint(PaintEvent* event)
 		canvas.fillRect(rcTabItem);
 	}
 
-	// Draw line.
-	if (m_drawLine)
+	// Draw line. A page draws its own edge, which separates the strip from the
+	// content on its own; a second line here would only double it up.
+	if (m_drawLine && m_pages.empty())
 	{
 		canvas.setForeground(ss->getColor(this, L"tab-line-color"));
 		if (!m_bottom)
-		{
-			canvas.drawLine(rcTabs.left, rcTabs.bottom - 2, rcTabs.right, rcTabs.bottom - 2);
 			canvas.drawLine(rcTabs.left, rcTabs.bottom - 1, rcTabs.right, rcTabs.bottom - 1);
-		}
 		else
-		{
 			canvas.drawLine(rcTabs.left, rcTabs.top, rcTabs.right, rcTabs.top);
-			canvas.drawLine(rcTabs.left, rcTabs.top + 1, rcTabs.right, rcTabs.top + 1);
-		}
 	}
 
 	// Draw surrounding gray border.

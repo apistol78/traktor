@@ -421,6 +421,15 @@ void CanvasGdiWin32::drawRoundRect(const Rect& rc, int radius)
 	SelectObject(m_hDC, hCurrentBrush);
 }
 
+void CanvasGdiWin32::fillRoundRect(const Rect& rc, int radius)
+{
+	HGDIOBJ hCurrentBrush = SelectObject(m_hDC, m_hBrush);
+	HGDIOBJ hCurrentPen = SelectObject(m_hDC, (HPEN)GetStockObject(NULL_PEN));
+	RoundRect(m_hDC, rc.left, rc.top, rc.right + 1, rc.bottom + 1, radius * 2, radius * 2);
+	SelectObject(m_hDC, hCurrentPen);
+	SelectObject(m_hDC, hCurrentBrush);
+}
+
 void CanvasGdiWin32::drawPolygon(const Point* pnts, int count)
 {
 	if (!pnts || count <= 2)

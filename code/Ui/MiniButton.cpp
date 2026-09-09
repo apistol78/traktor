@@ -8,6 +8,7 @@
  */
 #include "Ui/Application.h"
 #include "Ui/Bitmap.h"
+#include "Ui/StyleConstants.h"
 #include "Ui/StyleSheet.h"
 #include "Ui/MiniButton.h"
 
@@ -109,41 +110,36 @@ void MiniButton::eventPaint(PaintEvent* event)
 	const bool enabled = isEnable(true);
 
 	Canvas& canvas = event->getCanvas();
-	Rect rcInner = getInnerRect();
+	const Rect rcInner = getInnerRect();
+	const int32_t radius = pixel(c_controlRadius);
 
-	if (enabled)
+	// Cover the whole client area first; the rounded button leaves the four
+	// corners of the rectangle uncovered.
+	canvas.setBackground(ss->getColor(getParent(), L"background-color"));
+	canvas.fillRect(rcInner);
+
+	// State colours belong to the button, not to whichever widget happens to
+	// contain it; reading them from the parent resolved to the fallback colour.
+	const wchar_t* background = nullptr;
+	if (!enabled)
+		background = m_background ? L"background-color-disabled" : nullptr;
+	else if (m_background && m_pushed)
+		background = L"background-color-pushed";
+	else if (m_hover)
+		background = L"background-color-hover";
+	else if (m_background)
+		background = L"background-color";
+
+	if (background != nullptr)
 	{
-		if (m_background && m_pushed)
-			canvas.setBackground(ss->getColor(getParent(), L"background-color-pushed"));
-		else if (m_hover)
-			canvas.setBackground(ss->getColor(getParent(), L"background-color-hover"));
-		else
-			canvas.setBackground(ss->getColor(getParent(), L"background-color"));
-
-		canvas.fillRect(rcInner);
-
-		if (m_border)
-		{
-			canvas.setForeground(ss->getColor(this, L"border-color"));
-			canvas.drawRect(rcInner);
-		}
-
-		if (m_pushed)
-			rcInner = rcInner.offset(1, 1);
+		canvas.setBackground(ss->getColor(this, background));
+		canvas.fillRoundRect(rcInner, radius);
 	}
-	else
-	{
-		if (m_background)
-			canvas.setBackground(ss->getColor(this, L"background-color-disabled"));
-		else
-			canvas.setBackground(ss->getColor(getParent(), L"background-color"));
-		canvas.fillRect(rcInner);
 
-		if (m_border)
-		{
-			canvas.setForeground(ss->getColor(this, L"border-color-disabled"));
-			canvas.drawRect(rcInner);
-		}
+	if (m_border)
+	{
+		canvas.setForeground(ss->getColor(this, enabled ? L"border-color" : L"border-color-disabled"));
+		canvas.drawRoundRect(rcInner, radius);
 	}
 
 	if (m_image)
@@ -164,7 +160,7 @@ void MiniButton::eventPaint(PaintEvent* event)
 	}
 	else
 	{
-		canvas.setForeground(ss->getColor(this, L"color"));
+		canvas.setForeground(ss->getColor(this, enabled ? L"color" : L"color-disabled"));
 		canvas.drawText(rcInner, getText(), AnCenter, AnCenter);
 	}
 

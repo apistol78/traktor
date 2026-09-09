@@ -88,7 +88,7 @@ void ToolBarMenu::paint(ToolBar* toolBar, Canvas& canvas, const Point& at, const
 	if (m_hover)
 	{
 		canvas.setBackground(ss->getColor(toolBar, L"item-background-color-hover"));
-		canvas.fillRect(Rect(at, size));
+		canvas.fillRoundRect(Rect(at, size), toolBar->getItemRadius());
 	}
 
 	canvas.setForeground(ss->getColor(toolBar, L"color"));

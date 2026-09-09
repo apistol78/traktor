@@ -26,6 +26,24 @@ Vector2 pnt2vec(const Point& pt)
 	return Vector2(pt.x, pt.y);
 }
 
+void cairoRoundRect(cairo_t* cr, double x, double y, double w, double h, int radius)
+{
+	const double r = std::min< double >(radius, std::min(w, h) / 2.0);
+
+	if (r <= 0.0)
+	{
+		cairo_rectangle(cr, x, y, w, h);
+		return;
+	}
+
+	cairo_new_sub_path(cr);
+	cairo_arc(cr, x + w - r, y + r, r, -HALF_PI, 0.0);
+	cairo_arc(cr, x + w - r, y + h - r, r, 0.0, HALF_PI);
+	cairo_arc(cr, x + r, y + h - r, r, HALF_PI, PI);
+	cairo_arc(cr, x + r, y + r, r, PI, PI + HALF_PI);
+	cairo_close_path(cr);
+}
+
 	}
 
 CanvasX11::CanvasX11(cairo_t* cr, int32_t dpi)
@@ -141,7 +159,9 @@ void CanvasX11::fillCircle(int x, int y, float radius)
 void CanvasX11::drawCircle(int x, int y, float radius)
 {
 	setSourceColor(m_foreground);
-	cairo_move_to(m_cr, x, y);
+	// A move_to here would leave a line from the centre to the arc's start,
+	// which the stroke then draws as a spoke.
+	cairo_new_sub_path(m_cr);
 	cairo_arc(m_cr, x, y, radius, 0.0, TWO_PI);
 	cairo_stroke(m_cr);
 }
@@ -203,8 +223,15 @@ void CanvasX11::drawRect(const Rect& rc)
 void CanvasX11::drawRoundRect(const Rect& rc, int radius)
 {
 	setSourceColor(m_foreground);
-	cairo_rectangle(m_cr, rc.left, rc.top, rc.getWidth(), rc.getHeight());
+	cairoRoundRect(m_cr, rc.left + 0.5, rc.top + 0.5, rc.getWidth() - 1.0, rc.getHeight() - 1.0, radius);
 	cairo_stroke(m_cr);
+}
+
+void CanvasX11::fillRoundRect(const Rect& rc, int radius)
+{
+	setSourceColor(m_background);
+	cairoRoundRect(m_cr, rc.left, rc.top, rc.getWidth(), rc.getHeight(), radius);
+	cairo_fill(m_cr);
 }
 
 void CanvasX11::drawPolygon(const Point* pnts, int count)

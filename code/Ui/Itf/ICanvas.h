@@ -69,6 +69,8 @@ public:
 
 	virtual void drawRoundRect(const Rect& rc, int radius) = 0;
 
+	virtual void fillRoundRect(const Rect& rc, int radius) = 0;
+
 	virtual void drawPolygon(const Point* pnts, int count) = 0;
 
 	virtual void fillPolygon(const Point* pnts, int count) = 0;

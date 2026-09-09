@@ -29,7 +29,7 @@ enum Modes
 	MdMoveSeparator
 };
 
-const Unit c_columnsHeight = 25_ut;
+const Unit c_columnsHeight = 28_ut;
 const int c_wheelRotationFactor = 2;
 
 std::wstring buildPath(const PropertyItem* item)
@@ -141,7 +141,7 @@ bool PropertyList::create(Widget* parent, uint32_t style, IPropertyGuidResolver*
 	addEventHandler< PaintEvent >(this, &PropertyList::eventPaint);
 
 	m_separator = 80_ut;
-	m_propertyItemHeight = getFont().getSize() + 10_ut;
+	m_propertyItemHeight = getFont().getSize() + 14_ut;
 	m_columnHeader = bool((style & WsColumnHeader) == WsColumnHeader);
 	m_guidResolver = guidResolver;
 

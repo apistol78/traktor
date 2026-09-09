@@ -17,6 +17,23 @@
 
 namespace traktor::ui
 {
+	namespace
+	{
+
+const Unit c_fieldPad = 8_ut;
+const Unit c_chevronArea = 18_ut;
+const Unit c_chevronHalf = 3_ut;
+
+void paintChevron(ToolBar* toolBar, Canvas& canvas, const Point& center)
+{
+	const int32_t h = toolBar->pixel(c_chevronHalf);
+	canvas.setPenThickness(toolBar->pixel(2_ut));
+	canvas.drawLine(center.x - h, center.y - h / 2, center.x, center.y + h - h / 2);
+	canvas.drawLine(center.x, center.y + h - h / 2, center.x + h, center.y - h / 2);
+	canvas.setPenThickness(1);
+}
+
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.ToolBarDropMenu", ToolBarDropMenu, ToolBarItem)
 
@@ -73,69 +90,41 @@ Size ToolBarDropMenu::getSize(const ToolBar* toolBar) const
 {
 	const Size imageSize = toolBar->getImageSize();
 	const Size sz = toolBar->getFontMetric().getExtent(m_text);
+	const int32_t height = std::max< int32_t >(sz.cy, imageSize.cy) + toolBar->pixel(12_ut);
 	if (m_width > 0_ut)
-		return Size(toolBar->pixel(m_width), std::max< int32_t >(sz.cy, imageSize.cy) + toolBar->pixel(4_ut));
+		return Size(toolBar->pixel(m_width), height);
 	else
-		return Size(sz.cx + toolBar->pixel(32_ut), std::max< int32_t >(sz.cy, imageSize.cy) + toolBar->pixel(4_ut));
+		return Size(sz.cx + toolBar->pixel(c_fieldPad) * 2 + (m_arrow ? toolBar->pixel(c_chevronArea) : 0), height);
 }
 
 void ToolBarDropMenu::paint(ToolBar* toolBar, Canvas& canvas, const Point& at, const RefArray< IBitmap >& images)
 {
 	const StyleSheet* ss = toolBar->getStyleSheet();
 	const Size size = getSize(toolBar);
+	const int32_t radius = toolBar->getItemRadius();
+	const int32_t chevron = toolBar->pixel(c_chevronArea);
+	const int32_t pad = toolBar->pixel(c_fieldPad);
 
-	const int32_t sep = toolBar->pixel(14_ut);
-
-	Rect rcText;
-	if (m_arrow)
-		rcText = Rect(
-			at.x + toolBar->pixel(4_ut),
-			at.y + 2,
-			at.x + size.cx - sep - 2,
-			at.y + size.cy - 2
-		);
-	else
-		rcText = Rect(
-			at.x + 2,
-			at.y + 2,
-			at.x + size.cx - 2,
-			at.y + size.cy - 2
-		);
+	const Rect rcField(at, size);
+	const Rect rcText(
+		at.x + pad,
+		at.y,
+		at.x + size.cx - (m_arrow ? chevron : pad),
+		at.y + size.cy
+	);
 
 	canvas.setBackground(ss->getColor(toolBar, m_hover ? L"item-background-color-dropdown-hover" : L"item-background-color-dropdown"));
-	canvas.fillRect(Rect(at, size));
+	canvas.fillRoundRect(rcField, radius);
+
+	canvas.setForeground(ss->getColor(toolBar, m_hover ? L"item-color-dropdown-hover" : L"border-color"));
+	canvas.drawRoundRect(rcField, radius);
 
 	if (m_arrow)
 	{
-		const Rect rcButton(
-			at.x + size.cx - sep,
-			at.y + 1,
-			at.x + size.cx - 1,
-			at.y + size.cy - 1
-		);
+		canvas.setForeground(ss->getColor(toolBar, L"item-color-dropdown-arrow"));
+		paintChevron(toolBar, canvas, Point(at.x + size.cx - chevron / 2, at.y + size.cy / 2));
 
-		canvas.setBackground(ss->getColor(toolBar, L"item-background-color-dropdown-button"));
-		canvas.fillRect(rcButton);
-
-		if (m_hover)
-		{
-			canvas.setForeground(ss->getColor(toolBar, L"item-color-dropdown-hover"));
-			canvas.drawRect(Rect(at, size));
-			canvas.drawLine(rcButton.left - 1, rcButton.top, rcButton.left - 1, rcButton.bottom);
-		}
-
-		const Point center = rcButton.getCenter();
-		const Point pnts[] =
-		{
-			ui::Point(center.x - toolBar->pixel(3_ut), center.y - toolBar->pixel(1_ut)),
-			ui::Point(center.x + toolBar->pixel(2_ut), center.y - toolBar->pixel(1_ut)),
-			ui::Point(center.x - toolBar->pixel(1_ut), center.y + toolBar->pixel(2_ut))
-		};
-
-		canvas.setBackground(ss->getColor(toolBar, L"item-color-dropdown-arrow"));
-		canvas.fillPolygon(pnts, 3);
-
-		m_dropPosition = rcButton.left;
+		m_dropPosition = at.x + size.cx - chevron;
 	}
 	else
 		m_dropPosition = 0;

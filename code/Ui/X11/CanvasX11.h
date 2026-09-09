@@ -62,6 +62,8 @@ public:
 
 	virtual void drawRoundRect(const Rect& rc, int radius) override final;
 
+	virtual void fillRoundRect(const Rect& rc, int radius) override final;
+
 	virtual void drawPolygon(const Point* pnts, int count) override final;
 
 	virtual void fillPolygon(const Point* pnts, int count) override final;

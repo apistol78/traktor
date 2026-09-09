@@ -6,6 +6,8 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include <algorithm>
+
 #include "Ui/Cocoa/CanvasCocoa.h"
 #include "Ui/Cocoa/BitmapCocoa.h"
 #include "Ui/Cocoa/UtilitiesCocoa.h"
@@ -201,8 +203,25 @@ void CanvasCocoa::drawRoundRect(const Rect& rc, int radius)
 	nrc.size.width -= 1.0f;
 	nrc.size.height -= 1.0f;
 
+	const CGFloat r = std::min< CGFloat >(radius, std::min(nrc.size.width, nrc.size.height) / 2.0f);
+
 	[m_foregroundColor set];
-	[NSBezierPath strokeRect: nrc];
+	[[NSBezierPath bezierPathWithRoundedRect: nrc xRadius: r yRadius: r] stroke];
+}
+
+void CanvasCocoa::fillRoundRect(const Rect& rc, int radius)
+{
+	NSRect nrc = makeNSRect(rc.getUnified());
+
+	nrc.origin.x += 0.5f;
+	nrc.origin.y += 0.5f;
+	nrc.size.width -= 1.0f;
+	nrc.size.height -= 1.0f;
+
+	const CGFloat r = std::min< CGFloat >(radius, std::min(nrc.size.width, nrc.size.height) / 2.0f);
+
+	[m_backgroundColor set];
+	[[NSBezierPath bezierPathWithRoundedRect: nrc xRadius: r yRadius: r] fill];
 }
 
 void CanvasCocoa::drawPolygon(const Point* pnts, int count)

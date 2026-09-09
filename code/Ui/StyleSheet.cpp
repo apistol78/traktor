@@ -294,23 +294,60 @@ Ref< StyleSheet > StyleSheet::createDefault()
 	ss->setColor(L"traktor.ui.Edit", L"background-color-disabled", Color4ub(239, 239, 242));
 	ss->setColor(L"traktor.ui.Edit", L"border-color", Color4ub(180, 180, 180));
 	ss->setColor(L"traktor.ui.Edit", L"border-color-disabled", Color4ub(180, 180, 180));
+	ss->setColor(L"traktor.ui.Edit", L"border-color-focus", Color4ub(0, 122, 204));
+
+	ss->setColor(L"traktor.ui.MiniButton", L"background-color", Color4ub(246, 246, 246));
+	ss->setColor(L"traktor.ui.MiniButton", L"background-color-hover", Color4ub(252, 252, 252));
+	ss->setColor(L"traktor.ui.MiniButton", L"background-color-pushed", Color4ub(216, 216, 216));
+	ss->setColor(L"traktor.ui.MiniButton", L"background-color-disabled", Color4ub(230, 230, 235));
+	ss->setColor(L"traktor.ui.MiniButton", L"border-color", Color4ub(202, 202, 202));
+	ss->setColor(L"traktor.ui.MiniButton", L"border-color-disabled", Color4ub(224, 224, 224));
+
+	ss->setColor(L"traktor.ui.Button", L"background-color", Color4ub(239, 239, 242));
+	ss->setColor(L"traktor.ui.Button", L"background-color-hover", Color4ub(250, 250, 251));
+	ss->setColor(L"traktor.ui.Button", L"background-color-pushed", Color4ub(229, 229, 232));
+	ss->setColor(L"traktor.ui.Button", L"background-color-disabled", Color4ub(230, 230, 235));
+	ss->setColor(L"traktor.ui.Button", L"background-color-default", Color4ub(0, 122, 204));
+	ss->setColor(L"traktor.ui.Button", L"background-color-default-hover", Color4ub(38, 142, 212));
+	ss->setColor(L"traktor.ui.Button", L"background-color-default-pushed", Color4ub(0, 104, 173));
+	ss->setColor(L"traktor.ui.Button", L"border-color", Color4ub(196, 196, 198));
+	ss->setColor(L"traktor.ui.Button", L"border-color-disabled", Color4ub(218, 218, 220));
+	ss->setColor(L"traktor.ui.Button", L"color", Color4ub(30, 30, 30));
+	ss->setColor(L"traktor.ui.Button", L"color-default", Color4ub(255, 255, 255));
+	ss->setColor(L"traktor.ui.Button", L"color-disabled", Color4ub(142, 140, 140));
 
 	ss->setColor(L"traktor.ui.Dock", L"caption-background-color", Color4ub(0, 122, 204));
 	ss->setColor(L"traktor.ui.Dock", L"caption-color-focus", Color4ub(255, 255, 255));
 	ss->setColor(L"traktor.ui.Dock", L"caption-color-no-focus", Color4ub(30, 30, 30));
 	ss->setColor(L"traktor.ui.Dock", L"splitter-color", Color4ub(204, 200, 219));
 
-	ss->setColor(L"traktor.ui.Tab", L"tab-background-color", Color4ub(0, 122, 204));
-	ss->setColor(L"traktor.ui.Tab", L"tab-background-color-hover", Color4ub(28, 151, 234));
-	ss->setColor(L"traktor.ui.Tab", L"tab-line-color", Color4ub(0, 122, 204));
-	ss->setColor(L"traktor.ui.Tab", L"tab-color-active", Color4ub(255, 255, 255));
-	ss->setColor(L"traktor.ui.Tab", L"tab-color-inactive", Color4ub(30, 30, 30));
+	ss->setColor(L"traktor.ui.Tab", L"tab-background-color", Color4ub(255, 255, 255));
+	ss->setColor(L"traktor.ui.Tab", L"tab-background-color-hover", Color4ub(247, 247, 248));
+	ss->setColor(L"traktor.ui.Tab", L"tab-line-color", Color4ub(196, 196, 198));
+	ss->setColor(L"traktor.ui.Tab", L"tab-color-active", Color4ub(53, 53, 53));
+	ss->setColor(L"traktor.ui.Tab", L"tab-color-inactive", Color4ub(137, 137, 138));
+	ss->setColor(L"traktor.ui.Tab", L"tab-color-disabled", Color4ub(142, 140, 140));
+	ss->setColor(L"traktor.ui.Tab", L"tab-accent-color", Color4ub(0, 122, 204));
+
+	ss->setColor(L"traktor.ui.TabPage", L"background-color", Color4ub(248, 248, 250));
+	ss->setColor(L"traktor.ui.TabPage", L"page-border-color", Color4ub(218, 218, 220));
+
+	ss->setColor(L"traktor.ui.Slider", L"background-color", Color4ub(239, 239, 242));
+	ss->setColor(L"traktor.ui.Slider", L"track-color", Color4ub(201, 201, 203));
+	ss->setColor(L"traktor.ui.Slider", L"track-color-active", Color4ub(0, 122, 204));
+	ss->setColor(L"traktor.ui.Slider", L"knob-color", Color4ub(255, 255, 255));
+	ss->setColor(L"traktor.ui.Slider", L"knob-color-hover", Color4ub(235, 235, 235));
+	ss->setColor(L"traktor.ui.Slider", L"knob-color-disabled", Color4ub(215, 215, 218));
+	ss->setColor(L"traktor.ui.Slider", L"knob-border-color", Color4ub(179, 179, 182));
 
 	ss->setColor(L"traktor.ui.BackgroundWorkerDialog", L"border-color", Color4ub(0, 122, 204));
 
+	ss->setColor(L"traktor.ui.ToolBar", L"background-color", Color4ub(248, 248, 250));
+	ss->setColor(L"traktor.ui.CaptionBar", L"background-color", Color4ub(239, 239, 242));
 	ss->setColor(L"traktor.ui.ToolBar", L"item-background-color-pushed", Color4ub(0, 122, 204));
 	ss->setColor(L"traktor.ui.ToolBar", L"item-background-color-hover", Color4ub(254, 254, 254));
-	ss->setColor(L"traktor.ui.ToolBar", L"item-color-toggled", Color4ub(51, 153, 255));
+	ss->setColor(L"traktor.ui.ToolBar", L"item-background-color-toggled", Color4ub(51, 153, 255));
+	ss->setColor(L"traktor.ui.ToolBar", L"item-color-toggled", Color4ub(255, 255, 255));
 	ss->setColor(L"traktor.ui.ToolBar", L"item-color-seperator", Color4ub(160, 160, 160));
 	ss->setColor(L"traktor.ui.ToolBar", L"item-background-color-dropdown", Color4ub(239, 239, 242));
 	ss->setColor(L"traktor.ui.ToolBar", L"item-background-color-dropdown-hover", Color4ub(254, 254, 254));

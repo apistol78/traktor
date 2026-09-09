@@ -164,6 +164,11 @@ void Canvas::drawRoundRect(const Rect& rc, int radius)
 	m_canvas->drawRoundRect(rc, radius);
 }
 
+void Canvas::fillRoundRect(const Rect& rc, int radius)
+{
+	m_canvas->fillRoundRect(rc, radius);
+}
+
 void Canvas::drawPolygon(const Point* pnts, int count)
 {
 	m_canvas->drawPolygon(pnts, count);

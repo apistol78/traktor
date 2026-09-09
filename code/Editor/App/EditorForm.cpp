@@ -542,8 +542,11 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	updateTitle();
 	updateMRU();
 
+	Ref< ui::Container > dockContainer = new ui::Container();
+	dockContainer->create(this, ui::WsNone, new ui::FloodLayout(ui::Size(4, 4)));
+
 	m_dock = new ui::Dock();
-	m_dock->create(this);
+	m_dock->create(dockContainer);
 
 	// Define docking panes.
 	Ref< ui::DockPane > pane = m_dock->getPane();

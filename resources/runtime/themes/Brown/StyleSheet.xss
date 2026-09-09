@@ -178,12 +178,48 @@
 					<second>20</second>
 				</item>
 				<item>
+					<first>background-color-default</first>
+					<second>19</second>
+				</item>
+				<item>
+					<first>background-color-default-hover</first>
+					<second>78</second>
+				</item>
+				<item>
+					<first>background-color-default-pushed</first>
+					<second>79</second>
+				</item>
+				<item>
+					<first>background-color-disabled</first>
+					<second>1</second>
+				</item>
+				<item>
+					<first>background-color-hover</first>
+					<second>76</second>
+				</item>
+				<item>
 					<first>background-color-pushed</first>
 					<second>21</second>
 				</item>
 				<item>
+					<first>border-color</first>
+					<second>73</second>
+				</item>
+				<item>
+					<first>border-color-disabled</first>
+					<second>77</second>
+				</item>
+				<item>
 					<first>color</first>
 					<second>5</second>
+				</item>
+				<item>
+					<first>color-default</first>
+					<second>5</second>
+				</item>
+				<item>
+					<first>color-disabled</first>
+					<second>6</second>
 				</item>
 			</colors>
 		</item>
@@ -192,7 +228,7 @@
 			<colors>
 				<item>
 					<first>background-color</first>
-					<second>20</second>
+					<second>0</second>
 				</item>
 			</colors>
 		</item>
@@ -234,12 +270,16 @@
 					<second>23</second>
 				</item>
 				<item>
+					<first>tab-accent-color</first>
+					<second>19</second>
+				</item>
+				<item>
 					<first>tab-background-color</first>
 					<second>0</second>
 				</item>
 				<item>
 					<first>tab-background-color-hover</first>
-					<second>8</second>
+					<second>70</second>
 				</item>
 				<item>
 					<first>tab-color-active</first>
@@ -247,11 +287,11 @@
 				</item>
 				<item>
 					<first>tab-color-inactive</first>
-					<second>5</second>
+					<second>72</second>
 				</item>
 				<item>
 					<first>tab-selected-background-color</first>
-					<second>19</second>
+					<second>69</second>
 				</item>
 			</colors>
 		</item>
@@ -260,7 +300,7 @@
 			<colors>
 				<item>
 					<first>background-color</first>
-					<second>20</second>
+					<second>0</second>
 				</item>
 				<item>
 					<first>background-color-button</first>
@@ -268,7 +308,11 @@
 				</item>
 				<item>
 					<first>background-color-hover</first>
-					<second>9</second>
+					<second>75</second>
+				</item>
+				<item>
+					<first>border-color</first>
+					<second>74</second>
 				</item>
 				<item>
 					<first>color-arrow</first>
@@ -327,6 +371,10 @@
 				<item>
 					<first>border-color-disabled</first>
 					<second>14</second>
+				</item>
+				<item>
+					<first>border-color-focus</first>
+					<second>19</second>
 				</item>
 			</colors>
 		</item>
@@ -549,8 +597,20 @@
 					<second>12</second>
 				</item>
 				<item>
+					<first>background-color-hover</first>
+					<second>76</second>
+				</item>
+				<item>
 					<first>background-color-pushed</first>
 					<second>21</second>
+				</item>
+				<item>
+					<first>border-color</first>
+					<second>73</second>
+				</item>
+				<item>
+					<first>border-color-disabled</first>
+					<second>77</second>
 				</item>
 				<item>
 					<first>color</first>
@@ -681,7 +741,7 @@
 				</item>
 				<item>
 					<first>line-color</first>
-					<second>47</second>
+					<second>88</second>
 				</item>
 			</colors>
 		</item>
@@ -752,7 +812,7 @@
 				</item>
 				<item>
 					<first>line-color</first>
-					<second>3</second>
+					<second>80</second>
 				</item>
 				<item>
 					<first>tick-color</first>
@@ -765,11 +825,15 @@
 			<colors>
 				<item>
 					<first>background-color</first>
-					<second>31</second>
+					<second>82</second>
 				</item>
 				<item>
 					<first>background-color-selected</first>
-					<second>10</second>
+					<second>31</second>
+				</item>
+				<item>
+					<first>line-color</first>
+					<second>80</second>
 				</item>
 			</colors>
 		</item>
@@ -820,10 +884,30 @@
 			<colors>
 				<item>
 					<first>background-color</first>
-					<second>20</second>
+					<second>0</second>
 				</item>
 				<item>
-					<first>color</first>
+					<first>knob-border-color</first>
+					<second>87</second>
+				</item>
+				<item>
+					<first>knob-color</first>
+					<second>85</second>
+				</item>
+				<item>
+					<first>knob-color-disabled</first>
+					<second>86</second>
+				</item>
+				<item>
+					<first>knob-color-hover</first>
+					<second>5</second>
+				</item>
+				<item>
+					<first>track-color</first>
+					<second>84</second>
+				</item>
+				<item>
+					<first>track-color-active</first>
 					<second>19</second>
 				</item>
 			</colors>
@@ -943,27 +1027,48 @@
 			</colors>
 		</item>
 		<item>
+			<typeName>traktor.ui.TabPage</typeName>
+			<colors>
+				<item>
+					<first>background-color</first>
+					<second>70</second>
+				</item>
+				<item>
+					<first>page-border-color</first>
+					<second>83</second>
+				</item>
+			</colors>
+		</item>
+		<item>
 			<typeName>traktor.ui.Tab</typeName>
 			<colors>
 				<item>
-					<first>tab-background-color</first>
+					<first>tab-accent-color</first>
 					<second>19</second>
 				</item>
 				<item>
+					<first>tab-background-color</first>
+					<second>69</second>
+				</item>
+				<item>
 					<first>tab-background-color-hover</first>
-					<second>8</second>
+					<second>70</second>
 				</item>
 				<item>
 					<first>tab-color-active</first>
 					<second>5</second>
 				</item>
 				<item>
+					<first>tab-color-disabled</first>
+					<second>6</second>
+				</item>
+				<item>
 					<first>tab-color-inactive</first>
-					<second>5</second>
+					<second>72</second>
 				</item>
 				<item>
 					<first>tab-line-color</first>
-					<second>19</second>
+					<second>71</second>
 				</item>
 			</colors>
 		</item>
@@ -976,7 +1081,7 @@
 				</item>
 				<item>
 					<first>background-color-selected</first>
-					<second>8</second>
+					<second>81</second>
 				</item>
 				<item>
 					<first>color</first>
@@ -988,6 +1093,14 @@
 			<typeName>traktor.ui.ToolBar</typeName>
 			<colors>
 				<item>
+					<first>background-color</first>
+					<second>70</second>
+				</item>
+				<item>
+					<first>border-color</first>
+					<second>74</second>
+				</item>
+				<item>
 					<first>item-background-color-dropdown</first>
 					<second>0</second>
 				</item>
@@ -997,7 +1110,7 @@
 				</item>
 				<item>
 					<first>item-background-color-dropdown-hover</first>
-					<second>9</second>
+					<second>75</second>
 				</item>
 				<item>
 					<first>item-background-color-hover</first>
@@ -1005,6 +1118,10 @@
 				</item>
 				<item>
 					<first>item-background-color-pushed</first>
+					<second>19</second>
+				</item>
+				<item>
+					<first>item-background-color-toggled</first>
 					<second>19</second>
 				</item>
 				<item>
@@ -1021,7 +1138,7 @@
 				</item>
 				<item>
 					<first>item-color-toggled</first>
-					<second>19</second>
+					<second>5</second>
 				</item>
 			</colors>
 		</item>
@@ -1139,6 +1256,26 @@
 		<item>70, 49, 21, 255</item>
 		<item>180, 180, 180, 255</item>
 		<item>60, 60, 60, 255</item>
+		<item>84, 70, 49, 255</item>
+		<item>71, 55, 32, 255</item>
+		<item>98, 85, 65, 255</item>
+		<item>167, 159, 148, 255</item>
+		<item>73, 65, 55, 255</item>
+		<item>94, 80, 61, 255</item>
+		<item>83, 68, 46, 255</item>
+		<item>60, 51, 40, 255</item>
+		<item>53, 44, 33, 255</item>
+		<item>195, 117, 52, 255</item>
+		<item>156, 79, 14, 255</item>
+		<item>106, 106, 106, 255</item>
+		<item>223, 182, 147, 255</item>
+		<item>102, 102, 102, 255</item>
+		<item>97, 83, 63, 255</item>
+		<item>90, 76, 56, 255</item>
+		<item>206, 202, 196, 255</item>
+		<item>114, 102, 84, 255</item>
+		<item>133, 123, 108, 255</item>
+		<item>55, 46, 35, 255</item>
 	</palette>
 	<values>
 		<item>

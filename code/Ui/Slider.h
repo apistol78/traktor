@@ -46,6 +46,9 @@ private:
 	Range< int32_t > m_range = { 0, 100 };
 	int32_t m_value = 0;
 	bool m_drag = false;
+	bool m_hover = false;
+
+	void eventMouseTrack(MouseTrackEvent* event);
 
 	void eventButtonDown(MouseButtonDownEvent* event);
 

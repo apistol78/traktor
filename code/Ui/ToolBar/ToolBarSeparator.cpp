@@ -14,6 +14,13 @@
 
 namespace traktor::ui
 {
+	namespace
+	{
+
+const Unit c_separatorWidth = 11_ut;
+const Unit c_separatorInset = 4_ut;
+
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.ToolBarSeparator", ToolBarSeparator, ToolBarItem)
 
@@ -25,15 +32,18 @@ bool ToolBarSeparator::getToolTip(std::wstring& outToolTip) const
 Size ToolBarSeparator::getSize(const ToolBar* toolBar) const
 {
 	const Size imageSize = toolBar->getImageSize();
-	return Size(1, imageSize.cy);
+	return Size(toolBar->pixel(c_separatorWidth), imageSize.cy);
 }
 
 void ToolBarSeparator::paint(ToolBar* toolBar, Canvas& canvas, const Point& at, const RefArray< IBitmap >& images)
 {
 	const StyleSheet* ss = toolBar->getStyleSheet();
-	const Size imageSize = toolBar->getImageSize();
+	const Size size = getSize(toolBar);
+	const int32_t inset = toolBar->pixel(c_separatorInset);
+	const int32_t x = at.x + size.cx / 2;
+
 	canvas.setForeground(ss->getColor(toolBar, L"item-color-seperator"));
-	canvas.drawLine(at, at + Size(0, imageSize.cy));
+	canvas.drawLine(x, at.y + inset, x, at.y + size.cy - inset);
 }
 
 bool ToolBarSeparator::mouseEnter(ToolBar* toolBar)

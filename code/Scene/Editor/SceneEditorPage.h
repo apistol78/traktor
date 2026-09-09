@@ -11,6 +11,7 @@
 #include "Core/Containers/AlignedVector.h"
 #include "Core/Containers/CircularVector.h"
 #include "Core/Containers/SmallSet.h"
+#include "Core/RefArray.h"
 #include "Editor/IEditorPage.h"
 #include "Ui/Events/AllEvents.h"
 
@@ -49,7 +50,6 @@ class Edit;
 class Font;
 class IBitmap;
 class Menu;
-class StatusBar;
 class Tab;
 class ToolBar;
 class ToolBarButton;
@@ -112,7 +112,6 @@ private:
 	Ref< SceneEditorContext > m_context;
 	Ref< ui::Container > m_editPanel;
 	Ref< ScenePreviewControl > m_editControl;
-	Ref< ui::StatusBar > m_statusBar;
 	Ref< ui::Container > m_entityPanel;
 	Ref< ui::Tab > m_tabMisc;
 	Ref< EntityDependencyInvestigator > m_entityDependencyPanel;
@@ -122,7 +121,8 @@ private:
 	Ref< ui::Menu > m_entityMenuDefault;
 	Ref< ui::Menu > m_entityMenuGroup;
 	Ref< ui::Menu > m_entityMenuExternal;
-	Ref< ui::Tab > m_componentPanel;
+	Ref< ui::Container > m_parent;
+	RefArray< ui::Container > m_componentPanels;
 	Ref< editor::PropertiesView > m_propertiesView;
 	Ref< ui::ToolBar > m_entityToolBar;
 	Ref< ui::ToolBarButton > m_buttonFilterEntity;
@@ -163,8 +163,6 @@ private:
 	void updateInstanceGrid(bool ensureSelectedVisible);
 
 	void updatePropertyObject();
-
-	void updateStatusBar();
 
 	bool addEntity(const TypeInfo* entityType);
 

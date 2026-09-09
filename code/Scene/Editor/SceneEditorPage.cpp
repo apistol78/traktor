@@ -83,7 +83,6 @@
 #include "Ui/MessageBox.h"
 #include "Ui/PropertyList/NumericPropertyItem.h"
 #include "Ui/PropertyList/PropertyContentChangeEvent.h"
-#include "Ui/StatusBar/StatusBar.h"
 #include "Ui/StyleBitmap.h"
 #include "Ui/StyleSheet.h"
 #include "Ui/Tab.h"
@@ -108,12 +107,6 @@ namespace
 {
 
 const Guid c_guidWhiteRoomScene(L"{473467B0-835D-EF45-B308-E3C3C5B0F226}");
-
-constexpr int32_t c_statusBarPosition = 0;
-constexpr int32_t c_statusBarOrientation = 1;
-constexpr int32_t c_statusBarEntityCount = 2;
-constexpr int32_t c_statusBarTime = 3;
-constexpr int32_t c_statusBarSelectedEntity = 4;
 
 constexpr int32_t c_instanceGridName = 0;
 constexpr int32_t c_instanceGridDynamic = 1;
@@ -185,6 +178,8 @@ SceneEditorPage::SceneEditorPage(editor::IEditor* editor, editor::IEditorPageSit
 
 bool SceneEditorPage::create(ui::Container* parent)
 {
+	m_parent = parent;
+
 	std::set< std::wstring > guideIds;
 
 	// Get render system from store.
@@ -300,7 +295,7 @@ bool SceneEditorPage::create(ui::Container* parent)
 
 	// Create editor panel.
 	m_editPanel = new ui::Container();
-	m_editPanel->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"100%,*", 0_ut, 0_ut));
+	m_editPanel->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"100%", 0_ut, 0_ut));
 
 	m_editControl = new ScenePreviewControl();
 	if (!m_editControl->create(m_editPanel, m_context))
@@ -309,14 +304,6 @@ bool SceneEditorPage::create(ui::Container* parent)
 		safeDestroy(physicsManager);
 		return false;
 	}
-
-	m_statusBar = new ui::StatusBar();
-	m_statusBar->create(m_editPanel, ui::WsDoubleBuffer);
-	m_statusBar->addColumn(0); // Position
-	m_statusBar->addColumn(0); // Orientation
-	m_statusBar->addColumn(0); // Entity count
-	m_statusBar->addColumn(0); // Time
-	m_statusBar->addColumn(0); // Selected entity
 
 	// Create entity panel.
 	m_entityPanel = new ui::Container();
@@ -471,13 +458,6 @@ bool SceneEditorPage::create(ui::Container* parent)
 
 	m_site->createAdditionalPanel(m_tabMisc, 400_ut, false);
 
-	// Create component panel; hosts editors of components which need more than the property view.
-	m_componentPanel = new ui::Tab();
-	m_componentPanel->create(parent, ui::Tab::WsLine);
-	m_componentPanel->setText(i18n::Text(L"SCENE_EDITOR_CONTROLLER"));
-
-	m_site->createAdditionalPanel(m_componentPanel, 140_ut, true);
-
 	// Create the scene, loads textures etc, using a background job since it might take significant amount of time.
 	Ref< Job > job = JobManager::getInstance().add([&]() {
 		createSceneAsset();
@@ -516,7 +496,6 @@ bool SceneEditorPage::create(ui::Container* parent)
 	createInstanceGrid();
 	createComponentPanelEditors();
 	updatePropertyObject();
-	updateStatusBar();
 
 	// Frame entity in view.
 	if (auto entityData = dynamic_type_cast< world::EntityData* >(m_context->getDocument()->getObject(0)))
@@ -554,15 +533,17 @@ void SceneEditorPage::destroy()
 		m_site->destroyAdditionalPanel(m_entityPanel);
 	if (m_tabMisc)
 		m_site->destroyAdditionalPanel(m_tabMisc);
-	if (m_componentPanel)
-		m_site->destroyAdditionalPanel(m_componentPanel);
+	for (auto componentPanel : m_componentPanels)
+		m_site->destroyAdditionalPanel(componentPanel);
 
 	// Destroy widgets.
 	safeDestroy(m_editPanel);
 	safeDestroy(m_editControl);
 	safeDestroy(m_entityPanel);
 	safeDestroy(m_tabMisc);
-	safeDestroy(m_componentPanel);
+	for (auto componentPanel : m_componentPanels)
+		safeDestroy(componentPanel);
+	m_componentPanels.resize(0);
 	safeDestroy(m_entityToolBar);
 	safeDestroy(m_instanceGrid);
 
@@ -1154,8 +1135,12 @@ void SceneEditorPage::createComponentPanelEditors()
 		componentPanelEditor->destroy();
 	m_context->setComponentPanelEditors(RefArray< IComponentPanelEditor >());
 
-	m_site->hideAdditionalPanel(m_componentPanel);
-	m_componentPanel->removeAllPages();
+	for (auto componentPanel : m_componentPanels)
+	{
+		m_site->destroyAdditionalPanel(componentPanel);
+		safeDestroy(componentPanel);
+	}
+	m_componentPanels.resize(0);
 
 	RefArray< IComponentPanelEditor > componentPanelEditors;
 	for (size_t i = 0; i < applicableFactories.size(); ++i)
@@ -1167,40 +1152,42 @@ void SceneEditorPage::createComponentPanelEditors()
 			continue;
 		}
 
-		// Each editor gets its own page of the panel so several editors can coexist.
-		Ref< ui::TabPage > tabPage = new ui::TabPage();
-		if (!tabPage->create(m_componentPanel, componentEditor->getTitle(), new ui::FloodLayout()))
+		// Each editor gets a panel of its own so it docks alongside the other
+		// panels instead of being nested in a shared tab.
+		Ref< ui::Container > componentPanel = new ui::Container();
+		if (!componentPanel->create(m_parent, ui::WsNone, new ui::FloodLayout()))
 			continue;
 
-		if (!componentEditor->create(m_context, tabPage))
+		componentPanel->setText(componentEditor->getTitle());
+
+		if (!componentEditor->create(m_context, componentPanel))
 		{
 			log::error << L"Unable to create component editor for type \"" << applicableTypes[i]->getName() << L"\"; create failed." << Endl;
-			safeDestroy(tabPage);
+			safeDestroy(componentPanel);
 			continue;
 		}
 
 		componentPanelEditors.push_back(componentEditor);
 
-		// Editors which only draw guides do not create any UI; no need for a page.
-		if (tabPage->getFirstChild() != nullptr)
-			m_componentPanel->addPage(tabPage);
+		// Editors which only draw guides do not create any UI; no need for a panel.
+		if (componentPanel->getFirstChild() != nullptr)
+		{
+			m_site->createAdditionalPanel(componentPanel, 140_ut, true);
+
+			// Docking alone doesn't lay out the dock; showing the panel does.
+			m_site->showAdditionalPanel(componentPanel);
+
+			m_componentPanels.push_back(componentPanel);
+		}
 		else
-			safeDestroy(tabPage);
+			safeDestroy(componentPanel);
 	}
 
 	if (!componentPanelEditors.empty())
 		m_context->setComponentPanelEditors(componentPanelEditors);
 
-	// Only show panel if any editor has created a page.
-	if (m_componentPanel->getPageCount() > 0)
-	{
-		m_componentPanel->setActivePage(m_componentPanel->getPage(0));
-		m_site->showAdditionalPanel(m_componentPanel);
-	}
-
 	m_componentPanelEditorTypes = applicableTypes;
 	m_componentPanelEditorsCreated = true;
-	m_componentPanel->update();
 }
 
 void SceneEditorPage::updateScene()
@@ -1393,26 +1380,6 @@ void SceneEditorPage::updatePropertyObject()
 	}
 	else
 		m_propertiesView->setPropertyObject(m_context->getDocument()->getObject(0));
-}
-
-void SceneEditorPage::updateStatusBar()
-{
-	const Camera* camera = m_context->getCamera(0);
-	T_ASSERT(camera);
-
-	const Vector4 position = camera->getPosition();
-	const Vector4 angles = camera->getOrientation().toEulerAngles();
-
-	m_statusBar->setText(c_statusBarPosition, str(L"%.1f, %.1f, %.1f", (float)position.x(), (float)position.y(), (float)position.z()));
-	m_statusBar->setText(c_statusBarOrientation, str(L"%.1f, %.1f, %.1f", rad2deg(angles.x()), rad2deg(angles.y()), rad2deg(angles.z())));
-	m_statusBar->setText(c_statusBarEntityCount, str(L"%d entities", m_context->getEntityCount()));
-	m_statusBar->setText(c_statusBarTime, str(L"%.1f (%.1f)", m_context->getTime(), m_context->getTimeScale()));
-
-	const RefArray< EntityAdapter > selectedEntities = m_context->getEntities(SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants);
-	if (selectedEntities.size() == 1)
-		m_statusBar->setText(c_statusBarSelectedEntity, selectedEntities[0]->getPath() /* + L" " + selectedEntities[0]->getEntityData()->getId().format()*/);
-	else
-		m_statusBar->setText(c_statusBarSelectedEntity, L"");
 }
 
 bool SceneEditorPage::addEntity(const TypeInfo* entityType)
@@ -1802,7 +1769,6 @@ void SceneEditorPage::eventInstanceRename(ui::GridItemContentChangeEvent* event)
 
 	entityAdapter->getEntityData()->setName(renameTo);
 	updatePropertyObject();
-	updateStatusBar();
 
 	event->consume();
 }
@@ -1838,7 +1804,6 @@ void SceneEditorPage::eventPropertiesChanged(ui::ContentChangeEvent* event)
 void SceneEditorPage::eventContextPostBuild(PostBuildEvent* event)
 {
 	createInstanceGrid();
-	updateStatusBar();
 
 	// Components might have been added to, or removed from, entities.
 	createComponentPanelEditors();
@@ -1848,7 +1813,6 @@ void SceneEditorPage::eventContextSelect(SceneSelectionChangeEvent* event)
 {
 	updateInstanceGrid(event->shouldEnsureEntityVisible());
 	updatePropertyObject();
-	updateStatusBar();
 }
 
 void SceneEditorPage::eventContextPreModify(PreModifyEvent* event)
@@ -1863,7 +1827,6 @@ void SceneEditorPage::eventContextPostModify(PostModifyEvent* event)
 
 void SceneEditorPage::eventContextCameraMoved(CameraMovedEvent* event)
 {
-	updateStatusBar();
 }
 
 void SceneEditorPage::eventContextPostFrame(PostFrameEvent* event)
@@ -1922,8 +1885,6 @@ void SceneEditorPage::eventContextPostFrame(PostFrameEvent* event)
 			m_gridResources->addRow(row);
 		}
 	}
-
-	updateStatusBar();
 }
 
 void SceneEditorPage::eventContextMeasurement(MeasurementEvent* event)

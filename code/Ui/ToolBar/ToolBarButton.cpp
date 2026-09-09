@@ -16,6 +16,14 @@
 
 namespace traktor::ui
 {
+	namespace
+	{
+
+const Unit c_iconPad = 6_ut;
+const Unit c_textPad = 10_ut;
+const Unit c_iconTextGap = 6_ut;
+
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.ToolBarButton", ToolBarButton, ToolBarItem)
 
@@ -83,23 +91,27 @@ bool ToolBarButton::getToolTip(std::wstring& outToolTip) const
 Size ToolBarButton::getSize(const ToolBar* toolBar) const
 {
 	const Size imageSize = toolBar->getImageSize();
+	const bool icon = ((m_style & BsIcon) != 0);
+	const bool text = ((m_style & BsText) != 0);
 
-	int32_t width = toolBar->pixel(8_ut);
-	int32_t height = width;
+	const int32_t pad = toolBar->pixel(icon ? c_iconPad : c_textPad);
 
-	if (m_style & BsIcon)
+	int32_t width = pad * 2;
+	int32_t height = pad * 2;
+
+	if (icon)
 	{
 		width += imageSize.cx;
-		height = max(imageSize.cy + toolBar->pixel(8_ut), height);
+		height = max(imageSize.cy + toolBar->pixel(c_iconPad) * 2, height);
 	}
-	if (m_style & BsText)
+	if (text)
 	{
-		Size textExtent = toolBar->getFontMetric().getExtent(m_text);
+		const Size textExtent = toolBar->getFontMetric().getExtent(m_text);
 		width += textExtent.cx;
-		height = max(textExtent.cy + toolBar->pixel(8_ut), height);
+		height = max(textExtent.cy + toolBar->pixel(c_iconPad) * 2, height);
 	}
-	if ((m_style & (BsIcon | BsText)) == (BsIcon | BsText))
-		width += toolBar->pixel(4_ut);
+	if (icon && text)
+		width += toolBar->pixel(c_iconTextGap);
 
 	return Size(width, height);
 }
@@ -111,25 +123,26 @@ void ToolBarButton::paint(ToolBar* toolBar, Canvas& canvas, const Point& at, con
 	const Size size = getSize(toolBar);
 	const bool enabled = isEnable() && toolBar->isEnable(true);
 
+	const bool toggled = ((m_state & BstToggled) != 0);
+
 	if (enabled)
 	{
-		if ((m_state & (BstPushed | BstHover)) != 0)
-		{
-			if ((m_state & BstPushed) != 0)
-				canvas.setBackground(ss->getColor(toolBar, L"item-background-color-pushed"));
-			else if ((m_state & BstHover) != 0)
-				canvas.setBackground(ss->getColor(toolBar, L"item-background-color-hover"));
+		const wchar_t* background = nullptr;
+		if ((m_state & BstPushed) != 0)
+			background = L"item-background-color-pushed";
+		else if (toggled)
+			background = L"item-background-color-toggled";
+		else if ((m_state & BstHover) != 0)
+			background = L"item-background-color-hover";
 
-			canvas.fillRect(Rect(at, size));
-		}
-		if ((m_state & BstToggled) != 0)
+		if (background != nullptr)
 		{
-			canvas.setForeground(ss->getColor(toolBar, L"item-color-toggled"));
-			canvas.drawRect(Rect(at, size));
+			canvas.setBackground(ss->getColor(toolBar, background));
+			canvas.fillRoundRect(Rect(at, size), toolBar->getItemRadius());
 		}
 	}
 
-	int32_t centerOffsetX = toolBar->pixel(4_ut);
+	int32_t centerOffsetX = toolBar->pixel((m_style & BsIcon) != 0 ? c_iconPad : c_textPad);
 	if (m_imageIndex >= 0 && m_imageIndex < (int32_t)images.size() && (m_style & BsIcon) != 0)
 	{
 		const int32_t centerOffsetY = (size.cy - imageSize.cy) / 2;
@@ -142,13 +155,16 @@ void ToolBarButton::paint(ToolBar* toolBar, Canvas& canvas, const Point& at, con
 			Filter::Linear,
 			enabled ? 255 : 80
 		);
-		centerOffsetX += imageSize.cx + toolBar->pixel(4_ut);
+		centerOffsetX += imageSize.cx + toolBar->pixel(c_iconTextGap);
 	}
 	if ((m_style & BsText) != 0)
 	{
 		const Size textExtent = toolBar->getFontMetric().getExtent(m_text);
 		const int32_t centerOffsetY = (size.cy - textExtent.cy) / 2;
-		canvas.setForeground(ss->getColor(toolBar, enabled ? L"color" : L"color-disabled"));
+		if (!enabled)
+			canvas.setForeground(ss->getColor(toolBar, L"color-disabled"));
+		else
+			canvas.setForeground(ss->getColor(toolBar, toggled ? L"item-color-toggled" : L"color"));
 		canvas.drawText(
 			at + Size(centerOffsetX, centerOffsetY),
 			m_text

@@ -26,10 +26,6 @@
 			<second>Aspect</second>
 		</item>
 		<item>
-			<first>SCENE_EDITOR_CONTROLLER</first>
-			<second>Controller</second>
-		</item>
-		<item>
 			<first>SCENE_EDITOR_CREATE_EXTERNAL</first>
 			<second>Create external...</second>
 		</item>

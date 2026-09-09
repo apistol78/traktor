@@ -14,6 +14,7 @@
 #include "Ui/Bitmap.h"
 #include "Ui/FloodLayout.h"
 #include "Ui/StyleBitmap.h"
+#include "Ui/StyleConstants.h"
 #include "Ui/StyleSheet.h"
 #include "Ui/Tab.h"
 #include "Ui/TabPage.h"
@@ -24,6 +25,21 @@ namespace
 {
 
 const int c_splitterDim = 6;
+
+const Unit c_tabPad = 20_ut;
+
+/*! Space left above the tabs so they sit slightly inset in the caption. */
+const Unit c_tabOuterGap = 4_ut;
+
+/*! Thickness of the accent bar marking the selected tab. */
+const Unit c_tabAccent = 2_ut;
+
+/*! Fill a tab, rounded on top and square where it meets the panel below. */
+void fillTabShape(Canvas& canvas, const Rect& rc, int32_t radius)
+{
+	canvas.fillRoundRect(rc, radius);
+	canvas.fillRect(Rect(rc.left, rc.bottom - radius, rc.right, rc.bottom));
+}
 
 int32_t calculateRealSplit(const Widget* widget, int32_t gripperDim, const Rect& rc, int32_t split, bool vertical)
 {
@@ -52,7 +68,7 @@ DockPane::DockPane(Widget* owner, DockPane* parent)
 	m_bitmapGripper = new ui::StyleBitmap(L"UI.DockGripper");
 	T_FATAL_ASSERT(m_bitmapGripper);
 
-	m_gripperDim = owner->getFont().getSize() + 9_ut;
+	m_gripperDim = owner->getFont().getSize() + 13_ut + c_tabOuterGap;
 }
 
 void DockPane::split(bool vertical, Unit split, Ref< DockPane >& outLeftPane, Ref< DockPane >& outRightPane)
@@ -616,6 +632,7 @@ void DockPane::draw(Canvas& canvas, const Point& mousePosition)
 
 	const StyleSheet* ss = m_owner->getStyleSheet();
 
+	/*
 	// Draw splitter.
 	if (isSplitter() && m_child[0]->isVisible() && m_child[1]->isVisible())
 	{
@@ -641,6 +658,7 @@ void DockPane::draw(Canvas& canvas, const Point& mousePosition)
 			canvas.fillRect(splitterRect);
 		}
 	}
+	*/
 
 	if (m_detachable && !m_widgets.empty())
 	{
@@ -669,8 +687,8 @@ void DockPane::draw(Canvas& canvas, const Point& mousePosition)
 
 				const Rect rcTab(
 					left,
-					titleRect.top,
-					left + titleExtent.cx + m_owner->pixel(12_ut),
+					titleRect.top + m_owner->pixel(c_tabOuterGap),
+					left + titleExtent.cx + m_owner->pixel(c_tabPad),
 					titleRect.bottom);
 
 				const bool visible = w.widget->isVisible(false);
@@ -678,17 +696,25 @@ void DockPane::draw(Canvas& canvas, const Point& mousePosition)
 				{
 					canvas.setForeground(ss->getColor(this, L"tab-color-active"));
 					canvas.setBackground(ss->getColor(this, L"tab-selected-background-color"));
+					fillTabShape(canvas, rcTab, m_owner->pixel(c_surfaceRadius));
+
+					// Accent bar along the edge that meets the panel below.
+					const int32_t accent = m_owner->pixel(c_tabAccent);
+					canvas.setBackground(ss->getColor(this, L"tab-accent-color"));
+					canvas.fillRect(Rect(rcTab.left, rcTab.bottom - accent, rcTab.right, rcTab.bottom));
 				}
 				else
 				{
-					const bool hover = rcTab.inside(mousePosition, false);
 					canvas.setForeground(ss->getColor(this, L"tab-color-inactive"));
-					canvas.setBackground(ss->getColor(this, hover ? L"tab-background-color-hover" : L"tab-background-color"));
+					if (rcTab.inside(mousePosition, false))
+					{
+						canvas.setBackground(ss->getColor(this, L"tab-background-color-hover"));
+						fillTabShape(canvas, rcTab, m_owner->pixel(c_surfaceRadius));
+					}
 				}
-				canvas.fillRect(rcTab);
 
 				Rect rcTabTitle = rcTab;
-				rcTabTitle.left += m_owner->pixel(4_ut);
+				rcTabTitle.left += m_owner->pixel(c_tabPad) / 2;
 				canvas.drawText(rcTabTitle, title, AnLeft, AnCenter);
 
 				w.tabMin = left;

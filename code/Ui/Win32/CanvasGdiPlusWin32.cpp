@@ -8,6 +8,7 @@
  */
 #if defined(T_USE_GDI_PLUS)
 
+#include <algorithm>
 #include <cmath>
 #include "Core/Math/MathUtils.h"
 #include "Ui/Application.h"
@@ -24,6 +25,23 @@ namespace traktor::ui
 
 GdiplusStartupInput s_si;
 ULONG_PTR s_token = nullptr;
+
+void buildRoundRectPath(Gdiplus::GraphicsPath& outPath, int32_t x, int32_t y, int32_t w, int32_t h, int32_t radius)
+{
+	const int32_t r = std::min(radius, std::min(w, h) / 2);
+	if (r <= 0)
+	{
+		outPath.AddRectangle(Gdiplus::Rect(x, y, w, h));
+		return;
+	}
+
+	const int32_t d = r * 2;
+	outPath.AddArc(x, y, d, d, 180.0f, 90.0f);
+	outPath.AddArc(x + w - d, y, d, d, 270.0f, 90.0f);
+	outPath.AddArc(x + w - d, y + h - d, d, d, 0.0f, 90.0f);
+	outPath.AddArc(x, y + h - d, d, d, 90.0f, 90.0f);
+	outPath.CloseFigure();
+}
 
 	}
 
@@ -481,8 +499,18 @@ void CanvasGdiPlusWin32::drawRect(const Rect& rc)
 
 void CanvasGdiPlusWin32::drawRoundRect(const Rect& rc, int radius)
 {
-	Rect tmp = rc.getUnified();
-	m_graphics->DrawRectangle(&m_pen, tmp.left, tmp.top, tmp.getWidth() - 1, tmp.getHeight() - 1);
+	const Rect tmp = rc.getUnified();
+	Gdiplus::GraphicsPath path;
+	buildRoundRectPath(path, tmp.left, tmp.top, tmp.getWidth() - 1, tmp.getHeight() - 1, radius);
+	m_graphics->DrawPath(&m_pen, &path);
+}
+
+void CanvasGdiPlusWin32::fillRoundRect(const Rect& rc, int radius)
+{
+	const Rect tmp = rc.getUnified();
+	Gdiplus::GraphicsPath path;
+	buildRoundRectPath(path, tmp.left, tmp.top, tmp.getWidth(), tmp.getHeight(), radius);
+	m_graphics->FillPath(&m_brush, &path);
 }
 
 void CanvasGdiPlusWin32::drawPolygon(const Point* pnts, int count)

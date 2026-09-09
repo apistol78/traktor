@@ -39,6 +39,7 @@ public:
 	virtual Size getMaximumSize() const override;
 
 private:
+	bool m_defaultButton = false;
 	bool m_pushed = false;
 	bool m_hover = false;
 

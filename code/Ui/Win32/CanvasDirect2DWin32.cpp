@@ -607,6 +607,20 @@ void CanvasDirect2DWin32::drawRoundRect(const Rect& rc, int radius)
 		m_strokeWidth);
 }
 
+void CanvasDirect2DWin32::fillRoundRect(const Rect& rc, int radius)
+{
+	const Rect rc2 = rc.getUnified();
+	if (rc2.getWidth() <= 0 || rc2.getHeight() <= 0)
+		return;
+
+	m_d2dRenderTarget->FillRoundedRectangle(
+		D2D1::RoundedRect(
+			D2D1::RectF(rc2.left, rc2.top, rc2.right, rc2.bottom),
+			radius,
+			radius),
+		m_d2dBackgroundBrush);
+}
+
 void CanvasDirect2DWin32::drawPolygon(const Point* pnts, int npnts)
 {
 	if (npnts < 2)

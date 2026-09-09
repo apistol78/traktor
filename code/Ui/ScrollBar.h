@@ -67,6 +67,9 @@ private:
 	void eventMouseMove(MouseMoveEvent* event);
 
 	void eventPaint(PaintEvent* event);
+
+	/*! Rectangle of the draggable slider; false when there is nothing to scroll. */
+	bool getSliderRect(const Rect& rcInner, Rect& outSlider) const;
 };
 
 }

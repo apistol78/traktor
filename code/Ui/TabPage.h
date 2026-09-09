@@ -49,10 +49,15 @@ public:
 
 	bool getToolTip(std::wstring& outToolTip) const;
 
+	/*! Client area, inset so children clear the page's edge. */
+	virtual Rect getInnerRect() const override;
+
 private:
 	Tab* m_tab = nullptr;
 	int32_t m_imageIndex = 0;
 	std::wstring m_toolTip;
+
+	void eventPaint(PaintEvent* event);
 };
 
 }

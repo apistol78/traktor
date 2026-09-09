@@ -12,12 +12,16 @@
 #include "Ui/Clipboard.h"
 #include "Ui/Edit.h"
 #include "Ui/EditValidator.h"
+#include "Ui/StyleConstants.h"
 #include "Ui/StyleSheet.h"
 
 namespace traktor::ui
 {
 	namespace
 	{
+
+const Unit c_padX = 6_ut;
+const Unit c_padY = 6_ut;
 
 bool isWord(wchar_t ch)
 {
@@ -259,13 +263,13 @@ void Edit::setText(const std::wstring& text)
 
 Size Edit::getPreferredSize(const Size& hint) const
 {
-	const int32_t height = getFontMetric().getHeight() + pixel(4_ut) * 2;
+	const int32_t height = getFontMetric().getHeight() + pixel(c_padY) * 2;
 	return Size(pixel(200_ut), height);
 }
 
 Size Edit::getMaximumSize() const
 {
-	const int32_t height = getFontMetric().getHeight() + pixel(4_ut) * 2;
+	const int32_t height = getFontMetric().getHeight() + pixel(c_padY) * 2;
 	return Size(65535, height);
 }
 
@@ -574,19 +578,29 @@ void Edit::eventPaint(PaintEvent* event)
 	const Rect rcInner = getInnerRect();
 	const StyleSheet* ss = getStyleSheet();
 	const FontMetric fm = canvas.getFontMetric();
-	const int32_t ox = pixel(4_ut);
+	const int32_t ox = pixel(c_padX);
+	const int32_t radius = pixel(c_controlRadius);
+	const bool enabled = isEnable(true);
+	const bool focused = hasFocus() && !m_readOnly;
 
-	if (isEnable(true))
+	// Cover the whole client area first; the rounded field leaves the four
+	// corners of the rectangle uncovered.
+	canvas.setBackground(ss->getColor(getParent(), L"background-color"));
+	canvas.fillRect(rcInner);
+
+	if (enabled)
 		canvas.setBackground(ss->getColor(this, m_hover ? L"background-color-hover" : L"background-color"));
 	else
 		canvas.setBackground(ss->getColor(this, L"background-color-disabled"));
-	canvas.fillRect(rcInner);
+	canvas.fillRoundRect(rcInner, radius);
 
 	if (m_borderColor.a != 0)
 		canvas.setForeground(m_borderColor);
+	else if (!enabled)
+		canvas.setForeground(ss->getColor(this, L"border-color-disabled"));
 	else
-		canvas.setForeground(ss->getColor(this, L"border-color"));
-	canvas.drawRect(rcInner);
+		canvas.setForeground(ss->getColor(this, focused ? L"border-color-focus" : L"border-color"));
+	canvas.drawRoundRect(rcInner, radius);
 
 	const std::wstring text = getText();
 
@@ -606,13 +620,13 @@ void Edit::eventPaint(PaintEvent* event)
 		m_offset += caretX;
 		caretX = 0;
 	}
-	else if (caretX >= rcInner.right - ox * 2)
+	else if (caretX >= rcInner.getWidth() - ox * 2)
 	{
-		m_offset += (caretX - (rcInner.right - ox * 2));
-		caretX = rcInner.right - ox * 2 - 1;
+		m_offset += (caretX - (rcInner.getWidth() - ox * 2));
+		caretX = rcInner.getWidth() - ox * 2 - 1;
 	}
 
-	canvas.setForeground(ss->getColor(this, isEnable(true) ? L"color" : L"color-disabled"));
+	canvas.setForeground(ss->getColor(this, enabled ? L"color" : L"color-disabled"));
 
 	const int32_t h = fm.getHeight();
 	const int32_t y = (rcInner.getHeight() - h) / 2;
@@ -626,8 +640,8 @@ void Edit::eventPaint(PaintEvent* event)
 		{
 			canvas.setBackground(ss->getColor(this, L"background-color-selection"));
 			canvas.fillRect(Rect(
-				ox + x, rcInner.top + 1,
-				ox + x + w, rcInner.bottom - 1
+				ox + x, y,
+				ox + x + w, y + h
 			));
 		}
 

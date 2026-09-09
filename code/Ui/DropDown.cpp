@@ -13,10 +13,29 @@
 #include "Ui/Command.h"
 #include "Ui/Menu.h"
 #include "Ui/MenuItem.h"
+#include "Ui/StyleConstants.h"
 #include "Ui/StyleSheet.h"
 
 namespace traktor::ui
 {
+	namespace
+	{
+
+const Unit c_fieldPad = 8_ut;
+const Unit c_fieldPadY = 6_ut;
+const Unit c_chevronArea = 18_ut;
+const Unit c_chevronHalf = 3_ut;
+
+void paintChevron(Widget* widget, Canvas& canvas, const Point& center)
+{
+	const int32_t h = widget->pixel(c_chevronHalf);
+	canvas.setPenThickness(widget->pixel(2_ut));
+	canvas.drawLine(center.x - h, center.y - h / 2, center.x, center.y + h - h / 2);
+	canvas.drawLine(center.x, center.y + h - h / 2, center.x + h, center.y - h / 2);
+	canvas.setPenThickness(1);
+}
+
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.DropDown", DropDown, Widget)
 
@@ -160,20 +179,16 @@ Object* DropDown::getSelectedData() const
 
 Size DropDown::getPreferredSize(const Size& hint) const
 {
-	const int32_t marginX = pixel(16_ut);
-	const int32_t marginY = pixel(4_ut);
-
 	const FontMetric fm = getFontMetric();
 
-	int32_t h = fm.getHeight();
 	int32_t w = 0;
 	for (const auto& item : m_items)
-	{
-		int32_t iw = fm.getExtent(item.text).cx;
-		w = std::max(w, iw);
-	}
+		w = std::max(w, fm.getExtent(item.text).cx);
 
-	return Size(w + marginX * 2, h + marginY * 2);
+	return Size(
+		w + pixel(c_fieldPad) * 2 + pixel(c_chevronArea),
+		fm.getHeight() + pixel(c_fieldPadY) * 2
+	);
 }
 
 Size DropDown::getMaximumSize() const
@@ -258,47 +273,35 @@ void DropDown::eventPaint(PaintEvent* event)
 	const Rect rcInner = getInnerRect();
 	const Point at = rcInner.getTopLeft();
 	const Size size = rcInner.getSize();
-	const int32_t sep = pixel(14_ut);
-	bool hover = isEnable(true) && m_hover;
+	const int32_t radius = pixel(c_controlRadius);
+	const int32_t chevron = pixel(c_chevronArea);
+	const int32_t pad = pixel(c_fieldPad);
+	const bool enabled = isEnable(true);
+	const bool hover = enabled && m_hover;
 
+	const Rect rcField(at, size);
 	const Rect rcText(
-		at.x + pixel(4_ut),
-		at.y + 2,
-		at.x + size.cx - sep - 2,
-		at.y + size.cy - 2
+		at.x + pad,
+		at.y,
+		at.x + size.cx - chevron,
+		at.y + size.cy
 	);
-	const Rect rcButton(
-		at.x + size.cx - sep,
-		at.y + 1,
-		at.x + size.cx - 1,
-		at.y + size.cy - 1
-	);
+
+	// Cover the whole client area first; the rounded field leaves the four
+	// corners of the rectangle uncovered.
+	canvas.setBackground(ss->getColor(getParent(), L"background-color"));
+	canvas.fillRect(rcInner);
 
 	canvas.setBackground(ss->getColor(this, hover ? L"background-color-hover" : L"background-color"));
-	canvas.fillRect(Rect(at, size));
+	canvas.fillRoundRect(rcField, radius);
 
-	canvas.setBackground(ss->getColor(this, L"background-color-button"));
-	canvas.fillRect(rcButton);
+	canvas.setForeground(ss->getColor(this, hover ? L"color-hover" : L"border-color"));
+	canvas.drawRoundRect(rcField, radius);
 
-	if (hover)
-	{
-		canvas.setForeground(ss->getColor(this, L"color-hover"));
-		canvas.drawRect(Rect(at, size));
-		canvas.drawLine(rcButton.left - 1, rcButton.top, rcButton.left - 1, rcButton.bottom);
-	}
+	canvas.setForeground(ss->getColor(this, L"color-arrow"));
+	paintChevron(this, canvas, Point(at.x + size.cx - chevron / 2, at.y + size.cy / 2));
 
-	const Point center = rcButton.getCenter();
-	const Point pnts[] =
-	{
-		Point(center.x - pixel(3_ut), center.y - pixel(1_ut)),
-		Point(center.x + pixel(2_ut), center.y - pixel(1_ut)),
-		Point(center.x - pixel(1_ut), center.y + pixel(2_ut))
-	};
-
-	canvas.setBackground(ss->getColor(this, L"color-arrow"));
-	canvas.fillPolygon(pnts, 3);
-
-	canvas.setForeground(ss->getColor(this, isEnable(true) ? L"color" : L"color-disabled"));
+	canvas.setForeground(ss->getColor(this, enabled ? L"color" : L"color-disabled"));
 
 	if (!m_multiple)
 		canvas.drawText(rcText, getSelectedItem(), AnLeft, AnCenter);

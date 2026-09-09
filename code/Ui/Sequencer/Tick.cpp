@@ -20,6 +20,9 @@ namespace traktor::ui
 
 const Unit c_sequenceHeight = 25_ut;
 
+/*! Half the width and height of the diamond marking a key. */
+const Unit c_tickRadius = 5_ut;
+
 	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.Tick", Tick, Key)
@@ -50,13 +53,13 @@ void Tick::getRect(SequencerControl* sequencer, const Sequence* sequence, const 
 {
 	const int32_t sequenceHeight = sequencer->pixel(c_sequenceHeight);
 	const int32_t x = sequence->clientFromTime(m_time);
-	const int32_t hw = sequencer->pixel(3_ut);
-	const int32_t hh = sequencer->pixel(2_ut);
+	const int32_t r = sequencer->pixel(c_tickRadius);
+	const int32_t cy = rcClient.top + sequenceHeight / 2;
 
-	outRect.left = x - hw;
-	outRect.top = rcClient.top + hh;
-	outRect.right = x + hw + 1;
-	outRect.bottom = rcClient.top + sequenceHeight - hh - 1;
+	outRect.left = x - r;
+	outRect.top = cy - r;
+	outRect.right = x + r + 1;
+	outRect.bottom = cy + r + 1;
 }
 
 void Tick::paint(SequencerControl* sequencer, ui::Canvas& canvas, const Sequence* sequence, const Rect& rcClient, int scrollOffset)
@@ -64,16 +67,17 @@ void Tick::paint(SequencerControl* sequencer, ui::Canvas& canvas, const Sequence
 	const StyleSheet* ss = sequencer->getStyleSheet();
 
 	const int32_t sequenceHeight = sequencer->pixel(c_sequenceHeight);
-	const int32_t x = sequence->clientFromTime(m_time) - scrollOffset;
-	const int32_t hw = sequencer->pixel(3_ut);
-	const int32_t hh = sequencer->pixel(2_ut);
+	const int32_t cx = rcClient.left + sequence->clientFromTime(m_time) - scrollOffset;
+	const int32_t cy = rcClient.top + sequenceHeight / 2;
+	const int32_t r = sequencer->pixel(c_tickRadius);
 
-	Rect rc(
-		rcClient.left + x - hw,
-		rcClient.top + hh,
-		rcClient.left + x + hw + 1,
-		rcClient.top + sequenceHeight - hh - 1
-	);
+	const Point pnts[] =
+	{
+		Point(cx, cy - r),
+		Point(cx + r, cy),
+		Point(cx, cy + r),
+		Point(cx - r, cy)
+	};
 
 	const bool enabled = sequencer->isEnable(true);
 	const bool selected = (sequence->getSelectedKey() == this);
@@ -86,8 +90,8 @@ void Tick::paint(SequencerControl* sequencer, ui::Canvas& canvas, const Sequence
 
 	canvas.setBackground(ss->getColor(this, background));
 	canvas.setForeground(ss->getColor(this, enabled ? L"color" : L"color-disabled"));
-	canvas.fillRect(rc);
-	canvas.drawRect(rc);
+	canvas.fillPolygon(pnts, 4);
+	canvas.drawPolygon(pnts, 4);
 }
 
 }

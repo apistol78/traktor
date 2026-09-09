@@ -10,10 +10,18 @@
 #include "Ui/Application.h"
 #include "Ui/Button.h"
 #include "Ui/Canvas.h"
+#include "Ui/StyleConstants.h"
 #include "Ui/StyleSheet.h"
 
 namespace traktor::ui
 {
+	namespace
+	{
+
+const Unit c_marginX = 16_ut;
+const Unit c_marginY = 6_ut;
+
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.Button", Button, Widget)
 
@@ -21,6 +29,8 @@ bool Button::create(Widget* parent, const std::wstring& text, uint32_t style)
 {
 	if (!Widget::create(parent, style | WsFocus))
 		return false;
+
+	m_defaultButton = ((style & WsDefaultButton) != 0);
 
 	addEventHandler< MouseTrackEvent >(this, &Button::eventMouseTrack);
 	addEventHandler< MouseButtonDownEvent >(this, &Button::eventButtonDown);
@@ -34,13 +44,13 @@ bool Button::create(Widget* parent, const std::wstring& text, uint32_t style)
 Size Button::getPreferredSize(const Size& hint) const
 {
 	// Calculate preferred size from new text.
-	const int32_t marginX = pixel(16_ut);
-	const int32_t marginY = pixel(4_ut);
-
 	const FontMetric fm = getFontMetric();
 	const Size xt = fm.getExtent(getText());
 
-	return Size(xt.cx + marginX * 2, xt.cy + marginY * 2);
+	return Size(
+		xt.cx + pixel(c_marginX) * 2,
+		xt.cy + pixel(c_marginY) * 2
+	);
 }
 
 Size Button::getMaximumSize() const
@@ -83,27 +93,43 @@ void Button::eventPaint(PaintEvent* event)
 {
 	const StyleSheet* ss = getStyleSheet();
 	Canvas& canvas = event->getCanvas();
-	Rect rcInner = getInnerRect();
+	const Rect rcInner = getInnerRect();
+	const int32_t radius = pixel(c_controlRadius);
 
-	const bool hover = isEnable(true) && m_hover;
+	const bool enabled = isEnable(true);
+	const bool hover = enabled && m_hover;
 
-	if (m_pushed)
-		canvas.setBackground(ss->getColor(this, L"background-color-pushed"));
-	else
-		canvas.setBackground(ss->getColor(this, hover ? L"background-color-hover" : L"background-color"));
-
+	// Cover the whole client area first; the rounded button leaves the four
+	// corners of the rectangle uncovered.
+	canvas.setBackground(ss->getColor(getParent(), L"background-color"));
 	canvas.fillRect(rcInner);
 
-	canvas.setForeground(ss->getColor(this, L"border-color"));
-	canvas.drawRect(rcInner);
+	// The default button of a dialog is filled with the theme accent.
+	const wchar_t* background;
+	if (!enabled)
+		background = L"background-color-disabled";
+	else if (m_defaultButton)
+		background = m_pushed ? L"background-color-default-pushed" : (hover ? L"background-color-default-hover" : L"background-color-default");
+	else
+		background = m_pushed ? L"background-color-pushed" : (hover ? L"background-color-hover" : L"background-color");
 
-	if (m_pushed)
+	canvas.setBackground(ss->getColor(this, background));
+	canvas.fillRoundRect(rcInner, radius);
+
+	// An accent fill needs no outline; it already reads as a solid shape.
+	if (!(enabled && m_defaultButton))
 	{
-		const int32_t offset = pixel(1_ut);
-		rcInner = rcInner.offset(offset, offset);
+		canvas.setForeground(ss->getColor(this, enabled ? L"border-color" : L"border-color-disabled"));
+		canvas.drawRoundRect(rcInner, radius);
 	}
 
-	canvas.setForeground(ss->getColor(this, isEnable(true) ? L"color" : L"color-disabled"));
+	const wchar_t* color;
+	if (!enabled)
+		color = L"color-disabled";
+	else
+		color = m_defaultButton ? L"color-default" : L"color";
+
+	canvas.setForeground(ss->getColor(this, color));
 	canvas.drawText(rcInner, getText(), AnCenter, AnCenter);
 
 	event->consume();
