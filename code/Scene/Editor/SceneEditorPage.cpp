@@ -1897,6 +1897,16 @@ void SceneEditorPage::eventContextPostFrame(PostFrameEvent* event)
 			row->add(str(L"%d", rss.programs));
 			m_gridResources->addRow(row);
 		}
+
+		physics::PhysicsStatistics pms;
+		m_context->getPhysicsManager()->getStatistics(pms);
+
+		{
+			Ref< ui::GridRow > row = new ui::GridRow();
+			row->add(L"Physics bodies");
+			row->add(str(L"%d", pms.bodyCount));
+			m_gridResources->addRow(row);
+		}
 	}
 
 	updateStatusBar();

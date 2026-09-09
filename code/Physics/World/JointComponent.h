@@ -35,6 +35,8 @@ class T_DLLCLASS JointComponent : public world::IEntityComponent
 public:
 	explicit JointComponent(PhysicsManager* physicsManager, const JointDesc* jointDesc);
 
+	virtual ~JointComponent();
+
 	virtual void destroy() override final;
 
 	virtual void setOwner(world::Entity* owner) override final;

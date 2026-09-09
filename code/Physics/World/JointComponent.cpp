@@ -26,6 +26,13 @@ JointComponent::JointComponent(PhysicsManager* physicsManager, const JointDesc* 
 {
 }
 
+JointComponent::~JointComponent()
+{
+	// Scene editor drops replaced components through reference counting only;
+	// ensure joint is destroyed so it's removed from physics manager.
+	destroy();
+}
+
 void JointComponent::destroy()
 {
 	safeDestroy(m_joint);

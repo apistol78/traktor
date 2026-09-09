@@ -36,6 +36,13 @@ RigidBodyComponent::RigidBodyComponent(
 	}
 }
 
+RigidBodyComponent::~RigidBodyComponent()
+{
+	// Scene editor drops replaced components through reference counting only;
+	// ensure body is destroyed so it's removed from physics manager.
+	destroy();
+}
+
 void RigidBodyComponent::destroy()
 {
 	m_eventCollide = nullptr;
