@@ -166,6 +166,11 @@ public:
 		return RectBase< ValueType >(left - x, top - y, right + x, bottom + y);
 	}
 
+	RectBase< ValueType > inflate(ValueType xy) const
+	{
+		return RectBase< ValueType >(left - xy, top - xy, right + xy, bottom + xy);
+	}
+
 	ValueType area() const
 	{
 		return (right - left) * (bottom - top);

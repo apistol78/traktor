@@ -27,4 +27,7 @@ const Unit c_controlRadius = 4_ut;
  */
 const Unit c_surfaceRadius = 5_ut;
 
+/*! */
+const Unit c_propertyButtonMargin = 1_ut;
+
 }

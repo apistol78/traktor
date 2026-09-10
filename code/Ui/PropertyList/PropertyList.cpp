@@ -1,27 +1,30 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2023 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include <algorithm>
-#include <stack>
+#include "Ui/PropertyList/PropertyList.h"
+
 #include "Core/Misc/String.h"
 #include "Ui/Application.h"
 #include "Ui/HierarchicalState.h"
+#include "Ui/PropertyList/PropertyItem.h"
+#include "Ui/PropertyList/PropertySelectionChangeEvent.h"
 #include "Ui/ScrollBar.h"
 #include "Ui/StyleBitmap.h"
+#include "Ui/StyleConstants.h"
 #include "Ui/StyleSheet.h"
-#include "Ui/PropertyList/PropertyItem.h"
-#include "Ui/PropertyList/PropertyList.h"
-#include "Ui/PropertyList/PropertySelectionChangeEvent.h"
+
+#include <algorithm>
+#include <stack>
 
 namespace traktor::ui
 {
-	namespace
-	{
+namespace
+{
 
 enum Modes
 {
@@ -42,7 +45,7 @@ std::wstring buildPath(const PropertyItem* item)
 		const RefArray< PropertyItem >& children = parent->getChildItems();
 
 		RefArray< PropertyItem >::const_iterator it = std::find(children.begin(), children.end(), item);
-		T_FATAL_ASSERT (it != children.end());
+		T_FATAL_ASSERT(it != children.end());
 
 		path = buildPath(parent) + L"/" + path + L":" + toString(std::distance(children.begin(), it));
 	}
@@ -105,15 +108,15 @@ void recursiveCollapse(PropertyItem* item)
 	item->collapse();
 }
 
-		}
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.PropertyList", PropertyList, Widget)
 
 PropertyList::PropertyList()
-:	m_guidResolver(0)
-,	m_separator(0)
-,	m_mode(MdNone)
-,	m_columnHeader(true)
+	: m_guidResolver(0)
+	, m_separator(0)
+	, m_mode(MdNone)
+	, m_columnHeader(true)
 {
 	m_columnNames[0] = L"Name";
 	m_columnNames[1] = L"Value";
@@ -246,12 +249,9 @@ int PropertyList::getPropertyItems(RefArray< PropertyItem >& propertyItems, int 
 
 				RefArray< PropertyItem >& childItems = item->getChildItems();
 				if (!childItems.empty())
-				{
 					stack.push(std::make_pair(
 						childItems.begin(),
-						childItems.end()
-					));
-				}
+						childItems.end()));
 			}
 		}
 		else
@@ -294,10 +294,8 @@ Ref< PropertyItem > PropertyList::getPropertyItemFromPosition(const Point& posit
 
 	int32_t id = (y + scrollBarOffset) / pixel(m_propertyItemHeight);
 	for (const auto item : propertyItems)
-	{
 		if (id-- <= 0)
 			return item;
-	}
 
 	return 0;
 }
@@ -431,12 +429,14 @@ void PropertyList::placeItems()
 
 	// Issue resize of in-place controls on expanded items.
 	Rect rcItem(
-		rcInner.left, -scrollBarOffset + top,
-		rcInner.right - scrollBarWidth, -scrollBarOffset + top + pixel(m_propertyItemHeight) - 1
-	);
+		rcInner.left,
+		-scrollBarOffset + top,
+		rcInner.right - scrollBarWidth,
+		-scrollBarOffset + top + pixel(m_propertyItemHeight) - 1);
 	for (auto item : propertyItems)
 	{
-		const Rect rcValue(rcItem.left + pixel(m_separator) + 1, rcItem.top, rcItem.right, rcItem.bottom);
+		const int32_t margin = pixel(c_propertyButtonMargin);
+		const Rect rcValue(rcItem.left + pixel(m_separator) + margin + 1, rcItem.top + margin, rcItem.right - margin, rcItem.bottom - margin);
 		item->resizeInPlaceControls(rcValue, childRects);
 		rcItem = rcItem.offset(0, pixel(m_propertyItemHeight));
 	}
@@ -650,17 +650,14 @@ void PropertyList::eventMouseMove(MouseMoveEvent* event)
 
 		event->consume();
 	}
-	else
+	else if (p.x >= pixel(m_separator - 2_ut) && p.x <= pixel(m_separator + 2_ut))
 	{
-		if (p.x >= pixel(m_separator - 2_ut) && p.x <= pixel(m_separator + 2_ut))
-		{
-			setCursor(Cursor::SizeWE);
-			event->consume();
-		}
-		else if (m_mousePropertyItem)
-		{
-			m_mousePropertyItem->mouseMove(event);
-		}
+		setCursor(Cursor::SizeWE);
+		event->consume();
+	}
+	else if (m_mousePropertyItem)
+	{
+		m_mousePropertyItem->mouseMove(event);
 	}
 }
 
@@ -685,8 +682,7 @@ void PropertyList::eventSize(SizeEvent* event)
 		rc.right - scrollWidth,
 		rc.top + top,
 		rc.right,
-		rc.bottom
-	));
+		rc.bottom));
 
 	updateScrollBar();
 	placeItems();
@@ -718,24 +714,24 @@ void PropertyList::eventPaint(PaintEvent* event)
 		canvas.setForeground(ss->getColor(this, enabled ? L"color" : L"color-disabled"));
 		canvas.drawText(
 			Rect(
-				rcInner.left + 2, rcInner.top,
-				rcInner.left + pixel(m_separator) - 2, rcInner.top + pixel(c_columnsHeight)
-			),
+				rcInner.left + 2,
+				rcInner.top,
+				rcInner.left + pixel(m_separator) - 2,
+				rcInner.top + pixel(c_columnsHeight)),
 			m_columnNames[0],
 			AnLeft,
-			AnCenter
-		);
+			AnCenter);
 
 		canvas.setForeground(ss->getColor(this, enabled ? L"color" : L"color-disabled"));
 		canvas.drawText(
 			Rect(
-				rcInner.left + pixel(m_separator) + 2, rcInner.top,
-				rcInner.right, rcInner.top + pixel(c_columnsHeight)
-			),
+				rcInner.left + pixel(m_separator) + 2,
+				rcInner.top,
+				rcInner.right,
+				rcInner.top + pixel(c_columnsHeight)),
 			m_columnNames[1],
 			AnLeft,
-			AnCenter
-		);
+			AnCenter);
 	}
 
 	// Get visible items.
@@ -744,9 +740,10 @@ void PropertyList::eventPaint(PaintEvent* event)
 
 	// Draw property items.
 	Rect rcItem(
-		rcInner.left, -scrollBarOffset + top,
-		rcInner.right - scrollBarWidth, -scrollBarOffset + top + pixel(m_propertyItemHeight) - 1
-	);
+		rcInner.left,
+		-scrollBarOffset + top,
+		rcInner.right - scrollBarWidth,
+		-scrollBarOffset + top + pixel(m_propertyItemHeight) - 1);
 	RefArray< PropertyItem >::iterator i = propertyItems.begin();
 	while (rcItem.bottom < top && i != propertyItems.end())
 	{
@@ -781,8 +778,7 @@ void PropertyList::eventPaint(PaintEvent* event)
 		// Draw vertical item separator.
 		canvas.drawLine(
 			Point(rcItem.left + pixel(m_separator), rcItem.top),
-			Point(rcItem.left + pixel(m_separator), rcItem.bottom)
-		);
+			Point(rcItem.left + pixel(m_separator), rcItem.bottom));
 
 		rcItem = rcItem.offset(0, pixel(m_propertyItemHeight));
 		++i;

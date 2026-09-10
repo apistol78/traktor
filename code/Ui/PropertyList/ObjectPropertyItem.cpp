@@ -6,6 +6,8 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Ui/PropertyList/ObjectPropertyItem.h"
+
 #include "Core/Math/MathUtils.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/String.h"
@@ -13,23 +15,20 @@
 #include "Ui/Application.h"
 #include "Ui/Clipboard.h"
 #include "Ui/Command.h"
+#include "Ui/MiniButton.h"
+#include "Ui/PropertyList/PropertyList.h"
 #include "Ui/StyleBitmap.h"
 #include "Ui/StyleSheet.h"
-#include "Ui/MiniButton.h"
-#include "Ui/PropertyList/ObjectPropertyItem.h"
-#include "Ui/PropertyList/PropertyList.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.ObjectPropertyItem", ObjectPropertyItem, PropertyItem)
 
 ObjectPropertyItem::ObjectPropertyItem(const std::wstring& text, const TypeInfo* objectType, Object* object)
-:	PropertyItem(text)
-,	m_objectType(objectType)
-,	m_object(object)
+	: PropertyItem(text)
+	, m_objectType(objectType)
+	, m_object(object)
 {
 }
 
@@ -90,9 +89,7 @@ void ObjectPropertyItem::resizeInPlaceControls(const Rect& rc, std::vector< Widg
 				rc.right - rc.getHeight(),
 				rc.top,
 				rc.right,
-				rc.bottom
-			)
-		));
+				rc.bottom)));
 }
 
 void ObjectPropertyItem::paintValue(PropertyList* parent, Canvas& canvas, const Rect& rc)
@@ -138,5 +135,4 @@ void ObjectPropertyItem::eventClick(ButtonClickEvent* event)
 	notifyCommand(Command(L"Property.Browse"));
 }
 
-	}
 }

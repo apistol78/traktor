@@ -29,11 +29,10 @@ namespace
 const Unit c_tabPad = 20_ut;
 
 /*! Space left above the tabs so they sit slightly inset in the strip. */
-const Unit c_tabOuterGap = 4_ut;
+const Unit c_tabOuterGap = 6_ut;
 
 /*! Thickness of the accent bar marking the selected tab. */
 const Unit c_tabAccent = 2_ut;
-
 
 /*! Fill a tab, rounded on the outer edge and square where it meets the content. */
 void fillTabShape(Canvas& canvas, const Rect& rc, int32_t radius, bool bottom)
@@ -507,13 +506,14 @@ void Tab::eventPaint(PaintEvent* event)
 					rcTab.top += pixel(c_tabOuterGap);
 				else
 					rcTab.bottom -= pixel(c_tabOuterGap);
-				if (m_drawLine)
-				{
-					if (!m_bottom)
-						rcTab.bottom -= 1;
-					else
-						rcTab.top += 1;
-				}
+
+				//if (m_drawLine)
+				//{
+				//	if (!m_bottom)
+				//		rcTab.bottom -= 1;
+				//	else
+				//		rcTab.top += 1;
+				//}
 
 				// Highlight selected tab.
 				if (page == m_selectedPage)
