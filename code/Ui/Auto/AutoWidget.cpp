@@ -404,6 +404,13 @@ void AutoWidget::eventDoubleClick(MouseDoubleClickEvent* event)
 
 void AutoWidget::eventMouseMove(MouseMoveEvent* event)
 {
+	// Cell rects are in unscrolled content space, except header and footer.
+	auto cellUpdateRect = [this](AutoWidgetCell* cell) -> Rect {
+		if (cell == m_headerCell || cell == m_footerCell)
+			return cell->getRect();
+		return cell->getRect().offset(m_scrollOffset);
+	};
+
 	Ref< AutoWidgetCell > hitItem = hitTest(event->getPosition());
 	if (m_hoverCell != hitItem)
 	{
@@ -411,12 +418,13 @@ void AutoWidget::eventMouseMove(MouseMoveEvent* event)
 		if (m_hoverCell != nullptr)
 		{
 			m_hoverCell->mouseLeave();
-			updateRect = m_hoverCell->getRect();
+			updateRect = cellUpdateRect(m_hoverCell);
 		}
 		if ((m_hoverCell = hitItem) != nullptr)
 		{
 			m_hoverCell->mouseEnter();
-			updateRect = updateRect.contain(m_hoverCell->getRect());
+			const Rect rc = cellUpdateRect(m_hoverCell);
+			updateRect = (updateRect.area() != 0) ? updateRect.contain(rc) : rc;
 		}
 		update(&updateRect);
 	}
