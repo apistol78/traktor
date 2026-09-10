@@ -253,7 +253,15 @@ void TopLevelWidgetHost::dispatchFocus(bool gained)
 
 void TopLevelWidgetHost::captureLost()
 {
+	// Genuine loss, e.g. another window took the capture; synthesize a button
+	// release so the widget's internal drag state doesn't get stuck.
+	VirtualWidget* lost = m_capture;
 	m_capture = nullptr;
+	if (lost != nullptr)
+	{
+		MouseButtonUpEvent event(lost->getOwner(), MbtLeft, lost->fromHost(m_lastMousePosition));
+		lost->getOwner()->raiseEvent(&event);
+	}
 }
 
 ITopLevelWidgetHost::IPeer* TopLevelWidgetHost::getPeer() const

@@ -151,7 +151,10 @@ public:
 
 	virtual void setCapture() override
 	{
-		SetCapture(m_hWnd);
+		// Re-capturing an already captured window still sends WM_CAPTURECHANGED
+		// to ourselves, which would be mistaken for losing the capture.
+		if (GetCapture() != (HWND)m_hWnd)
+			SetCapture(m_hWnd);
 	}
 
 	virtual void releaseCapture() override
@@ -1060,7 +1063,8 @@ protected:
 
 	LRESULT eventCaptureChanged(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& outPass)
 	{
-		if (m_host != nullptr)
+		// Capture moving to ourselves is not a loss.
+		if ((HWND)lParam != (HWND)m_hWnd && m_host != nullptr)
 			m_host->captureLost();
 		outPass = true;
 		return 0;

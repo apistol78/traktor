@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2025 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -142,7 +142,15 @@ void Dock::eventButtonDown(MouseButtonDownEvent* event)
 	const Point position = event->getPosition();
 	Ref< DockPane > pane;
 
-	if ((pane = m_pane->getPaneFromPosition(position)) != nullptr)
+	// Splitter first; at pane edges both tests match and the move handler
+	// already promised a splitter grab through the cursor.
+	if ((pane = m_pane->getSplitterFromPosition(position)) != nullptr && pane->hitSplitter(position))
+	{
+		m_splittingPane = pane;
+		setCursor(pane->m_vertical ? Cursor::SizeNS : Cursor::SizeWE);
+		setCapture();
+	}
+	else if ((pane = m_pane->getPaneFromPosition(position)) != nullptr)
 	{
 		if (pane->hitGripperClose(position))
 		{
@@ -157,15 +165,6 @@ void Dock::eventButtonDown(MouseButtonDownEvent* event)
 		{
 			pane->showTab(tabIndex);
 			update();
-		}
-	}
-	else if ((pane = m_pane->getSplitterFromPosition(position)) != nullptr)
-	{
-		if (pane->hitSplitter(position))
-		{
-			m_splittingPane = pane;
-			setCursor(pane->m_vertical ? Cursor::SizeNS : Cursor::SizeWE);
-			setCapture();
 		}
 	}
 
@@ -190,8 +189,6 @@ void Dock::eventMouseMove(MouseMoveEvent* event)
 			pane &&
 			pane->hitSplitter(position))
 			cursor = pane->m_vertical ? Cursor::SizeNS : Cursor::SizeWE;
-
-		Widget::update(nullptr, false);
 	}
 	else
 	{
@@ -203,8 +200,6 @@ void Dock::eventMouseMove(MouseMoveEvent* event)
 		AlignedVector< WidgetRect > widgetRects;
 		m_splittingPane->update(paneRect, widgetRects);
 		setChildRects(&widgetRects[0], (uint32_t)widgetRects.size(), true);
-
-		update();
 	}
 
 	setCursor(cursor);
@@ -268,11 +263,6 @@ void Dock::eventDoubleClick(MouseDoubleClickEvent* event)
 void Dock::eventPaint(PaintEvent* event)
 {
 	Canvas& canvas = event->getCanvas();
-	const Rect innerRect = getInnerRect();
-	const StyleSheet* ss = getStyleSheet();
-
-	canvas.setBackground(ss->getColor(this, isEnable(true) ? L"background-color" : L"background-color-disabled"));
-	canvas.fillRect(innerRect);
 
 	const Point position = getMousePosition();
 	m_pane->draw(canvas, position);
