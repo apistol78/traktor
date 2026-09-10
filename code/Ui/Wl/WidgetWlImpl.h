@@ -390,6 +390,19 @@ public:
 
 		if (m_rect.getSize() != fromSize)
 		{
+			// Programmatic resize of a decorated top-level; commit the new
+			// content size so compositor side geometry and decorations follow,
+			// otherwise input is routed against the stale extent until the
+			// next compositor configure.
+			if (m_data.frame != nullptr && m_data.configured)
+			{
+				m_data.logicalWidth = m_context->toLogical(m_rect.getWidth());
+				m_data.logicalHeight = m_context->toLogical(m_rect.getHeight());
+				libdecor_state* state = libdecor_state_new(m_data.logicalWidth, m_data.logicalHeight);
+				libdecor_frame_commit(m_data.frame, state, nullptr);
+				libdecor_state_free(state);
+			}
+
 			SizeEvent sizeEvent(m_owner, m_rect.getSize());
 			m_owner->raiseEvent(&sizeEvent);
 		}
