@@ -1304,10 +1304,12 @@ void DatabaseView::updateGridInstances(const db::Instance* highlightInstance)
 			if (previewTypes.find(instanceType) != previewTypes.end())
 			{
 				Ref< db::Instance > childInstanceRef = childInstance;
+				const int32_t thumbSize = m_listInstances->getThumbnailDimension();
 				m_previewJobs.push_back(JobManager::getInstance().add([=, this]() {
 					item->setImage(browsePreview->generate(
 						m_editor,
-						childInstanceRef), alpha);
+						childInstanceRef,
+						thumbSize), alpha);
 					m_listInstances->requestUpdate();
 				}));
 				break;

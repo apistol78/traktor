@@ -27,6 +27,19 @@ const Unit c_controlRadius = 4_ut;
  */
 const Unit c_surfaceRadius = 5_ut;
 
+/*! Height added to the font size to form a row of a list.
+ *
+ * PropertyList, GridView and TreeView share this so their rows line up.
+ *
+ * \ingroup UI
+ */
+const Unit c_listRowPadding = 14_ut;
+
+/*! Height of the column header of a list.
+ * \ingroup UI
+ */
+const Unit c_listHeaderHeight = 28_ut;
+
 /*! */
 const Unit c_propertyButtonMargin = 1_ut;
 

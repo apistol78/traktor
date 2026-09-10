@@ -43,7 +43,7 @@ TypeInfoSet EntityBrowsePreview::getPreviewTypes() const
 	return makeTypeInfoSet< EntityData >();
 }
 
-Ref< ui::IBitmap > EntityBrowsePreview::generate(editor::IEditor* editor, db::Instance* instance) const
+Ref< ui::IBitmap > EntityBrowsePreview::generate(editor::IEditor* editor, db::Instance* instance, int32_t size) const
 {
 	Ref< const EntityData > asset = instance->getObject< EntityData >();
 	if (!asset)
@@ -73,7 +73,7 @@ Ref< ui::IBitmap > EntityBrowsePreview::generate(editor::IEditor* editor, db::In
 		{
 			const TypeInfoSet previewTypes = browsePreview->getPreviewTypes();
 			if (previewTypes.find(assetType) != previewTypes.end())
-				return browsePreview->generate(editor, sourceInstance);
+				return browsePreview->generate(editor, sourceInstance, size);
 		}
 	}
 

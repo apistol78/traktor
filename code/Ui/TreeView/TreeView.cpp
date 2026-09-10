@@ -6,6 +6,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Ui/StyleConstants.h"
 #include "Ui/TreeView/TreeView.h"
 
 #include "Ui/Edit.h"
@@ -199,7 +200,9 @@ int32_t TreeView::getMaxImageHeight() const
 
 void TreeView::layoutCells(const Rect& rc)
 {
-	int32_t height = getFontMetric().getHeight() + pixel(6_ut);
+	// Row height shared with PropertyList and GridView.
+	int32_t height = pixel(getFont().getSize() + c_listRowPadding);
+	height = std::max(height, getFontMetric().getHeight());
 	RefArray< TreeViewItem > items = getItems(GfDescendants | GfExpandedOnly);
 
 	int32_t maxWidth = rc.right - rc.left;

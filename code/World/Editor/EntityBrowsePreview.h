@@ -34,7 +34,7 @@ public:
 
 	virtual TypeInfoSet getPreviewTypes() const override final;
 
-	virtual Ref< ui::IBitmap > generate(editor::IEditor* editor, db::Instance* instance) const override final;
+	virtual Ref< ui::IBitmap > generate(editor::IEditor* editor, db::Instance* instance, int32_t size) const override final;
 
 private:
 	RefArray< const IBrowsePreview > m_browsePreview;

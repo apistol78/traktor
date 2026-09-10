@@ -1,15 +1,16 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Editor/App/SettingsDialog.h"
+
 #include "Core/Misc/String.h"
 #include "Editor/ISettingsPage.h"
 #include "Editor/App/GeneralSettingsPage.h"
-#include "Editor/App/SettingsDialog.h"
 #include "I18N/Text.h"
 #include "Ui/Application.h"
 #include "Ui/FloodLayout.h"
@@ -55,7 +56,7 @@ bool SettingsDialog::create(ui::Widget* parent, const PropertyGroup* originalSet
 		700_ut,
 		600_ut,
 		ui::ConfigDialog::WsCenterParent | ui::ConfigDialog::WsDefaultResizable,
-		new ui::FloodLayout()
+		new ui::FloodLayout(ui::Size(parent->pixel(4_ut), 0))
 	))
 		return false;
 

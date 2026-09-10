@@ -35,7 +35,7 @@ TypeInfoSet AnimationBrowsePreview::getPreviewTypes() const
 	return makeTypeInfoSet< AnimationAsset, SkeletonAsset >();
 }
 
-Ref< ui::IBitmap > AnimationBrowsePreview::generate(editor::IEditor* editor, db::Instance* instance) const
+Ref< ui::IBitmap > AnimationBrowsePreview::generate(editor::IEditor* editor, db::Instance* instance, int32_t size) const
 {
 	Ref< const editor::Asset > asset = instance->getObject< editor::Asset >();
 	if (!asset)
@@ -43,8 +43,8 @@ Ref< ui::IBitmap > AnimationBrowsePreview::generate(editor::IEditor* editor, db:
 
 	Ref< drawing::Image > meshThumb = new drawing::Image(
 		drawing::PixelFormat::getR8G8B8A8(),
-		128,
-		128
+		size * 2,
+		size * 2
 	);
 	meshThumb->clear(Color4f(0.4f, 0.4f, 0.6f, 0.0f));
 
@@ -126,8 +126,8 @@ Ref< ui::IBitmap > AnimationBrowsePreview::generate(editor::IEditor* editor, db:
 	raster.submit();
 
 	drawing::ScaleFilter scaleFilter(
-		64,
-		64,
+		size,
+		size,
 		drawing::ScaleFilter::MnAverage,
 		drawing::ScaleFilter::MgLinear
 	);

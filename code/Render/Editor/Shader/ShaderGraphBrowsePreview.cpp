@@ -22,14 +22,14 @@ TypeInfoSet ShaderGraphBrowsePreview::getPreviewTypes() const
 	return makeTypeInfoSet< ShaderGraph >();
 }
 
-Ref< ui::IBitmap > ShaderGraphBrowsePreview::generate(editor::IEditor* editor, db::Instance* instance) const
+Ref< ui::IBitmap > ShaderGraphBrowsePreview::generate(editor::IEditor* editor, db::Instance* instance, int32_t size) const
 {
 	Ref< const ShaderGraph > shaderGraph = instance->getObject< ShaderGraph >();
 	if (!shaderGraph)
 		return nullptr;
 
-	const int32_t w = 64;
-	const int32_t h = 64;
+	const int32_t w = size;
+	const int32_t h = size;
 	const int32_t m = 4;
 	const float sw = (float)100 / 100.0f;
 	const float ns = (float)200 / 100.0f;

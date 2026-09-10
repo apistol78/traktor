@@ -48,7 +48,11 @@ class T_DLLCLASS IBrowsePreview : public Object
 public:
 	virtual TypeInfoSet getPreviewTypes() const = 0;
 
-	virtual Ref< ui::IBitmap > generate(IEditor* editor, db::Instance* instance) const = 0;
+	/*! Generate a preview image.
+	 *
+	 * \param size Requested dimension, in physical pixels, of the square image.
+	 */
+	virtual Ref< ui::IBitmap > generate(IEditor* editor, db::Instance* instance, int32_t size) const = 0;
 };
 
 }

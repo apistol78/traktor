@@ -242,8 +242,10 @@ void BrowseInstanceDialog::updatePreviewList()
 				ui::PreviewItem* item = previewItems->get(i);
 				if (!item->getImage())
 				{
+					// Read the size here; the task runs off the UI thread.
+					const int32_t thumbSize = m_listInstances->getThumbnailDimension();
 					m_previewTasks.put([=, this]() {
-						taskGeneratePreview(item);
+						taskGeneratePreview(item, thumbSize);
 					});
 					m_previewTaskEvent.pulse();
 				}
@@ -274,7 +276,7 @@ void BrowseInstanceDialog::eventListDoubleClick(ui::MouseDoubleClickEvent* event
 		endModal(ui::DialogResult::Ok);
 }
 
-void BrowseInstanceDialog::taskGeneratePreview(ui::PreviewItem* item)
+void BrowseInstanceDialog::taskGeneratePreview(ui::PreviewItem* item, int32_t size)
 {
 	Ref< db::Instance > instance = item->getData< db::Instance >(L"INSTANCE");
 	T_ASSERT(instance);
@@ -287,7 +289,8 @@ void BrowseInstanceDialog::taskGeneratePreview(ui::PreviewItem* item)
 		{
 			item->setImage((*i)->generate(
 				m_editor,
-				instance));
+				instance,
+				size));
 			m_listInstances->requestUpdate();
 			break;
 		}

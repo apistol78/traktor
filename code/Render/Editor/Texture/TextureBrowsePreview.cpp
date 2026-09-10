@@ -28,7 +28,7 @@ TypeInfoSet TextureBrowsePreview::getPreviewTypes() const
 	return makeTypeInfoSet< TextureAsset >();
 }
 
-Ref< ui::IBitmap > TextureBrowsePreview::generate(editor::IEditor* editor, db::Instance* instance) const
+Ref< ui::IBitmap > TextureBrowsePreview::generate(editor::IEditor* editor, db::Instance* instance, int32_t size) const
 {
 	Ref< const TextureAsset > textureAsset = instance->getObject< TextureAsset >();
 	if (!textureAsset)
@@ -45,8 +45,8 @@ Ref< ui::IBitmap > TextureBrowsePreview::generate(editor::IEditor* editor, db::I
 	const bool linearGamma = textureAsset->m_output.m_assumeLinearGamma;
 	Ref< drawing::Image > textureThumb = thumbnailGenerator->get(
 		fileName,
-		64,
-		64,
+		size,
+		size,
 		visibleAlpha ? editor::IThumbnailGenerator::Alpha::WithAlpha : editor::IThumbnailGenerator::Alpha::NoAlpha,
 		linearGamma ? editor::IThumbnailGenerator::Gamma::Linear : editor::IThumbnailGenerator::Gamma::SRGB
 	);

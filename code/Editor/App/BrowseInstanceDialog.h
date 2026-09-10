@@ -82,7 +82,7 @@ private:
 
 	void eventListDoubleClick(ui::MouseDoubleClickEvent* event);
 
-	void taskGeneratePreview(ui::PreviewItem* item);
+	void taskGeneratePreview(ui::PreviewItem* item, int32_t size);
 
 	void threadGeneratePreview();
 };

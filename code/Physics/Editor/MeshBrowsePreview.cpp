@@ -27,24 +27,26 @@ TypeInfoSet MeshBrowsePreview::getPreviewTypes() const
 	return makeTypeInfoSet< MeshAsset >();
 }
 
-Ref< ui::IBitmap > MeshBrowsePreview::generate(editor::IEditor* editor, db::Instance* instance) const
+Ref< ui::IBitmap > MeshBrowsePreview::generate(editor::IEditor* editor, db::Instance* instance, int32_t size) const
 {
 	Ref< const MeshAsset > asset = instance->getObject< MeshAsset >();
 	if (!asset)
 		return nullptr;
 
+	// Rasterize at twice the requested size and scale down, so the result is
+	// supersampled rather than upscaled.
 	Ref< drawing::Image > meshThumb = new drawing::Image(
 		drawing::PixelFormat::getR8G8B8A8(),
-		128,
-		128
+		size * 2,
+		size * 2
 	);
 	meshThumb->clear(Color4f(0.0f, 0.0f, 0.0f, 0.0f));
 
 	MeshAssetRasterizer().generate(editor, asset, meshThumb);
 
 	drawing::ScaleFilter scaleFilter(
-		64,
-		64,
+		size,
+		size,
 		drawing::ScaleFilter::MnAverage,
 		drawing::ScaleFilter::MgLinear
 	);
@@ -52,16 +54,17 @@ Ref< ui::IBitmap > MeshBrowsePreview::generate(editor::IEditor* editor, db::Inst
 
 	Ref< drawing::Image > shadow = meshThumb->clone();
 
-	drawing::GaussianBlurFilter blurFilter(16);
+	drawing::GaussianBlurFilter blurFilter(size / 4);
 	shadow->apply(&blurFilter);
 
-	for (int32_t y = 0; y < 64; ++y)
+	const float half = size / 2.0f;
+	for (int32_t y = 0; y < size; ++y)
 	{
-		const float vy = min(4.0f * min(y, 63 - y) / 32.0f, 1.0f);
+		const float vy = min(4.0f * min(y, size - 1 - y) / half, 1.0f);
 
-		for (int32_t x = 0; x < 64; ++x)
+		for (int32_t x = 0; x < size; ++x)
 		{
-			const float vx = min(4.0f * min(x, 63 - x) / 32.0f, 1.0f);
+			const float vx = min(4.0f * min(x, size - 1 - x) / half, 1.0f);
 			const Scalar vignette(min(vx, vy));
 
 			Color4f alpha;

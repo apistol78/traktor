@@ -127,6 +127,19 @@ void PreviewList::setScalingFactor(float scaling)
 	requestUpdate();
 }
 
+int32_t PreviewList::getThumbnailDimension() const
+{
+	const int32_t pad = pixel(4_ut);
+	const int32_t width = (int32_t)(pixel(c_itemWidth) * m_scaling) - pad * 2;
+	const int32_t height = (int32_t)(pixel(c_itemHeight) * m_scaling) - pad * 2;
+
+	// Mirrors PreviewItem::paint for a single line of text and no sub text,
+	// which is the largest thumbnail an item can end up drawing.
+	const int32_t previewHeight = height - getFontMetric().getHeight() - pixel(4_ut);
+
+	return std::max(1, std::min(width, previewHeight) - pixel(8_ut));
+}
+
 void PreviewList::layoutCells(const Rect& rc)
 {
 	const int32_t nitems = m_items ? m_items->count() : 0;

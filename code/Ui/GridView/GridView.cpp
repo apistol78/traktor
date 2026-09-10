@@ -7,6 +7,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include <stack>
+#include "Ui/StyleConstants.h"
 #include "Core/Containers/AlignedVector.h"
 #include "Core/Misc/String.h"
 #include "Ui/Application.h"
@@ -28,7 +29,6 @@ namespace traktor::ui
 	namespace
 	{
 
-const Unit c_headerMargin = 2_ut;
 
 struct SortRowPredicateLexical
 {
@@ -387,12 +387,11 @@ void GridView::beginEdit(GridItem* item)
 
 void GridView::layoutCells(const Rect& rc)
 {
-	int32_t fontHeight = getFontMetric().getHeight();
 	Rect rcLayout = rc;
 
 	if (m_header)
 	{
-		const int32_t headerHeight = fontHeight + pixel(c_headerMargin) * 2;
+		const int32_t headerHeight = pixel(c_listHeaderHeight);
 		m_header->setColumns(m_columns);
 		placeHeaderCell(m_header, headerHeight);
 		rcLayout.top += headerHeight;

@@ -10,6 +10,7 @@
 #include "Ui/Application.h"
 #include "Ui/Canvas.h"
 #include "Ui/IBitmap.h"
+#include "Ui/StyleConstants.h"
 #include "Ui/StyleSheet.h"
 #include "Ui/Auto/AutoWidget.h"
 #include "Ui/GridView/GridColumn.h"
@@ -99,7 +100,9 @@ const RefArray< IBitmap >& GridItem::getImages() const
 
 int32_t GridItem::getHeight()
 {
-	int32_t height = pixel(19_ut);
+	// Row height shared with PropertyList and TreeView.
+	int32_t height = pixel(getWidget()->getFont().getSize() + c_listRowPadding);
+	height = std::max(height, getFontMetric().getHeight());
 
 	if (m_font)
 	{
@@ -109,8 +112,6 @@ int32_t GridItem::getHeight()
 		const int32_t lines = std::max< int32_t >(1, (int32_t)std::count(m_text.begin(), m_text.end(), L'\n'));
 		height = std::max(height, lines * pixel(m_font->getSize() + pad));
 	}
-	else
-		height = std::max(height, getFontMetric().getHeight() + pixel(6_ut));
 
 	for (auto image : m_images)
 		height = std::max(height, image->getSize(getWidget()).cy + pixel(4_ut));

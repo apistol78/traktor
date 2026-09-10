@@ -55,6 +55,13 @@ public:
 
 	void setScalingFactor(float scaling);
 
+	/*! Dimension, in physical pixels, an item draws its thumbnail at.
+	 *
+	 * Accounts for both the scaling factor and the display DPI, so a preview
+	 * generated at this size is never upscaled.
+	 */
+	int32_t getThumbnailDimension() const;
+
 private:
 	Ref< Edit > m_itemEditor;
 	Ref< PreviewItems > m_items;
