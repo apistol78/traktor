@@ -541,8 +541,8 @@ void SceneEditorPage::destroy()
 	safeDestroy(m_editControl);
 	safeDestroy(m_entityPanel);
 	safeDestroy(m_tabMisc);
-	//for (auto componentPanel : m_componentPanels)
-	//	safeDestroy(componentPanel);
+	for (auto componentPanel : m_componentPanels)
+		componentPanel->destroy();
 	m_componentPanels.resize(0);
 	safeDestroy(m_entityToolBar);
 	safeDestroy(m_instanceGrid);
@@ -1138,7 +1138,7 @@ void SceneEditorPage::createComponentPanelEditors()
 	for (auto componentPanel : m_componentPanels)
 	{
 		m_site->destroyAdditionalPanel(componentPanel);
-		safeDestroy(componentPanel);
+		componentPanel->destroy();
 	}
 	m_componentPanels.resize(0);
 
