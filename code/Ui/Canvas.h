@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2025 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -51,6 +51,15 @@ public:
 	void setLineStyle(LineStyle lineStyle);
 
 	void setPenThickness(int thickness);
+
+	void setOrigin(const Point& origin);
+
+	Point getOrigin() const;
+
+	/*! Set base clip; subsequent clips intersect it and reset restores it. */
+	void setBaseClip(const Rect& rc);
+
+	void clearBaseClip();
 
 	void setClipRect(const Rect& rc);
 
@@ -115,6 +124,8 @@ private:
 	Widget* m_widget;
 	Color4ub m_foreground;
 	Color4ub m_background;
+	Rect m_baseClip;
+	bool m_haveBaseClip = false;
 };
 
 }

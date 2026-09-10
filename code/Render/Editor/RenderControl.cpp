@@ -77,7 +77,7 @@ bool RenderControl::createInternal(ui::Widget* parent, editor::IEditor* editor)
 	if (!renderSystem)
 		return false;
 
-	if (!ui::Widget::create(parent, ui::WsFocus | ui::WsNoCanvas))
+	if (!ui::Widget::create(parent, ui::WsFocus | ui::WsNoCanvas | ui::WsNative))
 		return false;
 
 	const PropertyGroup* settings = editor->getSettings();

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2025 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -66,6 +66,10 @@ public:
 	virtual void setLineStyle(LineStyle lineStyle) override final;
 
 	virtual void setPenThickness(int thickness) override final;
+
+	virtual void setOrigin(const Point& origin) override final;
+
+	virtual Point getOrigin() const override final;
 
 	virtual void setClipRect(const Rect& rc) override final;
 
@@ -146,6 +150,7 @@ private:
 	mutable SmallMap< std::pair< Font, int32_t >, CachedFont > m_cachedFonts;
 	Font m_font;
 	float m_strokeWidth = 1.0f;
+	Point m_origin = Point(0, 0);
 	bool m_clip = false;
 
 	mutable Font m_fontOffScreen;

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2023 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -150,9 +150,6 @@ void Slider::eventPaint(PaintEvent* event)
 	const int32_t cy = rcInner.getCenter().y;
 	const int32_t half = pixel(c_trackHeight) / 2;
 	const int32_t radius = pixel(c_knobRadius);
-
-	canvas.setBackground(ss->getColor(getParent(), L"background-color"));
-	canvas.fillRect(rcInner);
 
 	const int32_t value = m_range.clamp(m_value);
 	const int32_t dist = rcInner.getSize().cx - pixel(c_margin) * 2;

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2025 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -55,6 +55,7 @@ CanvasX11::CanvasX11(cairo_t* cr, int32_t dpi)
 ,	m_thickness(1)
 ,	m_fontDirty(false)
 {
+	cairo_get_matrix(m_cr, &m_baseMatrix);
 	cairo_reset_clip(m_cr);
 	cairo_set_line_width(m_cr, 1);
 	cairo_set_source_rgba(m_cr, 1.0f, 1.0f, 1.0f, 1.0f);
@@ -92,6 +93,18 @@ void CanvasX11::setPenThickness(int thickness)
 {
 	cairo_set_line_width(m_cr, thickness);
 	m_thickness = thickness;
+}
+
+void CanvasX11::setOrigin(const Point& origin)
+{
+	m_origin = origin;
+	cairo_set_matrix(m_cr, &m_baseMatrix);
+	cairo_translate(m_cr, origin.x, origin.y);
+}
+
+Point CanvasX11::getOrigin() const
+{
+	return m_origin;
 }
 
 void CanvasX11::setClipRect(const Rect& rc)

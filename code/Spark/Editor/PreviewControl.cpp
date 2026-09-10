@@ -102,7 +102,7 @@ bool PreviewControl::create(
 	render::IRenderSystem* renderSystem,
 	sound::SoundPlayer* soundPlayer)
 {
-	if (!Widget::create(parent, style | ui::WsFocus | ui::WsNoCanvas))
+	if (!Widget::create(parent, style | ui::WsFocus | ui::WsNoCanvas | ui::WsNative))
 		return false;
 
 	render::RenderViewEmbeddedDesc desc;

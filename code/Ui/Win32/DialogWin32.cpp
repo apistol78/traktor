@@ -76,7 +76,7 @@ bool DialogWin32::create(IWidget* parent, const std::wstring& text, int width, i
 	))
 		return false;
 
-	if (!WidgetWin32Impl::create(0))
+	if (!WidgetWin32Impl::create(createWidgetHost(0)))
 		return false;
 
 	if (hWndParent)

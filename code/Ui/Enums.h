@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -37,7 +37,8 @@ constexpr static uint32_t WsTabStop			= 1 << 12;
 constexpr static uint32_t WsWantAllInput	= 1 << 13;
 constexpr static uint32_t WsNoCanvas		= 1 << 14;	//!< Don't allocate a graphics canvas; useful for 3d rendering widgets etc.
 constexpr static uint32_t WsFocus			= 1 << 15;	//!< Get focus when user press mouse on widget.
-constexpr static uint32_t WsUser			= 1 << 16;
+constexpr static uint32_t WsNative			= 1 << 16;	//!< Native OS child widget; required for embedding system windows such as 3d views.
+constexpr static uint32_t WsUser			= 1 << 17;
 
 constexpr static uint32_t MbOk				= 1 << 0;
 constexpr static uint32_t MbCancel			= 1 << 1;

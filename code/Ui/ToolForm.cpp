@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -12,6 +12,7 @@
 #include "Ui/Application.h"
 #include "Ui/Bitmap.h"
 #include "Ui/Itf/IToolForm.h"
+#include "Ui/StyleSheet.h"
 
 namespace traktor::ui
 {
@@ -35,15 +36,12 @@ bool ToolForm::create(Widget* parent, const std::wstring& text, Unit width, Unit
 		return false;
 	}
 
-	//// Ensure size are converted to display DPI.
-	// const int32_t w = toolForm->dpi96(width.get());
-	// const int32_t h = toolForm->dpi96(height.get());
-	// Rect rc = toolForm->getRect();
-	// rc.setSize(ui::Size(w, h));
-	// toolForm->setRect(rc);
-
 	m_widget = toolForm;
-	return Container::create(parent, style, refLayout);
+	if (!Container::create(parent, style, refLayout))
+		return false;
+
+	addEventHandler< PaintEvent >(this, &ToolForm::eventPaint);
+	return true;
 }
 
 void ToolForm::setIcon(IBitmap* icon)
@@ -110,6 +108,15 @@ bool ToolForm::isEnable(bool includingParents) const
 bool ToolForm::acceptLayout() const
 {
 	return false;
+}
+
+void ToolForm::eventPaint(PaintEvent* event)
+{
+	Canvas& canvas = event->getCanvas();
+	const StyleSheet* ss = getStyleSheet();
+
+	canvas.setBackground(ss->getColor(this, isEnable(true) ? L"background-color" : L"background-color-disabled"));
+	canvas.fillRect(event->getUpdateRect());
 }
 
 }

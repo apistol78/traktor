@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -19,6 +19,9 @@ namespace traktor::ui
 {
 
 class IFontMetric;
+class IFontMetricProvider;
+class ITopLevelWidgetHost;
+class VirtualWidget;
 
 /*!
  * \ingroup UI
@@ -85,6 +88,9 @@ public:
 
 	virtual const IFontMetric* getFontMetric() const = 0;
 
+	/*! Font-parameterized text measurement; only provided by top-level peers. */
+	virtual const IFontMetricProvider* getFontMetricProvider() const { return nullptr; }
+
 	virtual void setCursor(Cursor cursor) = 0;
 
 	virtual Point getMousePosition(bool relative) const = 0;
@@ -112,6 +118,12 @@ public:
 	virtual void* getInternalHandle() = 0;
 
 	virtual SystemWindow getSystemWindow() = 0;
+
+	/*! Virtual widget host; provided by top-level peers and virtual widgets. */
+	virtual ITopLevelWidgetHost* getWidgetHost() { return nullptr; }
+
+	/*! Virtual widget self; null for native peers. Compiler RTTI is disabled so no dynamic_cast. */
+	virtual VirtualWidget* getVirtualWidget() { return nullptr; }
 };
 
 }

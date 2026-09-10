@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -14,9 +14,53 @@
 #include "Ui/StyleSheet.h"
 #include "Ui/Widget.h"
 #include "Ui/Itf/IUserWidget.h"
+#include "Ui/Virtual/VirtualWidget.h"
 
 namespace traktor::ui
 {
+namespace
+{
+
+// Embedded native widgets own a window inside a virtual tree, i.e. system
+// window hosts such as 3d views; top-level windows and virtual widgets are not.
+bool isNativeEmbedded(IWidget* peer)
+{
+	return peer != nullptr && peer->getVirtualWidget() == nullptr && peer->getWidgetHost() == nullptr;
+}
+
+// Embedded natives are windowed directly on the top-level; their rects must
+// be translated between logical parent space and top-level space.
+Point hostOffset(const Widget* widget)
+{
+	IWidget* peer = widget->getIWidget();
+	if (!isNativeEmbedded(peer))
+		return Point(0, 0);
+
+	const Widget* parent = widget->getParent();
+	if (parent == nullptr || parent->getIWidget() == nullptr)
+		return Point(0, 0);
+
+	VirtualWidget* parentVirtual = parent->getIWidget()->getVirtualWidget();
+	return (parentVirtual != nullptr) ? parentVirtual->toHost(Point(0, 0)) : Point(0, 0);
+}
+
+// Shift embedded native descendants when a virtual ancestor moves; their
+// windows hold top-level space positions which do not follow virtual parents.
+void offsetNativeDescendants(Widget* widget, const Size& delta)
+{
+	for (Widget* child = widget->getFirstChild(); child != nullptr; child = child->getNextSibling())
+	{
+		IWidget* peer = child->getIWidget();
+		if (peer == nullptr)
+			continue;
+		if (peer->getVirtualWidget() != nullptr)
+			offsetNativeDescendants(child, delta);
+		else if (isNativeEmbedded(peer))
+			peer->setRect(peer->getRect().offset(delta.cx, delta.cy));
+	}
+}
+
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.Widget", Widget, EventSubject)
 
@@ -29,7 +73,13 @@ bool Widget::create(Widget* parent, uint32_t style)
 {
 	if (!m_widget)
 	{
-		IUserWidget* widget = Application::getInstance()->getWidgetFactory()->createUserWidget(this);
+		IWidgetFactory* widgetFactory = Application::getInstance()->getWidgetFactory();
+
+		IUserWidget* widget = nullptr;
+		if ((style & WsNative) != 0)
+			widget = widgetFactory->createUserWidget(this);
+		else if (parent->getIWidget() != nullptr && parent->getIWidget()->getWidgetHost() != nullptr)
+			widget = new VirtualWidget(this);
 		if (!widget)
 		{
 			log::error << L"Failed to create native widget peer (UserWidget)" << Endl;
@@ -38,6 +88,7 @@ bool Widget::create(Widget* parent, uint32_t style)
 
 		if (!widget->create(parent->getIWidget(), style))
 		{
+			log::error << L"Failed to create widget peer of " << type_name(this) << Endl;
 			widget->destroy();
 			return false;
 		}
@@ -136,7 +187,20 @@ bool Widget::isForeground() const
 void Widget::setVisible(bool visible)
 {
 	T_ASSERT(m_widget);
-	m_widget->setVisible(visible);
+	m_visible = visible;
+
+	if (isNativeEmbedded(m_widget))
+	{
+		// Embedded natives are not hidden by their virtual ancestors' windows;
+		// gate effective visibility on the whole virtual chain.
+		m_widget->setVisible(visible && virtualAncestorsVisible(this));
+	}
+	else
+	{
+		m_widget->setVisible(visible);
+		if (m_widget->getVirtualWidget() != nullptr)
+			syncNativeVisibility(this);
+	}
 }
 
 bool Widget::isVisible(bool includingParents) const
@@ -208,13 +272,29 @@ void Widget::setFocus()
 void Widget::setRect(const Rect& rect)
 {
 	T_ASSERT(m_widget);
-	m_widget->setRect(rect);
+
+	if (m_widget->getVirtualWidget() != nullptr)
+	{
+		// Shift embedded natives before the peer raises the size event; a
+		// layout running in that event recomputes them from the new chain,
+		// harmlessly overwriting, while a pure move runs no layout at all.
+		const Size delta = rect.getTopLeft() - m_widget->getRect().getTopLeft();
+		if (delta.cx != 0 || delta.cy != 0)
+			offsetNativeDescendants(this, delta);
+		m_widget->setRect(rect);
+	}
+	else
+	{
+		const Point offset = hostOffset(this);
+		m_widget->setRect(rect.offset(offset.x, offset.y));
+	}
 }
 
 Rect Widget::getRect() const
 {
 	T_ASSERT(m_widget);
-	return m_widget->getRect();
+	const Point offset = hostOffset(this);
+	return m_widget->getRect().offset(-offset.x, -offset.y);
 }
 
 Rect Widget::getInnerRect() const
@@ -267,14 +347,12 @@ void Widget::update(const Rect* rc, bool immediate)
 
 void Widget::show()
 {
-	T_ASSERT(m_widget);
-	m_widget->setVisible(true);
+	setVisible(true);
 }
 
 void Widget::hide()
 {
-	T_ASSERT(m_widget);
-	m_widget->setVisible(false);
+	setVisible(false);
 }
 
 int32_t Widget::dpi() const
@@ -382,18 +460,32 @@ bool Widget::hitTest(const Point& pt) const
 void Widget::setChildRects(const WidgetRect* childRects, uint32_t count, bool redraw)
 {
 	T_ASSERT(m_widget);
-	StaticVector< IWidgetRect, 32 > internalChildRects;
-	internalChildRects.resize(32);
-	for (uint32_t i = 0; i < count; i += 32)
+
+	// Anything virtual goes through Widget::setRect so host space translation
+	// and native descendant repositioning apply; only native children of
+	// native widgets benefit from the batched path.
+	StaticVector< IWidgetRect, 32 > native;
+	for (uint32_t i = 0; i < count; ++i)
 	{
-		const uint32_t slice = std::min< uint32_t >(count - i, 32);
-		for (uint32_t j = 0; j < slice; ++j)
+		Widget* child = childRects[i].widget;
+		if (child == nullptr || child->getIWidget() == nullptr)
+			continue;
+
+		if (m_widget->getVirtualWidget() != nullptr || child->getIWidget()->getVirtualWidget() != nullptr)
 		{
-			internalChildRects[j].widget = childRects[i + j].widget->getIWidget();
-			internalChildRects[j].rect = childRects[i + j].rect;
+			child->setRect(childRects[i].rect);
+			continue;
 		}
-		m_widget->setChildRects(internalChildRects.c_ptr(), slice, redraw);
+
+		if (native.full())
+		{
+			m_widget->setChildRects(native.c_ptr(), (uint32_t)native.size(), redraw);
+			native.clear();
+		}
+		native.push_back({ child->getIWidget(), childRects[i].rect });
 	}
+	if (!native.empty())
+		m_widget->setChildRects(native.c_ptr(), (uint32_t)native.size(), redraw);
 }
 
 Size Widget::getMinimumSize() const
@@ -511,11 +603,24 @@ void Widget::unlink()
 
 void Widget::setParent(Widget* parent)
 {
+	// Embedded natives derive position and visibility from the virtual chain
+	// which is about to change; capture logical rects before reparenting.
+	AlignedVector< std::pair< Widget*, Rect > > embedded;
+	collectEmbeddedNativeRects(this, embedded);
+
 	unlink();
 	if (parent)
 	{
 		m_widget->setParent(parent->getIWidget());
 		link(parent);
+
+		for (auto& it : embedded)
+			it.first->setRect(it.second);
+
+		if (m_widget->getVirtualWidget() != nullptr)
+			syncNativeVisibility(this);
+		else if (isNativeEmbedded(m_widget))
+			m_widget->setVisible(m_visible && virtualAncestorsVisible(this));
 	}
 	else
 		m_widget->setParent(nullptr);
@@ -557,6 +662,53 @@ Widget* Widget::getLastChild() const
 IWidget* Widget::getIWidget() const
 {
 	return m_widget;
+}
+
+bool Widget::virtualAncestorsVisible(const Widget* widget)
+{
+	for (const Widget* parent = widget->m_parent; parent != nullptr; parent = parent->m_parent)
+	{
+		IWidget* peer = parent->getIWidget();
+		if (peer == nullptr || peer->getVirtualWidget() == nullptr)
+			break;
+		if (!parent->m_visible)
+			return false;
+	}
+	return true;
+}
+
+void Widget::syncNativeVisibility(Widget* widget)
+{
+	for (Widget* child = widget->m_firstChild; child != nullptr; child = child->m_nextSibling)
+	{
+		IWidget* peer = child->getIWidget();
+		if (peer == nullptr)
+			continue;
+		if (peer->getVirtualWidget() != nullptr)
+			syncNativeVisibility(child);
+		else if (isNativeEmbedded(peer))
+			peer->setVisible(child->m_visible && virtualAncestorsVisible(child));
+	}
+}
+
+void Widget::collectEmbeddedNativeRects(Widget* widget, AlignedVector< std::pair< Widget*, Rect > >& outRects)
+{
+	IWidget* peer = widget->getIWidget();
+	if (peer == nullptr)
+		return;
+
+	if (isNativeEmbedded(peer))
+	{
+		outRects.push_back({ widget, widget->getRect() });
+		return;
+	}
+
+	// Top-level subtrees position themselves in screen space; leave them.
+	if (peer->getVirtualWidget() == nullptr)
+		return;
+
+	for (Widget* child = widget->m_firstChild; child != nullptr; child = child->m_nextSibling)
+		collectEmbeddedNativeRects(child, outRects);
 }
 
 }

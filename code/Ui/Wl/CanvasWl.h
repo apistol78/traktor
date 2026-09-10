@@ -34,6 +34,10 @@ public:
 
 	virtual void setPenThickness(int thickness) override final;
 
+	virtual void setOrigin(const Point& origin) override final;
+
+	virtual Point getOrigin() const override final;
+
 	virtual void setClipRect(const Rect& rc) override final;
 
 	virtual void resetClipRect() override final;
@@ -90,6 +94,8 @@ public:
 
 private:
 	cairo_t* m_cr;
+	cairo_matrix_t m_baseMatrix;
+	Point m_origin = Point(0, 0);
 	int32_t m_dpi;
 	Color4ub m_currentSourceColor;
 	Color4ub m_foreground;

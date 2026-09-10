@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -12,6 +12,7 @@
 #include "Ui/Form.h"
 #include "Ui/IBitmap.h"
 #include "Ui/Layout.h"
+#include "Ui/StyleSheet.h"
 #include "Ui/Itf/IDialog.h"
 
 namespace traktor::ui
@@ -71,6 +72,7 @@ bool Dialog::create(Widget* parent, const std::wstring& text, Unit width, Unit h
 		setIcon(ancestor->getIcon());
 
 	addEventHandler< ChildEvent >(this, &Dialog::eventChild);
+	addEventHandler< PaintEvent >(this, &Dialog::eventPaint);
 	return true;
 }
 
@@ -127,6 +129,15 @@ void Dialog::eventChild(ChildEvent* event)
 		return;
 
 	static_cast< IDialog* >(m_widget)->setMinSize(result);
+}
+
+void Dialog::eventPaint(PaintEvent* event)
+{
+	Canvas& canvas = event->getCanvas();
+	const StyleSheet* ss = getStyleSheet();
+
+	canvas.setBackground(ss->getColor(this, isEnable(true) ? L"background-color" : L"background-color-disabled"));
+	canvas.fillRect(event->getUpdateRect());
 }
 
 }

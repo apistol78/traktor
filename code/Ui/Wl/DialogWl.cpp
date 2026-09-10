@@ -65,6 +65,8 @@ bool DialogWl::create(IWidget* parent, const std::wstring& text, int width, int 
 
 	m_rect = Rect(0, 0, width, height);
 
+	style = createWidgetHost(style);
+
 	if (!WidgetWlImpl< IDialog >::create(nullptr, style, false, true))
 		return false;
 

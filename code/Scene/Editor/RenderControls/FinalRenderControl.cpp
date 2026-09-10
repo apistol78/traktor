@@ -93,7 +93,7 @@ bool FinalRenderControl::create(ui::Widget* parent, SceneEditorContext* context,
 	m_containerAspect->create(parent, ui::WsNone, new ui::FloodLayout());
 
 	m_renderWidget = new ui::Widget();
-	if (!m_renderWidget->create(m_containerAspect, ui::WsFocus | ui::WsWantAllInput | ui::WsNoCanvas))
+	if (!m_renderWidget->create(m_containerAspect, ui::WsFocus | ui::WsWantAllInput | ui::WsNoCanvas | ui::WsNative))
 	{
 		destroy();
 		return false;

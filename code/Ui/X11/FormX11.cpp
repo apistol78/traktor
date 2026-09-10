@@ -71,6 +71,8 @@ bool FormX11::create(IWidget* parent, const std::wstring& text, int width, int h
 
 	XSetWMProtocols(m_context->getDisplay(), window, &m_atomWmDeleteWindow, 1);
 
+	style = createWidgetHost(style);
+
 	if (!WidgetX11Impl< IForm >::create(nullptr, style, window, Rect(0, 0, width, height), false, true))
 		return false;
 

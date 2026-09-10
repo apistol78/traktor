@@ -55,6 +55,7 @@ CanvasWl::CanvasWl(cairo_t* cr, int32_t dpi)
 ,	m_thickness(1)
 ,	m_fontDirty(false)
 {
+	cairo_get_matrix(m_cr, &m_baseMatrix);
 	cairo_reset_clip(m_cr);
 	cairo_set_line_width(m_cr, 1);
 	cairo_set_source_rgba(m_cr, 1.0f, 1.0f, 1.0f, 1.0f);
@@ -92,6 +93,18 @@ void CanvasWl::setPenThickness(int thickness)
 {
 	cairo_set_line_width(m_cr, thickness);
 	m_thickness = thickness;
+}
+
+void CanvasWl::setOrigin(const Point& origin)
+{
+	m_origin = origin;
+	cairo_set_matrix(m_cr, &m_baseMatrix);
+	cairo_translate(m_cr, origin.x, origin.y);
+}
+
+Point CanvasWl::getOrigin() const
+{
+	return m_origin;
 }
 
 void CanvasWl::setClipRect(const Rect& rc)

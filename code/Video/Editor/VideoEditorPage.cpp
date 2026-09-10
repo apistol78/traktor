@@ -73,7 +73,7 @@ bool VideoEditorPage::create(ui::Container* parent)
 
 	// Create preview render widget.
 	m_renderWidget = new ui::Widget();
-	if (!m_renderWidget->create(parent, ui::WsFocus | ui::WsNoCanvas))
+	if (!m_renderWidget->create(parent, ui::WsFocus | ui::WsNoCanvas | ui::WsNative))
 		return false;
 
 	m_renderWidget->addEventHandler< ui::SizeEvent >(this, &VideoEditorPage::eventSize);

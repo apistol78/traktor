@@ -75,6 +75,8 @@ bool ToolFormWl::create(IWidget* parent, const std::wstring& text, int width, in
 	m_style = style;
 	m_rect = Rect(0, 0, width, height);
 
+	style = createWidgetHost(style);
+
 	if (!WidgetWlImpl< IToolForm >::create(parent, style, false, true))
 		return false;
 

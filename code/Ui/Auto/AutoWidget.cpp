@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2025 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -468,7 +468,7 @@ void AutoWidget::eventMouseTrack(MouseTrackEvent* event)
 void AutoWidget::eventPaint(PaintEvent* event)
 {
 	Canvas& canvas = event->getCanvas();
-	const Rect innerRect = event->getUpdateRect();
+	const Rect innerRect = getInnerRect();
 	const StyleSheet* ss = getStyleSheet();
 
 	const bool enabled = isEnable(true);

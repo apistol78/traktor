@@ -3065,6 +3065,16 @@
 											</items>
 										</item>
 										<item type="traktor.sb.Filter">
+											<name>Virtual</name>
+											<items>
+												<item type="traktor.sb.File" version="1">
+													<fileName>Virtual/*.*</fileName>
+													<excludeFilter/>
+													<items/>
+												</item>
+											</items>
+										</item>
+										<item type="traktor.sb.Filter">
 											<name>Resources</name>
 											<items>
 												<item type="traktor.sb.File" version="1">

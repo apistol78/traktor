@@ -22,30 +22,11 @@ bool Container::create(Widget* parent, uint32_t style, Layout* layout)
 {
 	m_layout = layout;
 
-	if (!m_widget)
-	{
-		IUserWidget* widget = Application::getInstance()->getWidgetFactory()->createUserWidget(this);
-		if (!widget)
-		{
-			log::error << L"Failed to create native widget peer (Container)" << Endl;
-			return false;
-		}
-
-		if (!widget->create(parent->getIWidget(), style))
-		{
-			widget->destroy();
-			return false;
-		}
-
-		m_widget = widget;
-	}
+	if (!Widget::create(parent, style))
+		return false;
 
 	addEventHandler< SizeEvent >(this, &Container::eventSize);
-
-	if ((style & WsNoCanvas) == 0)
-		addEventHandler< PaintEvent >(this, &Container::eventPaint);
-
-	return Widget::create(parent);
+	return true;
 }
 
 void Container::fit(uint32_t axis)
@@ -125,15 +106,6 @@ void Container::setLayout(Layout* layout)
 void Container::eventSize(SizeEvent* event)
 {
 	update(nullptr, false);
-}
-
-void Container::eventPaint(PaintEvent* event)
-{
-	Canvas& canvas = event->getCanvas();
-	const StyleSheet* ss = getStyleSheet();
-
-	canvas.setBackground(ss->getColor(getParent(), isEnable(true) ? L"background-color" : L"background-color-disabled"));
-	canvas.fillRect(event->getUpdateRect());
 }
 
 }

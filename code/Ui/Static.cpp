@@ -62,8 +62,8 @@ void Static::eventPaint(PaintEvent* event)
 	const Rect rcInner = getInnerRect();
 	const StyleSheet* ss = getStyleSheet();
 
-	canvas.setBackground(ss->getColor(getParent(), L"background-color"));
-	canvas.fillRect(rcInner);
+	//canvas.setBackground(ss->getColor(getParent(), L"background-color"));
+	//canvas.fillRect(rcInner);
 
 	canvas.setForeground(ss->getColor(this, isEnable(true) ? L"color" : L"color-disabled"));
 	for (const auto& line : m_lines)

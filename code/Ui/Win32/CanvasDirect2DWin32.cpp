@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2025 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -100,6 +100,8 @@ bool CanvasDirect2DWin32::beginPaint(Window& hWnd, const Font& font, bool double
 
 	m_d2dRenderTarget->BeginDraw();
 	m_d2dRenderTarget->SetAntialiasMode(D2D1_ANTIALIAS_MODE_ALIASED);
+	m_d2dRenderTarget->SetTransform(D2D1::Matrix3x2F::Identity());
+	m_origin = Point(0, 0);
 
 	setForeground(Color4ub(0, 0, 0, 255));
 	setBackground(Color4ub(255, 255, 255, 255));
@@ -360,14 +362,23 @@ void CanvasDirect2DWin32::setPenThickness(int thickness)
 	m_strokeWidth = thickness;
 }
 
+void CanvasDirect2DWin32::setOrigin(const Point& origin)
+{
+	m_origin = origin;
+	m_d2dRenderTarget->SetTransform(D2D1::Matrix3x2F::Translation((FLOAT)origin.x, (FLOAT)origin.y));
+}
+
+Point CanvasDirect2DWin32::getOrigin() const
+{
+	return m_origin;
+}
+
 void CanvasDirect2DWin32::setClipRect(const Rect& rc)
 {
 	resetClipRect();
 
-	Rect rc2 = rc.getUnified();
-	if (rc2.getWidth() <= 0 || rc2.getHeight() <= 0)
-		return;
-
+	// Degenerate rects must still be pushed; an empty clip excludes everything.
+	const Rect rc2 = rc.getUnified();
 	m_d2dRenderTarget->PushAxisAlignedClip(
 		D2D1::RectF(rc2.left, rc2.top, rc2.right, rc2.bottom),
 		D2D1_ANTIALIAS_MODE_PER_PRIMITIVE);

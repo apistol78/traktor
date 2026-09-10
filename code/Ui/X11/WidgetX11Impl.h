@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -22,6 +22,8 @@
 #include "Ui/EventSubject.h"
 #include "Ui/Events/AllEvents.h"
 #include "Ui/Itf/IFontMetric.h"
+#include "Ui/Itf/IFontMetricProvider.h"
+#include "Ui/Itf/ITopLevelWidgetHost.h"
 #include "Ui/Itf/IWidget.h"
 #include "Ui/X11/Context.h"
 #include "Ui/X11/CanvasX11.h"
@@ -38,6 +40,8 @@ template < typename ControlType >
 class WidgetX11Impl
 :	public ControlType
 ,	public IFontMetric
+,	public IFontMetricProvider
+,	public ITopLevelWidgetHost::IPeer
 {
 public:
 	explicit WidgetX11Impl(Context* context, EventSubject* owner)
@@ -309,6 +313,11 @@ public:
 		return this;
 	}
 
+	virtual const IFontMetricProvider* getFontMetricProvider() const override
+	{
+		return (m_cairo != nullptr) ? this : nullptr;
+	}
+
 	virtual void setCursor(Cursor cursor) override
 	{
 		int shape = -1;
@@ -467,6 +476,11 @@ public:
 		return SystemWindow::fromX11(m_context->getDisplay(), m_data.window);
 	}
 
+	virtual ITopLevelWidgetHost* getWidgetHost() override
+	{
+		return m_host;
+	}
+
 	// IFontMetric
 
 	virtual void getAscentAndDescent(int32_t& outAscent, int32_t& outDescent) const override
@@ -516,6 +530,76 @@ public:
 		return Size(tx.width, fx.height);
 	}
 
+	// IFontMetricProvider
+
+	virtual void getAscentAndDescent(const Font& font, int32_t& outAscent, int32_t& outDescent) const override
+	{
+		T_FATAL_ASSERT(m_cairo != nullptr);
+		cairo_save(m_cairo);
+		applyFont(font);
+		cairo_font_extents_t x;
+		cairo_font_extents(m_cairo, &x);
+		cairo_restore(m_cairo);
+		outAscent = (int32_t)x.ascent;
+		outDescent = (int32_t)x.descent;
+	}
+
+	virtual int32_t getAdvance(const Font& font, wchar_t ch, wchar_t next) const override
+	{
+		T_FATAL_ASSERT(m_cairo != nullptr);
+		uint8_t uc[IEncoding::MaxEncodingSize + 1] = { 0 };
+		const int32_t nuc = Utf8Encoding().translate(&ch, 1, uc);
+		if (nuc <= 0)
+			return 0;
+		cairo_save(m_cairo);
+		applyFont(font);
+		cairo_text_extents_t tx;
+		cairo_text_extents(m_cairo, (const char*)uc, &tx);
+		cairo_restore(m_cairo);
+		return (int32_t)(tx.x_advance + 0.5);
+	}
+
+	virtual int32_t getLineSpacing(const Font& font) const override
+	{
+		T_FATAL_ASSERT(m_cairo != nullptr);
+		cairo_save(m_cairo);
+		applyFont(font);
+		cairo_font_extents_t x;
+		cairo_font_extents(m_cairo, &x);
+		cairo_restore(m_cairo);
+		return (int32_t)x.height;
+	}
+
+	virtual Size getExtent(const Font& font, const std::wstring& text) const override
+	{
+		T_FATAL_ASSERT(m_cairo != nullptr);
+		cairo_save(m_cairo);
+		applyFont(font);
+		cairo_font_extents_t fx;
+		cairo_text_extents_t tx;
+		cairo_font_extents(m_cairo, &fx);
+		cairo_text_extents(m_cairo, wstombs(text).c_str(), &tx);
+		cairo_restore(m_cairo);
+		return Size(tx.width, fx.height);
+	}
+
+	// ITopLevelWidgetHost::IPeer
+
+	virtual IWidget* getPeerWidget() override
+	{
+		return this;
+	}
+
+	virtual int32_t startHostTimer(int32_t interval, const std::function< void() >& fn) override
+	{
+		return Timers::getInstance().bind(interval, fn);
+	}
+
+	virtual void stopHostTimer(int32_t id) override
+	{
+		Timers::getInstance().unbind(id);
+	}
+
 protected:
 	enum
 	{
@@ -526,6 +610,7 @@ protected:
 
 	Ref< Context > m_context;
 	EventSubject* m_owner = nullptr;
+	Ref< ITopLevelWidgetHost > m_host;
 	WidgetData m_data;
 	XIC m_xic = 0;
 	Rect m_rect;
@@ -539,6 +624,25 @@ protected:
 	int32_t m_lastMouseButton = 0;
 	bool m_pendingExposure = false;
 	bool m_focus = false;
+
+	void applyFont(const Font& font) const
+	{
+		cairo_select_font_face(
+			m_cairo,
+			wstombs(font.getFace()).c_str(),
+			CAIRO_FONT_SLANT_NORMAL,
+			font.isBold() ? CAIRO_FONT_WEIGHT_BOLD : CAIRO_FONT_WEIGHT_NORMAL
+		);
+		cairo_set_font_size(m_cairo, dpi96(font.getSize().get()));
+	}
+
+	// Create host for virtual children; called by top-level widgets before
+	// create. Clears WsNoCanvas as the host paints through the top-level canvas.
+	int32_t createWidgetHost(int32_t style)
+	{
+		m_host = createTopLevelWidgetHost(this, m_owner);
+		return style & ~(int32_t)WsNoCanvas;
+	}
 
 	bool create(IWidget* parent, int32_t style, Window window, const Rect& rect, bool visible, bool topLevel)
 	{
@@ -626,8 +730,13 @@ protected:
 				XSetICFocus(m_xic);
 			if (!m_focus)
 			{
-				FocusEvent focusEvent(m_owner, true);
-				m_owner->raiseEvent(&focusEvent);
+				if (m_host != nullptr)
+					m_host->dispatchFocus(true);
+				else
+				{
+					FocusEvent focusEvent(m_owner, true);
+					m_owner->raiseEvent(&focusEvent);
+				}
 				m_focus = true;
 			}
 		});
@@ -638,8 +747,13 @@ protected:
 				XUnsetICFocus(m_xic);
 			if (m_focus)
 			{
-				FocusEvent focusEvent(m_owner, false);
-				m_owner->raiseEvent(&focusEvent);
+				if (m_host != nullptr)
+					m_host->dispatchFocus(false);
+				else
+				{
+					FocusEvent focusEvent(m_owner, false);
+					m_owner->raiseEvent(&focusEvent);
+				}
 				m_focus = false;
 			}
 		});
@@ -656,8 +770,13 @@ protected:
 			VirtualKey vk = translateToVirtualKey(ks, nkeysyms);
 			if (vk != VkNull)
 			{
-				KeyDownEvent keyDownEvent(m_owner, vk, xe.xkey.keycode, 0);
-				m_owner->raiseEvent(&keyDownEvent);
+				if (m_host != nullptr)
+					m_host->dispatchKeyDown(vk, xe.xkey.keycode);
+				else
+				{
+					KeyDownEvent keyDownEvent(m_owner, vk, xe.xkey.keycode, 0);
+					m_owner->raiseEvent(&keyDownEvent);
+				}
 			}
 
 			// Ensure owner is still valid; widget might have been destroyed in key down event.
@@ -672,8 +791,13 @@ protected:
 					wchar_t wch = 0;
 					if (Utf8Encoding().translate(str, n, wch) > 0)
 					{
-						KeyEvent keyEvent(m_owner, vk, xe.xkey.keycode, wch);
-						m_owner->raiseEvent(&keyEvent);
+						if (m_host != nullptr)
+							m_host->dispatchKey(vk, xe.xkey.keycode, wch);
+						else
+						{
+							KeyEvent keyEvent(m_owner, vk, xe.xkey.keycode, wch);
+							m_owner->raiseEvent(&keyEvent);
+						}
 					}
 				}
 			}
@@ -701,8 +825,13 @@ protected:
 					repeat = (nextEvent.type == KeyPress && nextEvent.xkey.time == xe.xkey.time && nextEvent.xkey.keycode == xe.xkey.keycode);
 				}
 
-				KeyUpEvent keyUpEvent(m_owner, vk, xe.xkey.keycode, 0, repeat);
-				m_owner->raiseEvent(&keyUpEvent);
+				if (m_host != nullptr)
+					m_host->dispatchKeyUp(vk, xe.xkey.keycode);
+				else
+				{
+					KeyUpEvent keyUpEvent(m_owner, vk, xe.xkey.keycode, 0, repeat);
+					m_owner->raiseEvent(&keyUpEvent);
+				}
 			}
 
 			XFree(ks);
@@ -720,6 +849,12 @@ protected:
 			if ((xe.xmotion.state & Button3Mask) != 0)
 				button = MbtRight;
 
+			if (m_host != nullptr)
+			{
+				m_host->dispatchMouseMove(button, Point(xe.xmotion.x, xe.xmotion.y));
+				return;
+			}
+
 			MouseMoveEvent mouseMoveEvent(
 				m_owner,
 				button,
@@ -730,12 +865,22 @@ protected:
 
 		// Enter
 		m_context->bind(&m_data, EnterNotify, [=, this](XEvent& xe){
+			if (m_host != nullptr)
+			{
+				m_host->dispatchMouseTrack(true, Point(xe.xcrossing.x, xe.xcrossing.y));
+				return;
+			}
 			MouseTrackEvent mouseTrackEvent(m_owner, true);
 			m_owner->raiseEvent(&mouseTrackEvent);
 		});
 
 		// Leave
 		m_context->bind(&m_data, LeaveNotify, [=, this](XEvent& xe){
+			if (m_host != nullptr)
+			{
+				m_host->dispatchMouseTrack(false, m_host->getLastMousePosition());
+				return;
+			}
 			MouseTrackEvent mouseTrackEvent(m_owner, false);
 			m_owner->raiseEvent(&mouseTrackEvent);
 		});
@@ -746,6 +891,11 @@ protected:
 
 			if (xe.xbutton.button == 4 || xe.xbutton.button == 5)
 			{
+				if (m_host != nullptr)
+				{
+					m_host->dispatchMouseWheel(xe.xbutton.button == 4 ? 1 : -1, Point(xe.xbutton.x, xe.xbutton.y));
+					return;
+				}
 				MouseWheelEvent mouseWheelEvent(
 					m_owner,
 					xe.xbutton.button == 4 ? 1 : -1,
@@ -777,22 +927,32 @@ protected:
 				if ((style & WsFocus) != 0)
 					setFocus();
 
-				MouseButtonDownEvent mouseButtonDownEvent(
-					m_owner,
-					button,
-					Point(xe.xbutton.x, xe.xbutton.y)
-				);
-				m_owner->raiseEvent(&mouseButtonDownEvent);
-
-				const int32_t dbt = xe.xbutton.time - m_lastMousePress;
-				if (dbt <= 200 && m_lastMouseButton == button)
+				if (m_host != nullptr)
+					m_host->dispatchMouseButtonDown(button, Point(xe.xbutton.x, xe.xbutton.y));
+				else
 				{
-					MouseDoubleClickEvent mouseDoubleClickEvent(
+					MouseButtonDownEvent mouseButtonDownEvent(
 						m_owner,
 						button,
 						Point(xe.xbutton.x, xe.xbutton.y)
 					);
-					m_owner->raiseEvent(&mouseDoubleClickEvent);
+					m_owner->raiseEvent(&mouseButtonDownEvent);
+				}
+
+				const int32_t dbt = xe.xbutton.time - m_lastMousePress;
+				if (dbt <= 200 && m_lastMouseButton == button)
+				{
+					if (m_host != nullptr)
+						m_host->dispatchMouseDoubleClick(button, Point(xe.xbutton.x, xe.xbutton.y));
+					else
+					{
+						MouseDoubleClickEvent mouseDoubleClickEvent(
+							m_owner,
+							button,
+							Point(xe.xbutton.x, xe.xbutton.y)
+						);
+						m_owner->raiseEvent(&mouseDoubleClickEvent);
+					}
 				}
 
 				m_lastMousePress = xe.xbutton.time;
@@ -820,6 +980,12 @@ protected:
 				break;
 
 			default:
+				return;
+			}
+
+			if (m_host != nullptr)
+			{
+				m_host->dispatchMouseButtonUp(button, Point(xe.xbutton.x, xe.xbutton.y));
 				return;
 			}
 
@@ -881,20 +1047,25 @@ protected:
 			CanvasX11 canvasImpl(m_cairo, m_context->getSystemDPI());
 			Canvas canvas(&canvasImpl, reinterpret_cast< Widget* >(m_owner));
 
-			PaintEvent paintEvent(
-				m_owner,
-				canvas,
-				rc != nullptr ? *rc : Rect(Point(0, 0), sz)
-			);
-			m_owner->raiseEvent(&paintEvent);
+			if (m_host != nullptr)
+				m_host->paint(canvas, rc != nullptr ? *rc : Rect(Point(0, 0), sz));
+			else
+			{
+				PaintEvent paintEvent(
+					m_owner,
+					canvas,
+					rc != nullptr ? *rc : Rect(Point(0, 0), sz)
+				);
+				m_owner->raiseEvent(&paintEvent);
 
-			OverlayPaintEvent overlayPaintEvent(
-				m_owner,
-				canvas,
-				rc != nullptr ? *rc : Rect(Point(0, 0), sz)
-			);
-			m_owner->raiseEvent(&overlayPaintEvent);
-			
+				OverlayPaintEvent overlayPaintEvent(
+					m_owner,
+					canvas,
+					rc != nullptr ? *rc : Rect(Point(0, 0), sz)
+				);
+				m_owner->raiseEvent(&overlayPaintEvent);
+			}
+
 			cairo_pop_group_to_source(m_cairo);
 			cairo_paint(m_cairo);
 			cairo_surface_flush(m_surface);

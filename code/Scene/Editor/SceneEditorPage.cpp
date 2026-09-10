@@ -541,8 +541,8 @@ void SceneEditorPage::destroy()
 	safeDestroy(m_editControl);
 	safeDestroy(m_entityPanel);
 	safeDestroy(m_tabMisc);
-	for (auto componentPanel : m_componentPanels)
-		safeDestroy(componentPanel);
+	//for (auto componentPanel : m_componentPanels)
+	//	safeDestroy(componentPanel);
 	m_componentPanels.resize(0);
 	safeDestroy(m_entityToolBar);
 	safeDestroy(m_instanceGrid);

@@ -103,7 +103,7 @@ bool OrthogonalRenderControl::create(ui::Widget* parent, SceneEditorContext* con
 	m_viewPlane = viewPlane;
 
 	m_renderWidget = new ui::Widget();
-	if (!m_renderWidget->create(parent, ui::WsFocus | ui::WsNoCanvas))
+	if (!m_renderWidget->create(parent, ui::WsFocus | ui::WsNoCanvas | ui::WsNative))
 	{
 		destroy();
 		return false;

@@ -92,6 +92,7 @@ bool DialogX11::create(IWidget* parent, const std::wstring& text, int width, int
 	XSetWMProtocols(m_context->getDisplay(), window, &m_atomWmDeleteWindow, 1);
 
 	Rect rc(0, 0, width, height);
+	style = createWidgetHost(style);
 	if (!WidgetX11Impl< IDialog >::create(nullptr, style, window, rc, false, true))
 		return false;
 

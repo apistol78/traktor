@@ -103,10 +103,6 @@ void TabPage::eventPaint(PaintEvent* event)
 
 	canvas.setForeground(ss->getColor(this, L"page-border-color"));
 	canvas.drawRoundRect(rcInner, radius);
-
-	// Handlers run newest first, so consuming keeps Container's flat fill
-	// from painting over the page.
-	event->consume();
 }
 
 }

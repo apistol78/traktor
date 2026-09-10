@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2025 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -33,6 +33,10 @@ public:
 	virtual void setLineStyle(LineStyle lineStyle) override final;
 
 	virtual void setPenThickness(int thickness) override final;
+
+	virtual void setOrigin(const Point& origin) override final;
+
+	virtual Point getOrigin() const override final;
 
 	virtual void setClipRect(const Rect& rc) override final;
 
@@ -90,6 +94,8 @@ public:
 
 private:
 	cairo_t* m_cr;
+	cairo_matrix_t m_baseMatrix;
+	Point m_origin = Point(0, 0);
 	int32_t m_dpi;
 	Color4ub m_currentSourceColor;
 	Color4ub m_foreground;

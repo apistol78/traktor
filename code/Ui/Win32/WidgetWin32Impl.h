@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,6 +8,8 @@
  */
 #pragma once
 
+#include "Core/Containers/SmallMap.h"
+#include "Core/Containers/StaticVector.h"
 #include "Core/Misc/AutoPtr.h"
 #include "Core/Misc/TString.h"
 #include "Ui/Application.h"
@@ -15,6 +17,8 @@
 #include "Ui/Events/AllEvents.h"
 #include "Ui/EventSubject.h"
 #include "Ui/Itf/IFontMetric.h"
+#include "Ui/Itf/IFontMetricProvider.h"
+#include "Ui/Itf/ITopLevelWidgetHost.h"
 #include "Ui/Itf/IWidget.h"
 #include "Ui/Win32/SmartHandle.h"
 #include "Ui/Win32/UtilitiesWin32.h"
@@ -42,6 +46,8 @@ template < typename ControlType >
 class WidgetWin32Impl
 	: public ControlType
 	, public IFontMetric
+	, public IFontMetricProvider
+	, public ITopLevelWidgetHost::IPeer
 {
 public:
 	explicit WidgetWin32Impl(EventSubject* owner)
@@ -62,6 +68,10 @@ public:
 
 	virtual void destroy() override
 	{
+		for (auto it : m_hostTimers)
+			KillTimer(m_hWnd, it.first);
+		m_hostTimers.clear();
+
 		KillTimer(m_hWnd, 1000);
 		delete this;
 	}
@@ -222,6 +232,11 @@ public:
 		return this;
 	}
 
+	virtual const IFontMetricProvider* getFontMetricProvider() const override
+	{
+		return (m_canvasImpl != nullptr) ? this : nullptr;
+	}
+
 	virtual void setCursor(Cursor cursor) override
 	{
 		HCURSOR hCursor = NULL;
@@ -316,19 +331,32 @@ public:
 	{
 		const UINT flags = SWP_NOZORDER | SWP_NOOWNERZORDER | SWP_NOACTIVATE | SWP_NOCOPYBITS | SWP_NOSENDCHANGING | (redraw ? 0 : SWP_NOREDRAW);
 
-		HDWP hdwp = BeginDeferWindowPos((int)count);
+		// Virtual children own no window; their internal handle is our own
+		// window so they must be updated directly, never through SetWindowPos.
+		StaticVector< const IWidgetRect*, 64 > native;
+		for (uint32_t i = 0; i < count; ++i)
+		{
+			if (childRects[i].widget->getVirtualWidget() != nullptr)
+				childRects[i].widget->setRect(childRects[i].rect);
+			else if (!native.full())
+				native.push_back(&childRects[i]);
+		}
+		if (native.empty())
+			return;
+
+		HDWP hdwp = BeginDeferWindowPos((int)native.size());
 		if (hdwp)
 		{
-			for (uint32_t i = 0; i < count; ++i)
+			for (const IWidgetRect* cr : native)
 			{
 				hdwp = DeferWindowPos(
 					hdwp,
-					(HWND)childRects[i].widget->getInternalHandle(),
+					(HWND)cr->widget->getInternalHandle(),
 					NULL,
-					childRects[i].rect.left,
-					childRects[i].rect.top,
-					childRects[i].rect.getWidth(),
-					childRects[i].rect.getHeight(),
+					cr->rect.left,
+					cr->rect.top,
+					cr->rect.getWidth(),
+					cr->rect.getHeight(),
 					flags);
 				if (!hdwp)
 					break;
@@ -341,14 +369,14 @@ public:
 		}
 
 		// If we reach this point there has been an error in the deferred stuff, fall back on old style.
-		for (uint32_t i = 0; i < count; ++i)
+		for (const IWidgetRect* cr : native)
 			SetWindowPos(
-				(HWND)childRects[i].widget->getInternalHandle(),
+				(HWND)cr->widget->getInternalHandle(),
 				NULL,
-				childRects[i].rect.left,
-				childRects[i].rect.top,
-				childRects[i].rect.getWidth(),
-				childRects[i].rect.getHeight(),
+				cr->rect.left,
+				cr->rect.top,
+				cr->rect.getWidth(),
+				cr->rect.getHeight(),
 				flags);
 	}
 
@@ -406,6 +434,11 @@ public:
 		return SystemWindow(m_hWnd);
 	}
 
+	virtual ITopLevelWidgetHost* getWidgetHost() override
+	{
+		return m_host;
+	}
+
 	// IFontMetric
 
 	virtual void getAscentAndDescent(int32_t& outAscent, int32_t& outDescent) const override
@@ -432,6 +465,53 @@ public:
 		return m_canvasImpl->getExtent(m_hWnd, m_font, text);
 	}
 
+	// IFontMetricProvider
+
+	virtual void getAscentAndDescent(const Font& font, int32_t& outAscent, int32_t& outDescent) const override
+	{
+		T_FATAL_ASSERT(m_canvasImpl != nullptr);
+		m_canvasImpl->getAscentAndDescent(m_hWnd, font, outAscent, outDescent);
+	}
+
+	virtual int32_t getAdvance(const Font& font, wchar_t ch, wchar_t next) const override
+	{
+		T_FATAL_ASSERT(m_canvasImpl != nullptr);
+		return m_canvasImpl->getAdvance(m_hWnd, font, ch, next);
+	}
+
+	virtual int32_t getLineSpacing(const Font& font) const override
+	{
+		T_FATAL_ASSERT(m_canvasImpl != nullptr);
+		return m_canvasImpl->getLineSpacing(m_hWnd);
+	}
+
+	virtual Size getExtent(const Font& font, const std::wstring& text) const override
+	{
+		T_FATAL_ASSERT(m_canvasImpl != nullptr);
+		return m_canvasImpl->getExtent(m_hWnd, font, text);
+	}
+
+	// ITopLevelWidgetHost::IPeer
+
+	virtual IWidget* getPeerWidget() override
+	{
+		return this;
+	}
+
+	virtual int32_t startHostTimer(int32_t interval, const std::function< void() >& fn) override
+	{
+		const int32_t id = m_nextHostTimerId++;
+		m_hostTimers[id] = fn;
+		SetTimer(m_hWnd, id, interval, NULL);
+		return id;
+	}
+
+	virtual void stopHostTimer(int32_t id) override
+	{
+		KillTimer(m_hWnd, id);
+		m_hostTimers.remove(id);
+	}
+
 protected:
 	EventSubject* m_owner;
 	mutable Window m_hWnd;
@@ -442,6 +522,17 @@ protected:
 	bool m_ownCursor;
 	bool m_tracking;
 	int32_t m_interval;
+	Ref< ITopLevelWidgetHost > m_host;
+	SmallMap< int32_t, std::function< void() > > m_hostTimers;
+	int32_t m_nextHostTimerId = 2000;
+
+	// Create host for virtual children; called by top-level widgets before
+	// create. Clears WsNoCanvas as the host paints through the top-level canvas.
+	int32_t createWidgetHost(int32_t style)
+	{
+		m_host = createTopLevelWidgetHost(this, m_owner);
+		return style & ~(int32_t)WsNoCanvas;
+	}
 
 	static void getNativeStyles(int style, UINT& nativeStyle, UINT& nativeStyleEx)
 	{
@@ -524,6 +615,9 @@ protected:
 		m_hWnd.registerMessageHandler(WM_DROPFILES, new MethodMessageHandler< WidgetWin32Impl >(this, &WidgetWin32Impl::eventDropFiles));
 		m_hWnd.registerMessageHandler(WM_DPICHANGED_BEFOREPARENT, new MethodMessageHandler< WidgetWin32Impl >(this, &WidgetWin32Impl::eventDpiChanged));
 
+		if (m_host != nullptr)
+			m_hWnd.registerMessageHandler(WM_CAPTURECHANGED, new MethodMessageHandler< WidgetWin32Impl >(this, &WidgetWin32Impl::eventCaptureChanged));
+
 		if (style & WsWantAllInput)
 			m_hWnd.registerMessageHandler(WM_GETDLGCODE, new MethodMessageHandler< WidgetWin32Impl >(this, &WidgetWin32Impl::eventGetDlgCode));
 
@@ -553,6 +647,12 @@ protected:
 			vk = translateToVirtualKey(int(wParam));
 		}
 
+		if (m_host != nullptr)
+		{
+			outPass = !m_host->dispatchKey(vk, int(wParam), wchar_t(wParam));
+			return TRUE;
+		}
+
 		KeyEvent k(m_owner, vk, int(wParam), wchar_t(wParam));
 		m_owner->raiseEvent(&k);
 		if (!k.consumed())
@@ -565,6 +665,12 @@ protected:
 	{
 		const VirtualKey vk = translateToVirtualKey(int(wParam));
 
+		if (m_host != nullptr)
+		{
+			outPass = !m_host->dispatchKeyDown(vk, int(wParam));
+			return TRUE;
+		}
+
 		KeyDownEvent k(m_owner, vk, int(wParam), 0);
 		m_owner->raiseEvent(&k);
 		if (!k.consumed())
@@ -576,6 +682,12 @@ protected:
 	LRESULT eventKeyUp(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& outPass)
 	{
 		const VirtualKey vk = translateToVirtualKey(int(wParam));
+
+		if (m_host != nullptr)
+		{
+			outPass = !m_host->dispatchKeyUp(vk, int(wParam));
+			return TRUE;
+		}
 
 		KeyUpEvent k(m_owner, vk, int(wParam), 0, false);
 		m_owner->raiseEvent(&k);
@@ -622,6 +734,12 @@ protected:
 			break;
 		}
 
+		if (m_host != nullptr)
+		{
+			outPass = !m_host->dispatchMouseButtonDown(button, Point(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)));
+			return TRUE;
+		}
+
 		MouseButtonDownEvent m(
 			m_owner,
 			button,
@@ -648,6 +766,12 @@ protected:
 		case WM_RBUTTONUP:
 			button = MbtRight;
 			break;
+		}
+
+		if (m_host != nullptr)
+		{
+			outPass = !m_host->dispatchMouseButtonUp(button, Point(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)));
+			return TRUE;
 		}
 
 		MouseButtonUpEvent m(
@@ -677,6 +801,12 @@ protected:
 			break;
 		}
 
+		if (m_host != nullptr)
+		{
+			outPass = !m_host->dispatchMouseDoubleClick(button, Point(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)));
+			return TRUE;
+		}
+
 		MouseDoubleClickEvent m(
 			m_owner,
 			button,
@@ -690,6 +820,8 @@ protected:
 
 	LRESULT eventMouseMove(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& outPass)
 	{
+		const Point pt(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+
 		if (!m_tracking)
 		{
 			TRACKMOUSEEVENT tme = { 0 };
@@ -699,8 +831,13 @@ protected:
 			tme.dwHoverTime = 0;
 			if (TrackMouseEvent(&tme))
 			{
-				MouseTrackEvent m(m_owner, true);
-				m_owner->raiseEvent(&m);
+				if (m_host != nullptr)
+					m_host->dispatchMouseTrack(true, pt);
+				else
+				{
+					MouseTrackEvent m(m_owner, true);
+					m_owner->raiseEvent(&m);
+				}
 				m_tracking = true;
 			}
 		}
@@ -713,10 +850,13 @@ protected:
 		if (wParam & MK_RBUTTON)
 			button |= MbtRight;
 
-		MouseMoveEvent m(
-			m_owner,
-			button,
-			Point(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)));
+		if (m_host != nullptr)
+		{
+			outPass = !m_host->dispatchMouseMove(button, pt);
+			return TRUE;
+		}
+
+		MouseMoveEvent m(m_owner, button, pt);
 		m_owner->raiseEvent(&m);
 
 		if (!m.consumed())
@@ -732,8 +872,13 @@ protected:
 	{
 		if (m_tracking)
 		{
-			MouseTrackEvent m(m_owner, false);
-			m_owner->raiseEvent(&m);
+			if (m_host != nullptr)
+				m_host->dispatchMouseTrack(false, m_host->getLastMousePosition());
+			else
+			{
+				MouseTrackEvent m(m_owner, false);
+				m_owner->raiseEvent(&m);
+			}
 			m_tracking = false;
 		}
 		return 0;
@@ -741,10 +886,19 @@ protected:
 
 	LRESULT eventMouseWheel(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& outPass)
 	{
-		MouseWheelEvent m(
-			m_owner,
-			GET_WHEEL_DELTA_WPARAM(wParam) / WHEEL_DELTA,
-			Point(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)));
+		// Wheel messages carry screen coordinates.
+		const Point pt(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+		const int32_t rotation = GET_WHEEL_DELTA_WPARAM(wParam) / WHEEL_DELTA;
+
+		if (m_host != nullptr)
+		{
+			POINT pnt = { pt.x, pt.y };
+			ScreenToClient(m_hWnd, &pnt);
+			outPass = !m_host->dispatchMouseWheel(rotation, Point(pnt.x, pnt.y));
+			return TRUE;
+		}
+
+		MouseWheelEvent m(m_owner, rotation, pt);
 		m_owner->raiseEvent(&m);
 
 		if (!m.consumed())
@@ -754,6 +908,13 @@ protected:
 
 	LRESULT eventFocus(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& outPass)
 	{
+		if (m_host != nullptr)
+		{
+			m_host->dispatchFocus(bool(message == WM_SETFOCUS));
+			outPass = true;
+			return TRUE;
+		}
+
 		FocusEvent focusEvent(m_owner, bool(message == WM_SETFOCUS));
 		m_owner->raiseEvent(&focusEvent);
 
@@ -763,32 +924,39 @@ protected:
 
 	LRESULT eventPaint(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& outPass)
 	{
-		if (m_owner->hasEventHandler< PaintEvent >())
+		if (m_host != nullptr || m_owner->hasEventHandler< PaintEvent >())
 		{
 			RECT rcUpdate = { 0 };
-			if (false /* support partial update */)
-				GetUpdateRect(m_hWnd, &rcUpdate, FALSE);
-			else
+			if (!GetUpdateRect(m_hWnd, &rcUpdate, FALSE))
 				GetClientRect(m_hWnd, &rcUpdate);
 
 			if (m_canvasImpl != nullptr && m_canvasImpl->beginPaint(m_hWnd, m_font, m_doubleBuffer, NULL))
 			{
 				Canvas canvas(m_canvasImpl, reinterpret_cast< Widget* >(m_owner));
 
-				PaintEvent p(
-					m_owner,
-					canvas,
-					Rect(rcUpdate.left, rcUpdate.top, rcUpdate.right, rcUpdate.bottom));
-				m_owner->raiseEvent(&p);
+				if (m_host != nullptr)
+				{
+					m_host->paint(canvas, Rect(rcUpdate.left, rcUpdate.top, rcUpdate.right, rcUpdate.bottom));
+					outPass = false;
+				}
+				else
+				{
+					PaintEvent p(
+						m_owner,
+						canvas,
+						Rect(rcUpdate.left, rcUpdate.top, rcUpdate.right, rcUpdate.bottom));
+					m_owner->raiseEvent(&p);
 
-				OverlayPaintEvent op(
-					m_owner,
-					canvas,
-					Rect(rcUpdate.left, rcUpdate.top, rcUpdate.right, rcUpdate.bottom));
-				m_owner->raiseEvent(&op);
+					OverlayPaintEvent op(
+						m_owner,
+						canvas,
+						Rect(rcUpdate.left, rcUpdate.top, rcUpdate.right, rcUpdate.bottom));
+					m_owner->raiseEvent(&op);
+
+					outPass = !p.consumed();
+				}
 
 				m_canvasImpl->endPaint(m_hWnd);
-				outPass = !p.consumed();
 			}
 			else if (m_canvasImpl == nullptr)
 			{
@@ -811,7 +979,7 @@ protected:
 
 	LRESULT eventEraseBkGnd(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& outPass)
 	{
-		if (m_owner->hasEventHandler< PaintEvent >())
+		if (m_host != nullptr || m_owner->hasEventHandler< PaintEvent >())
 		{
 			// Have paint event handler; return zero to indicate we didn't erase the background.
 			outPass = false;
@@ -825,6 +993,15 @@ protected:
 
 	LRESULT eventTimer(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& outPass)
 	{
+		const auto it = m_hostTimers.find((int32_t)wParam);
+		if (it != m_hostTimers.end())
+		{
+			// Copy as callback may start or stop host timers.
+			const std::function< void() > fn = it->second;
+			fn();
+			return 0;
+		}
+
 		if (!IsWindowEnabled(m_hWnd))
 			return 0;
 
@@ -878,6 +1055,14 @@ protected:
 	{
 		SizeEvent s(m_owner, Size(0, 0));
 		m_owner->raiseEvent(&s);
+		return 0;
+	}
+
+	LRESULT eventCaptureChanged(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& outPass)
+	{
+		if (m_host != nullptr)
+			m_host->captureLost();
+		outPass = true;
 		return 0;
 	}
 

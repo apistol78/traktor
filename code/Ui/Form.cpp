@@ -1,15 +1,17 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Ui/Form.h"
+
 #include "Core/Log/Log.h"
 #include "Ui/Application.h"
 #include "Ui/Bitmap.h"
-#include "Ui/Form.h"
+#include "Ui/StyleSheet.h"
 #include "Ui/Itf/IForm.h"
 
 namespace traktor::ui
@@ -41,7 +43,12 @@ bool Form::create(const std::wstring& text, Unit width, Unit height, uint32_t st
 
 	m_widget = form;
 	m_icon = nullptr;
-	return Container::create(parent, style, layout);
+
+	if (!Container::create(parent, style, layout))
+		return false;
+
+	addEventHandler< PaintEvent >(this, &Form::eventPaint);
+	return true;
 }
 
 void Form::setIcon(IBitmap* icon)
@@ -105,6 +112,15 @@ bool Form::isEnable(bool includingParents) const
 bool Form::acceptLayout() const
 {
 	return false;
+}
+
+void Form::eventPaint(PaintEvent* event)
+{
+	Canvas& canvas = event->getCanvas();
+	const StyleSheet* ss = getStyleSheet();
+
+	canvas.setBackground(ss->getColor(this, isEnable(true) ? L"background-color" : L"background-color-disabled"));
+	canvas.fillRect(event->getUpdateRect());
 }
 
 }

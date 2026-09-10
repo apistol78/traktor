@@ -113,10 +113,10 @@ void MiniButton::eventPaint(PaintEvent* event)
 	const Rect rcInner = getInnerRect();
 	const int32_t radius = pixel(c_controlRadius);
 
-	// Cover the whole client area first; the rounded button leaves the four
-	// corners of the rectangle uncovered.
-	canvas.setBackground(ss->getColor(getParent(), L"background-color"));
-	canvas.fillRect(rcInner);
+	//// Cover the whole client area first; the rounded button leaves the four
+	//// corners of the rectangle uncovered.
+	//canvas.setBackground(ss->getColor(getParent(), L"background-color"));
+	//canvas.fillRect(rcInner);
 
 	// State colours belong to the button, not to whichever widget happens to
 	// contain it; reading them from the parent resolved to the fallback colour.

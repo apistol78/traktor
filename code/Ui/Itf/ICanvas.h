@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2025 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -40,6 +40,11 @@ public:
 	virtual void setLineStyle(LineStyle lineStyle) = 0;
 
 	virtual void setPenThickness(int thickness) = 0;
+
+	/*! Set absolute origin translation; applies to all subsequent draw and clip operations. */
+	virtual void setOrigin(const Point& origin) {}
+
+	virtual Point getOrigin() const { return Point(0, 0); }
 
 	virtual void setClipRect(const Rect& rc) = 0;
 

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,6 +8,8 @@
  */
 #pragma once
 
+#include <utility>
+#include "Core/Containers/AlignedVector.h"
 #include "Ui/Associative.h"
 #include "Ui/Canvas.h"
 #include "Ui/Enums.h"
@@ -212,6 +214,14 @@ protected:
 	Ref< const StyleSheet > m_styleSheet;
 	Align m_halign = AnLeft;
 	Align m_valign = AnTop;
+	bool m_visible = true;
+
+private:
+	static bool virtualAncestorsVisible(const Widget* widget);
+
+	static void syncNativeVisibility(Widget* widget);
+
+	static void collectEmbeddedNativeRects(Widget* widget, AlignedVector< std::pair< Widget*, Rect > >& outRects);
 };
 
 }

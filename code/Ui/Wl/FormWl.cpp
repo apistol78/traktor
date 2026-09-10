@@ -36,6 +36,8 @@ bool FormWl::create(IWidget* parent, const std::wstring& text, int width, int he
 
 	m_rect = Rect(0, 0, width, height);
 
+	style = createWidgetHost(style);
+
 	if (!WidgetWlImpl< IForm >::create(nullptr, style, false, true))
 		return false;
 

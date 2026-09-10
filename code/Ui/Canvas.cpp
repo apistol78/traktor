@@ -1,11 +1,12 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include <algorithm>
 #include "Ui/Application.h"
 #include "Ui/Canvas.h"
 #include "Ui/IBitmap.h"
@@ -64,14 +65,52 @@ void Canvas::setPenThickness(int thickness)
 	m_canvas->setPenThickness(thickness);
 }
 
+void Canvas::setOrigin(const Point& origin)
+{
+	m_canvas->setOrigin(origin);
+}
+
+Point Canvas::getOrigin() const
+{
+	return m_canvas->getOrigin();
+}
+
+void Canvas::setBaseClip(const Rect& rc)
+{
+	m_baseClip = rc;
+	m_haveBaseClip = true;
+	m_canvas->setClipRect(rc);
+}
+
+void Canvas::clearBaseClip()
+{
+	m_haveBaseClip = false;
+	m_canvas->resetClipRect();
+}
+
 void Canvas::setClipRect(const Rect& rc)
 {
-	m_canvas->setClipRect(rc);
+	if (m_haveBaseClip)
+	{
+		Rect rc2 = rc.getUnified();
+		rc2.left = std::max(rc2.left, m_baseClip.left);
+		rc2.top = std::max(rc2.top, m_baseClip.top);
+		rc2.right = std::min(rc2.right, m_baseClip.right);
+		rc2.bottom = std::min(rc2.bottom, m_baseClip.bottom);
+		rc2.right = std::max(rc2.left, rc2.right);
+		rc2.bottom = std::max(rc2.top, rc2.bottom);
+		m_canvas->setClipRect(rc2);
+	}
+	else
+		m_canvas->setClipRect(rc);
 }
 
 void Canvas::resetClipRect()
 {
-	m_canvas->resetClipRect();
+	if (m_haveBaseClip)
+		m_canvas->setClipRect(m_baseClip);
+	else
+		m_canvas->resetClipRect();
 }
 
 void Canvas::drawPixel(int x, int y)

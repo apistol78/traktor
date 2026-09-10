@@ -87,6 +87,8 @@ bool ToolFormX11::create(IWidget* parent, const std::wstring& text, int width, i
 	m_atomWmDeleteWindow = XInternAtom(m_context->getDisplay(), "WM_DELETE_WINDOW", False);
 	XSetWMProtocols(m_context->getDisplay(), window, &m_atomWmDeleteWindow, 1);
 
+	style = createWidgetHost(style);
+
 	if (!WidgetX11Impl< IToolForm >::create(parent, style, window, Rect(0, 0, width, height), false, true))
 		return false;
 

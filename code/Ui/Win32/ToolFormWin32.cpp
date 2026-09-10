@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2025 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -58,6 +58,8 @@ bool ToolFormWin32::create(IWidget* parent, const std::wstring& text, int width,
 			width,
 			height))
 		return false;
+
+	style = createWidgetHost(style);
 
 	if (!WidgetWin32Impl::create(style))
 		return false;

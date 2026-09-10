@@ -98,7 +98,7 @@ PreviewControl::PreviewControl(editor::IEditor* editor)
 
 bool PreviewControl::create(ui::Widget* parent)
 {
-	if (!ui::Widget::create(parent, ui::WsFocus | ui::WsNoCanvas))
+	if (!ui::Widget::create(parent, ui::WsFocus | ui::WsNoCanvas | ui::WsNative))
 		return false;
 
 	Ref< db::Database > database = m_editor->getOutputDatabase();
