@@ -1004,7 +1004,7 @@ void SceneEditorPage::handleDatabaseEvents(AlignedVector< std::pair< db::Databas
 	for (const auto& event : events)
 	{
 		if (event.first == m_editor->getSourceDatabase())
-			return;
+			continue;
 
 		// Notify scene UI extensions.
 		for (auto extension : m_context->getUIExtensions())
