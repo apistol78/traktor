@@ -100,6 +100,7 @@ private:
 	Point m_lastMousePosition;
 	bool m_inside = false;
 	bool m_inPaint = false;
+	bool m_suppressFocusDispatch = false;
 
 	void paintWidget(Canvas& canvas, VirtualWidget* widget, const Rect& clip, const Point& offset);
 

@@ -253,6 +253,9 @@ void TopLevelWidgetHost::dispatchMouseTrack(bool entered, const Point& pt)
 
 void TopLevelWidgetHost::dispatchFocus(bool gained)
 {
+	if (m_suppressFocusDispatch)
+		return;
+
 	EventSubject* target = (m_focus != nullptr) ? m_focus->getOwner() : m_owner;
 	FocusEvent event(target, gained);
 	target->raiseEvent(&event);
@@ -313,6 +316,21 @@ void TopLevelWidgetHost::setFocus(VirtualWidget* widget)
 
 	VirtualWidget* previous = m_focus;
 	m_focus = widget;
+
+	// Keyboard input is delivered to the native widget owning this host, so it
+	// must hold the native focus for any virtual widget to receive keys at all;
+	// setCapture does the same for the pointer. Suppress the focus events that
+	// acquiring it raises, the transition is reported below instead.
+	if (m_focus != nullptr)
+	{
+		IWidget* peer = m_peer->getPeerWidget();
+		if (!peer->hasFocus())
+		{
+			m_suppressFocusDispatch = true;
+			peer->setFocus();
+			m_suppressFocusDispatch = false;
+		}
+	}
 
 	if (previous != nullptr)
 	{
