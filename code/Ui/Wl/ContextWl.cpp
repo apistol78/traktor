@@ -834,6 +834,13 @@ void ContextWl::dispatch(wl_surface* surface, int32_t eventType, bool always, Wl
 	const auto& binding = b->second;
 	T_FATAL_ASSERT(binding.widget != nullptr);
 
+	// While a widget holds capture the pointer belongs to it; the cursor
+	// crossing another widget's surface must not raise enter/leave there.
+	// Enter and leave are dispatched with "always", so this has to come first.
+	if (m_grabbed != nullptr && binding.widget != m_grabbed &&
+		(eventType == WlEvtPointerEnter || eventType == WlEvtPointerLeave))
+		return;
+
 	if (!always && binding.widget != m_grabbed)
 	{
 		for (const WidgetData* w = binding.widget; w != nullptr; w = w->parent)

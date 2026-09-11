@@ -85,6 +85,9 @@ public:
 	//@}
 
 	virtual Point getLastMousePosition() const = 0;
+
+	/*! Widget currently holding the mouse capture, or null. */
+	virtual IWidget* getCaptureWidget() const = 0;
 };
 
 /*! Create host routing paint and input for a native top-level peer. */

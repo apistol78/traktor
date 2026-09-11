@@ -692,9 +692,14 @@ void DockPane::draw(Canvas& canvas, const Point& mousePosition)
 					titleRect.bottom);
 
 				const bool visible = w.widget->isVisible(false);
+				const bool hover = !visible && rcTab.inside(mousePosition, false);
+
+				// A hovered tab brightens its label as well as its background,
+				// the same as Tab does.
+				canvas.setForeground(ss->getColor(this, (visible || hover) ? L"tab-color-active" : L"tab-color-inactive"));
+
 				if (visible)
 				{
-					canvas.setForeground(ss->getColor(this, L"tab-color-active"));
 					canvas.setBackground(ss->getColor(this, L"tab-selected-background-color"));
 					fillTabShape(canvas, rcTab, m_owner->pixel(c_surfaceRadius));
 
@@ -703,14 +708,10 @@ void DockPane::draw(Canvas& canvas, const Point& mousePosition)
 					canvas.setBackground(ss->getColor(this, L"tab-accent-color"));
 					canvas.fillRect(Rect(rcTab.left, rcTab.bottom - accent, rcTab.right, rcTab.bottom));
 				}
-				else
+				else if (hover)
 				{
-					canvas.setForeground(ss->getColor(this, L"tab-color-inactive"));
-					if (rcTab.inside(mousePosition, false))
-					{
-						canvas.setBackground(ss->getColor(this, L"tab-background-color-hover"));
-						fillTabShape(canvas, rcTab, m_owner->pixel(c_surfaceRadius));
-					}
+					canvas.setBackground(ss->getColor(this, L"tab-background-color-hover"));
+					fillTabShape(canvas, rcTab, m_owner->pixel(c_surfaceRadius));
 				}
 
 				Rect rcTabTitle = rcTab;

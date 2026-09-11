@@ -131,6 +131,14 @@ public:
 
 	bool hasCapture() const;
 
+	/*! Some other widget holds the mouse capture.
+	 *
+	 * Widgets which derive hover from the pointer position rather than from
+	 * mouse events need this; capture routes events, but it cannot route a
+	 * query of where the pointer happens to be.
+	 */
+	bool hasCaptureOther() const;
+
 	void setCapture();
 
 	void releaseCapture();

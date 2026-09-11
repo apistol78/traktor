@@ -225,9 +225,17 @@ bool TopLevelWidgetHost::dispatchKey(VirtualKey vk, int32_t systemKey, wchar_t c
 
 void TopLevelWidgetHost::dispatchMouseTrack(bool entered, const Point& pt)
 {
+	m_inside = entered;
+
+	// While a widget holds capture the pointer belongs to it. Crossing the
+	// window edge, or a native child widget with a peer of its own, must not
+	// hand hover to anyone else; dispatchMouseMove freezes hover for the same
+	// reason. Hover is resolved again once the capture is released.
+	if (m_capture != nullptr)
+		return;
+
 	if (entered)
 	{
-		m_inside = true;
 		if (m_hover == nullptr)
 		{
 			MouseTrackEvent event(m_owner, true);
@@ -236,7 +244,6 @@ void TopLevelWidgetHost::dispatchMouseTrack(bool entered, const Point& pt)
 	}
 	else
 	{
-		m_inside = false;
 		EventSubject* owner = (m_hover != nullptr) ? m_hover->getOwner() : m_owner;
 		m_hover = nullptr;
 		MouseTrackEvent event(owner, false);
@@ -262,6 +269,8 @@ void TopLevelWidgetHost::captureLost()
 		MouseButtonUpEvent event(lost->getOwner(), MbtLeft, lost->fromHost(m_lastMousePosition));
 		lost->getOwner()->raiseEvent(&event);
 	}
+
+	updateHover(m_lastMousePosition);
 }
 
 ITopLevelWidgetHost::IPeer* TopLevelWidgetHost::getPeer() const
@@ -335,6 +344,15 @@ void TopLevelWidgetHost::releaseCapture(VirtualWidget* widget)
 
 	m_capture = nullptr;
 	m_peer->getPeerWidget()->releaseCapture();
+
+	// Hover was frozen while captured; resolve it against where the pointer
+	// actually is now.
+	updateHover(m_lastMousePosition);
+}
+
+IWidget* TopLevelWidgetHost::getCaptureWidget() const
+{
+	return m_capture;
 }
 
 VirtualWidget* TopLevelWidgetHost::getCapture() const

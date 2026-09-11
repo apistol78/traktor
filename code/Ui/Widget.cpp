@@ -409,6 +409,19 @@ bool Widget::hasCapture() const
 	return m_widget->hasCapture();
 }
 
+bool Widget::hasCaptureOther() const
+{
+	if (m_widget == nullptr)
+		return false;
+
+	ITopLevelWidgetHost* host = m_widget->getWidgetHost();
+	if (host == nullptr)
+		return false;
+
+	IWidget* capture = host->getCaptureWidget();
+	return capture != nullptr && capture != m_widget;
+}
+
 void Widget::setCapture()
 {
 	T_ASSERT(m_widget);

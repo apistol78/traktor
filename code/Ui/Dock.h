@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -50,6 +50,7 @@ public:
 private:
 	Ref< DockPane > m_pane;
 	Ref< DockPane > m_splittingPane;
+	Ref< DockPane > m_hoverPane;
 	Ref< DockPane > m_hintDockPane;
 	Ref< ToolForm > m_hintDockForm;
 	Ref< ToolForm > m_hint;
@@ -58,6 +59,7 @@ private:
 	Ref< Image > m_hintTop;
 	Ref< Image > m_hintBottom;
 	EventSubject* m_ncButtonDownSender = nullptr;
+	int32_t m_hoverTab = -1;
 
 	void eventSize(SizeEvent* event);
 

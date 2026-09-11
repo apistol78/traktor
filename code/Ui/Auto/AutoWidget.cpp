@@ -317,8 +317,9 @@ void AutoWidget::updateLayout()
 		m_scrollOffset.cy = 0;
 	}
 
-	// Update hover tracking.
-	Ref< AutoWidgetCell > hitItem = hitTest(getMousePosition());
+	// Update hover tracking. Unlike eventMouseMove this samples the pointer
+	// directly, so capture has to be honoured here by hand.
+	Ref< AutoWidgetCell > hitItem = !hasCaptureOther() ? hitTest(getMousePosition()) : nullptr;
 	if (m_hoverCell != hitItem)
 	{
 		if (m_hoverCell != nullptr)

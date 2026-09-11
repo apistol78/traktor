@@ -134,6 +134,11 @@ void Dock::eventSize(SizeEvent* event)
 
 void Dock::eventMouseTrack(MouseTrackEvent* event)
 {
+	if (!event->entered())
+	{
+		m_hoverPane = nullptr;
+		m_hoverTab = -1;
+	}
 	Widget::update(nullptr, false);
 }
 
@@ -189,6 +194,18 @@ void Dock::eventMouseMove(MouseMoveEvent* event)
 			pane &&
 			pane->hitSplitter(position))
 			cursor = pane->m_vertical ? Cursor::SizeNS : Cursor::SizeWE;
+
+		// Tabs highlight on hover, so a repaint is needed when the hovered tab
+		// changes. Only then; repainting on every move is what made this a
+		// source of redundant repaints before.
+		Ref< DockPane > hoverPane = m_pane->getPaneFromPosition(position);
+		const int32_t hoverTab = (hoverPane != nullptr) ? hoverPane->hitTab(position) : -1;
+		if (hoverPane != m_hoverPane || hoverTab != m_hoverTab)
+		{
+			m_hoverPane = hoverPane;
+			m_hoverTab = hoverTab;
+			Widget::update(nullptr, false);
+		}
 	}
 	else
 	{
@@ -264,7 +281,10 @@ void Dock::eventPaint(PaintEvent* event)
 {
 	Canvas& canvas = event->getCanvas();
 
-	const Point position = getMousePosition();
+	// Hover comes from the pointer position rather than from mouse events, so
+	// it has to respect capture explicitly; a widget being dragged elsewhere
+	// should not light up the tabs it happens to pass over.
+	const Point position = hasCaptureOther() ? Point(-1, -1) : getMousePosition();
 	m_pane->draw(canvas, position);
 
 	event->consume();

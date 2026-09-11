@@ -53,6 +53,8 @@ public:
 
 	virtual Point getLastMousePosition() const override final;
 
+	virtual IWidget* getCaptureWidget() const override final;
+
 	/*! \name Services for virtual widgets. */
 	//@{
 
