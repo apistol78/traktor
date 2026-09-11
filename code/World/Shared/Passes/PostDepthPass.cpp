@@ -77,7 +77,7 @@ render::RGTargetSet PostDepthPass::setup(
 	rgtd.targets[0].colorFormat = render::TfR32F;
 
 	// Share depth buffer with visual target so depth test against opaque and transparent geometry is possible.
-	const render::RGTargetSet postDepthTargetSetId = renderGraph.addTransientTargetSet(L"Post depth", rgtd, outputTargetSetId, outputTargetSetId);
+	const render::RGTargetSet postDepthTargetSetId = renderGraph.addTransientTargetSet(L"Post depth", rgtd, gbufferTargetSetId, gbufferTargetSetId);
 
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Post depth");
 	rp->addInput(gbufferTargetSetId);
