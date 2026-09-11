@@ -190,7 +190,9 @@ public:
 
 	WidgetData* getPointerFocus() const { return m_pointerFocus; }
 
-	uint32_t getPointerSerial() const { return m_pointerSerial; }
+	//! Serial from the most recent pointer enter.
+	//! wl_pointer.set_cursor is ignored unless given this exact serial.
+	uint32_t getPointerEnterSerial() const { return m_pointerEnterSerial; }
 
 	//! Serial from the most recent button press (for xdg_popup_grab).
 	uint32_t getGrabSerial() const { return m_grabSerial; }
@@ -310,7 +312,7 @@ private:
 	bool m_fractionalScaling = false;	//!< True once a wp_fractional_scale_v1 preferred scale has been applied.
 	int32_t m_outputWidth = 1920;
 	int32_t m_outputHeight = 1080;
-	uint32_t m_pointerSerial = 0;
+	uint32_t m_pointerEnterSerial = 0;
 	uint32_t m_grabSerial = 0;
 	uint32_t m_inputSerial = 0;
 	uint32_t m_keyboardModifiers = 0;

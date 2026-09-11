@@ -512,17 +512,21 @@ public:
 		wl_cursor_image* image = wlCursor->images[0];
 		wl_buffer* buffer = wl_cursor_image_get_buffer(image);
 
-		wl_surface_attach(cursorSurface, buffer, 0, 0);
-		wl_surface_damage(cursorSurface, 0, 0, image->width, image->height);
-		wl_surface_commit(cursorSurface);
-
+		// Set the cursor before committing the surface; the hotspot is part of
+		// the surface state and only takes effect on the following commit. The
+		// other order shows the new image with the previous hotspot until
+		// something commits the cursor surface again.
 		wl_pointer_set_cursor(
 			pointer,
-			m_context->getPointerSerial(),
+			m_context->getPointerEnterSerial(),
 			cursorSurface,
 			image->hotspot_x,
 			image->hotspot_y
 		);
+
+		wl_surface_attach(cursorSurface, buffer, 0, 0);
+		wl_surface_damage(cursorSurface, 0, 0, image->width, image->height);
+		wl_surface_commit(cursorSurface);
 	}
 
 	// Returns device coordinates.

@@ -943,7 +943,7 @@ void ContextWl::seatName(void* data, wl_seat* seat, const char* name)
 void ContextWl::pointerEnter(void* data, wl_pointer* pointer, uint32_t serial, wl_surface* surface, wl_fixed_t sx, wl_fixed_t sy)
 {
 	ContextWl* ctx = static_cast< ContextWl* >(data);
-	ctx->m_pointerSerial = serial;
+	ctx->m_pointerEnterSerial = serial;
 
 	double px = wl_fixed_to_double(sx) * ctx->getScale();
 	double py = wl_fixed_to_double(sy) * ctx->getScale();
@@ -977,7 +977,6 @@ void ContextWl::pointerEnter(void* data, wl_pointer* pointer, uint32_t serial, w
 void ContextWl::pointerLeave(void* data, wl_pointer* pointer, uint32_t serial, wl_surface* surface)
 {
 	ContextWl* ctx = static_cast< ContextWl* >(data);
-	ctx->m_pointerSerial = serial;
 
 	WlEvent e;
 	e.type = WlEvtPointerLeave;
@@ -1030,7 +1029,6 @@ void ContextWl::pointerMotion(void* data, wl_pointer* pointer, uint32_t time, wl
 void ContextWl::pointerButton(void* data, wl_pointer* pointer, uint32_t serial, uint32_t time, uint32_t button, uint32_t state)
 {
 	ContextWl* ctx = static_cast< ContextWl* >(data);
-	ctx->m_pointerSerial = serial;
 	ctx->m_inputSerial = serial;
 
 	// Save button-press serials separately — Mutter only accepts press
