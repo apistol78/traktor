@@ -2179,20 +2179,12 @@ void EditorForm::moveNewTabGroup()
 	tab->addEventHandler< ui::ChildEvent >(this, &EditorForm::eventTabChild);
 	m_tabGroups.push_back(tab);
 
-	std::wstring toolTip;
-	activeTabPage->getToolTip(toolTip);
-
-	Ref< ui::TabPage > tabPage = new ui::TabPage();
-	tabPage->create(tab, activeTabPage->getText(), toolTip, activeTabPage->getImageIndex(), new ui::FloodLayout());
-	tabPage->copyData(activeTabPage);
-
-	tab->addPage(tabPage);
+	// Move the page itself, not only its content, since editor pages
+	// might have attached handlers or timers to the page.
+	tab->addPage(activeTabPage);
 	tab->update(nullptr, true);
 
-	Ref< ui::Widget > child = activeTabPage->getFirstChild();
-	child->setParent(tabPage);
-
-	activeTabGroup->removePage(activeTabPage);
+	m_tabGroupLastFocus = tab;
 	m_tabGroupContainer->update();
 }
 
@@ -2951,7 +2943,8 @@ void EditorForm::eventTabChild(ui::ChildEvent* event)
 	}
 	if (childTab != nullptr)
 	{
-		if (event->link())
+		// Pages moved between tab groups already have a focus handler.
+		if (event->link() && !event->getChild()->hasEventHandler< ui::FocusEvent >())
 			event->getChild()->addEventHandler< ui::FocusEvent >(this, &EditorForm::eventTabFocus);
 	}
 }

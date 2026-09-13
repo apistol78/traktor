@@ -53,6 +53,8 @@ public:
 	virtual Rect getInnerRect() const override;
 
 private:
+	friend class Tab;
+
 	Tab* m_tab = nullptr;
 	int32_t m_imageIndex = 0;
 	std::wstring m_toolTip;

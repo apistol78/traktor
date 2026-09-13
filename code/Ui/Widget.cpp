@@ -616,6 +616,10 @@ void Widget::unlink()
 
 void Widget::setParent(Widget* parent)
 {
+	// Ensure this instance is alive as unlink might otherwise
+	// cause this instance to be collected as we will become "unreachable".
+	T_ANONYMOUS_VAR(Ref< Widget >)(this);
+
 	// Embedded natives derive position and visibility from the virtual chain
 	// which is about to change; capture logical rects before reparenting.
 	AlignedVector< std::pair< Widget*, Rect > > embedded;

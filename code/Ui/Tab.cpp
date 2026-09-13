@@ -128,6 +128,16 @@ int32_t Tab::addPage(TabPage* page)
 	if (page == 0)
 		return -1;
 
+	// Move page from another tab; the page widget itself is kept so
+	// event handlers, timers and user data attached to it remain intact.
+	if (page->m_tab != this)
+	{
+		if (page->m_tab != nullptr)
+			page->m_tab->removePage(page);
+		page->setParent(this);
+		page->m_tab = this;
+	}
+
 	for (auto& ps : m_pages)
 		ps.depth++;
 

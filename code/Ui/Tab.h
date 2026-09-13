@@ -52,6 +52,7 @@ public:
 
 	int32_t addImage(IBitmap* image, int32_t imageCount);
 
+	/*! Add page; a page belonging to another tab is moved into this tab. */
 	int32_t addPage(TabPage* page);
 
 	int32_t getPageCount() const;
