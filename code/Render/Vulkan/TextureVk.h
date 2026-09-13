@@ -59,6 +59,8 @@ public:
 
 	virtual void unlock(int32_t side, int32_t level) override final;
 
+	virtual void unlock(int32_t side, int32_t level, const Region& region) override final;
+
 	virtual ITexture* resolve() override final;
 
 	Image* getImage() const { return m_textureImage; }

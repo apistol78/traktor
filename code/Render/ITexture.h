@@ -35,6 +35,15 @@ public:
 		void* bits;
 	};
 
+	/*! Sub region of a texture level, in texels. */
+	struct Region
+	{
+		int32_t x;
+		int32_t y;
+		int32_t width;
+		int32_t height;
+	};
+
 	struct Size
 	{
 		int32_t x;
@@ -90,6 +99,18 @@ public:
 	 * \param level Mip level.
 	 */
 	virtual void unlock(int32_t side, int32_t level) = 0;
+
+	/*! Unlock access to texture data, transferring only a sub region.
+	 *
+	 * Only \a region is guaranteed to have been modified since the lock; a backend
+	 * may use this to limit the amount of data transferred. The default implementation
+	 * transfers the entire level.
+	 *
+	 * \param side Cube map side (0 if not cube map).
+	 * \param level Mip level.
+	 * \param region Region, in texels of the given level, modified since the lock.
+	 */
+	virtual void unlock(int32_t side, int32_t level, const Region& region);
 
 	/*! Resolve render texture.
 	 *

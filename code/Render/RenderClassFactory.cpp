@@ -221,7 +221,7 @@ void RenderClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 
 	auto classITexture = new AutoRuntimeClass< ITexture >();
 	classITexture->addMethod("lock", &ITexture_lock);
-	classITexture->addMethod("unlock", &ITexture::unlock);
+	classITexture->addMethod("unlock", (void (ITexture::*)(int32_t, int32_t))&ITexture::unlock);
 	registrar->registerClass(classITexture);
 
 	auto classIRenderSystem = new AutoRuntimeClass< IRenderSystem >();

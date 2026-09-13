@@ -9,6 +9,7 @@
 #include "Render/Vulkan/TextureVk.h"
 
 #include "Core/Log/Log.h"
+#include "Core/Math/MathUtils.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/TString.h"
 #include "Core/Thread/Atomic.h"
@@ -442,7 +443,50 @@ bool TextureVk::lock(int32_t side, int32_t level, Lock& lock)
 
 void TextureVk::unlock(int32_t side, int32_t level)
 {
+	const Region region = {
+		0,
+		0,
+		(int32_t)getTextureMipSize(m_size.x, level),
+		(int32_t)getTextureMipSize(m_size.y, level)
+	};
+	unlock(side, level, region);
+}
+
+void TextureVk::unlock(int32_t side, int32_t level, const Region& region)
+{
 	m_stagingBuffer->unlock();
+
+	const int32_t mipWidth = (int32_t)getTextureMipSize(m_size.x, level);
+	const int32_t mipHeight = (int32_t)getTextureMipSize(m_size.y, level);
+
+	int32_t x0 = clamp(region.x, 0, mipWidth);
+	int32_t y0 = clamp(region.y, 0, mipHeight);
+	int32_t x1 = clamp(region.x + region.width, 0, mipWidth);
+	int32_t y1 = clamp(region.y + region.height, 0, mipHeight);
+
+	// Nothing modified since lock; no transfer necessary.
+	if (x0 >= x1 || y0 >= y1)
+		return;
+
+	const uint32_t rowPitch = getTextureRowPitch(m_format, m_size.x, level);
+	const uint32_t texelSize = getTextureBlockSize(m_format);
+
+	// Vulkan require buffer offset to be a multiple of both 4 and the texel size; align
+	// the region out until it is. Block compressed formats are transferred in whole since
+	// the staging layout is expressed in blocks.
+	const bool partial = (getTextureBlockDenom(m_format) == 1 && (rowPitch % 4) == 0);
+	if (partial)
+	{
+		const int32_t alignX = (texelSize >= 4) ? 1 : (int32_t)(4 / texelSize);
+		x0 = (x0 / alignX) * alignX;
+	}
+	else
+	{
+		x0 = 0;
+		y0 = 0;
+		x1 = mipWidth;
+		y1 = mipHeight;
+	}
 
 	// This submits ahead of endFrame; a texture created this frame still has its initial
 	// layout transition pending in the upload command buffer, which must execute first for
@@ -455,20 +499,17 @@ void TextureVk::unlock(int32_t side, int32_t level)
 	m_textureImage->changeLayout(commandBuffer, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_ASPECT_COLOR_BIT, level, 1, 0, 1);
 
 	// Copy staging buffer into texture.
-	const uint32_t mipWidth = getTextureMipSize(m_size.x, level);
-	const uint32_t mipHeight = getTextureMipSize(m_size.y, level);
-
-	const VkBufferImageCopy region = {
-		.bufferOffset = 0,
-		.bufferRowLength = 0,
+	const VkBufferImageCopy copyRegion = {
+		.bufferOffset = partial ? ((uint32_t)y0 * rowPitch + (uint32_t)x0 * texelSize) : 0,
+		.bufferRowLength = partial ? (rowPitch / texelSize) : 0,
 		.bufferImageHeight = 0,
 		.imageSubresource = {
 			.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
 			.mipLevel = (uint32_t)level,
 			.baseArrayLayer = (uint32_t)side,
 			.layerCount = 1 },
-		.imageOffset = { 0, 0, 0 },
-		.imageExtent = { mipWidth, mipHeight, 1 }
+		.imageOffset = { x0, y0, 0 },
+		.imageExtent = { (uint32_t)(x1 - x0), (uint32_t)(y1 - y0), 1 }
 	};
 
 	vkCmdCopyBufferToImage(
@@ -477,7 +518,7 @@ void TextureVk::unlock(int32_t side, int32_t level)
 		m_textureImage->getVkImage(),
 		VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
 		1,
-		&region);
+		&copyRegion);
 
 	// Change layout of texture to optimal sampling.
 	m_textureImage->changeLayout(commandBuffer, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_ASPECT_COLOR_BIT, level, 1, 0, 1);

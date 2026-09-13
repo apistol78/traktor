@@ -43,6 +43,11 @@ void TextureProxy::unlock(int32_t side, int32_t level)
 	m_texture->unlock(side, level);
 }
 
+void TextureProxy::unlock(int32_t side, int32_t level, const Region& region)
+{
+	m_texture->unlock(side, level, region);
+}
+
 ITexture* TextureProxy::resolve()
 {
 	return m_texture->resolve();

@@ -21,4 +21,9 @@ void ITexture::release(void* owner) const noexcept
 		ResourceMorgue::getInstance().retire(this);
 }
 
+void ITexture::unlock(int32_t side, int32_t level, const Region& region)
+{
+	unlock(side, level);
+}
+
 }

@@ -70,6 +70,18 @@ void TextureVrfy::unlock(int32_t side, int32_t level)
 	m_locked = -1;
 }
 
+void TextureVrfy::unlock(int32_t side, int32_t level, const Region& region)
+{
+	T_CAPTURE_ASSERT(m_texture, L"Texture destroyed.");
+	T_CAPTURE_ASSERT(level >= 0, L"Invalid mip level.");
+	T_CAPTURE_ASSERT(level < getSize().mips, L"Invalid mip level.");
+	T_CAPTURE_ASSERT(m_locked != level, L"Trying to unlock incorrect mip level.");
+	T_CAPTURE_ASSERT(region.width >= 0 && region.height >= 0, L"Invalid region.");
+	if (m_texture)
+		m_texture->unlock(side, level, region);
+	m_locked = -1;
+}
+
 ITexture* TextureVrfy::resolve()
 {
 	T_CAPTURE_ASSERT(m_texture, L"Texture destroyed.");
