@@ -828,6 +828,16 @@
 				<id>{4067F6C8-9404-45CA-9359-D9E2456F7431}</id>
 			</destination>
 		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[2]"/>
+				<id>{29BA4386-B838-4550-93DF-F53D8B812C88}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[19]"/>
+				<id>{9AA653E8-079E-4ABF-87F5-40F9D2C21980}</id>
+			</destination>
+		</item>
 	</edges>
 	<groups/>
 </object>
