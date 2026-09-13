@@ -38,6 +38,13 @@
 
 namespace traktor::physics
 {
+namespace
+{
+
+//! Maximum vertical error, in meters, of heightfield collision geometry.
+const float c_heightfieldMaxError = 0.05f;
+
+}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.PhysicsEntityReplicator", 0, PhysicsEntityReplicator, world::IEntityReplicator)
 
@@ -229,6 +236,10 @@ Ref< model::Model > PhysicsEntityReplicator::createModel(
 		shapeModel->setProperty< PropertyObject >(type_name(outputBodyDesc), outputBodyDesc);
 
 		shapeModel->apply(model::Transform(
+			scale(meshAsset->getScaleFactor())
+		));
+
+		shapeModel->apply(model::Transform(
 			localTransform.toMatrix44()
 		));
 
@@ -258,7 +269,7 @@ Ref< model::Model > PhysicsEntityReplicator::createModel(
 
 		safeClose(sourceData);
 
-		return hf::ConvertHeightfield().convert(heightfield, 4);
+		return hf::ConvertHeightfield().convert(heightfield, 1, c_heightfieldMaxError);
 	}
 
 	return nullptr;

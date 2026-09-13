@@ -38,11 +38,16 @@ class T_DLLCLASS ConvertHeightfield : public Object
 public:
     /*! Convert heightfield into model.
      *
+     * When a maximum error is given the heightfield is adaptively tessellated;
+     * flat areas are covered by large triangles while no heightfield sample
+     * deviate more than the maximum error from the model.
+     *
      * \param heightfield Heightfield to convert.
      * \param step Step size, sample heightfield every N step.
+     * \param maxError Maximum vertical error in world units, 0 produce a regular grid.
      * \return Converted model.
      */
-    Ref< model::Model > convert(const Heightfield* heightfield, int32_t step) const;
+    Ref< model::Model > convert(const Heightfield* heightfield, int32_t step, float maxError = 0.0f) const;
 };
 
 }
