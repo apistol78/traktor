@@ -42,6 +42,13 @@ public:
 		int32_t size,
 		const Vector4& worldExtent);
 
+	/*! Set extent of heightfield in world.
+	 *
+	 * Heights are stored normalized, thus changing the extent
+	 * reinterprets the grid; cell bounds are updated accordingly.
+	 */
+	void setWorldExtent(const Vector4& worldExtent);
+
 	void setGridHeight(int32_t gridX, int32_t gridZ, float unitY);
 
 	void setGridCut(int32_t gridX, int32_t gridZ, bool cut);

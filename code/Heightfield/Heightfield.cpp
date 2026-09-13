@@ -43,6 +43,13 @@ Heightfield::Heightfield(
 	m_worldExtent.storeUnaligned(m_worldExtentFloats);
 }
 
+void Heightfield::setWorldExtent(const Vector4& worldExtent)
+{
+	m_worldExtent = worldExtent;
+	m_worldExtent.storeUnaligned(m_worldExtentFloats);
+	updateCellBounds();
+}
+
 void Heightfield::setGridHeight(int32_t gridX, int32_t gridZ, float unitY)
 {
 	if (gridX < 0 || gridX >= (int32_t)m_size)

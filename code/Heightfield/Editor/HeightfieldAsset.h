@@ -41,6 +41,8 @@ public:
 
 	virtual void serialize(ISerializer& s) override final;
 
+	void setWorldExtent(const Vector4& worldExtent) { m_worldExtent = worldExtent; }
+
 	const Vector4& getWorldExtent() const { return m_worldExtent; }
 
 	bool getErosionEnable() const { return m_erosionEnable; }

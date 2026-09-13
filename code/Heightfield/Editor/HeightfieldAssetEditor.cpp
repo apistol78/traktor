@@ -18,6 +18,7 @@
 #include "Heightfield/Heightfield.h"
 #include "Heightfield/HeightfieldFormat.h"
 #include "Heightfield/Editor/ConvertHeightfield.h"
+#include "Heightfield/Editor/CropHeightfieldDialog.h"
 #include "Heightfield/Editor/HeightfieldAsset.h"
 #include "Heightfield/Editor/HeightfieldAssetEditor.h"
 #include "I18N/Text.h"
@@ -163,10 +164,12 @@ bool HeightfieldAssetEditor::create(ui::Widget* parent, db::Instance* instance, 
 	toolBar->addItem(new ui::ToolBarButton(L"Remap height...", ui::Command(L"HeightfieldAssetEditor.RemapHeight")));
 	toolBar->addEventHandler< ui::ToolBarButtonClickEvent >(this, &HeightfieldAssetEditor::eventToolBar);
 
+	m_previewImage = generatePreviewImage(m_heightfield);
+
 	m_imagePreview = new ui::Image();
 	m_imagePreview->create(
 		m_container,
-		new ui::Bitmap(generatePreviewImage(m_heightfield)),
+		new ui::Bitmap(m_previewImage),
 		ui::WsDoubleBuffer | ui::Image::WsScaleKeepAspect
 	);
 
@@ -181,19 +184,41 @@ void HeightfieldAssetEditor::destroy()
 
 void HeightfieldAssetEditor::apply()
 {
-	Ref< IStream > sourceData = m_instance->writeData(L"Data");
-	if (sourceData)
-	{
-		if (!HeightfieldFormat().write(
-			sourceData,
-			m_heightfield
-		))
-			log::error << L"Unable to write heightfield to instance data stream." << Endl;
+	// Keep the last valid extent for fields which are being edited, thus empty.
+	const Vector4 worldExtent(
+		parseString< float >(m_editExtent[0]->getText(), m_asset->getWorldExtent().x()),
+		parseString< float >(m_editExtent[1]->getText(), m_asset->getWorldExtent().y()),
+		parseString< float >(m_editExtent[2]->getText(), m_asset->getWorldExtent().z()),
+		0.0f
+	);
 
-		sourceData->close();
+	// Applied periodically while the editor is open; cell bounds are only
+	// recalculated when the extent has actually changed.
+	if (!compareFuzzyEqual(worldExtent, m_asset->getWorldExtent().xyz0()))
+	{
+		m_asset->setWorldExtent(worldExtent);
+		m_heightfield->setWorldExtent(worldExtent);
 	}
-	else
-		log::error << L"Unable to write data to instance." << Endl;
+
+	if (m_heightfieldModified)
+	{
+		Ref< IStream > sourceData = m_instance->writeData(L"Data");
+		if (sourceData)
+		{
+			if (!HeightfieldFormat().write(
+				sourceData,
+				m_heightfield
+			))
+				log::error << L"Unable to write heightfield to instance data stream." << Endl;
+
+			sourceData->close();
+			m_heightfieldModified = false;
+		}
+		else
+			log::error << L"Unable to write data to instance." << Endl;
+	}
+
+	m_instance->setObject(m_asset);
 }
 
 bool HeightfieldAssetEditor::handleCommand(const ui::Command& command)
@@ -256,6 +281,8 @@ bool HeightfieldAssetEditor::handleCommand(const ui::Command& command)
 			}
 		}
 		m_heightfield->updateCellBounds();
+
+		m_heightfieldModified = true;
 		updatePreviewImage();
 		return true;
 	}
@@ -323,39 +350,29 @@ bool HeightfieldAssetEditor::handleCommand(const ui::Command& command)
 		m_heightfield->updateCellBounds();
 
 		m_editSize->setText(toString(m_heightfield->getSize()));
+
+		m_heightfieldModified = true;
 		updatePreviewImage();
 
 		return true;
 	}
 	else if (command == L"HeightfieldAssetEditor.Crop")
 	{
-		ui::InputDialog::Field fields[] =
-		{
-			ui::InputDialog::Field(L"Left", L"0", new ui::NumericEditValidator(false)),
-			ui::InputDialog::Field(L"Top", L"0", new ui::NumericEditValidator(false)),
-			ui::InputDialog::Field(L"Size", toString(m_heightfield->getSize()), new ui::NumericEditValidator(false, 1))
-		};
+		Ref< CropHeightfieldDialog > cropDialog = new CropHeightfieldDialog();
+		if (!cropDialog->create(m_container, m_heightfield->getSize(), m_previewImage))
+			return false;
 
-		ui::InputDialog inputDialog;
-		inputDialog.create(
-			m_container,
-			i18n::Text(L"CROP_HEIGHTFIELD_WIZARDTOOL_TITLE"),
-			i18n::Text(L"CROP_HEIGHTFIELD_WIZARDTOOL_MESSAGE"),
-			fields,
-			sizeof_array(fields)
-		);
-
-		if (inputDialog.showModal() == ui::DialogResult::Cancel)
+		if (cropDialog->showModal() == ui::DialogResult::Cancel)
 		{
-			inputDialog.destroy();
+			safeDestroy(cropDialog);
 			return false;
 		}
 
-		const int32_t x = parseString< int32_t >(fields[0].value);
-		const int32_t y = parseString< int32_t >(fields[1].value);
-		const int32_t size = parseString< int32_t >(fields[2].value);
+		const int32_t x = cropDialog->getCropLeft();
+		const int32_t y = cropDialog->getCropTop();
+		const int32_t size = cropDialog->getCropSize();
 
-		inputDialog.destroy();
+		safeDestroy(cropDialog);
 
 		if (size <= 0)
 		{
@@ -396,6 +413,7 @@ bool HeightfieldAssetEditor::handleCommand(const ui::Command& command)
 
 		m_editSize->setText(toString(m_heightfield->getSize()));
 
+		m_heightfieldModified = true;
 		updatePreviewImage();
 		return true;
 	}
@@ -432,6 +450,9 @@ bool HeightfieldAssetEditor::handleCommand(const ui::Command& command)
 		m_heightfield = cropped;
 		m_heightfield->updateCellBounds();
 
+		m_editExtent[1]->setText(toString(newWorldExtent.y()));
+
+		m_heightfieldModified = true;
 		updatePreviewImage();
 		return true;
 	}
@@ -453,8 +474,9 @@ ui::Size HeightfieldAssetEditor::getPreferredSize() const
 
 void HeightfieldAssetEditor::updatePreviewImage()
 {
+	m_previewImage = generatePreviewImage(m_heightfield);
 	m_imagePreview->setImage(
-		new ui::Bitmap(generatePreviewImage(m_heightfield)),
+		new ui::Bitmap(m_previewImage),
 		false
 	);
 	m_container->update();

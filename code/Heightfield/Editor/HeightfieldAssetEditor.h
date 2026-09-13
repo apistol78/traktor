@@ -11,6 +11,13 @@
 #include "Core/Ref.h"
 #include "Editor/IObjectEditor.h"
 
+namespace traktor::drawing
+{
+
+class Image;
+
+}
+
 namespace traktor::editor
 {
 
@@ -58,10 +65,12 @@ private:
 	Ref< db::Instance > m_instance;
 	Ref< HeightfieldAsset > m_asset;
 	Ref< Heightfield > m_heightfield;
+	Ref< drawing::Image > m_previewImage;
 	Ref< ui::Container > m_container;
 	Ref< ui::Edit > m_editExtent[3];
 	Ref< ui::Edit > m_editSize;
 	Ref< ui::Image > m_imagePreview;
+	bool m_heightfieldModified = false;
 
 	void updatePreviewImage();
 
