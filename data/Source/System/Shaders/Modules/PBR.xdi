@@ -100,7 +100,7 @@ vec3 CalculateReflection(vec3 N, vec3 V, vec3 albedo, float metallic, float roug
 	const vec3 F0 = CalculateF0(albedo, metallic);
 	const vec3 F = FresnelSchlickRoughness(NdotV, F0, roughness);
 
-	return clamp(F, 0.0f, 1.0f);
+	return clamp(F * F, 0.0f, 1.0f);
 }
 
 	
