@@ -119,6 +119,12 @@ public:
 
 	virtual SystemWindow getSystemWindow() = 0;
 
+	/*! Install the router for virtual children; the Ui layer creates one per
+	 * top-level and installs it before create. The peer does not own it; it
+	 * feeds the host raw input and paint for as long as it lives. Backends
+	 * without virtual widget hosting leave the default, which ignores it. */
+	virtual void setWidgetHost(ITopLevelWidgetHost* host) {}
+
 	/*! Virtual widget host; provided by top-level peers and virtual widgets. */
 	virtual ITopLevelWidgetHost* getWidgetHost() { return nullptr; }
 

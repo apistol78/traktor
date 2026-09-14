@@ -23,7 +23,7 @@ class VirtualWidget;
 class TopLevelWidgetHost : public RefCountImpl< ITopLevelWidgetHost >
 {
 public:
-	explicit TopLevelWidgetHost(ITopLevelWidgetHost::IPeer* peer, EventSubject* owner);
+	explicit TopLevelWidgetHost(EventSubject* owner, IWidget* peerWidget);
 
 	// ITopLevelWidgetHost
 
@@ -58,7 +58,7 @@ public:
 	/*! \name Services for virtual widgets. */
 	//@{
 
-	ITopLevelWidgetHost::IPeer* getPeer() const;
+	IWidget* getPeerWidget() const;
 
 	EventSubject* getOwner() const;
 
@@ -90,8 +90,8 @@ public:
 	VirtualWidget* hitTest(const Point& pt) const;
 
 private:
-	ITopLevelWidgetHost::IPeer* m_peer;
 	EventSubject* m_owner;
+	IWidget* m_peerWidget;
 	AlignedVector< VirtualWidget* > m_children;
 	VirtualWidget* m_hover = nullptr;
 	VirtualWidget* m_capture = nullptr;

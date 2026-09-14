@@ -6,6 +6,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Core/Containers/SmallMap.h"
 #include "Core/Log/Log.h"
 #include "Ui/Enums.h"
 #include "Ui/EventSubject.h"
@@ -32,6 +33,21 @@ namespace traktor::ui
 {
 namespace
 {
+
+// Thread timers for the callback timer service; keyed by the native timer id
+// so the trampoline can find the callback. UI thread only.
+SmallMap< UINT_PTR, std::function< void() > > s_timerCallbacks;
+
+void CALLBACK timerCallbackProc(HWND, UINT, UINT_PTR id, DWORD)
+{
+	const auto it = s_timerCallbacks.find(id);
+	if (it != s_timerCallbacks.end())
+	{
+		// Copy as the callback may start or stop timers.
+		const std::function< void() > fn = it->second;
+		fn();
+	}
+}
 
 // Windows delivers wheel messages to the keyboard focus window; reroute them
 // to the window beneath the pointer so scrolling affects what is pointed at,
@@ -184,6 +200,31 @@ bool EventLoopWin32::isKeyDown(VirtualKey vk) const
 		return (GetAsyncKeyState(keyCode) & 0x8000) != 0;
 	else
 		return false;
+}
+
+int32_t EventLoopWin32::startTimer(int32_t interval, const std::function< void() >& fn)
+{
+	// Thread timer; the TIMERPROC is invoked by DispatchMessage, so it fires
+	// from any loop pumping this thread's queue, modal loops included.
+	const UINT_PTR id = SetTimer(NULL, 0, interval, &timerCallbackProc);
+	if (id == 0)
+		return -1;
+
+	s_timerCallbacks[id] = fn;
+
+	// Native thread timer ids are small handle-table indices; they must fit
+	// the interface's id type.
+	T_FATAL_ASSERT(id <= 0x7fffffff);
+	return (int32_t)id;
+}
+
+void EventLoopWin32::stopTimer(int32_t id)
+{
+	if (id <= 0)
+		return;
+
+	KillTimer(NULL, (UINT_PTR)id);
+	s_timerCallbacks.remove((UINT_PTR)id);
 }
 
 bool EventLoopWin32::preTranslateMessage(EventSubject* owner, const MSG& msg)

@@ -8,49 +8,25 @@
  */
 #pragma once
 
-#include <functional>
 #include "Core/IRefCount.h"
-#include "Core/Ref.h"
 #include "Ui/Enums.h"
 #include "Ui/Point.h"
 #include "Ui/Rect.h"
-
-// import/export mechanism.
-#undef T_DLLCLASS
-#if defined(T_UI_EXPORT)
-#	define T_DLLCLASS T_DLLEXPORT
-#else
-#	define T_DLLCLASS T_DLLIMPORT
-#endif
 
 namespace traktor::ui
 {
 
 class Canvas;
-class EventSubject;
 class IWidget;
 
 /*! Host routing paint and input to the virtual widgets of a native top-level
- * window; hides the implementation from the backends.
+ * window; hides the implementation from the backends. Created and owned by
+ * the Ui layer, installed on the peer with IWidget::setWidgetHost.
  * \ingroup UI
  */
 class ITopLevelWidgetHost : public IRefCount
 {
 public:
-	/*! Services the host requires from its native top-level peer. */
-	class IPeer
-	{
-	public:
-		virtual ~IPeer() {}
-
-		virtual IWidget* getPeerWidget() = 0;
-
-		/*! Start native timer; callback fired on UI thread until stopped. */
-		virtual int32_t startHostTimer(int32_t interval, const std::function< void() >& fn) = 0;
-
-		virtual void stopHostTimer(int32_t id) = 0;
-	};
-
 	/*! \name Dispatch from native top-level peer.
 	 *
 	 * Points are in top-level client coordinates, device pixels. Return
@@ -89,8 +65,5 @@ public:
 	/*! Widget currently holding the mouse capture, or null. */
 	virtual IWidget* getCaptureWidget() const = 0;
 };
-
-/*! Create host routing paint and input for a native top-level peer. */
-T_DLLCLASS Ref< ITopLevelWidgetHost > createTopLevelWidgetHost(ITopLevelWidgetHost::IPeer* peer, EventSubject* owner);
 
 }

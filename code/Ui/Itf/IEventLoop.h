@@ -8,6 +8,7 @@
  */
 #pragma once
 
+#include <functional>
 #include "Core/IRefCount.h"
 #include "Ui/Enums.h"
 #include "Ui/Size.h"
@@ -38,6 +39,21 @@ public:
 	virtual int32_t getAsyncKeyState() const = 0;
 
 	virtual bool isKeyDown(VirtualKey vk) const = 0;
+
+	/*! \name Callback timers.
+	 *
+	 * Timers driven by the event loop; the callback fires on the UI thread
+	 * until stopped. Virtual widget timers are multiplexed through these, so
+	 * they must be overridden by any backend hosting virtual widgets; the
+	 * defaults cover backends that fall back to native widgets (Cocoa).
+	 */
+	//@{
+
+	virtual int32_t startTimer(int32_t interval, const std::function< void() >& fn) { return -1; }
+
+	virtual void stopTimer(int32_t id) {}
+
+	//@}
 };
 
 }

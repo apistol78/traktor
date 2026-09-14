@@ -51,7 +51,6 @@ class WidgetWlImpl
 :	public ControlType
 ,	public IFontMetric
 ,	public IFontMetricProvider
-,	public ITopLevelWidgetHost::IPeer
 {
 public:
 	explicit WidgetWlImpl(ContextWl* context, EventSubject* owner)
@@ -659,6 +658,8 @@ public:
 		);
 	}
 
+	virtual void setWidgetHost(ITopLevelWidgetHost* host) override { m_host = host; }
+
 	virtual ITopLevelWidgetHost* getWidgetHost() override { return m_host; }
 
 	// IFontMetric
@@ -755,26 +756,12 @@ public:
 		return Size(tx.width, fx.height);
 	}
 
-	// ITopLevelWidgetHost::IPeer
-
-	virtual IWidget* getPeerWidget() override { return this; }
-
-	virtual int32_t startHostTimer(int32_t interval, const std::function< void() >& fn) override
-	{
-		return Timers::getInstance().bind(interval, fn);
-	}
-
-	virtual void stopHostTimer(int32_t id) override
-	{
-		Timers::getInstance().unbind(id);
-	}
-
 	ContextWl* getContextWl() const { return m_context; }
 
 protected:
 	Ref< ContextWl > m_context;
 	EventSubject* m_owner = nullptr;
-	Ref< ITopLevelWidgetHost > m_host;
+	ITopLevelWidgetHost* m_host = nullptr;
 	WidgetData m_data;
 	Rect m_rect;			// Device coordinates.
 	Font m_font;
@@ -814,16 +801,13 @@ protected:
 
 	// --- Creation ---
 
-	// Create host for virtual children; called by top-level widgets before
-	// create. Clears WsNoCanvas as the host paints through the top-level canvas.
-	int32_t createWidgetHost(int32_t style)
-	{
-		m_host = createTopLevelWidgetHost(this, m_owner);
-		return style & ~(int32_t)WsNoCanvas;
-	}
-
 	bool create(IWidget* parent, int32_t style, bool visible, bool topLevel)
 	{
+		// A hosted top-level always owns a canvas; virtual children paint
+		// through it, so a WsNoCanvas request is ignored.
+		if (m_host != nullptr)
+			style &= ~(int32_t)WsNoCanvas;
+
 		m_data.parent = (parent != nullptr ? static_cast< WidgetData* >(parent->getInternalHandle()) : nullptr);
 		m_data.topLevel = topLevel;
 		m_data.visible = visible;

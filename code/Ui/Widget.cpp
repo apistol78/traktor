@@ -241,6 +241,13 @@ bool Widget::isEnable(bool includingParents) const
 	return true;
 }
 
+void Widget::installWidgetHost(IWidget* peer)
+{
+	T_ASSERT(peer != nullptr);
+	m_widgetHost = new TopLevelWidgetHost(this, peer);
+	peer->setWidgetHost(m_widgetHost);
+}
+
 bool Widget::hasFocus() const
 {
 	T_ASSERT(m_widget);

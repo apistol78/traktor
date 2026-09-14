@@ -31,6 +31,7 @@
 namespace traktor::ui
 {
 
+class ITopLevelWidgetHost;
 class IWidget;
 class StyleSheet;
 
@@ -224,7 +225,16 @@ protected:
 	Align m_valign = AnTop;
 	bool m_visible = true;
 
+	/*! Create the router for virtual children and install it on the peer;
+	 * called by top-level widgets (Form/Dialog/ToolForm) before the peer is
+	 * created. The Ui layer owns the router; the peer only borrows it. */
+	void installWidgetHost(IWidget* peer);
+
 private:
+	// Router for virtual children; owned here, borrowed by the peer. Only
+	// top-level widgets install one.
+	Ref< ITopLevelWidgetHost > m_widgetHost;
+
 	static bool virtualAncestorsVisible(const Widget* widget);
 
 	static void syncNativeVisibility(Widget* widget);

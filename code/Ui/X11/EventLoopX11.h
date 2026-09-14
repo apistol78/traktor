@@ -47,6 +47,10 @@ public:
 
 	virtual bool isKeyDown(VirtualKey vk) const override final;
 
+	virtual int32_t startTimer(int32_t interval, const std::function< void() >& fn) override final;
+
+	virtual void stopTimer(int32_t id) override final;
+
 private:
 	Ref< Context > m_context;
 	XIC m_xic;

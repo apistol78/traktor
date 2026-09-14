@@ -47,7 +47,6 @@ class WidgetWin32Impl
 	: public ControlType
 	, public IFontMetric
 	, public IFontMetricProvider
-	, public ITopLevelWidgetHost::IPeer
 {
 public:
 	explicit WidgetWin32Impl(EventSubject* owner)
@@ -68,10 +67,6 @@ public:
 
 	virtual void destroy() override
 	{
-		for (auto it : m_hostTimers)
-			KillTimer(m_hWnd, it.first);
-		m_hostTimers.clear();
-
 		KillTimer(m_hWnd, 1000);
 		delete this;
 	}
@@ -437,6 +432,11 @@ public:
 		return SystemWindow(m_hWnd);
 	}
 
+	virtual void setWidgetHost(ITopLevelWidgetHost* host) override
+	{
+		m_host = host;
+	}
+
 	virtual ITopLevelWidgetHost* getWidgetHost() override
 	{
 		return m_host;
@@ -494,27 +494,6 @@ public:
 		return m_canvasImpl->getExtent(m_hWnd, font, text);
 	}
 
-	// ITopLevelWidgetHost::IPeer
-
-	virtual IWidget* getPeerWidget() override
-	{
-		return this;
-	}
-
-	virtual int32_t startHostTimer(int32_t interval, const std::function< void() >& fn) override
-	{
-		const int32_t id = m_nextHostTimerId++;
-		m_hostTimers[id] = fn;
-		SetTimer(m_hWnd, id, interval, NULL);
-		return id;
-	}
-
-	virtual void stopHostTimer(int32_t id) override
-	{
-		KillTimer(m_hWnd, id);
-		m_hostTimers.remove(id);
-	}
-
 protected:
 	EventSubject* m_owner;
 	mutable Window m_hWnd;
@@ -525,17 +504,7 @@ protected:
 	bool m_ownCursor;
 	bool m_tracking;
 	int32_t m_interval;
-	Ref< ITopLevelWidgetHost > m_host;
-	SmallMap< int32_t, std::function< void() > > m_hostTimers;
-	int32_t m_nextHostTimerId = 2000;
-
-	// Create host for virtual children; called by top-level widgets before
-	// create. Clears WsNoCanvas as the host paints through the top-level canvas.
-	int32_t createWidgetHost(int32_t style)
-	{
-		m_host = createTopLevelWidgetHost(this, m_owner);
-		return style & ~(int32_t)WsNoCanvas;
-	}
+	ITopLevelWidgetHost* m_host = nullptr;
 
 	static void getNativeStyles(int style, UINT& nativeStyle, UINT& nativeStyleEx)
 	{
@@ -564,6 +533,11 @@ protected:
 	{
 		if (!m_hWnd)
 			return false;
+
+		// A hosted top-level always owns a canvas; virtual children paint
+		// through it, so a WsNoCanvas request is ignored.
+		if (m_host != nullptr)
+			style &= ~(int32_t)WsNoCanvas;
 
 		if (style & WsDoubleBuffer)
 			m_doubleBuffer = true;
@@ -996,15 +970,6 @@ protected:
 
 	LRESULT eventTimer(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& outPass)
 	{
-		const auto it = m_hostTimers.find((int32_t)wParam);
-		if (it != m_hostTimers.end())
-		{
-			// Copy as callback may start or stop host timers.
-			const std::function< void() > fn = it->second;
-			fn();
-			return 0;
-		}
-
 		if (!IsWindowEnabled(m_hWnd))
 			return 0;
 

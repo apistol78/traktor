@@ -30,6 +30,10 @@ bool ToolForm::create(Widget* parent, const std::wstring& text, Unit width, Unit
 
 	Ref< Layout > refLayout = layout;
 
+	// Install the virtual widget router before create; the peer routes input
+	// through it and virtual children paint through the peer's canvas.
+	installWidgetHost(toolForm);
+
 	if (!toolForm->create(parent ? parent->getIWidget() : 0, text, width.get(), height.get(), style))
 	{
 		toolForm->destroy();

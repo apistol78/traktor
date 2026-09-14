@@ -28,6 +28,10 @@ bool Form::create(const std::wstring& text, Unit width, Unit height, uint32_t st
 		return false;
 	}
 
+	// Install the virtual widget router before create; the peer routes input
+	// through it and virtual children paint through the peer's canvas.
+	installWidgetHost(form);
+
 	if (!form->create(parent ? parent->getIWidget() : nullptr, text, width.get(), height.get(), style))
 	{
 		form->destroy();

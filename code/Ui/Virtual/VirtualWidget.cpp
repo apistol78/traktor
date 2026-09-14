@@ -8,8 +8,10 @@
  */
 #include <algorithm>
 #include "Core/Log/Log.h"
+#include "Ui/Application.h"
 #include "Ui/EventSubject.h"
 #include "Ui/Events/AllEvents.h"
+#include "Ui/Itf/IEventLoop.h"
 #include "Ui/Itf/IFontMetricProvider.h"
 #include "Ui/Virtual/VirtualWidget.h"
 
@@ -26,7 +28,7 @@ bool VirtualWidget::create(IWidget* parent, int style)
 	if (parent == nullptr)
 		return false;
 
-	// Hosts are created solely by createTopLevelWidgetHost; downcast is safe.
+	// Hosts are created solely by Widget::installWidgetHost; downcast is safe.
 	m_host = static_cast< TopLevelWidgetHost* >(parent->getWidgetHost());
 	if (m_host == nullptr)
 		return false;
@@ -170,7 +172,7 @@ bool VirtualWidget::hasFocus() const
 	// keyboard focus; an embedded native child (e.g. a 3d view) or another
 	// top-level may hold it instead, and then no virtual widget has focus.
 	// Matches the native world where hasFocus was GetFocus() == hWnd.
-	return m_host != nullptr && m_host->getFocus() == this && m_host->getPeer()->getPeerWidget()->hasFocus();
+	return m_host != nullptr && m_host->getFocus() == this && m_host->getPeerWidget()->hasFocus();
 }
 
 void VirtualWidget::setFocus()
@@ -200,8 +202,7 @@ void VirtualWidget::startTimer(int interval)
 {
 	stopTimer();
 
-	m_timerInterval = interval;
-	m_timer = m_host->getPeer()->startHostTimer(interval, [this]() {
+	m_timer = Application::getInstance()->getEventLoop()->startTimer(interval, [this]() {
 		if (!m_visible)
 			return;
 		TimerEvent timerEvent(m_owner);
@@ -213,9 +214,8 @@ void VirtualWidget::stopTimer()
 {
 	if (m_timer >= 0)
 	{
-		m_host->getPeer()->stopHostTimer(m_timer);
+		Application::getInstance()->getEventLoop()->stopTimer(m_timer);
 		m_timer = -1;
-		m_timerInterval = 0;
 	}
 }
 
@@ -284,7 +284,7 @@ void VirtualWidget::setCursor(Cursor cursor)
 {
 	m_cursor = cursor;
 	if (m_host != nullptr && (m_host->getHover() == this || m_host->getCapture() == this))
-		m_host->getPeer()->getPeerWidget()->setCursor(cursor);
+		m_host->getPeerWidget()->setCursor(cursor);
 }
 
 Point VirtualWidget::getMousePosition(bool relative) const
@@ -293,17 +293,17 @@ Point VirtualWidget::getMousePosition(bool relative) const
 	if (relative)
 		return fromHost(pt);
 	else
-		return m_host->getPeer()->getPeerWidget()->clientToScreen(pt);
+		return m_host->getPeerWidget()->clientToScreen(pt);
 }
 
 Point VirtualWidget::screenToClient(const Point& pt) const
 {
-	return fromHost(m_host->getPeer()->getPeerWidget()->screenToClient(pt));
+	return fromHost(m_host->getPeerWidget()->screenToClient(pt));
 }
 
 Point VirtualWidget::clientToScreen(const Point& pt) const
 {
-	return m_host->getPeer()->getPeerWidget()->clientToScreen(toHost(pt));
+	return m_host->getPeerWidget()->clientToScreen(toHost(pt));
 }
 
 bool VirtualWidget::hitTest(const Point& pt) const
@@ -348,17 +348,17 @@ void VirtualWidget::update(const Rect* rc, bool immediate)
 
 int32_t VirtualWidget::dpi96(int32_t measure) const
 {
-	return m_host->getPeer()->getPeerWidget()->dpi96(measure);
+	return m_host->getPeerWidget()->dpi96(measure);
 }
 
 int32_t VirtualWidget::invdpi96(int32_t measure) const
 {
-	return m_host->getPeer()->getPeerWidget()->invdpi96(measure);
+	return m_host->getPeerWidget()->invdpi96(measure);
 }
 
 void* VirtualWidget::getInternalHandle()
 {
-	return m_host->getPeer()->getPeerWidget()->getInternalHandle();
+	return m_host->getPeerWidget()->getInternalHandle();
 }
 
 SystemWindow VirtualWidget::getSystemWindow()
@@ -456,21 +456,16 @@ bool VirtualWidget::isEffectivelyEnabled() const
 
 const IFontMetricProvider* VirtualWidget::getProvider() const
 {
-	return (m_host != nullptr) ? m_host->getPeer()->getPeerWidget()->getFontMetricProvider() : nullptr;
+	return (m_host != nullptr) ? m_host->getPeerWidget()->getFontMetricProvider() : nullptr;
 }
 
 void VirtualWidget::migrateHost(TopLevelWidgetHost* host)
 {
-	const int32_t interval = m_timerInterval;
-	stopTimer();
-
+	// Timers are event-loop driven and survive the migration untouched.
 	if (m_host != nullptr)
 		m_host->detach(this);
 
 	m_host = host;
-
-	if (interval > 0)
-		startTimer(interval);
 
 	for (auto child : m_children)
 		child->migrateHost(host);

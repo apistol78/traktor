@@ -59,8 +59,6 @@ bool ToolFormWin32::create(IWidget* parent, const std::wstring& text, int width,
 			height))
 		return false;
 
-	style = createWidgetHost(style);
-
 	if (!WidgetWin32Impl::create(style))
 		return false;
 

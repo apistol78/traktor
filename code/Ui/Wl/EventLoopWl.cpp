@@ -223,4 +223,14 @@ bool EventLoopWl::isKeyDown(VirtualKey vk) const
 	return false;
 }
 
+int32_t EventLoopWl::startTimer(int32_t interval, const std::function< void() >& fn)
+{
+	return Timers::getInstance().bind(interval, fn);
+}
+
+void EventLoopWl::stopTimer(int32_t id)
+{
+	Timers::getInstance().unbind(id);
+}
+
 }

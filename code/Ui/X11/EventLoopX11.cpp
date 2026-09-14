@@ -264,6 +264,16 @@ bool EventLoopX11::isKeyDown(VirtualKey vk) const
 	return false;
 }
 
+int32_t EventLoopX11::startTimer(int32_t interval, const std::function< void() >& fn)
+{
+	return Timers::getInstance().bind(interval, fn);
+}
+
+void EventLoopX11::stopTimer(int32_t id)
+{
+	Timers::getInstance().unbind(id);
+}
+
 bool EventLoopX11::preTranslateEvent(EventSubject* owner, XEvent& e)
 {
 	bool consumed = false;

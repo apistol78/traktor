@@ -55,8 +55,6 @@ bool FormWin32::create(IWidget* parent, const std::wstring& text, int width, int
 	))
 		return false;
 
-	style = createWidgetHost(style);
-
 	if (!WidgetWin32Impl::create(style))
 		return false;
 

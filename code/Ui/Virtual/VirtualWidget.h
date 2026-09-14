@@ -170,7 +170,6 @@ private:
 	std::wstring m_text;
 	uint32_t m_style = 0;
 	int32_t m_timer = -1;
-	int32_t m_timerInterval = 0;
 	bool m_visible = true;
 	bool m_enable = true;
 

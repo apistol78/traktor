@@ -48,6 +48,10 @@ bool Dialog::create(Widget* parent, const std::wstring& text, Unit width, Unit h
 		return false;
 	}
 
+	// Install the virtual widget router before create; the peer routes input
+	// through it and virtual children paint through the peer's canvas.
+	installWidgetHost(dialog);
+
 	if (!dialog->create(parent ? parent->getIWidget() : nullptr, text, width.get(), height.get(), style))
 	{
 		dialog->destroy();

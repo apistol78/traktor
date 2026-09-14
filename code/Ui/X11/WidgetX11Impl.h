@@ -41,7 +41,6 @@ class WidgetX11Impl
 :	public ControlType
 ,	public IFontMetric
 ,	public IFontMetricProvider
-,	public ITopLevelWidgetHost::IPeer
 {
 public:
 	explicit WidgetX11Impl(Context* context, EventSubject* owner)
@@ -476,6 +475,11 @@ public:
 		return SystemWindow::fromX11(m_context->getDisplay(), m_data.window);
 	}
 
+	virtual void setWidgetHost(ITopLevelWidgetHost* host) override
+	{
+		m_host = host;
+	}
+
 	virtual ITopLevelWidgetHost* getWidgetHost() override
 	{
 		return m_host;
@@ -583,23 +587,6 @@ public:
 		return Size(tx.width, fx.height);
 	}
 
-	// ITopLevelWidgetHost::IPeer
-
-	virtual IWidget* getPeerWidget() override
-	{
-		return this;
-	}
-
-	virtual int32_t startHostTimer(int32_t interval, const std::function< void() >& fn) override
-	{
-		return Timers::getInstance().bind(interval, fn);
-	}
-
-	virtual void stopHostTimer(int32_t id) override
-	{
-		Timers::getInstance().unbind(id);
-	}
-
 protected:
 	enum
 	{
@@ -610,7 +597,7 @@ protected:
 
 	Ref< Context > m_context;
 	EventSubject* m_owner = nullptr;
-	Ref< ITopLevelWidgetHost > m_host;
+	ITopLevelWidgetHost* m_host = nullptr;
 	WidgetData m_data;
 	XIC m_xic = 0;
 	Rect m_rect;
@@ -636,18 +623,15 @@ protected:
 		cairo_set_font_size(m_cairo, dpi96(font.getSize().get()));
 	}
 
-	// Create host for virtual children; called by top-level widgets before
-	// create. Clears WsNoCanvas as the host paints through the top-level canvas.
-	int32_t createWidgetHost(int32_t style)
-	{
-		m_host = createTopLevelWidgetHost(this, m_owner);
-		return style & ~(int32_t)WsNoCanvas;
-	}
-
 	bool create(IWidget* parent, int32_t style, Window window, const Rect& rect, bool visible, bool topLevel)
 	{
 		if (window == 0)
 			return false;
+
+		// A hosted top-level always owns a canvas; virtual children paint
+		// through it, so a WsNoCanvas request is ignored.
+		if (m_host != nullptr)
+			style &= ~(int32_t)WsNoCanvas;
 
 		m_data.window = window;
 		m_data.parent = (parent != nullptr ? static_cast< WidgetData* >(parent->getInternalHandle()) : nullptr);

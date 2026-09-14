@@ -55,9 +55,9 @@ VirtualWidget* hitTestChildren(const AlignedVector< VirtualWidget* >& children, 
 
 }
 
-TopLevelWidgetHost::TopLevelWidgetHost(ITopLevelWidgetHost::IPeer* peer, EventSubject* owner)
-:	m_peer(peer)
-,	m_owner(owner)
+TopLevelWidgetHost::TopLevelWidgetHost(EventSubject* owner, IWidget* peerWidget)
+:	m_owner(owner)
+,	m_peerWidget(peerWidget)
 {
 }
 
@@ -186,7 +186,7 @@ bool TopLevelWidgetHost::dispatchMouseWheel(int32_t rotation, const Point& pt)
 	VirtualWidget* target = (m_capture != nullptr) ? m_capture : hitTest(pt);
 
 	// Wheel events carry screen coordinates on every backend.
-	const Point ptScreen = m_peer->getPeerWidget()->clientToScreen(pt);
+	const Point ptScreen = m_peerWidget->clientToScreen(pt);
 
 	if (target == nullptr)
 	{
@@ -280,9 +280,9 @@ void TopLevelWidgetHost::captureLost()
 	updateHover(m_lastMousePosition);
 }
 
-ITopLevelWidgetHost::IPeer* TopLevelWidgetHost::getPeer() const
+IWidget* TopLevelWidgetHost::getPeerWidget() const
 {
-	return m_peer;
+	return m_peerWidget;
 }
 
 EventSubject* TopLevelWidgetHost::getOwner() const
@@ -310,12 +310,12 @@ AlignedVector< VirtualWidget* >& TopLevelWidgetHost::getChildren()
 void TopLevelWidgetHost::requestUpdate(const Rect& rc, bool immediate)
 {
 	// Immediate repaint while already painting would recurse into the canvas.
-	m_peer->getPeerWidget()->update(&rc, immediate && !m_inPaint);
+	m_peerWidget->update(&rc, immediate && !m_inPaint);
 }
 
 void TopLevelWidgetHost::setFocus(VirtualWidget* widget)
 {
-	IWidget* peer = m_peer->getPeerWidget();
+	IWidget* peer = m_peerWidget;
 
 	// A no-op only when nothing would change; the same virtual widget still
 	// needs the native focus reclaimed when an embedded native child (e.g. a
@@ -362,7 +362,7 @@ VirtualWidget* TopLevelWidgetHost::getFocus() const
 void TopLevelWidgetHost::setCapture(VirtualWidget* widget)
 {
 	m_capture = widget;
-	m_peer->getPeerWidget()->setCapture();
+	m_peerWidget->setCapture();
 }
 
 void TopLevelWidgetHost::releaseCapture(VirtualWidget* widget)
@@ -371,7 +371,7 @@ void TopLevelWidgetHost::releaseCapture(VirtualWidget* widget)
 		return;
 
 	m_capture = nullptr;
-	m_peer->getPeerWidget()->releaseCapture();
+	m_peerWidget->releaseCapture();
 
 	// Hover was frozen while captured; resolve it against where the pointer
 	// actually is now.
@@ -468,12 +468,7 @@ void TopLevelWidgetHost::updateHover(const Point& pt)
 void TopLevelWidgetHost::applyCursor()
 {
 	VirtualWidget* widget = (m_capture != nullptr) ? m_capture : m_hover;
-	m_peer->getPeerWidget()->setCursor(widget != nullptr ? widget->getCursor() : Cursor::Arrow);
-}
-
-Ref< ITopLevelWidgetHost > createTopLevelWidgetHost(ITopLevelWidgetHost::IPeer* peer, EventSubject* owner)
-{
-	return new TopLevelWidgetHost(peer, owner);
+	m_peerWidget->setCursor(widget != nullptr ? widget->getCursor() : Cursor::Arrow);
 }
 
 }
