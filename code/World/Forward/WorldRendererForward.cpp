@@ -297,6 +297,7 @@ void WorldRendererForward::setupVisualPass(
 		sharedParams->setBufferViewParameter(ShaderParameter::TileSBuffer, m_lightClusterPass->getTileSBuffer()->getBufferView());
 		sharedParams->setBufferViewParameter(ShaderParameter::LightIndexSBuffer, m_lightClusterPass->getLightIndexSBuffer()->getBufferView());
 		sharedParams->setBufferViewParameter(ShaderParameter::LightSBuffer, lightSBuffer->getBufferView());
+		sharedParams->setFloatParameter(ShaderParameter::LightCount, (float)m_gatheredView.lights.size());
 
 		ProbeComponent::setupSharedParameters(probe, m_blackCubeTexture, sharedParams);
 		VolumetricFogPass::setupSharedParameters(m_gatheredView, viewNearZ, viewFarZ, sharedParams);

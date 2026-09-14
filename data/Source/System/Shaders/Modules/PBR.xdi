@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderModule" version="2">
-	<text><![CDATA[
-	
-// https://learnopengl.com/PBR/Lighting
+	<text><![CDATA[// https://learnopengl.com/PBR/Lighting
 
 /*! Calculate fresnel term.
  * How much the surface reflects light versus how much it refracts light.
@@ -102,9 +100,7 @@ vec3 CalculateReflection(vec3 N, vec3 V, vec3 albedo, float metallic, float roug
 
 	return clamp(F * F, 0.0f, 1.0f);
 }
-
-	
-	]]></text>
+]]></text>
 	<samplers/>
 	<structDeclarations/>
 </object>
