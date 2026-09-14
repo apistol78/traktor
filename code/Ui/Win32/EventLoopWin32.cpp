@@ -30,6 +30,32 @@ HINSTANCE g_hInstance = NULL;
 
 namespace traktor::ui
 {
+namespace
+{
+
+// Windows delivers wheel messages to the keyboard focus window; reroute them
+// to the window beneath the pointer so scrolling affects what is pointed at,
+// e.g. a hovered 3d viewport rather than a graph keeping focus in a sibling
+// pane. Only enabled windows on this thread are valid targets, and an active
+// mouse capture keeps the focus routing since the captured window is the one
+// being operated.
+void routeMouseWheelToPointer(MSG& msg)
+{
+	if (msg.message != WM_MOUSEWHEEL && msg.message != WM_MOUSEHWHEEL)
+		return;
+	if (GetCapture() != NULL)
+		return;
+
+	const POINT pnt = { GET_X_LPARAM(msg.lParam), GET_Y_LPARAM(msg.lParam) };
+	const HWND hWndUnder = WindowFromPoint(pnt);
+	if (hWndUnder == NULL || hWndUnder == msg.hwnd)
+		return;
+
+	if (GetWindowThreadProcessId(hWndUnder, NULL) == GetCurrentThreadId() && IsWindowEnabled(hWndUnder))
+		msg.hwnd = hWndUnder;
+}
+
+}
 
 EventLoopWin32::EventLoopWin32()
 :	m_exitCode(0)
@@ -83,6 +109,8 @@ bool EventLoopWin32::process(EventSubject* owner)
 	MSG msg;
 	if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
 	{
+		routeMouseWheelToPointer(msg);
+
 		const bool dispatch = !preTranslateMessage(owner, msg);
 		if (dispatch)
 		{
@@ -101,6 +129,8 @@ int32_t EventLoopWin32::execute(EventSubject* owner)
 		MSG msg = { 0 };
 		if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
 		{
+			routeMouseWheelToPointer(msg);
+
 			const bool dispatch = !preTranslateMessage(owner, msg);
 			if (dispatch)
 			{

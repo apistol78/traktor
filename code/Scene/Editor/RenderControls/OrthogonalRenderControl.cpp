@@ -456,6 +456,9 @@ void OrthogonalRenderControl::eventMouseMove(ui::MouseMoveEvent* event)
 
 void OrthogonalRenderControl::eventMouseWheel(ui::MouseWheelEvent* event)
 {
+	// Consume so the wheel doesn't bubble out of the viewport into the host window.
+	event->consume();
+
 	const int rotation = event->getRotation();
 
 	const float delta = m_magnification / 10.0f;

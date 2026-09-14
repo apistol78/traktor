@@ -166,7 +166,11 @@ bool VirtualWidget::isEnable() const
 
 bool VirtualWidget::hasFocus() const
 {
-	return m_host != nullptr && m_host->getFocus() == this;
+	// Virtual focus is only live while the host's native widget holds the real
+	// keyboard focus; an embedded native child (e.g. a 3d view) or another
+	// top-level may hold it instead, and then no virtual widget has focus.
+	// Matches the native world where hasFocus was GetFocus() == hWnd.
+	return m_host != nullptr && m_host->getFocus() == this && m_host->getPeer()->getPeerWidget()->hasFocus();
 }
 
 void VirtualWidget::setFocus()

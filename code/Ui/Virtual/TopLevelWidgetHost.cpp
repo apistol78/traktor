@@ -179,7 +179,11 @@ bool TopLevelWidgetHost::dispatchMouseMove(int32_t button, const Point& pt)
 
 bool TopLevelWidgetHost::dispatchMouseWheel(int32_t rotation, const Point& pt)
 {
-	VirtualWidget* target = (m_hover != nullptr) ? m_hover : m_focus;
+	// Wheel is a pointer gesture; resolve the target the way button events do.
+	// Keyboard focus is no fallback since it may rest in a sibling pane far
+	// from the pointer, e.g. a graph left focused must not zoom when a wheel
+	// arrives with the pointer over an embedded native 3d view.
+	VirtualWidget* target = (m_capture != nullptr) ? m_capture : hitTest(pt);
 
 	// Wheel events carry screen coordinates on every backend.
 	const Point ptScreen = m_peer->getPeerWidget()->clientToScreen(pt);
@@ -311,10 +315,17 @@ void TopLevelWidgetHost::requestUpdate(const Rect& rc, bool immediate)
 
 void TopLevelWidgetHost::setFocus(VirtualWidget* widget)
 {
-	if (widget == m_focus)
+	IWidget* peer = m_peer->getPeerWidget();
+
+	// A no-op only when nothing would change; the same virtual widget still
+	// needs the native focus reclaimed when an embedded native child (e.g. a
+	// 3d view) has taken it, and the regain must be reported or focus-driven
+	// logic such as editor page activation stalls on the stale state. Matches
+	// the native world where setFocus was a no-op iff GetFocus() == hWnd.
+	if (widget == m_focus && (widget == nullptr || peer->hasFocus()))
 		return;
 
-	VirtualWidget* previous = m_focus;
+	VirtualWidget* previous = (widget != m_focus) ? m_focus : nullptr;
 	m_focus = widget;
 
 	// Keyboard input is delivered to the native widget owning this host, so it
@@ -323,7 +334,6 @@ void TopLevelWidgetHost::setFocus(VirtualWidget* widget)
 	// acquiring it raises, the transition is reported below instead.
 	if (m_focus != nullptr)
 	{
-		IWidget* peer = m_peer->getPeerWidget();
 		if (!peer->hasFocus())
 		{
 			m_suppressFocusDispatch = true;

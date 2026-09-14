@@ -504,6 +504,9 @@ void PerspectiveRenderControl::eventMouseMove(ui::MouseMoveEvent* event)
 
 void PerspectiveRenderControl::eventMouseWheel(ui::MouseWheelEvent* event)
 {
+	// Consume so the wheel doesn't bubble out of the viewport into the host window.
+	event->consume();
+
 	int32_t rotation = event->getRotation();
 	if (!m_model.isMovingCamera())
 	{
