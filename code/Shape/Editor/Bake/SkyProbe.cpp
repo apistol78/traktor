@@ -8,8 +8,6 @@
  */
 #include "Shape/Editor/Bake/SkyProbe.h"
 
-#include "Core/Math/Matrix44.h"
-#include "Core/Math/Quasirandom.h"
 #include "Render/SH/SHEngine.h"
 #include "Render/SH/SHFunction.h"
 
@@ -46,33 +44,16 @@ SkyProbe::SkyProbe(const Color4f& skyOverHorizon, const Color4f& skyUnderHorizon
 	const Scalar intensity(intensity_);
 	const Scalar saturation(saturation_);
 
-	WrappedSHFunction shFunction([&](const Vector4& unit) -> Vector4 {
-		Color4f cl(0.0f, 0.0f, 0.0f, 0.0f);
-		const Vector4 rd = unit;
-
-		// Sample over hemisphere.
-		for (int32_t i = 0; i < 1000; ++i)
-		{
-			const Vector2 uv = Quasirandom::hammersley(i, 1000);
-
-			// const Vector4 direction = Quasirandom::uniformHemiSphere(uv, rd);
-			// const Scalar probability = 1.0_simd;
-
-			const Vector4 direction = Quasirandom::lambertian(uv, rd);
-			const Scalar probability = 0.78532_simd;
-
-			Vector4 col = Vector4(skyOverHorizon.linear()) - max(rd.y(), 0.01_simd) * max(rd.y(), 0.01_simd) * 0.5_simd;
-			col = lerp(col, skyUnderHorizon.linear(), power(1.0_simd - max(rd.y(), 0.0_simd), 6.0_simd));
-
-			const Scalar cosPhi = dot3(direction, rd);
-			cl += Color4f(col * cosPhi / probability);
-		}
+	// Project sky radiance; the tracer sample radiance of escaping rays so no convolution.
+	WrappedSHFunction shFunction([&](const Vector4& rd) -> Vector4 {
+		Vector4 col = Vector4(skyOverHorizon.linear()) - max(rd.y(), 0.01_simd) * max(rd.y(), 0.01_simd) * 0.5_simd;
+		col = lerp(col, skyUnderHorizon.linear(), power(1.0_simd - max(rd.y(), 0.0_simd), 6.0_simd));
 
 		// Apply saturation.
-		const Scalar bw = dot3(cl, Vector4(1.0f, 1.0f, 1.0f)) / 3.0_simd;
-		cl = Color4f(lerp(Vector4(bw, bw, bw, 0.0f), cl, saturation));
+		const Scalar bw = dot3(col, Vector4(1.0f, 1.0f, 1.0f)) / 3.0_simd;
+		col = lerp(Vector4(bw, bw, bw, 0.0f), col, saturation);
 
-		return (cl * intensity * 2.0_simd) / 1000.0_simd;
+		return col * intensity;
 	});
 
 	render::SHEngine shEngine(3);

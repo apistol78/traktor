@@ -9,7 +9,6 @@
 #include "Weather/Sky/SkyComponentData.h"
 
 #include "Core/Math/Const.h"
-#include "Core/Math/Quasirandom.h"
 #include "Core/Serialization/AttributeHdr.h"
 #include "Core/Serialization/AttributePrivate.h"
 #include "Core/Serialization/AttributeRange.h"
@@ -73,37 +72,19 @@ Ref< SkyComponent > SkyComponentData::createComponent(resource::IResourceManager
 			return nullptr;
 	}
 
-	// Create irradiance grid from sky.
+	// Create irradiance grid from sky; project sky radiance, sun excluded since it's lit separately.
 	const Scalar intensity(m_intensity);
 	const Scalar saturation(m_saturation);
 
-	WrappedSHFunction shFunction([&](const Vector4& unit) -> Vector4 {
-		Color4f cl(0.0f, 0.0f, 0.0f, 0.0f);
-		const Vector4 rd = unit;
-
-		// Sample over hemisphere.
-		for (int32_t i = 0; i < 1000; ++i)
-		{
-			const Vector2 uv = Quasirandom::hammersley(i, 1000);
-
-			// const Vector4 direction = Quasirandom::uniformHemiSphere(uv, rd);
-			// const Scalar probability = 1.0_simd;
-
-			const Vector4 direction = Quasirandom::lambertian(uv, rd);
-			const Scalar probability = 0.78532_simd;
-
-			Vector4 col = Vector4(m_skyOverHorizon.linear()) - max(rd.y(), 0.01_simd) * max(rd.y(), 0.01_simd) * 0.5_simd;
-			col = lerp(col, m_skyUnderHorizon.linear(), power(1.0_simd - max(rd.y(), 0.0_simd), 6.0_simd));
-
-			const Scalar cosPhi = dot3(direction, rd);
-			cl += Color4f(col * cosPhi / probability);
-		}
+	WrappedSHFunction shFunction([&](const Vector4& rd) -> Vector4 {
+		Vector4 col = Vector4(m_skyOverHorizon.linear()) - max(rd.y(), 0.01_simd) * max(rd.y(), 0.01_simd) * 0.5_simd;
+		col = lerp(col, m_skyUnderHorizon.linear(), power(1.0_simd - max(rd.y(), 0.0_simd), 6.0_simd));
 
 		// Apply saturation.
-		const Scalar bw = dot3(cl, Vector4(1.0f, 1.0f, 1.0f)) / 3.0_simd;
-		cl = Color4f(lerp(Vector4(bw, bw, bw, 0.0f), cl, saturation));
+		const Scalar bw = dot3(col, Vector4(1.0f, 1.0f, 1.0f)) / 3.0_simd;
+		col = lerp(Vector4(bw, bw, bw, 0.0f), col, saturation);
 
-		return (cl * intensity * 2.0_simd) / 1000.0_simd;
+		return col * intensity;
 	});
 
 	render::SHCoeffs shCoeffs;
@@ -111,6 +92,13 @@ Ref< SkyComponent > SkyComponentData::createComponent(resource::IResourceManager
 	render::SHEngine shEngine(3);
 	shEngine.generateSamplePoints(10000);
 	shEngine.generateCoefficients(&shFunction, true, shCoeffs);
+
+	// Convolve radiance with the clamped cosine lobe into irradiance; per band factors are
+	// pi, 2pi/3 and pi/4 but the shaders expect irradiance divided by pi.
+	for (uint32_t i = 1; i < 4; ++i)
+		shCoeffs[i] *= Scalar(2.0f / 3.0f);
+	for (uint32_t i = 4; i < 9; ++i)
+		shCoeffs[i] *= 0.25_simd;
 
 	Ref< world::IrradianceGrid > irradianceGrid = world::IrradianceGrid::createSingle(renderSystem, shCoeffs);
 	if (!irradianceGrid)
