@@ -1911,14 +1911,9 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, uint32_t multiSample,
 	m_vblanks = vblanks;
 	m_allowHDR = allowHDR;
 
-	// Do not fail if requested size, assume it will get reset later.
-	if (width == 0 || height == 0)
-	{
-		log::debug << L"Vulkan: View size 0 * 0, wait for view to be reset." << Endl;
-		return true;
-	}
-
 	// Populate cached surface-static state once per surface; subsequent resets reuse it.
+	// Note this must happen even when we've yet to get a valid size since state such
+	// as HDR is queried by owners before the first reset.
 	if (!m_surfaceCacheValid)
 	{
 		vkGetPhysicalDeviceProperties(m_context->getPhysicalDevice(), &m_deviceProperties);
@@ -2072,6 +2067,13 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, uint32_t multiSample,
 #endif
 
 		m_surfaceCacheValid = true;
+	}
+
+	// Do not fail if requested size, assume it will get reset later.
+	if (width == 0 || height == 0)
+	{
+		log::debug << L"Vulkan: View size 0 * 0, wait for view to be reset." << Endl;
+		return true;
 	}
 
 	// Clamp surface size to physical device limits (capabilities can change per resize, so always re-query).

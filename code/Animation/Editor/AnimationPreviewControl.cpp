@@ -151,7 +151,6 @@ bool AnimationPreviewControl::create(ui::Widget* parent)
 	m_sceneInstance.consume();
 
 	updateSettings();
-	updateWorldRenderer();
 
 	m_idleEventHandler = ui::Application::getInstance()->addEventHandler< ui::IdleEvent >(this, &AnimationPreviewControl::eventIdle);
 
@@ -316,6 +315,12 @@ bool AnimationPreviewControl::renderFrame()
 	if (!m_sceneInstance)
 		return false;
 
+	// Validate render view before world renderer is created since
+	// the world renderer is configured from properties of the view,
+	// such as HDR, which aren't valid until the view has been reset.
+	if (!validateRenderView())
+		return false;
+
 	// Lazy create world renderer.
 	if (!m_worldRenderer)
 	{
@@ -323,9 +328,6 @@ bool AnimationPreviewControl::renderFrame()
 		if (!m_worldRenderer)
 			return false;
 	}
-
-	if (!validateRenderView())
-		return false;
 
 	const ui::Size sz = getRenderSize();
 

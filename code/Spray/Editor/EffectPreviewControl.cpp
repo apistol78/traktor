@@ -343,6 +343,12 @@ bool EffectPreviewControl::renderFrame()
 	if (!m_sceneInstance)
 		return false;
 
+	// Validate render view before world renderer is created since
+	// the world renderer is configured from properties of the view,
+	// such as HDR, which aren't valid until the view has been reset.
+	if (!validateRenderView())
+		return false;
+
 	// Lazy create world renderer.
 	if (!m_worldRenderer)
 	{
@@ -350,9 +356,6 @@ bool EffectPreviewControl::renderFrame()
 		if (!m_worldRenderer)
 			return false;
 	}
-
-	if (!validateRenderView())
-		return false;
 
 	const ui::Size sz = getRenderSize();
 
