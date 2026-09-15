@@ -222,8 +222,8 @@ int32_t WorldServer::reconfigure(const PropertyGroup* settings)
 		return CrUnaffected;
 
 	// Adjust in-place systems.
-	const float sprayLod1Distance = c_sprayLodDistances[(int32_t)m_particleQuality][0];
-	const float sprayLod2Distance = c_sprayLodDistances[(int32_t)m_particleQuality][1];
+	const float sprayLod1Distance = c_sprayLodDistances[(int32_t)particleQuality][0];
+	const float sprayLod2Distance = c_sprayLodDistances[(int32_t)particleQuality][1];
 	m_effectEntityRenderer->setLodDistances(sprayLod1Distance, sprayLod2Distance);
 
 	m_terrainEntityRenderer->setTerrainDetailDistance(c_terrainDetailDistances[(int32_t)terrainQuality]);
@@ -236,6 +236,7 @@ int32_t WorldServer::reconfigure(const PropertyGroup* settings)
 	m_ambientOcclusionQuality = ambientOcclusionQuality;
 	m_antiAliasQuality = antiAliasQuality;
 	m_imageProcessQuality = imageProcessQuality;
+	m_particleQuality = particleQuality;
 	m_terrainQuality = terrainQuality;
 	m_irradianceQuality = irradianceQuality;
 	m_volumetricFogQuality = volumetricFogQuality;
