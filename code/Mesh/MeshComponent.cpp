@@ -61,7 +61,9 @@ void MeshComponent::freeIntervalTransform()
 	if (m_transform)
 	{
 		Ref< world::IntervalTransformComponent > intervalTransformComponent = m_world->getComponent< world::IntervalTransformComponent >();
-		intervalTransformComponent->free(m_transform);
+		if (intervalTransformComponent)
+			intervalTransformComponent->free(m_transform);
+		m_transform = nullptr;
 	}
 }
 
