@@ -115,6 +115,7 @@ bool CanvasDirect2DWin32::beginPaint(Window& hWnd, const Font& font, bool double
 	{
 		m_dwFont.release();
 		m_dwTextFormat.release();
+		m_dwFontFace.release();
 		m_dpi = hWnd.dpi();
 	}
 
@@ -143,7 +144,7 @@ void CanvasDirect2DWin32::endPaint(Window& hWnd)
 
 void CanvasDirect2DWin32::getAscentAndDescent(Window& hWnd, const Font& font, int32_t& outAscent, int32_t& outDescent) const
 {
-	if (!m_inPaint)
+	if (!m_inPaint || font != m_font)
 	{
 		outAscent = 0;
 		outDescent = 0;
@@ -174,7 +175,8 @@ void CanvasDirect2DWin32::getAscentAndDescent(Window& hWnd, const Font& font, in
 		UINT32 findex;
 		BOOL exists;
 		collection->FindFamilyName(font.getFace().c_str(), &findex, &exists);
-		T_FATAL_ASSERT(exists);
+		if (!exists)
+			return;
 
 		ComRef< IDWriteFontFamily > ffamily;
 		collection->GetFontFamily(findex, &ffamily.getAssign());
@@ -202,10 +204,9 @@ void CanvasDirect2DWin32::getAscentAndDescent(Window& hWnd, const Font& font, in
 
 int32_t CanvasDirect2DWin32::getAdvance(Window& hWnd, const Font& font, wchar_t ch, wchar_t next) const
 {
-	if (!m_inPaint)
+	if (!m_inPaint || font != m_font)
 		return getExtent(hWnd, font, std::wstring(1, ch)).cx;
 	else // Inside begin/end thus use current paint context.
-
 		return getAdvance(ch, next);
 }
 
@@ -216,7 +217,7 @@ int32_t CanvasDirect2DWin32::getLineSpacing(Window& hWnd) const
 
 Size CanvasDirect2DWin32::getExtent(Window& hWnd, const Font& font, const std::wstring& text) const
 {
-	if (!m_inPaint)
+	if (!m_inPaint || font != m_font)
 	{
 		const int32_t dpi = hWnd.dpi();
 		const int32_t fontSize = (font.getSize().get() * dpi) / 96.0f;
@@ -341,11 +342,9 @@ void CanvasDirect2DWin32::setFont(const Font& font)
 		return;
 
 	m_font = font;
-
-	// Release previous font, the actual font is created later when text
-	// is first drawn using the new font.
 	m_dwFont.release();
 	m_dwTextFormat.release();
+	m_dwFontFace.release();
 }
 
 const IFontMetric* CanvasDirect2DWin32::getFontMetric() const
@@ -802,7 +801,7 @@ void CanvasDirect2DWin32::drawGlyph(const Point& at, const wchar_t chr)
 	FLOAT glyphAdvance = 0.0f;
 
 	DWRITE_GLYPH_OFFSET glyphOffset = {};
-	glyphOffset.advanceOffset == 0.0f;
+	glyphOffset.advanceOffset = 0.0f;
 	glyphOffset.ascenderOffset = -fontSize;
 
 	DWRITE_GLYPH_RUN grun = {};
@@ -906,6 +905,8 @@ bool CanvasDirect2DWin32::realizeFont() const
 	{
 		m_dwTextFormat = it->second.dwTextFormat;
 		m_dwFont = it->second.dwFont;
+		m_dwFontFace = it->second.dwFontFace;
+		m_fontMetrics = it->second.fontMetrics;
 		return true;
 	}
 
@@ -958,7 +959,8 @@ bool CanvasDirect2DWin32::realizeFont() const
 		std::make_pair(m_font, fontSize),
 		{ m_dwTextFormat,
 			m_dwFont,
-			m_dwFontFace });
+			m_dwFontFace,
+			m_fontMetrics });
 
 	return true;
 }

@@ -1,12 +1,11 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include <cstring>
 #include "Ui/Font.h"
 
 namespace traktor::ui
@@ -23,7 +22,7 @@ Font::Font()
 }
 
 Font::Font(const Font& font)
-:	m_face(font.m_face)
+	: m_face(font.m_face)
 {
 	m_params.size = font.m_params.size;
 	m_params.bold = font.m_params.bold;
@@ -32,7 +31,7 @@ Font::Font(const Font& font)
 }
 
 Font::Font(const std::wstring& face, Unit size, bool bold, bool italic, bool underline)
-:	m_face(face)
+	: m_face(face)
 {
 	m_params.size = size;
 	m_params.bold = bold;
@@ -90,28 +89,31 @@ bool Font::isUnderline() const
 	return m_params.underline;
 }
 
-bool Font::operator == (const Font& r) const
+bool Font::operator==(const Font& r) const
 {
-	if (m_face != r.m_face)
-		return false;
-
-	return std::memcmp(&m_params, &r.m_params, sizeof(m_params)) == 0;
+	return m_face == r.m_face &&
+		m_params.size == r.m_params.size &&
+		m_params.bold == r.m_params.bold &&
+		m_params.italic == r.m_params.italic &&
+		m_params.underline == r.m_params.underline;
 }
 
-bool Font::operator != (const Font& r) const
+bool Font::operator!=(const Font& r) const
 {
 	return !(*this == r);
 }
 
-bool Font::operator < (const Font& r) const
+bool Font::operator<(const Font& r) const
 {
-	if (m_face < r.m_face)
-		return true;
-
-	if (std::memcmp(&m_params, &r.m_params, sizeof(m_params)) < 0)
-		return true;
-
-	return false;
+	if (m_face != r.m_face)
+		return m_face < r.m_face;
+	if (m_params.size != r.m_params.size)
+		return m_params.size < r.m_params.size;
+	if (m_params.bold != r.m_params.bold)
+		return m_params.bold < r.m_params.bold;
+	if (m_params.italic != r.m_params.italic)
+		return m_params.italic < r.m_params.italic;
+	return m_params.underline < r.m_params.underline;
 }
 
 }

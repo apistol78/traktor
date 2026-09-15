@@ -131,6 +131,7 @@ private:
 		ComRef< IDWriteTextFormat > dwTextFormat;
 		ComRef< IDWriteFont > dwFont;
 		ComRef< IDWriteFontFace > dwFontFace;
+		DWRITE_FONT_METRICS fontMetrics;
 	};
 
 	bool m_inPaint = false;
@@ -145,7 +146,7 @@ private:
 	mutable ComRef< IDWriteTextFormat > m_dwTextFormat;
 	mutable ComRef< IDWriteFont > m_dwFont;
 	mutable ComRef< IDWriteFontFace > m_dwFontFace;
-	mutable DWRITE_FONT_METRICS m_fontMetrics;
+	mutable DWRITE_FONT_METRICS m_fontMetrics = {};
 	SmallMap< int32_t, CachedBitmap > m_cachedBitmaps;
 	mutable SmallMap< std::pair< Font, int32_t >, CachedFont > m_cachedFonts;
 	Font m_font;
