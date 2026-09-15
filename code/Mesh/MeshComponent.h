@@ -11,6 +11,7 @@
 #include "Core/Ref.h"
 #include "Core/Math/IntervalTransform.h"
 #include "World/IEntityComponent.h"
+#include "World/Entity/IntervalTransformComponent.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -50,9 +51,13 @@ class T_DLLCLASS MeshComponent : public world::IEntityComponent
 	T_RTTI_CLASS;
 
 public:
+	virtual ~MeshComponent();
+
 	virtual void destroy() override;
 
 	virtual void setOwner(world::Entity* owner) override;
+
+	virtual void setWorld(world::World* world) override;
 
 	virtual void setTransform(const Transform& transform) override;
 
@@ -70,14 +75,14 @@ public:
 
 	const IMeshParameterCallback* getParameterCallback() const { return m_parameterCallback; }
 
-	const IntervalTransform& getTransform() const { return m_transform; }
-
-	IntervalTransform& getTransform() { return m_transform; }
-
 protected:
 	world::Entity* m_owner = nullptr;
+	world::World* m_world = nullptr;
 	const IMeshParameterCallback* m_parameterCallback = nullptr;
-	IntervalTransform m_transform = Transform::identity();	//!< Contain interval of update transforms. 
+	world::IntervalTransformComponent::Entry* m_transform = nullptr;
+
+private:
+	void freeIntervalTransform();
 };
 
 }

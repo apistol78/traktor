@@ -217,11 +217,13 @@ void WorldLayer::preSetup(const UpdateInfo& info)
 	if (!m_worldRenderer || !m_scene)
 		return;
 
+	// Grab interpolated camera transform.
 	if (m_cameraEntity)
 	{
+		const float cameraInterval = info.getInterval();
 		m_worldRenderView.setView(
 			m_worldRenderView.getView(),
-			(m_cameraTransform.get() * m_cameraOffset).inverse().toMatrix44());
+			(m_cameraTransform.get(cameraInterval) * m_cameraOffset).inverse().toMatrix44());
 	}
 
 	m_worldRenderView.setTimes(

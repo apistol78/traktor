@@ -14,6 +14,7 @@
 #include "Render/Frame/RenderGraph.h"
 #include "Render/IRenderSystem.h"
 #include "World/Entity.h"
+#include "World/Entity/IntervalTransformComponent.h"
 #include "World/Entity/RTWorldComponent.h"
 #include "World/IEntityComponent.h"
 #include "World/IEntityRenderer.h"
@@ -72,6 +73,14 @@ void WorldRendererSimple::setup(
 	render::RGTargetSet outputTargetSetId,
 	const std::function< bool(const EntityState& state) >& filter)
 {
+	// Evaluate interpolated transforms once for this frame; all views, including
+	// snapshot views such as probe captures, render from the same values.
+	if (!worldRenderView.getSnapshot())
+	{
+		if (auto intervalTransformComponent = world->getComponent< IntervalTransformComponent >())
+			intervalTransformComponent->interpolate(worldRenderView.getInterval());
+	}
+
 	// Gather active renderables for this frame.
 	{
 		T_PROFILER_SCOPE(L"WorldRendererSimple gather");

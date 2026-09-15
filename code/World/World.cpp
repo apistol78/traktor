@@ -14,6 +14,7 @@
 #include "World/Entity.h"
 #include "World/Entity/CullingComponent.h"
 #include "World/Entity/EventManagerComponent.h"
+#include "World/Entity/IntervalTransformComponent.h"
 #include "World/Entity/IrradianceGridComponent.h"
 #include "World/Entity/RTWorldComponent.h"
 #include "World/IWorldComponent.h"
@@ -27,6 +28,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.world.World", World, Object)
 
 World::World(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem)
 {
+	setComponent(new IntervalTransformComponent());
 	setComponent(new CullingComponent(resourceManager, renderSystem));
 	setComponent(new EventManagerComponent(512));
 	setComponent(new IrradianceGridComponent());

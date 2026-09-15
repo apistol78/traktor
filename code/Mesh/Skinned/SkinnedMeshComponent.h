@@ -67,6 +67,8 @@ public:
 	/*! Check if this component maintains a ray tracing acceleration structure instance. */
 	bool haveAccelerationStructure() const { return m_rtwInstance != nullptr; }
 
+	const Transform& getRenderTransform() const { return m_transform->currentRender; }
+
 protected:
 	/*! Number of skin buffer ring slots.
 	 *
@@ -80,7 +82,6 @@ protected:
 	constexpr static int32_t SkinBufferCount = 6;
 
 	resource::Proxy< SkinnedMesh > m_mesh;
-	world::World* m_world = nullptr;
 	Ref< render::Buffer > m_jointBuffer;
 	Ref< render::Buffer > m_skinBuffer[SkinBufferCount];
 	Ref< render::IAccelerationStructure > m_rtAccelerationStructure;

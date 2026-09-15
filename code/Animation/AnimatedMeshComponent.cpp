@@ -159,8 +159,7 @@ void AnimatedMeshComponent::setupSkin(const world::WorldRenderView& worldRenderV
 	// inherited setupAccelerationStructure reads it to decide whether to build the BLAS.
 	m_setupBuiltSkin = false;
 
-	const Scalar interval(worldRenderView.getInterval());
-	const Transform worldTransform = m_transform.get(interval);
+	const Transform& worldTransform = getRenderTransform();
 	float distance = std::numeric_limits< float >::max();
 
 	const bool isVisible = worldRenderView.isBoxVisible(
@@ -195,6 +194,7 @@ void AnimatedMeshComponent::setupSkin(const world::WorldRenderView& worldRenderV
 
 	// When the pose is evaluated at a reduced rate the two pose slots span more than a
 	// single update, thus the update interval no longer apply; snap to the latest pose.
+	const Scalar interval(worldRenderView.getInterval());
 	const Scalar poseInterval = (m_updatePeriod > 1) ? 1.0_simd : interval;
 
 	// Rebuild skin when the pose has changed and something is actually going to draw us.
@@ -258,8 +258,7 @@ void AnimatedMeshComponent::build(const world::WorldBuildContext& context, const
 	if (!supportTechnique)
 		return;
 
-	const Scalar interval(worldRenderView.getInterval());
-	const Transform worldTransform = m_transform.get(interval);
+	const Transform& worldTransform = getRenderTransform();
 	float distance = 0.0f;
 
 	const bool isVisible = worldRenderView.isBoxVisible(

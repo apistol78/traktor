@@ -205,10 +205,10 @@ Ref< world::Entity > EntityAdapterBuilder::create(const world::EntityData* entit
 		entityProductHash = 0;
 	}
 
-	entity->setTransform(entityData->getTransform());
-
 	// Add entity to world container.
 	m_world->addEntity(entity);
+
+	entity->setTransform(entityData->getTransform());
 
 	// Prepare entity adapter.
 	entityAdapter->prepare(

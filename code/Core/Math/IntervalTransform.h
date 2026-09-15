@@ -27,6 +27,12 @@ namespace traktor
  * Interval transform which makes it easier to
  * maintain timing independent animations from
  * discrete transformation updates.
+ *
+ * The pair spans the poses of the last two steps; step() must be called
+ * exactly once at the start of each discrete update, before any set() of
+ * that update, and any number of set() calls may follow. See
+ * world::IntervalTransformComponent which steps registered transforms at
+ * a single guaranteed point.
  */
 class T_MATH_ALIGN16 T_DLLCLASS IntervalTransform
 {
@@ -49,7 +55,6 @@ public:
 
 private:
 	Transform m_transform[2];
-	bool m_stepped = false;
 };
 
 }

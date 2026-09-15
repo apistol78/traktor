@@ -101,8 +101,8 @@ public:
 
 private:
 	Ref< IRenderSystem > m_renderSystem;
-	bool m_useRenderDoc = false;
-	bool m_useAftermath = true;
+	bool m_useRenderDoc = true;
+	bool m_useAftermath = false;
 	Ref< Library > m_libRenderDoc;
 	void* m_apiRenderDoc = nullptr;
 	Ref< ResourceTracker > m_resourceTracker;

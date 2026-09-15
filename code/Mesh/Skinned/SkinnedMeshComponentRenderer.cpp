@@ -53,7 +53,7 @@ void SkinnedMeshComponentRenderer::setup(
 		for (Object* renderable : renderables)
 		{
 			SkinnedMeshComponent* meshComponent = static_cast< SkinnedMeshComponent* >(renderable);
-			const Transform& worldTransform = meshComponent->getTransform().get();
+			const Transform& worldTransform = meshComponent->getRenderTransform();
 			const Scalar radius = meshComponent->getBoundingBox().getExtent().length() * 0.75_simd;
 			const Scalar distance = dot3(worldRenderView.getEyeDirection(), worldTransform.translation() - worldRenderView.getEyePosition());
 			if (distance >= -radius)

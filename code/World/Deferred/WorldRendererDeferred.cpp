@@ -30,7 +30,9 @@
 #include "Resource/IResourceManager.h"
 #include "World/Entity.h"
 #include "World/Entity/FogComponent.h"
+#include "World/Entity/IntervalTransformComponent.h"
 #include "World/Entity/LightComponent.h"
+#include "World/World.h"
 #include "World/Entity/ProbeComponent.h"
 #include "World/IEntityRenderer.h"
 #include "World/IrradianceGrid.h"
@@ -128,6 +130,14 @@ void WorldRendererDeferred::setup(
 		const Matrix44 currentProjection = translate(ndcc.x, ndcc.y, 0.0f) * originalProjection;
 
 		worldRenderView.setProjection(currentProjection);
+	}
+
+	// Evaluate interpolated transforms once for this frame; all views, including
+	// snapshot views such as probe captures, render from the same values.
+	if (!worldRenderView.getSnapshot())
+	{
+		if (auto intervalTransformComponent = world->getComponent< IntervalTransformComponent >())
+			intervalTransformComponent->interpolate(worldRenderView.getInterval());
 	}
 
 	// Gather active renderables for this frame.

@@ -32,7 +32,6 @@ Entity::Entity(
 		m_updating = component;
 		component->setOwner(this);
 		component->setState(m_state, EntityState::All, false);
-		component->setTransform(m_transform);
 	}
 	m_updating = nullptr;
 }
@@ -52,6 +51,8 @@ void Entity::setWorld(World* world)
 	{
 		component->setWorld(world);
 		component->setState(m_state, EntityState::All, false);
+		if (m_world)
+			component->setTransform(m_transform);
 	}
 }
 

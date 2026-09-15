@@ -44,9 +44,9 @@ void InstanceMeshComponent::destroy()
 
 void InstanceMeshComponent::setWorld(world::World* world)
 {
+	MeshComponent::setWorld(world);
 	safeDestroy(m_cullingInstance);
 	safeDestroy(m_rtwInstance);
-	m_world = world;
 }
 
 void InstanceMeshComponent::setState(const world::EntityState& state, const world::EntityState& mask, bool includeChildren)
@@ -62,14 +62,14 @@ void InstanceMeshComponent::setState(const world::EntityState& state, const worl
 			if (rtw != nullptr)
 			{
 				m_rtwInstance = rtw->createInstance(m_mesh->getAccelerationStructure(), m_mesh->getRTVertexAttributes());
-				m_rtwInstance->setTransform(m_transform.get0());
+				m_rtwInstance->setTransform(m_transform->currentRender);
 			}
 		}
 		if (!m_cullingInstance)
 		{
 			world::CullingComponent* culling = m_world->getComponent< world::CullingComponent >();
 			m_cullingInstance = culling->createInstance(m_mesh, (intptr_t)m_mesh.getResource(), m_dynamic);
-			m_cullingInstance->setTransform(m_transform.get0());
+			m_cullingInstance->setTransform(m_transform->currentRender);
 		}
 		else
 			m_cullingInstance->setDynamic(m_dynamic);
@@ -98,7 +98,6 @@ void InstanceMeshComponent::setup(
 	// Recreate RT and culling if mesh has been reloaded.
 	if (m_mesh.changed())
 	{
-		const Transform worldTransform = m_transform.get(worldRenderView.getInterval());
 		if (m_rtwInstance)
 		{
 			safeDestroy(m_rtwInstance);
@@ -107,7 +106,7 @@ void InstanceMeshComponent::setup(
 			if (rtw != nullptr && m_mesh->getAccelerationStructure() != nullptr)
 			{
 				m_rtwInstance = rtw->createInstance(m_mesh->getAccelerationStructure(), m_mesh->getRTVertexAttributes());
-				m_rtwInstance->setTransform(worldTransform);
+				m_rtwInstance->setTransform(m_transform->currentRender);
 			}
 		}
 		if (m_cullingInstance)
@@ -116,20 +115,19 @@ void InstanceMeshComponent::setup(
 
 			world::CullingComponent* culling = m_world->getComponent< world::CullingComponent >();
 			m_cullingInstance = culling->createInstance(m_mesh, (intptr_t)m_mesh.getResource(), m_dynamic);
-			m_cullingInstance->setTransform(worldTransform);
+			m_cullingInstance->setTransform(m_transform->currentRender);
 		}
 		m_mesh.consume();
 	}
 
 	if (m_cullingInstance)
 	{
-		const Transform worldTransform = m_transform.get(worldRenderView.getInterval());
-		if (!fuzzyEqual(worldTransform, m_cullingInstance->transform))
+		if (!fuzzyEqual(m_transform->currentRender, m_cullingInstance->transform))
 		{
 			if (m_rtwInstance)
-				m_rtwInstance->setTransform(worldTransform);
+				m_rtwInstance->setTransform(m_transform->currentRender);
 
-			m_cullingInstance->setTransform(worldTransform);
+			m_cullingInstance->setTransform(m_transform->currentRender);
 		}
 	}
 }

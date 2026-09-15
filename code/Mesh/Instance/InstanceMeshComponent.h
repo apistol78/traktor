@@ -57,7 +57,6 @@ public:
 
 private:
 	resource::Proxy< InstanceMesh > m_mesh;
-	world::World* m_world = nullptr;
 	world::RTWorldComponent::Instance* m_rtwInstance = nullptr;
 	world::CullingComponent::Instance* m_cullingInstance = nullptr;
 	bool m_dynamic = false;

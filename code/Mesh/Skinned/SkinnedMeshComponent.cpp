@@ -64,8 +64,8 @@ void SkinnedMeshComponent::destroy()
 
 void SkinnedMeshComponent::setWorld(world::World* world)
 {
+	MeshComponent::setWorld(world);
 	safeDestroy(m_rtwInstance);
-	m_world = world;
 }
 
 void SkinnedMeshComponent::setState(const world::EntityState& state, const world::EntityState& mask, bool includeChildren)
@@ -79,7 +79,7 @@ void SkinnedMeshComponent::setState(const world::EntityState& state, const world
 			if (rtw != nullptr)
 			{
 				m_rtwInstance = rtw->createInstance(m_rtAccelerationStructure, m_mesh->getRTVertexAttributes());
-				m_rtwInstance->setTransform(m_transform.get0());
+				m_rtwInstance->setTransform(m_transform->currentRender);
 			}
 		}
 	}
@@ -119,7 +119,7 @@ void SkinnedMeshComponent::setupAccelerationStructure(const world::WorldRenderVi
 	// skinned vertex buffer, so there is nothing new to build otherwise.
 	if (m_setupBuiltSkin && m_rtwInstance)
 	{
-		const Transform worldTransform = m_transform.get(worldRenderView.getInterval());
+		const Transform& worldTransform = m_transform->currentRender;
 		const Vector4 eyePosition = worldRenderView.getEyePosition();
 		const Scalar farDistance = worldRenderView.getViewFrustum().getFarZ();
 		const Scalar cullDistance = farDistance * 0.5_simd;
@@ -142,8 +142,8 @@ void SkinnedMeshComponent::setupAccelerationStructure(const world::WorldRenderVi
 
 void SkinnedMeshComponent::build(const world::WorldBuildContext& context, const world::WorldRenderView& worldRenderView, const world::IWorldRenderPass& worldRenderPass)
 {
-	const Transform worldTransform = m_transform.get(worldRenderView.getInterval());
-	const Transform lastWorldTransform = m_transform.get(worldRenderView.getInterval() - 1.0f);
+	const Transform& worldTransform = m_transform->currentRender;
+	const Transform& lastWorldTransform = m_transform->lastRender;
 
 	if (!m_mesh->supportTechnique(worldRenderPass.getTechnique()))
 		return;

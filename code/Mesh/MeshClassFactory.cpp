@@ -29,15 +29,6 @@
 
 namespace traktor::mesh
 {
-	namespace
-	{
-
-const IntervalTransform& MeshComponent_getTransform(MeshComponent* self)
-{
-	return self->getTransform();
-}
-
-	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.MeshClassFactory", 0, MeshClassFactory, IRuntimeClassFactory)
 
@@ -47,7 +38,6 @@ void MeshClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classIMesh);
 
 	auto classMeshComponent = new AutoRuntimeClass< MeshComponent >();
-	classMeshComponent->addProperty("transform", &MeshComponent_getTransform);
 	registrar->registerClass(classMeshComponent);
 
 	auto classInstanceMesh = new AutoRuntimeClass< InstanceMesh >();

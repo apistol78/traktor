@@ -29,7 +29,6 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.StaticMeshComponent", StaticMeshComponent,
 
 StaticMeshComponent::StaticMeshComponent(const resource::Proxy< StaticMesh >& mesh)
 	: m_mesh(mesh)
-	, m_lastTransform(Transform::identity())
 {
 }
 
@@ -40,17 +39,10 @@ void StaticMeshComponent::destroy()
 	MeshComponent::destroy();
 }
 
-void StaticMeshComponent::setOwner(world::Entity* owner)
-{
-	if (owner != nullptr)
-		m_lastTransform = owner->getTransform();
-	MeshComponent::setOwner(owner);
-}
-
 void StaticMeshComponent::setWorld(world::World* world)
 {
+	MeshComponent::setWorld(world);
 	safeDestroy(m_rtwInstance);
-	m_world = world;
 }
 
 void StaticMeshComponent::setState(const world::EntityState& state, const world::EntityState& mask, bool includeChildren)
@@ -64,7 +56,7 @@ void StaticMeshComponent::setState(const world::EntityState& state, const world:
 			if (rtw != nullptr)
 			{
 				m_rtwInstance = rtw->createInstance(m_mesh->getAccelerationStructure(), m_mesh->getRTVertexAttributes());
-				m_rtwInstance->setTransform(m_transform.get0());
+				m_rtwInstance->setTransform(m_transform->currentRender);
 			}
 		}
 	}
@@ -86,9 +78,8 @@ Aabb3 StaticMeshComponent::getBoundingBox() const
 
 void StaticMeshComponent::setup(const world::WorldSetupContext& context, const world::WorldRenderView& worldRenderView)
 {
-	const Transform worldTransform = m_transform.get(worldRenderView.getInterval());
-	if (m_rtwInstance && worldTransform != m_lastTransform)
-		m_rtwInstance->setTransform(worldTransform);
+	if (m_rtwInstance && m_transform->currentRender != m_transform->lastRender)
+		m_rtwInstance->setTransform(m_transform->currentRender);
 }
 
 void StaticMeshComponent::build(const world::WorldBuildContext& context, const world::WorldRenderView& worldRenderView, const world::IWorldRenderPass& worldRenderPass)
@@ -97,19 +88,17 @@ void StaticMeshComponent::build(const world::WorldBuildContext& context, const w
 	if (!techniqueParts)
 		return;
 
-	const Transform worldTransform = m_transform.get(worldRenderView.getInterval());
-
 	// Skip rendering velocities if mesh hasn't moved since last frame.
 	if (worldRenderPass.getTechnique() == s_techniqueVelocityWrite)
 	{
-		if (worldTransform == m_lastTransform)
+		if (m_transform->currentRender == m_transform->lastRender)
 			return;
 	}
 
 	float distance = 0.0f;
 	if (!worldRenderView.isBoxVisible(
 			m_mesh->getBoundingBox(),
-			worldTransform,
+			m_transform->currentRender,
 			distance))
 		return;
 
@@ -117,14 +106,10 @@ void StaticMeshComponent::build(const world::WorldBuildContext& context, const w
 		context.getRenderContext(),
 		worldRenderPass,
 		*techniqueParts,
-		m_lastTransform,
-		worldTransform,
+		m_transform->lastRender,
+		m_transform->currentRender,
 		distance,
 		m_parameterCallback);
-
-	// Save last rendered transform so we can properly write velocities next frame.
-	if (worldRenderPass.getTechnique() == s_techniqueVelocityWrite)
-		m_lastTransform = worldTransform;
 }
 
 }
