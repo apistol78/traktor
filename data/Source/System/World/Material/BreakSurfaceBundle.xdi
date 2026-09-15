@@ -18,6 +18,7 @@
 				<item>Decal response</item>
 				<item>World position offset</item>
 				<item>Emissive</item>
+				<item>Height</item>
 				<item>Opaque</item>
 				<item>VertexAttributes</item>
 			</names>
@@ -36,7 +37,7 @@
 			<id>{BE9CBFE6-2C95-4FD5-981F-79DD3BFDFD5B}</id>
 			<comment/>
 			<position>
-				<first>787</first>
+				<first>786</first>
 				<second>21</second>
 			</position>
 			<name>Albedo</name>
@@ -45,7 +46,7 @@
 			<id>{FF21298E-FCDC-4239-8465-31F94AC4F39A}</id>
 			<comment/>
 			<position>
-				<first>787</first>
+				<first>786</first>
 				<second>57</second>
 			</position>
 			<name>Metalness</name>
@@ -54,7 +55,7 @@
 			<id>{098603B0-CE71-49AB-B118-67720BFCD6FA}</id>
 			<comment/>
 			<position>
-				<first>787</first>
+				<first>786</first>
 				<second>93</second>
 			</position>
 			<name>Roughness</name>
@@ -63,7 +64,7 @@
 			<id>{4798B70B-BF13-4668-A68B-F0FFCE76CCD3}</id>
 			<comment/>
 			<position>
-				<first>787</first>
+				<first>786</first>
 				<second>129</second>
 			</position>
 			<name>Specular</name>
@@ -72,7 +73,7 @@
 			<id>{D118C611-C6C0-4145-AD0E-4B395E161044}</id>
 			<comment/>
 			<position>
-				<first>787</first>
+				<first>786</first>
 				<second>165</second>
 			</position>
 			<name>Normal</name>
@@ -81,7 +82,7 @@
 			<id>{7F0CC4A4-5B4D-4280-98AF-E6FB2B233C5A}</id>
 			<comment/>
 			<position>
-				<first>787</first>
+				<first>786</first>
 				<second>201</second>
 			</position>
 			<name>Alpha</name>
@@ -90,7 +91,7 @@
 			<id>{8FA83300-1866-49F4-A5D5-5539C850E0C9}</id>
 			<comment/>
 			<position>
-				<first>787</first>
+				<first>786</first>
 				<second>237</second>
 			</position>
 			<name>Decal response</name>
@@ -99,7 +100,7 @@
 			<id>{DF78B7B0-0EB7-40B5-944B-D65C92485A86}</id>
 			<comment/>
 			<position>
-				<first>787</first>
+				<first>786</first>
 				<second>273</second>
 			</position>
 			<name>World position offset</name>
@@ -108,7 +109,7 @@
 			<id>{48CAC832-6EB6-CF48-AB6A-DE7EB3382F86}</id>
 			<comment/>
 			<position>
-				<first>787</first>
+				<first>786</first>
 				<second>309</second>
 			</position>
 			<name>Emissive</name>
@@ -117,8 +118,8 @@
 			<id>{2F33C345-06B1-8848-81B5-E6E45FC2265D}</id>
 			<comment/>
 			<position>
-				<first>787</first>
-				<second>345</second>
+				<first>786</first>
+				<second>381</second>
 			</position>
 			<name>Opaque</name>
 		</item>
@@ -126,10 +127,19 @@
 			<id>{6273D970-BDAA-48E6-96DE-5DB4268034E4}</id>
 			<comment/>
 			<position>
-				<first>791</first>
-				<second>381</second>
+				<first>786</first>
+				<second>417</second>
 			</position>
 			<name>VertexAttributes</name>
+		</item>
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{733B8764-2882-4E32-966A-4C35D355349D}</id>
+			<comment/>
+			<position>
+				<first>786</first>
+				<second>345</second>
+			</position>
+			<name>Height</name>
 		</item>
 	</nodes>
 	<edges>
@@ -236,10 +246,10 @@
 		<item type="traktor.render.Edge" version="1">
 			<source>
 				<node ref="/object/nodes/item"/>
-				<id>{D596E4E4-1A78-4D80-C66B-6DEEF934EDEC}</id>
+				<id>{D596E4E4-1A78-4D80-C86B-6DEEF934EDEC}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[11]"/>
+				<node ref="/object/nodes/item[12]"/>
 				<id>{731844D4-AFDC-4EAA-8B41-C4BA2455898F}</id>
 			</destination>
 		</item>
@@ -249,7 +259,17 @@
 				<id>{D596E4E4-1A78-4D80-C76B-6DEEF934EDEC}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[12]"/>
+				<node ref="/object/nodes/item[11]"/>
+				<id>{731844D4-AFDC-4EAA-8B41-C4BA2455898F}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item"/>
+				<id>{D596E4E4-1A78-4D80-C66B-6DEEF934EDEC}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[13]"/>
 				<id>{731844D4-AFDC-4EAA-8B41-C4BA2455898F}</id>
 			</destination>
 		</item>

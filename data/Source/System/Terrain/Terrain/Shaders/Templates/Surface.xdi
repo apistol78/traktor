@@ -270,6 +270,10 @@
 					<name>Emissive</name>
 				</item>
 				<item>
+					<id>{733B8764-2882-4E32-966A-4C35D355349D}</id>
+					<name>Height</name>
+				</item>
+				<item>
 					<id>{FF21298E-FCDC-4239-8465-31F94AC4F39A}</id>
 					<name>Metalness</name>
 				</item>

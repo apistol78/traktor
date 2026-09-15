@@ -64,6 +64,10 @@
 					<name>Emissive</name>
 				</item>
 				<item>
+					<id>{733B8764-2882-4E32-966A-4C35D355349D}</id>
+					<name>Height</name>
+				</item>
+				<item>
 					<id>{B608C832-F2C4-441B-BB31-14220F345149}</id>
 					<name>Metalness</name>
 				</item>
@@ -126,6 +130,10 @@
 					<name>Emissive</name>
 				</item>
 				<item>
+					<id>{733B8764-2882-4E32-966A-4C35D355349D}</id>
+					<name>Height</name>
+				</item>
+				<item>
 					<id>{8F18D828-A517-4820-B47A-253F0D0AC5AF}</id>
 					<name>Metalness</name>
 				</item>
@@ -182,6 +190,11 @@
 				<item>
 					<id>{639F9D7D-2927-4238-9BCB-F2C629D3AA03}</id>
 					<name>Emissive</name>
+					<optional>true</optional>
+				</item>
+				<item>
+					<id>{BB9BD084-AAC9-406B-921B-41FDD533B988}</id>
+					<name>Height</name>
 					<optional>true</optional>
 				</item>
 				<item>

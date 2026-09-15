@@ -1808,7 +1808,7 @@ $Output = gl_DrawID;
 				<first>-822</first>
 				<second>-2399</second>
 			</position>
-			<value>64</value>
+			<value>160</value>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{DB11D7E0-5557-44E0-A86F-8F559A4C216F}</id>
