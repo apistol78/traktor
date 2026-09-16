@@ -65,6 +65,7 @@ const render::Handle ShaderParameter::ShadowBias(L"World_ShadowBias");
 const render::Handle ShaderParameter::TileSBuffer(L"World_TileSBuffer");
 const render::Handle ShaderParameter::Time(L"World_Time");
 const render::Handle ShaderParameter::Random(L"World_Random");
+const render::Handle ShaderParameter::Frame(L"World_Frame");
 const render::Handle ShaderParameter::ViewDistance(L"World_ViewDistance");
 const render::Handle ShaderParameter::View(L"World_View");
 const render::Handle ShaderParameter::ViewInverse(L"World_ViewInverse");

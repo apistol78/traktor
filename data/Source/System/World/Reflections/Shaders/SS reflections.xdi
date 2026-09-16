@@ -495,6 +495,10 @@ $Output = BlueNoise(seed);
 					<id>{58D1DC6A-4E6D-DC47-AAB3-553B015151B3}</id>
 					<name>Input</name>
 				</item>
+				<item>
+					<id>{9096E174-8A10-4769-A40A-A7E5FBF968A7}</id>
+					<name>History</name>
+				</item>
 			</inputPins>
 			<outputPins>
 				<item>
@@ -504,10 +508,17 @@ $Output = BlueNoise(seed);
 				</item>
 			</outputPins>
 			<script><![CDATA[const vec2 uv = $Input.xy;
+const vec4 history = $History;
 
+// Reject the history when the reprojection lands off screen, or when the
+// history itself is not finite. A NaN or infinity in the history would be
+// held by the temporal blend forever and spread through the bilinear
+// reprojection, so it must be replaced by the fresh sample to heal.
 if (uv.x < 0.0f || uv.x > 1.0f)
 	$Output = 1.0f;
 else if (uv.y < 0.0f || uv.y > 1.0f)
+	$Output = 1.0f;
+else if (any(isnan(history)) || any(isinf(history)))
 	$Output = 1.0f;
 else
 	$Output = 0.0f;
@@ -838,6 +849,48 @@ else
 			</position>
 			<parameterDeclaration>{B8AE6C9B-745D-ED43-AB69-5814E56BF99B}</parameterDeclaration>
 		</item>
+		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
+			<id>{1EE4029A-B202-4E3B-8BD2-A60758C7C950}</id>
+			<comment/>
+			<position>
+				<first>3774</first>
+				<second>-1450</second>
+			</position>
+			<name>Sanitize</name>
+			<technique/>
+			<domain>Undefined</domain>
+			<localSize>
+				<X>1</X>
+				<Y>1</Y>
+				<Z>1</Z>
+			</localSize>
+			<useRayTracing>false</useRayTracing>
+			<include/>
+			<inputPins>
+				<item>
+					<id>{4B329AAA-566F-4BC3-AB82-CAC877218C51}</id>
+					<name>Input</name>
+				</item>
+			</inputPins>
+			<outputPins>
+				<item>
+					<id>{21222D0D-73B6-48E4-9E1B-E04E6D1F26B9}</id>
+					<name>Output</name>
+					<type>Vector</type>
+				</item>
+			</outputPins>
+			<script><![CDATA[
+// Keep the new sample finite and bounded before it enters the half float
+// history. The visual buffer sampled at the hit is half float as well, so a
+// value above 65504 is already infinity there and must be clamped here.
+const float MaxReflection = 16384.0f;
+
+vec4 c = $Input;
+if (any(isnan(c)) || any(isinf(c)))
+	c = vec4(0.0f);
+$Output = clamp(c, vec4(0.0f), vec4(MaxReflection));
+]]></script>
+		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge" version="1">
@@ -1146,8 +1199,8 @@ else
 				<id>{9E839249-E9B9-4736-8BDD-A95A1C892B42}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[38]"/>
-				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
+				<node ref="/object/nodes/item[62]"/>
+				<id>{4B329AAA-566F-4BC3-AB82-CAC877218C51}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
@@ -1388,6 +1441,26 @@ else
 			<destination>
 				<node ref="/object/nodes/item[10]"/>
 				<id>{7174FE5A-D079-4452-AFEF-9FC2BCC2900F}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[62]"/>
+				<id>{21222D0D-73B6-48E4-9E1B-E04E6D1F26B9}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[38]"/>
+				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[34]"/>
+				<id>{AF6C971B-D67A-42EE-A12B-97D36927C89F}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[29]"/>
+				<id>{9096E174-8A10-4769-A40A-A7E5FBF968A7}</id>
 			</destination>
 		</item>
 	</edges>

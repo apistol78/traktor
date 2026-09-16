@@ -191,6 +191,7 @@ render::RGTargetSet RTIrradiancePass::setup(
 		const auto halfResDepthTexture = renderGraph.getTexture(halfResDepthTextureId);
 
 		params->setFloatParameter(ShaderParameter::Time, (float)worldRenderView.getTime());
+		params->setFloatParameter(ShaderParameter::Frame, (float)(frameCount & 0x00FFFFFF));
 		params->setVectorParameter(ShaderParameter::Jitter, Vector4(jrp.x, -jrp.y, jrc.x, -jrc.y)); // Texture space.
 		params->setMatrixParameter(ShaderParameter::Projection, worldRenderView.getProjection());
 		params->setMatrixParameter(ShaderParameter::View, worldRenderView.getView());

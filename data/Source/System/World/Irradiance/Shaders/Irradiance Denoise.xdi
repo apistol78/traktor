@@ -137,6 +137,14 @@ const int N = 16;
 const float NormalRange = 0.5f;
 const float DepthRange = 8.0f;
 
+// Firefly rejection. A tap far brighter than its neighbourhood is an outlier
+// which the blur would otherwise turn into a disc of the filter radius. The
+// reference luminance is a tone weighted mean so a single bright tap cannot
+// inflate it much, and the centre tap is clamped like any other.
+const float LuminanceClampRatio = 4.0f;
+const float LuminanceClampFloor = 1.0f;
+const vec3 LuminanceCoeff = vec3(0.2126f, 0.7152f, 0.0722f);
+
 const float offset = $Random;
 
 const vec2 sz = 1.0f / textureSize($Input, 0);
@@ -148,8 +156,12 @@ const vec3 centerN = vec3(tmp.yzw);
 const float k = clamp(1.0f - 1.0f / (centerD * 0.1f), 0.0f, 1.0f);
 const float radius = mix(20.0f, 6.0f, k);
 
-vec3 acc = texture(sampler2D($Input, $InputSampler), $UV).xyz;
-float W = 1.0f;
+// 1. Gather taps; index 0 is the centre.
+vec3 smp[N + 1];
+float wgt[N + 1];
+
+smp[0] = texture(sampler2D($Input, $InputSampler), $UV).xyz;
+wgt[0] = 1.0f;
 
 [[unroll]]
 for (int i = 0; i < N; ++i)
@@ -174,10 +186,46 @@ for (int i = 0; i < N; ++i)
 	[[branch]]
 	if (w > 0.01f)
 	{
-		const vec3 smple = texture(sampler2D($Input, $InputSampler), uv).xyz;
-		acc += smple * w;
-		W += w;
+		smp[i + 1] = texture(sampler2D($Input, $InputSampler), uv).xyz;
+		wgt[i + 1] = w;
 	}
+	else
+	{
+		smp[i + 1] = vec3(0.0f);
+		wgt[i + 1] = 0.0f;
+	}
+}
+
+// 2. Tone weighted reference luminance of the neighbourhood.
+float refLum = 0.0f;
+float refW = 0.0f;
+
+[[unroll]]
+for (int i = 0; i <= N; ++i)
+{
+	const float lum = dot(smp[i], LuminanceCoeff);
+	const float tw = wgt[i] / (1.0f + lum);
+	refLum += lum * tw;
+	refW += tw;
+}
+
+refLum /= refW;
+
+const float maxLum = refLum * LuminanceClampRatio + LuminanceClampFloor;
+
+// 3. Blend with each tap clamped to the reference.
+vec3 acc = vec3(0.0f);
+float W = 0.0f;
+
+[[unroll]]
+for (int i = 0; i <= N; ++i)
+{
+	vec3 s = smp[i];
+	const float lum = dot(s, LuminanceCoeff);
+	if (lum > maxLum)
+		s *= maxLum / lum;
+	acc += s * wgt[i];
+	W += wgt[i];
 }
 
 acc /= W;

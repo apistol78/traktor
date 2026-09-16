@@ -80,6 +80,10 @@
 					<name>Random</name>
 				</item>
 				<item>
+					<id>{ED224903-DD49-4958-B8CC-61E4F7C1903D}</id>
+					<name>Frame</name>
+				</item>
+				<item>
 					<id>{0AF5A293-F31B-8546-B3DE-EA97A5CD3BF0}</id>
 					<name>Lights</name>
 				</item>
@@ -126,7 +130,7 @@
 			</inputPins>
 			<outputPins/>
 			<script><![CDATA[
-#define USE_SECOND_BOUNCE 0
+#define USE_SECOND_BOUNCE 1
 #define USE_TEMPORAL_FILTER 1
 #define USE_SPATIAL_FILTER 1
 
@@ -144,6 +148,14 @@ const float SpatialFilterRadius = 0.025f;
 const float SpatialFilterCoeff = 0.8f;
 const float Boost = 0.0f;
 
+// Firefly suppression. A single ray hitting a surface next to a punctual
+// light carries luminance hundreds of times the local mean and would linger
+// in the running average for K frames, then get smeared by the spatial reuse
+// and the denoiser. Clamp each sample relative to the current estimate, with
+// an absolute floor (irradiance, W/m2) so an empty reservoir can still brighten.
+const float FireflyRelativeClamp = 8.0f;
+const float FireflyAbsoluteClamp = 5.0f;
+
 const ivec2 sz = imageSize($Output);
 const ivec2 pt = ivec2(gl_GlobalInvocationID.xy);
 const int index = pt.x + pt.y * sz.x;
@@ -157,7 +169,19 @@ const vec3 cameraPosition = ($ViewInverse * vec4(0.0f, 0.0f, 0.0f, 1.0f)).xyz;
 // Random state must differ per pixel; with a shared per-frame state every
 // pixel traces the same directions so the estimation error pulsates in
 // unison across the screen. Masked to stay positive as it's used with %.
-int rndState = int((uint(pt.x) * 73856093u ^ uint(pt.y) * 19349663u ^ uint($Random * 16777216.0f) * 2654435761u) & 0x00FFFFFFu);
+const uint pixelSeed = uint(pt.x) * 73856093u ^ uint(pt.y) * 19349663u;
+int rndState = int((pixelSeed ^ uint($Random * 16777216.0f) * 2654435761u) & 0x00FFFFFFu);
+
+// Ray directions are stratified over time; K consecutive frames walk through
+// every stratum of the Hammersley set exactly once, so the K frame history in
+// the reservoir converges far faster than with a random stratum per frame.
+// The per pixel offsets must be stable across frames or the stratification
+// is lost; they decorrelate neighbouring pixels instead.
+const int frame = int($Frame);
+const int stratumOffset = int(Hash(pixelSeed) * K);
+const int stratumOffset2 = int(Hash(pixelSeed ^ 0x9E3779B9u) * K);
+const float azimuthOffset = Hash(pixelSeed ^ 0x7F4A7C15u);
+const float azimuthOffset2 = Hash(pixelSeed ^ 0x2545F491u);
 
 if (pt.x < sz.x && pt.y < sz.y)
 {
@@ -236,7 +260,6 @@ if (pt.x < sz.x && pt.y < sz.y)
 	// 3. Sample generation.
 	if (true)
 	{
-		const mat3 R = Rotate($Direction.xyz, Hash(rndState++) * TWO_PI);
 		const int sampleN = temporalValid ? N : Ndisclose; // (reservoir.M > K) ? N : Ndisclose;
 
 		for (int I = 0; I < sampleN; I += N)
@@ -244,9 +267,14 @@ if (pt.x < sz.x && pt.y < sz.y)
 			vec3 Nacc = vec3(0.0f);
 			for (int i = 0; i < N; ++i)
 			{
-				const vec2 r = Rotate2D((Hammersley(rndState++ % K, K)) * 2.0f - 1.0f, Hash(rndState++)) * 0.5f + 0.5f;
+				// Disclosure samples are spread K / Ndisclose strata apart since
+				// consecutive indices share nearly the same inclination. Only the
+				// azimuth is offset; rotating the square sample would push uv.x
+				// outside [0, 1] and LambertianDirection takes its square root.
+				vec2 r = Hammersley(uint(frame * N + i + stratumOffset + I * (K / Ndisclose)) % uint(K), uint(K));
+				r.y = fract(r.y + azimuthOffset);
 				const vec3 rayOrigin = $Origin.xyz;
-				const vec3 rayDir = R * LambertianDirection($Direction.xyz, r);
+				const vec3 rayDir = LambertianDirection($Direction.xyz, r);
 				const float phi = 0.5f;
 		
 				HWRT_Material m;
@@ -287,12 +315,13 @@ if (pt.x < sz.x && pt.y < sz.y)
 						HWRT_Material m2;
 						float t2;
 			
-						const vec2 r = Rotate2D((Hammersley(rndState++ % K, K)) * 2.0f - 1.0f, Hash(rndState++)) * 0.5f + 0.5f;
+						vec2 r = Hammersley(uint(frame * N + i + stratumOffset2 + I * (K / Ndisclose)) % uint(K), uint(K));
+						r.y = fract(r.y + azimuthOffset2);
 						const vec3 secondRayDir = LambertianDirection(m.normal.xyz, r);
 		
 						if (HWRT_Trace($AS, hit, secondRayDir, FarSecond, m2, t2))
 						{
-							const vec3 hit2 = hit + secondRayDir * t;
+							const vec3 hit2 = hit + secondRayDir * t2;
 							const float attenuate2 = IndirectRangeFallOff(t2);
 	
 							if (false && $UseIrradianceField == 0)
@@ -332,7 +361,16 @@ if (pt.x < sz.x && pt.y < sz.y)
 				}
 			}
 		
-			const vec3 r = Nacc / N;
+			vec3 r = Nacc / N;
+
+			{
+				const float currentLum = Reservoir_CalculateProbability(Reservoir_GetRadiance(reservoir));
+				const float maxLum = max(currentLum * FireflyRelativeClamp, FireflyAbsoluteClamp);
+				const float lum = Reservoir_CalculateProbability(r);
+				if (lum > maxLum)
+					r *= maxLum / lum;
+			}
+
 			const float w = Reservoir_CalculateProbability(r);
 			Reservoir_Update(
 				reservoir,
@@ -1069,6 +1107,15 @@ imageStore($Output, pt, $Sky);
 			</position>
 			<value>0</value>
 		</item>
+		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
+			<id>{2973792C-7AF9-4DAC-9AB7-9FD9EE09811F}</id>
+			<comment/>
+			<position>
+				<first>-1805</first>
+				<second>-920</second>
+			</position>
+			<parameterDeclaration>{D49AD6D3-D744-4CBA-A6A2-0A6FF8DCAB3F}</parameterDeclaration>
+		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge" version="1">
@@ -1699,6 +1746,16 @@ imageStore($Output, pt, $Sky);
 			<destination>
 				<node ref="/object/nodes/item[2]"/>
 				<id>{67B9FFAB-C0DA-41C8-9615-B700B99D057A}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[67]"/>
+				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[2]"/>
+				<id>{ED224903-DD49-4958-B8CC-61E4F7C1903D}</id>
 			</destination>
 		</item>
 	</edges>

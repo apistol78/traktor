@@ -83,6 +83,7 @@ struct T_DLLCLASS ShaderParameter
 	static const render::Handle TileSBuffer;
 	static const render::Handle Time;
 	static const render::Handle Random;
+	static const render::Handle Frame;
 	static const render::Handle ViewDistance;
 	static const render::Handle View;
 	static const render::Handle ViewInverse;

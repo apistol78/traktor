@@ -65,6 +65,11 @@ const int N = 4;
 const float Far = 20.0f;
 const float TemporalFilter = 0.95f;
 
+// Firefly suppression; see Irradiance Compute. The field stores irradiance
+// without albedo so the floor is higher than in the screen space pass.
+const float FireflyRelativeClamp = 8.0f;
+const float FireflyAbsoluteClamp = 10.0f;
+
 
 HWRT_Material m;
 float t;
@@ -72,6 +77,7 @@ float t;
 const ivec3 pt = ivec3(gl_GlobalInvocationID.xyz);
 const vec3 cellPosition = CellToWorldSpace($ViewInverse, pt);
 const vec3 Nacc0 = SampleIrradianceField($LastIrradianceField, $LastViewInverse, cellPosition);
+const float maxLum = max(dot(Nacc0, vec3(0.2126f, 0.7152f, 0.0722f)) * FireflyRelativeClamp, FireflyAbsoluteClamp);
 
 vec3 Nacc = vec3(0.0f, 0.0f, 0.0f);
 
@@ -104,6 +110,7 @@ for (int i = 0; i < N; ++i)
 	{
 		const vec3 hit = rayOrigin + rayDir * t;
 		const float attenuate = IndirectRangeFallOff(t);
+		vec3 Sacc = vec3(0.0f);
 		for (int lightIndex = 0; lightIndex < $LightCount; ++lightIndex)
 		{
 			const $typeof(Lights) light = $Lights[lightIndex];
@@ -115,8 +122,14 @@ for (int i = 0; i < N; ++i)
 				m.normal.xyz,
 				true
 			);
-			Nacc += incident.xyz * attenuate;
+			Sacc += incident.xyz * attenuate;
 		}
+
+		const float lum = dot(Sacc, vec3(0.2126f, 0.7152f, 0.0722f));
+		if (lum > maxLum)
+			Sacc *= maxLum / lum;
+
+		Nacc += Sacc;
 	}
 }
 
