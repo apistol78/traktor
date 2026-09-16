@@ -64,8 +64,15 @@ private:
 	SmallSet< resource::Id< physics::CollisionSpecification > > m_traceInclude;
 	SmallSet< resource::Id< physics::CollisionSpecification > > m_traceIgnore;
 	AlignedVector< std::wstring > m_footJoints;
-	float m_offset = 0.1f;	//!< Foot joint offset from actual bottom of foot.
-	float m_range = 0.2f;	//!< Trace range up/down from foot.
+	std::wstring m_hipsJoint;		//!< Joint lowered so the deepest foot can reach; leave empty to disable.
+	float m_offset = 0.1f;			//!< Foot joint offset from actual bottom of foot.
+	float m_rangeUp = 0.3f;			//!< Trace range above the sole.
+	float m_rangeDown = 0.6f;		//!< Trace range below the sole.
+	float m_pelvisDropMax = 0.35f;	//!< Furthest the pelvis is lowered.
+	float m_liftHeight = 0.08f;		//!< Animated sole height at which a foot counts as fully lifted.
+	float m_smoothTime = 0.08f;		//!< Settle time of the foot correction.
+	float m_maxTilt = 30.0f;		//!< Furthest a foot tilts onto a slope, in degrees.
+	float m_cullDistance = 10.0f;	//!< No foot placement beyond this distance from the camera.
 };
 
 }
