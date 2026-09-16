@@ -1092,7 +1092,7 @@
 				<first>-357</first>
 				<second>-1765</second>
 			</position>
-			<value>0.3</value>
+			<value>0.4</value>
 		</item>
 		<item type="traktor.render.TextureState" version="1,traktor.render.Node:1">
 			<id>{F5644820-7D49-46EC-9C3B-E79E1513078F}</id>
@@ -1239,8 +1239,8 @@ if (abs(det) > 1e-12f)
 	// |Traw| is metres per UV unit, which is what converts the depth.
 	const float metresPerUV = 16.0f; //length(Traw);
 
-	const vec3 T = $ViewBinormal.xyz; // normalize(Traw - N * dot(N, Traw));
-	const vec3 B = $ViewTangent.xyz; // normalize(Braw - N * dot(N, Braw));
+	const vec3 T = $ViewTangent.xyz; // normalize(Traw - N * dot(N, Traw));
+	const vec3 B = $ViewBinormal.xyz; // normalize(Braw - N * dot(N, Braw));
 
 	const vec3 V = normalize(-position);
 	const float NdotV = dot(V, N);
