@@ -1214,7 +1214,7 @@ const float c_fadeNear = 10.0f;
 const float c_fadeFar = 30.0f;
 const float c_minNdotV = 0.35f;
 const int c_stepsMin = 4;
-const int c_stepsMax = 12;
+const int c_stepsMax = 32;
 
 const vec3 position = $ViewPosition.xyz;
 const vec2 baseTexCoord = $TexCoord.xy;
