@@ -57,6 +57,7 @@ const render::Handle s_handleWeather_SkyCloudTextureLast(L"Weather_SkyCloudTextu
 const render::Handle s_handleWeather_SkyTemporalBlend(L"Weather_SkyTemporalBlend");
 const render::Handle s_handleWeather_SkyCloudAmbientTop(L"Weather_SkyCloudAmbientTop");
 const render::Handle s_handleWeather_SkyCloudAmbientBottom(L"Weather_SkyCloudAmbientBottom");
+const render::Handle s_handleWeather_SkyCloudCoverage(L"Weather_SkyCloudCoverage");
 const render::Handle s_handleWeather_InputTexture(L"Weather_InputTexture");
 const render::Handle s_handleWeather_OutputTexture(L"Weather_OutputTexture");
 const render::Handle s_handleWeather_OutputTexture3D(L"Weather_OutputTexture3D");
@@ -353,8 +354,9 @@ void SkyComponent::setup(
 				renderBlock->programParams->setFloatParameter(s_handleWeather_SkyIntensity, m_data.m_intensity);
 				renderBlock->programParams->setVectorParameter(s_handleWeather_SkySunColor, sunColor);
 				renderBlock->programParams->setVectorParameter(s_handleWeather_SkySunDirection, sunDirection);
-				renderBlock->programParams->setVectorParameter(s_handleWeather_SkyCloudAmbientTop, m_data.m_cloudAmbientTop);
-				renderBlock->programParams->setVectorParameter(s_handleWeather_SkyCloudAmbientBottom, m_data.m_cloudAmbientBottom);
+				renderBlock->programParams->setVectorParameter(s_handleWeather_SkyCloudAmbientTop, m_data.m_cloudAmbientTop.linear());
+				renderBlock->programParams->setVectorParameter(s_handleWeather_SkyCloudAmbientBottom, m_data.m_cloudAmbientBottom.linear());
+				renderBlock->programParams->setFloatParameter(s_handleWeather_SkyCloudCoverage, m_data.m_cloudCoverage);
 				renderBlock->programParams->setFloatParameter(s_handleWeather_SkyTemporalBlend, (worldRenderView.getSnapshot() || m_cloudFrame == 0) ? 1.0f : 0.2f);
 				renderBlock->programParams->setFloatParameter(world::ShaderParameter::Time, worldRenderView.getTime());
 				renderBlock->programParams->endParameters(renderContext);
@@ -424,6 +426,7 @@ void SkyComponent::build(
 	renderBlock->programParams->setVectorParameter(s_handleWeather_SkyUnderHorizon, m_data.m_skyUnderHorizon.linear());
 	renderBlock->programParams->setVectorParameter(s_handleWeather_SkyCloudAmbientTop, m_data.m_cloudAmbientTop.linear());
 	renderBlock->programParams->setVectorParameter(s_handleWeather_SkyCloudAmbientBottom, m_data.m_cloudAmbientBottom.linear());
+	renderBlock->programParams->setFloatParameter(s_handleWeather_SkyCloudCoverage, m_data.m_cloudCoverage);
 	renderBlock->programParams->setVectorParameter(s_handleWeather_SkyEyePosition, eyePosition);
 	renderBlock->programParams->setTextureParameter(s_handleWeather_SkyTexture, m_texture);
 

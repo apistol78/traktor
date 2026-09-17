@@ -94,6 +94,7 @@ private:
 	bool m_clouds = true;
 	Color4f m_cloudAmbientTop = Color4f(0.99f, 0.98f, 1.18f, 1.0f);
 	Color4f m_cloudAmbientBottom = Color4f(0.23f, 0.39f, 0.51f, 1.0f);
+	float m_cloudCoverage = 0.6f;
 };
 
 }

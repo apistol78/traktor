@@ -486,8 +486,8 @@ $Output = vec4(clr, 1.0f);
 			<id>{8FB6549E-5322-4FD8-8912-FD35D323CFF6}</id>
 			<comment/>
 			<position>
-				<first>-1173</first>
-				<second>616</second>
+				<first>-1141</first>
+				<second>592</second>
 			</position>
 			<name>WorldPosition</name>
 		</item>
@@ -547,6 +547,10 @@ $Output = vec4(clr, 1.0f);
 					<id>{FA94D259-22C0-4243-9837-74F3B1664F1F}</id>
 					<name>CloudAmbientBottom</name>
 				</item>
+				<item>
+					<id>{DDA3FC5D-59C7-7742-9790-C64D0AB97C87}</id>
+					<name>CloudCoverage</name>
+				</item>
 			</inputPins>
 			<outputPins>
 				<item>
@@ -565,6 +569,7 @@ $Output = vec4(clr, 1.0f);
 CloudConfig config = GetDefaultCloudConfig();
 config.ambientTop = $CloudAmbientTop.xyz;
 config.ambientBottom = $CloudAmbientBottom.xyz;
+config.coverage = $CloudCoverage;
 
 const vec3 ro = vec3(0.0f);
 const vec3 rd = normalize($Input.xyz);
@@ -778,8 +783,8 @@ $Output = vec4(texCoord, 0.0f, 0.0f);
 			<id>{E7530B7B-E7A2-3C4B-8072-C3B73EE99101}</id>
 			<comment/>
 			<position>
-				<first>-1203</first>
-				<second>1079</second>
+				<first>-1163</first>
+				<second>1074</second>
 			</position>
 			<value>0, 0, 0, 0</value>
 		</item>
@@ -957,8 +962,8 @@ $Output = vec4(texCoord, 0.0f, 0.0f);
 			<id>{A1A876F1-18E4-864F-983D-420CC2E11F69}</id>
 			<comment/>
 			<position>
-				<first>-1197</first>
-				<second>782</second>
+				<first>-1189</first>
+				<second>746</second>
 			</position>
 			<parameterDeclaration>{2FE9C779-BCBD-7F45-8E6D-22CDDDBABFB7}</parameterDeclaration>
 		</item>
@@ -966,8 +971,8 @@ $Output = vec4(texCoord, 0.0f, 0.0f);
 			<id>{98B4C16A-14F1-E049-8BE8-ABDA94466F57}</id>
 			<comment/>
 			<position>
-				<first>-1255</first>
-				<second>958</second>
+				<first>-1189</first>
+				<second>900</second>
 			</position>
 			<parameterDeclaration>{3BA38C4D-AFA6-E14D-BF1D-E7B22CEE64F6}</parameterDeclaration>
 		</item>
@@ -975,8 +980,8 @@ $Output = vec4(texCoord, 0.0f, 0.0f);
 			<id>{DA939656-CF10-8449-90CE-AD3899B1F042}</id>
 			<comment/>
 			<position>
-				<first>-1218</first>
-				<second>1025</second>
+				<first>-1141</first>
+				<second>1016</second>
 			</position>
 			<parameterDeclaration>{C5FE5E84-7112-A047-8C1C-10A884ABCF5F}</parameterDeclaration>
 		</item>
@@ -984,8 +989,8 @@ $Output = vec4(texCoord, 0.0f, 0.0f);
 			<id>{546FFE09-8A2E-CE46-AAED-E0572D5339EC}</id>
 			<comment/>
 			<position>
-				<first>-1197</first>
-				<second>552</second>
+				<first>-1189</first>
+				<second>534</second>
 			</position>
 			<parameterDeclaration>{5E7FEB01-77B5-664E-BFEF-B0C2C5C091F5}</parameterDeclaration>
 		</item>
@@ -994,7 +999,7 @@ $Output = vec4(texCoord, 0.0f, 0.0f);
 			<comment/>
 			<position>
 				<first>-1205</first>
-				<second>488</second>
+				<second>476</second>
 			</position>
 			<parameterDeclaration>{A2DCDD5E-2C52-8B4F-90F0-030A8CDC639D}</parameterDeclaration>
 		</item>
@@ -1002,8 +1007,8 @@ $Output = vec4(texCoord, 0.0f, 0.0f);
 			<id>{7A63185B-9F69-AD4A-8209-63CC1D5F0095}</id>
 			<comment/>
 			<position>
-				<first>-1195</first>
-				<second>1170</second>
+				<first>-1589</first>
+				<second>1105</second>
 			</position>
 			<parameterDeclaration>{E6E18D27-B272-1D43-BBEF-BE74D2396BB9}</parameterDeclaration>
 		</item>
@@ -1083,8 +1088,8 @@ $Output = vec4(texCoord, 0.0f, 0.0f);
 			<id>{84D98E78-CC1F-934E-8B87-FD95D568759D}</id>
 			<comment/>
 			<position>
-				<first>-1525</first>
-				<second>904</second>
+				<first>-1538</first>
+				<second>850</second>
 			</position>
 			<parameterDeclaration>{AF32CA30-7252-BE42-B6B8-2E9FE57A133F}</parameterDeclaration>
 		</item>
@@ -1092,8 +1097,8 @@ $Output = vec4(texCoord, 0.0f, 0.0f);
 			<id>{5C17B1A3-F5F9-0D4D-8BAE-F8022CF5A235}</id>
 			<comment/>
 			<position>
-				<first>-1517</first>
-				<second>763</second>
+				<first>-1530</first>
+				<second>709</second>
 			</position>
 			<parameterDeclaration>{62705753-B4B0-E349-9DF0-201C181C0495}</parameterDeclaration>
 		</item>
@@ -1135,7 +1140,7 @@ $Output = vec4(texCoord, 0.0f, 0.0f);
 			<id>{08CBC7BB-F6C0-F749-A04B-4CA40647DFDF}</id>
 			<comment/>
 			<position>
-				<first>-1186</first>
+				<first>-1167</first>
 				<second>284</second>
 			</position>
 		</item>
@@ -1143,8 +1148,8 @@ $Output = vec4(texCoord, 0.0f, 0.0f);
 			<id>{24DE9973-5811-7840-B8EF-3CF6F606C7E7}</id>
 			<comment/>
 			<position>
-				<first>-1186</first>
-				<second>386</second>
+				<first>-1167</first>
+				<second>380</second>
 			</position>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
@@ -1160,16 +1165,16 @@ $Output = vec4(texCoord, 0.0f, 0.0f);
 			<id>{E93427D7-6949-F248-AE2E-F58F02023A96}</id>
 			<comment/>
 			<position>
-				<first>-1186</first>
-				<second>680</second>
+				<first>-1167</first>
+				<second>650</second>
 			</position>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
 			<id>{1C873837-5A24-9742-B61B-EF09EE299FDB}</id>
 			<comment/>
 			<position>
-				<first>-1485</first>
-				<second>699</second>
+				<first>-1498</first>
+				<second>645</second>
 			</position>
 			<parameterDeclaration>{50AE020B-7E0D-FE4A-AC73-C98D2A2A2C10}</parameterDeclaration>
 		</item>
@@ -1177,8 +1182,8 @@ $Output = vec4(texCoord, 0.0f, 0.0f);
 			<id>{4150AFDE-9AFB-4147-9A39-AAF1EAC2D415}</id>
 			<comment/>
 			<position>
-				<first>-1485</first>
-				<second>840</second>
+				<first>-1498</first>
+				<second>786</second>
 			</position>
 			<parameterDeclaration>{50AE020B-7E0D-FE4A-AC73-C98D2A2A2C10}</parameterDeclaration>
 		</item>
@@ -1186,16 +1191,16 @@ $Output = vec4(texCoord, 0.0f, 0.0f);
 			<id>{B8E75BB7-6F69-AB49-8BBA-B25989668F19}</id>
 			<comment/>
 			<position>
-				<first>-1186</first>
-				<second>846</second>
+				<first>-1167</first>
+				<second>804</second>
 			</position>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
 			<id>{5B0F7A2E-6C41-4F0D-9E8A-31C6A7D4E902}</id>
 			<comment><![CDATA[Sky is beyond the fog volume, so the distance fog covers the whole ray.]]></comment>
 			<position>
-				<first>-1186</first>
-				<second>960</second>
+				<first>-1131</first>
+				<second>958</second>
 			</position>
 			<value>0</value>
 		</item>
@@ -1225,6 +1230,15 @@ $Output = vec4(texCoord, 0.0f, 0.0f);
 					<name>Output</name>
 				</item>
 			</outputPins>
+		</item>
+		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
+			<id>{AA98870A-94AA-CC45-90B5-84A879BBD451}</id>
+			<comment/>
+			<position>
+				<first>-1221</first>
+				<second>1132</second>
+			</position>
+			<parameterDeclaration>{E5C93A9E-8DA2-FB42-B817-980B335EDBC9}</parameterDeclaration>
 		</item>
 	</nodes>
 	<edges>
@@ -2156,6 +2170,16 @@ $Output = vec4(texCoord, 0.0f, 0.0f);
 			<destination>
 				<node ref="/object/nodes/item[50]"/>
 				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[92]"/>
+				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[26]"/>
+				<id>{DDA3FC5D-59C7-7742-9790-C64D0AB97C87}</id>
 			</destination>
 		</item>
 	</edges>

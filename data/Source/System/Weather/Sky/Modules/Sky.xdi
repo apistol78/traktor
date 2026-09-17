@@ -24,7 +24,7 @@ vec3 GetSkyColor(vec3 sunDirection, vec3 sunColor, vec3 overHorizon, vec3 underH
 #define CLOUDS_BOTTOM   				(1050.0f)
 #define CLOUDS_TOP      				(2450.0f)
 
-#define CLOUDS_COVERAGE					(0.6f)
+#define CLOUDS_COVERAGE					(0.5f)
 
 #define CLOUDS_DETAIL_STRENGTH				(0.4f)
 #define CLOUDS_BASE_EDGE_SOFTNESS			(0.15f)
@@ -44,6 +44,22 @@ vec3 GetSkyColor(vec3 sunDirection, vec3 sunColor, vec3 overHorizon, vec3 underH
 #define CLOUDS_DETAIL_SCALE 			0.4f
 
 #define CLOUDS_OFFSET_SCALE				40.0f
+
+struct CloudConfig
+{
+	vec3 ambientTop;
+	vec3 ambientBottom;
+	float coverage;
+};
+
+CloudConfig GetDefaultCloudConfig()
+{
+	CloudConfig c;
+	c.ambientTop = CLOUDS_AMBIENT_COLOR_TOP;
+	c.ambientBottom = CLOUDS_AMBIENT_COLOR_BOTTOM;
+	c.coverage = CLOUDS_COVERAGE;
+	return c;
+}
 
 float HenyeyGreenstein( float sundotrd, float g)
 {
@@ -95,7 +111,7 @@ float cloudGradient(float norY)
 	return linearstep(0.0f, 0.05f, norY) - linearstep(0.8f, 1.2f, norY);
 }
 
-float cloudMap(vec3 pos, vec3 offset, vec3 rd, float norY, float time, texture2D clouds2D, texture3D clouds3D)
+float cloudMap(CloudConfig config, vec3 pos, vec3 offset, vec3 rd, float norY, float time, texture2D clouds2D, texture3D clouds3D)
 {
 	vec3 ps = pos + offset;
 
@@ -110,13 +126,13 @@ float cloudMap(vec3 pos, vec3 offset, vec3 rd, float norY, float time, texture2D
 		m -= cloudMapDetail(ps, clouds3D) * dstrength * CLOUDS_DETAIL_STRENGTH;
 	}
 
-	m = smoothstep(0.0f, CLOUDS_BASE_EDGE_SOFTNESS, m + (CLOUDS_COVERAGE - 1.0f));
+	m = smoothstep(0.0f, CLOUDS_BASE_EDGE_SOFTNESS, m + (config.coverage - 1.0f));
 	m *= linearstep0(CLOUDS_BOTTOM_SOFTNESS, norY);
 
 	return clamp(m * CLOUDS_DENSITY * (1.0f + max((pos.x - 7000.0f) * 0.005f, 0.0f)), 0.0f, 1.0f);
 }
 
-float volumetricShadow(vec3 from, vec3 offset, float sundotrd, float time, vec3 sunDirection, texture2D clouds2D, texture3D clouds3D)
+float volumetricShadow(CloudConfig config, vec3 from, vec3 offset, float sundotrd, float time, vec3 sunDirection, texture2D clouds2D, texture3D clouds3D)
 {
     float dd = CLOUDS_SHADOW_MARGE_STEP_SIZE;
     vec3 rd = sunDirection;
@@ -131,7 +147,7 @@ float volumetricShadow(vec3 from, vec3 offset, float sundotrd, float time, vec3 
         if (norY > 1.)
 			return shadow;
 
-        float muE = cloudMap(pos, offset, rd, norY, time, clouds2D, clouds3D);
+        float muE = cloudMap(config, pos, offset, rd, norY, time, clouds2D, clouds3D);
         shadow *= exp(-muE * dd);
 
         dd *= CLOUDS_SHADOW_MARGE_STEP_MULTIPLY;
@@ -139,20 +155,6 @@ float volumetricShadow(vec3 from, vec3 offset, float sundotrd, float time, vec3 
     }
 
     return shadow;
-}
-
-struct CloudConfig
-{
-	vec3 ambientTop;
-	vec3 ambientBottom;
-};
-
-CloudConfig GetDefaultCloudConfig()
-{
-	CloudConfig c;
-	c.ambientTop = CLOUDS_AMBIENT_COLOR_TOP;
-	c.ambientBottom = CLOUDS_AMBIENT_COLOR_BOTTOM;
-	return c;
 }
 
 vec4 RenderClouds(
@@ -208,14 +210,14 @@ vec4 RenderClouds(
 		const vec3 p = ro + d * rd;
 
 		const float norY = clamp((length(p) - (EARTH_RADIUS + CLOUDS_BOTTOM)) * (1.0f / (CLOUDS_TOP - CLOUDS_BOTTOM)), 0.0f, 1.0f);
-		const float alpha = cloudMap( p, offset, rd, norY, time, clouds2D, clouds3D);
+		const float alpha = cloudMap(config, p, offset, rd, norY, time, clouds2D, clouds3D);
 
         if (alpha > 0.0f)
 		{
             dist = min( dist, d);
             const vec3 ambientLight = mix(config.ambientBottom, config.ambientTop, norY);
 
-			const vec3 S = (ambientLight + sunColor * (scattering * volumetricShadow(p, offset, sundotrd, time, sunDirection, clouds2D, clouds3D))) * alpha;
+			const vec3 S = (ambientLight + sunColor * (scattering * volumetricShadow(config, p, offset, sundotrd, time, sunDirection, clouds2D, clouds3D))) * alpha;
 			const float dTrans = exp(-alpha * dD);
 			const vec3 Sint = (S - S * dTrans) * (1. / alpha);
 

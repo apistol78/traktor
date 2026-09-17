@@ -52,7 +52,7 @@ private:
 
 }
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.weather.SkyComponentData", 8, SkyComponentData, world::IEntityComponentData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.weather.SkyComponentData", 9, SkyComponentData, world::IEntityComponentData)
 
 SkyComponentData::SkyComponentData()
 	: m_shader(c_defaultShader)
@@ -167,6 +167,9 @@ void SkyComponentData::serialize(ISerializer& s)
 			s >> Member< Color4f >(L"underHorizon", m_skyUnderHorizon);
 		}
 	}
+
+	if (s.getVersion< SkyComponentData >() >= 9)
+		s >> Member< float >(L"cloudCoverage", m_cloudCoverage, AttributeRange(0.0f, 1.0f) | AttributeUnit(UnitType::Percent));
 }
 
 }

@@ -163,6 +163,10 @@ $Output = vec4(direction, 0.0f);
 					<id>{60A82300-B8BB-F74A-A1E6-9410C272E74C}</id>
 					<name>CloudAmbientBottom</name>
 				</item>
+				<item>
+					<id>{4BC1EF13-31DB-9E40-9A32-D7373EAB301F}</id>
+					<name>CloudCoverage</name>
+				</item>
 			</inputPins>
 			<outputPins>
 				<item>
@@ -181,6 +185,7 @@ $Output = vec4(direction, 0.0f);
 CloudConfig config = GetDefaultCloudConfig();
 config.ambientTop = $CloudAmbientTop.xyz;
 config.ambientBottom = $CloudAmbientBottom.xyz;
+config.coverage = $CloudCoverage;
 
 const vec3 ro = vec3(0.0f);
 const vec3 rd = normalize($Input.xyz);
@@ -243,7 +248,7 @@ $Distance = dist;
 			<id>{4E704F36-056A-A347-B55D-6BC9EF584AA9}</id>
 			<comment/>
 			<position>
-				<first>-656</first>
+				<first>-624</first>
 				<second>333</second>
 			</position>
 			<name>DomePosition</name>
@@ -252,8 +257,8 @@ $Distance = dist;
 			<id>{B17ADA46-C381-B64E-BACC-0975857EE8A7}</id>
 			<comment/>
 			<position>
-				<first>-667</first>
-				<second>921</second>
+				<first>-646</first>
+				<second>905</second>
 			</position>
 			<value>0, 0, 0, 0</value>
 		</item>
@@ -382,8 +387,8 @@ $Output = vec4(sz.x, sz.y, 0.0f, 0.0f);
 			<id>{9BEB5B49-7689-E148-AD48-E6F5F32D97DD}</id>
 			<comment/>
 			<position>
-				<first>-680</first>
-				<second>665</second>
+				<first>-672</first>
+				<second>657</second>
 			</position>
 			<parameterDeclaration>{3BA38C4D-AFA6-E14D-BF1D-E7B22CEE64F6}</parameterDeclaration>
 		</item>
@@ -391,8 +396,8 @@ $Output = vec4(sz.x, sz.y, 0.0f, 0.0f);
 			<id>{E2079A44-51AA-7E45-B37B-DB2A1F67B798}</id>
 			<comment/>
 			<position>
-				<first>-680</first>
-				<second>499</second>
+				<first>-672</first>
+				<second>495</second>
 			</position>
 			<parameterDeclaration>{2FE9C779-BCBD-7F45-8E6D-22CDDDBABFB7}</parameterDeclaration>
 		</item>
@@ -400,8 +405,8 @@ $Output = vec4(sz.x, sz.y, 0.0f, 0.0f);
 			<id>{D61CDD4F-7A3A-EA4A-A3CD-32D7990C5C08}</id>
 			<comment/>
 			<position>
-				<first>-656</first>
-				<second>729</second>
+				<first>-624</first>
+				<second>719</second>
 			</position>
 			<parameterDeclaration>{C5FE5E84-7112-A047-8C1C-10A884ABCF5F}</parameterDeclaration>
 		</item>
@@ -410,7 +415,7 @@ $Output = vec4(sz.x, sz.y, 0.0f, 0.0f);
 			<comment/>
 			<position>
 				<first>-688</first>
-				<second>793</second>
+				<second>781</second>
 			</position>
 			<parameterDeclaration>{A2DCDD5E-2C52-8B4F-90F0-030A8CDC639D}</parameterDeclaration>
 		</item>
@@ -418,8 +423,8 @@ $Output = vec4(sz.x, sz.y, 0.0f, 0.0f);
 			<id>{1E0F450D-842D-0C4E-9384-ECDF6EE85002}</id>
 			<comment/>
 			<position>
-				<first>-680</first>
-				<second>857</second>
+				<first>-672</first>
+				<second>843</second>
 			</position>
 			<parameterDeclaration>{5E7FEB01-77B5-664E-BFEF-B0C2C5C091F5}</parameterDeclaration>
 		</item>
@@ -490,17 +495,26 @@ $Output = vec4(sz.x, sz.y, 0.0f, 0.0f);
 			<id>{EEDACAC9-06DB-0F46-B29C-9F2BC362132C}</id>
 			<comment/>
 			<position>
-				<first>-669</first>
-				<second>563</second>
+				<first>-650</first>
+				<second>557</second>
 			</position>
 		</item>
 		<item type="traktor.render.Mul" version="traktor.render.Node:1">
 			<id>{D608A7C8-E7B8-5747-8148-74F79937B75B}</id>
 			<comment/>
 			<position>
-				<first>-669</first>
-				<second>397</second>
+				<first>-650</first>
+				<second>395</second>
 			</position>
+		</item>
+		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
+			<id>{92E19B2E-7FDA-0D45-BAA2-CC16CCB16ADD}</id>
+			<comment/>
+			<position>
+				<first>-704</first>
+				<second>967</second>
+			</position>
+			<parameterDeclaration>{E5C93A9E-8DA2-FB42-B817-980B335EDBC9}</parameterDeclaration>
 		</item>
 	</nodes>
 	<edges>
@@ -812,6 +826,16 @@ $Output = vec4(sz.x, sz.y, 0.0f, 0.0f);
 			<destination>
 				<node ref="/object/nodes/item[8]"/>
 				<id>{60A82300-B8BB-F74A-A1E6-9410C272E74C}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[36]"/>
+				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[8]"/>
+				<id>{4BC1EF13-31DB-9E40-9A32-D7373EAB301F}</id>
 			</destination>
 		</item>
 	</edges>
