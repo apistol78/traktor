@@ -1,6 +1,7 @@
 /3rdp
 /3rdp-restricted
 /build
+/tools/*/build
 /bin/latest
 /bin/git
 /bin/win64/.wget-hsts

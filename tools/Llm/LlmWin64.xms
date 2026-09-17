@@ -1,0 +1,346 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.sb.Solution" version="6">
+	<name>Llm</name>
+	<rootPath>$(TRAKTOR_HOME)/tools/Llm/build/win64</rootPath>
+	<aggregateOutputPath>$(TRAKTOR_HOME)/bin/latest/win64</aggregateOutputPath>
+	<projects>
+		<item type="traktor.sb.Project" version="1">
+			<enable>true</enable>
+			<name>Llm</name>
+			<sourcePath>$(TRAKTOR_HOME)/tools/Llm/code/Llm</sourcePath>
+			<configurations>
+				<item type="traktor.sb.Configuration" version="5">
+					<name>DebugShared</name>
+					<targetFormat>TfSharedLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(TRAKTOR_HOME)/tools/Llm/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_LLM_EXPORT</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<warningLevel>WlCompilerDefault</warningLevel>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
+					<aggregationItems>
+						<item type="traktor.sb.AggregationItem">
+							<sourceFile>Llm.pdb</sourceFile>
+							<targetPath>debugshared</targetPath>
+						</item>
+						<item type="traktor.sb.AggregationItem">
+							<sourceFile>Llm.lib</sourceFile>
+							<targetPath>debugshared</targetPath>
+						</item>
+						<item type="traktor.sb.AggregationItem">
+							<sourceFile>Llm.dll</sourceFile>
+							<targetPath>debugshared</targetPath>
+						</item>
+					</aggregationItems>
+					<consumerLibraryPath>debugshared</consumerLibraryPath>
+				</item>
+				<item type="traktor.sb.Configuration" version="5">
+					<name>ReleaseShared</name>
+					<targetFormat>TfSharedLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(TRAKTOR_HOME)/tools/Llm/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_LLM_EXPORT</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<warningLevel>WlCompilerDefault</warningLevel>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
+					<aggregationItems>
+						<item type="traktor.sb.AggregationItem">
+							<sourceFile>Llm.pdb</sourceFile>
+							<targetPath>releaseshared</targetPath>
+						</item>
+						<item type="traktor.sb.AggregationItem">
+							<sourceFile>Llm.lib</sourceFile>
+							<targetPath>releaseshared</targetPath>
+						</item>
+						<item type="traktor.sb.AggregationItem">
+							<sourceFile>Llm.dll</sourceFile>
+							<targetPath>releaseshared</targetPath>
+						</item>
+					</aggregationItems>
+					<consumerLibraryPath>releaseshared</consumerLibraryPath>
+				</item>
+				<item type="traktor.sb.Configuration" version="5">
+					<name>DebugStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(TRAKTOR_HOME)/tools/Llm/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<warningLevel>WlCompilerDefault</warningLevel>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
+					<aggregationItems>
+						<item type="traktor.sb.AggregationItem">
+							<sourceFile>Llm.pdb</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
+						<item type="traktor.sb.AggregationItem">
+							<sourceFile>Llm.lib</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
+					</aggregationItems>
+					<consumerLibraryPath>debugstatic</consumerLibraryPath>
+				</item>
+				<item type="traktor.sb.Configuration" version="5">
+					<name>ReleaseStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(TRAKTOR_HOME)/tools/Llm/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<warningLevel>WlCompilerDefault</warningLevel>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
+					<aggregationItems>
+						<item type="traktor.sb.AggregationItem">
+							<sourceFile>Llm.pdb</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
+						<item type="traktor.sb.AggregationItem">
+							<sourceFile>Llm.lib</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
+					</aggregationItems>
+					<consumerLibraryPath>releasestatic</consumerLibraryPath>
+				</item>
+			</configurations>
+			<items>
+				<item type="traktor.sb.File" version="1">
+					<fileName>*.*</fileName>
+					<excludeFilter/>
+					<items/>
+				</item>
+			</items>
+			<dependencies>
+				<item type="traktor.sb.ExternalDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
+					<link>LnkYes</link>
+					<solutionFileName>$(TRAKTOR_HOME)/resources/build/TraktorWin64.xms</solutionFileName>
+					<projectName>Traktor.Core</projectName>
+				</item>
+			</dependencies>
+		</item>
+		<item type="traktor.sb.Project" version="1">
+			<enable>true</enable>
+			<name>Llm.App</name>
+			<sourcePath>$(TRAKTOR_HOME)/tools/Llm/code/Llm/App</sourcePath>
+			<configurations>
+				<item type="traktor.sb.Configuration" version="5">
+					<name>DebugShared</name>
+					<targetFormat>TfExecutable</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(TRAKTOR_HOME)/tools/Llm/code</item>
+					</includePaths>
+					<definitions>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<warningLevel>WlCompilerDefault</warningLevel>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
+					<aggregationItems>
+						<item type="traktor.sb.AggregationItem">
+							<sourceFile>Llm.App.exe</sourceFile>
+							<targetPath>debugshared</targetPath>
+						</item>
+						<item type="traktor.sb.AggregationItem">
+							<sourceFile>Llm.App.pdb</sourceFile>
+							<targetPath>debugshared</targetPath>
+						</item>
+					</aggregationItems>
+					<consumerLibraryPath/>
+				</item>
+				<item type="traktor.sb.Configuration" version="5">
+					<name>ReleaseShared</name>
+					<targetFormat>TfExecutable</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(TRAKTOR_HOME)/tools/Llm/code</item>
+					</includePaths>
+					<definitions>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<warningLevel>WlCompilerDefault</warningLevel>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
+					<aggregationItems>
+						<item type="traktor.sb.AggregationItem">
+							<sourceFile>Llm.App.exe</sourceFile>
+							<targetPath>releaseshared</targetPath>
+						</item>
+						<item type="traktor.sb.AggregationItem">
+							<sourceFile>Llm.App.pdb</sourceFile>
+							<targetPath>releaseshared</targetPath>
+						</item>
+					</aggregationItems>
+					<consumerLibraryPath/>
+				</item>
+				<item type="traktor.sb.Configuration" version="5">
+					<name>DebugStatic</name>
+					<targetFormat>TfExecutable</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(TRAKTOR_HOME)/tools/Llm/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<warningLevel>WlCompilerDefault</warningLevel>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
+					<aggregationItems>
+						<item type="traktor.sb.AggregationItem">
+							<sourceFile>Llm.App.exe</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
+						<item type="traktor.sb.AggregationItem">
+							<sourceFile>Llm.App.pdb</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
+					</aggregationItems>
+					<consumerLibraryPath/>
+				</item>
+				<item type="traktor.sb.Configuration" version="5">
+					<name>ReleaseStatic</name>
+					<targetFormat>TfExecutable</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(TRAKTOR_HOME)/tools/Llm/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<warningLevel>WlCompilerDefault</warningLevel>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
+					<aggregationItems>
+						<item type="traktor.sb.AggregationItem">
+							<sourceFile>Llm.App.exe</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
+						<item type="traktor.sb.AggregationItem">
+							<sourceFile>Llm.App.pdb</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
+					</aggregationItems>
+					<consumerLibraryPath/>
+				</item>
+			</configurations>
+			<items>
+				<item type="traktor.sb.File" version="1">
+					<fileName>*.*</fileName>
+					<excludeFilter/>
+					<items/>
+				</item>
+			</items>
+			<dependencies>
+				<item type="traktor.sb.ExternalDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
+					<link>LnkYes</link>
+					<solutionFileName>$(TRAKTOR_HOME)/resources/build/TraktorWin64.xms</solutionFileName>
+					<projectName>Traktor.Core</projectName>
+				</item>
+				<item type="traktor.sb.ExternalDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
+					<link>LnkYes</link>
+					<solutionFileName>$(TRAKTOR_HOME)/resources/build/TraktorWin64.xms</solutionFileName>
+					<projectName>Traktor.Ui</projectName>
+				</item>
+				<item type="traktor.sb.ExternalDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
+					<link>LnkYes</link>
+					<solutionFileName>$(TRAKTOR_HOME)/resources/build/TraktorWin64.xms</solutionFileName>
+					<projectName>Traktor.Drawing</projectName>
+				</item>
+				<item type="traktor.sb.ExternalDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
+					<link>LnkYes</link>
+					<solutionFileName>$(TRAKTOR_HOME)/resources/build/TraktorWin64.xms</solutionFileName>
+					<projectName>Traktor.Ui.Win32</projectName>
+				</item>
+				<item type="traktor.sb.ProjectDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
+					<link>LnkYes</link>
+					<project ref="/object/projects/item"/>
+				</item>
+			</dependencies>
+		</item>
+	</projects>
+	<startupProject ref="/object/projects/item[1]"/>
+</object>
