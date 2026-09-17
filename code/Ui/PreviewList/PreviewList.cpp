@@ -12,6 +12,7 @@
 #include "Ui/Application.h"
 #include "Ui/Edit.h"
 #include "Ui/FloodLayout.h"
+#include "Ui/PreviewList/PreviewActivateEvent.h"
 #include "Ui/PreviewList/PreviewContentChangeEvent.h"
 #include "Ui/PreviewList/PreviewItem.h"
 #include "Ui/PreviewList/PreviewItemMouseButtonDownEvent.h"
@@ -44,11 +45,13 @@ bool PreviewList::create(Widget* parent, uint32_t style)
 	m_itemEditor->create(this, L"", WsBorder | WsWantAllInput);
 	m_itemEditor->hide();
 	m_itemEditor->addEventHandler< FocusEvent >(this, &PreviewList::eventEditFocus);
-	m_itemEditor->addEventHandler< KeyDownEvent >(this, &PreviewList::eventEditKeyDownEvent);
+	m_itemEditor->addEventHandler< KeyDownEvent >(this, &PreviewList::eventEditKeyDown);
 
 	addEventHandler< MouseButtonDownEvent >(this, &PreviewList::eventButtonDown);
 	addEventHandler< MouseButtonUpEvent >(this, &PreviewList::eventButtonUp);
 	addEventHandler< MouseMoveEvent >(this, &PreviewList::eventMouseMove);
+	addEventHandler< MouseDoubleClickEvent >(this, &PreviewList::eventMouseDoubleClick);
+	addEventHandler< KeyDownEvent >(this, &PreviewList::eventKeyDown);
 	return true;
 }
 
@@ -92,10 +95,8 @@ bool PreviewList::show(PreviewItem* item)
 
 	int32_t index = 0;
 	for (; index < m_items->count(); ++index)
-	{
 		if (m_items->get(index) == item)
 			break;
-	}
 	if (index >= m_items->count())
 		return false;
 
@@ -192,6 +193,41 @@ void PreviewList::layoutCells(const Rect& rc)
 	}
 }
 
+bool PreviewList::getItemPosition(const PreviewItem* item, int& outRow, int& outColumn) const
+{
+	if (!m_items)
+		return false;
+
+	const int32_t index = m_items->indexOf(item);
+	if (index < 0)
+		return false;
+
+	const Rect rc = getInnerRect();
+	const int32_t width = (int32_t)(pixel(c_itemWidth) * m_scaling);
+	const int32_t ncolumns = (rc.getWidth() - pixel(c_marginX * 2_ut)) / width;
+	if (ncolumns <= 0)
+		return false;
+
+	outRow = index / ncolumns;
+	outColumn = index % ncolumns;
+	return true;
+}
+
+PreviewItem* PreviewList::getItem(int row, int column) const
+{
+	if (!m_items)
+		return nullptr;
+
+	const Rect rc = getInnerRect();
+	const int32_t width = (int32_t)(pixel(c_itemWidth) * m_scaling);
+	const int32_t ncolumns = (rc.getWidth() - pixel(c_marginX * 2_ut)) / width;
+	if (ncolumns <= 0)
+		return nullptr;
+
+	const int32_t index = row * ncolumns + column;
+	return m_items->get(index);
+}
+
 void PreviewList::eventEditFocus(FocusEvent* event)
 {
 	if (event->lostFocus() && m_itemEditor->isVisible(false))
@@ -213,7 +249,7 @@ void PreviewList::eventEditFocus(FocusEvent* event)
 	}
 }
 
-void PreviewList::eventEditKeyDownEvent(KeyDownEvent* event)
+void PreviewList::eventEditKeyDown(KeyDownEvent* event)
 {
 	if (event->getVirtualKey() == ui::VkReturn)
 	{
@@ -320,6 +356,67 @@ void PreviewList::eventMouseMove(MouseMoveEvent* event)
 	{
 		const Point screenPosition = clientToScreen(event->getPosition() + Size(4, 4));
 		m_thumb->setRect({ screenPosition, Size(64, 64) });
+	}
+}
+
+void PreviewList::eventMouseDoubleClick(MouseDoubleClickEvent* event)
+{
+	Ref< ui::PreviewItem > item = getSelectedItem();
+	if (!item)
+		return;
+
+	PreviewActivateEvent activateEvent(this, item);
+	raiseEvent(&activateEvent);
+}
+
+void PreviewList::eventKeyDown(KeyDownEvent* event)
+{
+	Ref< ui::PreviewItem > item = getSelectedItem();
+	if (!item)
+		return;
+
+	if (event->getVirtualKey() == ui::VkReturn)
+	{
+		PreviewActivateEvent activateEvent(this, item);
+		raiseEvent(&activateEvent);
+	}
+	else if (
+		event->getVirtualKey() == ui::VkLeft ||
+		event->getVirtualKey() == ui::VkRight ||
+		event->getVirtualKey() == ui::VkUp ||
+		event->getVirtualKey() == ui::VkDown)
+	{
+		int32_t row, column;
+		if (!getItemPosition(item, row, column))
+			return;
+
+		switch (event->getVirtualKey())
+		{
+		case VkLeft:
+			column--;
+			break;
+		case VkRight:
+			column++;
+			break;
+		case VkUp:
+			row--;
+			break;
+		case VkDown:
+			row++;
+			break;
+		}
+
+		Ref< ui::PreviewItem > nextItem = getItem(row, column);
+		if (nextItem)
+		{
+			nextItem->setSelected(true);
+			item->setSelected(false);
+
+			PreviewSelectionChangeEvent selectionChangeEvent(this, nextItem);
+			raiseEvent(&selectionChangeEvent);
+
+			show(nextItem);
+		}
 	}
 }
 

@@ -198,12 +198,18 @@ void AutoWidget::scrollTo(const Point& pnt)
 	m_scrollOffset = -(pnt - innerRect.getCenter());
 
 	if (m_scrollBarH->isVisible(false))
+	{
 		m_scrollBarH->setPosition(-m_scrollOffset.cx / c_scrollBarDenom);
+		m_scrollOffset.cx = -m_scrollBarH->getPosition() * c_scrollBarDenom;
+	}
 	else
 		m_scrollOffset.cx = 0;
 
 	if (m_scrollBarV->isVisible(false))
+	{
 		m_scrollBarV->setPosition(-m_scrollOffset.cy / c_scrollBarDenom);
+		m_scrollOffset.cy = -m_scrollBarV->getPosition() * c_scrollBarDenom;
+	}
 	else
 		m_scrollOffset.cy = 0;
 

@@ -6,12 +6,12 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include "Ui/StyleConstants.h"
 #include "Ui/TreeView/TreeView.h"
 
 #include "Ui/Edit.h"
 #include "Ui/HierarchicalState.h"
 #include "Ui/StyleBitmap.h"
+#include "Ui/StyleConstants.h"
 #include "Ui/TreeView/TreeViewContentChangeEvent.h"
 #include "Ui/TreeView/TreeViewEditEvent.h"
 #include "Ui/TreeView/TreeViewItem.h"
@@ -307,14 +307,18 @@ void TreeView::eventKeyDown(KeyDownEvent* event)
 		return;
 
 	const bool recursive = (bool)((event->getKeyState() & KsShift) != 0);
+	bool selectionChanged = false;
 
 	switch (event->getVirtualKey())
 	{
 	case VkLeft:
 		if (items[current]->isExpanded())
 			items[current]->collapse(recursive);
-		else if (items[current]->getParent() != 0)
+		else if (items[current]->getParent() != nullptr)
+		{
 			items[current]->getParent()->select();
+			selectionChanged = true;
+		}
 		requestUpdate();
 		break;
 
@@ -324,7 +328,10 @@ void TreeView::eventKeyDown(KeyDownEvent* event)
 			if (items[current]->isCollapsed())
 				items[current]->expand(recursive);
 			else
+			{
 				items[current + 1]->select();
+				selectionChanged = true;
+			}
 			requestUpdate();
 		}
 		break;
@@ -333,6 +340,7 @@ void TreeView::eventKeyDown(KeyDownEvent* event)
 		if (current > 0)
 		{
 			items[current - 1]->select();
+			selectionChanged = true;
 			requestUpdate();
 		}
 		break;
@@ -341,6 +349,7 @@ void TreeView::eventKeyDown(KeyDownEvent* event)
 		if (current < items.size() - 1)
 		{
 			items[current + 1]->select();
+			selectionChanged = true;
 			requestUpdate();
 		}
 		break;
@@ -355,6 +364,12 @@ void TreeView::eventKeyDown(KeyDownEvent* event)
 
 	default:
 		break;
+	}
+
+	if (selectionChanged)
+	{
+		SelectionChangeEvent selectionChangeEvent(this);
+		raiseEvent(&selectionChangeEvent);
 	}
 }
 

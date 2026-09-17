@@ -75,15 +75,23 @@ private:
 
 	virtual void layoutCells(const Rect& rc) override final;
 
+	bool getItemPosition(const PreviewItem* item, int& outRow, int& outColumn) const;
+
+	PreviewItem* getItem(int row, int column) const;
+
 	void eventEditFocus(FocusEvent* event);
 
-	void eventEditKeyDownEvent(KeyDownEvent* event);
+	void eventEditKeyDown(KeyDownEvent* event);
 
 	void eventButtonDown(MouseButtonDownEvent* event);
 
 	void eventButtonUp(MouseButtonUpEvent* event);
 
 	void eventMouseMove(MouseMoveEvent* event);
+
+	void eventMouseDoubleClick(MouseDoubleClickEvent* event);
+
+	void eventKeyDown(KeyDownEvent* event);
 };
 
 }

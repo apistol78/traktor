@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2026 Anders Pistol.
+ * Copyright (c) 2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,8 +8,7 @@
  */
 #pragma once
 
-#include "Core/Object.h"
-#include "Core/RefArray.h"
+#include "Ui/Event.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -24,25 +23,20 @@ namespace traktor::ui
 
 class PreviewItem;
 
-class T_DLLCLASS PreviewItems : public Object
+/*!
+ * \ingroup UI
+ */
+class T_DLLCLASS PreviewActivateEvent : public Event
 {
 	T_RTTI_CLASS;
 
 public:
-	void add(PreviewItem* item);
+	explicit PreviewActivateEvent(EventSubject* sender, PreviewItem* item);
 
-	void remove(PreviewItem* item);
-
-	void removeAll();
-
-	int count() const;
-
-	PreviewItem* get(int32_t index) const;
-
-	int32_t indexOf(const PreviewItem* item) const;
+	PreviewItem* getItem() const;
 
 private:
-	RefArray< PreviewItem > m_items;
+	Ref< PreviewItem > m_item;
 };
 
 }

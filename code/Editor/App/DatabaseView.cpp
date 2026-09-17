@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -49,6 +49,7 @@
 #include "Ui/Menu.h"
 #include "Ui/MenuItem.h"
 #include "Ui/MessageBox.h"
+#include "Ui/PreviewList/PreviewActivateEvent.h"
 #include "Ui/PreviewList/PreviewContentChangeEvent.h"
 #include "Ui/PreviewList/PreviewItem.h"
 #include "Ui/PreviewList/PreviewItemMouseButtonDownEvent.h"
@@ -428,7 +429,7 @@ bool DatabaseView::create(ui::Widget* parent)
 	if (!m_listInstances->create(m_splitter, ui::WsDoubleBuffer | ui::WsTabStop))
 		return false;
 	m_listInstances->addEventHandler< ui::PreviewItemMouseButtonDownEvent >(this, &DatabaseView::eventPreviewInstanceButtonDown);
-	m_listInstances->addEventHandler< ui::MouseDoubleClickEvent >(this, &DatabaseView::eventInstancePreviewActivate);
+	m_listInstances->addEventHandler< ui::PreviewActivateEvent >(this, &DatabaseView::eventInstancePreviewActivate);
 	m_listInstances->addEventHandler< ui::PreviewContentChangeEvent >(this, &DatabaseView::eventPreviewContentChange);
 	m_listInstances->addEventHandler< ui::DragEvent >(this, &DatabaseView::eventInstanceDrag);
 	m_listInstances->setVisible(false);
@@ -1660,7 +1661,7 @@ void DatabaseView::eventInstanceDrag(ui::DragEvent* event)
 	event->consume();
 }
 
-void DatabaseView::eventInstancePreviewActivate(ui::MouseDoubleClickEvent* event)
+void DatabaseView::eventInstancePreviewActivate(ui::PreviewActivateEvent* event)
 {
 	Ref< ui::PreviewItem > item = m_listInstances->getSelectedItem();
 	if (!item)
