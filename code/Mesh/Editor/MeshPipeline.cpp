@@ -190,7 +190,7 @@ AlignedVector< render::VertexElement > getDepthVertexElements(
 
 }
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.MeshPipeline", 67, MeshPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.MeshPipeline", 68, MeshPipeline, editor::IPipeline)
 
 MeshPipeline::MeshPipeline()
 	: m_promoteHalf(false)

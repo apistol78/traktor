@@ -1,16 +1,19 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include <mikktspace.h>
+#include "Model/Operations/CalculateTangents.h"
+
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
 #include "Model/Model.h"
-#include "Model/Operations/CalculateTangents.h"
+#include "Model/Operations/Triangulate.h"
+
+#include <mikktspace.h>
 
 namespace traktor::model
 {
@@ -24,6 +27,18 @@ CalculateTangents::CalculateTangents(bool replaceExisting)
 
 bool CalculateTangents::apply(Model& model) const
 {
+	// Keep original polygons if any N-gon has more than 4 vertices since mikktspace doesn't support more.
+	AlignedVector< Polygon > originalPolygons;
+	for (const auto& polygon : model.getPolygons())
+	{
+		if (polygon.getVertexCount() > 4)
+		{
+			originalPolygons = model.getPolygons();
+			model.apply(Triangulate());
+			break;
+		}
+	}
+
 	struct UserData
 	{
 		Model* model;
@@ -107,6 +122,11 @@ bool CalculateTangents::apply(Model& model) const
 	cx.m_pUserData = &ud;
 
 	genTangSpaceDefault(&cx);
+
+	// Restore the original polygons; only the vertices should have been modified.
+	if (!originalPolygons.empty())
+		model.setPolygons(originalPolygons);
+
 	return true;
 }
 
