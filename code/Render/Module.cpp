@@ -9,8 +9,6 @@
 #include "Core/Rtti/TypeInfo.h"
 
 #if defined(T_STATIC)
-#	include "Render/Compute/ComputeTextureFactory.h"
-#	include "Render/Compute/ComputeTextureResource.h"
 #	include "Render/RenderClassFactory.h"
 #	include "Render/Image2/AmbientOcclusionData.h"
 #	include "Render/Image2/DirectionalBlurData.h"
@@ -23,8 +21,6 @@ namespace traktor::render
 
 extern "C" void __module__Traktor_Render()
 {
-	T_FORCE_LINK_REF(ComputeTextureFactory);
-	T_FORCE_LINK_REF(ComputeTextureResource);
 	T_FORCE_LINK_REF(RenderClassFactory);
 	T_FORCE_LINK_REF(AmbientOcclusionData);
 	T_FORCE_LINK_REF(DirectionalBlurData);

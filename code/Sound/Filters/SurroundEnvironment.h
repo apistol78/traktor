@@ -71,7 +71,7 @@ public:
 	 * \param delta Vector from listener to source, in world space.
 	 * \return Scaled distance.
 	 */
-	Scalar getScaledDistance(const Vector4& delta) const { return (delta * m_verticalAxisScale).length(); }
+	traktor::Scalar getScaledDistance(const Vector4& delta) const { return (delta * m_verticalAxisScale).length(); }
 
 private:
 	Scalar m_maxDistance;
