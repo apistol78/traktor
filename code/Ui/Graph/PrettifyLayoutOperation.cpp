@@ -23,6 +23,57 @@
 namespace traktor::ui
 {
 
+namespace
+{
+
+/*! Edge of the island, carrying where each end attaches to its node.
+ *
+ * A node's pins are stacked in a fixed order, so which pin an edge uses
+ * decides where it meets the node vertically. Ordering that only knows
+ * "node A is above node B" cannot see crossings caused by pin order, and
+ * those are the ones left over on otherwise trivial graphs.
+ */
+struct IslandEdge
+{
+	int32_t u;         //!< Source node, island local index.
+	int32_t v;         //!< Destination node, island local index.
+	float srcOffset;   //!< Source pin, as a fraction of the source node's height.
+	float dstOffset;   //!< Destination pin, as a fraction of the destination node's height.
+};
+
+/*! One edge segment spanning a single layer boundary.
+ *
+ * Long edges are cut into one segment per boundary by dummy items; a
+ * dummy has a single pin in its middle, hence offset 0.5.
+ */
+struct Segment
+{
+	int32_t item;      //!< The item at the other end of this segment.
+	float ownOffset;   //!< Pin offset on the item owning this segment.
+	float othOffset;   //!< Pin offset on  item.
+};
+
+/*! A segment reduced to the two vertical keys it connects. */
+struct SegmentKeys
+{
+	float upper;
+	float lower;
+
+	bool operator < (const SegmentKeys& rh) const
+	{
+		return upper != rh.upper ? upper < rh.upper : lower < rh.lower;
+	}
+};
+
+const int32_t c_orderSweeps = 24;             //!< Barycenter sweeps per attempt.
+const int32_t c_orderStaleLimit = 6;          //!< Give up an attempt after this many sweeps without a gain.
+const int32_t c_transposeIterations = 16;     //!< Transposition passes per sweep.
+const int32_t c_orderAttempts = 4;            //!< Seed orders tried, best kept.
+const int32_t c_orderAttemptsLarge = 2;       //!< ...fewer once the island gets big, to bound the cost.
+const int32_t c_largeIsland = 1024;           //!< Item count above which an island counts as big.
+
+}
+
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.PrettifyLayoutOperation", PrettifyLayoutOperation, IGraphLayoutOperation);
 
 UnitRect PrettifyLayoutOperation::prettifyIsland(
@@ -45,9 +96,24 @@ UnitRect PrettifyLayoutOperation::prettifyIsland(
 	for (int32_t i = 0; i < nReal; ++i)
 		localIndex.insert(gNodes[nodeIndices[i]], i);
 
+	// Where a pin sits vertically within its node, as a fraction of the
+	// node's height. Pins are laid out top-down in a fixed order, so this
+	// is a stand-in for the pin's index that already accounts for nodes of
+	// differing heights.
+	const auto pinOffset = [](const Node* node, const Pin* pin) -> float {
+		const UnitRect rc = node->calculateRect();
+		const int32_t height = rc.getHeight().get();
+		if (height <= 0)
+			return 0.5f;
+		const float f = (float)(pin->getPosition().y - rc.top).get() / (float)height;
+		return std::min(0.98f, std::max(0.02f, f));
+	};
+
 	// Build adjacency restricted to edges between members of the island.
+	// Both the plain successor lists (used for layering) and the pin-aware
+	// edge list (used for ordering) come out of the same pass.
 	AlignedVector< AlignedVector< int32_t > > outAdj(nReal);
-	AlignedVector< AlignedVector< int32_t > > inAdj(nReal);
+	AlignedVector< IslandEdge > islandEdges;
 	for (auto edge : gEdges)
 	{
 		const Pin* src = edge->getSourcePin();
@@ -61,7 +127,11 @@ UnitRect PrettifyLayoutOperation::prettifyIsland(
 		if (si->second == di->second)
 			continue;
 		outAdj[si->second].push_back(di->second);
-		inAdj[di->second].push_back(si->second);
+		islandEdges.push_back({
+			si->second,
+			di->second,
+			pinOffset(src->getNode(), src),
+			pinOffset(dst->getNode(), dst) });
 	}
 
 	// Iterative DFS topological order. Back-edges (cycles) end up
@@ -162,42 +232,41 @@ UnitRect PrettifyLayoutOperation::prettifyIsland(
 	for (int32_t L : layer)
 		nLayers = std::max(nLayers, L + 1);
 
-	// Insert dummy nodes along forward edges that span more than one layer.
-	// Dummies participate in barycenter ordering exactly like real nodes,
-	// which is what causes neighboring columns to shift so long edges have
-	// a clear vertical lane to pass through.
-	AlignedVector< AlignedVector< int32_t > > xOutAdj(nReal);
-	AlignedVector< AlignedVector< int32_t > > xInAdj(nReal);
+	// Insert dummy items along forward edges that span more than one layer,
+	// so every segment connects adjacent layers. Dummies take part in the
+	// ordering exactly like real nodes, which is what makes neighboring
+	// columns shift aside to give a long edge a clear vertical lane.
+	AlignedVector< AlignedVector< Segment > > xOut(nReal);
+	AlignedVector< AlignedVector< Segment > > xIn(nReal);
 	AlignedVector< int32_t > xLayer = layer;
 	int32_t nTotal = nReal;
 
-	for (int32_t u = 0; u < nReal; ++u)
+	for (const IslandEdge& e : islandEdges)
 	{
-		for (int32_t v : outAdj[u])
+		if (rank[e.u] >= rank[e.v])
+			continue; // skip back-edges
+		if (layer[e.v] - layer[e.u] == 1)
 		{
-			if (rank[u] >= rank[v])
-				continue; // skip back-edges
-			if (layer[v] - layer[u] == 1)
+			xOut[e.u].push_back({ e.v, e.srcOffset, e.dstOffset });
+			xIn[e.v].push_back({ e.u, e.dstOffset, e.srcOffset });
+		}
+		else
+		{
+			int32_t prev = e.u;
+			float prevOffset = e.srcOffset;
+			for (int32_t L = layer[e.u] + 1; L < layer[e.v]; ++L)
 			{
-				xOutAdj[u].push_back(v);
-				xInAdj[v].push_back(u);
+				const int32_t d = nTotal++;
+				xOut.push_back(AlignedVector< Segment >());
+				xIn.push_back(AlignedVector< Segment >());
+				xLayer.push_back(L);
+				xOut[prev].push_back({ d, prevOffset, 0.5f });
+				xIn[d].push_back({ prev, 0.5f, prevOffset });
+				prev = d;
+				prevOffset = 0.5f;
 			}
-			else
-			{
-				int32_t prev = u;
-				for (int32_t L = layer[u] + 1; L < layer[v]; ++L)
-				{
-					const int32_t d = nTotal++;
-					xOutAdj.push_back(AlignedVector< int32_t >());
-					xInAdj.push_back(AlignedVector< int32_t >());
-					xLayer.push_back(L);
-					xOutAdj[prev].push_back(d);
-					xInAdj[d].push_back(prev);
-					prev = d;
-				}
-				xOutAdj[prev].push_back(v);
-				xInAdj[v].push_back(prev);
-			}
+			xOut[prev].push_back({ e.v, prevOffset, e.dstOffset });
+			xIn[e.v].push_back({ prev, e.dstOffset, prevOffset });
 		}
 	}
 
@@ -205,138 +274,317 @@ UnitRect PrettifyLayoutOperation::prettifyIsland(
 	for (int32_t i = 0; i < nTotal; ++i)
 		layerNodes[xLayer[i]].push_back(i);
 
-	// Seed within-layer order: real nodes by current Y, dummies by insertion order.
-	for (int32_t L = 0; L < nLayers; ++L)
-	{
-		std::stable_sort(layerNodes[L].begin(), layerNodes[L].end(), [&](int32_t a, int32_t b) {
-			const bool aReal = a < nReal;
-			const bool bReal = b < nReal;
-			if (aReal && bReal)
-				return gNodes[nodeIndices[a]]->getPosition().y < gNodes[nodeIndices[b]]->getPosition().y;
-			return false;
-		});
-	}
-
 	AlignedVector< int32_t > position((size_t)nTotal, 0);
-	for (int32_t L = 0; L < nLayers; ++L)
-		for (int32_t i = 0; i < (int32_t)layerNodes[L].size(); ++i)
-			position[layerNodes[L][i]] = i;
+	const auto reindex = [&]() {
+		for (int32_t L = 0; L < nLayers; ++L)
+			for (int32_t i = 0; i < (int32_t)layerNodes[L].size(); ++i)
+				position[layerNodes[L][i]] = i;
+	};
 
-	auto sortLayer = [&](int32_t L, bool useIn) {
+	// Vertical key of the far end of a segment: which item it lands on,
+	// plus where on that item its pin sits. Items within a layer never
+	// overlap vertically, so comparing these keys is exactly comparing the
+	// on-screen height of the two endpoints.
+	const auto endKey = [&](const Segment& s) -> float {
+		return (float)position[s.item] + s.othOffset;
+	};
+
+	// Exact number of crossings implied by the current ordering, counted at
+	// pin granularity. Per layer boundary the segments are sorted by their
+	// upper endpoint and the inversions among the lower endpoints are
+	// counted with a Fenwick tree, giving O(E log E) — cheap enough to
+	// evaluate after every sweep, which is what makes best-of tracking and
+	// multiple attempts affordable.
+	AlignedVector< SegmentKeys > cxSegments;
+	AlignedVector< float > cxRanks;
+	AlignedVector< int32_t > cxTree;
+	const auto countCrossings = [&]() -> int64_t {
+		int64_t total = 0;
+		for (int32_t L = 0; L + 1 < nLayers; ++L)
+		{
+			cxSegments.resize(0);
+			for (int32_t u : layerNodes[L])
+				for (const Segment& s : xOut[u])
+					cxSegments.push_back({ (float)position[u] + s.ownOffset, endKey(s) });
+			if (cxSegments.size() < 2)
+				continue;
+
+			std::sort(cxSegments.begin(), cxSegments.end());
+
+			cxRanks.resize(0);
+			for (const SegmentKeys& sk : cxSegments)
+				cxRanks.push_back(sk.lower);
+			std::sort(cxRanks.begin(), cxRanks.end());
+			cxRanks.erase(std::unique(cxRanks.begin(), cxRanks.end()), cxRanks.end());
+
+			const int32_t nRanks = (int32_t)cxRanks.size();
+			cxTree.resize(0);
+			cxTree.resize((size_t)(nRanks + 1), 0);
+
+			int32_t inserted = 0;
+			for (const SegmentKeys& sk : cxSegments)
+			{
+				const int32_t r = (int32_t)std::distance(cxRanks.begin(), std::lower_bound(cxRanks.begin(), cxRanks.end(), sk.lower)) + 1;
+				int32_t atOrAbove = 0;
+				for (int32_t i = r; i > 0; i -= i & (-i))
+					atOrAbove += cxTree[i];
+				total += inserted - atOrAbove;
+				for (int32_t i = r; i <= nRanks; i += i & (-i))
+					++cxTree[i];
+				++inserted;
+			}
+		}
+		return total;
+	};
+
+	// Barycenter sweep: order a layer by the average height of the
+	// endpoints its edges reach in the neighboring layer. The endpoint key
+	// includes the pin offset, so two edges leaving the same node are no
+	// longer indistinguishable — which is precisely the case node-level
+	// ordering is blind to.
+	AlignedVector< float > baryKey((size_t)nTotal, 0.0f);
+	const auto sortLayer = [&](int32_t L, bool useIn) {
 		auto& nodes = layerNodes[L];
 		if (nodes.size() < 2)
 			return;
-		const int32_t targetLayer = useIn ? L - 1 : L + 1;
-		AlignedVector< float > bary(nodes.size());
-		for (size_t i = 0; i < nodes.size(); ++i)
+		for (int32_t u : nodes)
 		{
-			const auto& adj = useIn ? xInAdj[nodes[i]] : xOutAdj[nodes[i]];
-			int32_t cnt = 0;
-			float sum = 0.0f;
-			for (int32_t v : adj)
+			const auto& adj = useIn ? xIn[u] : xOut[u];
+			if (adj.empty())
 			{
-				if (xLayer[v] == targetLayer)
-				{
-					sum += (float)position[v];
-					cnt++;
-				}
+				// Nothing to be pulled toward; stay put.
+				baryKey[u] = (float)position[u];
+				continue;
 			}
-			bary[i] = cnt > 0 ? sum / (float)cnt : (float)position[nodes[i]];
+			float sum = 0.0f;
+			for (const Segment& s : adj)
+				sum += endKey(s);
+			baryKey[u] = sum / (float)adj.size();
 		}
-		AlignedVector< size_t > idx(nodes.size());
-		for (size_t i = 0; i < idx.size(); ++i)
-			idx[i] = i;
-		std::stable_sort(idx.begin(), idx.end(), [&](size_t a, size_t b) {
-			return bary[a] < bary[b];
+		std::stable_sort(nodes.begin(), nodes.end(), [&](int32_t a, int32_t b) {
+			return baryKey[a] < baryKey[b];
 		});
-		AlignedVector< int32_t > newNodes(nodes.size());
-		for (size_t i = 0; i < idx.size(); ++i)
-			newNodes[i] = nodes[idx[i]];
-		nodes = std::move(newNodes);
 		for (int32_t i = 0; i < (int32_t)nodes.size(); ++i)
 			position[nodes[i]] = i;
 	};
 
-	const int32_t sweeps = 24;
-	for (int32_t s = 0; s < sweeps; ++s)
-	{
-		if ((s & 1) == 0)
-		{
-			for (int32_t L = 1; L < nLayers; ++L)
-				sortLayer(L, true);
-		}
-		else
-		{
-			for (int32_t L = nLayers - 2; L >= 0; --L)
-				sortLayer(L, false);
-		}
-	}
-
-	// Adjacent-transposition cleanup. The barycenter heuristic is
-	// well-known to get stuck in local minima where two neighboring
-	// nodes would have fewer crossings if swapped. This pass walks each
-	// layer's adjacent pairs and swaps them when doing so strictly
-	// reduces the total crossings on edges incident to that pair —
-	// counting downstream (toward L+1) and upstream (toward L-1) edges
-	// together. Only swaps that improve are accepted, so the total
-	// crossing count is monotonically non-increasing.
-	auto pairCrossings = [&](const AlignedVector< int32_t >& adjA, const AlignedVector< int32_t >& adjB) -> std::pair< int32_t, int32_t > {
-		int32_t crossAB = 0;
-		int32_t crossBA = 0;
-		for (int32_t va : adjA)
-		{
-			const int32_t pva = position[va];
-			for (int32_t vb : adjB)
-			{
-				const int32_t pvb = position[vb];
-				if (pva > pvb)
-					++crossAB;
-				else if (pva < pvb)
-					++crossBA;
-			}
-		}
-		return { crossAB, crossBA };
+	// Crossings among the edges incident to a and b, given a sits directly
+	// above b. Only these change when the two are swapped, and the value
+	// does not depend on where a and b themselves sit — which is what lets
+	// sifting accumulate swap deltas without re-evaluating anything.
+	const auto pairCost = [&](int32_t a, int32_t b) -> int32_t {
+		int32_t crossings = 0;
+		for (const Segment& sa : xOut[a])
+			for (const Segment& sb : xOut[b])
+				if (endKey(sa) > endKey(sb))
+					++crossings;
+		for (const Segment& sa : xIn[a])
+			for (const Segment& sb : xIn[b])
+				if (endKey(sa) > endKey(sb))
+					++crossings;
+		return crossings;
 	};
 
-	const int32_t maxTransIter = 16;
-	for (int32_t iter = 0; iter < maxTransIter; ++iter)
-	{
-		bool improved = false;
-		// Alternate sweep direction across iterations so neither end of
-		// the column has a structural advantage.
-		const bool reverse = (iter & 1) != 0;
-		for (int32_t lIdx = 0; lIdx < nLayers; ++lIdx)
+	// Adjacent-transposition cleanup. The barycenter heuristic is well
+	// known to get stuck where two neighboring items would have fewer
+	// crossings swapped.
+	const auto transposeLayers = [&](bool acceptEqual) {
+		for (int32_t iter = 0; iter < c_transposeIterations; ++iter)
 		{
-			const int32_t L = reverse ? nLayers - 1 - lIdx : lIdx;
+			bool improved = false;
+			// Alternate sweep direction so neither end of a column has a
+			// structural advantage.
+			const bool reverse = (iter & 1) != 0;
+			for (int32_t lIdx = 0; lIdx < nLayers; ++lIdx)
+			{
+				const int32_t L = reverse ? nLayers - 1 - lIdx : lIdx;
+				auto& nodes = layerNodes[L];
+				const int32_t sz = (int32_t)nodes.size();
+				if (sz < 2)
+					continue;
+				for (int32_t i = 0; i + 1 < sz; ++i)
+				{
+					const int32_t a = nodes[i];
+					const int32_t b = nodes[i + 1];
+					const int32_t keepCost = pairCost(a, b);
+					const int32_t swapCost = pairCost(b, a);
+					// Swapping on a tie is how the search leaves a plateau
+					// it would otherwise sit on; only a strict gain counts
+					// as progress, so the loop still terminates.
+					if (swapCost < keepCost || (acceptEqual && swapCost == keepCost && swapCost > 0))
+					{
+						nodes[i] = b;
+						nodes[i + 1] = a;
+						position[a] = i + 1;
+						position[b] = i;
+						if (swapCost < keepCost)
+							improved = true;
+					}
+				}
+			}
+			if (!improved)
+				break;
+		}
+	};
+
+	// Sifting: walk each item across every other position in its layer,
+	// accumulating the exact crossing delta one adjacent swap at a time,
+	// and drop it wherever that sum was lowest. Transposition only ever
+	// looks one step ahead, so it cannot move an item past a neighbor that
+	// is temporarily in the way; sifting can.
+	AlignedVector< int32_t > siftItems;
+	const auto siftLayers = [&]() {
+		for (int32_t L = 0; L < nLayers; ++L)
+		{
 			auto& nodes = layerNodes[L];
 			const int32_t sz = (int32_t)nodes.size();
 			if (sz < 2)
 				continue;
-			for (int32_t i = 0; i + 1 < sz; ++i)
+			// Snapshot, since sifting permutes `nodes` as it goes and every
+			// item should still be considered exactly once.
+			siftItems = nodes;
+			for (int32_t k = 0; k < sz; ++k)
 			{
-				const int32_t a = nodes[i];
-				const int32_t b = nodes[i + 1];
-				int32_t cur = 0;
-				int32_t swp = 0;
-				const auto dn = pairCrossings(xOutAdj[a], xOutAdj[b]);
-				cur += dn.first;
-				swp += dn.second;
-				const auto up = pairCrossings(xInAdj[a], xInAdj[b]);
-				cur += up.first;
-				swp += up.second;
-				if (swp < cur)
+				const int32_t u = siftItems[k];
+				const int32_t from = position[u];
+				int32_t best = 0;
+				int32_t bestIndex = from;
+				int32_t cumulative = 0;
+
+				// Upwards; items passed keep their relative order, so the
+				// ones encountered are simply those currently above u.
+				for (int32_t i = from - 1; i >= 0; --i)
 				{
-					nodes[i] = b;
-					nodes[i + 1] = a;
-					position[a] = i + 1;
-					position[b] = i;
-					improved = true;
+					const int32_t a = nodes[i];
+					cumulative += pairCost(u, a) - pairCost(a, u);
+					if (cumulative < best)
+					{
+						best = cumulative;
+						bestIndex = i;
+					}
+				}
+
+				// ...and downwards from the original position.
+				cumulative = 0;
+				for (int32_t i = from + 1; i < sz; ++i)
+				{
+					const int32_t b = nodes[i];
+					cumulative += pairCost(b, u) - pairCost(u, b);
+					if (cumulative < best)
+					{
+						best = cumulative;
+						bestIndex = i;
+					}
+				}
+
+				if (best < 0)
+				{
+					nodes.erase(nodes.begin() + from);
+					nodes.insert(nodes.begin() + bestIndex, u);
+					const int32_t lo = std::min(from, bestIndex);
+					const int32_t hi = std::max(from, bestIndex);
+					for (int32_t i = lo; i <= hi; ++i)
+						position[nodes[i]] = i;
 				}
 			}
 		}
-		if (!improved)
+	};
+
+	// Starting order for one attempt. Attempt 0 keeps the arrangement the
+	// user already has, so an already-tidy graph is left recognizable; the
+	// others exist only to give the local search different basins to fall
+	// into, and are accepted only when strictly better.
+	const auto seedOrder = [&](int32_t attempt) {
+		uint32_t rnd = 0x9e3779b9u + (uint32_t)attempt * 0x85ebca6bu;
+		for (int32_t L = 0; L < nLayers; ++L)
+		{
+			auto& nodes = layerNodes[L];
+			if (attempt <= 1)
+			{
+				const bool descending = (attempt == 1);
+				std::stable_sort(nodes.begin(), nodes.end(), [&](int32_t a, int32_t b) {
+					const bool aReal = a < nReal;
+					const bool bReal = b < nReal;
+					if (aReal != bReal)
+						return aReal;
+					if (!aReal)
+						return a < b;
+					const Unit ay = gNodes[nodeIndices[a]]->getPosition().y;
+					const Unit by = gNodes[nodeIndices[b]]->getPosition().y;
+					return descending ? by < ay : ay < by;
+				});
+			}
+			else if (attempt == 2)
+			{
+				// Island index order, which follows the topological sweep.
+				std::sort(nodes.begin(), nodes.end());
+			}
+			else
+			{
+				for (int32_t i = (int32_t)nodes.size() - 1; i > 0; --i)
+				{
+					rnd = rnd * 1664525u + 1013904223u;
+					std::swap(nodes[i], nodes[(int32_t)((rnd >> 16) % (uint32_t)(i + 1))]);
+				}
+			}
+		}
+		reindex();
+	};
+
+	// Ordering proper. Barycenter alone oscillates between equally poor
+	// states, so each attempt alternates it with the two local searches and
+	// keeps the best ordering actually seen rather than whatever the last
+	// sweep happened to leave behind.
+	AlignedVector< AlignedVector< int32_t > > bestNodes;
+	int64_t bestCrossings = std::numeric_limits< int64_t >::max();
+
+	const int32_t attempts = (nTotal > c_largeIsland) ? c_orderAttemptsLarge : c_orderAttempts;
+	for (int32_t attempt = 0; attempt < attempts; ++attempt)
+	{
+		seedOrder(attempt);
+
+		AlignedVector< AlignedVector< int32_t > > attemptNodes = layerNodes;
+		int64_t attemptCrossings = countCrossings();
+		int32_t stale = 0;
+
+		for (int32_t sweep = 0; sweep < c_orderSweeps && attemptCrossings > 0; ++sweep)
+		{
+			if ((sweep & 1) == 0)
+			{
+				for (int32_t L = 1; L < nLayers; ++L)
+					sortLayer(L, true);
+			}
+			else
+			{
+				for (int32_t L = nLayers - 2; L >= 0; --L)
+					sortLayer(L, false);
+			}
+
+			transposeLayers((sweep & 2) != 0);
+			siftLayers();
+
+			const int64_t crossings = countCrossings();
+			if (crossings < attemptCrossings)
+			{
+				attemptCrossings = crossings;
+				attemptNodes = layerNodes;
+				stale = 0;
+			}
+			else if (++stale >= c_orderStaleLimit)
+				break;
+		}
+
+		if (attemptCrossings < bestCrossings)
+		{
+			bestCrossings = attemptCrossings;
+			bestNodes = attemptNodes;
+		}
+		if (bestCrossings == 0)
 			break;
 	}
+
+	layerNodes = bestNodes;
+	reindex();
 
 	const Unit columnGap = 90_ut;
 	const Unit rowGap = 32_ut;
@@ -385,15 +633,19 @@ UnitRect PrettifyLayoutOperation::prettifyIsland(
 		}
 	}
 
-	// Compaction pass: pull each item toward the vertical center of its
-	// connected neighbors (upstream + downstream), constrained by its
-	// same-column siblings so within-column order is preserved and no
-	// node overlaps another. Dummies on long edges get pulled toward a
-	// straight line between their endpoints, which also keeps long edges
-	// from drifting across nodes. Each item considers neighbors in both
-	// directions, so direct edges become close to horizontal.
-	auto centerYOf = [&](int32_t u) -> Unit {
-		return itemY[u] + itemHeight(u) / 2_ut;
+	// Compaction pass: pull each item toward its connected neighbors
+	// (upstream + downstream), constrained by its same-column siblings so
+	// within-column order is preserved and no node overlaps another.
+	// Dummies on long edges get pulled toward a straight line between
+	// their endpoints, which also keeps long edges from drifting across
+	// nodes. Each item considers neighbors in both directions, so direct
+	// edges become close to horizontal.
+	//
+	// The target is pin-to-pin rather than center-to-center: an edge
+	// leaving a node's third output pin should line up with that pin, not
+	// with the node's middle.
+	const auto pinYOf = [&](int32_t u, float offset) -> Unit {
+		return itemY[u] + Unit((int32_t)(offset * (float)itemHeight(u).get()));
 	};
 
 	const int32_t compactionPasses = 16;
@@ -412,21 +664,21 @@ UnitRect PrettifyLayoutOperation::prettifyIsland(
 
 				int32_t cnt = 0;
 				int64_t sum = 0;
-				for (int32_t v : xInAdj[u])
+				const int32_t ownHeight = itemHeight(u).get();
+				for (const Segment& s : xIn[u])
 				{
-					sum += (int64_t)centerYOf(v).get();
+					sum += (int64_t)pinYOf(s.item, s.othOffset).get() - (int64_t)(s.ownOffset * (float)ownHeight);
 					++cnt;
 				}
-				for (int32_t v : xOutAdj[u])
+				for (const Segment& s : xOut[u])
 				{
-					sum += (int64_t)centerYOf(v).get();
+					sum += (int64_t)pinYOf(s.item, s.othOffset).get() - (int64_t)(s.ownOffset * (float)ownHeight);
 					++cnt;
 				}
 				if (cnt == 0)
 					continue;
 
-				const Unit targetCenter((int32_t)(sum / cnt));
-				Unit newY = targetCenter - itemHeight(u) / 2_ut;
+				Unit newY((int32_t)(sum / cnt));
 
 				// Same-column sibling constraints. Note minY <= maxY is
 				// guaranteed because each prior update preserved the
@@ -451,18 +703,17 @@ UnitRect PrettifyLayoutOperation::prettifyIsland(
 		}
 	}
 
-	// Strict pin-aware alignment. The compaction above lines up nodes by
-	// their geometric centers; this stricter pass refines by aligning
-	// each real node's *input pin* against the *output pin* on the
-	// upstream node that drives it — but only for edges that come from
-	// the immediately preceding column (one layer back). Long edges go
-	// through dummies and were already handled by the compaction.
+	// Strict pin-aware alignment. The compaction above works from pin
+	// offsets rounded to a fraction of the node height; this pass refines
+	// using the exact pin positions, aligning each real node's *input pin*
+	// against the *output pin* on the upstream node that drives it — but
+	// only for edges that come from the immediately preceding column (one
+	// layer back). Long edges go through dummies and were already handled
+	// by the compaction.
 	//
-	// Because the pass only mutates itemY (never the within-column order
-	// in layerNodes/position) it cannot change cross-column edge
-	// crossings. A defensive crossing count before/after enforces that
-	// invariant: if the count ever increased, the itemY snapshot is
-	// restored.
+	// The pass only mutates itemY, never the within-column order in
+	// layerNodes/position, and crossings are decided entirely by that
+	// order — so no edge crossing can be introduced here.
 	{
 		struct PinIncoming
 		{
@@ -497,41 +748,6 @@ UnitRect PrettifyLayoutOperation::prettifyIsland(
 			const Unit dstPinOffset = dp->getPosition().y - dn->getPosition().y;
 			pinIn[v_local].push_back({ u_local, srcPinOffset - dstPinOffset });
 		}
-
-		// Count edge crossings between every adjacent column pair using
-		// current position[] indices. Cheap enough at this scale; we run
-		// it twice (before and after alignment) only as a safety net.
-		auto totalCrossings = [&]() -> int64_t {
-			int64_t total = 0;
-			for (int32_t L = 0; L + 1 < nLayers; ++L)
-			{
-				AlignedVector< std::pair< int32_t, int32_t > > es;
-				for (int32_t u : layerNodes[L])
-				{
-					for (int32_t v : xOutAdj[u])
-					{
-						if (xLayer[v] == L + 1)
-							es.push_back({ position[u], position[v] });
-					}
-				}
-				const size_t n = es.size();
-				for (size_t i = 0; i < n; ++i)
-				{
-					for (size_t j = i + 1; j < n; ++j)
-					{
-						const auto& a = es[i];
-						const auto& b = es[j];
-						if ((a.first < b.first && a.second > b.second) ||
-							(a.first > b.first && a.second < b.second))
-							++total;
-					}
-				}
-			}
-			return total;
-		};
-
-		const int64_t crossingsBefore = totalCrossings();
-		AlignedVector< Unit > savedItemY = itemY;
 
 		const int32_t pinPasses = 8;
 		for (int32_t pass = 0; pass < pinPasses; ++pass)
@@ -577,9 +793,6 @@ UnitRect PrettifyLayoutOperation::prettifyIsland(
 				}
 			}
 		}
-
-		if (totalCrossings() > crossingsBefore)
-			itemY = std::move(savedItemY);
 	}
 
 	// Commit real-node positions and compute the content bounds.

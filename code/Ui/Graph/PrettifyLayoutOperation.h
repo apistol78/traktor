@@ -34,7 +34,13 @@ class Node;
  * trying to reduce edge crossings and edges passing behind nodes.
  * Groups become per-group islands, and disjoint sub-graphs are laid out
  * independently. Cyclic edges are tolerated as back-edges (the resulting
- * layout for cycles is approximate).
+ * layout for cycles is approximate, and back-edges take no part in
+ * crossing minimisation).
+ *
+ * Crossings are minimised at pin granularity rather than node granularity:
+ * a node's pins are stacked in a fixed order, so two edges leaving the same
+ * node can cross each other, which ordering that only compares nodes cannot
+ * see.
  *
  * If at least one node or group is selected, only the selection is
  * processed. With nothing selected the whole graph is laid out.
