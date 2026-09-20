@@ -31,13 +31,8 @@
 					<debugArguments/>
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
-					<aggregationItems>
-						<item type="traktor.sb.AggregationItem">
-							<sourceFile>libLlm.so</sourceFile>
-							<targetPath>debugshared</targetPath>
-						</item>
-					</aggregationItems>
-					<consumerLibraryPath>debugshared</consumerLibraryPath>
+					<aggregationItems/>
+					<consumerLibraryPath/>
 				</item>
 				<item type="traktor.sb.Configuration" version="5">
 					<name>ReleaseShared</name>
@@ -61,13 +56,8 @@
 					<debugArguments/>
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
-					<aggregationItems>
-						<item type="traktor.sb.AggregationItem">
-							<sourceFile>libLlm.so</sourceFile>
-							<targetPath>releaseshared</targetPath>
-						</item>
-					</aggregationItems>
-					<consumerLibraryPath>releaseshared</consumerLibraryPath>
+					<aggregationItems/>
+					<consumerLibraryPath/>
 				</item>
 				<item type="traktor.sb.Configuration" version="5">
 					<name>DebugStatic</name>
@@ -91,13 +81,8 @@
 					<debugArguments/>
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
-					<aggregationItems>
-						<item type="traktor.sb.AggregationItem">
-							<sourceFile>libLlm.a</sourceFile>
-							<targetPath>debugstatic</targetPath>
-						</item>
-					</aggregationItems>
-					<consumerLibraryPath>debugstatic</consumerLibraryPath>
+					<aggregationItems/>
+					<consumerLibraryPath/>
 				</item>
 				<item type="traktor.sb.Configuration" version="5">
 					<name>ReleaseStatic</name>
@@ -121,13 +106,8 @@
 					<debugArguments/>
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
-					<aggregationItems>
-						<item type="traktor.sb.AggregationItem">
-							<sourceFile>libLlm.a</sourceFile>
-							<targetPath>releasestatic</targetPath>
-						</item>
-					</aggregationItems>
-					<consumerLibraryPath>releasestatic</consumerLibraryPath>
+					<aggregationItems/>
+					<consumerLibraryPath/>
 				</item>
 			</configurations>
 			<items>
@@ -172,12 +152,7 @@
 					<debugArguments/>
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
-					<aggregationItems>
-						<item type="traktor.sb.AggregationItem">
-							<sourceFile>Llm.App</sourceFile>
-							<targetPath>debugshared</targetPath>
-						</item>
-					</aggregationItems>
+					<aggregationItems/>
 					<consumerLibraryPath/>
 				</item>
 				<item type="traktor.sb.Configuration" version="5">
@@ -201,12 +176,7 @@
 					<debugArguments/>
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
-					<aggregationItems>
-						<item type="traktor.sb.AggregationItem">
-							<sourceFile>Llm.App</sourceFile>
-							<targetPath>releaseshared</targetPath>
-						</item>
-					</aggregationItems>
+					<aggregationItems/>
 					<consumerLibraryPath/>
 				</item>
 				<item type="traktor.sb.Configuration" version="5">
@@ -231,12 +201,7 @@
 					<debugArguments/>
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
-					<aggregationItems>
-						<item type="traktor.sb.AggregationItem">
-							<sourceFile>Llm.App</sourceFile>
-							<targetPath>debugstatic</targetPath>
-						</item>
-					</aggregationItems>
+					<aggregationItems/>
 					<consumerLibraryPath/>
 				</item>
 				<item type="traktor.sb.Configuration" version="5">
@@ -261,12 +226,7 @@
 					<debugArguments/>
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
-					<aggregationItems>
-						<item type="traktor.sb.AggregationItem">
-							<sourceFile>Llm.App</sourceFile>
-							<targetPath>releasestatic</targetPath>
-						</item>
-					</aggregationItems>
+					<aggregationItems/>
 					<consumerLibraryPath/>
 				</item>
 			</configurations>

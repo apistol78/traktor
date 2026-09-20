@@ -5,6 +5,10 @@ window, written entirely against Traktor's own `Core` and `Ui`. No third-party
 code, no GPU. It is not part of the engine — it links against it the way any
 external tool would, through `ExternalDependency` on the main solution.
 
+`docs/index.html` walks the whole path — the container, the tokenizer, the
+forward pass, the key/value cache and the sampler — one stage at a time, with
+each step tied back to the source. Open it in a browser; it needs no server.
+
 ## What it supports
 
 - **Container:** GGUF v2 and v3, memory mapped, weights decoded on the fly.
