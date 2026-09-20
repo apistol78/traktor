@@ -9,6 +9,7 @@
 #include "Render/Editor/Texture/TextureOutputPipeline.h"
 
 #include "Compress/Lzf/DeflateStreamLzf.h"
+#include "Core/Containers/AlignedVector.h"
 #include "Core/Io/BufferedStream.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/Writer.h"
@@ -41,6 +42,7 @@
 #include "Drawing/Filters/SphereMapFilter.h"
 #include "Drawing/Filters/SwizzleFilter.h"
 #include "Drawing/Filters/TransformFilter.h"
+#include "Drawing/IImageFilter.h"
 #include "Drawing/Image.h"
 #include "Drawing/PixelFormat.h"
 #include "Editor/IPipelineBuilder.h"
@@ -121,6 +123,71 @@ void adjustAlphaCoverage(drawing::Image* image, float alphaCoverageRef, float al
 	}
 }
 
+/*! Reduce an image by taking the maximum of each source block.
+ *
+ * A mip chain which is used to accelerate ray marching a height field - quad
+ * tree displacement mapping - is not an image but a bounding hierarchy; each
+ * texel must bound the texels it covers, so the reduction has to be a maximum
+ * and not an average. Averaging lets the ray step past thin ridges since the
+ * coarse levels then sit below the surface they are supposed to be above.
+ */
+class MaxReduceFilter : public drawing::IImageFilter
+{
+public:
+	explicit MaxReduceFilter(int32_t width, int32_t height)
+	:	m_width(width)
+	,	m_height(height)
+	{
+	}
+
+protected:
+	virtual void apply(drawing::Image* image) const override final
+	{
+		const int32_t sourceWidth = image->getWidth();
+		const int32_t sourceHeight = image->getHeight();
+
+		Ref< drawing::Image > final = new drawing::Image(image->getPixelFormat(), m_width, m_height, image->getPalette());
+
+		AlignedVector< Color4f > source(sourceWidth, Color4f(0.0f, 0.0f, 0.0f, 0.0f));
+		AlignedVector< Color4f > destination(m_width, Color4f(0.0f, 0.0f, 0.0f, 0.0f));
+
+		const float sx = float(sourceWidth) / m_width;
+		const float sy = float(sourceHeight) / m_height;
+
+		for (int32_t y = 0; y < m_height; ++y)
+		{
+			// Source rows covered by this destination row; at least one even when magnifying.
+			const int32_t y1 = std::min(int32_t(y * sy), sourceHeight - 1);
+			const int32_t y2 = std::min(std::max(int32_t(y * sy + sy), y1 + 1), sourceHeight);
+
+			for (int32_t yy = y1; yy < y2; ++yy)
+			{
+				image->getSpanUnsafe(yy, &source[0]);
+
+				for (int32_t x = 0; x < m_width; ++x)
+				{
+					const int32_t x1 = std::min(int32_t(x * sx), sourceWidth - 1);
+					const int32_t x2 = std::min(std::max(int32_t(x * sx + sx), x1 + 1), sourceWidth);
+
+					Color4f c = source[x1];
+					for (int32_t xx = x1 + 1; xx < x2; ++xx)
+						c = traktor::max(c, source[xx]);
+
+					destination[x] = (yy > y1) ? traktor::max(destination[x], c) : c;
+				}
+			}
+
+			final->setSpanUnsafe(y, &destination[0]);
+		}
+
+		image->swap(final);
+	}
+
+private:
+	int32_t m_width;
+	int32_t m_height;
+};
+
 struct ScaleTextureTask : public Object
 {
 	Ref< drawing::Image > image;
@@ -138,7 +205,7 @@ struct ScaleTextureTask : public Object
 
 }
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.TextureOutputPipeline", 40, TextureOutputPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.TextureOutputPipeline", 41, TextureOutputPipeline, editor::IPipeline)
 
 bool TextureOutputPipeline::create(const editor::IPipelineSettings* settings, db::Database* database)
 {
@@ -425,6 +492,16 @@ bool TextureOutputPipeline::buildOutput(
 			log::info << L"Using no compression." << Endl;
 	}
 
+	// A max reduced chain is a bounding hierarchy, so anything which perturbs
+	// the stored values breaks the bound it is supposed to give.
+	if (textureOutput->m_maxReduceMips)
+	{
+		if (!textureOutput->m_generateMips)
+			log::warning << L"Max reduced mips requested but mip generation is off; the setting has no effect." << Endl;
+		else if (textureFormat >= TfDXT1)
+			log::warning << L"Max reduced mips are lossy compressed; the levels no longer strictly bound the surface, which can let a ray marcher step past thin detail. Use an explicit uncompressed format, such as TfR8, if that shows." << Endl;
+	}
+
 	// Data is stored in big endian as GPUs are big endian machines.
 	pixelFormat = pixelFormat.endianSwapped();
 
@@ -707,12 +784,17 @@ bool TextureOutputPipeline::buildOutput(
 					Ref< drawing::ChainFilter > taskFilters = new drawing::ChainFilter();
 
 					// First add scaling filter to desired mip size.
-					taskFilters->add(new drawing::ScaleFilter(
-						mipWidth,
-						mipHeight,
-						drawing::ScaleFilter::MnAverage,
-						drawing::ScaleFilter::MgLinear,
-						textureOutput->m_keepZeroAlpha));
+					if (textureOutput->m_maxReduceMips && i > 0)
+						taskFilters->add(new MaxReduceFilter(
+							mipWidth,
+							mipHeight));
+					else
+						taskFilters->add(new drawing::ScaleFilter(
+							mipWidth,
+							mipHeight,
+							drawing::ScaleFilter::MnAverage,
+							drawing::ScaleFilter::MgLinear,
+							textureOutput->m_keepZeroAlpha));
 
 					// Append sharpen filter.
 					if (!textureOutput->m_normalMap && textureOutput->m_sharpenRadius > 0)
@@ -795,16 +877,26 @@ bool TextureOutputPipeline::buildOutput(
 			// Clone previous mip image.
 			mipImages[i] = i > 0 ? mipImages[i - 1]->clone() : image->clone();
 
-			// Scale image to desired mip size.
+			// Scale image to desired mip size. Mip 0 is a resample of the source image
+			// and is always filtered; it is the levels above it which form the hierarchy
+			// and which a max reduced chain has to bound.
 			if (mipWidth != image->getWidth() || mipHeight != image->getHeight())
 			{
-				drawing::ScaleFilter scaleFilter(
-					mipWidth,
-					mipHeight,
-					drawing::ScaleFilter::MnAverage,
-					drawing::ScaleFilter::MgLinear,
-					textureOutput->m_keepZeroAlpha);
-				mipImages[i]->apply(&scaleFilter);
+				if (textureOutput->m_maxReduceMips && i > 0)
+				{
+					const MaxReduceFilter maxReduceFilter(mipWidth, mipHeight);
+					mipImages[i]->apply(&maxReduceFilter);
+				}
+				else
+				{
+					drawing::ScaleFilter scaleFilter(
+						mipWidth,
+						mipHeight,
+						drawing::ScaleFilter::MnAverage,
+						drawing::ScaleFilter::MgLinear,
+						textureOutput->m_keepZeroAlpha);
+					mipImages[i]->apply(&scaleFilter);
+				}
 			}
 		}
 

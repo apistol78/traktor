@@ -14,8 +14,8 @@
 			<id>{E9B1B225-CAC5-4434-96E1-77CBFD1E2C84}</id>
 			<comment/>
 			<position>
-				<first>190</first>
-				<second>1123</second>
+				<first>196</first>
+				<second>832</second>
 			</position>
 			<name>Opaque</name>
 		</item>
@@ -23,8 +23,8 @@
 			<id>{E7674D7B-C163-4D47-8532-A7002E2B1525}</id>
 			<comment/>
 			<position>
-				<first>193</first>
-				<second>553</second>
+				<first>199</first>
+				<second>262</second>
 			</position>
 			<value>0</value>
 		</item>
@@ -32,8 +32,8 @@
 			<id>{C7CE4B74-1146-48E1-8BB2-CA3B8EB35496}</id>
 			<comment/>
 			<position>
-				<first>159</first>
-				<second>424</second>
+				<first>165</first>
+				<second>133</second>
 			</position>
 			<minFilter>Linear</minFilter>
 			<mipFilter>Linear</mipFilter>
@@ -50,8 +50,8 @@
 			<id>{EC0815AA-B77F-4D57-967E-F0C42CE69675}</id>
 			<comment/>
 			<position>
-				<first>673</first>
-				<second>422</second>
+				<first>679</first>
+				<second>131</second>
 			</position>
 			<swizzle>x</swizzle>
 		</item>
@@ -59,8 +59,8 @@
 			<id>{179A82AE-77FE-4942-9E85-3D3CB03CFE5F}</id>
 			<comment/>
 			<position>
-				<first>881</first>
-				<second>422</second>
+				<first>887</first>
+				<second>131</second>
 			</position>
 			<name>Emissive</name>
 		</item>
@@ -68,16 +68,16 @@
 			<id>{95FED87E-77A7-4B77-914A-EA912D38186D}</id>
 			<comment/>
 			<position>
-				<first>439</first>
-				<second>405</second>
+				<first>445</first>
+				<second>114</second>
 			</position>
 		</item>
 		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{A4306CF1-4272-4CDE-B0A7-FB4D6FFB71D1}</id>
 			<comment/>
 			<position>
-				<first>-283</first>
-				<second>-185</second>
+				<first>-277</first>
+				<second>-476</second>
 			</position>
 			<fragmentGuid>{9CF439FA-A6CE-410B-B4EA-6E945C992342}</fragmentGuid>
 			<inputPins>
@@ -142,8 +142,8 @@
 			<id>{97B1BDFC-FD48-421B-ACBE-3C8863A16C09}</id>
 			<comment/>
 			<position>
-				<first>174</first>
-				<second>1187</second>
+				<first>180</first>
+				<second>896</second>
 			</position>
 			<name>WorldPositionOffset</name>
 		</item>
@@ -151,8 +151,8 @@
 			<id>{F595A7A3-929D-4E5F-8684-0E126076B4E0}</id>
 			<comment/>
 			<position>
-				<first>190</first>
-				<second>1059</second>
+				<first>196</first>
+				<second>768</second>
 			</position>
 			<name>DecalResponse</name>
 		</item>
@@ -160,8 +160,8 @@
 			<id>{9C8A34D2-9DCD-4563-BBE7-5837309B3BAD}</id>
 			<comment/>
 			<position>
-				<first>190</first>
-				<second>995</second>
+				<first>196</first>
+				<second>704</second>
 			</position>
 			<name>Alpha</name>
 		</item>
@@ -169,16 +169,16 @@
 			<id>{7BF56680-828A-49E8-8B4D-0E32C8ECEDDC}</id>
 			<comment/>
 			<position>
-				<first>439</first>
-				<second>20</second>
+				<first>445</first>
+				<second>-271</second>
 			</position>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{EF4E44C4-93DB-4A83-A5B1-43A530F5F3EC}</id>
 			<comment/>
 			<position>
-				<first>881</first>
-				<second>37</second>
+				<first>887</first>
+				<second>-254</second>
 			</position>
 			<name>Specular</name>
 		</item>
@@ -186,8 +186,8 @@
 			<id>{71B5E95E-AD9A-49E7-9FEE-8CC4CB9587C1}</id>
 			<comment/>
 			<position>
-				<first>673</first>
-				<second>37</second>
+				<first>679</first>
+				<second>-254</second>
 			</position>
 			<swizzle>x</swizzle>
 		</item>
@@ -195,8 +195,8 @@
 			<id>{5C69F629-F9BE-4193-B51E-917DD882781C}</id>
 			<comment/>
 			<position>
-				<first>159</first>
-				<second>39</second>
+				<first>165</first>
+				<second>-252</second>
 			</position>
 			<minFilter>Linear</minFilter>
 			<mipFilter>Linear</mipFilter>
@@ -213,8 +213,8 @@
 			<id>{65269F35-58D4-4D11-8E1F-EB0192756B44}</id>
 			<comment/>
 			<position>
-				<first>193</first>
-				<second>168</second>
+				<first>199</first>
+				<second>-123</second>
 			</position>
 			<value>0.5</value>
 		</item>
@@ -222,8 +222,8 @@
 			<id>{6A72158E-F9D7-40B1-93FC-B7B7FB480342}</id>
 			<comment/>
 			<position>
-				<first>881</first>
-				<second>758</second>
+				<first>887</first>
+				<second>467</second>
 			</position>
 			<name>Normal</name>
 		</item>
@@ -231,8 +231,8 @@
 			<id>{CF17F6CC-A43C-44C0-BE78-6F350A430276}</id>
 			<comment/>
 			<position>
-				<first>673</first>
-				<second>758</second>
+				<first>679</first>
+				<second>467</second>
 			</position>
 			<swizzle>xyz</swizzle>
 		</item>
@@ -240,16 +240,16 @@
 			<id>{51E96A4A-C26F-4A72-83E5-0413F9D08B94}</id>
 			<comment/>
 			<position>
-				<first>439</first>
-				<second>741</second>
+				<first>445</first>
+				<second>450</second>
 			</position>
 		</item>
 		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{0A0061BA-E80D-48CE-84EE-4B0DB2B9CDFB}</id>
 			<comment/>
 			<position>
-				<first>159</first>
-				<second>745</second>
+				<first>165</first>
+				<second>454</second>
 			</position>
 			<fragmentGuid>{036D3453-15CB-164C-85AF-C08268AED664}</fragmentGuid>
 			<inputPins>
@@ -294,8 +294,8 @@
 			<id>{FF375889-47CF-425F-978A-B685DDB0ACA4}</id>
 			<comment/>
 			<position>
-				<first>203</first>
-				<second>-331</second>
+				<first>209</first>
+				<second>-622</second>
 			</position>
 			<value>0.8</value>
 		</item>
@@ -303,16 +303,16 @@
 			<id>{3CE03795-36B1-4BFE-BBF2-62B57ADA04D5}</id>
 			<comment/>
 			<position>
-				<first>439</first>
-				<second>-461</second>
+				<first>445</first>
+				<second>-752</second>
 			</position>
 		</item>
 		<item type="traktor.render.Sampler" version="6,traktor.render.Node:1">
 			<id>{33BF3EBD-370E-4C53-AA03-D694195E6D75}</id>
 			<comment/>
 			<position>
-				<first>152</first>
-				<second>-483</second>
+				<first>158</first>
+				<second>-774</second>
 			</position>
 			<minFilter>Linear</minFilter>
 			<mipFilter>Linear</mipFilter>
@@ -329,8 +329,8 @@
 			<id>{D786E868-0415-4D66-B706-E547E57DE968}</id>
 			<comment/>
 			<position>
-				<first>673</first>
-				<second>-444</second>
+				<first>679</first>
+				<second>-735</second>
 			</position>
 			<swizzle>x</swizzle>
 		</item>
@@ -338,8 +338,8 @@
 			<id>{EF9C0B15-6600-4DEF-BCBF-73081D1B37F5}</id>
 			<comment/>
 			<position>
-				<first>881</first>
-				<second>-444</second>
+				<first>887</first>
+				<second>-735</second>
 			</position>
 			<name>Roughness</name>
 		</item>
@@ -347,8 +347,8 @@
 			<id>{564FDF6D-8763-4C11-A255-D19633EED35A}</id>
 			<comment/>
 			<position>
-				<first>193</first>
-				<second>-602</second>
+				<first>199</first>
+				<second>-893</second>
 			</position>
 			<value>0</value>
 		</item>
@@ -356,8 +356,8 @@
 			<id>{C6198EB9-B7DA-448B-BF1F-14DEEC5EE7F2}</id>
 			<comment/>
 			<position>
-				<first>881</first>
-				<second>-829</second>
+				<first>887</first>
+				<second>-1120</second>
 			</position>
 			<name>Metalness</name>
 		</item>
@@ -365,8 +365,8 @@
 			<id>{175C10C7-55B7-4E6B-8811-1A218AC65FCB}</id>
 			<comment/>
 			<position>
-				<first>673</first>
-				<second>-829</second>
+				<first>679</first>
+				<second>-1120</second>
 			</position>
 			<swizzle>x</swizzle>
 		</item>
@@ -374,16 +374,16 @@
 			<id>{F840985F-5BF1-4832-B358-46749A93C9E7}</id>
 			<comment/>
 			<position>
-				<first>439</first>
-				<second>-846</second>
+				<first>445</first>
+				<second>-1137</second>
 			</position>
 		</item>
 		<item type="traktor.render.Sampler" version="6,traktor.render.Node:1">
 			<id>{A29F085B-885B-4764-808B-917F725B3E9F}</id>
 			<comment/>
 			<position>
-				<first>159</first>
-				<second>-923</second>
+				<first>165</first>
+				<second>-1214</second>
 			</position>
 			<minFilter>Linear</minFilter>
 			<mipFilter>Linear</mipFilter>
@@ -400,8 +400,8 @@
 			<id>{34A51E5E-5A60-4CE0-AA2E-8ABD23FAC4C0}</id>
 			<comment/>
 			<position>
-				<first>673</first>
-				<second>-1310</second>
+				<first>679</first>
+				<second>-1601</second>
 			</position>
 			<swizzle>xyz</swizzle>
 		</item>
@@ -409,8 +409,8 @@
 			<id>{7219763F-681E-402D-B726-90EA520B06BB}</id>
 			<comment/>
 			<position>
-				<first>145</first>
-				<second>-1179</second>
+				<first>151</first>
+				<second>-1470</second>
 			</position>
 			<color>0.627451, 0.627451, 0.627451, 1</color>
 			<linear>false</linear>
@@ -419,8 +419,8 @@
 			<id>{FF76217C-2678-471A-8261-91F4EFCC8258}</id>
 			<comment/>
 			<position>
-				<first>159</first>
-				<second>-1308</second>
+				<first>165</first>
+				<second>-1599</second>
 			</position>
 			<minFilter>Linear</minFilter>
 			<mipFilter>Linear</mipFilter>
@@ -437,8 +437,8 @@
 			<id>{F774DB75-EED7-4AE7-999B-3B6DC42A0E7E}</id>
 			<comment/>
 			<position>
-				<first>881</first>
-				<second>-1310</second>
+				<first>887</first>
+				<second>-1601</second>
 			</position>
 			<name>Albedo</name>
 		</item>
@@ -446,16 +446,16 @@
 			<id>{328005F6-5D86-480B-A40E-A8C8F0571384}</id>
 			<comment/>
 			<position>
-				<first>439</first>
-				<second>-1327</second>
+				<first>445</first>
+				<second>-1618</second>
 			</position>
 		</item>
 		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{DC38224D-2711-495A-A7DF-C83FB3A862F5}</id>
 			<comment/>
 			<position>
-				<first>351</first>
-				<second>-2659</second>
+				<first>366</first>
+				<second>-3111</second>
 			</position>
 			<fragmentGuid>{2E9AE5A7-2444-466C-8694-17BE1CF26CBD}</fragmentGuid>
 			<inputPins>
@@ -492,8 +492,8 @@
 			<id>{23399A88-F61F-4432-9D70-5523F1FEA5C1}</id>
 			<comment/>
 			<position>
-				<first>21</first>
-				<second>-2719</second>
+				<first>36</first>
+				<second>-3171</second>
 			</position>
 			<fragmentGuid>{BC8CF2ED-E005-4043-8E3E-0004A6392BF9}</fragmentGuid>
 			<inputPins>
@@ -534,8 +534,8 @@
 			<id>{48B5D6C3-EA98-4BDB-A8CF-331A59203252}</id>
 			<comment/>
 			<position>
-				<first>608</first>
-				<second>-2685</second>
+				<first>623</first>
+				<second>-3137</second>
 			</position>
 			<name>ViewBinormal</name>
 		</item>
@@ -543,8 +543,8 @@
 			<id>{9D8F75F9-213E-4BC0-AFC9-1FB8EB256367}</id>
 			<comment/>
 			<position>
-				<first>608</first>
-				<second>-2544</second>
+				<first>623</first>
+				<second>-2996</second>
 			</position>
 			<name>ViewTangent</name>
 		</item>
@@ -552,8 +552,8 @@
 			<id>{ACC1D5F8-1DEB-43B1-B84C-595B8473FA9B}</id>
 			<comment/>
 			<position>
-				<first>608</first>
-				<second>-2638</second>
+				<first>623</first>
+				<second>-3090</second>
 			</position>
 			<name>ViewNormal</name>
 		</item>
@@ -561,8 +561,8 @@
 			<id>{BB6BF24F-4794-4EA2-8183-F4F64EEB1BD9}</id>
 			<comment/>
 			<position>
-				<first>371</first>
-				<second>-2723</second>
+				<first>386</first>
+				<second>-3175</second>
 			</position>
 			<name>TexCoord</name>
 		</item>
@@ -742,8 +742,8 @@
 			<id>{01389FE9-4EE3-4746-BAFF-6D039C778BA1}</id>
 			<comment/>
 			<position>
-				<first>173</first>
-				<second>-70</second>
+				<first>179</first>
+				<second>-361</second>
 			</position>
 			<name>VertexAttributes</name>
 		</item>
@@ -751,8 +751,8 @@
 			<id>{937DB1DF-2D16-428E-9926-A2172EDCE0E6}</id>
 			<comment/>
 			<position>
-				<first>-219</first>
-				<second>-2723</second>
+				<first>-204</first>
+				<second>-3175</second>
 			</position>
 			<name>VertexAttributes</name>
 		</item>
@@ -933,8 +933,8 @@
 			<id>{5DB7A309-9C25-42AA-A4A3-AFCED50C7D0B}</id>
 			<comment/>
 			<position>
-				<first>27</first>
-				<second>-2495</second>
+				<first>42</first>
+				<second>-2947</second>
 			</position>
 			<name>SurfaceAttributes</name>
 			<optional>false</optional>
@@ -943,8 +943,8 @@
 			<id>{2A44FC4D-A7B4-4B9E-B491-462F2B1AB1FC}</id>
 			<comment/>
 			<position>
-				<first>397</first>
-				<second>-2451</second>
+				<first>412</first>
+				<second>-2903</second>
 			</position>
 			<name>L_SurfaceAttributes</name>
 		</item>
@@ -952,8 +952,8 @@
 			<id>{F240BBE6-466B-4E70-93F6-2BF368AD40E0}</id>
 			<comment/>
 			<position>
-				<first>-492</first>
-				<second>-153</second>
+				<first>-486</first>
+				<second>-444</second>
 			</position>
 			<name>L_SurfaceAttributes</name>
 		</item>
@@ -970,8 +970,8 @@
 			<id>{487DECAA-5D73-1949-9226-8520BB943945}</id>
 			<comment/>
 			<position>
-				<first>191</first>
-				<second>879</second>
+				<first>197</first>
+				<second>588</second>
 			</position>
 			<value>0, 0, 1, 0</value>
 		</item>
@@ -979,8 +979,8 @@
 			<id>{7847D05F-8E13-4544-BD9D-909D02AE69F3}</id>
 			<comment/>
 			<position>
-				<first>608</first>
-				<second>-2591</second>
+				<first>623</first>
+				<second>-3043</second>
 			</position>
 			<name>ViewPosition</name>
 		</item>
@@ -988,8 +988,8 @@
 			<id>{60A20983-2FB6-41C6-ADE5-201F10FAE13E}</id>
 			<comment/>
 			<position>
-				<first>-300</first>
-				<second>-2153</second>
+				<first>-474</first>
+				<second>-2651</second>
 			</position>
 			<name>L_SurfaceAttributes</name>
 		</item>
@@ -997,8 +997,8 @@
 			<id>{06C6B678-9E33-4BDC-B642-C5F7934B49BD}</id>
 			<comment/>
 			<position>
-				<first>-91</first>
-				<second>-2185</second>
+				<first>-234</first>
+				<second>-2668</second>
 			</position>
 			<fragmentGuid>{9CF439FA-A6CE-410B-B4EA-6E945C992342}</fragmentGuid>
 			<inputPins>
@@ -1063,16 +1063,16 @@
 			<id>{F8135BD6-EE31-459C-BE2F-01C21BA261B6}</id>
 			<comment/>
 			<position>
-				<first>532</first>
-				<second>-1969</second>
+				<first>659</first>
+				<second>-2260</second>
 			</position>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{70C3A6D5-A843-4CC3-82C9-AE39DCF5075A}</id>
 			<comment/>
 			<position>
-				<first>298</first>
-				<second>-1844</second>
+				<first>478</first>
+				<second>-2131</second>
 			</position>
 			<name>TexCoord</name>
 		</item>
@@ -1080,8 +1080,8 @@
 			<id>{FDB8A7E7-75A3-4F23-A853-82F2F6A7C932}</id>
 			<comment/>
 			<position>
-				<first>770</first>
-				<second>-1930</second>
+				<first>893</first>
+				<second>-2243</second>
 			</position>
 			<name>TexCoordDepthOffset</name>
 		</item>
@@ -1089,17 +1089,17 @@
 			<id>{974255C3-D230-457F-B52D-645118B7CF6D}</id>
 			<comment><![CDATA[Relief depth in metres.]]></comment>
 			<position>
-				<first>-357</first>
-				<second>-1765</second>
+				<first>-182</first>
+				<second>-2124</second>
 			</position>
-			<value>0.4</value>
+			<value>0.8</value>
 		</item>
 		<item type="traktor.render.TextureState" version="1,traktor.render.Node:1">
 			<id>{F5644820-7D49-46EC-9C3B-E79E1513078F}</id>
 			<comment/>
 			<position>
-				<first>-365</first>
-				<second>-1822</second>
+				<first>-186</first>
+				<second>-2188</second>
 			</position>
 			<minFilter>Linear</minFilter>
 			<mipFilter>Linear</mipFilter>
@@ -1116,8 +1116,8 @@
 			<id>{F113FAAD-245A-4BFD-9FAE-5EFC97BD43D7}</id>
 			<comment/>
 			<position>
-				<first>-367</first>
-				<second>-1879</second>
+				<first>-187</first>
+				<second>-2252</second>
 			</position>
 			<name>TexCoord</name>
 		</item>
@@ -1125,8 +1125,8 @@
 			<id>{A87260E5-A711-4518-8F73-50F54F33FB6D}</id>
 			<comment/>
 			<position>
-				<first>-367</first>
-				<second>-1936</second>
+				<first>-187</first>
+				<second>-2316</second>
 			</position>
 			<name>ViewNormal</name>
 		</item>
@@ -1134,8 +1134,8 @@
 			<id>{0CE54F59-D05F-4DFA-A676-0C7E18925A57}</id>
 			<comment/>
 			<position>
-				<first>-367</first>
-				<second>-1993</second>
+				<first>-187</first>
+				<second>-2380</second>
 			</position>
 			<name>ViewPosition</name>
 		</item>
@@ -1143,12 +1143,12 @@
 			<id>{3A81836C-2F52-4AFC-8259-1F343A182F70}</id>
 			<comment/>
 			<position>
-				<first>-21</first>
-				<second>-1806</second>
+				<first>100</first>
+				<second>-2375</second>
 			</position>
 			<name>POM</name>
 			<technique/>
-			<domain>Pixel</domain>
+			<domain>Undefined</domain>
 			<localSize>
 				<X>1</X>
 				<Y>1</Y>
@@ -1301,8 +1301,8 @@ $Output = vec4(texCoord.x, texCoord.y, 0.0f, 0.0f);
 			<id>{BF1A2F59-B2CD-4CEA-A549-ABA7B0BBBCE7}</id>
 			<comment/>
 			<position>
-				<first>-175</first>
-				<second>-1250</second>
+				<first>-169</first>
+				<second>-1541</second>
 			</position>
 			<name>TexCoordDepthOffset</name>
 		</item>
@@ -1310,8 +1310,8 @@ $Output = vec4(texCoord.x, texCoord.y, 0.0f, 0.0f);
 			<id>{25C1F92E-4462-4CDB-A173-28317AE5C873}</id>
 			<comment/>
 			<position>
-				<first>-166</first>
-				<second>-857</second>
+				<first>-160</first>
+				<second>-1148</second>
 			</position>
 			<name>TexCoordDepthOffset</name>
 		</item>
@@ -1319,8 +1319,8 @@ $Output = vec4(texCoord.x, texCoord.y, 0.0f, 0.0f);
 			<id>{2F362FE1-2C8C-4EE3-9857-04B4A1498B2A}</id>
 			<comment/>
 			<position>
-				<first>-172</first>
-				<second>-417</second>
+				<first>-166</first>
+				<second>-708</second>
 			</position>
 			<name>TexCoordDepthOffset</name>
 		</item>
@@ -1328,8 +1328,8 @@ $Output = vec4(texCoord.x, texCoord.y, 0.0f, 0.0f);
 			<id>{9E95B900-3055-43A9-8115-6771354B1224}</id>
 			<comment/>
 			<position>
-				<first>-194</first>
-				<second>124</second>
+				<first>-188</first>
+				<second>-167</second>
 			</position>
 			<name>TexCoordDepthOffset</name>
 		</item>
@@ -1337,8 +1337,8 @@ $Output = vec4(texCoord.x, texCoord.y, 0.0f, 0.0f);
 			<id>{DCE27643-BF0A-42A2-BC62-9882E95A1099}</id>
 			<comment/>
 			<position>
-				<first>-157</first>
-				<second>500</second>
+				<first>-151</first>
+				<second>209</second>
 			</position>
 			<name>TexCoordDepthOffset</name>
 		</item>
@@ -1346,8 +1346,8 @@ $Output = vec4(texCoord.x, texCoord.y, 0.0f, 0.0f);
 			<id>{B8D474F8-7D12-49AD-A472-C692B7F57863}</id>
 			<comment/>
 			<position>
-				<first>-168</first>
-				<second>818</second>
+				<first>-162</first>
+				<second>527</second>
 			</position>
 			<name>TexCoordDepthOffset</name>
 		</item>
@@ -1355,8 +1355,8 @@ $Output = vec4(texCoord.x, texCoord.y, 0.0f, 0.0f);
 			<id>{AA66FBB9-D48F-4FFD-B985-F35D0E87B3BD}</id>
 			<comment/>
 			<position>
-				<first>-315</first>
-				<second>-1666</second>
+				<first>-187</first>
+				<second>-1996</second>
 			</position>
 			<name>ViewBinormal</name>
 		</item>
@@ -1364,10 +1364,230 @@ $Output = vec4(texCoord.x, texCoord.y, 0.0f, 0.0f);
 			<id>{F30EC930-44ED-4FDB-8CA3-4260933BCE60}</id>
 			<comment/>
 			<position>
-				<first>-313</first>
-				<second>-1707</second>
+				<first>-187</first>
+				<second>-2060</second>
 			</position>
 			<name>ViewTangent</name>
+		</item>
+		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
+			<id>{2C912685-6E51-4318-9532-2446FABB42CB}</id>
+			<comment/>
+			<position>
+				<first>100</first>
+				<second>-2080</second>
+			</position>
+			<name>QDM</name>
+			<technique/>
+			<domain>Undefined</domain>
+			<localSize>
+				<X>1</X>
+				<Y>1</Y>
+				<Z>1</Z>
+			</localSize>
+			<useRayTracing>false</useRayTracing>
+			<include/>
+			<inputPins>
+				<item>
+					<id>{E1F2AE34-8747-EC45-B28A-FC70F93F3135}</id>
+					<name>ViewPosition</name>
+				</item>
+				<item>
+					<id>{9923E5FA-FFC7-2D47-B1E0-2547D5086398}</id>
+					<name>ViewNormal</name>
+				</item>
+				<item>
+					<id>{D3A78607-FC1C-4F46-8C56-DBD78534F6FC}</id>
+					<name>TexCoord</name>
+				</item>
+				<item>
+					<id>{3C1A7E52-9D41-4F08-B6C3-71E5A0D42B19}</id>
+					<name>HeightMap</name>
+				</item>
+				<item>
+					<id>{6B8F2D14-05AC-4E7B-9F20-C48D31A65E77}</id>
+					<name>HeightState</name>
+				</item>
+				<item>
+					<id>{A7E4C61D-2B98-4D53-AF07-5E9C3814B6A2}</id>
+					<name>HeightScale</name>
+				</item>
+				<item>
+					<id>{2C99805C-0E9C-441C-A9D3-14C49D1B6861}</id>
+					<name>ViewTangent</name>
+				</item>
+				<item>
+					<id>{2C197AEC-CEFE-4BCD-9631-7CCC234CD200}</id>
+					<name>ViewBinormal</name>
+				</item>
+			</inputPins>
+			<outputPins>
+				<item>
+					<id>{A2DDA335-48B8-0B41-AB94-18DD465713FC}</id>
+					<name>Output</name>
+					<type>Vector</type>
+				</item>
+			</outputPins>
+			<script><![CDATA[
+// Quad tree displacement mapping for the terrain detail materials.
+//
+// Framed like the POM node it replaces: the terrain has no vertex tangents and
+// its detail UVs are a planar world mapping (TexCoordTile = TexCoordWorld * 64,
+// so one tile is 16m across a 1024m terrain), so the relief depth is given in
+// metres and converted through the tile size rather than in tile UV units.
+//
+// What differs is how the intersection is found. POM walks the ray at a fixed
+// rate and refines whichever bracket it lands in, so at grazing angles - where
+// one pixel's ray covers many texels - it steps straight over ridges, and the
+// relief stair-steps and swims as the camera moves. Here the height map's mip
+// chain is a max reduced one: a texel at level L holds the highest point of
+// everything underneath it, so the space above that texel is known to be empty
+// and can be crossed whole. The march descends the levels until it meets the
+// surface, never steps over anything, and gets cheaper as the ray gets longer
+// instead of more expensive.
+//
+// This needs the height map built with "maxReduceMips" set on its texture
+// asset. An ordinary averaged chain sits below the surface it is supposed to
+// bound, and then thin detail is missed worse than POM missed it.
+
+// Relief depth in metres, driven by the HeightScale pin. Metres rather than UV
+// units because one detail tile is 16m across this terrain.
+const float c_depthMetres = $HeightScale;
+const float c_fadeNear = 10.0f;
+const float c_fadeFar = 30.0f;
+// Offset limiting; looser than POM's 0.35 since a long ray no longer costs a
+// fixed step budget, but still bounded so the relief doesn't shear off towards
+// the horizon.
+const float c_minNdotV = 0.2f;
+// One point fetch per iteration; measured convergence is 5 - 25 of them.
+const int c_maxIterations = 64;
+const int c_refineSteps = 5;
+// Leaving a cell has to land inside the next one. An eighth of a texel, the
+// obvious choice, is far too much: on a ray which is slow along the axis being
+// crossed it buys half a texel of travel along the other one, which is enough
+// to step over a ridge. A hundred and twenty-eighth is still tens of float
+// ulps at these UVs and costs nothing.
+const float c_wallEpsilon = 1.0f / 128.0f;
+
+const vec3 position = $ViewPosition.xyz;
+const vec2 baseTexCoord = $TexCoord.xy;
+const vec3 N = normalize($ViewNormal.xyz);
+const vec3 T = $ViewTangent.xyz;
+const vec3 B = $ViewBinormal.xyz;
+const vec3 V = normalize(-position);
+const float NdotV = dot(V, N);
+
+// Metres per UV unit; one detail tile is 16m across this terrain.
+const float metresPerUV = 16.0f;
+
+vec2 texCoord = baseTexCoord;
+
+// Relief is only readable up close and this is the expensive part of the
+// material, so fade it out with distance and towards the horizon.
+const float fade = (1.0f - smoothstep(c_fadeNear, c_fadeFar, length(position))) * smoothstep(0.0f, 0.2f, NdotV);
+if (fade > 0.0f)
+{
+	const float depthUV = (c_depthMetres / metresPerUV) * fade;
+
+	// Tangent space ray written against depth: uv(t) = baseTexCoord + dirUV * t,
+	// with t running 0 at the polygon plane to 1 at the bottom of the relief.
+	const vec2 dirUV = -vec2(dot(V, T), dot(V, B)) * depthUV / max(NdotV, c_minNdotV);
+
+	// Which wall of a cell the ray leaves through, and a direction which is
+	// never zero so that test cannot divide by one.
+	const vec2 dirStep = step(vec2(0.0f), dirUV);
+	const vec2 dirSafe = (dirStep * 2.0f - 1.0f) * max(abs(dirUV), vec2(1e-6f));
+
+	const vec2 baseSize = vec2(textureSize($HeightMap, 0));
+	const int maxLevel = textureQueryLevels($HeightMap) - 1;
+
+	// Base texels covered per unit of t, and the t which moves the epsilon
+	// above along each axis.
+	const vec2 texelsPerT = abs(dirUV) * baseSize;
+	const vec2 tEpsilon = c_wallEpsilon / (baseSize * abs(dirSafe));
+
+	// Start at the coarsest level whose cell still bounds the ray; anything
+	// above that covers more ground than the ray can ever reach and only costs
+	// a fetch to walk back down through. Worth about five iterations.
+	const int startLevel = clamp(int(ceil(log2(max(max(texelsPerT.x, texelsPerT.y), 1.0f)))), 0, maxLevel);
+
+	// Marched in a local frame - the detail UVs run to 64 out here, and cell
+	// indices taken from those directly lose most of their precision.
+	const vec2 origin = fract(baseTexCoord);
+
+	float t = 0.0f;
+	float tAbove = 0.0f;
+	int level = startLevel;
+
+	for (int i = 0; i < c_maxIterations && level >= 0; ++i)
+	{
+		const vec2 p = origin + dirUV * t;
+		const ivec2 size = textureSize($HeightMap, level);
+		const vec2 cell = floor(p * vec2(size));
+
+		// Depth of the highest point anywhere under this cell; above that the
+		// cell is empty. Fetched rather than sampled - a filtered read blends
+		// in the neighbours and then bounds neither.
+		const ivec2 texel = clamp(ivec2(mod(cell, vec2(size))), ivec2(0), size - 1);
+		const float cellDepth = 1.0f - texelFetch($HeightMap, texel, level).x;
+
+		if (t >= cellDepth)
+		{
+			// Down at the bound already; descend for a tighter one. At level 0
+			// the bound is the surface itself, so that ends the march.
+			--level;
+			continue;
+		}
+
+		// Depth at which the ray leaves this cell sideways. The wall actually
+		// hit is picked on the unbiased distances and only that axis gets the
+		// epsilon, so a slow axis cannot drag the other one along with it.
+		const vec2 tWall = ((cell + dirStep) / vec2(size) - p) / dirSafe;
+		const float tExit = (tWall.x <= tWall.y) ? (tWall.x + tEpsilon.x) : (tWall.y + tEpsilon.y);
+
+		tAbove = t;
+
+		if (cellDepth - t <= tExit)
+		{
+			// Bound is met inside this cell; drop onto it and refine.
+			t = cellDepth;
+			--level;
+		}
+		else
+		{
+			// Cell is empty the whole way through; step into the next one and
+			// widen the search again.
+			t += tExit;
+			if (t >= 1.0f)
+			{
+				t = 1.0f;
+				break;
+			}
+			level = min(level + 1, startLevel);
+		}
+	}
+
+	// The hierarchy resolves the surface one texel at a time, which would read
+	// as a staircase, so bisect that last step against the filtered height to
+	// put the hit back onto the bilinear surface. The bracket is that one step
+	// either way, so this stays bounded when the two disagree.
+	float t0 = tAbove;
+	float t1 = t;
+	for (int i = 0; i < c_refineSteps; ++i)
+	{
+		const float tm = 0.5f * (t0 + t1);
+		const float dm = 1.0f - textureLod(sampler2D($HeightMap, $HeightState), baseTexCoord + dirUV * tm, 0.0f).x;
+		if (tm < dm)
+			t0 = tm;
+		else
+			t1 = tm;
+	}
+
+	texCoord = baseTexCoord + dirUV * t1;
+}
+
+$Output = vec4(texCoord.x, texCoord.y, 0.0f, 0.0f);
+
+]]></script>
 		</item>
 	</nodes>
 	<edges>
@@ -2283,7 +2503,7 @@ $Output = vec4(texCoord.x, texCoord.y, 0.0f, 0.0f);
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[81]"/>
+				<node ref="/object/nodes/item[90]"/>
 				<id>{A2DDA335-48B8-0B41-AB94-18DD465713FC}</id>
 			</source>
 			<destination>
@@ -2391,6 +2611,86 @@ $Output = vec4(texCoord.x, texCoord.y, 0.0f, 0.0f);
 				<id>{2C99805C-0E9C-441C-A9D3-14C49D1B6861}</id>
 			</destination>
 		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[80]"/>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[90]"/>
+				<id>{E1F2AE34-8747-EC45-B28A-FC70F93F3135}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[79]"/>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[90]"/>
+				<id>{9923E5FA-FFC7-2D47-B1E0-2547D5086398}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[78]"/>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[90]"/>
+				<id>{D3A78607-FC1C-4F46-8C56-DBD78534F6FC}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[77]"/>
+				<id>{82C966B2-7B19-48B2-8FE0-B85FF4E3C504}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[90]"/>
+				<id>{6B8F2D14-05AC-4E7B-9F20-C48D31A65E77}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[76]"/>
+				<id>{D33F8931-C90C-4EBA-8A04-A31D3E08FAB7}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[90]"/>
+				<id>{A7E4C61D-2B98-4D53-AF07-5E9C3814B6A2}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[89]"/>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[90]"/>
+				<id>{2C99805C-0E9C-441C-A9D3-14C49D1B6861}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[88]"/>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[90]"/>
+				<id>{2C197AEC-CEFE-4BCD-9631-7CCC234CD200}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[72]"/>
+				<id>{733B8764-2882-4E32-966A-4C35D355349D}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[90]"/>
+				<id>{3C1A7E52-9D41-4F08-B6C3-71E5A0D42B19}</id>
+			</destination>
+		</item>
 	</edges>
 	<groups>
 		<item type="traktor.render.Group">
@@ -2409,8 +2709,8 @@ $Output = vec4(texCoord.x, texCoord.y, 0.0f, 0.0f);
 			<title>Get UV and basis from Vertex attributes</title>
 			<comment/>
 			<position>
-				<first>-487</first>
-				<second>-2856</second>
+				<first>-472</first>
+				<second>-3308</second>
 			</position>
 			<size>
 				<first>1539</first>
@@ -2421,8 +2721,8 @@ $Output = vec4(texCoord.x, texCoord.y, 0.0f, 0.0f);
 			<title>Read any textures</title>
 			<comment/>
 			<position>
-				<first>-559</first>
-				<second>-1423</second>
+				<first>-553</first>
+				<second>-1714</second>
 			</position>
 			<size>
 				<first>1672</first>
@@ -2442,15 +2742,15 @@ $Output = vec4(texCoord.x, texCoord.y, 0.0f, 0.0f);
 			</size>
 		</item>
 		<item type="traktor.render.Group">
-			<title>POM if height</title>
+			<title>Displacement</title>
 			<comment/>
 			<position>
-				<first>-469</first>
-				<second>-2299</second>
+				<first>-538</first>
+				<second>-2764</second>
 			</position>
 			<size>
-				<first>1492</first>
-				<second>798</second>
+				<first>1662</first>
+				<second>1005</second>
 			</size>
 		</item>
 	</groups>

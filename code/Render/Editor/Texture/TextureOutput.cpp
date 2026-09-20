@@ -15,7 +15,7 @@
 namespace traktor::render
 {
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.TextureOutput", 21, TextureOutput, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.TextureOutput", 22, TextureOutput, ISerializable)
 
 void TextureOutput::serialize(ISerializer& s)
 {
@@ -70,6 +70,10 @@ void TextureOutput::serialize(ISerializer& s)
 
 	s >> Member< float >(L"scaleDepth", m_scaleDepth, AttributeRange(0.0f));
 	s >> Member< bool >(L"generateMips", m_generateMips);
+
+	if (s.getVersion() >= 22)
+		s >> Member< bool >(L"maxReduceMips", m_maxReduceMips);
+
 	s >> Member< bool >(L"keepZeroAlpha", m_keepZeroAlpha);
 
 	if (s.getVersion() >= 8)
