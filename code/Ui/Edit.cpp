@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2025 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -582,11 +582,6 @@ void Edit::eventPaint(PaintEvent* event)
 	const int32_t radius = pixel(c_controlRadius);
 	const bool enabled = isEnable(true);
 	const bool focused = hasFocus() && !m_readOnly;
-
-	// Cover the whole client area first; the rounded field leaves the four
-	// corners of the rectangle uncovered.
-	canvas.setBackground(ss->getColor(getParent(), L"background-color"));
-	canvas.fillRect(rcInner);
 
 	if (enabled)
 		canvas.setBackground(ss->getColor(this, m_hover ? L"background-color-hover" : L"background-color"));

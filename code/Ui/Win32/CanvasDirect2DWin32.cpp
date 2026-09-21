@@ -547,6 +547,7 @@ void CanvasDirect2DWin32::fillRect(const Rect& rc)
 	if (rc2.getWidth() <= 0 || rc2.getHeight() <= 0)
 		return;
 
+	m_d2dRenderTarget->SetAntialiasMode(D2D1_ANTIALIAS_MODE_ALIASED);
 	m_d2dRenderTarget->FillRectangle(
 		D2D1::RectF(rc2.left, rc2.top, rc2.right, rc2.bottom),
 		m_d2dBackgroundBrush);
@@ -585,6 +586,7 @@ void CanvasDirect2DWin32::fillGradientRect(const Rect& rc, bool vertical)
 	if (FAILED(hr))
 		return;
 
+	m_d2dRenderTarget->SetAntialiasMode(D2D1_ANTIALIAS_MODE_ALIASED);
 	m_d2dRenderTarget->FillRectangle(
 		D2D1::RectF(rc2.left, rc2.top, rc2.right, rc2.bottom),
 		d2dGradientBrush);
@@ -596,6 +598,7 @@ void CanvasDirect2DWin32::drawRect(const Rect& rc)
 	if (rc2.getWidth() <= 0 || rc2.getHeight() <= 0)
 		return;
 
+	m_d2dRenderTarget->SetAntialiasMode(D2D1_ANTIALIAS_MODE_ALIASED);
 	m_d2dRenderTarget->DrawRectangle(
 		D2D1::RectF(rc2.left + 0.5f, rc2.top + 0.5f, rc2.right - 0.5f, rc2.bottom - 0.5f),
 		m_d2dForegroundBrush,
@@ -608,6 +611,7 @@ void CanvasDirect2DWin32::drawRoundRect(const Rect& rc, int radius)
 	if (rc2.getWidth() <= 0 || rc2.getHeight() <= 0)
 		return;
 
+	m_d2dRenderTarget->SetAntialiasMode(D2D1_ANTIALIAS_MODE_PER_PRIMITIVE);
 	m_d2dRenderTarget->DrawRoundedRectangle(
 		D2D1::RoundedRect(
 			D2D1::RectF(rc2.left + 0.5f, rc2.top + 0.5f, rc2.right - 0.5f, rc2.bottom - 0.5f),
@@ -623,6 +627,7 @@ void CanvasDirect2DWin32::fillRoundRect(const Rect& rc, int radius)
 	if (rc2.getWidth() <= 0 || rc2.getHeight() <= 0)
 		return;
 
+	m_d2dRenderTarget->SetAntialiasMode(D2D1_ANTIALIAS_MODE_PER_PRIMITIVE);
 	m_d2dRenderTarget->FillRoundedRectangle(
 		D2D1::RoundedRect(
 			D2D1::RectF(rc2.left, rc2.top, rc2.right, rc2.bottom),
@@ -710,6 +715,8 @@ void CanvasDirect2DWin32::drawBitmap(const Point& dstAt, const Size& dstSize, co
 	ID2D1Bitmap* bm = getCachedBitmap(bitmap);
 	if (!bm)
 		return;
+
+	m_d2dRenderTarget->SetAntialiasMode(D2D1_ANTIALIAS_MODE_ALIASED);
 
 	if (blendMode == BlendMode::Modulate)
 	{

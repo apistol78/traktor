@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -98,11 +98,6 @@ void Button::eventPaint(PaintEvent* event)
 
 	const bool enabled = isEnable(true);
 	const bool hover = enabled && m_hover;
-
-	// Cover the whole client area first; the rounded button leaves the four
-	// corners of the rectangle uncovered.
-	canvas.setBackground(ss->getColor(getParent(), L"background-color"));
-	canvas.fillRect(rcInner);
 
 	// The default button of a dialog is filled with the theme accent.
 	const wchar_t* background;

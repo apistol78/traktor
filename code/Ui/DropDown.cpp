@@ -287,11 +287,6 @@ void DropDown::eventPaint(PaintEvent* event)
 		at.y + size.cy
 	);
 
-	// Cover the whole client area first; the rounded field leaves the four
-	// corners of the rectangle uncovered.
-	canvas.setBackground(ss->getColor(getParent(), L"background-color"));
-	canvas.fillRect(rcInner);
-
 	canvas.setBackground(ss->getColor(this, hover ? L"background-color-hover" : L"background-color"));
 	canvas.fillRoundRect(rcField, radius);
 
