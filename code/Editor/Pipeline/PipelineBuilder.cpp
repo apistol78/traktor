@@ -451,18 +451,12 @@ bool PipelineBuilder::buildAdHocOutput(const ISerializable* sourceAsset, const s
 {
 	PipelineDependencySet dependencySet;
 
-	// Exclude filtering; already added dependencies and built ad-hocs should be excluded from further ad-hoc builds.
-	auto dependencyFilter = [&](const Guid& id) -> bool {
-		if (m_dependencySet->get(id) != PipelineDependencySet::DiInvalid)
-			return false;
-
-		if (m_adHocBuilds.find(id) != m_adHocBuilds.end())
-			return false;
-
-		return true;
-	};
-
-	// Scan dependencies of source asset; exclude dependencies already in work set.
+	// Scan dependencies of source asset; no dependencies are excluded since hash of this
+	// ad-hoc output is calculated from the entire dependency set. If dependencies already
+	// in the work set were excluded then a synthesized shader graph would, for instance, be
+	// hashed from it's unresolved fragment references alone; a modified fragment would then
+	// never invalidate the cached product. Dependencies built by the main build are skipped
+	// when building below.
 	m_profiler->begin(type_of< PipelineDependsIncremental >());
 	PipelineDependsIncremental pipelineDepends(
 		m_pipelineFactory,
@@ -470,8 +464,7 @@ bool PipelineBuilder::buildAdHocOutput(const ISerializable* sourceAsset, const s
 		m_outputDatabase,
 		&dependencySet,
 		m_pipelineDb,
-		m_instanceCache,
-		dependencyFilter);
+		m_instanceCache);
 	pipelineDepends.addDependency(
 		sourceAsset,
 		outputPath,
@@ -493,6 +486,11 @@ bool PipelineBuilder::buildAdHocOutput(const ISerializable* sourceAsset, const s
 	{
 		const PipelineDependency* dependency = dependencySet.get(i);
 		if ((dependency->flags & PdfBuild) == 0)
+			continue;
+
+		// Skip dependencies which are built by the main build; they are still part of our
+		// dependency set as they contribute to our hash.
+		if (i != index && m_dependencySet->get(dependency->outputGuid) != PipelineDependencySet::DiInvalid)
 			continue;
 
 		if (m_adHocBuilds.find(dependency->outputGuid) != m_adHocBuilds.end())
