@@ -1840,16 +1840,6 @@ World_DeferredGBufferWrite
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[54]"/>
-				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[68]"/>
-				<id>{C4793C58-4118-4914-8734-1D4FEBC4FC01}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
 				<node ref="/object/nodes/item[63]"/>
 				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
 			</source>
@@ -2266,6 +2256,16 @@ World_DeferredGBufferWrite
 			<destination>
 				<node ref="/object/nodes/item[19]"/>
 				<id>{C74C86A6-0876-4524-8450-8C10C05A7C63}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[54]"/>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[68]"/>
+				<id>{C4793C58-4118-4914-8734-1D4FEBC4FC01}</id>
 			</destination>
 		</item>
 	</edges>

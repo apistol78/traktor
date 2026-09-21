@@ -1092,7 +1092,7 @@
 				<first>-182</first>
 				<second>-2124</second>
 			</position>
-			<value>0.8</value>
+			<value>0.2</value>
 		</item>
 		<item type="traktor.render.TextureState" version="1,traktor.render.Node:1">
 			<id>{F5644820-7D49-46EC-9C3B-E79E1513078F}</id>
@@ -1210,6 +1210,13 @@
 // Relief depth in metres, driven by the HeightScale pin. Metres rather
 // than UV units because one detail tile is 16m across this terrain.
 const float c_depthMetres = $HeightScale;
+// Height map value which lies on the polygon surface. Displacement maps are
+// authored around mid grey, so with the top of the map on the polygon the
+// whole surface first sinks by half the relief before any detail shows, and
+// every error in the frame is scaled by that sink. Heights above this poke
+// up out of the polygon - as far as parallax can show that, silhouettes
+// don't change - and heights below are dug down into it.
+const float c_referenceHeight = 0.5f;
 const float c_fadeNear = 10.0f;
 const float c_fadeFar = 30.0f;
 const float c_minNdotV = 0.35f;
@@ -1261,9 +1268,17 @@ if (abs(det) > 1e-12f)
 		const float stepDepth = 1.0f / float(steps);
 		const vec2 stepTexCoord = maxOffset * stepDepth;
 
+		// The ray crosses the polygon plane at baseTexCoord, which is at the
+		// depth of the reference height. Wind it back to the top of the relief
+		// so the march covers the whole height range with that height on the
+		// plane; the shift scales with depthUV so it fades out with the relief.
+		texCoord = baseTexCoord - maxOffset * (1.0f - c_referenceHeight);
+
 		// Height map is 1 at the peaks, so march against (1 - height).
+		// Explicit gradients throughout; this is non-uniform control flow so
+		// implicit mip selection would be undefined here.
 		float rayDepth = 0.0f;
-		float surfaceDepth = 1.0f - texture(sampler2D($HeightMap, $HeightState), texCoord).x;
+		float surfaceDepth = 1.0f - textureGrad(sampler2D($HeightMap, $HeightState), texCoord, dTdx, dTdy).x;
 		vec2 prevTexCoord = texCoord;
 		float prevRayDepth = 0.0f;
 		float prevSurfaceDepth = surfaceDepth;
@@ -1280,8 +1295,6 @@ if (abs(det) > 1e-12f)
 			texCoord += stepTexCoord;
 			rayDepth += stepDepth;
 
-			// Explicit gradients; the loop is non-uniform control flow so
-			// implicit mip selection would be undefined here.
 			surfaceDepth = 1.0f - textureGrad(sampler2D($HeightMap, $HeightState), texCoord, dTdx, dTdy).x;
 		}
 
@@ -1452,6 +1465,13 @@ $Output = vec4(texCoord.x, texCoord.y, 0.0f, 0.0f);
 // Relief depth in metres, driven by the HeightScale pin. Metres rather than UV
 // units because one detail tile is 16m across this terrain.
 const float c_depthMetres = $HeightScale;
+// Height map value which lies on the polygon surface. Displacement maps are
+// authored around mid grey, so with the top of the map on the polygon the
+// whole surface first sinks by half the relief before any detail shows, and
+// every error in the frame is scaled by that sink. Heights above this poke
+// up out of the polygon - as far as parallax can show that, silhouettes
+// don't change - and heights below are dug down into it.
+const float c_referenceHeight = 0.5f;
 const float c_fadeNear = 10.0f;
 const float c_fadeFar = 30.0f;
 // Offset limiting; looser than POM's 0.35 since a long ray no longer costs a
@@ -1488,9 +1508,16 @@ if (fade > 0.0f)
 {
 	const float depthUV = (c_depthMetres / metresPerUV) * fade;
 
-	// Tangent space ray written against depth: uv(t) = baseTexCoord + dirUV * t,
-	// with t running 0 at the polygon plane to 1 at the bottom of the relief.
+	// Tangent space ray written against depth: uv(t) = startTexCoord + dirUV * t,
+	// with t running 0 at the top of the relief to 1 at the bottom of it.
 	const vec2 dirUV = -vec2(dot(V, T), dot(V, B)) * depthUV / max(NdotV, c_minNdotV);
+
+	// The ray crosses the polygon plane at baseTexCoord, which is at the depth
+	// of the reference height. Wind it back to the top of the relief so the
+	// march covers the whole height range with that height on the plane. A
+	// constant shift of where the ray starts leaves every bound below intact,
+	// and it scales with depthUV so it fades out with the relief.
+	const vec2 startTexCoord = baseTexCoord - dirUV * (1.0f - c_referenceHeight);
 
 	// Which wall of a cell the ray leaves through, and a direction which is
 	// never zero so that test cannot divide by one.
@@ -1512,7 +1539,7 @@ if (fade > 0.0f)
 
 	// Marched in a local frame - the detail UVs run to 64 out here, and cell
 	// indices taken from those directly lose most of their precision.
-	const vec2 origin = fract(baseTexCoord);
+	const vec2 origin = fract(startTexCoord);
 
 	float t = 0.0f;
 	float tAbove = 0.0f;
@@ -1575,14 +1602,14 @@ if (fade > 0.0f)
 	for (int i = 0; i < c_refineSteps; ++i)
 	{
 		const float tm = 0.5f * (t0 + t1);
-		const float dm = 1.0f - textureLod(sampler2D($HeightMap, $HeightState), baseTexCoord + dirUV * tm, 0.0f).x;
+		const float dm = 1.0f - textureLod(sampler2D($HeightMap, $HeightState), startTexCoord + dirUV * tm, 0.0f).x;
 		if (tm < dm)
 			t0 = tm;
 		else
 			t1 = tm;
 	}
 
-	texCoord = baseTexCoord + dirUV * t1;
+	texCoord = startTexCoord + dirUV * t1;
 }
 
 $Output = vec4(texCoord.x, texCoord.y, 0.0f, 0.0f);
