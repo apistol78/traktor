@@ -37,7 +37,7 @@ float fract(float v)
 
 	}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.hf.HeightfieldTexturePipeline", 5, HeightfieldTexturePipeline, editor::DefaultPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.hf.HeightfieldTexturePipeline", 6, HeightfieldTexturePipeline, editor::DefaultPipeline)
 
 bool HeightfieldTexturePipeline::create(const editor::IPipelineSettings* settings, db::Database* database)
 {
