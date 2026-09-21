@@ -34,13 +34,15 @@ void NormalizeFilter::apply(Image* image) const
 		image->getSpanUnsafe(y, row.ptr());
 		for (int32_t x = 0; x < width; ++x)
 		{
-			Vector4 n = (Vector4(row[x]) * 2.0_simd - 1.0_simd) * scale;
+			Vector4 n = Vector4(row[x]) * 2.0_simd - 1.0_simd;
 
 			const Scalar ln = n.xyz0().length2();
 			if (ln >= FUZZY_EPSILON * FUZZY_EPSILON)
 				n *= reciprocalSquareRoot(ln);
 			else
 				n.set(0.0f, 0.0f, 1.0f);
+
+			n *= scale;
 
 			row[x] = Color4f((n * 0.5_simd + 0.5_simd).xyz0() + Vector4(0.0f, 0.0f, 0.0f, row[x].getAlpha()));
 		}

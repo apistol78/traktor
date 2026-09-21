@@ -33,6 +33,7 @@
 #include "Drawing/Filters/DilateFilter.h"
 #include "Drawing/Filters/EncodeRGBM.h"
 #include "Drawing/Filters/GammaFilter.h"
+#include "Drawing/Filters/MaxReduceFilter.h"
 #include "Drawing/Filters/MirrorFilter.h"
 #include "Drawing/Filters/NoiseFilter.h"
 #include "Drawing/Filters/NormalizeFilter.h"
@@ -62,11 +63,6 @@
 #include "Render/Types.h"
 
 #include <cstring>
-
-// Enable scaling texture mips as job tasks;
-// but since each task must scale from highest mip the
-// net result might be that it takes longer time to complete.
-// #define T_USE_MIP_SCALE_TASKS
 
 namespace traktor::render
 {
@@ -122,71 +118,6 @@ void adjustAlphaCoverage(drawing::Image* image, float alphaCoverageRef, float al
 		}
 	}
 }
-
-/*! Reduce an image by taking the maximum of each source block.
- *
- * A mip chain which is used to accelerate ray marching a height field - quad
- * tree displacement mapping - is not an image but a bounding hierarchy; each
- * texel must bound the texels it covers, so the reduction has to be a maximum
- * and not an average. Averaging lets the ray step past thin ridges since the
- * coarse levels then sit below the surface they are supposed to be above.
- */
-class MaxReduceFilter : public drawing::IImageFilter
-{
-public:
-	explicit MaxReduceFilter(int32_t width, int32_t height)
-	:	m_width(width)
-	,	m_height(height)
-	{
-	}
-
-protected:
-	virtual void apply(drawing::Image* image) const override final
-	{
-		const int32_t sourceWidth = image->getWidth();
-		const int32_t sourceHeight = image->getHeight();
-
-		Ref< drawing::Image > final = new drawing::Image(image->getPixelFormat(), m_width, m_height, image->getPalette());
-
-		AlignedVector< Color4f > source(sourceWidth, Color4f(0.0f, 0.0f, 0.0f, 0.0f));
-		AlignedVector< Color4f > destination(m_width, Color4f(0.0f, 0.0f, 0.0f, 0.0f));
-
-		const float sx = float(sourceWidth) / m_width;
-		const float sy = float(sourceHeight) / m_height;
-
-		for (int32_t y = 0; y < m_height; ++y)
-		{
-			// Source rows covered by this destination row; at least one even when magnifying.
-			const int32_t y1 = std::min(int32_t(y * sy), sourceHeight - 1);
-			const int32_t y2 = std::min(std::max(int32_t(y * sy + sy), y1 + 1), sourceHeight);
-
-			for (int32_t yy = y1; yy < y2; ++yy)
-			{
-				image->getSpanUnsafe(yy, &source[0]);
-
-				for (int32_t x = 0; x < m_width; ++x)
-				{
-					const int32_t x1 = std::min(int32_t(x * sx), sourceWidth - 1);
-					const int32_t x2 = std::min(std::max(int32_t(x * sx + sx), x1 + 1), sourceWidth);
-
-					Color4f c = source[x1];
-					for (int32_t xx = x1 + 1; xx < x2; ++xx)
-						c = traktor::max(c, source[xx]);
-
-					destination[x] = (yy > y1) ? traktor::max(destination[x], c) : c;
-				}
-			}
-
-			final->setSpanUnsafe(y, &destination[0]);
-		}
-
-		image->swap(final);
-	}
-
-private:
-	int32_t m_width;
-	int32_t m_height;
-};
 
 struct ScaleTextureTask : public Object
 {
@@ -764,111 +695,6 @@ bool TextureOutputPipeline::buildOutput(
 		RefArray< drawing::Image > mipImages(mipCount);
 
 		// Generate each mip level.
-#if defined(T_USE_MIP_SCALE_TASKS)
-		{
-			RefArray< ScaleTextureTask > tasks(mipCount);
-			RefArray< Job > jobs(mipCount);
-
-			// Create task for each mip level.
-			for (int32_t i = 0; i < mipCount; ++i)
-			{
-				if (ThreadManager::getInstance().getCurrentThread()->stopped())
-					break;
-
-				int32_t mipWidth = std::max(width >> i, 1);
-				int32_t mipHeight = std::max(height >> i, 1);
-
-				if (mipWidth != image->getWidth() || mipHeight != image->getHeight() || textureOutput->m_normalMap || mipFilters)
-				{
-					// Create chain of image filters.
-					Ref< drawing::ChainFilter > taskFilters = new drawing::ChainFilter();
-
-					// First add scaling filter to desired mip size.
-					if (textureOutput->m_maxReduceMips && i > 0)
-						taskFilters->add(new MaxReduceFilter(
-							mipWidth,
-							mipHeight));
-					else
-						taskFilters->add(new drawing::ScaleFilter(
-							mipWidth,
-							mipHeight,
-							drawing::ScaleFilter::MnAverage,
-							drawing::ScaleFilter::MgLinear,
-							textureOutput->m_keepZeroAlpha));
-
-					// Append sharpen filter.
-					if (!textureOutput->m_normalMap && textureOutput->m_sharpenRadius > 0)
-						taskFilters->add(new drawing::SharpenFilter(
-							textureOutput->m_sharpenRadius,
-							textureOutput->m_sharpenStrength * (float(i) / (mipCount - 1))));
-
-					// Ensure each pixel is renormalized after scaling.
-					if (textureOutput->m_normalMap)
-						taskFilters->add(new drawing::NormalizeFilter());
-
-					// Append mip filters for compression etc.
-					if (mipFilters)
-						taskFilters->add(mipFilters);
-
-					Ref< ScaleTextureTask > task = new ScaleTextureTask();
-					task->image = image->clone();
-					task->filter = taskFilters;
-					task->alphaCoverageDesired = alphaCoverage;
-					task->alphaCoverageRef = textureOutput->m_alphaCoverageReference;
-
-					if (m_generateMipsThread)
-					{
-						Ref< Job > job = JobManager::getInstance().add([=]() {
-							task->execute();
-						});
-						T_ASSERT(job);
-
-						tasks[i] = task;
-						jobs[i] = job;
-					}
-					else
-					{
-						task->execute();
-
-						mipImages[i] = task->image;
-						T_ASSERT(mipImages[i]);
-					}
-				}
-				else
-				{
-					// No need to actually process the image; it's already in the format and size we want.
-					// \note We're not cloning the image as we want to keep memory usage lower, this
-					// assumes the image isn't modified.
-					mipImages[i] = image;
-					T_ASSERT(mipImages[i]);
-				}
-			}
-
-			// Gather generated mips from jobs.
-			if (m_generateMipsThread)
-			{
-				for (size_t i = 0; i < jobs.size(); ++i)
-				{
-					if (!mipImages[i])
-					{
-						jobs[i]->wait();
-						jobs[i] = nullptr;
-
-						mipImages[i] = tasks[i]->image;
-						T_ASSERT(mipImages[i]);
-
-						tasks[i] = nullptr;
-					}
-				}
-			}
-
-			if (ThreadManager::getInstance().getCurrentThread()->stopped())
-			{
-				log::info << L"Texture pipeline terminated. Pipeline aborted." << Endl;
-				return false;
-			}
-		}
-#else
 		for (int32_t i = 0; i < mipCount; ++i)
 		{
 			const int32_t mipWidth = std::max(width >> i, 1);
@@ -884,12 +710,12 @@ bool TextureOutputPipeline::buildOutput(
 			{
 				if (textureOutput->m_maxReduceMips && i > 0)
 				{
-					const MaxReduceFilter maxReduceFilter(mipWidth, mipHeight);
+					const drawing::MaxReduceFilter maxReduceFilter(mipWidth, mipHeight);
 					mipImages[i]->apply(&maxReduceFilter);
 				}
 				else
 				{
-					drawing::ScaleFilter scaleFilter(
+					const drawing::ScaleFilter scaleFilter(
 						mipWidth,
 						mipHeight,
 						drawing::ScaleFilter::MnAverage,
@@ -906,7 +732,7 @@ bool TextureOutputPipeline::buildOutput(
 				adjustAlphaCoverage(mipImage, textureOutput->m_alphaCoverageReference, alphaCoverage);
 
 		// Ensure each pixel is renormalized after scaling.
-		if (textureOutput->m_normalMap && abs(textureOutput->m_scaleNormalMap) > FUZZY_EPSILON)
+		if (textureOutput->m_normalMap/* && abs(textureOutput->m_scaleNormalMap) > FUZZY_EPSILON*/)
 		{
 			const drawing::NormalizeFilter normalizeFilter(textureOutput->m_scaleNormalMap);
 			for (auto mipImage : mipImages)
@@ -924,7 +750,6 @@ bool TextureOutputPipeline::buildOutput(
 				mipImages[i]->apply(&sharpenFilter);
 			}
 		}
-#endif
 
 		// Create compressor and use it to write mips to instance.
 		Ref< const ICompressor > compressor;
