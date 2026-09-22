@@ -265,7 +265,7 @@ public:
 
 			if (m_data.mapped)
 			{
-				draw(nullptr);
+				draw();
 
 				// On the unmapped->mapped edge the whole subtree is (re)appearing.
 				// Wayland delivers no expose on map (unlike X11), and descendants whose
@@ -587,8 +587,10 @@ public:
 		if (!m_data.visible || !m_data.mapped)
 			return;
 
+		// rc is only a damage hint; draw always repaints the entire surface.
+		// See draw() for why a partial repaint isn't possible here.
 		if (immediate)
-			draw(rc);
+			draw();
 		else
 			m_context->queueExpose(&m_data);
 	}
@@ -1040,7 +1042,7 @@ protected:
 		});
 
 		m_context->bind(&m_data, WlEvtExpose, [this](WlEvent& e) {
-			draw(nullptr);
+			draw();
 		});
 
 		if (visible && m_rect.area() > 0)
@@ -1135,7 +1137,17 @@ protected:
 			m_context->queueExpose(m_data.parent);
 	}
 
-	void draw(const Rect* rc)
+	// Repaints the whole surface. There is deliberately no partial variant:
+	// the paint below is composited through an intermediate group, and cairo
+	// initializes an opaque (CAIRO_CONTENT_COLOR) group to black rather than to
+	// the destination's current pixels. Anything left unpainted is therefore
+	// committed as black, so restricting the paint to a damage rectangle blanks
+	// the rest of the window until the next full repaint. Taking the untouched
+	// pixels from the destination instead is not an option either: ShmPoolWl
+	// rotates between buffer slots, so the buffer being drawn into is generally
+	// not the one holding the previous frame. A partial repaint would first have
+	// to carry that frame forward into the acquired slot.
+	void draw()
 	{
 		if (!m_data.visible || !m_data.mapped)
 			return;
@@ -1153,20 +1165,16 @@ protected:
 			CanvasWl canvasImpl(m_cairo, m_context->getSystemDPI());
 			Canvas canvas(&canvasImpl, reinterpret_cast< Widget* >(m_owner));
 
+			const Rect rcPaint(Point(0, 0), sz);
+
 			if (m_host != nullptr)
-				m_host->paint(canvas, rc != nullptr ? *rc : Rect(Point(0, 0), sz));
+				m_host->paint(canvas, rcPaint);
 			else
 			{
-				PaintEvent paintEvent(
-					m_owner, canvas,
-					rc != nullptr ? *rc : Rect(Point(0, 0), sz)
-				);
+				PaintEvent paintEvent(m_owner, canvas, rcPaint);
 				m_owner->raiseEvent(&paintEvent);
 
-				OverlayPaintEvent overlayPaintEvent(
-					m_owner, canvas,
-					rc != nullptr ? *rc : Rect(Point(0, 0), sz)
-				);
+				OverlayPaintEvent overlayPaintEvent(m_owner, canvas, rcPaint);
 				m_owner->raiseEvent(&overlayPaintEvent);
 			}
 
@@ -1183,10 +1191,7 @@ protected:
 		else
 		{
 			Canvas canvas(nullptr, reinterpret_cast< Widget* >(m_owner));
-			PaintEvent p(
-				m_owner, canvas,
-				rc != nullptr ? *rc : Rect(Point(0, 0), sz)
-			);
+			PaintEvent p(m_owner, canvas, Rect(Point(0, 0), sz));
 			m_owner->raiseEvent(&p);
 		}
 	}

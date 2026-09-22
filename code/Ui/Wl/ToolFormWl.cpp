@@ -184,7 +184,7 @@ void ToolFormWl::setVisible(bool visible)
 		SizeEvent sizeEvent(m_owner, m_rect.getSize());
 		m_owner->raiseEvent(&sizeEvent);
 
-		draw(nullptr);
+		draw();
 
 		// Flush immediately so the compositor receives the buffer in the
 		// same frame as the popup creation.  Without this, Mutter never

@@ -449,7 +449,9 @@ public:
 		}
 		else
 		{
-			draw(rc);
+			// rc is only a damage hint; draw always repaints the entire window.
+			// See draw() for why a partial repaint isn't possible here.
+			draw();
 		}
 	}
 
@@ -1002,13 +1004,19 @@ protected:
 		m_context->bind(&m_data, Expose, [this](XEvent& xe){
 			if (xe.xexpose.count != 0)
 				return;
-			draw(nullptr);
+			draw();
 		});
 
 		return true;
 	}
 
-	void draw(const Rect* rc)
+	// Repaints the whole window. There is deliberately no partial variant: the
+	// paint below is composited through an intermediate group, and cairo
+	// initializes an opaque (CAIRO_CONTENT_COLOR) group to black rather than to
+	// the destination's current pixels. Anything left unpainted is therefore
+	// blitted out as black, so restricting the paint to a damage rectangle
+	// blanks the rest of the window until the next full repaint.
+	void draw()
 	{
 		m_pendingExposure = false;
 
@@ -1031,22 +1039,16 @@ protected:
 			CanvasX11 canvasImpl(m_cairo, m_context->getSystemDPI());
 			Canvas canvas(&canvasImpl, reinterpret_cast< Widget* >(m_owner));
 
+			const Rect rcPaint(Point(0, 0), sz);
+
 			if (m_host != nullptr)
-				m_host->paint(canvas, rc != nullptr ? *rc : Rect(Point(0, 0), sz));
+				m_host->paint(canvas, rcPaint);
 			else
 			{
-				PaintEvent paintEvent(
-					m_owner,
-					canvas,
-					rc != nullptr ? *rc : Rect(Point(0, 0), sz)
-				);
+				PaintEvent paintEvent(m_owner, canvas, rcPaint);
 				m_owner->raiseEvent(&paintEvent);
 
-				OverlayPaintEvent overlayPaintEvent(
-					m_owner,
-					canvas,
-					rc != nullptr ? *rc : Rect(Point(0, 0), sz)
-				);
+				OverlayPaintEvent overlayPaintEvent(m_owner, canvas, rcPaint);
 				m_owner->raiseEvent(&overlayPaintEvent);
 			}
 
@@ -1057,12 +1059,8 @@ protected:
 		else
 		{
 			Canvas canvas(nullptr, reinterpret_cast< Widget* >(m_owner));
-			PaintEvent p(
-				m_owner,
-				canvas,
-				rc != nullptr ? *rc : Rect(Point(0, 0), sz)
-			);
-			m_owner->raiseEvent(&p);			
+			PaintEvent p(m_owner, canvas, Rect(Point(0, 0), sz));
+			m_owner->raiseEvent(&p);
 		}
 	}
 
