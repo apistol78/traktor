@@ -97,6 +97,16 @@ bool Form::isMinimized() const
 	return static_cast< IForm* >(m_widget)->isMinimized();
 }
 
+bool Form::hasNativeCaption() const
+{
+	return static_cast< IForm* >(m_widget)->hasNativeCaption();
+}
+
+bool Form::beginMove()
+{
+	return static_cast< IForm* >(m_widget)->beginMove();
+}
+
 void Form::hideProgress()
 {
 	static_cast< IForm* >(m_widget)->hideProgress();

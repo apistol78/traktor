@@ -36,6 +36,15 @@ public:
 
 	virtual bool isMinimized() const = 0;
 
+	/*! True if the window system draws the caption (title bar, window buttons) of the form. */
+	virtual bool hasNativeCaption() const = 0;
+
+	/*! Hand an interactive move of the form, from the currently pressed mouse button, to the window system.
+	 *
+	 * \return False if not supported; caller should then move the form itself.
+	 */
+	virtual bool beginMove() = 0;
+
 	virtual void hideProgress() = 0;
 
 	virtual void showProgress(int32_t current, int32_t total) = 0;

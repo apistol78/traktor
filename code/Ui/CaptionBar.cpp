@@ -8,6 +8,8 @@
  */
 #include "Ui/CaptionBar.h"
 
+#include <cstdlib>
+
 #include "Ui/Application.h"
 #include "Ui/Form.h"
 #include "Ui/MiniButton.h"
@@ -25,7 +27,11 @@ bool CaptionBar::create(Widget* parent, uint32_t style)
 	if (!ToolBar::create(parent, style))
 		return false;
 
-#if !defined(__LINUX__)
+	// Only provide caption buttons and dragging when the window system doesn't.
+	const Form* parentForm = dynamic_type_cast< const Form* >(getAncestor());
+	if (parentForm == nullptr || parentForm->hasNativeCaption())
+		return true;
+
 	m_buttonMinimize = new MiniButton();
 	m_buttonMinimize->create(this, new ui::StyleBitmap(L"UI.CaptionMinimize"), MiniButton::WsNoBorder | MiniButton::WsNoBackground);
 	m_buttonMinimize->addEventHandler< ButtonClickEvent >(this, &CaptionBar::eventButtonClick);
@@ -46,7 +52,6 @@ bool CaptionBar::create(Widget* parent, uint32_t style)
 	addEventHandler< MouseDoubleClickEvent >(this, &CaptionBar::eventMouseDoubleClick);
 	addEventHandler< MouseMoveEvent >(this, &CaptionBar::eventMouseMove);
 	addEventHandler< SizeEvent >(this, &CaptionBar::eventSize);
-#endif
 
 	return true;
 }
@@ -147,6 +152,8 @@ void CaptionBar::eventMouseButtonDown(MouseButtonDownEvent* event)
 	if (parentForm->isMaximized())
 		return;
 
+	m_pressPosition = event->getPosition();
+	m_moveBegun = false;
 	m_mousePosition = getParent()->clientToScreen(event->getPosition());
 	m_parentRect = getParent()->getRect();
 	m_haveCapture = true;
@@ -187,6 +194,26 @@ void CaptionBar::eventMouseMove(MouseMoveEvent* event)
 	Form* parentForm = dynamic_type_cast< Form* >(getAncestor());
 	if (!parentForm)
 		return;
+
+	// Wait for the pointer to travel a bit so a double click doesn't start a move.
+	if (!m_moveBegun)
+	{
+		const Size d = event->getPosition() - m_pressPosition;
+		const int32_t threshold = pixel(4_ut);
+		if (std::abs(d.cx) < threshold && std::abs(d.cy) < threshold)
+			return;
+		m_moveBegun = true;
+
+		// Let the window system move the form if possible; required where
+		// clients cannot position their own windows (Wayland).
+		if (parentForm->beginMove())
+		{
+			m_haveCapture = false;
+			releaseCapture();
+			event->consume();
+			return;
+		}
+	}
 
 	const Point position = parentForm->clientToScreen(event->getPosition());
 	const Rect rc = m_parentRect.offset(position - m_mousePosition);

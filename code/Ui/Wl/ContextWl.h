@@ -262,6 +262,10 @@ public:
 	//! rect changes, since that can change every descendant's visibility.
 	void applyClipRecursive(WidgetData* widget) const;
 
+	//! Set pointer cursor image from the cursor theme; returns false if the
+	//! theme has no cursor of that name.
+	bool setPointerCursor(const char* name) const;
+
 	//@{
 
 	int32_t getSystemDPI() const;
@@ -323,6 +327,8 @@ private:
 	double m_pointerX = 0.0;
 	double m_pointerY = 0.0;
 	int32_t m_buttonMask = 0;		//!< Currently pressed buttons (MbtLeft | MbtMiddle | MbtRight).
+	uint32_t m_resizeEdge = 0;		//!< Resize edge currently hovered (XDG_TOPLEVEL_RESIZE_EDGE_NONE when not over any).
+	uint32_t m_swallowButton = 0;	//!< Button whose press started a compositor resize; its release, if any, is swallowed.
 
 	SmallMap< wl_surface*, Binding > m_bindings;
 	AlignedVector< WidgetData* > m_modal;
@@ -343,6 +349,12 @@ private:
 	//! Dedicated thread body: dispatches m_pingQueue so xdg_wm_base pings are
 	//! answered even while the UI thread is CPU-starved or busy in a long task.
 	void watchdogThread();
+
+	//! Resize edge (xdg_toplevel_resize_edge) under a pointer position given in the
+	//! widget's surface coordinates, if the widget belongs to a client decorated,
+	//! resizable toplevel; the application's own caption has no resize border so
+	//! the edges are provided here, inside the toplevel, on top of any child widget.
+	uint32_t hitTestResizeEdge(const WidgetData* widget, double x, double y, WidgetData** outToplevel) const;
 
 public:
 	// Registry listener

@@ -59,6 +59,15 @@ public:
 
 	bool isMinimized() const;
 
+	/*! True if the window system draws the caption; otherwise the application is expected to provide one, e.g. CaptionBar. */
+	bool hasNativeCaption() const;
+
+	/*! Let the window system move the form interactively, from the currently pressed mouse button.
+	 *
+	 * \return False if not supported by the window system.
+	 */
+	bool beginMove();
+
 	void hideProgress();
 
 	void showProgress(int32_t current, int32_t total);

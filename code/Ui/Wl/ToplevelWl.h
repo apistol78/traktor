@@ -13,6 +13,7 @@
 #include "Ui/Itf/IWidget.h"
 #include "Ui/Wl/ContextWl.h"
 #include "Ui/Wl/TypesWl.h"
+#include "xdg-decoration-client-protocol.h"
 #include "xdg-shell-client-protocol.h"
 
 namespace traktor::ui
@@ -156,6 +157,16 @@ inline void toplevelLibdecorDismissPopup(libdecor_frame*, const char*, void*)
 {
 }
 
+//! Effective decoration mode of a toplevel that asked for client-side decorations.
+//! The compositor may override the request and must be obeyed, so track which mode
+//! is actually in effect; a server-side decorated toplevel has a native caption.
+inline void toplevelDecorationConfigure(void* data, zxdg_toplevel_decoration_v1*, uint32_t mode)
+{
+	auto* lctx = static_cast< ToplevelListenerCtx* >(data);
+	WidgetData* wd = static_cast< WidgetData* >(lctx->widget->getInternalHandle());
+	wd->clientDecorated = (mode == ZXDG_TOPLEVEL_DECORATION_V1_MODE_CLIENT_SIDE);
+}
+
 //! Compositor-preferred fractional scale changed (units of 1/120). Update the
 //! context's effective scale/DPI and, if the size is already known, re-derive the
 //! device rect at the new scale — setRect drives the relayout + redraw, which
@@ -196,6 +207,10 @@ inline const xdg_surface_listener s_toplevelXdgSurfaceListener = {
 inline const xdg_toplevel_listener s_toplevelXdgToplevelListener = {
 	toplevelXdgToplevelConfigure,
 	toplevelXdgToplevelClose
+};
+
+inline const zxdg_toplevel_decoration_v1_listener s_toplevelDecorationListener = {
+	toplevelDecorationConfigure
 };
 
 inline libdecor_frame_interface s_toplevelLibdecorFrameInterface = {

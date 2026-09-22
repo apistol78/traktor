@@ -149,6 +149,17 @@ bool FormWin32::isMinimized() const
 	return bool(iconic == TRUE);
 }
 
+bool FormWin32::hasNativeCaption() const
+{
+	// Caption is stripped in WM_NCCALCSIZE when created without WsCaption.
+	return !m_hWnd.haveMessageHandler(WM_NCCALCSIZE);
+}
+
+bool FormWin32::beginMove()
+{
+	return false;
+}
+
 void FormWin32::hideProgress()
 {
 	if (m_taskBarList && m_taskBarVisible)

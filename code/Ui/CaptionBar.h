@@ -45,9 +45,11 @@ private:
 	Ref< MiniButton > m_buttonMaximizeOrRestore;
 	Ref< MiniButton > m_buttonClose;
 	Ref< Static > m_label;
+	Point m_pressPosition;
 	Point m_mousePosition;
 	Rect m_parentRect;
 	bool m_haveCapture = false;
+	bool m_moveBegun = false;
 
 	void eventButtonClick(ButtonClickEvent* event);
 

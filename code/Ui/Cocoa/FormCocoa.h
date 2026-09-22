@@ -45,6 +45,10 @@ public:
 
 	virtual bool isMinimized() const override final;
 
+	virtual bool hasNativeCaption() const override final;
+
+	virtual bool beginMove() override final;
+
 	virtual void hideProgress() override final;
 
 	virtual void showProgress(int32_t current, int32_t total) override final;

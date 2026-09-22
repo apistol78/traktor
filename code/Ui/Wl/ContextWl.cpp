@@ -111,6 +111,36 @@ static const wl_data_offer_listener s_dataOfferListener = {
 // Re-express a surface-local point in another widget's local space, via the
 // shared toplevel.  Used to fix up coordinates during capture, since Wayland
 // has no protocol equivalent of XGrabPointer to redirect events.
+//! Width of the client-side resize border, and length of its corners, in logical pixels.
+const int32_t c_resizeBorder = 4;
+const int32_t c_resizeCorner = 16;
+
+//! Cursor theme names for each xdg_toplevel_resize_edge, with fallbacks.
+static const char* resizeEdgeCursor(uint32_t edge, bool fallback)
+{
+	switch (edge)
+	{
+	case XDG_TOPLEVEL_RESIZE_EDGE_TOP:
+		return fallback ? "sb_v_double_arrow" : "top_side";
+	case XDG_TOPLEVEL_RESIZE_EDGE_BOTTOM:
+		return fallback ? "sb_v_double_arrow" : "bottom_side";
+	case XDG_TOPLEVEL_RESIZE_EDGE_LEFT:
+		return fallback ? "sb_h_double_arrow" : "left_side";
+	case XDG_TOPLEVEL_RESIZE_EDGE_RIGHT:
+		return fallback ? "sb_h_double_arrow" : "right_side";
+	case XDG_TOPLEVEL_RESIZE_EDGE_TOP_LEFT:
+		return fallback ? "fleur" : "top_left_corner";
+	case XDG_TOPLEVEL_RESIZE_EDGE_TOP_RIGHT:
+		return fallback ? "fleur" : "top_right_corner";
+	case XDG_TOPLEVEL_RESIZE_EDGE_BOTTOM_LEFT:
+		return fallback ? "fleur" : "bottom_left_corner";
+	case XDG_TOPLEVEL_RESIZE_EDGE_BOTTOM_RIGHT:
+		return fallback ? "fleur" : "bottom_right_corner";
+	default:
+		return "left_ptr";
+	}
+}
+
 static void translateBetweenWidgets(const WidgetData* from, const WidgetData* to, double& x, double& y)
 {
 	if (!from || !to || from == to)
@@ -765,6 +795,36 @@ void ContextWl::applyClipRecursive(WidgetData* widget) const
 		applyClipRecursive(child);
 }
 
+bool ContextWl::setPointerCursor(const char* name) const
+{
+	if (!m_pointer || !m_cursorTheme || !m_cursorSurface)
+		return false;
+
+	wl_cursor* wlCursor = wl_cursor_theme_get_cursor(m_cursorTheme, name);
+	if (!wlCursor || wlCursor->image_count < 1)
+		return false;
+
+	wl_cursor_image* image = wlCursor->images[0];
+	wl_buffer* buffer = wl_cursor_image_get_buffer(image);
+
+	// Set the cursor before committing the surface; the hotspot is part of
+	// the surface state and only takes effect on the following commit. The
+	// other order shows the new image with the previous hotspot until
+	// something commits the cursor surface again.
+	wl_pointer_set_cursor(
+		m_pointer,
+		m_pointerEnterSerial,
+		m_cursorSurface,
+		image->hotspot_x,
+		image->hotspot_y
+	);
+
+	wl_surface_attach(m_cursorSurface, buffer, 0, 0);
+	wl_surface_damage(m_cursorSurface, 0, 0, image->width, image->height);
+	wl_surface_commit(m_cursorSurface);
+	return true;
+}
+
 void ContextWl::setInternalFocus(WidgetData* widget)
 {
 	if (widget == m_internalFocus)
@@ -873,6 +933,72 @@ void ContextWl::dispatch(wl_surface* surface, int32_t eventType, bool always, Wl
 	}
 }
 
+uint32_t ContextWl::hitTestResizeEdge(const WidgetData* widget, double x, double y, WidgetData** outToplevel) const
+{
+	// Not while a popup menu is open or another window is modal; the press
+	// belongs to dismissing the popup or is blocked.
+	if (widget == nullptr || !m_popupStack.empty())
+		return XDG_TOPLEVEL_RESIZE_EDGE_NONE;
+
+	// Surface coordinates of a cropped subsurface start at its visible rect.
+	if (widget->subsurface != nullptr)
+	{
+		const Rect visible = computeVisibleRect(widget);
+		x += visible.left;
+		y += visible.top;
+	}
+
+	const WidgetData* w = widget;
+	for (; w != nullptr && !w->topLevel; w = w->parent)
+	{
+		x += w->posX;
+		y += w->posY;
+	}
+
+	if (w == nullptr || w->xdgToplevel == nullptr || !w->clientDecorated || !w->resizable || w->maximized)
+		return XDG_TOPLEVEL_RESIZE_EDGE_NONE;
+
+	if (!m_modal.empty() && m_modal.back() != w)
+		return XDG_TOPLEVEL_RESIZE_EDGE_NONE;
+
+	const double border = toDevice(c_resizeBorder);
+	const double corner = toDevice(c_resizeCorner);
+	const double width = w->width;
+	const double height = w->height;
+
+	const bool left = x < border;
+	const bool right = x >= width - border;
+	const bool top = y < border;
+	const bool bottom = y >= height - border;
+	if (!(left || right || top || bottom))
+		return XDG_TOPLEVEL_RESIZE_EDGE_NONE;
+
+	const bool nearLeft = x < corner;
+	const bool nearRight = x >= width - corner;
+	const bool nearTop = y < corner;
+	const bool nearBottom = y >= height - corner;
+
+	if (outToplevel != nullptr)
+		*outToplevel = const_cast< WidgetData* >(w);
+
+	if ((top && nearLeft) || (left && nearTop))
+		return XDG_TOPLEVEL_RESIZE_EDGE_TOP_LEFT;
+	else if ((top && nearRight) || (right && nearTop))
+		return XDG_TOPLEVEL_RESIZE_EDGE_TOP_RIGHT;
+	else if ((bottom && nearLeft) || (left && nearBottom))
+		return XDG_TOPLEVEL_RESIZE_EDGE_BOTTOM_LEFT;
+	else if ((bottom && nearRight) || (right && nearBottom))
+		return XDG_TOPLEVEL_RESIZE_EDGE_BOTTOM_RIGHT;
+	else if (top)
+		return XDG_TOPLEVEL_RESIZE_EDGE_TOP;
+	else if (bottom)
+		return XDG_TOPLEVEL_RESIZE_EDGE_BOTTOM;
+	else if (left)
+		return XDG_TOPLEVEL_RESIZE_EDGE_LEFT;
+	else
+		return XDG_TOPLEVEL_RESIZE_EDGE_RIGHT;
+}
+
 // Registry
 void ContextWl::registryGlobal(void* data, wl_registry* registry, uint32_t name, const char* interface, uint32_t version)
 {
@@ -952,6 +1078,12 @@ void ContextWl::pointerEnter(void* data, wl_pointer* pointer, uint32_t serial, w
 	ContextWl* ctx = static_cast< ContextWl* >(data);
 	ctx->m_pointerEnterSerial = serial;
 
+	// Button state is unknown on enter; a release may have gone elsewhere, e.g.
+	// to the compositor during an interactive move or resize.
+	ctx->m_buttonMask = 0;
+	ctx->m_resizeEdge = XDG_TOPLEVEL_RESIZE_EDGE_NONE;
+	ctx->m_swallowButton = 0;
+
 	double px = wl_fixed_to_double(sx) * ctx->getScale();
 	double py = wl_fixed_to_double(sy) * ctx->getScale();
 
@@ -984,6 +1116,7 @@ void ContextWl::pointerEnter(void* data, wl_pointer* pointer, uint32_t serial, w
 void ContextWl::pointerLeave(void* data, wl_pointer* pointer, uint32_t serial, wl_surface* surface)
 {
 	ContextWl* ctx = static_cast< ContextWl* >(data);
+	ctx->m_resizeEdge = XDG_TOPLEVEL_RESIZE_EDGE_NONE;
 
 	WlEvent e;
 	e.type = WlEvtPointerLeave;
@@ -1023,6 +1156,21 @@ void ContextWl::pointerMotion(void* data, wl_pointer* pointer, uint32_t time, wl
 	ctx->m_pointerX = px;
 	ctx->m_pointerY = py;
 
+	// Hovering a resize edge of a client decorated toplevel; the edge
+	// owns the pointer so the widget underneath doesn't see the motion.
+	if (!ctx->m_grabbed && ctx->m_buttonMask == 0)
+	{
+		const uint32_t edge = ctx->hitTestResizeEdge(target, px, py, nullptr);
+		if (edge != ctx->m_resizeEdge)
+		{
+			if (!ctx->setPointerCursor(resizeEdgeCursor(edge, false)))
+				ctx->setPointerCursor(resizeEdgeCursor(edge, true));
+			ctx->m_resizeEdge = edge;
+		}
+		if (edge != XDG_TOPLEVEL_RESIZE_EDGE_NONE)
+			return;
+	}
+
 	WlEvent e;
 	e.type = WlEvtPointerMotion;
 	e.surface = target->surface;
@@ -1037,6 +1185,26 @@ void ContextWl::pointerButton(void* data, wl_pointer* pointer, uint32_t serial, 
 {
 	ContextWl* ctx = static_cast< ContextWl* >(data);
 	ctx->m_inputSerial = serial;
+
+	// Press on a resize edge; hand the resize to the compositor, which then
+	// owns the pointer until release, so no widget sees this button.
+	if (state == WL_POINTER_BUTTON_STATE_PRESSED && ctx->m_resizeEdge != XDG_TOPLEVEL_RESIZE_EDGE_NONE)
+	{
+		WidgetData* toplevel = nullptr;
+		const uint32_t edge = ctx->hitTestResizeEdge(ctx->m_pointerFocus, ctx->m_pointerX, ctx->m_pointerY, &toplevel);
+		if (edge != XDG_TOPLEVEL_RESIZE_EDGE_NONE && button == BTN_LEFT)
+			xdg_toplevel_resize(toplevel->xdgToplevel, ctx->m_seat, serial, edge);
+		if (edge != XDG_TOPLEVEL_RESIZE_EDGE_NONE)
+		{
+			ctx->m_swallowButton = button;
+			return;
+		}
+	}
+	else if (state == WL_POINTER_BUTTON_STATE_RELEASED && button == ctx->m_swallowButton)
+	{
+		ctx->m_swallowButton = 0;
+		return;
+	}
 
 	// Save button-press serials separately — Mutter only accepts press
 	// serials for xdg_popup_grab (not release or enter serials).

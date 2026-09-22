@@ -78,6 +78,16 @@ bool FormCocoa::isMinimized() const
 	return [m_window isZoomed] == NO;
 }
 
+bool FormCocoa::hasNativeCaption() const
+{
+	return false;
+}
+
+bool FormCocoa::beginMove()
+{
+	return false;
+}
+
 void FormCocoa::hideProgress()
 {
 }

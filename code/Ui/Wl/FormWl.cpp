@@ -42,9 +42,13 @@ bool FormWl::create(IWidget* parent, const std::wstring& text, int width, int he
 	m_listenerCtx = { m_context, this };
 	toplevelSetupFractionalScale(&m_listenerCtx, &m_data);
 
-	if (m_context->hasServerSideDecorations())
+	// Without WsCaption the application draws its own caption (CaptionBar),
+	// so neither the compositor nor libdecor may decorate the toplevel.
+	const bool nativeCaption = (style & WsCaption) != 0;
+
+	if (!nativeCaption || m_context->hasServerSideDecorations())
 	{
-		// SSD path — compositor provides title bar / close button.
+		// Plain xdg toplevel; decorated server side if a native caption is wanted.
 		m_data.xdgSurface = m_context->createXdgSurface(m_data.surface);
 		xdg_surface_add_listener(m_data.xdgSurface, &s_toplevelXdgSurfaceListener, &m_listenerCtx);
 
@@ -54,10 +58,24 @@ bool FormWl::create(IWidget* parent, const std::wstring& text, int width, int he
 		xdg_toplevel_set_title(m_data.xdgToplevel, wstombs(text).c_str());
 		xdg_toplevel_set_app_id(m_data.xdgToplevel, m_context->getAppId());
 
-		m_data.decoration = zxdg_decoration_manager_v1_get_toplevel_decoration(
-			m_context->getDecorationManager(), m_data.xdgToplevel);
-		zxdg_toplevel_decoration_v1_set_mode(
-			m_data.decoration, ZXDG_TOPLEVEL_DECORATION_V1_MODE_SERVER_SIDE);
+		// A toplevel without a decoration object is client-side decorated; with
+		// one the compositor reports the effective mode, which may override ours.
+		m_data.clientDecorated = !nativeCaption;
+		m_data.resizable = (style & WsResizable) != 0;
+		if (m_context->hasServerSideDecorations())
+		{
+			m_data.decoration = zxdg_decoration_manager_v1_get_toplevel_decoration(
+				m_context->getDecorationManager(), m_data.xdgToplevel);
+			if (nativeCaption)
+				zxdg_toplevel_decoration_v1_set_mode(
+					m_data.decoration, ZXDG_TOPLEVEL_DECORATION_V1_MODE_SERVER_SIDE);
+			else
+			{
+				zxdg_toplevel_decoration_v1_add_listener(m_data.decoration, &s_toplevelDecorationListener, &m_listenerCtx);
+				zxdg_toplevel_decoration_v1_set_mode(
+					m_data.decoration, ZXDG_TOPLEVEL_DECORATION_V1_MODE_CLIENT_SIDE);
+			}
+		}
 
 		wl_surface_commit(m_data.surface);
 	}
@@ -150,6 +168,29 @@ bool FormWl::isMaximized() const
 bool FormWl::isMinimized() const
 {
 	return m_data.minimized;
+}
+
+bool FormWl::hasNativeCaption() const
+{
+	return !m_data.clientDecorated;
+}
+
+bool FormWl::beginMove()
+{
+	wl_seat* seat = m_context->getSeat();
+	if (seat == nullptr)
+		return false;
+
+	// The compositor only accepts the serial of the press that is still held.
+	const uint32_t serial = m_context->getGrabSerial();
+	if (m_data.frame)
+		libdecor_frame_move(m_data.frame, seat, serial);
+	else if (m_data.xdgToplevel)
+		xdg_toplevel_move(m_data.xdgToplevel, seat, serial);
+	else
+		return false;
+
+	return true;
 }
 
 void FormWl::hideProgress()

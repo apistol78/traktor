@@ -46,6 +46,8 @@ struct WidgetData
 	bool configured = false;
 	bool maximized = false;		//!< Toplevel only: compositor-confirmed maximized state, updated from the xdg/libdecor configure (covers caption-bar maximize/restore).
 	bool minimized = false;		//!< Toplevel only: set when minimize is requested; cleared on the next configure, as neither xdg-shell nor libdecor report a minimized state.
+	bool clientDecorated = false;	//!< Toplevel only: undecorated by both compositor and libdecor; the application draws its own caption (CaptionBar) and ContextWl provides resize edges.
+	bool resizable = false;		//!< Toplevel only: user may resize; gates the client-side resize edges.
 	int32_t posX = 0;			//!< Widget position (device coords), kept in sync with m_rect for parent chain walks.
 	int32_t posY = 0;
 	int32_t width = 0;			//!< Widget size (device coords), needed by descendants for ancestor-chain clip.

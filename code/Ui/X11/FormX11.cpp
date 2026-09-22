@@ -258,6 +258,17 @@ bool FormX11::isMinimized() const
 	return minimized;
 }
 
+bool FormX11::hasNativeCaption() const
+{
+	// Window manager always decorates.
+	return true;
+}
+
+bool FormX11::beginMove()
+{
+	return false;
+}
+
 void FormX11::hideProgress()
 {
 }
