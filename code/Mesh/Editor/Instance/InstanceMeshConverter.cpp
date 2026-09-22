@@ -12,6 +12,8 @@
 #include "Core/Math/Half.h"
 #include "Core/Misc/String.h"
 #include "Editor/IPipelineDepends.h"
+#include "Mesh/DeformMesh.h"
+#include "Mesh/Editor/DeformMeshGeometry.h"
 #include "Mesh/Editor/IndexRange.h"
 #include "Mesh/Editor/MeshAsset.h"
 #include "Mesh/Editor/MeshVertexWriter.h"
@@ -107,6 +109,16 @@ bool InstanceMeshConverter::convert(
 	if (rtVertexAttributesSize > 0)
 		auxBufferSizes[IMesh::c_fccRayTracingVertexAttributes] = rtVertexAttributesSize;
 
+	// Deform geometry; per-material vertex lists dispatched with the Deform techniques.
+	// Only present when some material deforms.
+	DeformGeometry deformGeometry;
+	buildDeformGeometry(model, rtModel, rtSharedVertexCount, totalVertexCount, materialTechniqueMap, deformGeometry);
+	if (!deformGeometry.empty())
+	{
+		auxBufferSizes[DeformMesh::c_fccDeformVertices] = getDeformVerticesSize(totalVertexCount);
+		auxBufferSizes[DeformMesh::c_fccDeformIndices] = getDeformIndicesSize(deformGeometry);
+	}
+
 	Ref< render::Mesh > renderMesh = render::SystemMeshFactory().createMesh(
 		vertexElements,
 		vertexBufferSize,
@@ -175,6 +187,10 @@ bool InstanceMeshConverter::convert(
 	if (depthVertexBufferSize > 0)
 		renderMesh->getDepthVertexBuffer()->unlock();
 
+	// Write deform source vertices and the vertex index lists of the deform parts.
+	if (!deformGeometry.empty())
+		writeDeformGeometry(renderMesh, model, rtModel, rtSharedVertexCount, deformGeometry);
+
 	// Create index buffer.
 	std::map< std::wstring, AlignedVector< IndexRange > > techniqueRanges;
 
@@ -211,6 +227,10 @@ bool InstanceMeshConverter::convert(
 
 		for (const auto& mtt : mt.second)
 		{
+			// Deform techniques are dispatched over vertex lists, not drawn.
+			if (mtt.deform)
+				continue;
+
 			const std::wstring technique = mtt.worldTechnique + L"/" + mtt.shaderTechnique;
 			range.mergeInto(techniqueRanges[technique]);
 		}
@@ -305,6 +325,7 @@ bool InstanceMeshConverter::convert(
 	checked_type_cast< InstanceMeshResource* >(meshResource)->m_shader = resource::Id< render::Shader >(materialGuid);
 	checked_type_cast< InstanceMeshResource* >(meshResource)->m_albedoTextures = albedoTextures;
 	checked_type_cast< InstanceMeshResource* >(meshResource)->m_parts = parts;
+	checked_type_cast< InstanceMeshResource* >(meshResource)->m_deformParts = deformGeometry.parts;
 
 	return true;
 }

@@ -55,6 +55,7 @@
 #include "Render/Editor/Shader/FragmentLinker.h"
 #include "Render/Editor/Shader/Nodes.h"
 #include "Render/Editor/Shader/ParameterLinker.h"
+#include "Render/Editor/Shader/Script.h"
 #include "Render/Editor/Shader/ShaderGraph.h"
 #include "Render/Editor/Shader/ShaderGraphPreview.h"
 #include "Render/Editor/Texture/TextureAsset.h"
@@ -68,6 +69,37 @@ namespace traktor::mesh
 {
 namespace
 {
+
+// Fragments used for materials with a world position offset; the vertex fragments read
+// positions from the deform buffers and the source fragment feeds the Deform compute
+// technique from the deform source vertex buffer.
+const Guid c_staticDeformVertex(L"{53E7A0FF-6E02-4E48-B333-17F20FCB6FFE}");
+const Guid c_instanceDeformVertex(L"{35471BC6-E8D6-40CC-8C7B-50483A9A1BC6}");
+const Guid c_staticDeformSource(L"{25B87AFD-AF4F-4C2C-8955-39438966B57F}");
+
+/*! Vertex fragment of deforming materials, per mesh type; null for types not supporting deform. */
+Guid getDeformVertexShaderGuid(MeshAsset::MeshType meshType)
+{
+	switch (meshType)
+	{
+	case MeshAsset::MeshType::Instance:
+		return c_instanceDeformVertex;
+
+	case MeshAsset::MeshType::Static:
+		return c_staticDeformVertex;
+
+	default:
+		return Guid();
+	}
+}
+
+// World material fragment whose "World position offset" input decides if a material deforms.
+const Guid c_makeSurfaceBundle(L"{0524A94E-4377-42AC-8A13-26FFE3491CC3}");
+
+// Name of the compute technique, in the mesh shader template, deforming vertices, and of
+// the input of its script receiving the world position offset.
+const wchar_t* const c_deformTechnique = L"Deform";
+const wchar_t* const c_deformOffsetPin = L"WorldPositionOffset";
 
 class FragmentReaderAdapter : public render::FragmentLinker::FragmentReaderTransientCache
 {
@@ -111,6 +143,91 @@ Guid getVertexShaderGuid(MeshAsset::MeshType meshType)
 	default:
 		return Guid();
 	}
+}
+
+/*! Check if a surface shader might provide a world position offset.
+ *
+ * The offset enters the surface bundle through the "World position offset" input of the
+ * MakeSurfaceBundle fragment; a material can only deform when such an input is connected.
+ * Nested fragments are resolved on the way so bundles made inside user fragments are found
+ * too, but the surface bundle fragment itself is left alone since that is what is inspected.
+ *
+ * This is a structural check; fragments which re-make a bundle, such as the blend and freeze
+ * surface bundles, pass the offset of their incoming bundle through and connect the input even
+ * when nothing provides an offset. \sa deformProvidesWorldPositionOffset
+ */
+bool surfaceUsesWorldPositionOffset(const render::ShaderGraph* surfaceShaderGraph, const render::FragmentLinker::IFragmentReader& fragmentReader)
+{
+	Ref< const render::ShaderGraph > shaderGraph = surfaceShaderGraph;
+	for (int32_t depth = 0; depth < 16 && shaderGraph != nullptr; ++depth)
+	{
+		RefArray< render::External > resolveNodes;
+		for (auto externalNode : shaderGraph->findNodesOf< render::External >())
+		{
+			if (externalNode->getFragmentGuid() == c_makeSurfaceBundle)
+			{
+				const render::InputPin* inputPin = externalNode->findInputPin(L"World position offset");
+				if (inputPin != nullptr && shaderGraph->findSourcePin(inputPin) != nullptr)
+					return true;
+			}
+			else
+				resolveNodes.push_back(externalNode);
+		}
+		if (resolveNodes.empty())
+			break;
+
+		shaderGraph = render::FragmentLinker(fragmentReader).resolve(shaderGraph, resolveNodes, false);
+	}
+	return false;
+}
+
+/*! Check if the deform technique of a material actually receives a world position offset.
+ *
+ * The mesh shader is generated and linked far enough to resolve the surface bundles and the
+ * "Connected" conditionals; the offset then arrives at the deform script either from the
+ * material or, when unconnected all the way, from the template's zero constant. Only an
+ * offset from a non-constant source deforms; a constant offset would just write back the
+ * same positions every frame.
+ */
+bool deformProvidesWorldPositionOffset(
+	const VertexShaderGenerator& vertexGenerator,
+	const model::Model& model,
+	const model::Material& material,
+	const render::ShaderGraph* surfaceShaderGraph,
+	const Guid& vertexShaderGuid,
+	const Guid& shaderGraphId,
+	const render::FragmentLinker::IFragmentReader& fragmentReader)
+{
+	Ref< render::ShaderGraph > shaderGraph = vertexGenerator.generateMesh(model, material, surfaceShaderGraph, vertexShaderGuid, c_staticDeformSource);
+	if (shaderGraph)
+		shaderGraph = render::FragmentLinker(fragmentReader).resolve(shaderGraph, true);
+	if (shaderGraph)
+		shaderGraph = render::ShaderGraphStatic(shaderGraph, shaderGraphId).getBundleResolved();
+	if (shaderGraph)
+		shaderGraph = render::ShaderGraphStatic(shaderGraph, shaderGraphId).getConnectedPermutation();
+	if (!shaderGraph)
+		return true; // Unable to tell; assume the offset is real and let the build report the failure.
+
+	for (auto scriptNode : shaderGraph->findNodesOf< render::Script >())
+	{
+		if (scriptNode->getTechnique() != c_deformTechnique)
+			continue;
+
+		const render::InputPin* offsetPin = scriptNode->findInputPin(c_deformOffsetPin);
+		if (!offsetPin)
+			continue;
+
+		const render::OutputPin* sourcePin = shaderGraph->findSourcePin(offsetPin);
+		if (!sourcePin)
+			return false;
+
+		const render::Node* sourceNode = sourcePin->getNode();
+		return !(
+			is_a< render::Scalar >(sourceNode) ||
+			is_a< render::Vector >(sourceNode) ||
+			is_a< render::Color >(sourceNode));
+	}
+	return false;
 }
 
 bool buildEmbeddedTexture(editor::IPipelineBuilder* pipelineBuilder, model::Material::Map& map, bool normalMap)
@@ -190,7 +307,7 @@ AlignedVector< render::VertexElement > getDepthVertexElements(
 
 }
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.MeshPipeline", 68, MeshPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.MeshPipeline", 70, MeshPipeline, editor::IPipeline)
 
 MeshPipeline::MeshPipeline()
 	: m_promoteHalf(false)
@@ -259,6 +376,11 @@ bool MeshPipeline::buildDependencies(
 	}
 	pipelineDepends->addDependency(vertexShaderGuid, editor::PdfUse);
 
+	// Deform fragments; used by materials with a world position offset.
+	pipelineDepends->addDependency(c_staticDeformVertex, editor::PdfUse);
+	pipelineDepends->addDependency(c_instanceDeformVertex, editor::PdfUse);
+	pipelineDepends->addDependency(c_staticDeformSource, editor::PdfUse);
+
 	// Add dependencies to generator fragments.
 	VertexShaderGenerator::addDependencies(pipelineDepends);
 	world::MaterialShaderGenerator::addDependencies(pipelineDepends);
@@ -277,6 +399,7 @@ bool MeshPipeline::buildDependencies(
 	// Add dependencies from mesh subsystems.
 	InstanceMeshConverter::addDependencies(pipelineDepends);
 	SkinnedMeshConverter::addDependencies(pipelineDepends);
+	StaticMeshConverter::addDependencies(pipelineDepends);
 	return true;
 }
 
@@ -627,6 +750,13 @@ bool MeshPipeline::buildOutput(
 		Ref< render::ShaderGraph > materialShaderGraph;
 		Guid materialShaderGraphId;
 
+		FragmentReaderAdapter linkerFragmentReader(m_linkerCache, pipelineBuilder);
+
+		// Materials providing a world position offset are deformed on the compute queue; they
+		// render from a vertex fragment reading the deformed positions and keep the Deform
+		// technique. Generated surfaces never provide an offset so only custom shaders are inspected.
+		bool materialDeform = false;
+
 		pipelineBuilder->getProfiler()->begin(L"MeshPipeline generateSurface");
 		Ref< const render::ShaderGraph > meshSurfaceShaderGraph = materialGenerator.generateSurface(
 			m,
@@ -670,12 +800,35 @@ bool MeshPipeline::buildOutput(
 				return false;
 			}
 
+			pipelineBuilder->getProfiler()->begin(L"MeshPipeline surfaceUsesWorldPositionOffset");
+			materialDeform = surfaceUsesWorldPositionOffset(customMeshSurfaceShaderGraph, linkerFragmentReader);
+			pipelineBuilder->getProfiler()->end();
+
+			// The surface check is structural; make sure an offset really reaches the deform
+			// technique before paying for the deform buffers and passes.
+			if (materialDeform)
+			{
+				pipelineBuilder->getProfiler()->begin(L"MeshPipeline deformProvidesWorldPositionOffset");
+				materialDeform = deformProvidesWorldPositionOffset(vertexGenerator, *model, m, customMeshSurfaceShaderGraph, vertexShaderGuid, it->second, linkerFragmentReader);
+				pipelineBuilder->getProfiler()->end();
+				if (!materialDeform)
+					log::info << L"Material \"" << materialName << L"\" passes an unconnected or constant world position offset through; not deformed." << Endl;
+			}
+
+			const Guid deformVertexShaderGuid = getDeformVertexShaderGuid(asset->getMeshType());
+			if (materialDeform && deformVertexShaderGuid.isNull())
+			{
+				log::warning << L"Material \"" << materialName << L"\" provides a world position offset which is only supported by static and instance meshes; offset ignored." << Endl;
+				materialDeform = false;
+			}
+
 			pipelineBuilder->getProfiler()->begin(L"MeshPipeline generateMesh");
 			materialShaderGraph = vertexGenerator.generateMesh(
 				*model,
 				m,
 				customMeshSurfaceShaderGraph,
-				vertexShaderGuid);
+				materialDeform ? deformVertexShaderGuid : vertexShaderGuid,
+				c_staticDeformSource);
 			pipelineBuilder->getProfiler()->end();
 			if (!materialShaderGraph)
 			{
@@ -692,7 +845,8 @@ bool MeshPipeline::buildOutput(
 				*model,
 				m,
 				meshSurfaceShaderGraph,
-				vertexShaderGuid);
+				vertexShaderGuid,
+				c_staticDeformSource);
 			pipelineBuilder->getProfiler()->end();
 			if (!materialShaderGraph)
 			{
@@ -703,8 +857,7 @@ bool MeshPipeline::buildOutput(
 
 		// Link shader fragments.
 		pipelineBuilder->getProfiler()->begin(L"MeshPipeline link fragments");
-		FragmentReaderAdapter fragmentReader(m_linkerCache, pipelineBuilder);
-		materialShaderGraph = render::FragmentLinker(fragmentReader).resolve(materialShaderGraph, true);
+		materialShaderGraph = render::FragmentLinker(linkerFragmentReader).resolve(materialShaderGraph, true);
 		pipelineBuilder->getProfiler()->end();
 		if (!materialShaderGraph)
 		{
@@ -826,13 +979,31 @@ bool MeshPipeline::buildOutput(
 					if (wc.match(materialTechniqueName))
 						keepTechniqueNames.insert(materialTechniqueName);
 			}
+
+			// The deform technique is not a world technique; a deforming material cannot
+			// render without it so it is never filtered out.
+			if (materialDeform && materialTechniqueNames.count(c_deformTechnique) > 0)
+				keepTechniqueNames.insert(c_deformTechnique);
+
 			materialTechniqueNames = keepTechniqueNames;
+		}
+
+		if (materialDeform && materialTechniqueNames.count(c_deformTechnique) == 0)
+		{
+			log::error << L"Mesh pipeline failed; material \"" << materialName << L"\" deforms but no \"" << c_deformTechnique << L"\" technique was generated." << Endl;
+			return false;
 		}
 
 		// Generate graph for each technique.
 		log::info << L"Mesh material \"" << materialName << L"\" techniques:" << Endl;
 		for (const auto& materialTechniqueName : materialTechniqueNames)
 		{
+			// The deform technique is only kept for materials which actually deform; for others
+			// it would just write back the undeformed positions.
+			const bool deformTechnique = (materialTechniqueName == c_deformTechnique);
+			if (deformTechnique && !materialDeform)
+				continue;
+
 			Ref< render::ShaderGraph > materialTechniqueShaderGraph = DeepClone(techniques.generate(materialTechniqueName)).create< render::ShaderGraph >();
 
 			const uint32_t hash = render::ShaderGraphHash(true, false).calculate(materialTechniqueShaderGraph);
@@ -844,6 +1015,9 @@ bool MeshPipeline::buildOutput(
 					vertexOutputNode->setTechnique(shaderTechniqueName);
 				if (auto pixelOutputNode = dynamic_type_cast< render::PixelOutput* >(node))
 					pixelOutputNode->setTechnique(shaderTechniqueName);
+				if (auto scriptNode = dynamic_type_cast< render::Script* >(node))
+					if (!scriptNode->getTechnique().empty())
+						scriptNode->setTechnique(shaderTechniqueName);
 			}
 
 			materialTechniqueShaderGraphs[hash] = materialTechniqueShaderGraph;
@@ -862,9 +1036,10 @@ bool MeshPipeline::buildOutput(
 			mt.shaderTechnique = shaderTechniqueName;
 			mt.hash = hash;
 			mt.depthStream = depthStream;
+			mt.deform = deformTechnique;
 			materialTechniqueMap[materialName].push_back(mt);
 
-			log::info << L"\t\"" << materialTechniqueName << L"\"\t\t(" << shaderTechniqueName << L")" << (depthStream ? L"\t[depth stream]" : L"") << Endl;
+			log::info << L"\t\"" << materialTechniqueName << L"\"\t\t(" << shaderTechniqueName << L")" << (depthStream ? L"\t[depth stream]" : L"") << (deformTechnique ? L"\t[deform]" : L"") << Endl;
 		}
 
 		// Build vertex declaration from shader vertex inputs.

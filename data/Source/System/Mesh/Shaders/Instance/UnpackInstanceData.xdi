@@ -5,8 +5,8 @@
 			<id>{19913397-AF16-7040-9FB5-8E57B092D98C}</id>
 			<comment/>
 			<position>
-				<first>1398</first>
-				<second>574</second>
+				<first>1340</first>
+				<second>524</second>
 			</position>
 			<name>Rotation</name>
 		</item>
@@ -14,8 +14,8 @@
 			<id>{B12B5D79-F6DD-6F4E-9E62-040B6A429EAC}</id>
 			<comment/>
 			<position>
-				<first>1398</first>
-				<second>638</second>
+				<first>1636</first>
+				<second>626</second>
 			</position>
 			<name>Translation</name>
 		</item>
@@ -23,8 +23,8 @@
 			<id>{B3E7E7D8-D5D1-B540-980A-AC2301D4A734}</id>
 			<comment/>
 			<position>
-				<first>1213</first>
-				<second>662</second>
+				<first>1368</first>
+				<second>626</second>
 			</position>
 			<swizzle>xyz</swizzle>
 		</item>
@@ -32,8 +32,8 @@
 			<id>{9A93E123-A45D-1340-B936-91FF85883ECC}</id>
 			<comment/>
 			<position>
-				<first>1222</first>
-				<second>781</second>
+				<first>1368</first>
+				<second>830</second>
 			</position>
 			<swizzle>xyz</swizzle>
 		</item>
@@ -41,8 +41,8 @@
 			<id>{45936592-3A8C-FA45-8C08-6827D12F9FDD}</id>
 			<comment/>
 			<position>
-				<first>1398</first>
-				<second>766</second>
+				<first>1628</first>
+				<second>830</second>
 			</position>
 			<name>TranslationLast</name>
 		</item>
@@ -50,8 +50,8 @@
 			<id>{471FD3A8-9A8B-EE4B-B14F-382762CC4870}</id>
 			<comment/>
 			<position>
-				<first>1398</first>
-				<second>702</second>
+				<first>1324</first>
+				<second>728</second>
 			</position>
 			<name>RotationLast</name>
 		</item>
@@ -59,40 +59,40 @@
 			<id>{CA90CD3D-4575-BF44-A9AB-47FB337A4E60}</id>
 			<comment/>
 			<position>
-				<first>1105</first>
-				<second>627</second>
+				<first>1194</first>
+				<second>524</second>
 			</position>
 		</item>
 		<item type="traktor.render.Interpolator" version="traktor.render.Node:1">
 			<id>{3FF226A7-AF06-E349-8D56-0E8616828A7C}</id>
 			<comment/>
 			<position>
-				<first>1105</first>
-				<second>683</second>
+				<first>1194</first>
+				<second>626</second>
 			</position>
 		</item>
 		<item type="traktor.render.Interpolator" version="traktor.render.Node:1">
 			<id>{A5E9A8AD-E562-7241-B9B3-7D5DACCC2684}</id>
 			<comment/>
 			<position>
-				<first>1105</first>
-				<second>739</second>
+				<first>1194</first>
+				<second>728</second>
 			</position>
 		</item>
 		<item type="traktor.render.Interpolator" version="traktor.render.Node:1">
 			<id>{AE1F4229-0E7C-E340-A5A9-517448A1C520}</id>
 			<comment/>
 			<position>
-				<first>1105</first>
-				<second>795</second>
+				<first>1194</first>
+				<second>830</second>
 			</position>
 		</item>
 		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
 			<id>{8A459FBA-5749-254B-9853-127DB9AF95F8}</id>
 			<comment/>
 			<position>
-				<first>47</first>
-				<second>756</second>
+				<first>-243</first>
+				<second>785</second>
 			</position>
 			<name>gl_InstanceIndex</name>
 			<technique/>
@@ -122,24 +122,24 @@ $Output = gl_InstanceIndex;
 			<id>{1B6A44DE-272D-E946-8D87-4A519ECE2206}</id>
 			<comment/>
 			<position>
-				<first>1105</first>
-				<second>907</second>
+				<first>1194</first>
+				<second>1034</second>
 			</position>
 		</item>
 		<item type="traktor.render.Interpolator" version="traktor.render.Node:1">
 			<id>{AC4D62DC-9C8E-924D-AAE4-182B09B6D3BE}</id>
 			<comment/>
 			<position>
-				<first>1105</first>
-				<second>851</second>
+				<first>1194</first>
+				<second>932</second>
 			</position>
 		</item>
 		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
 			<id>{83E74CF2-6EDE-4641-8544-674F7F7FFE26}</id>
 			<comment/>
 			<position>
-				<first>1398</first>
-				<second>830</second>
+				<first>1316</first>
+				<second>932</second>
 			</position>
 			<name>BoundingBoxMin</name>
 		</item>
@@ -147,8 +147,8 @@ $Output = gl_InstanceIndex;
 			<id>{4707BE88-7A5E-CD47-9F8E-FA925A4CB9BE}</id>
 			<comment/>
 			<position>
-				<first>1398</first>
-				<second>894</second>
+				<first>1316</first>
+				<second>1034</second>
 			</position>
 			<name>BoundingBoxMax</name>
 		</item>
@@ -156,16 +156,16 @@ $Output = gl_InstanceIndex;
 			<id>{24C3ACAD-6FB5-2143-9B61-CD34A943D39E}</id>
 			<comment/>
 			<position>
-				<first>262</first>
-				<second>775</second>
+				<first>508</first>
+				<second>777</second>
 			</position>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
 			<id>{AFA7AC86-631B-E24D-80DA-EAF4AC6E9BBF}</id>
 			<comment/>
 			<position>
-				<first>-39</first>
-				<second>832</second>
+				<first>220</first>
+				<second>815</second>
 			</position>
 			<parameterDeclaration>{39E27A9D-4CCD-0F42-881E-95744149442E}</parameterDeclaration>
 		</item>
@@ -173,8 +173,8 @@ $Output = gl_InstanceIndex;
 			<id>{FE961F88-4434-E644-86BA-6B3EA65B5D7D}</id>
 			<comment/>
 			<position>
-				<first>233</first>
-				<second>711</second>
+				<first>521</first>
+				<second>713</second>
 			</position>
 			<parameterDeclaration>{A0D2BF02-CAF1-4E4C-829A-3685A08FBDB2}</parameterDeclaration>
 		</item>
@@ -182,16 +182,16 @@ $Output = gl_InstanceIndex;
 			<id>{50A0AF11-C340-1641-A8FD-DF0B582FE761}</id>
 			<comment/>
 			<position>
-				<first>461</first>
-				<second>737</second>
+				<first>742</first>
+				<second>728</second>
 			</position>
 		</item>
 		<item type="traktor.render.MemberValue" version="traktor.render.Node:1">
 			<id>{D6234E44-592D-0042-9D7B-CE599C6F75B6}</id>
 			<comment/>
 			<position>
-				<first>847</first>
-				<second>560</second>
+				<first>960</first>
+				<second>490</second>
 			</position>
 			<memberName>rotation</memberName>
 		</item>
@@ -199,8 +199,8 @@ $Output = gl_InstanceIndex;
 			<id>{AE509300-178F-8843-B99D-F3ADFD0C4162}</id>
 			<comment/>
 			<position>
-				<first>847</first>
-				<second>634</second>
+				<first>960</first>
+				<second>592</second>
 			</position>
 			<memberName>translation</memberName>
 		</item>
@@ -208,8 +208,8 @@ $Output = gl_InstanceIndex;
 			<id>{C02F9BA1-9B2F-D640-9328-D85731812F57}</id>
 			<comment/>
 			<position>
-				<first>847</first>
-				<second>708</second>
+				<first>960</first>
+				<second>694</second>
 			</position>
 			<memberName>lastRotation</memberName>
 		</item>
@@ -217,8 +217,8 @@ $Output = gl_InstanceIndex;
 			<id>{28CBF104-9525-E44B-9674-F6D5820B6AE0}</id>
 			<comment/>
 			<position>
-				<first>847</first>
-				<second>782</second>
+				<first>960</first>
+				<second>796</second>
 			</position>
 			<memberName>lastTranslation</memberName>
 		</item>
@@ -226,8 +226,8 @@ $Output = gl_InstanceIndex;
 			<id>{35130D27-204D-A34A-93D6-B87F72F36220}</id>
 			<comment/>
 			<position>
-				<first>847</first>
-				<second>856</second>
+				<first>960</first>
+				<second>898</second>
 			</position>
 			<memberName>boundingBoxMin</memberName>
 		</item>
@@ -235,8 +235,8 @@ $Output = gl_InstanceIndex;
 			<id>{1FAF0F2E-FBA9-9C47-A719-36221F54E8F2}</id>
 			<comment/>
 			<position>
-				<first>847</first>
-				<second>930</second>
+				<first>960</first>
+				<second>1000</second>
 			</position>
 			<memberName>boundingBoxMax</memberName>
 		</item>
@@ -244,8 +244,8 @@ $Output = gl_InstanceIndex;
 			<id>{F42EFE5F-C716-4CA4-BEA2-4A4BCED4429C}</id>
 			<comment/>
 			<position>
-				<first>-39</first>
-				<second>700</second>
+				<first>-254</first>
+				<second>721</second>
 			</position>
 			<parameterDeclaration>{181F88C6-D41E-4A1A-835D-97ED11490858}</parameterDeclaration>
 		</item>
@@ -253,16 +253,16 @@ $Output = gl_InstanceIndex;
 			<id>{DE72F727-D74E-477F-ADDC-82F07F065DC4}</id>
 			<comment/>
 			<position>
-				<first>150</first>
-				<second>700</second>
+				<first>2</first>
+				<second>736</second>
 			</position>
 		</item>
 		<item type="traktor.render.MemberValue" version="traktor.render.Node:1">
 			<id>{7EA22DCA-7325-40F2-ABA0-6736FD0655FC}</id>
 			<comment/>
 			<position>
-				<first>150</first>
-				<second>756</second>
+				<first>247</first>
+				<second>713</second>
 			</position>
 			<memberName>index</memberName>
 		</item>

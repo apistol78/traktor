@@ -162,6 +162,7 @@ void PrecipitationComponent::build(const world::WorldBuildContext& context, cons
 		*techniqueParts,
 		Transform(rotation),
 		Transform(rotation),
+		-1,
 		0.0f,
 		&mc
 	);

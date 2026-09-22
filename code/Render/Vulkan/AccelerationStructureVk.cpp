@@ -355,6 +355,28 @@ bool AccelerationStructureVk::writeGeometry(CommandBuffer* commandBuffer, const 
 			.transformData = { .deviceAddress = 0 } }
 	};
 
+	// One geometry per primitive range; all share the vertex and index data and are
+	// distinguished by their build ranges. The structure is sized for these ranges
+	// only, not the entire index buffer, which may hold far more (other LODs, other
+	// parts) than what is built here.
+	AlignedVector< VkAccelerationStructureBuildRangeInfoKHR > buildRanges;
+	for (const auto& rtp : primitives)
+	{
+		const auto& primitives = rtp.primitives;
+
+		if (
+			primitives.type != PrimitiveType::Triangles ||
+			primitives.indexed == false)
+			continue;
+
+		buildRanges.push_back({ .primitiveCount = primitives.count,
+			.primitiveOffset = primitives.offset * ((indexType == IndexType::UInt32) ? 4 : 2),
+			.firstVertex = rtp.firstVertex,
+			.transformOffset = 0 });
+	}
+	if (buildRanges.empty())
+		return false;
+
 	const VkAccelerationStructureGeometryKHR bottomLevelAccelerationStructureGeometry = {
 		.sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_GEOMETRY_KHR,
 		.pNext = nullptr,
@@ -362,6 +384,11 @@ bool AccelerationStructureVk::writeGeometry(CommandBuffer* commandBuffer, const 
 		.geometry = bottomLevelAccelerationStructureGeometryData,
 		.flags = VK_GEOMETRY_OPAQUE_BIT_KHR
 	};
+
+	AlignedVector< VkAccelerationStructureGeometryKHR > bottomLevelAccelerationStructureGeometries(buildRanges.size(), bottomLevelAccelerationStructureGeometry);
+	AlignedVector< uint32_t > bottomLevelMaxPrimitiveCountList;
+	for (const auto& buildRange : buildRanges)
+		bottomLevelMaxPrimitiveCountList.push_back(buildRange.primitiveCount);
 
 	VkAccelerationStructureBuildGeometryInfoKHR bottomLevelAccelerationStructureBuildGeometryInfo = {
 		.sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_BUILD_GEOMETRY_INFO_KHR,
@@ -371,8 +398,8 @@ bool AccelerationStructureVk::writeGeometry(CommandBuffer* commandBuffer, const 
 		.mode = VK_BUILD_ACCELERATION_STRUCTURE_MODE_BUILD_KHR,
 		.srcAccelerationStructure = VK_NULL_HANDLE,
 		.dstAccelerationStructure = VK_NULL_HANDLE,
-		.geometryCount = 1,
-		.pGeometries = &bottomLevelAccelerationStructureGeometry,
+		.geometryCount = (uint32_t)bottomLevelAccelerationStructureGeometries.size(),
+		.pGeometries = bottomLevelAccelerationStructureGeometries.ptr(),
 		.ppGeometries = nullptr,
 		.scratchData = {
 			.deviceAddress = 0 }
@@ -386,8 +413,6 @@ bool AccelerationStructureVk::writeGeometry(CommandBuffer* commandBuffer, const 
 		.buildScratchSize = 0
 	};
 
-	const uint32_t primitiveCount = ib->getVkBufferSize() / ((indexType == IndexType::UInt32) ? 4 : 2);
-	AlignedVector< uint32_t > bottomLevelMaxPrimitiveCountList = { primitiveCount };
 	vkGetAccelerationStructureBuildSizesKHR(
 		m_context->getLogicalDevice(),
 		VK_ACCELERATION_STRUCTURE_BUILD_TYPE_DEVICE_KHR,
@@ -488,31 +513,13 @@ bool AccelerationStructureVk::writeGeometry(CommandBuffer* commandBuffer, const 
 	bottomLevelAccelerationStructureBuildGeometryInfo.dstAccelerationStructure = m_as[slot];
 	bottomLevelAccelerationStructureBuildGeometryInfo.scratchData.deviceAddress = alignUp(m_scratchBuffers[slot]->getDeviceAddress(), m_scratchAlignment);
 
-	AlignedVector< VkAccelerationStructureBuildRangeInfoKHR > buildRanges;
-	for (const auto& rtp : primitives)
-	{
-		const auto& primitives = rtp.primitives;
-
-		if (
-			primitives.type != PrimitiveType::Triangles ||
-			primitives.indexed == false)
-			continue;
-
-		buildRanges.push_back({ .primitiveCount = primitives.count,
-			.primitiveOffset = primitives.offset * ((indexType == IndexType::UInt32) ? 4 : 2),
-			.firstVertex = 0,
-			.transformOffset = 0 });
-	}
-
-	AlignedVector< VkAccelerationStructureBuildRangeInfoKHR* > buildRangePtrs;
-	for (auto& buildRange : buildRanges)
-		buildRangePtrs.push_back(&buildRange);
-
+	// A single build info takes one pointer to an array of ranges, one per geometry.
+	const VkAccelerationStructureBuildRangeInfoKHR* buildRangePtr = buildRanges.ptr();
 	vkCmdBuildAccelerationStructuresKHR(
 		*commandBuffer,
 		1,
 		&bottomLevelAccelerationStructureBuildGeometryInfo,
-		buildRangePtrs.ptr());
+		&buildRangePtr);
 
 	return true;
 }

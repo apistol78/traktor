@@ -21,6 +21,13 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
+namespace traktor::render
+{
+
+class RenderContext;
+
+}
+
 namespace traktor::mesh
 {
 
@@ -28,6 +35,10 @@ class InstanceMesh;
 
 /*! Instancing mesh component.
  * \ingroup Mesh
+ *
+ * Deformed instance meshes hold a deform slot of their mesh while within deform
+ * distance; the slot is written every frame and carried by the culling instance
+ * so the instanced draw picks the deformed positions for this instance.
  */
 class T_DLLCLASS InstanceMeshComponent : public MeshComponent
 {
@@ -53,13 +64,37 @@ public:
 		const world::WorldRenderView& worldRenderView
 	);
 
+	/*! Acquire or release the deform slot depending on distance to the eye; deformed meshes only.
+	 *
+	 * \return True if the instance holds a deform slot and must be deformed this frame.
+	 */
+	bool setupDeform(const world::WorldRenderView& worldRenderView);
+
+	/*! Build compute work deforming this instance into its slot. */
+	void buildDeform(const world::WorldRenderView& worldRenderView, render::RenderContext* renderContext);
+
+	/*! Build update of the slot's acceleration structure and point the ray tracing instance at it. */
+	void buildDeformAccelerationStructure(const world::WorldRenderView& worldRenderView, render::RenderContext* renderContext);
+
+	bool haveDeformSlot() const { return m_deformSlot >= 0; }
+
+	int32_t getDeformSlot() const { return m_deformSlot; }
+
+	/*! Index of this instance within its culling batch; valid while culled. */
+	bool getBatchIndex(uint32_t& outBatchIndex) const;
+
 	inline resource::Proxy< InstanceMesh >& getMesh() { return m_mesh; }
 
 private:
 	resource::Proxy< InstanceMesh > m_mesh;
 	world::RTWorldComponent::Instance* m_rtwInstance = nullptr;
 	world::CullingComponent::Instance* m_cullingInstance = nullptr;
+	int32_t m_deformSlot = -1;
+	InstanceMesh* m_deformSlotMesh = nullptr; //!< Mesh the slot was allocated from; a reloaded mesh knows nothing of it.
+	bool m_deformSlotNew = false;			  //!< Slot acquired this frame; its history must be written too.
 	bool m_dynamic = false;
+
+	void releaseDeformSlot();
 };
 
 }

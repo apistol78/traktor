@@ -62,11 +62,17 @@ class T_DLLCLASS VertexShaderGenerator : public Object
 public:
 	explicit VertexShaderGenerator(const std::function< Ref< const render::ShaderGraph >(const Guid& fragmentId) >& resolve);
 
+	/*! Generate mesh shader from surface shader.
+	 *
+	 * \param vertexShaderGuid Fragment implementing the vertex interface, i.e. the raster vertex fragment of the mesh type.
+	 * \param deformShaderGuid Fragment implementing the deform interface, i.e. the compute vertex source used by the Deform technique; null selects the static mesh source.
+	 */
 	Ref< render::ShaderGraph > generateMesh(
 		const model::Model& model,
 		const model::Material& material,
 		const render::ShaderGraph* meshSurfaceShaderGraph,
-		const Guid& vertexShaderGuid) const;
+		const Guid& vertexShaderGuid,
+		const Guid& deformShaderGuid = Guid()) const;
 
 	static void addDependencies(editor::IPipelineDepends* pipelineDepends);
 

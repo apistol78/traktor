@@ -9,11 +9,13 @@
 #include "Mesh/Instance/InstanceMesh.h"
 
 #include "Core/Log/Log.h"
+#include "Core/Misc/Align.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/String.h"
 #include "Mesh/Instance/InstanceMeshData.h"
 #include "Render/Buffer.h"
 #include "Render/Context/RenderContext.h"
+#include "Render/IAccelerationStructure.h"
 #include "Render/IProgram.h"
 #include "Render/IRenderSystem.h"
 #include "Render/Mesh/Mesh.h"
@@ -23,6 +25,7 @@
 #include "World/WorldRenderView.h"
 
 #include <algorithm>
+#include <cstring>
 
 namespace traktor::mesh
 {
@@ -38,10 +41,11 @@ render::Handle s_handleInstanceOffset(L"InstanceMesh_InstanceOffset");
 render::Handle s_handleInstanceCount(L"InstanceMesh_InstanceCount");
 render::Handle s_handlePartIndex(L"InstanceMesh_PartIndex");
 render::Handle s_handlePartCount(L"InstanceMesh_PartCount");
+render::Handle s_handleDeformSlots(L"Mesh_DeformSlots");
 
 }
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.InstanceMesh", InstanceMesh, IMesh)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.InstanceMesh", InstanceMesh, DeformMesh)
 
 InstanceMesh::InstanceMesh(
 	render::IRenderSystem* renderSystem,
@@ -72,6 +76,49 @@ void InstanceMesh::getTechniques(SmallSet< render::handle_t >& outHandles) const
 const render::Buffer* InstanceMesh::getRTVertexAttributes() const
 {
 	return m_renderMesh->getAuxBuffer(c_fccRayTracingVertexAttributes);
+}
+
+void InstanceMesh::beginDeformSlotTable()
+{
+	m_deformSlotTable.resize(0);
+}
+
+void InstanceMesh::setDeformSlotTableEntry(uint32_t batchIndex, int32_t slot)
+{
+	if (batchIndex >= (uint32_t)m_deformSlotTable.size())
+		m_deformSlotTable.resize(batchIndex + 1, -1);
+	m_deformSlotTable[batchIndex] = slot;
+}
+
+void InstanceMesh::endDeformSlotTable()
+{
+	ensureDeformSlotBuffer((uint32_t)m_deformSlotTable.size());
+}
+
+void InstanceMesh::ensureDeformSlotBuffer(uint32_t count)
+{
+	// The compaction of every batch reads the table for each of its instances, so the
+	// buffer must cover the batch; entries beyond the table are undeformed. Only upload
+	// when the table changed, i.e. as instances cross the deform distance, or the
+	// buffer grew.
+	const uint32_t required = (uint32_t)alignUp(std::max< uint32_t >(count, (uint32_t)m_deformSlotTable.size()), 64);
+	const bool grow = (m_deformSlotBuffer == nullptr || required > m_deformSlotBufferCount);
+	if (!grow && m_deformSlotTable == m_deformSlotTableLast)
+		return;
+
+	if (grow)
+	{
+		m_deformSlotBuffer = m_renderSystem->createBuffer(render::BufferUsage::BuStructured, required * sizeof(int32_t), true, T_FILE_LINE_W);
+		m_deformSlotBufferCount = required;
+	}
+
+	int32_t* ptr = (int32_t*)m_deformSlotBuffer->lock();
+	std::memcpy(ptr, m_deformSlotTable.c_ptr(), m_deformSlotTable.size() * sizeof(int32_t));
+	for (uint32_t i = (uint32_t)m_deformSlotTable.size(); i < m_deformSlotBufferCount; ++i)
+		ptr[i] = -1;
+	m_deformSlotBuffer->unlock();
+
+	m_deformSlotTableLast = m_deformSlotTable;
 }
 
 void InstanceMesh::cullableBuildSetup(
@@ -118,9 +165,10 @@ void InstanceMesh::cullableBuildSetup(
 			maxPartCount * sizeof(render::IndexedIndirectDraw),
 			false,
 			T_FILE_LINE_W));
+		// One InstanceMesh_Compact entry per instance; the instance index and its deform slot.
 		m_compactBuffers.push_back(m_renderSystem->createBuffer(
 			render::BufferUsage::BuStructured,
-			bufferItemCount * sizeof(float),
+			bufferItemCount * (sizeof(float) + sizeof(int32_t)),
 			false,
 			T_FILE_LINE_W));
 	}
@@ -199,6 +247,12 @@ void InstanceMesh::cullableBuildCompact(
 	renderBlock->programParams->setBufferViewParameter(world::ShaderParameter::Visibility, visibilityBuffer->getBufferView());
 	renderBlock->programParams->setBufferViewParameter(s_handleDraw, drawBuffer->getBufferView());
 	renderBlock->programParams->setBufferViewParameter(s_handleCompact, compactBuffer->getBufferView());
+
+	// Each compacted instance carries its deform slot, resolved from the slot table; meshes
+	// without deform carry a table of undeformed entries.
+	ensureDeformSlotBuffer(count);
+	renderBlock->programParams->setBufferViewParameter(s_handleDeformSlots, m_deformSlotBuffer->getBufferView());
+
 	renderBlock->programParams->endParameters(renderContext);
 
 	renderBlock->workSize[0] = (int32_t)count;
@@ -264,6 +318,13 @@ void InstanceMesh::cullableBuildDraw(
 		renderBlock->programParams->setFloatParameter(s_handleInstanceOffset, start + 0.5f);
 		renderBlock->programParams->setBufferViewParameter(s_handleInstanceWorld, instanceBuffer->getBufferView());
 		renderBlock->programParams->setBufferViewParameter(s_handleCompact, compactBuffer->getBufferView());
+
+		// Deformed materials read positions of instances holding a deform slot from the
+		// pooled deform buffers; the slot comes with the compact entry. Parts of other
+		// materials ignore the parameters.
+		if (haveDeform())
+			setDeformParameters(renderBlock->programParams, -1);
+
 		renderBlock->programParams->endParameters(renderContext);
 
 		renderContext->draw(sp.priority, renderBlock);

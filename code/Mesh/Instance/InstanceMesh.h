@@ -14,7 +14,7 @@
 #include "Core/Math/Quaternion.h"
 #include "Core/Math/Vector4.h"
 #include "Core/RefArray.h"
-#include "Mesh/IMesh.h"
+#include "Mesh/DeformMesh.h"
 #include "Render/Shader.h"
 #include "Resource/Proxy.h"
 #include "World/Entity/CullingComponent.h"
@@ -58,9 +58,14 @@ namespace traktor::mesh
  * Instance meshes are meshes which are repeated
  * automatically by the GPU in any number of instances
  * using hardware instancing in a single draw call.
+ *
+ * Deformed instances hold slots of the mesh's deform pool; the compaction of each
+ * culling batch resolves every visible instance's slot from a table indexed by the
+ * instance's position within the batch, so a single instanced draw renders deformed
+ * and undeformed instances alike.
  */
 class T_DLLCLASS InstanceMesh
-	: public IMesh
+	: public DeformMesh
 	, public world::CullingComponent::ICullable
 {
 	T_RTTI_CLASS;
@@ -87,6 +92,22 @@ public:
 	const render::IAccelerationStructure* getAccelerationStructure() const { return m_rtAccelerationStructure; }
 
 	const render::Buffer* getRTVertexAttributes() const;
+
+	const render::Shader* getShader() const { return m_shader; }
+
+	//! \name Deform slot table
+	//! The compaction looks up each instance's deform slot by its index within the
+	//! culling batch; the table is rebuilt every frame from all instances of this mesh.
+	//! \{
+
+	void beginDeformSlotTable();
+
+	void setDeformSlotTableEntry(uint32_t batchIndex, int32_t slot);
+
+	/*! Upload the table if it changed since last frame. */
+	void endDeformSlotTable();
+
+	//! \}
 
 	/* world::CullingComponent::ICullable */
 
@@ -135,6 +156,12 @@ private:
 	Ref< render::IAccelerationStructure > m_rtAccelerationStructure;
 	AlignedVector< resource::Proxy< render::ITexture > > m_albedoTextures;
 
+	// Deform slot table
+	AlignedVector< int32_t > m_deformSlotTable;		//!< Slot per batch index, -1 for undeformed instances.
+	AlignedVector< int32_t > m_deformSlotTableLast; //!< Table as uploaded.
+	Ref< render::Buffer > m_deformSlotBuffer;
+	uint32_t m_deformSlotBufferCount = 0;
+
 	// #todo All instances are bookkeep;ed in InstanceMesh which should be a resource.
 	Ref< render::IRenderSystem > m_renderSystem;
 	resource::Proxy< render::Shader > m_shaderDraw;
@@ -145,6 +172,9 @@ private:
 	RefArray< render::Buffer > m_drawBuffers;
 	RefArray< render::Buffer > m_compactBuffers;
 	uint32_t m_allocatedCount = 0;
+
+	/*! Ensure the slot table buffer covers the given number of instances, uploading the table if it changed. */
+	void ensureDeformSlotBuffer(uint32_t count);
 };
 
 }

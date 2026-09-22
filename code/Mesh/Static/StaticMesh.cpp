@@ -1,13 +1,14 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include "Mesh/IMeshParameterCallback.h"
 #include "Mesh/Static/StaticMesh.h"
+
+#include "Mesh/IMeshParameterCallback.h"
 #include "Render/Buffer.h"
 #include "Render/Context/RenderContext.h"
 #include "Render/Mesh/Mesh.h"
@@ -15,7 +16,8 @@
 
 namespace traktor::mesh
 {
-T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.StaticMesh", StaticMesh, IMesh)
+
+T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.StaticMesh", StaticMesh, DeformMesh)
 
 const Aabb3& StaticMesh::getBoundingBox() const
 {
@@ -34,22 +36,26 @@ void StaticMesh::build(
 	const techniqueParts_t& techniqueParts,
 	const Transform& lastWorldTransform,
 	const Transform& worldTransform,
+	int32_t deformSlot,
 	float distance,
-	const IMeshParameterCallback* parameterCallback
-)
+	const IMeshParameterCallback* parameterCallback)
 {
 	// Setup the parameters; these are shared for all technique parts.
 	auto programParams = renderContext->alloc< render::ProgramParameters >();
 	programParams->beginParameters(renderContext);
-	
+
 	worldRenderPass.setProgramParameters(
 		programParams,
 		lastWorldTransform,
-		worldTransform
-	);
-	
+		worldTransform);
+
 	if (parameterCallback)
 		parameterCallback->setParameters(programParams);
+
+	// Deformed materials read positions from the deform slot, or the vertex stream
+	// when the instance holds none; parts of other materials ignore the parameters.
+	if (haveDeform())
+		setDeformParameters(programParams, deformSlot);
 
 	programParams->endParameters(renderContext);
 
@@ -80,8 +86,7 @@ void StaticMesh::build(
 
 		renderContext->draw(
 			sp.priority,
-			renderBlock
-		);
+			renderBlock);
 	}
 }
 

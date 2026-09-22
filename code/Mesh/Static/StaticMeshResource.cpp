@@ -27,7 +27,7 @@
 namespace traktor::mesh
 {
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.StaticMeshResource", 8, StaticMeshResource, MeshResource)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.StaticMeshResource", 9, StaticMeshResource, MeshResource)
 
 StaticMeshResource::StaticMeshResource()
 	: m_haveRenderMesh(false)
@@ -92,8 +92,16 @@ Ref< IMesh > StaticMeshResource::createMesh(
 
 	staticMesh->m_renderMesh = renderMesh;
 
+	// Create deform; deformed meshes read positions from per-instance deform buffers.
+	if (!staticMesh->createDeform(resourceManager, renderSystem, m_deformParts, renderMesh))
+	{
+		log::error << L"Static mesh create failed; unable to create deform." << Endl;
+		return nullptr;
+	}
+
 	// Create ray tracing structures. Meshes built with ray tracing disabled carry no ray
-	// tracing primitives, in which case no acceleration structure is created.
+	// tracing primitives, in which case no acceleration structure is created. Deformed
+	// instances near the eye replace this shared structure with a refit one of their own.
 	if (renderSystem->supportRayTracing() && !renderMesh->getRaytracingPrimitives().empty())
 	{
 		staticMesh->m_rtAccelerationStructure = renderSystem->createAccelerationStructure(
@@ -130,6 +138,9 @@ void StaticMeshResource::serialize(ISerializer& s)
 			 parts_t,
 			 Member< std::wstring >,
 			 MemberAlignedVector< Part, MemberComposite< Part > > >(L"parts", m_parts);
+
+	if (s.getVersion() >= 9)
+		s >> MemberAlignedVector< MeshResource::DeformPart, MemberComposite< MeshResource::DeformPart > >(L"deformParts", m_deformParts);
 }
 
 void StaticMeshResource::Part::serialize(ISerializer& s)
@@ -138,4 +149,5 @@ void StaticMeshResource::Part::serialize(ISerializer& s)
 	s >> Member< uint32_t >(L"meshPart", meshPart);
 	s >> Member< bool >(L"depthStream", depthStream);
 }
+
 }

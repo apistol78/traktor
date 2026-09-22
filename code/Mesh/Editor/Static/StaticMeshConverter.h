@@ -10,12 +10,21 @@
 
 #include "Mesh/Editor/IMeshConverter.h"
 
+namespace traktor::editor
+{
+
+class IPipelineDepends;
+
+}
+
 namespace traktor::mesh
 {
 
 class StaticMeshConverter : public IMeshConverter
 {
 public:
+	static void addDependencies(editor::IPipelineDepends* pipelineDepends);
+
 	virtual Ref< MeshResource > createResource() const override final;
 
 	virtual bool getOperations(const MeshAsset* meshAsset, bool editor, RefArray< const model::IModelOperation >& outOperations) const override final;

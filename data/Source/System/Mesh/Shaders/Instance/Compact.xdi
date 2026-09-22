@@ -6,7 +6,7 @@
 			<comment/>
 			<position>
 				<first>189</first>
-				<second>265</second>
+				<second>378</second>
 			</position>
 			<swizzle>x</swizzle>
 		</item>
@@ -15,7 +15,7 @@
 			<comment/>
 			<position>
 				<first>-73</first>
-				<second>265</second>
+				<second>378</second>
 			</position>
 			<scope>Global</scope>
 		</item>
@@ -24,7 +24,7 @@
 			<comment/>
 			<position>
 				<first>437</first>
-				<second>316</second>
+				<second>320</second>
 			</position>
 			<name>Compact</name>
 			<technique>Default</technique>
@@ -65,6 +65,10 @@
 					<id>{283BC503-0ED5-479C-95DD-75D7F00A5A25}</id>
 					<name>PartCount</name>
 				</item>
+				<item>
+					<id>{E98F2FD0-0F00-4CC0-94C3-ED911FDC77B5}</id>
+					<name>DeformSlots</name>
+				</item>
 			</inputPins>
 			<outputPins/>
 			<script><![CDATA[
@@ -86,7 +90,10 @@ if (index < int($InstanceCount))
 		// Part 0's instance count doubles as the allocation counter; every part
 		// draws the same compacted list so they all end up with the same count.
 		const int slot = atomicAdd($DrawBuffer[0].instanceCount, 1);
-		$CompactBuffer[slot].index = float(index);
+		$CompactBuffer[slot].index = index;
+
+		// Deform slot of the instance, resolved here once per instance rather than per vertex.
+		$CompactBuffer[slot].deform = $DeformSlots[index].Index;
 
 		const int partCount = int($PartCount);
 		for (int i = 1; i < partCount; ++i)
@@ -100,7 +107,7 @@ if (index < int($InstanceCount))
 			<comment/>
 			<position>
 				<first>173</first>
-				<second>201</second>
+				<second>186</second>
 			</position>
 			<parameterDeclaration>{2F1BFD3B-182C-FE45-BE1B-C87D5FDAE15F}</parameterDeclaration>
 		</item>
@@ -109,7 +116,7 @@ if (index < int($InstanceCount))
 			<comment/>
 			<position>
 				<first>165</first>
-				<second>329</second>
+				<second>250</second>
 			</position>
 			<parameterDeclaration>{181F88C6-D41E-4A1A-835D-97ED11490858}</parameterDeclaration>
 		</item>
@@ -117,8 +124,8 @@ if (index < int($InstanceCount))
 			<id>{68041F16-9D20-431B-8671-13ED7CE38EED}</id>
 			<comment/>
 			<position>
-				<first>181</first>
-				<second>393</second>
+				<first>189</first>
+				<second>314</second>
 			</position>
 			<parameterDeclaration>{5BD7E68E-843E-5F4C-9DA9-15DB66FA288E}</parameterDeclaration>
 		</item>
@@ -127,7 +134,7 @@ if (index < int($InstanceCount))
 			<comment/>
 			<position>
 				<first>149</first>
-				<second>457</second>
+				<second>442</second>
 			</position>
 			<parameterDeclaration>{39E27A9D-4CCD-0F42-881E-95744149442E}</parameterDeclaration>
 		</item>
@@ -136,7 +143,7 @@ if (index < int($InstanceCount))
 			<comment/>
 			<position>
 				<first>149</first>
-				<second>521</second>
+				<second>506</second>
 			</position>
 			<parameterDeclaration>{636BD145-F27A-0A45-9DE8-9574E4DB5683}</parameterDeclaration>
 		</item>
@@ -145,9 +152,18 @@ if (index < int($InstanceCount))
 			<comment/>
 			<position>
 				<first>157</first>
-				<second>585</second>
+				<second>570</second>
 			</position>
 			<parameterDeclaration>{71A347DB-5D26-4CB1-9AF0-CE95EE86A619}</parameterDeclaration>
+		</item>
+		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
+			<id>{3C860A29-F3D6-4354-BA20-ACA703DEA29E}</id>
+			<comment/>
+			<position>
+				<first>173</first>
+				<second>634</second>
+			</position>
+			<parameterDeclaration>{C1D76E12-D3B0-44F3-9EEC-94C6760BFBB2}</parameterDeclaration>
 		</item>
 	</nodes>
 	<edges>
@@ -229,6 +245,16 @@ if (index < int($InstanceCount))
 			<destination>
 				<node ref="/object/nodes/item[2]"/>
 				<id>{283BC503-0ED5-479C-95DD-75D7F00A5A25}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[9]"/>
+				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[2]"/>
+				<id>{E98F2FD0-0F00-4CC0-94C3-ED911FDC77B5}</id>
 			</destination>
 		</item>
 	</edges>

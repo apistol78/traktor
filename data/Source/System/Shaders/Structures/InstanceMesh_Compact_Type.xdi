@@ -3,7 +3,12 @@
 	<elements>
 		<item>
 			<name>index</name>
-			<type>Float1</type>
+			<type>Integer1</type>
+			<length>0</length>
+		</item>
+		<item>
+			<name>deform</name>
+			<type>Integer1</type>
 			<length>0</length>
 		</item>
 	</elements>

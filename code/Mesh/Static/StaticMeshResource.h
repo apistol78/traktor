@@ -68,6 +68,7 @@ private:
 	resource::Id< render::Shader > m_shader;
 	AlignedVector< resource::Id< render::ITexture > > m_albedoTextures;
 	SmallMap< std::wstring, parts_t > m_parts;
+	AlignedVector< MeshResource::DeformPart > m_deformParts;
 };
 
 }

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2025 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -11,7 +11,7 @@
 #include "Core/Containers/SmallMap.h"
 #include "Core/Math/Aabb3.h"
 #include "Core/Math/Transform.h"
-#include "Mesh/IMesh.h"
+#include "Mesh/DeformMesh.h"
 #include "Render/Shader.h"
 #include "Resource/Proxy.h"
 
@@ -55,7 +55,7 @@ class IMeshParameterCallback;
  * all times should be placed on the GPU for
  * quick rendering.
  */
-class T_DLLCLASS StaticMesh : public IMesh
+class T_DLLCLASS StaticMesh : public DeformMesh
 {
 	T_RTTI_CLASS;
 
@@ -73,18 +73,25 @@ public:
 
 	const techniqueParts_t* findTechniqueParts(render::handle_t technique) const;
 
+	/*! Build draws of the parts of a technique.
+	 *
+	 * \param deformSlot Deform slot the instance holds, or -1 when drawn undeformed.
+	 */
 	void build(
 		render::RenderContext* renderContext,
 		const world::IWorldRenderPass& worldRenderPass,
 		const techniqueParts_t& techniqueParts,
 		const Transform& lastWorldTransform,
 		const Transform& worldTransform,
+		int32_t deformSlot,
 		float distance,
 		const IMeshParameterCallback* parameterCallback);
 
 	const render::IAccelerationStructure* getAccelerationStructure() const { return m_rtAccelerationStructure; }
 
 	const render::Buffer* getRTVertexAttributes() const;
+
+	const render::Shader* getShader() const { return m_shader; }
 
 private:
 	friend class StaticMeshResource;

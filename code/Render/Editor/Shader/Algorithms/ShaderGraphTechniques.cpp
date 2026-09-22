@@ -123,8 +123,22 @@ ShaderGraphTechniques::ShaderGraphTechniques(const ShaderGraph* shaderGraph, con
 				}
 			}
 
+			// Compute techniques, i.e. only rooted in compute outputs or compute scripts,
+			// have no use for a vertex output; a shader may carry both graphics and compute
+			// techniques in which case the unnamed vertex output belongs to the former only.
+			bool computeOnly = !roots.empty();
+			for (auto root : roots)
+			{
+				if (is_a< ComputeOutput >(root))
+					continue;
+				if (auto script = dynamic_type_cast< Script* >(root); script != nullptr && script->getDomain() == Script::Compute)
+					continue;
+				computeOnly = false;
+				break;
+			}
+
 			// If no explicit named vertex output we'll try to find an unnamed vertex output.
-			if (!foundNamedVertexOutput)
+			if (!foundNamedVertexOutput && !computeOnly)
 			{
 				for (auto node : nodes)
 				{

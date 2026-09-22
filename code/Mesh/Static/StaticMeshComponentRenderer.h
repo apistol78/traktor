@@ -8,6 +8,7 @@
  */
 #pragma once
 
+#include "Core/Containers/AlignedVector.h"
 #include "World/IEntityRenderer.h"
 
 // import/export mechanism.
@@ -21,9 +22,9 @@
 namespace traktor::mesh
 {
 
-/*! Mesh component renderer.
- * \ingroup Mesh
- */
+class StaticMesh;
+class StaticMeshComponent;
+
 class T_DLLCLASS StaticMeshComponentRenderer : public world::IEntityRenderer
 {
 	T_RTTI_CLASS;
@@ -46,6 +47,9 @@ public:
 		const AlignedVector< Object* >& renderables
 	) override final;
 
+private:
+	AlignedVector< StaticMeshComponent* > m_deform; //!< Components holding a deform slot this frame.
+	AlignedVector< StaticMesh* > m_deformMeshes;	//!< Distinct meshes of those components.
 };
 
 }

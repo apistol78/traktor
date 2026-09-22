@@ -41,7 +41,7 @@ Ref< MeshComponent > MeshComponentData::createComponent(resource::IResourceManag
 	else if (is_a< SkinnedMesh >(mesh.getResource()))
 		component = new SkinnedMeshComponent(resource::Proxy< SkinnedMesh >(mesh.getHandle()), renderSystem);
 	else if (is_a< StaticMesh >(mesh.getResource()))
-		component = new StaticMeshComponent(resource::Proxy< StaticMesh >(mesh.getHandle()));
+		component = new StaticMeshComponent(resource::Proxy< StaticMesh >(mesh.getHandle()), renderSystem);
 
 	return component;
 }

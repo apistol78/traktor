@@ -122,8 +122,9 @@ public:
 	{
 		CullingComponent* owner = nullptr;
 		ICullable* cullable = nullptr;
-		intptr_t ordinal = 0;
+		intptr_t ordinal = 0;				//!< All instances with same ordinal become a batch.
 		bool dynamic = false;
+		uint32_t batchIndex = 0;			//!< Index of instance within batch.
 		Transform transform;
 		Transform lastTransform;
 		Aabb3 boundingBox;
@@ -137,6 +138,9 @@ public:
 		 * Dynamic instances are not rendered in static only passes.
 		 */
 		void setDynamic(bool dynamic);
+
+		/*! Flag instance as moving this frame, without changing its transform, so velocities are rendered. */
+		void setVelocityDirty();
 	};
 
 	explicit CullingComponent(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem);
@@ -166,6 +170,8 @@ private:
 	void destroyInstance(Instance* instance);
 
 	void insertInstance(Instance* instance);
+
+	void updateBatchIndices();
 };
 
 }

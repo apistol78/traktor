@@ -10,6 +10,7 @@
 
 #include "Core/Misc/SafeDestroy.h"
 #include "Mesh/Instance/InstanceMesh.h"
+#include "Render/IAccelerationStructure.h"
 #include "World/Entity.h"
 #include "World/IWorldRenderPass.h"
 #include "World/World.h"
@@ -36,6 +37,7 @@ InstanceMeshComponent::~InstanceMeshComponent()
 
 void InstanceMeshComponent::destroy()
 {
+	releaseDeformSlot();
 	safeDestroy(m_cullingInstance);
 	safeDestroy(m_rtwInstance);
 	m_mesh.clear();
@@ -45,6 +47,7 @@ void InstanceMeshComponent::destroy()
 void InstanceMeshComponent::setWorld(world::World* world)
 {
 	MeshComponent::setWorld(world);
+	releaseDeformSlot();
 	safeDestroy(m_cullingInstance);
 	safeDestroy(m_rtwInstance);
 }
@@ -76,6 +79,7 @@ void InstanceMeshComponent::setState(const world::EntityState& state, const worl
 	}
 	else
 	{
+		releaseDeformSlot();
 		safeDestroy(m_cullingInstance);
 		safeDestroy(m_rtwInstance);
 	}
@@ -98,6 +102,8 @@ void InstanceMeshComponent::setup(
 	// Recreate RT and culling if mesh has been reloaded.
 	if (m_mesh.changed())
 	{
+		releaseDeformSlot();
+
 		if (m_rtwInstance)
 		{
 			safeDestroy(m_rtwInstance);
@@ -129,6 +135,92 @@ void InstanceMeshComponent::setup(
 
 			m_cullingInstance->setTransform(m_transform->currentRender);
 		}
+	}
+}
+
+bool InstanceMeshComponent::setupDeform(const world::WorldRenderView& worldRenderView)
+{
+	T_ASSERT(m_mesh->haveDeform());
+
+	// Only instances which are culled, i.e. visible, deform.
+	const bool inRange = (m_cullingInstance != nullptr) && DeformMesh::isWithinDeformDistance(m_transform->currentRender, m_mesh->getBoundingBox(), worldRenderView.getEyePosition());
+	if (inRange && m_deformSlot < 0)
+	{
+		m_deformSlot = m_mesh->allocateDeformSlot(this);
+		m_deformSlotMesh = m_mesh.getResource();
+		m_deformSlotNew = true;
+	}
+	else if (!inRange && m_deformSlot >= 0)
+		releaseDeformSlot();
+
+	// Deformed instances move every frame regardless of their transforms.
+	if (m_deformSlot >= 0 && m_cullingInstance)
+		m_cullingInstance->setVelocityDirty();
+
+	return m_deformSlot >= 0;
+}
+
+bool InstanceMeshComponent::getBatchIndex(uint32_t& outBatchIndex) const
+{
+	if (!m_cullingInstance)
+		return false;
+	outBatchIndex = m_cullingInstance->batchIndex;
+	return true;
+}
+
+void InstanceMeshComponent::buildDeform(const world::WorldRenderView& worldRenderView, render::RenderContext* renderContext)
+{
+	T_ASSERT(m_deformSlot >= 0);
+	m_mesh->buildDeformSlot(renderContext, worldRenderView, m_deformSlot, m_transform->currentRender, m_mesh->getShader(), m_parameterCallback, m_deformSlotNew);
+	m_deformSlotNew = false;
+}
+
+void InstanceMeshComponent::buildDeformAccelerationStructure(const world::WorldRenderView& worldRenderView, render::RenderContext* renderContext)
+{
+	T_ASSERT(m_deformSlot >= 0);
+	if (!m_rtwInstance || m_rtwInstance->parts.empty())
+		return;
+
+	// Refitting a structure per instance is expensive in memory, so only the nearest
+	// deformed instances trace their deformed geometry; the rest trace the shared,
+	// undeformed, structure and give theirs back.
+	const render::IAccelerationStructure* blas = nullptr;
+	if (DeformMesh::isWithinDeformRayTracingDistance(m_transform->currentRender, m_mesh->getBoundingBox(), worldRenderView.getEyePosition()))
+		blas = m_mesh->buildDeformSlotAccelerationStructure(renderContext, m_deformSlot);
+	else
+		m_mesh->releaseDeformSlotAccelerationStructure(m_deformSlot);
+
+	if (blas == nullptr)
+		blas = m_mesh->getAccelerationStructure();
+
+	if (m_rtwInstance->parts[0].blas != blas)
+	{
+		m_rtwInstance->parts[0].blas = blas;
+		m_rtwInstance->setDirty();
+	}
+
+	m_rtwInstance->setTransform(m_transform->currentRender);
+}
+
+void InstanceMeshComponent::releaseDeformSlot()
+{
+	if (m_deformSlot < 0)
+		return;
+
+	// The slot belongs to the mesh it was allocated from; after a reload the proxy
+	// refers to a new mesh with its own, empty, pool which knows nothing of the slot.
+	if (m_deformSlotMesh != nullptr && m_deformSlotMesh == m_mesh.getResource())
+		m_deformSlotMesh->releaseDeformSlot(m_deformSlot);
+
+	m_deformSlot = -1;
+	m_deformSlotMesh = nullptr;
+	m_deformSlotNew = false;
+
+	// Back to the shared, undeformed, structure.
+	if (m_rtwInstance && !m_rtwInstance->parts.empty())
+	{
+		m_rtwInstance->parts[0].blas = m_mesh->getAccelerationStructure();
+		m_rtwInstance->setDirty();
 	}
 }
 

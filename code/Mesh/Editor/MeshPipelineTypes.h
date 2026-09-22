@@ -19,6 +19,7 @@ struct MeshMaterialTechnique
 	std::wstring shaderTechnique;	//< Shader, render, technique. e.g. "Mnnnnnnnn".
 	uint32_t hash;					//< Shader technique hash.
 	bool depthStream = false;		//< Technique can be rendered from the mesh's depth-only vertex stream.
+	bool deform = false;			//< Deform compute technique; dispatched over the material's vertices rather than drawn.
 };
 
 }

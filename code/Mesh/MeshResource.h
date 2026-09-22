@@ -57,6 +57,20 @@ class T_DLLCLASS MeshResource : public ISerializable
 	T_RTTI_CLASS;
 
 public:
+	/*! Deform part; a range of the deform vertex index list dispatched with a compute technique.
+	 *
+	 * A part with an empty technique covers the vertices not deformed by any material; those
+	 * copy their undeformed positions so the whole deform buffer is written every frame.
+	 */
+	struct T_DLLCLASS DeformPart
+	{
+		std::wstring shaderTechnique; //!< Deform compute technique of the material, empty to copy.
+		uint32_t indexOffset = 0;	  //!< Offset into the deform vertex index list.
+		uint32_t indexCount = 0;	  //!< Number of vertex indices.
+
+		void serialize(ISerializer& s);
+	};
+
 	virtual Ref< IMesh > createMesh(
 		const std::wstring& name,
 		IStream* dataStream,

@@ -295,6 +295,7 @@ void CullingComponent::destroyInstance(Instance* instance)
 		m_instances.erase(it);
 		m_instanceBufferDirty = true;
 		delete instance;
+		updateBatchIndices();
 	}
 }
 
@@ -306,6 +307,20 @@ void CullingComponent::insertInstance(Instance* instance)
 
 	// All instances following the inserted one have shifted position in the buffer.
 	m_instanceBufferDirty = true;
+	updateBatchIndices();
+}
+
+void CullingComponent::updateBatchIndices()
+{
+	// Instances are sorted by ordinal so each batch is a run; the batch index is the
+	// position within the run, which is also the index the compacted draws use.
+	uint32_t batchIndex = 0;
+	for (uint32_t i = 0; i < (uint32_t)m_instances.size(); ++i)
+	{
+		if (i > 0 && m_instances[i]->ordinal != m_instances[i - 1]->ordinal)
+			batchIndex = 0;
+		m_instances[i]->batchIndex = batchIndex++;
+	}
 }
 
 void CullingComponent::Instance::destroy()
@@ -321,6 +336,12 @@ void CullingComponent::Instance::setTransform(const Transform& transform)
 	this->boundingBox = this->cullable->cullableGetBoundingBox().transform(transform);
 	this->owner->m_instanceBufferDirty = true;
 	this->owner->m_velocityDirty = true;
+}
+
+void CullingComponent::Instance::setVelocityDirty()
+{
+	this->owner->m_velocityDirty = true;
+	this->owner->m_instanceBufferDirty = true;
 }
 
 void CullingComponent::Instance::setDynamic(bool dynamic)

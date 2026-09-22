@@ -35,7 +35,7 @@ const resource::Id< render::Shader > c_shaderInstanceMeshCompact(L"{F46125D0-632
 
 }
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.InstanceMeshResource", 10, InstanceMeshResource, MeshResource)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.InstanceMeshResource", 11, InstanceMeshResource, MeshResource)
 
 Ref< IMesh > InstanceMeshResource::createMesh(
 	const std::wstring& name,
@@ -84,6 +84,12 @@ Ref< IMesh > InstanceMeshResource::createMesh(
 
 	instanceMesh->m_renderMesh = renderMesh;
 
+	// Create deform; instances within deform distance read positions from pooled deform buffers.
+	if (!instanceMesh->createDeform(resourceManager, renderSystem, m_deformParts, renderMesh))
+	{
+		log::error << L"Instance mesh create failed; unable to create deform." << Endl;
+		return nullptr;
+	}
 	for (const auto& part : m_parts)
 	{
 		render::handle_t worldTechnique = render::getParameterHandle(part.first);
@@ -134,6 +140,9 @@ void InstanceMeshResource::serialize(ISerializer& s)
 			 parts_t,
 			 Member< std::wstring >,
 			 MemberAlignedVector< Part, MemberComposite< Part > > >(L"parts", m_parts);
+
+	if (s.getVersion() >= 11)
+		s >> MemberAlignedVector< MeshResource::DeformPart, MemberComposite< MeshResource::DeformPart > >(L"deformParts", m_deformParts);
 }
 
 void InstanceMeshResource::Part::serialize(ISerializer& s)

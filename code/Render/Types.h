@@ -685,6 +685,7 @@ struct RaytracingPrimitives
 {
 	Primitives primitives;
 	bool opaque;
+	uint32_t firstVertex = 0; //!< Added to every index when building; addresses geometry stored at an offset into the vertex buffer.
 };
 
 /*! Copy region. */

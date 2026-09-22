@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,8 +8,8 @@
  */
 #pragma once
 
-#include "Core/Object.h"
 #include "Core/Misc/FourCC.h"
+#include "Core/Object.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -22,7 +22,7 @@
 namespace traktor::mesh
 {
 
-/*! Runtime mesh interface.
+/*! Mesh base.
  * \ingroup Mesh
  */
 class T_DLLCLASS IMesh : public Object

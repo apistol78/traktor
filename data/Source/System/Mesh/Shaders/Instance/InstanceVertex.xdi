@@ -5,8 +5,8 @@
 			<id>{9EE92C6C-4FEB-E445-B5C8-0D66293F1261}</id>
 			<comment/>
 			<position>
-				<first>364</first>
-				<second>34</second>
+				<first>351</first>
+				<second>329</second>
 			</position>
 			<fragmentGuid>{ED92EDEC-EAFA-4A37-91A3-21F32B1BE644}</fragmentGuid>
 			<inputPins>
@@ -37,8 +37,8 @@
 			<id>{368E63A4-F96F-034E-9073-DC8F859F09C0}</id>
 			<comment/>
 			<position>
-				<first>-187</first>
-				<second>-2</second>
+				<first>-179</first>
+				<second>183</second>
 			</position>
 			<name>Position</name>
 			<usage>Position</usage>
@@ -49,8 +49,8 @@
 			<id>{72CA45F5-0FA5-204C-A057-2AF046DBB046}</id>
 			<comment/>
 			<position>
-				<first>174</first>
-				<second>96</second>
+				<first>114</first>
+				<second>238</second>
 			</position>
 			<swizzle>xyz1</swizzle>
 		</item>
@@ -58,8 +58,8 @@
 			<id>{0EC6EBA0-627B-4B4F-BAEB-B7F5B69CD18A}</id>
 			<comment/>
 			<position>
-				<first>911</first>
-				<second>518</second>
+				<first>617</first>
+				<second>284</second>
 			</position>
 			<name>TexCoord0</name>
 			<usage>Custom</usage>
@@ -70,8 +70,8 @@
 			<id>{1DCADDDF-CE7B-D647-BF1A-E16E9B160CC1}</id>
 			<comment/>
 			<position>
-				<first>642</first>
-				<second>411</second>
+				<first>380</first>
+				<second>629</second>
 			</position>
 			<swizzle>xyz</swizzle>
 		</item>
@@ -79,8 +79,8 @@
 			<id>{299C234A-CB7A-5147-B383-660C76E45228}</id>
 			<comment/>
 			<position>
-				<first>364</first>
-				<second>416</second>
+				<first>85</first>
+				<second>420</second>
 			</position>
 			<fragmentGuid>{ED92EDEC-EAFA-4A37-91A3-21F32B1BE644}</fragmentGuid>
 			<inputPins>
@@ -111,8 +111,8 @@
 			<id>{DA0FB948-C99B-914D-8421-B045742EE1D9}</id>
 			<comment/>
 			<position>
-				<first>-169</first>
-				<second>562</second>
+				<first>-179</first>
+				<second>247</second>
 			</position>
 			<name>Normal</name>
 			<usage>Normal</usage>
@@ -123,8 +123,8 @@
 			<id>{F9E04EC4-028A-D14A-B804-1CF776F20C08}</id>
 			<comment/>
 			<position>
-				<first>642</first>
-				<second>364</second>
+				<first>380</first>
+				<second>447</second>
 			</position>
 			<swizzle>xyz</swizzle>
 		</item>
@@ -132,8 +132,8 @@
 			<id>{6E9D327B-AE7B-5C45-98E4-2EF567D99E6C}</id>
 			<comment/>
 			<position>
-				<first>364</first>
-				<second>296</second>
+				<first>85</first>
+				<second>302</second>
 			</position>
 			<fragmentGuid>{ED92EDEC-EAFA-4A37-91A3-21F32B1BE644}</fragmentGuid>
 			<inputPins>
@@ -164,8 +164,8 @@
 			<id>{2992B836-5021-614E-801B-FDD6F76395BE}</id>
 			<comment/>
 			<position>
-				<first>-169</first>
-				<second>514</second>
+				<first>-179</first>
+				<second>119</second>
 			</position>
 			<name>Binormal</name>
 			<usage>Binormal</usage>
@@ -176,8 +176,8 @@
 			<id>{E5E82190-B3EE-9F47-B6AB-C7369BEE7505}</id>
 			<comment/>
 			<position>
-				<first>642</first>
-				<second>457</second>
+				<first>380</first>
+				<second>693</second>
 			</position>
 			<swizzle>xyz</swizzle>
 		</item>
@@ -185,8 +185,8 @@
 			<id>{C3BF109D-DC4C-E944-A20B-DA5F2B879C31}</id>
 			<comment/>
 			<position>
-				<first>364</first>
-				<second>530</second>
+				<first>85</first>
+				<second>538</second>
 			</position>
 			<fragmentGuid>{ED92EDEC-EAFA-4A37-91A3-21F32B1BE644}</fragmentGuid>
 			<inputPins>
@@ -217,8 +217,8 @@
 			<id>{1D09091F-45DA-B148-B6B0-11506248FC2D}</id>
 			<comment/>
 			<position>
-				<first>-169</first>
-				<second>610</second>
+				<first>-179</first>
+				<second>311</second>
 			</position>
 			<name>Tangent</name>
 			<usage>Tangent</usage>
@@ -229,8 +229,8 @@
 			<id>{2F07227C-C9D5-E942-8225-8F4829963715}</id>
 			<comment/>
 			<position>
-				<first>923</first>
-				<second>603</second>
+				<first>631</first>
+				<second>412</second>
 			</position>
 			<fragmentGuid>{0F359947-AADA-6748-B492-44CE56038205}</fragmentGuid>
 			<inputPins>
@@ -251,8 +251,8 @@
 			<id>{527D73C2-014C-B24F-A9EC-DAAB3793BD53}</id>
 			<comment/>
 			<position>
-				<first>648</first>
-				<second>640</second>
+				<first>361</first>
+				<second>265</second>
 			</position>
 			<name>Color</name>
 			<usage>Color</usage>
@@ -263,8 +263,8 @@
 			<id>{46E45D62-2AEE-974F-8555-88A3D21CDB5E}</id>
 			<comment/>
 			<position>
-				<first>911</first>
-				<second>552</second>
+				<first>617</first>
+				<second>348</second>
 			</position>
 			<name>TexCoord1</name>
 			<usage>Custom</usage>
@@ -275,8 +275,8 @@
 			<id>{A7A9BEB5-8B1F-404F-AB70-05B72A18DFF7}</id>
 			<comment/>
 			<position>
-				<first>173</first>
-				<second>16</second>
+				<first>114</first>
+				<second>110</second>
 			</position>
 			<swizzle>xyz1</swizzle>
 		</item>
@@ -284,8 +284,8 @@
 			<id>{477B1B56-8CE8-E149-BB72-2F8B63F04F2F}</id>
 			<comment/>
 			<position>
-				<first>-548</first>
-				<second>282</second>
+				<first>-181</first>
+				<second>386</second>
 			</position>
 			<fragmentGuid>{20E08173-83A8-D949-903E-D1ABB63CDA52}</fragmentGuid>
 			<inputPins/>
@@ -320,8 +320,8 @@
 			<id>{E2553150-7C5C-5847-AD53-AAE413BE9AF2}</id>
 			<comment/>
 			<position>
-				<first>923</first>
-				<second>315</second>
+				<first>623</first>
+				<second>498</second>
 			</position>
 			<fragmentGuid>{93C8C2C3-BE05-EA45-9C6C-BE87B6E6D412}</fragmentGuid>
 			<inputPins>
@@ -374,8 +374,8 @@
 			<id>{9272BDB3-C584-4D45-9C2E-BCAB848DB254}</id>
 			<comment/>
 			<position>
-				<first>1560</first>
-				<second>285</second>
+				<first>1193</first>
+				<second>303</second>
 			</position>
 			<name>Attributes</name>
 		</item>
@@ -383,8 +383,8 @@
 			<id>{3A28F638-03A6-40D1-939C-9C1D34529A39}</id>
 			<comment/>
 			<position>
-				<first>364</first>
-				<second>144</second>
+				<first>351</first>
+				<second>511</second>
 			</position>
 			<fragmentGuid>{ED92EDEC-EAFA-4A37-91A3-21F32B1BE644}</fragmentGuid>
 			<inputPins>
@@ -415,8 +415,8 @@
 			<id>{7FC60B53-9905-4262-841A-8E8BC0DFDEA6}</id>
 			<comment/>
 			<position>
-				<first>1254</first>
-				<second>231</second>
+				<first>895</first>
+				<second>285</second>
 			</position>
 			<fragmentGuid>{B32FEC7C-53C3-4A9C-B8D2-4928D7EED490}</fragmentGuid>
 			<inputPins>
@@ -472,8 +472,8 @@
 			<id>{2D6C7A57-151B-4A93-BE29-7A8FE1FDDD57}</id>
 			<comment/>
 			<position>
-				<first>923</first>
-				<second>120</second>
+				<first>631</first>
+				<second>46</second>
 			</position>
 			<fragmentGuid>{699DA285-CE14-4C70-BE47-453A33DD840A}</fragmentGuid>
 			<inputPins>

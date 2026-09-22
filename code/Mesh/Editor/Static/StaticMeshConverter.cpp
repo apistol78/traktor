@@ -12,6 +12,9 @@
 #include "Core/Math/Half.h"
 #include "Core/Math/Random.h"
 #include "Core/Misc/String.h"
+#include "Editor/IPipelineDepends.h"
+#include "Mesh/DeformMesh.h"
+#include "Mesh/Editor/DeformMeshGeometry.h"
 #include "Mesh/Editor/IndexRange.h"
 #include "Mesh/Editor/MeshAsset.h"
 #include "Mesh/Editor/MeshVertexWriter.h"
@@ -29,12 +32,26 @@
 #include "Render/Mesh/SystemMeshFactory.h"
 #include "World/WorldTypes.h"
 
+#include <algorithm>
 #include <cstring>
 #include <set>
 #include <limits>
 
 namespace traktor::mesh
 {
+namespace
+{
+
+// Compute shader copying undeformed positions of vertices no material deforms.
+const resource::Id< render::Shader > c_shaderDeformCopy(L"{2CA77837-CFFF-4259-A98D-8FC2074FF892}");
+
+
+}
+
+void StaticMeshConverter::addDependencies(editor::IPipelineDepends* pipelineDepends)
+{
+	pipelineDepends->addDependency(c_shaderDeformCopy, editor::PdfBuild);
+}
 
 Ref< MeshResource > StaticMeshConverter::createResource() const
 {
@@ -99,6 +116,16 @@ bool StaticMeshConverter::convert(
 	SmallMap< FourCC, uint32_t > auxBufferSizes;
 	if (rtVertexAttributesSize > 0)
 		auxBufferSizes[IMesh::c_fccRayTracingVertexAttributes] = rtVertexAttributesSize;
+
+	// Deform geometry; per-material vertex lists dispatched with the Deform techniques.
+	// Only present when some material deforms.
+	DeformGeometry deformGeometry;
+	buildDeformGeometry(model, rtModel, rtSharedVertexCount, totalVertexCount, materialTechniqueMap, deformGeometry);
+	if (!deformGeometry.empty())
+	{
+		auxBufferSizes[DeformMesh::c_fccDeformVertices] = getDeformVerticesSize(totalVertexCount);
+		auxBufferSizes[DeformMesh::c_fccDeformIndices] = getDeformIndicesSize(deformGeometry);
+	}
 
 	Ref< render::Mesh > renderMesh = render::SystemMeshFactory().createMesh(
 		vertexElements,
@@ -168,6 +195,10 @@ bool StaticMeshConverter::convert(
 	if (depthVertexBufferSize > 0)
 		renderMesh->getDepthVertexBuffer()->unlock();
 
+	// Write deform source vertices and the vertex index lists of the deform parts.
+	if (!deformGeometry.empty())
+		writeDeformGeometry(renderMesh, model, rtModel, rtSharedVertexCount, deformGeometry);
+
 	// Create index buffer.
 	std::map< std::wstring, AlignedVector< IndexRange > > techniqueRanges;
 
@@ -204,6 +235,10 @@ bool StaticMeshConverter::convert(
 
 		for (const auto& mtt : mt.second)
 		{
+			// Deform techniques are dispatched over vertex lists, not drawn.
+			if (mtt.deform)
+				continue;
+
 			const std::wstring technique = mtt.worldTechnique + L"/" + mtt.shaderTechnique;
 			range.mergeInto(techniqueRanges[technique]);
 		}
@@ -316,6 +351,7 @@ bool StaticMeshConverter::convert(
 	checked_type_cast< StaticMeshResource* >(meshResource)->m_shader = resource::Id< render::Shader >(materialGuid);
 	checked_type_cast< StaticMeshResource* >(meshResource)->m_albedoTextures = albedoTextures;
 	checked_type_cast< StaticMeshResource* >(meshResource)->m_parts = parts;
+	checked_type_cast< StaticMeshResource* >(meshResource)->m_deformParts = deformGeometry.parts;
 	return true;
 }
 

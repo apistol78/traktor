@@ -30,6 +30,10 @@ namespace
 
 const Guid c_meshShaderTemplate(L"{E657266C-4925-1A40-9225-0776ACC3B0E8}");
 const Guid c_meshVertexInterface(L"{4015ACBD-D998-6243-B379-21BB383B864E}");
+const Guid c_meshDeformInterface(L"{DC33B670-EF10-4D67-83F4-3B2D3826261E}");
+
+// Default deform interface implementation; the static mesh compute vertex source.
+const Guid c_staticDeformSource(L"{25B87AFD-AF4F-4C2C-8955-39438966B57F}");
 
 // Fragments from world MaterialShaderGenerator.
 const Guid c_materialInterface(L"{139CACBD-2A79-5644-B9BC-B113F66D50EA}");
@@ -69,7 +73,8 @@ Ref< render::ShaderGraph > VertexShaderGenerator::generateMesh(
 	const model::Model& model,
 	const model::Material& material,
 	const render::ShaderGraph* meshSurfaceShaderGraph,
-	const Guid& vertexShaderGuid) const
+	const Guid& vertexShaderGuid,
+	const Guid& deformShaderGuid) const
 {
 	// Create a mutable material mesh shader.
 	Ref< render::ShaderGraph > meshShaderGraph = DeepClone(m_resolve(c_meshShaderTemplate)).create< render::ShaderGraph >();
@@ -122,8 +127,9 @@ Ref< render::ShaderGraph > VertexShaderGenerator::generateMesh(
 			return nullptr;
 	}
 
-	// Replace vertex interface with concrete implementation fragment.
+	// Replace vertex and deform interfaces with concrete implementation fragments.
 	bool replacedVertexInterface = false;
+	bool replacedDeformInterface = false;
 	for (auto externalNode : meshShaderGraph->findNodesOf< render::External >())
 	{
 		const Guid& fragmentGuid = externalNode->getFragmentGuid();
@@ -132,8 +138,13 @@ Ref< render::ShaderGraph > VertexShaderGenerator::generateMesh(
 			externalNode->setFragmentGuid(vertexShaderGuid);
 			replacedVertexInterface = true;
 		}
+		else if (fragmentGuid == c_meshDeformInterface)
+		{
+			externalNode->setFragmentGuid(deformShaderGuid.isNotNull() ? deformShaderGuid : c_staticDeformSource);
+			replacedDeformInterface = true;
+		}
 	}
-	if (!replacedVertexInterface)
+	if (!replacedVertexInterface || !replacedDeformInterface)
 		return nullptr;
 
 	return meshShaderGraph;
@@ -143,6 +154,8 @@ void VertexShaderGenerator::addDependencies(editor::IPipelineDepends* pipelineDe
 {
 	pipelineDepends->addDependency(c_meshShaderTemplate, editor::PdfUse);
 	pipelineDepends->addDependency(c_meshVertexInterface, editor::PdfUse);
+	pipelineDepends->addDependency(c_meshDeformInterface, editor::PdfUse);
+	pipelineDepends->addDependency(c_staticDeformSource, editor::PdfUse);
 }
 
 }

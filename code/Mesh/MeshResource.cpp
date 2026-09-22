@@ -20,4 +20,11 @@ void MeshResource::serialize(ISerializer& s)
 	s >> Member< bool >(L"compressed", m_compressed);
 }
 
+void MeshResource::DeformPart::serialize(ISerializer& s)
+{
+	s >> Member< std::wstring >(L"shaderTechnique", shaderTechnique);
+	s >> Member< uint32_t >(L"indexOffset", indexOffset);
+	s >> Member< uint32_t >(L"indexCount", indexCount);
+}
+
 }
