@@ -51,4 +51,19 @@ bool MoveQuery::update(const Vector4& currentPosition, Vector4& outMoveToPositio
 	return false;
 }
 
+uint32_t MoveQuery::getSteerPathCount() const
+{
+	return (uint32_t)m_steerPath.size();
+}
+
+const Vector4& MoveQuery::getSteerPathPosition(uint32_t index) const
+{
+	return m_steerPath[index];
+}
+
+uint32_t MoveQuery::getSteerIndex() const
+{
+	return (uint32_t)m_steerIndex;
+}
+
 }

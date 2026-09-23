@@ -47,6 +47,19 @@ public:
 	 */
 	bool update(const Vector4& currentPosition, Vector4& outMoveToPosition, float nodeDistanceThreshold);
 
+	/*! Number of positions in the steer path, including those already passed. */
+	uint32_t getSteerPathCount() const;
+
+	/*! Position in the steer path.
+	 *
+	 * \param index Index of position, must be less than getSteerPathCount().
+	 * \return Steer path position.
+	 */
+	const Vector4& getSteerPathPosition(uint32_t index) const;
+
+	/*! Index of steer path position currently moving towards, equal to getSteerPathCount() when arrived. */
+	uint32_t getSteerIndex() const;
+
 private:
 	friend class NavMesh;
 

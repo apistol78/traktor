@@ -87,6 +87,9 @@ void AiClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 {
 	auto classMoveQuery = new AutoRuntimeClass< MoveQuery >();
 	classMoveQuery->addMethod("update", &MoveQuery_update);
+	classMoveQuery->addMethod("getSteerPathCount", &MoveQuery::getSteerPathCount);
+	classMoveQuery->addMethod("getSteerPathPosition", &MoveQuery::getSteerPathPosition);
+	classMoveQuery->addMethod("getSteerIndex", &MoveQuery::getSteerIndex);
 	registrar->registerClass(classMoveQuery);
 
 	auto classMoveQueryResult = new AutoRuntimeClass< MoveQueryResult >();
