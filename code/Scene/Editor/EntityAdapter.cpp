@@ -429,8 +429,8 @@ void EntityAdapter::setLocked(bool locked)
 
 bool EntityAdapter::isLocked(bool includingParents) const
 {
-	if (!m_entityData->getState().locked)
-		return false;
+	if (m_entityData->getState().locked)
+		return true;
 
 	if (includingParents)
 	{
