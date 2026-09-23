@@ -23,6 +23,7 @@ const render::Handle ShaderTechnique::ReflectionWrite(L"World_ReflectionWrite");
 const render::Handle ShaderTechnique::VelocityWrite(L"World_VelocityWrite");
 const render::Handle ShaderTechnique::ZPrePassWrite(L"World_ZPrePassWrite");
 const render::Handle ShaderTechnique::PostDepthWrite(L"World_PostDepthWrite");
+const render::Handle ShaderTechnique::EntityIdWrite(L"World_EntityIdWrite");
 const render::Handle ShaderTechnique::Shadow(L"World_ShadowWrite");
 
 // Permutations
@@ -120,6 +121,12 @@ const render::Handle ShaderParameter::FogVolumeMediumDensity(L"World_FogVolumeMe
 
 // Contact shadows.
 const render::Handle ShaderParameter::ContactLightDirection(L"World_ContactLightDirection");
+
+// EntityId
+const render::Handle ShaderParameter::EntityId(L"World_EntityId");
+const render::Handle ShaderParameter::EntityIdInput(L"World_EntityIdInput");
+const render::Handle ShaderParameter::EntityIdBuffer(L"World_EntityIdBuffer");
+const render::Handle ShaderParameter::EntityIdParams(L"World_EntityIdParams");
 
 // ImageGraph inputs.
 const render::Handle ShaderParameter::InputColor(L"InputColor");

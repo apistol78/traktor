@@ -35,6 +35,7 @@ struct T_DLLCLASS ShaderTechnique
 	static const render::Handle VelocityWrite;
 	static const render::Handle ZPrePassWrite;
 	static const render::Handle PostDepthWrite;
+	static const render::Handle EntityIdWrite;
 	static const render::Handle Shadow;
 };
 
@@ -138,6 +139,12 @@ struct T_DLLCLASS ShaderParameter
 
 	// Contact shadows.
 	static const render::Handle ContactLightDirection;
+
+	// EntityId
+	static const render::Handle EntityId;
+	static const render::Handle EntityIdInput;
+	static const render::Handle EntityIdBuffer;
+	static const render::Handle EntityIdParams;
 
 	// ImageGraph inputs.
 	static const render::Handle InputColor;

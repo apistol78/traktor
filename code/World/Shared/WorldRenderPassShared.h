@@ -57,9 +57,9 @@ public:
 
 	virtual render::Shader::Permutation getPermutation(const render::Shader* shader) const override final;
 
-	virtual void setProgramParameters(render::ProgramParameters* programParams) const override final;
+	virtual void setProgramParameters(render::ProgramParameters* programParams) const override;
 
-	virtual void setProgramParameters(render::ProgramParameters* programParams, const Transform& lastWorld, const Transform& world) const override final;
+	virtual void setProgramParameters(render::ProgramParameters* programParams, const Transform& lastWorld, const Transform& world) const override;
 
 private:
 	render::handle_t m_technique;

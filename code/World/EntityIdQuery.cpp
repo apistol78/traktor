@@ -30,8 +30,7 @@ bool EntityIdQuery::poll(Ref< Entity >& outEntity)
 	const float* slots = (const float*)m_readBackBuffer->lock();
 	if (!slots)
 		return false;
-
-	const float value = slots[m_slot];
+	const float value = slots[0];
 	m_readBackBuffer->unlock();
 
 	// Slot is reset to a negative value when rendered; still in flight until overwritten by the GPU.

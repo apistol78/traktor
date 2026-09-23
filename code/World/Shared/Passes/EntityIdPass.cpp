@@ -40,50 +40,32 @@ namespace
 
 const resource::Id< render::Shader > c_readBackShader(L"{23A40284-2D7E-4DB3-B169-D0DADFCF842D}"); // System/World/EntityId/Shaders/EntityIdReadBack
 
-const render::Handle s_techniqueEntityIdWrite(L"World_EntityIdWrite");
-const render::Handle s_handleEntityId(L"World_EntityId");
-const render::Handle s_handleEntityIdInput(L"World_EntityIdInput");
-const render::Handle s_handleEntityIdBuffer(L"World_EntityIdBuffer");
-const render::Handle s_handleEntityIdParams(L"World_EntityIdParams");
-
-constexpr uint32_t c_readBackSlotCount = 4;
 constexpr float c_readBackPending = -1.0f;
 
 /*! World render pass stamping each draw with the id of the entity being built. */
-class EntityIdRenderPass : public IWorldRenderPass
+class EntityIdRenderPass : public WorldRenderPassShared
 {
 public:
 	explicit EntityIdRenderPass(render::ProgramParameters* sharedParams, const WorldRenderView& worldRenderView)
-		: m_worldRenderPass(s_techniqueEntityIdWrite, sharedParams, worldRenderView)
+		: WorldRenderPassShared(ShaderTechnique::EntityIdWrite, sharedParams, worldRenderView)
 	{
 	}
 
 	void setId(float id) { m_id = id; }
 
-	virtual render::handle_t getTechnique() const override final
-	{
-		return m_worldRenderPass.getTechnique();
-	}
-
-	virtual render::Shader::Permutation getPermutation(const render::Shader* shader) const override final
-	{
-		return m_worldRenderPass.getPermutation(shader);
-	}
-
 	virtual void setProgramParameters(render::ProgramParameters* programParams) const override final
 	{
-		m_worldRenderPass.setProgramParameters(programParams);
-		programParams->setFloatParameter(s_handleEntityId, m_id);
+		WorldRenderPassShared::setProgramParameters(programParams);
+		programParams->setFloatParameter(ShaderParameter::EntityId, m_id);
 	}
 
 	virtual void setProgramParameters(render::ProgramParameters* programParams, const Transform& lastWorld, const Transform& world) const override final
 	{
-		m_worldRenderPass.setProgramParameters(programParams, lastWorld, world);
-		programParams->setFloatParameter(s_handleEntityId, m_id);
+		WorldRenderPassShared::setProgramParameters(programParams, lastWorld, world);
+		programParams->setFloatParameter(ShaderParameter::EntityId, m_id);
 	}
 
 private:
-	WorldRenderPassShared m_worldRenderPass;
 	float m_id = 0.0f;
 };
 
@@ -111,7 +93,7 @@ bool EntityIdPass::create(resource::IResourceManager* resourceManager, render::I
 
 	Ref< render::Buffer > readBackBuffer = renderSystem->createBuffer(
 		render::BufferUsage::BuStructured | render::BufferUsage::BuReadBack,
-		c_readBackSlotCount * sizeof(float),
+		sizeof(float),
 		false,
 		T_FILE_LINE_W);
 	if (!readBackBuffer)
@@ -124,8 +106,7 @@ bool EntityIdPass::create(resource::IResourceManager* resourceManager, render::I
 		log::warning << L"Unable to create entity id pass; read back buffer is not readable." << Endl;
 		return false;
 	}
-	for (uint32_t i = 0; i < c_readBackSlotCount; ++i)
-		slots[i] = c_readBackPending;
+	slots[0] = c_readBackPending;
 	readBackBuffer->unlock();
 
 	m_entityRenderers = desc.entityRenderers;
@@ -170,11 +151,10 @@ void EntityIdPass::setup(
 	T_PROFILER_SCOPE(L"EntityIdPass::setup");
 
 	// Reset slot this request is read back into; the GPU overwrites it with the id.
-	const uint32_t slot = (m_query->m_slot + 1) % c_readBackSlotCount;
 	float* slots = (float*)m_query->m_readBackBuffer->lock();
 	if (!slots)
 		return;
-	slots[slot] = c_readBackPending;
+	slots[0] = c_readBackPending;
 	m_query->m_readBackBuffer->unlock();
 
 	// Assign ids to entities gathered by the world renderer, all components of an entity are drawn with its id.
@@ -298,9 +278,9 @@ void EntityIdPass::setup(
 
 		renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
 		renderBlock->programParams->beginParameters(renderContext);
-		renderBlock->programParams->setImageViewParameter(s_handleEntityIdInput, entityIdTargetSet->getColorTexture(0), 0);
-		renderBlock->programParams->setBufferViewParameter(s_handleEntityIdBuffer, readBackBuffer->getBufferView());
-		renderBlock->programParams->setVectorParameter(s_handleEntityIdParams, Vector4((float)x, (float)y, (float)slot, 0.0f));
+		renderBlock->programParams->setImageViewParameter(ShaderParameter::EntityIdInput, entityIdTargetSet->getColorTexture(0), 0);
+		renderBlock->programParams->setBufferViewParameter(ShaderParameter::EntityIdBuffer, readBackBuffer->getBufferView());
+		renderBlock->programParams->setVectorParameter(ShaderParameter::EntityIdParams, Vector4((float)x, (float)y, 0.0f, 0.0f));
 		renderBlock->programParams->endParameters(renderContext);
 
 		renderContext->compute(renderBlock);
@@ -308,7 +288,6 @@ void EntityIdPass::setup(
 
 	renderGraph.addPass(rrp);
 
-	m_query->m_slot = slot;
 	m_query->m_state = EntityIdQuery::State::Rendered;
 }
 

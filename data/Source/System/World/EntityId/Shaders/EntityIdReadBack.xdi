@@ -36,8 +36,7 @@
 			<script><![CDATA[
 // Copy entity id of a single texel into a read back slot.
 const ivec2 pt = ivec2($Params.xy);
-const int slot = int($Params.z);
-$Buffer[slot].id = imageLoad($Input, pt).x;
+$Buffer[0].id = imageLoad($Input, pt).x;
 ]]></script>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">

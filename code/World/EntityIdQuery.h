@@ -78,7 +78,6 @@ private:
 	Vector2 m_position = Vector2(0.0f, 0.0f);
 	bool m_supported = false;
 	Ref< render::Buffer > m_readBackBuffer;
-	uint32_t m_slot = 0;
 	RefArray< Entity > m_entities;			//!< Entity of each id, first id is 1.
 	RefArray< Entity > m_instanceEntities;	//!< Entity of each culling instance, first id is m_instanceBase.
 	uint32_t m_instanceBase = 0;
