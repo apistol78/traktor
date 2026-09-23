@@ -46,6 +46,10 @@ other instances use the vertex stream. Remaining attributes come from the stream
 					<id>{BAF9D351-0B98-4C8A-A057-F7BEF933D489}</id>
 					<name>TranslationLast</name>
 				</item>
+				<item>
+					<id>{B825DB3E-D339-449E-A9C0-C0BCF22AC338}</id>
+					<name>Index</name>
+				</item>
 			</outputPins>
 		</item>
 		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
@@ -664,6 +668,11 @@ else
 					<name>World</name>
 					<optional>true</optional>
 				</item>
+				<item>
+					<id>{982CAE26-A396-42C6-8B83-4D30EC2DA4DA}</id>
+					<name>InstanceId</name>
+					<optional>true</optional>
+				</item>
 			</inputPins>
 			<outputPins>
 				<item>
@@ -1121,6 +1130,16 @@ else
 			<destination>
 				<node ref="/object/nodes/item[32]"/>
 				<id>{731844D4-AFDC-4EAA-8B41-C4BA2455898F}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[1]"/>
+				<id>{B825DB3E-D339-449E-A9C0-C0BCF22AC338}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[31]"/>
+				<id>{982CAE26-A396-42C6-8B83-4D30EC2DA4DA}</id>
 			</destination>
 		</item>
 	</edges>

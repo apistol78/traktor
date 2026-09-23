@@ -10,6 +10,7 @@
 #include "Database/Database.h"
 #include "Editor/IEditor.h"
 #include "Scene/Editor/EntityAdapter.h"
+#include "Scene/Editor/IEntityEditor.h"
 #include "Scene/Editor/IModifier.h"
 #include "Scene/Editor/ISceneRenderControl.h"
 #include "Scene/Editor/RenderControlModel.h"
@@ -17,11 +18,15 @@
 #include "Scene/Editor/TransformChain.h"
 #include "Ui/Application.h"
 #include "Ui/Widget.h"
+#include "World/Entity.h"
+#include "World/Entity/GroupComponent.h"
 
 namespace traktor::scene
 {
 	namespace
 	{
+
+const double c_pickTimeout = 2.0;
 
 int32_t translateMouseButton(int32_t uimb)
 {
@@ -33,6 +38,55 @@ int32_t translateMouseButton(int32_t uimb)
 		return 3;
 	else
 		return 0;
+}
+
+bool isEntityInside(const world::Entity* parent, const world::Entity* entity)
+{
+	auto group = parent->getComponent< world::GroupComponent >();
+	if (!group)
+		return false;
+
+	for (auto child : group->getEntities())
+	{
+		if (child == entity || isEntityInside(child, entity))
+			return true;
+	}
+
+	return false;
+}
+
+/*! Find adapter of picked entity, nullptr if adapter isn't pickable.
+ *
+ * Entities instantiated from an external have no adapters of their own thus
+ * the external is picked, as are the parents of private adapters.
+ */
+EntityAdapter* findPickedAdapter(SceneEditorContext* context, const world::Entity* entity)
+{
+	EntityAdapter* entityAdapter = context->findAdapterFromEntity(entity);
+	if (!entityAdapter)
+	{
+		for (auto externalAdapter : context->getEntities(SceneEditorContext::GfDescendants | SceneEditorContext::GfExternalOnly))
+		{
+			if (externalAdapter->getEntity() != nullptr && isEntityInside(externalAdapter->getEntity(), entity))
+			{
+				entityAdapter = externalAdapter;
+				break;
+			}
+		}
+	}
+
+	while (entityAdapter != nullptr && (entityAdapter->isPrivate() || entityAdapter->isChildOfExternal()))
+		entityAdapter = entityAdapter->getParent();
+
+	// Must be unlocked, visible and pickable.
+	if (entityAdapter == nullptr || entityAdapter->isLocked() || !entityAdapter->isVisible())
+		return nullptr;
+
+	IEntityEditor* entityEditor = entityAdapter->getEntityEditor();
+	if (!entityEditor || !entityEditor->isPickable())
+		return nullptr;
+
+	return entityAdapter;
 }
 
 	}
@@ -47,11 +101,17 @@ RenderControlModel::RenderControlModel()
 ,	m_modify(MtNothing)
 ,	m_moveCamera(0)
 ,	m_movementSpeed(40.0f)
+,	m_pickPending(false)
+,	m_pickKeyState(0)
+,	m_pickTime(0.0)
 {
 }
 
 void RenderControlModel::update(ISceneRenderControl* renderControl, ui::Widget* renderWidget, SceneEditorContext* context, const TransformChain& transformChain)
 {
+	if (m_pickPending)
+		updatePick(renderControl, context);
+
 	if (m_mouseButton == 0 || m_moveCamera == 0)
 		return;
 
@@ -93,6 +153,9 @@ void RenderControlModel::eventButtonDown(ISceneRenderControl* renderControl, ui:
 	m_modifyAlternative = false;
 	m_modifyClone = false;
 	m_modifyBegun = false;
+
+	// Discard pending pick; selection might be modified by this click.
+	m_pickPending = false;
 
 	T_ASSERT(m_modify == MtNothing);
 
@@ -203,6 +266,15 @@ void RenderControlModel::eventButtonUp(ISceneRenderControl* renderControl, ui::W
 
 				context->raiseSelect(true);
 			}
+		}
+		else if (renderControl->requestEntity(m_mousePosition))
+		{
+			// Single clicked; entity rendered at position is read back from the GPU
+			// thus selection is updated in update when resolved.
+			m_pickPending = true;
+			m_pickKeyState = event->getKeyState();
+			m_pickTime = m_timer.getElapsedTime();
+			context->enqueueRedraw(renderControl);
 		}
 		else
 		{
@@ -463,6 +535,43 @@ void RenderControlModel::eventKeyUp(ISceneRenderControl* renderControl, ui::Widg
 
 	context->enqueueRedraw(renderControl);
 	event->consume();
+}
+
+void RenderControlModel::updatePick(ISceneRenderControl* renderControl, SceneEditorContext* context)
+{
+	Ref< world::Entity > entity;
+	if (!renderControl->pollEntity(entity))
+	{
+		// Keep rendering until entity has been read back.
+		if (m_timer.getElapsedTime() - m_pickTime < c_pickTimeout)
+			context->enqueueRedraw(renderControl);
+		else
+		{
+			log::warning << L"Unable to pick entity; request timed out." << Endl;
+			m_pickPending = false;
+		}
+		return;
+	}
+
+	m_pickPending = false;
+
+	EntityAdapter* entityAdapter = entity ? findPickedAdapter(context, entity) : nullptr;
+
+	// De-select all other if shift isn't held.
+	if ((m_pickKeyState & (ui::KsShift | ui::KsControl)) == 0)
+		context->selectAllEntities(false);
+
+	if (entityAdapter)
+	{
+		// Toggle selection if ctrl is being held.
+		if ((m_pickKeyState & ui::KsControl) == 0)
+			context->selectEntity(entityAdapter, true);
+		else
+			context->selectEntity(entityAdapter, !entityAdapter->isSelected());
+	}
+
+	context->raiseSelect(true);
+	context->enqueueRedraw(renderControl);
 }
 
 }

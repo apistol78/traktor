@@ -37,6 +37,7 @@ class PrimitiveRenderer;
 namespace traktor::world
 {
 
+class EntityIdQuery;
 class IWorldRenderer;
 
 }
@@ -92,6 +93,10 @@ public:
 
 	virtual void showSelectionRectangle(const ui::Rect& rect) override final;
 
+	virtual bool requestEntity(const ui::Point& position) override final;
+
+	virtual bool pollEntity(Ref< world::Entity >& outEntity) override final;
+
 private:
 	Ref< SceneEditorContext > m_context;
 	Ref< ui::Widget > m_renderWidget;
@@ -101,6 +106,7 @@ private:
 	Ref< render::PrimitiveRenderer > m_primitiveRenderer;
 	const TypeInfo* m_worldRendererType;
 	Ref< world::IWorldRenderer > m_worldRenderer;
+	Ref< world::EntityIdQuery > m_entityIdQuery;
 	uint32_t m_worldRendererHash = 0;
 	world::QualitySettings m_worldQuality;
 	RenderControlModel m_model;

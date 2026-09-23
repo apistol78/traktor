@@ -266,6 +266,31 @@ $Output = gl_InstanceIndex;
 			</position>
 			<memberName>index</memberName>
 		</item>
+		<item type="traktor.render.Interpolator" version="traktor.render.Node:1">
+			<id>{95514494-3120-4CD6-9B30-2F6134120FCE}</id>
+			<comment/>
+			<position>
+				<first>700</first>
+				<second>900</second>
+			</position>
+		</item>
+		<item type="traktor.render.Truncate" version="traktor.render.Node:1">
+			<id>{46099F19-826E-472E-B11D-12C396A16D56}</id>
+			<comment/>
+			<position>
+				<first>900</first>
+				<second>900</second>
+			</position>
+		</item>
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{B825DB3E-D339-449E-A9C0-C0BCF22AC338}</id>
+			<comment/>
+			<position>
+				<first>1100</first>
+				<second>900</second>
+			</position>
+			<name>Index</name>
+		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge" version="1">
@@ -536,6 +561,36 @@ $Output = gl_InstanceIndex;
 			<destination>
 				<node ref="/object/nodes/item[11]"/>
 				<id>{93DEEDC9-D4C7-47F8-8D6A-A79DABD6BA6A}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[15]"/>
+				<id>{32FD3DAA-16C1-44C8-8A1E-E9ECF97F31D2}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[28]"/>
+				<id>{93DEEDC9-D4C7-47F8-8D6A-A79DABD6BA6A}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[28]"/>
+				<id>{8FFB3BDB-A00E-4406-994C-0D52FAF04871}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[29]"/>
+				<id>{58E01BB0-182E-4FF2-8629-A1EA043A57F1}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[29]"/>
+				<id>{7E002805-FA4B-4EEE-9D3B-6FA3AB0B2DAB}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[30]"/>
+				<id>{731844D4-AFDC-4EAA-8B41-C4BA2455898F}</id>
 			</destination>
 		</item>
 	</edges>

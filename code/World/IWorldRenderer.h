@@ -46,6 +46,7 @@ namespace traktor::world
 {
 
 class Entity;
+class EntityIdQuery;
 class World;
 class WorldEntityRenderers;
 class WorldRenderSettings;
@@ -79,6 +80,7 @@ struct WorldCreateDesc
 	float gamma = 2.2f;
 	bool hdr = false;
 	bool rt = true;
+	EntityIdQuery* entityIdQuery = nullptr; //!< Query entity rendered at a position, only used by the editor.
 };
 
 /*! World renderer.

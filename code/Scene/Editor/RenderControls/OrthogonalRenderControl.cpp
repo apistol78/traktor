@@ -38,6 +38,7 @@
 #include "Ui/Widget.h"
 #include "World/Entity.h"
 #include "World/Entity/GroupComponent.h"
+#include "World/EntityIdQuery.h"
 #include "World/IWorldRenderer.h"
 #include "World/WorldEntityRenderers.h"
 #include "World/WorldRenderSettings.h"
@@ -252,6 +253,11 @@ bool OrthogonalRenderControl::handleCommand(const ui::Command& command)
 
 void OrthogonalRenderControl::update()
 {
+	TransformChain transformChain;
+	transformChain.pushProjection(getProjectionTransform());
+	transformChain.pushView(getViewTransform());
+	m_model.update(this, m_renderWidget, m_context, transformChain);
+
 	m_renderWidget->update(nullptr, false);
 }
 
@@ -332,6 +338,27 @@ void OrthogonalRenderControl::showSelectionRectangle(const ui::Rect& rect)
 	m_selectionRectangle = rect;
 }
 
+bool OrthogonalRenderControl::requestEntity(const ui::Point& position)
+{
+	if (!m_entityIdQuery || !m_entityIdQuery->isSupported())
+		return false;
+
+	const ui::Rect innerRect = m_renderWidget->getInnerRect();
+	if (innerRect.getWidth() <= 0 || innerRect.getHeight() <= 0)
+		return false;
+
+	m_entityIdQuery->request(Vector2(
+		(position.x + 0.5f) / innerRect.getWidth(),
+		(position.y + 0.5f) / innerRect.getHeight()
+	));
+	return true;
+}
+
+bool OrthogonalRenderControl::pollEntity(Ref< world::Entity >& outEntity)
+{
+	return m_entityIdQuery != nullptr && m_entityIdQuery->poll(outEntity);
+}
+
 void OrthogonalRenderControl::updateWorldRenderer()
 {
 	safeDestroy(m_worldRenderer);
@@ -367,6 +394,10 @@ void OrthogonalRenderControl::updateWorldRenderer()
 	wcd.multiSample = m_multiSample;
 	wcd.hdr = m_renderView->isHDR();
 	wcd.rt = m_rayTracingEnable;
+
+	// Query entity rendered at a position, used for picking; not supported by all world renderers.
+	m_entityIdQuery = new world::EntityIdQuery();
+	wcd.entityIdQuery = m_entityIdQuery;
 
 	// Prevent ultra AA quality since jitter cause orthogonal projection to be broken.
 	if (wcd.quality.antiAlias == world::Quality::Ultra)

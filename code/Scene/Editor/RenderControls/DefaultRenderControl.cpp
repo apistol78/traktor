@@ -388,6 +388,16 @@ void DefaultRenderControl::showSelectionRectangle(const ui::Rect& rect)
 		m_renderControl->showSelectionRectangle(rect);
 }
 
+bool DefaultRenderControl::requestEntity(const ui::Point& position)
+{
+	return m_renderControl ? m_renderControl->requestEntity(position) : false;
+}
+
+bool DefaultRenderControl::pollEntity(Ref< world::Entity >& outEntity)
+{
+	return m_renderControl ? m_renderControl->pollEntity(outEntity) : false;
+}
+
 bool DefaultRenderControl::createRenderControl(int32_t type)
 {
 	safeDestroy(m_renderControl);

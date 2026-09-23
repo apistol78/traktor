@@ -10,6 +10,7 @@
 
 #include "Core/Math/Frustum.h"
 #include "Core/Object.h"
+#include "Core/Ref.h"
 #include "Render/Types.h"
 #include "Ui/Rect.h"
 #include "World/IWorldRenderer.h"
@@ -72,6 +73,20 @@ public:
 	virtual void moveCamera(MoveCameraMode mode, const Vector4& mouseDelta, const Vector4& viewDelta) = 0;
 
 	virtual void showSelectionRectangle(const ui::Rect& rect) = 0;
+
+	/*! Request entity rendered at a position.
+	 *
+	 * \param position Position in render control.
+	 * \return True if requested; result is polled with pollEntity.
+	 */
+	virtual bool requestEntity(const ui::Point& position) = 0;
+
+	/*! Poll entity requested by requestEntity.
+	 *
+	 * \param outEntity Entity rendered at requested position, null if none.
+	 * \return True when request has been resolved.
+	 */
+	virtual bool pollEntity(Ref< world::Entity >& outEntity) = 0;
 };
 
 }

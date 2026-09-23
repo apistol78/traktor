@@ -450,6 +450,10 @@ Tag_LightmapTexCoord
 					<id>{040896B1-C2AE-4281-A4F9-D9BBAE3503A1}</id>
 					<name>World</name>
 				</item>
+				<item>
+					<id>{F579A74D-1E2E-4EF2-9CF1-0B73DD6DB0CC}</id>
+					<name>InstanceId</name>
+				</item>
 			</outputPins>
 		</item>
 		<item type="traktor.render.External" version="3,traktor.render.Node:1">
@@ -1029,8 +1033,8 @@ The surface's world position offset is written, in object space, into the
 deform buffer which the raster vertex fragment and the ray tracing BLAS
 update read. Dropped by the mesh pipeline for materials without WPO.]]></comment>
 			<position>
-				<first>-1405</first>
-				<second>1025</second>
+				<first>-1376</first>
+				<second>1108</second>
 			</position>
 		</item>
 		<item type="traktor.render.External" version="3,traktor.render.Node:1">
@@ -1289,6 +1293,51 @@ if (gid < uint($Count))
 				<second>1873</second>
 			</position>
 			<parameterDeclaration>{C1FFA687-8FE7-C54E-AA46-23305604D4F5}</parameterDeclaration>
+		</item>
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
+			<id>{48C6D797-2316-43FA-BD4F-4B569D0120D1}</id>
+			<comment/>
+			<position>
+				<first>-843</first>
+				<second>825</second>
+			</position>
+			<name>Alpha</name>
+		</item>
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
+			<id>{4E46E0CD-7ECA-47F9-82BF-755F9E8B605F}</id>
+			<comment/>
+			<position>
+				<first>-843</first>
+				<second>885</second>
+			</position>
+			<name>Opaque</name>
+		</item>
+		<item type="traktor.render.External" version="3,traktor.render.Node:1">
+			<id>{3929EDDC-F45F-428B-827B-C142ABA905C4}</id>
+			<comment/>
+			<position>
+				<first>-543</first>
+				<second>825</second>
+			</position>
+			<fragmentGuid>{5C91DD9B-01E2-4F16-9998-ACF83CB14246}</fragmentGuid>
+			<inputPins>
+				<item>
+					<id>{07DB8063-302C-432D-982A-E68D153AF8B3}</id>
+					<name>Alpha</name>
+					<optional>true</optional>
+				</item>
+				<item>
+					<id>{94473F95-5BF7-42EA-954E-391CB3839798}</id>
+					<name>InstanceId</name>
+					<optional>true</optional>
+				</item>
+				<item>
+					<id>{083DB5C6-963F-4861-BCDA-51E64FBE478A}</id>
+					<name>Opaque</name>
+					<optional>true</optional>
+				</item>
+			</inputPins>
+			<outputPins/>
 		</item>
 	</nodes>
 	<edges>
@@ -2272,6 +2321,36 @@ if (gid < uint($Count))
 				<id>{6A8C5F86-F34F-4FD1-BB01-7A0007D9C82F}</id>
 			</destination>
 		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[93]"/>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[95]"/>
+				<id>{07DB8063-302C-432D-982A-E68D153AF8B3}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[94]"/>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[95]"/>
+				<id>{083DB5C6-963F-4861-BCDA-51E64FBE478A}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[29]"/>
+				<id>{F579A74D-1E2E-4EF2-9CF1-0B73DD6DB0CC}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[95]"/>
+				<id>{94473F95-5BF7-42EA-954E-391CB3839798}</id>
+			</destination>
+		</item>
 	</edges>
 	<groups>
 		<item type="traktor.render.Group">
@@ -2350,12 +2429,12 @@ if (gid < uint($Count))
 			<title>WPO Deform</title>
 			<comment/>
 			<position>
-				<first>-1469</first>
-				<second>929</second>
+				<first>-1457</first>
+				<second>1009</second>
 			</position>
 			<size>
-				<first>1544</first>
-				<second>1040</second>
+				<first>1532</first>
+				<second>960</second>
 			</size>
 		</item>
 	</groups>

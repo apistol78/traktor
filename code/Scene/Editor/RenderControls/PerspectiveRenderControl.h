@@ -43,6 +43,7 @@ class Shader;
 namespace traktor::world
 {
 
+class EntityIdQuery;
 class IWorldRenderer;
 class Entity;
 
@@ -89,6 +90,10 @@ public:
 
 	virtual void showSelectionRectangle(const ui::Rect& rect) override final;
 
+	virtual bool requestEntity(const ui::Point& position) override final;
+
+	virtual bool pollEntity(Ref< world::Entity >& outEntity) override final;
+
 private:
 	Ref< SceneEditorContext > m_context;
 	Ref< ui::Container > m_containerAspect;
@@ -100,6 +105,7 @@ private:
 	Ref< render::ScreenRenderer > m_screenRenderer;
 	const TypeInfo* m_worldRendererType = nullptr;
 	Ref< world::IWorldRenderer > m_worldRenderer;
+	Ref< world::EntityIdQuery > m_entityIdQuery;
 	uint32_t m_worldRendererHash = 0;
 	world::WorldRenderView m_worldRenderView;
 	world::WorldRenderSettings m_worldRenderSettings;

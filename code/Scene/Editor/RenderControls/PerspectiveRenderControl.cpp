@@ -50,6 +50,7 @@
 #include "World/Entity.h"
 #include "World/Entity/GroupComponent.h"
 #include "World/Entity/ProbeComponent.h"
+#include "World/EntityIdQuery.h"
 #include "World/IWorldRenderer.h"
 #include "World/World.h"
 #include "World/WorldEntityRenderers.h"
@@ -393,6 +394,27 @@ void PerspectiveRenderControl::showSelectionRectangle(const ui::Rect& rect)
 	m_selectionRectangle = rect;
 }
 
+bool PerspectiveRenderControl::requestEntity(const ui::Point& position)
+{
+	if (!m_entityIdQuery || !m_entityIdQuery->isSupported())
+		return false;
+
+	const ui::Rect innerRect = m_renderWidget->getInnerRect();
+	if (innerRect.getWidth() <= 0 || innerRect.getHeight() <= 0)
+		return false;
+
+	m_entityIdQuery->request(Vector2(
+		(position.x + 0.5f) / innerRect.getWidth(),
+		(position.y + 0.5f) / innerRect.getHeight()
+	));
+	return true;
+}
+
+bool PerspectiveRenderControl::pollEntity(Ref< world::Entity >& outEntity)
+{
+	return m_entityIdQuery != nullptr && m_entityIdQuery->poll(outEntity);
+}
+
 void PerspectiveRenderControl::updateWorldRenderer()
 {
 	safeDestroy(m_worldRenderer);
@@ -424,6 +446,10 @@ void PerspectiveRenderControl::updateWorldRenderer()
 	wcd.multiSample = m_multiSample;
 	wcd.hdr = m_renderView->isHDR();
 	wcd.rt = m_rayTracingEnable;
+
+	// Query entity rendered at a position, used for picking; not supported by all world renderers.
+	m_entityIdQuery = new world::EntityIdQuery();
+	wcd.entityIdQuery = m_entityIdQuery;
 
 	if (!worldRenderer->create(
 			m_context->getResourceManager(),

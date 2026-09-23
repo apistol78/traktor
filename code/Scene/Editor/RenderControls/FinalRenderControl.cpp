@@ -310,6 +310,16 @@ void FinalRenderControl::showSelectionRectangle(const ui::Rect& rect)
 {
 }
 
+bool FinalRenderControl::requestEntity(const ui::Point& position)
+{
+	return false;
+}
+
+bool FinalRenderControl::pollEntity(Ref< world::Entity >& outEntity)
+{
+	return false;
+}
+
 void FinalRenderControl::updateWorldRenderer()
 {
 	safeDestroy(m_worldRenderer);

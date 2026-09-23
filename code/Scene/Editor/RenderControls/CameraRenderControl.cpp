@@ -235,6 +235,16 @@ void CameraRenderControl::showSelectionRectangle(const ui::Rect& rect)
 	m_selectionRectangle = rect;
 }
 
+bool CameraRenderControl::requestEntity(const ui::Point& position)
+{
+	return false;
+}
+
+bool CameraRenderControl::pollEntity(Ref< world::Entity >& outEntity)
+{
+	return false;
+}
+
 void CameraRenderControl::updateWorldRenderer()
 {
 	safeDestroy(m_worldRenderer);

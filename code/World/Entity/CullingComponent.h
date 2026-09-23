@@ -41,6 +41,7 @@ class IResourceManager;
 namespace traktor::world
 {
 
+class IEntityComponent;
 class IWorldRenderPass;
 class WorldBuildContext;
 class WorldRenderView;
@@ -122,6 +123,7 @@ public:
 	{
 		CullingComponent* owner = nullptr;
 		ICullable* cullable = nullptr;
+		const IEntityComponent* component = nullptr; //!< Component instance belong to.
 		intptr_t ordinal = 0;				//!< All instances with same ordinal become a batch.
 		bool dynamic = false;
 		uint32_t batchIndex = 0;			//!< Index of instance within batch.
@@ -155,7 +157,10 @@ public:
 		const IWorldRenderPass& worldRenderPass
 	);
 
-	Instance* createInstance(ICullable* cullable, intptr_t ordinal, bool dynamic);
+	Instance* createInstance(ICullable* cullable, intptr_t ordinal, bool dynamic, const IEntityComponent* component);
+
+	/*! Get instances, in the same order as in the instance buffer. */
+	const AlignedVector< Instance* >& getInstances() const { return m_instances; }
 
 private:
 	Ref< render::IRenderSystem > m_renderSystem;

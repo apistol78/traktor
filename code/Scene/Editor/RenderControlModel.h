@@ -74,6 +74,11 @@ private:
 	ModifyType m_modify;
 	uint32_t m_moveCamera;
 	float m_movementSpeed;
+	bool m_pickPending;
+	int32_t m_pickKeyState;
+	double m_pickTime;
+
+	void updatePick(ISceneRenderControl* renderControl, SceneEditorContext* context);
 };
 
 }

@@ -89,6 +89,11 @@
 					<optional>true</optional>
 				</item>
 				<item>
+					<id>{982CAE26-A396-42C6-8B83-4D30EC2DA4DA}</id>
+					<name>InstanceId</name>
+					<optional>true</optional>
+				</item>
+				<item>
 					<id>{E9D42E3C-F5D5-4F49-B401-65050CF54EB9}</id>
 					<name>Object</name>
 					<optional>true</optional>

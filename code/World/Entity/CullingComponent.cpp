@@ -271,11 +271,12 @@ void CullingComponent::build(
 	});
 }
 
-CullingComponent::Instance* CullingComponent::createInstance(ICullable* cullable, intptr_t ordinal, bool dynamic)
+CullingComponent::Instance* CullingComponent::createInstance(ICullable* cullable, intptr_t ordinal, bool dynamic, const IEntityComponent* component)
 {
 	Instance* instance = new Instance();
 	instance->owner = this;
 	instance->cullable = cullable;
+	instance->component = component;
 	instance->ordinal = ordinal;
 	instance->dynamic = dynamic;
 	instance->transform = Transform::identity();

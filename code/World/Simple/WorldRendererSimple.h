@@ -29,6 +29,7 @@ class ITexture;
 namespace traktor::world
 {
 
+class EntityIdPass;
 class WorldEntityRenderers;
 
 /*! World renderer implementation.
@@ -72,6 +73,7 @@ private:
 	SmallMap< IEntityRenderer*, Renderable > m_gathered;
 	AlignedVector< render::RGDependency > m_visualAttachments;
 	AlignedVector< render::RGDependency > m_setupAttachments;
+	Ref< EntityIdPass > m_entityIdPass;
 };
 
 }

@@ -32,6 +32,7 @@ class AmbientOcclusionPass;
 class ContactShadowsPass;
 class DBufferPass;
 class DownScalePass;
+class EntityIdPass;
 class GBufferPass;
 class HiZPass;
 class IEntityRenderer;
@@ -117,6 +118,7 @@ protected:
 	Ref< ReflectionsPass > m_reflectionsPass;
 	Ref< PostDepthPass > m_postDepthPass;
 	Ref< PostProcessPass > m_postProcessPass;
+	Ref< EntityIdPass > m_entityIdPass;
 	//@}
 
 	Ref< WorldEntityRenderers > m_entityRenderers;

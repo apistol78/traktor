@@ -71,7 +71,7 @@ void InstanceMeshComponent::setState(const world::EntityState& state, const worl
 		if (!m_cullingInstance)
 		{
 			world::CullingComponent* culling = m_world->getComponent< world::CullingComponent >();
-			m_cullingInstance = culling->createInstance(m_mesh, (intptr_t)m_mesh.getResource(), m_dynamic);
+			m_cullingInstance = culling->createInstance(m_mesh, (intptr_t)m_mesh.getResource(), m_dynamic, this);
 			m_cullingInstance->setTransform(m_transform->currentRender);
 		}
 		else
@@ -120,7 +120,7 @@ void InstanceMeshComponent::setup(
 			safeDestroy(m_cullingInstance);
 
 			world::CullingComponent* culling = m_world->getComponent< world::CullingComponent >();
-			m_cullingInstance = culling->createInstance(m_mesh, (intptr_t)m_mesh.getResource(), m_dynamic);
+			m_cullingInstance = culling->createInstance(m_mesh, (intptr_t)m_mesh.getResource(), m_dynamic, this);
 			m_cullingInstance->setTransform(m_transform->currentRender);
 		}
 		m_mesh.consume();

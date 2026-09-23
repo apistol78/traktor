@@ -314,6 +314,10 @@
 					<id>{45936592-3A8C-FA45-8C08-6827D12F9FDD}</id>
 					<name>TranslationLast</name>
 				</item>
+				<item>
+					<id>{B825DB3E-D339-449E-A9C0-C0BCF22AC338}</id>
+					<name>Index</name>
+				</item>
 			</outputPins>
 		</item>
 		<item type="traktor.render.External" version="3,traktor.render.Node:1">
@@ -458,6 +462,11 @@
 				<item>
 					<id>{0D26FDA8-3EB2-4B6F-AC89-93C624546B30}</id>
 					<name>World</name>
+					<optional>true</optional>
+				</item>
+				<item>
+					<id>{982CAE26-A396-42C6-8B83-4D30EC2DA4DA}</id>
+					<name>InstanceId</name>
 					<optional>true</optional>
 				</item>
 			</inputPins>
@@ -865,6 +874,16 @@
 			<destination>
 				<node ref="/object/nodes/item[21]"/>
 				<id>{E9D42E3C-F5D5-4F49-B401-65050CF54EB9}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[17]"/>
+				<id>{B825DB3E-D339-449E-A9C0-C0BCF22AC338}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[21]"/>
+				<id>{982CAE26-A396-42C6-8B83-4D30EC2DA4DA}</id>
 			</destination>
 		</item>
 	</edges>

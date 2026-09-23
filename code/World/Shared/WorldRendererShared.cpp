@@ -34,6 +34,7 @@
 #include "World/Shared/Passes/ContactShadowsPass.h"
 #include "World/Shared/Passes/DBufferPass.h"
 #include "World/Shared/Passes/DownScalePass.h"
+#include "World/Shared/Passes/EntityIdPass.h"
 #include "World/Shared/Passes/GBufferPass.h"
 #include "World/Shared/Passes/HiZPass.h"
 #include "World/Shared/Passes/IrradiancePass.h"
@@ -223,6 +224,14 @@ bool WorldRendererShared::create(
 	if (!m_postProcessPass->create(resourceManager, renderSystem, desc))
 		return false;
 
+	// Entity id pass is optional; only created when queried, which only the editor does.
+	if (desc.entityIdQuery)
+	{
+		m_entityIdPass = new EntityIdPass();
+		if (!m_entityIdPass->create(resourceManager, renderSystem, desc))
+			m_entityIdPass = nullptr;
+	}
+
 	return true;
 }
 
@@ -236,6 +245,7 @@ void WorldRendererShared::destroy()
 	for (int32_t i = 0; i < sizeof_array(m_state); ++i)
 		safeDestroy(m_state[i].lightSBuffer);
 
+	safeDestroy(m_entityIdPass);
 	safeDestroy(m_postProcessPass);
 	safeDestroy(m_postDepthPass);
 	safeDestroy(m_reflectionsPass);

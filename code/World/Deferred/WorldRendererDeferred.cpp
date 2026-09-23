@@ -40,6 +40,7 @@
 #include "World/Shared/Passes/ContactShadowsPass.h"
 #include "World/Shared/Passes/DBufferPass.h"
 #include "World/Shared/Passes/DownScalePass.h"
+#include "World/Shared/Passes/EntityIdPass.h"
 #include "World/Shared/Passes/GBufferPass.h"
 #include "World/Shared/Passes/HiZPass.h"
 #include "World/Shared/Passes/IrradiancePass.h"
@@ -230,6 +231,9 @@ void WorldRendererDeferred::setup(
 		hizTextureId);
 
 	const auto postDepthTargetSetId = m_postDepthPass->setup(worldRenderView, m_gatheredView, renderGraph, gbufferTargetSetId, visualTargetSetId.current, outputTargetSetId);
+
+	if (m_entityIdPass)
+		m_entityIdPass->setup(world, worldRenderView, m_gatheredView.setupAttachments, renderGraph, gbufferTargetSetId, visualTargetSetId.current, filter);
 
 	m_postProcessPass->setup(worldRenderView, m_gatheredView, count, m_whiteTexture, renderGraph, gbufferTargetSetId, postDepthTargetSetId, velocityTargetSetId, visualTargetSetId, outputTargetSetId);
 

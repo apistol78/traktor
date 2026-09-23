@@ -18,6 +18,7 @@
 #include "World/Entity/RTWorldComponent.h"
 #include "World/IEntityComponent.h"
 #include "World/IEntityRenderer.h"
+#include "World/Shared/Passes/EntityIdPass.h"
 #include "World/Simple/WorldRenderPassSimple.h"
 #include "World/World.h"
 #include "World/WorldBuildContext.h"
@@ -57,11 +58,21 @@ bool WorldRendererSimple::create(
 {
 	m_entityRenderers = desc.entityRenderers;
 	m_depthTexture = create1x1Texture(renderSystem, desc.worldRenderSettings->viewFarZ);
+
+	// Entity id pass is optional; only created when queried, which only the editor does.
+	if (desc.entityIdQuery)
+	{
+		m_entityIdPass = new EntityIdPass();
+		if (!m_entityIdPass->create(resourceManager, renderSystem, desc))
+			m_entityIdPass = nullptr;
+	}
+
 	return true;
 }
 
 void WorldRendererSimple::destroy()
 {
+	safeDestroy(m_entityIdPass);
 	m_entityRenderers = nullptr;
 	safeDestroy(m_depthTexture);
 }
@@ -140,22 +151,7 @@ void WorldRendererSimple::setup(
 	}
 
 	// Add passes to render graph.
-	Ref< render::RenderPass > rp = new render::RenderPass(L"Visual");
-
-	render::Clear cl;
-	cl.mask = render::CfColor | render::CfDepth;
-	cl.colors[0] = Color4f(0.0f, 0.0f, 0.0f, 0.0f);
-	cl.depth = 1.0f;
-	rp->setOutput(outputTargetSetId, cl, render::TfNone, render::TfAll);
-
-	for (auto attachment : m_visualAttachments)
-		rp->addInput(attachment);
-	for (auto attachment : m_setupAttachments)
-		rp->addInput(attachment);
-	rp->addInput(rtWorldDependency);
-
-	rp->addBuild(
-		[=, this](const render::RenderGraph& renderGraph, render::RenderContext* renderContext) {
+	const auto buildVisual = [=, this](const render::RenderGraph& renderGraph, render::RenderContext* renderContext) {
 		const WorldBuildContext wc(
 			m_entityRenderers,
 			renderContext);
@@ -178,8 +174,51 @@ void WorldRendererSimple::setup(
 
 		for (auto gathered : m_gathered)
 			gathered.first->build(wc, worldRenderView, defaultPass, gathered.second.objects);
-	});
+	};
+
+	Ref< render::RenderPass > rp = new render::RenderPass(L"Visual");
+
+	render::Clear cl;
+	cl.mask = render::CfColor | render::CfDepth;
+	cl.colors[0] = Color4f(0.0f, 0.0f, 0.0f, 0.0f);
+	cl.depth = 1.0f;
+	rp->setOutput(outputTargetSetId, cl, render::TfNone, render::TfAll);
+
+	for (auto attachment : m_visualAttachments)
+		rp->addInput(attachment);
+	for (auto attachment : m_setupAttachments)
+		rp->addInput(attachment);
+	rp->addInput(rtWorldDependency);
+
+	rp->addBuild(buildVisual);
 	renderGraph.addPass(rp);
+
+	// Entity ids need depth of visible surfaces; output target might be multisampled and is drawn
+	// over by the caller, thus visual is rendered once more into a depth target of its own.
+	if (m_entityIdPass && m_entityIdPass->isRequested())
+	{
+		render::RenderGraphTargetSetDesc rgtd;
+		rgtd.count = 1;
+		rgtd.createDepthStencil = true;
+		rgtd.referenceWidthDenom = 1;
+		rgtd.referenceHeightDenom = 1;
+		rgtd.targets[0].colorFormat = render::TfR8;
+		const render::RGTargetSet depthTargetSetId = renderGraph.addTransientTargetSet(L"Entity id depth", rgtd, render::RGTargetSet::Invalid, outputTargetSetId);
+
+		Ref< render::RenderPass > rpd = new render::RenderPass(L"Entity id depth");
+		rpd->setOutput(depthTargetSetId, cl, render::TfNone, render::TfDepth);
+
+		for (auto attachment : m_visualAttachments)
+			rpd->addInput(attachment);
+		for (auto attachment : m_setupAttachments)
+			rpd->addInput(attachment);
+		rpd->addInput(rtWorldDependency);
+
+		rpd->addBuild(buildVisual);
+		renderGraph.addPass(rpd);
+
+		m_entityIdPass->setup(world, worldRenderView, m_setupAttachments, renderGraph, depthTargetSetId, render::RGTargetSet::Invalid, filter);
+	}
 }
 
 }
