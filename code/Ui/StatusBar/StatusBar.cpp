@@ -1,24 +1,25 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2023 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Ui/StatusBar/StatusBar.h"
+
 #include "Ui/Application.h"
 #include "Ui/Form.h"
 #include "Ui/StyleSheet.h"
-#include "Ui/StatusBar/StatusBar.h"
 
 namespace traktor::ui
 {
-	namespace
-	{
+namespace
+{
 
-const Unit c_preferedHeightMargin = 2_ut;
+const Unit c_preferedHeightMargin = 4_ut;
 
-	}
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.StatusBar", StatusBar, Widget)
 
@@ -129,24 +130,6 @@ void StatusBar::eventPaint(PaintEvent* event)
 			canvas.drawText(rcText.inflate(pixel(-8_ut), 0), m_columns[i].text, AnLeft, AnCenter);
 
 			x += w;
-		}
-	}
-
-	// Draw scale grip if parent is a form and isn't maximized.
-	Form* parentForm = dynamic_type_cast< Form* >(getParent());
-	if (parentForm && !parentForm->isMaximized())
-	{
-		rc = rc.inflate(-pixel(2_ut), -pixel(2_ut));
-		for (int i = 0; i <= 2; ++i)
-		{
-			const Unit ii(i);
-
-			canvas.setForeground(Color4ub(180, 180, 180));
-			canvas.drawLine(rc.right, rc.bottom - pixel(4_ut * ii - 1_ut), rc.right - pixel(4_ut * ii - 1_ut), rc.bottom);
-			canvas.drawLine(rc.right, rc.bottom - pixel(4_ut * ii - 2_ut), rc.right - pixel(4_ut * ii - 2_ut), rc.bottom);
-
-			canvas.setForeground(Color4ub(255, 255, 255));
-			canvas.drawLine(rc.right, rc.bottom - pixel(4_ut * ii - 3_ut), rc.right - pixel(4_ut * ii - 3_ut), rc.bottom);
 		}
 	}
 
