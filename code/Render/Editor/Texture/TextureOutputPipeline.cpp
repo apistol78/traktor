@@ -150,27 +150,26 @@ bool TextureOutputPipeline::create(const editor::IPipelineSettings* settings, db
 	m_sRGB = settings->getPropertyIncludeHash< bool >(L"TexturePipeline.sRGB", false);
 	m_compressedData = settings->getPropertyIncludeHash< bool >(L"TexturePipeline.CompressedData", true);
 
-	if (!editor)
-	{
-		const std::wstring compressionMethod = settings->getPropertyIncludeHash< std::wstring >(L"TexturePipeline.CompressionMethod", L"DXTn");
-		if (compareIgnoreCase(compressionMethod, L"None") == 0)
-			m_compressionMethod = CompressionMethod::None;
-		else if (compareIgnoreCase(compressionMethod, L"DXTn") == 0)
-			m_compressionMethod = CompressionMethod::DXTn;
-		else if (compareIgnoreCase(compressionMethod, L"PVRTC") == 0)
-			m_compressionMethod = CompressionMethod::PVRTC;
-		else if (compareIgnoreCase(compressionMethod, L"ETC1") == 0)
-			m_compressionMethod = CompressionMethod::ETC1;
-		else if (compareIgnoreCase(compressionMethod, L"ASTC") == 0)
-			m_compressionMethod = CompressionMethod::ASTC;
-		else
-		{
-			log::error << L"Unknown compression method \"" << compressionMethod << L"\"." << Endl;
-			return false;
-		}
-	}
-	else
+	const std::wstring compressionMethod = settings->getPropertyIncludeHash< std::wstring >(L"TexturePipeline.CompressionMethod", L"DXTn");
+	if (compareIgnoreCase(compressionMethod, L"None") == 0)
 		m_compressionMethod = CompressionMethod::None;
+	else if (compareIgnoreCase(compressionMethod, L"DXTn") == 0)
+		m_compressionMethod = CompressionMethod::DXTn;
+	else if (compareIgnoreCase(compressionMethod, L"PVRTC") == 0)
+		m_compressionMethod = CompressionMethod::PVRTC;
+	else if (compareIgnoreCase(compressionMethod, L"ETC1") == 0)
+		m_compressionMethod = CompressionMethod::ETC1;
+	else if (compareIgnoreCase(compressionMethod, L"ASTC") == 0)
+		m_compressionMethod = CompressionMethod::ASTC;
+	else
+	{
+		log::error << L"Unknown compression method \"" << compressionMethod << L"\"." << Endl;
+		return false;
+	}
+	
+	// Don't compress data on disk for editor; assuming loading faster than decompression.
+	if (editor)
+		m_compressedData = false;
 
 	return true;
 }
