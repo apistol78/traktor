@@ -49,7 +49,7 @@ public:
 	 * \param endPosition End of movement.
 	 * \return Movement query async result.
 	 */
-	Ref< MoveQueryResult > createMoveQuery(const Vector4& startPosition, const Vector4& endPosition);
+	Ref< MoveQueryResult > createMoveQuery(const Vector4& startPosition, const Vector4& endPosition) const;
 
 	/*! Find closest point on navigation mesh.
 	 *

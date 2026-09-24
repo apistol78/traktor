@@ -43,11 +43,11 @@ NavMesh::~NavMesh()
 	dtFreeNavMesh(m_navMesh);
 }
 
-Ref< MoveQueryResult > NavMesh::createMoveQuery(const Vector4& startPosition, const Vector4& endPosition)
+Ref< MoveQueryResult > NavMesh::createMoveQuery(const Vector4& startPosition, const Vector4& endPosition) const
 {
 	Ref< MoveQueryResult > result = new MoveQueryResult();
 	JobManager::getInstance().add([=]() {
-		T_ANONYMOUS_VAR(Ref< NavMesh >)(this);
+		T_ANONYMOUS_VAR(Ref< const NavMesh >)(this);
 
 		dtNavMeshQuery* navQuery = dtAllocNavMeshQuery();
 		if (!navQuery)
