@@ -969,9 +969,14 @@ Ref< Body > PhysicsManagerJolt::createBody(resource::IResourceManager* resourceM
 		const Vector4& worldExtent = heightfield->getWorldExtent();
 		const Vector4 scale(1.0f / size, 1.0f, 1.0f / size, 1.0f);
 
+		// Samples are located at texel centers, same as the terrain shader samples the height
+		// map, so the first sample is half a texel in from the heightfield corner.
+		float originX, originZ;
+		heightfield->gridToWorld(0, 0, originX, originZ);
+
 		JPH::HeightFieldShapeSettings shapeSettings(
 			samples.c_ptr(),
-			convertToJolt(-worldExtent * 0.5_simd),
+			JPH::Vec3(originX, -worldExtent.y() * 0.5f, originZ),
 			convertToJolt(worldExtent * scale),
 			size);
 		shapeSettings.SetEmbedded();
