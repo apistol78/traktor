@@ -6,6 +6,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Core/Containers/SmallMap.h"
 #include "Core/Containers/StaticVector.h"
 #include "Core/Io/DynamicMemoryStream.h"
 #include "Core/Io/FileSystem.h"
@@ -13,6 +14,7 @@
 #include "Core/Io/StreamCopy.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/Split.h"
+#include "Core/Misc/String.h"
 #include "Drawing/Image.h"
 #include "Svg/Document.h"
 #include "Svg/Parser.h"
@@ -44,6 +46,15 @@ struct ImageHeader
 	ImageEntry entry[1];
 };
 #pragma pack()
+
+/*! Loaded images shared by all style bitmaps; many widgets use the same icons
+ *  and parsing and rasterizing an SVG is costly. Only accessed from the UI thread.
+ */
+SmallMap< std::wstring, Ref< drawing::Image > >& imageCache()
+{
+	static SmallMap< std::wstring, Ref< drawing::Image > > s_imageCache;
+	return s_imageCache;
+}
 
 	}
 
@@ -117,11 +128,17 @@ bool StyleBitmap::resolve(const Widget* reference, int32_t dpi) const
 	if (fileName.empty())
 		return false;
 
-	Ref< drawing::Image > image;
+	const bool svg = (fileName.getExtension() == L"svg");
+	const Color4ub themeColorUb = svg ? ss->getColor(reference, L"theme-color") : Color4ub(0, 0, 0, 0);
 
-	if (fileName.getExtension() == L"svg")
+	// Theme color is baked into rasterized SVGs, so it's part of the key.
+	const std::wstring cacheKey = key + L"@" + toString(dpi) + L"#" + toString(themeColorUb.getARGB());
+
+	// A failed load leaves a null entry which is retried next time.
+	Ref< drawing::Image >& image = imageCache()[cacheKey];
+	if (!image && svg)
 	{
-		const Color4f themeColor = Color4f::fromColor4ub(ss->getColor(reference, L"theme-color"));
+		const Color4f themeColor = Color4f::fromColor4ub(themeColorUb);
 
 		Ref< svg::Style > themeFill = new svg::Style();
 		themeFill->setFillEnable(true);
@@ -148,7 +165,7 @@ bool StyleBitmap::resolve(const Widget* reference, int32_t dpi) const
 		const float scale = float(dpi) / 96.0f;
 		image = svg::Rasterizer().raster(sd, scale, pageColumn, pageRow);
 	}
-	else if (fileName.getExtension() == L"image")
+	else if (!image && fileName.getExtension() == L"image")
 	{
 		Ref< IStream > s = FileSystem::getInstance().open(fileName, File::FmRead);
 		if (!s)

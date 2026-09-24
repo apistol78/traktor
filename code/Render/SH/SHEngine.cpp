@@ -38,22 +38,23 @@ SHEngine::SHEngine(uint32_t bandCount)
 
 void SHEngine::generateSamplePoints(uint32_t count)
 {
-	m_samplePoints.resize(count);
+	m_sampleDirections.resize(count);
+	m_sampleCoefficients.resize(count * m_coefficientCount);
 	for (uint32_t i = 0; i < count; ++i)
 	{
 		const Vector2 uv = Quasirandom::hammersley(i, count);
 		const Vector4 direction = Quasirandom::uniformSphere(uv);
 
-		m_samplePoints[i].direction = Polar::fromUnitCartesian(direction);
-		m_samplePoints[i].coefficients.resize(m_coefficientCount);
+		const Polar& polar = m_sampleDirections[i] = Polar::fromUnitCartesian(direction);
+		Vector4* coefficients = &m_sampleCoefficients[i * m_coefficientCount];
 
 		for (int32_t l = 0; l < (int32_t)m_bandCount; ++l)
 		{
 			for (int32_t m = -l; m <= l; ++m)
 			{
 				const int32_t index = l * (l + 1) + m;
-				const float shc = (float)SH(l, m, m_samplePoints[i].direction.phi, m_samplePoints[i].direction.theta);
-				m_samplePoints[i].coefficients[index] = Vector4(shc, shc, shc, 0.0f);
+				const float shc = (float)SH(l, m, polar.phi, polar.theta);
+				coefficients[index] = Vector4(shc, shc, shc, 0.0f);
 			}
 		}
 	}
@@ -62,7 +63,7 @@ void SHEngine::generateSamplePoints(uint32_t count)
 void SHEngine::generateCoefficients(const SHFunction* function, bool parallell, SHCoeffs& outResult) const
 {
 	const float weight = 4.0f * PI;
-	const uint32_t nsp = (uint32_t)m_samplePoints.size();
+	const uint32_t nsp = (uint32_t)m_sampleDirections.size();
 
 	if (parallell)
 	{
@@ -129,9 +130,10 @@ void SHEngine::generateCoefficientsJob(const SHFunction* function, uint32_t star
 {
 	for (uint32_t i = start; i < end; ++i)
 	{
-		const Vector4 fs = function->evaluate(m_samplePoints[i].direction);
+		const Vector4 fs = function->evaluate(m_sampleDirections[i]);
+		const Vector4* coefficients = &m_sampleCoefficients[i * m_coefficientCount];
 		for (uint32_t n = 0; n < m_coefficientCount; ++n)
-			(*outResult)[n] += fs * m_samplePoints[i].coefficients[n];
+			(*outResult)[n] += fs * coefficients[n];
 	}
 }
 

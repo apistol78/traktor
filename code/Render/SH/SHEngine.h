@@ -35,12 +35,6 @@ class T_DLLCLASS SHEngine : public Object
 	T_RTTI_CLASS;
 
 public:
-	struct Sample
-	{
-		Polar direction;
-		SHCoeffs coefficients;
-	};
-
 	explicit SHEngine(uint32_t bandCount);
 
 	void generateSamplePoints(uint32_t count);
@@ -52,7 +46,8 @@ public:
 private:
 	uint32_t m_bandCount;
 	uint32_t m_coefficientCount;
-	AlignedVector< Sample > m_samplePoints;
+	AlignedVector< Polar > m_sampleDirections;
+	AlignedVector< Vector4 > m_sampleCoefficients;	//!< m_coefficientCount coefficients per sample, stored contiguously.
 
 	void generateCoefficientsJob(const SHFunction* function, uint32_t start, uint32_t end, SHCoeffs* outResult) const;
 };

@@ -11,6 +11,8 @@
 #include "Core/Config.h"
 #include "Core/Memory/IAllocator.h"
 
+#include <atomic>
+
 namespace traktor
 {
 
@@ -24,6 +26,11 @@ namespace traktor
  * each quantized size with a growable list of block allocators (chunks).
  * When every chunk of a size is full a new chunk is created on demand, so
  * the fast path keeps serving allocations as long as system memory lasts.
+ *
+ * Chunks are aligned to, and sized in, whole granules. A two-level radix
+ * map from granule to owning chunk makes free() O(1) regardless of how
+ * many chunks exist; pointers not found in the map belong to the system
+ * allocator.
  */
 class DynamicFastAllocator : public IAllocator
 {
@@ -40,13 +47,14 @@ private:
 	struct Chunk;
 
 	constexpr static int32_t QuantizeCount = 6;
+	constexpr static int32_t GranuleBits = 16;	//!< 64 KiB granules.
+	constexpr static int32_t LeafBits = 16;		//!< Granules per leaf; a leaf spans 4 GiB.
+	constexpr static int32_t RootBits = 48 - GranuleBits - LeafBits;
 
 	struct SizeClass
 	{
 		Chunk* chunks;		 //!< All chunks for this size, newest first.
 		Chunk* active;		 //!< Cached chunk most likely to have a free block.
-		uintptr_t envMin;	 //!< Lowest block address across all chunks (fast free rejection).
-		uintptr_t envMax;	 //!< End of highest block address across all chunks.
 		uint32_t qsize;		 //!< Quantized block size in bytes.
 		uint32_t blockCount; //!< Number of blocks per chunk.
 		int32_t lock;		 //!< Spin-lock guarding this size class.
@@ -54,8 +62,13 @@ private:
 
 	IAllocator* m_systemAllocator;
 	SizeClass m_sizeClass[QuantizeCount];
+	std::atomic< std::atomic< Chunk* >* > m_map[1 << RootBits]; //!< Granule to chunk; leaves created on demand, never released until destruction.
 
 	Chunk* grow(SizeClass& sc, const char* const tag);
+
+	bool mapChunk(uintptr_t base, size_t size, Chunk* chunk);
+
+	Chunk* findChunk(uintptr_t p) const;
 };
 
 }
