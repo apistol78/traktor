@@ -43,6 +43,7 @@
 #include "Physics/StaticBodyDesc.h"
 #include "Physics/World/EntityFactory.h"
 #include "Render/Context/RenderContext.h"
+#include "Render/Editor/RenderControlEvent.h"
 #include "Render/Frame/RenderGraph.h"
 #include "Render/Image2/ImageGraphFactory.h"
 #include "Render/IRenderSystem.h"
@@ -96,8 +97,10 @@ AnimationPreviewControl::AnimationPreviewControl(editor::IEditor* editor)
 
 bool AnimationPreviewControl::create(ui::Widget* parent)
 {
-	if (!render::RenderControl::create(parent, m_editor))
+	if (!render::RenderControl::create(parent, m_editor, false))
 		return false;
+
+	addEventHandler< render::RenderControlEvent >(this, &AnimationPreviewControl::eventRender);
 
 	render::IRenderSystem* renderSystem = getRenderSystem();
 
@@ -153,7 +156,6 @@ bool AnimationPreviewControl::create(ui::Widget* parent)
 	updateSettings();
 
 	m_idleEventHandler = ui::Application::getInstance()->addEventHandler< ui::IdleEvent >(this, &AnimationPreviewControl::eventIdle);
-
 	m_timer.reset();
 	return true;
 }
@@ -303,7 +305,7 @@ void AnimationPreviewControl::updateWorldRenderer()
 	m_worldRenderer = worldRenderer;
 }
 
-bool AnimationPreviewControl::renderFrame()
+void AnimationPreviewControl::eventRender(render::RenderControlEvent* event)
 {
 	// Reload scene if changed.
 	if (m_sceneInstance.changed())
@@ -313,20 +315,20 @@ bool AnimationPreviewControl::renderFrame()
 	}
 
 	if (!m_sceneInstance)
-		return false;
+		return;
 
 	// Validate render view before world renderer is created since
 	// the world renderer is configured from properties of the view,
 	// such as HDR, which aren't valid until the view has been reset.
 	if (!validateRenderView())
-		return false;
+		return;
 
 	// Lazy create world renderer.
 	if (!m_worldRenderer)
 	{
 		updateWorldRenderer();
 		if (!m_worldRenderer)
-			return false;
+			return;
 	}
 
 	const ui::Size sz = getRenderSize();
@@ -382,10 +384,6 @@ bool AnimationPreviewControl::renderFrame()
 	m_worldRenderView.setView(m_worldRenderView.getView(), viewTransform);
 	m_worldRenderer->setup(m_sceneInstance->getWorld(), m_worldRenderView, *m_renderGraph, render::RGTargetSet::Output, nullptr);
 
-	// Remove mesh entity from world.
-	if (m_entity)
-		m_sceneInstance->getWorld()->removeEntity(m_entity);
-
 	// Draw debug wires.
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Debug wire");
 	rp->setOutput(render::RGTargetSet::Output, render::TfAll, render::TfAll);
@@ -415,25 +413,30 @@ bool AnimationPreviewControl::renderFrame()
 	});
 	m_renderGraph->addPass(rp);
 
-	// Validate render graph.
-	if (!m_renderGraph->validate())
-		return false;
+	// Validate render graph and build render context.
+	const bool validated = m_renderGraph->validate();
+	if (validated)
+		m_renderGraph->build(m_renderContext, sz.cx, sz.cy);
 
-	// Build render context.
-	m_renderGraph->build(m_renderContext, sz.cx, sz.cy);
+	// Remove mesh entity from world; not until the render graph has been built since the
+	// passes' build callbacks read the mesh component's interval transform, which is
+	// owned by the world and released as the entity is removed.
+	if (m_entity)
+		m_sceneInstance->getWorld()->removeEntity(m_entity);
 
-	// Render frame.
+	if (!validated)
+		return;
+
+	//// Render frame.
 	render::IRenderView* renderView = getRenderView();
-	if (!renderView->beginFrame())
-		return false;
+	//if (!renderView->beginFrame())
+	//	return;
 
 	m_renderContext->render(renderView);
 	m_renderContext->flush();
 
-	renderView->endFrame();
-	renderView->present();
-
-	return true;
+	//renderView->endFrame();
+	//renderView->present();
 }
 
 void AnimationPreviewControl::eventIdle(ui::IdleEvent* event)

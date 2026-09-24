@@ -92,7 +92,7 @@ bool SHEditorPage::create(ui::Container* parent)
 	for (uint32_t i = 0; i < 2; ++i)
 	{
 		m_renderControls[i] = new RenderControl();
-		if (!m_renderControls[i]->create(splitter, m_editor))
+		if (!m_renderControls[i]->create(splitter, m_editor, true))
 			return false;
 
 		m_renderControls[i]->setView({ .position = Vector4(0.0f, 0.0f, 4.0f, 1.0f),

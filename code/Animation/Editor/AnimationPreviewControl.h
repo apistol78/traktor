@@ -32,6 +32,7 @@ namespace traktor::render
 {
 
 class RenderContext;
+class RenderControlEvent;
 class RenderGraph;
 
 }
@@ -121,7 +122,7 @@ private:
 
 	void updateWorldRenderer();
 
-	virtual bool renderFrame() override final;
+	void eventRender(render::RenderControlEvent* event);
 
 	void eventIdle(ui::IdleEvent* event);
 };

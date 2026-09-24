@@ -71,10 +71,10 @@ public:
 	};
 
 	/*! Create control; a resource manager is created, and owned, for the editor's output database. */
-	bool create(ui::Widget* parent, editor::IEditor* editor);
+	bool create(ui::Widget* parent, editor::IEditor* editor, bool beginPass);
 
 	/*! Create control using an already existing resource manager. */
-	bool create(ui::Widget* parent, editor::IEditor* editor, resource::IResourceManager* resourceManager);
+	bool create(ui::Widget* parent, editor::IEditor* editor, resource::IResourceManager* resourceManager, bool beginPass);
 
 	virtual void destroy() override;
 
@@ -130,6 +130,7 @@ private:
 	float m_fieldOfView = deg2rad(80.0f);
 	float m_nearZ = 0.1f;
 	float m_farZ = 2000.0f;
+	bool m_beginPass = true;
 	View m_view;
 	ui::Point m_lastMousePosition = ui::Point(0, 0);
 

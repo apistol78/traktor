@@ -41,7 +41,7 @@ const float c_deltaScalePitch = 0.005f;
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderControl", RenderControl, ui::Widget)
 
-bool RenderControl::create(ui::Widget* parent, editor::IEditor* editor)
+bool RenderControl::create(ui::Widget* parent, editor::IEditor* editor, bool beginPass)
 {
 	Ref< db::Database > database = editor->getOutputDatabase();
 	if (!database)
@@ -59,14 +59,16 @@ bool RenderControl::create(ui::Widget* parent, editor::IEditor* editor)
 
 	m_resourceManager = resourceManager;
 	m_ownResourceManager = true;
+	m_beginPass = beginPass;
 
 	return createInternal(parent, editor);
 }
 
-bool RenderControl::create(ui::Widget* parent, editor::IEditor* editor, resource::IResourceManager* resourceManager)
+bool RenderControl::create(ui::Widget* parent, editor::IEditor* editor, resource::IResourceManager* resourceManager, bool beginPass)
 {
 	m_resourceManager = resourceManager;
 	m_ownResourceManager = false;
+	m_beginPass = beginPass;
 
 	return createInternal(parent, editor);
 }
@@ -197,37 +199,46 @@ bool RenderControl::renderFrame()
 	if (!m_renderView->beginFrame())
 		return false;
 
-	Clear cl;
-	cl.mask = CfColor | CfDepth;
-	cl.colors[0] = Color4f::fromColor4ub(getStyleSheet()->getColor(this, L"background-color"));
-	cl.depth = 1.0f;
-
-	if (!m_renderView->beginPass(&cl, TfAll, TfAll))
+	if (m_beginPass)
 	{
-		m_renderView->endFrame();
-		return false;
+		Clear cl;
+		cl.mask = CfColor | CfDepth;
+		cl.colors[0] = Color4f::fromColor4ub(getStyleSheet()->getColor(this, L"background-color"));
+		cl.depth = 1.0f;
+
+		if (!m_renderView->beginPass(&cl, TfAll, TfAll))
+		{
+			m_renderView->endFrame();
+			return false;
+		}
+	
+		const float aspect = float(m_renderSize.cx) / m_renderSize.cy;
+		const Matrix44 projectionTransform = perspectiveLh(
+			m_fieldOfView,
+			aspect,
+			m_nearZ,
+			m_farZ);
+
+		if (m_primitiveRenderer->begin(0, projectionTransform))
+		{
+			m_primitiveRenderer->pushView(getViewTransform());
+
+			RenderControlEvent renderEvent(this, m_renderView, m_primitiveRenderer);
+			raiseEvent(&renderEvent);
+
+			m_primitiveRenderer->popView();
+			m_primitiveRenderer->end(0);
+			m_primitiveRenderer->render(m_renderView, 0);
+		}
+
+		m_renderView->endPass();
 	}
-
-	const float aspect = float(m_renderSize.cx) / m_renderSize.cy;
-	const Matrix44 projectionTransform = perspectiveLh(
-		m_fieldOfView,
-		aspect,
-		m_nearZ,
-		m_farZ);
-
-	if (m_primitiveRenderer->begin(0, projectionTransform))
+	else
 	{
-		m_primitiveRenderer->pushView(getViewTransform());
-
 		RenderControlEvent renderEvent(this, m_renderView, m_primitiveRenderer);
 		raiseEvent(&renderEvent);
-
-		m_primitiveRenderer->popView();
-		m_primitiveRenderer->end(0);
-		m_primitiveRenderer->render(m_renderView, 0);
 	}
 
-	m_renderView->endPass();
 	m_renderView->endFrame();
 	m_renderView->present();
 

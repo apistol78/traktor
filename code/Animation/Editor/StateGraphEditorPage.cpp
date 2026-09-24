@@ -34,6 +34,7 @@
 #include "Editor/PropertiesView.h"
 #include "I18N/Text.h"
 #include "Mesh/Editor/MeshAsset.h"
+#include "Render/Editor/RenderControlEvent.h"
 #include "Resource/IResourceManager.h"
 #include "Ui/Application.h"
 #include "Ui/AspectLayout.h"
@@ -128,7 +129,6 @@ bool StateGraphEditorPage::create(ui::Container* parent)
 	m_toolBarPreview->create(m_containerPreview);
 	m_toolBarPreview->addItem(new ui::ToolBarButton(L"Mesh...", ui::Command(L"StateGraph.Editor.BrowseMesh")));
 	m_toolBarPreview->addItem(new ui::ToolBarButton(L"Skeleton...", ui::Command(L"StateGraph.Editor.BrowseSkeleton")));
-	m_toolBarPreview->addItem(new ui::ToolBarButton(L"Capture preview transform", ui::Command(L"StateGraph.Editor.CapturePreviewTransform")));
 	m_toolBarPreview->addEventHandler< ui::ToolBarButtonClickEvent >(this, &StateGraphEditorPage::eventToolBarPreviewClick);
 
 	m_previewControl = new AnimationPreviewControl(m_editor);
@@ -136,6 +136,7 @@ bool StateGraphEditorPage::create(ui::Container* parent)
 	m_previewControl->setView({ .position = m_stateGraph->getPreviewPosition(),
 		.head = m_stateGraph->getPreviewAngles().x(),
 		.pitch = m_stateGraph->getPreviewAngles().y() });
+	m_previewControl->addEventHandler< render::RenderControlEvent >(this, &StateGraphEditorPage::eventRenderControl);
 
 	m_previewConditions = new ui::Container();
 	m_previewConditions->create(m_containerPreview, ui::WsNone, new ui::TableLayout(L"50%,50%", L"*", 0_ut, 0_ut));
@@ -468,12 +469,6 @@ bool StateGraphEditorPage::handleCommand(const ui::Command& command)
 		if (skeletonInstance)
 			m_previewControl->setSkeleton(resource::Id< Skeleton >(skeletonInstance->getGuid()));
 	}
-	else if (command == L"StateGraph.Editor.CapturePreviewTransform")
-	{
-		const AnimationPreviewControl::View view = m_previewControl->getView();
-		m_stateGraph->setPreviewPosition(view.position);
-		m_stateGraph->setPreviewAngles(Vector4(view.head, view.pitch, 0.0f));
-	}
 	else
 		return false;
 
@@ -766,4 +761,12 @@ void StateGraphEditorPage::eventPreviewConditionClick(ui::ButtonClickEvent* even
 	const ui::CheckBox* cb = mandatory_non_null_type_cast< ui::CheckBox* >(event->getSender());
 	m_previewControl->setParameterValue(cb->getText(), cb->isChecked());
 }
+
+void StateGraphEditorPage::eventRenderControl(render::RenderControlEvent* event)
+{
+	const AnimationPreviewControl::View view = m_previewControl->getView();
+	m_stateGraph->setPreviewPosition(view.position);
+	m_stateGraph->setPreviewAngles(Vector4(view.head, view.pitch, 0.0f));
+}
+
 }

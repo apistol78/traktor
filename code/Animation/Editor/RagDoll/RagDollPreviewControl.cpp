@@ -130,7 +130,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.RagDollPreviewControl", RagDollPrevie
 
 bool RagDollPreviewControl::create(ui::Widget* parent, editor::IEditor* editor)
 {
-	if (!render::RenderControl::create(parent, editor))
+	if (!render::RenderControl::create(parent, editor, true))
 		return false;
 
 	setView({ .position = Vector4(0.0f, 0.0f, 4.0f, 1.0f),

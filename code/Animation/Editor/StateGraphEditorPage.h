@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2025 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -30,6 +30,13 @@ class IDocument;
 class IEditor;
 class IEditorPageSite;
 class PropertiesView;
+
+}
+
+namespace traktor::render
+{
+
+class RenderControlEvent;
 
 }
 
@@ -123,6 +130,8 @@ private:
 	void eventPropertiesChanged(ui::ContentChangeEvent* event);
 
 	void eventPreviewConditionClick(ui::ButtonClickEvent* event);
+
+	void eventRenderControl(render::RenderControlEvent* event);
 };
 
 }
