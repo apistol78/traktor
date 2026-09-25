@@ -105,7 +105,7 @@ bool getPlacementLayer(const TrimSheetRegion* region, TrimSheetLayer currentLaye
 	return false;
 }
 
-/*! Burn outline of each region into sheet image. */
+/*! Burn outline of each region's content, excluding margins, into sheet image. */
 void drawGuides(drawing::Image* sheet, const TrimSheetSetupAsset* setup)
 {
 	AlignedVector< TrimSheetRect > slabRects;
@@ -115,7 +115,7 @@ void drawGuides(drawing::Image* sheet, const TrimSheetSetupAsset* setup)
 	const Color4f guideColor(1.0f, 0.0f, 1.0f, 1.0f);
 	for (const auto& regionLayout : regionLayouts)
 	{
-		const TrimSheetRect& rc = regionLayout.rect;
+		const TrimSheetRect& rc = regionLayout.content;
 		if (rc.empty())
 			continue;
 
@@ -214,6 +214,22 @@ bool TrimSheetSetupEditor::create(ui::Container* parent)
 
 	m_control = new TrimSheetControl();
 	m_control->create(splitter);
+	m_control->setImageMeasure([this](const TrimSheetRegion* region, int32_t& outWidth, int32_t& outHeight) {
+		// Fit largest image of all layers since they share placement.
+		bool found = false;
+		outWidth = outHeight = 0;
+		for (int32_t i = 0; i < TrimSheetLayerCount; ++i)
+		{
+			int32_t width, height;
+			if (m_composer->getPlacedSize(region, (TrimSheetLayer)i, width, height))
+			{
+				outWidth = std::max(outWidth, width);
+				outHeight = std::max(outHeight, height);
+				found = true;
+			}
+		}
+		return found;
+	});
 	m_control->addEventHandler< ui::SelectionChangeEvent >(this, &TrimSheetSetupEditor::eventControlSelect);
 	m_control->addEventHandler< ui::ContentChangingEvent >(this, &TrimSheetSetupEditor::eventControlChanging);
 	m_control->addEventHandler< ui::ContentChangeEvent >(this, &TrimSheetSetupEditor::eventControlChange);
@@ -386,11 +402,17 @@ void TrimSheetSetupEditor::updateTree()
 	{
 		const TrimSheetSlab* slab = slabs[i];
 		const bool horizontal = (slab->getOrientation() == TrimSheetSlab::Orientation::Horizontal);
-		const int32_t thickness = horizontal ? slabRects[i].height : slabRects[i].width;
+
+		// Thickness of content, same as slab's size, and margins on both sides.
+		const int32_t margin = slab->getMargin();
+		const int32_t thickness = std::max((horizontal ? slabRects[i].height : slabRects[i].width) - margin * 2, 0);
+		std::wstring thicknessText = toString(thickness);
+		if (margin > 0)
+			thicknessText += L" + 2 x " + toString(margin);
 
 		Ref< ui::TreeViewItem > slabItem = m_treeStructure->createItem(
 			sheetItem,
-			i18n::Format(horizontal ? L"TRIMSHEET_EDITOR_SLAB_HORIZONTAL" : L"TRIMSHEET_EDITOR_SLAB_VERTICAL", i, thickness),
+			i18n::Format(horizontal ? L"TRIMSHEET_EDITOR_SLAB_HORIZONTAL" : L"TRIMSHEET_EDITOR_SLAB_VERTICAL", i, thicknessText),
 			0
 		);
 		slabItem->setData(L"STRUCTURE", new StructureItemData(i, -1));
@@ -469,8 +491,8 @@ void TrimSheetSetupEditor::updateImageBounds()
 			if (regionLayout.slab == m_selectedSlab && regionLayout.region == m_selectedRegion)
 			{
 				const TrimSheetRect bounds = {
-					regionLayout.rect.x + region->getOffsetX(),
-					regionLayout.rect.y + region->getOffsetY(),
+					regionLayout.content.x + region->getOffsetX(),
+					regionLayout.content.y + region->getOffsetY(),
 					width,
 					height
 				};
@@ -786,16 +808,23 @@ void TrimSheetSetupEditor::eventControlChange(ui::ContentChangeEvent* event)
 		}
 		updateImageBounds();
 		updateStatus();
+		m_propertiesDirty = true;
 	}
-	else
+	else if (dragMode == TrimSheetControl::DragMode::SlabSize || dragMode == TrimSheetControl::DragMode::RegionSize)
 	{
 		// Layout changed; recompose entire sheet when drag is released.
 		m_sheetDirty = true;
+		m_propertiesDirty = true;
 		m_statusBar->setText(2, i18n::Format(L"TRIMSHEET_EDITOR_STATUS_SIZE", value));
 		m_statusBar->update();
 	}
-
-	m_propertiesDirty = true;
+	else
+	{
+		// Not dragging, e.g. edge fitted to images; update everything immediately.
+		updateTree();
+		updateSheet();
+		updateSelection(true);
+	}
 }
 
 void TrimSheetSetupEditor::eventControlMouseUp(ui::MouseButtonUpEvent* event)

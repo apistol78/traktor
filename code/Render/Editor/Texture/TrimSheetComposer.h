@@ -89,8 +89,9 @@ private:
 
 	Path m_assetPath;
 	std::map< std::wstring, Source > m_sources;
+	std::set< std::wstring > m_invalidSwizzles;
 
-	const drawing::Image* getSource(const Path& fileName, float scale, TrimSheetLayer layer);
+	const drawing::Image* getSource(const Path& fileName, const std::wstring& swizzle, float scale, TrimSheetLayer layer);
 
 	void placeRegion(const TrimSheetSetupAsset* setup, TrimSheetLayer layer, const TrimSheetSetupAsset::RegionLayout& regionLayout, drawing::Image* sheet);
 };

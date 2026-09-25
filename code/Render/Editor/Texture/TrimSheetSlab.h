@@ -51,10 +51,13 @@ public:
 
 	Orientation getOrientation() const { return m_orientation; }
 
-	/*! Thickness, in pixels; 0 means all of the remaining sheet area. */
+	/*! Thickness, in pixels, excluding margins; 0 means all of the remaining sheet area. */
 	void setSize(int32_t size) { m_size = size; }
 
 	int32_t getSize() const { return m_size; }
+
+	/*! Margin, on both sides, added to thickness; largest margin of all regions in slab. */
+	int32_t getMargin() const;
 
 	void insertRegion(int32_t index, TrimSheetRegion* region);
 

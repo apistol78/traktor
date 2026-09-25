@@ -69,7 +69,8 @@ public:
 	{
 		int32_t slab = -1;
 		int32_t region = -1;
-		TrimSheetRect rect;
+		TrimSheetRect rect;		//!< Entire region, including margins.
+		TrimSheetRect content;	//!< Region excluding slab's margins; images are placed here.
 	};
 
 	TrimSheetSetupAsset();

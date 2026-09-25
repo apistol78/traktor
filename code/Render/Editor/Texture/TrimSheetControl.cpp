@@ -309,6 +309,112 @@ TrimSheetControl::DragMode TrimSheetControl::hitEdge(const ui::Point& position, 
 	return DragMode::None;
 }
 
+int32_t TrimSheetControl::getRegionLength(int32_t slab, int32_t region) const
+{
+	const RefArray< TrimSheetSlab >& slabs = m_setup->getSlabs();
+	if (slab < 0 || slab >= (int32_t)slabs.size())
+		return 0;
+
+	const bool horizontal = (slabs[slab]->getOrientation() == TrimSheetSlab::Orientation::Horizontal);
+	for (const auto& regionLayout : m_regionLayouts)
+	{
+		if (regionLayout.slab == slab && regionLayout.region == region)
+			return horizontal ? regionLayout.rect.width : regionLayout.rect.height;
+	}
+
+	return 0;
+}
+
+bool TrimSheetControl::setRegionLength(TrimSheetSlab* slab, int32_t region, int32_t length, int32_t currentLength, int32_t currentNextLength)
+{
+	RefArray< TrimSheetRegion >& regions = slab->getRegions();
+	TrimSheetRegion* next = (region + 1 < (int32_t)regions.size()) ? regions[region + 1].ptr() : nullptr;
+	const bool nextFixed = (next != nullptr && next->getSize() > 0);
+
+	// Keep following regions in place if next region has a fixed length.
+	if (nextFixed)
+		length = std::min(length, currentLength + currentNextLength - 1);
+	length = std::max(length, 1);
+
+	if (length == regions[region]->getSize())
+		return false;
+
+	regions[region]->setSize(length);
+	if (nextFixed)
+		next->setSize(currentLength + currentNextLength - length);
+
+	return true;
+}
+
+bool TrimSheetControl::fitEdge(DragMode edge, int32_t slab, int32_t region)
+{
+	if (!m_setup || !m_imageMeasure)
+		return false;
+
+	TrimSheetSlab* fitSlab = m_setup->getSlabs()[slab];
+	const bool horizontal = (fitSlab->getOrientation() == TrimSheetSlab::Orientation::Horizontal);
+	const RefArray< TrimSheetRegion >& regions = fitSlab->getRegions();
+
+	// Operate on a copy first to find out if anything changes, as a change
+	// must be notified before the setup is modified.
+	Ref< TrimSheetSlab > fittedSlab = new TrimSheetSlab(fitSlab->getOrientation(), fitSlab->getSize());
+	for (auto fitRegion : regions)
+		fittedSlab->getRegions().push_back(new TrimSheetRegion(fitRegion->getSize()));
+
+	if (edge == DragMode::SlabSize)
+	{
+		// Thick enough to fit tallest, or widest, image of all regions in slab.
+		int32_t thickness = 0;
+		for (auto fitRegion : regions)
+		{
+			int32_t width, height;
+			if (m_imageMeasure(fitRegion, width, height))
+				thickness = std::max(thickness, horizontal ? fitRegion->getOffsetY() + height : fitRegion->getOffsetX() + width);
+		}
+		if (thickness <= 0)
+			return false;
+
+		fittedSlab->setSize(thickness);
+	}
+	else if (edge == DragMode::RegionSize)
+	{
+		// Long enough to fit region's image; placed at offset, one tile if tiled.
+		const TrimSheetRegion* fitRegion = regions[region];
+
+		int32_t width, height;
+		if (!m_imageMeasure(fitRegion, width, height))
+			return false;
+
+		const int32_t length = horizontal ? fitRegion->getOffsetX() + width : fitRegion->getOffsetY() + height;
+		if (length <= 0)
+			return false;
+
+		setRegionLength(fittedSlab, region, length, getRegionLength(slab, region), getRegionLength(slab, region + 1));
+	}
+	else
+		return false;
+
+	// Nothing to do if already fitted.
+	bool changed = (fittedSlab->getSize() != fitSlab->getSize());
+	for (int32_t i = 0; i < (int32_t)regions.size(); ++i)
+		changed |= (fittedSlab->getRegions()[i]->getSize() != regions[i]->getSize());
+	if (!changed)
+		return false;
+
+	ui::ContentChangingEvent changingEvent(this);
+	raiseEvent(&changingEvent);
+
+	fitSlab->setSize(fittedSlab->getSize());
+	for (int32_t i = 0; i < (int32_t)regions.size(); ++i)
+		regions[i]->setSize(fittedSlab->getRegions()[i]->getSize());
+
+	updateLayout();
+
+	ui::ContentChangeEvent changeEvent(this);
+	raiseEvent(&changeEvent);
+	return true;
+}
+
 void TrimSheetControl::convertDisplay(const drawing::Image* sheet, const TrimSheetRect& rect)
 {
 	const float* src = static_cast< const float* >(sheet->getData());
@@ -363,33 +469,23 @@ void TrimSheetControl::eventMouseDown(ui::MouseButtonDownEvent* event)
 	const DragMode edge = hitEdge(position, slab, region);
 	if (edge == DragMode::SlabSize)
 	{
-		const bool horizontal = (m_setup->getSlabs()[slab]->getOrientation() == TrimSheetSlab::Orientation::Horizontal);
+		// Size of slab excludes margins.
+		const TrimSheetSlab* dragSlab = m_setup->getSlabs()[slab];
+		const bool horizontal = (dragSlab->getOrientation() == TrimSheetSlab::Orientation::Horizontal);
 		m_dragMode = edge;
 		m_dragSlab = slab;
 		m_dragRegion = -1;
-		m_dragValueOrigin[0] = horizontal ? m_slabRects[slab].height : m_slabRects[slab].width;
+		m_dragValueOrigin[0] = (horizontal ? m_slabRects[slab].height : m_slabRects[slab].width) - dragSlab->getMargin() * 2;
 		setCapture();
 		return;
 	}
 	else if (edge == DragMode::RegionSize)
 	{
-		const TrimSheetSlab* dragSlab = m_setup->getSlabs()[slab];
-		const bool horizontal = (dragSlab->getOrientation() == TrimSheetSlab::Orientation::Horizontal);
-
 		m_dragMode = edge;
 		m_dragSlab = slab;
 		m_dragRegion = region;
-		m_dragValueOrigin[0] = 0;
-		m_dragValueOrigin[1] = 0;
-		for (const auto& regionLayout : m_regionLayouts)
-		{
-			if (regionLayout.slab != slab)
-				continue;
-			if (regionLayout.region == region)
-				m_dragValueOrigin[0] = horizontal ? regionLayout.rect.width : regionLayout.rect.height;
-			else if (regionLayout.region == region + 1)
-				m_dragValueOrigin[1] = horizontal ? regionLayout.rect.width : regionLayout.rect.height;
-		}
+		m_dragValueOrigin[0] = getRegionLength(slab, region);
+		m_dragValueOrigin[1] = getRegionLength(slab, region + 1);
 		setCapture();
 		return;
 	}
@@ -529,24 +625,14 @@ void TrimSheetControl::eventMouseMove(ui::MouseMoveEvent* event)
 		{
 			TrimSheetSlab* slab = m_setup->getSlabs()[m_dragSlab];
 			const bool horizontal = (slab->getOrientation() == TrimSheetSlab::Orientation::Horizontal);
-			RefArray< TrimSheetRegion >& regions = slab->getRegions();
 
 			int32_t length = m_dragValueOrigin[0] + (horizontal ? dx : dy);
 			if (snapping)
 				length = snap(length);
 
-			// Keep following regions in place if next region has a fixed length.
-			TrimSheetRegion* next = (m_dragRegion + 1 < (int32_t)regions.size()) ? regions[m_dragRegion + 1].ptr() : nullptr;
-			if (next && next->getSize() > 0)
-				length = std::min(length, m_dragValueOrigin[0] + m_dragValueOrigin[1] - 1);
-			length = std::max(length, 1);
-
-			if (length != regions[m_dragRegion]->getSize())
+			if (setRegionLength(slab, m_dragRegion, length, m_dragValueOrigin[0], m_dragValueOrigin[1]))
 			{
-				regions[m_dragRegion]->setSize(length);
-				if (next && next->getSize() > 0)
-					next->setSize(m_dragValueOrigin[0] + m_dragValueOrigin[1] - length);
-				m_dragValue = length;
+				m_dragValue = slab->getRegions()[m_dragRegion]->getSize();
 				changed = true;
 			}
 		}
@@ -582,7 +668,21 @@ void TrimSheetControl::eventMouseWheel(ui::MouseWheelEvent* event)
 
 void TrimSheetControl::eventMouseDoubleClick(ui::MouseDoubleClickEvent* event)
 {
-	fit();
+	int32_t slab = -1, region = -1;
+	const DragMode edge = (event->getButton() == ui::MbtLeft) ? hitEdge(event->getPosition(), slab, region) : DragMode::None;
+	if (edge == DragMode::None)
+	{
+		fit();
+		return;
+	}
+
+	// Setup is modified; cancel any drag which the first click might have prepared.
+	if (hasCapture())
+		releaseCapture();
+	m_dragMode = DragMode::None;
+	m_dragStarted = false;
+
+	fitEdge(edge, slab, region);
 }
 
 void TrimSheetControl::eventSize(ui::SizeEvent* event)
@@ -639,6 +739,17 @@ void TrimSheetControl::eventPaint(ui::PaintEvent* event)
 				canvas.drawRect(sheetToClient(regionLayout.rect));
 		}
 
+		// Content of regions within slabs with margins; distinct color as not all canvases support line styles.
+		canvas.setForeground(Color4ub(0, 220, 255, 200));
+		canvas.setLineStyle(ui::LineStyle::Dot);
+		for (const auto& regionLayout : m_regionLayouts)
+		{
+			if (regionLayout.content.empty() || (regionLayout.content.width == regionLayout.rect.width && regionLayout.content.height == regionLayout.rect.height))
+				continue;
+			canvas.drawRect(sheetToClient(regionLayout.content));
+		}
+		canvas.setLineStyle(ui::LineStyle::Solid);
+
 		canvas.setForeground(Color4ub(255, 255, 255, 255));
 		canvas.setPenThickness(2);
 		for (const auto& slabRect : m_slabRects)
@@ -678,7 +789,7 @@ void TrimSheetControl::eventPaint(ui::PaintEvent* event)
 		}
 	}
 
-	// Bounds of selected region's image, clipped to region.
+	// Bounds of selected region's image, clipped to region's content.
 	if (m_imageBoundsVisible)
 	{
 		for (const auto& regionLayout : m_regionLayouts)
@@ -686,7 +797,7 @@ void TrimSheetControl::eventPaint(ui::PaintEvent* event)
 			if (regionLayout.slab != m_selectedSlab || regionLayout.region != m_selectedRegion)
 				continue;
 
-			canvas.setClipRect(sheetToClient(regionLayout.rect).inflate(1, 1));
+			canvas.setClipRect(sheetToClient(regionLayout.content).inflate(1, 1));
 			canvas.setForeground(Color4ub(255, 255, 0, 255));
 			canvas.setLineStyle(ui::LineStyle::Dot);
 			canvas.drawRect(sheetToClient(m_imageBounds));

@@ -12,6 +12,8 @@
 #include "Render/Editor/Texture/TrimSheetSetupAsset.h"
 #include "Ui/Widget.h"
 
+#include <functional>
+
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_RENDER_EDITOR_EXPORT)
@@ -42,17 +44,23 @@ namespace traktor::render
  *
  * Left click select region, left drag on region move its images, in
  * all layers, and left drag on slab or region edge resize it; hold
- * shift to snap to 16 pixels. Middle, or right, drag pan and wheel zoom.
+ * shift to snap to 16 pixels. Double click on slab or region edge
+ * resize it to fit images. Middle, or right, drag pan and wheel zoom;
+ * double click elsewhere fit sheet in view.
  *
  * Raise SelectionChangeEvent when user select a region,
- * ContentChangingEvent before a drag modifies the setup and
- * ContentChangeEvent each time a drag has modified the setup.
+ * ContentChangingEvent before the setup is modified and
+ * ContentChangeEvent each time the setup has been modified; during
+ * a drag getDragMode tells what is being modified.
  */
 class T_DLLCLASS TrimSheetControl : public ui::Widget
 {
 	T_RTTI_CLASS;
 
 public:
+	/*! Measure size, in sheet pixels, of a region's images as placed; false if region has no images. */
+	typedef std::function< bool(const TrimSheetRegion* region, int32_t& outWidth, int32_t& outHeight) > measure_fn_t;
+
 	/*! What is modified by current drag. */
 	enum class DragMode
 	{
@@ -90,6 +98,9 @@ public:
 
 	void setShowNames(bool showNames);
 
+	/*! Set function used to measure images when fitting a slab or region to its images. */
+	void setImageMeasure(const measure_fn_t& imageMeasure) { m_imageMeasure = imageMeasure; }
+
 	/*! Zoom and center sheet to fit control; keep fitting as control is resized until user zoom or pan. */
 	void fit();
 
@@ -114,6 +125,7 @@ public:
 private:
 	Ref< TrimSheetSetupAsset > m_setup;
 	TrimSheetLayer m_layer = TrimSheetLayer::Albedo;
+	measure_fn_t m_imageMeasure;
 	AlignedVector< TrimSheetRect > m_slabRects;
 	AlignedVector< TrimSheetSetupAsset::RegionLayout > m_regionLayouts;
 	Ref< drawing::Image > m_display;
@@ -146,6 +158,21 @@ private:
 
 	/*! Find slab, or region, edge which can be dragged at client position. */
 	DragMode hitEdge(const ui::Point& position, int32_t& outSlab, int32_t& outRegion) const;
+
+	/*! Get laid out length of region along its slab, 0 if region doesn't exist. */
+	int32_t getRegionLength(int32_t slab, int32_t region) const;
+
+	/*! Set length of region; next region, if it has a fixed length, is adjusted to keep following regions in place.
+	 *
+	 * \param length Desired length, clamped if next region cannot shrink enough.
+	 * \param currentLength Laid out length of region before resize.
+	 * \param currentNextLength Laid out length of next region before resize.
+	 * \return True if region was modified.
+	 */
+	bool setRegionLength(TrimSheetSlab* slab, int32_t region, int32_t length, int32_t currentLength, int32_t currentNextLength);
+
+	/*! Resize slab, or region, of edge to fit its images; return true if modified. */
+	bool fitEdge(DragMode edge, int32_t slab, int32_t region);
 
 	void convertDisplay(const drawing::Image* sheet, const TrimSheetRect& rect);
 

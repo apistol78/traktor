@@ -17,6 +17,8 @@
 #include "Core/Serialization/MemberRefArray.h"
 #include "Render/Editor/Texture/TrimSheetRegion.h"
 
+#include <algorithm>
+
 namespace traktor::render
 {
 
@@ -26,6 +28,14 @@ TrimSheetSlab::TrimSheetSlab(Orientation orientation, int32_t size)
 :	m_orientation(orientation)
 ,	m_size(size)
 {
+}
+
+int32_t TrimSheetSlab::getMargin() const
+{
+	int32_t margin = 0;
+	for (auto region : m_regions)
+		margin = std::max(margin, region->getMargin());
+	return margin;
 }
 
 void TrimSheetSlab::insertRegion(int32_t index, TrimSheetRegion* region)

@@ -68,17 +68,20 @@ void TrimSheetSetupAsset::calculateLayout(AlignedVector< TrimSheetRect >& outSla
 		const TrimSheetSlab* slab = m_slabs[i];
 		const bool horizontal = (slab->getOrientation() == TrimSheetSlab::Orientation::Horizontal);
 
+		// Margins are added to slab's thickness, on both sides.
+		const int32_t margin = slab->getMargin();
+
 		// Take slab from top, or left, of remaining sheet area.
 		TrimSheetRect slabRect = remaining;
 		if (horizontal)
 		{
-			slabRect.height = (slab->getSize() > 0) ? std::min(slab->getSize(), remaining.height) : remaining.height;
+			slabRect.height = (slab->getSize() > 0) ? std::min(slab->getSize() + margin * 2, remaining.height) : remaining.height;
 			remaining.y += slabRect.height;
 			remaining.height -= slabRect.height;
 		}
 		else
 		{
-			slabRect.width = (slab->getSize() > 0) ? std::min(slab->getSize(), remaining.width) : remaining.width;
+			slabRect.width = (slab->getSize() > 0) ? std::min(slab->getSize() + margin * 2, remaining.width) : remaining.width;
 			remaining.x += slabRect.width;
 			remaining.width -= slabRect.width;
 		}
@@ -126,6 +129,19 @@ void TrimSheetSetupAsset::calculateLayout(AlignedVector< TrimSheetRect >& outSla
 			{
 				regionLayout.rect.y += position;
 				regionLayout.rect.height = regionLength;
+			}
+
+			// Content of all regions in slab are aligned, inside of slab's margins.
+			regionLayout.content = regionLayout.rect;
+			if (horizontal)
+			{
+				regionLayout.content.y += margin;
+				regionLayout.content.height = std::max(regionLayout.rect.height - margin * 2, 0);
+			}
+			else
+			{
+				regionLayout.content.x += margin;
+				regionLayout.content.width = std::max(regionLayout.rect.width - margin * 2, 0);
 			}
 
 			position += regionLength;

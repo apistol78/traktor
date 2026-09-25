@@ -23,6 +23,7 @@
 
 #include <algorithm>
 #include <cmath>
+#include <cwctype>
 
 namespace traktor::render
 {
@@ -48,12 +49,75 @@ float normalized(float v)
 	return v;
 }
 
+/*! Parse swizzle, same characters as TextureOutput, into source of each output channel.
+ *
+ * Sources are 0 to 3 for red to alpha, 4 for zero and 5 for one. Missing,
+ * or invalid, characters keep channel as is.
+ *
+ * \return False if swizzle is invalid; empty swizzle is valid.
+ */
+bool parseSwizzle(const std::wstring& swizzle, int32_t outSources[4])
+{
+	bool valid = swizzle.empty() || swizzle.length() == 4;
+	for (int32_t i = 0; i < 4; ++i)
+	{
+		outSources[i] = i;
+		if (i >= (int32_t)swizzle.length())
+			continue;
+
+		switch (std::towupper(swizzle[i]))
+		{
+		case L'R':
+			outSources[i] = 0;
+			break;
+
+		case L'G':
+			outSources[i] = 1;
+			break;
+
+		case L'B':
+			outSources[i] = 2;
+			break;
+
+		case L'A':
+			outSources[i] = 3;
+			break;
+
+		case L'0':
+			outSources[i] = 4;
+			break;
+
+		case L'1':
+			outSources[i] = 5;
+			break;
+
+		default:
+			valid = false;
+			break;
+		}
+	}
+	return valid;
+}
+
+template < typename ChannelType >
+void swizzleChannels(ChannelType* p, int32_t count, const int32_t sources[4], ChannelType one)
+{
+	for (int32_t i = 0; i < count; ++i, p += 4)
+	{
+		const ChannelType in[] = { p[0], p[1], p[2], p[3], ChannelType(0), one };
+		p[0] = in[sources[0]];
+		p[1] = in[sources[1]];
+		p[2] = in[sources[2]];
+		p[3] = in[sources[3]];
+	}
+}
+
 /*! Load source image and convert into a format which is fast to sample.
  *
  * Sources with at most 8 bits per channel are kept as 8 bit RGBA, others
  * as RGBA F32; both have channels in RGBA order in memory.
  */
-Ref< drawing::Image > loadSource(const Path& filePath, float scale, bool sRGB)
+Ref< drawing::Image > loadSource(const Path& filePath, const int32_t swizzle[4], float scale, bool sRGB)
 {
 	Ref< drawing::Image > image = drawing::Image::load(filePath);
 	if (!image)
@@ -100,6 +164,17 @@ Ref< drawing::Image > loadSource(const Path& filePath, float scale, bool sRGB)
 	{
 		const drawing::GammaFilter gammaFilter(gamma, 2.2f);
 		image->apply(&gammaFilter);
+	}
+
+	// Select channels, e.g. roughness from green of a packed image; done after source
+	// has been expanded into RGBA so gray images and missing alpha behave.
+	if (swizzle[0] != 0 || swizzle[1] != 1 || swizzle[2] != 2 || swizzle[3] != 3)
+	{
+		const int32_t count = image->getWidth() * image->getHeight();
+		if (highPrecision)
+			swizzleChannels< float >(static_cast< float* >(image->getData()), count, swizzle, 1.0f);
+		else
+			swizzleChannels< uint8_t >(static_cast< uint8_t* >(image->getData()), count, swizzle, 255);
 	}
 
 	if (std::abs(scale - 1.0f) > FUZZY_EPSILON)
@@ -232,6 +307,68 @@ void placeImage(const drawing::Image* source, const TrimSheetRegion* region, con
 	}
 }
 
+/*! Fill margin around content by repeating content's edge pixels.
+ *
+ * \param horizontal True if margin is above and below content, else to the left and right.
+ */
+void fillMargin(drawing::Image* sheet, const TrimSheetRect& content, int32_t margin, bool horizontal)
+{
+	if (content.empty() || margin <= 0)
+		return;
+
+	float* data = static_cast< float* >(sheet->getData());
+	const int32_t width = sheet->getWidth();
+	const int32_t height = sheet->getHeight();
+
+	auto copyPixel = [&](int32_t fromX, int32_t fromY, int32_t toX, int32_t toY) {
+		if (toX < 0 || toY < 0 || toX >= width || toY >= height)
+			return;
+		const float* s = &data[(fromX + fromY * width) * 4];
+		float* d = &data[(toX + toY * width) * 4];
+		d[0] = s[0];
+		d[1] = s[1];
+		d[2] = s[2];
+		d[3] = s[3];
+	};
+
+	if (horizontal)
+	{
+		const int32_t x0 = std::max(content.x, 0);
+		const int32_t x1 = std::min(content.x + content.width, width);
+		const int32_t top = content.y;
+		const int32_t bottom = content.y + content.height - 1;
+		if (top < 0 || bottom >= height)
+			return;
+
+		for (int32_t i = 1; i <= margin; ++i)
+		{
+			for (int32_t x = x0; x < x1; ++x)
+			{
+				copyPixel(x, top, x, top - i);
+				copyPixel(x, bottom, x, bottom + i);
+			}
+		}
+	}
+	else
+	{
+		const int32_t y0 = std::max(content.y, 0);
+		const int32_t y1 = std::min(content.y + content.height, height);
+		const int32_t left = content.x;
+		const int32_t right = content.x + content.width - 1;
+		if (left < 0 || right >= width)
+			return;
+
+		for (int32_t y = y0; y < y1; ++y)
+		{
+			for (int32_t i = 1; i <= margin; ++i)
+			{
+				copyPixel(left, y, left - i, y);
+				copyPixel(right, y, right + i, y);
+			}
+		}
+	}
+}
+
 void fillRect(drawing::Image* sheet, const TrimSheetRect& rect, const Color4f& color)
 {
 	float T_MATH_ALIGN16 c[4];
@@ -319,7 +456,7 @@ bool TrimSheetComposer::getPlacedSize(const TrimSheetRegion* region, TrimSheetLa
 	if (fileName.empty())
 		return false;
 
-	const drawing::Image* source = getSource(fileName, region->getScale(), layer);
+	const drawing::Image* source = getSource(fileName, region->getSwizzle(layer), region->getScale(), layer);
 	if (!source)
 		return false;
 
@@ -331,6 +468,7 @@ bool TrimSheetComposer::getPlacedSize(const TrimSheetRegion* region, TrimSheetLa
 void TrimSheetComposer::flush()
 {
 	m_sources.clear();
+	m_invalidSwizzles.clear();
 }
 
 void TrimSheetComposer::collectFiles(const TrimSheetSetupAsset* setup, TrimSheetLayer layer, std::set< std::wstring >& outFiles)
@@ -346,13 +484,20 @@ void TrimSheetComposer::collectFiles(const TrimSheetSetupAsset* setup, TrimSheet
 	}
 }
 
-const drawing::Image* TrimSheetComposer::getSource(const Path& fileName, float scale, TrimSheetLayer layer)
+const drawing::Image* TrimSheetComposer::getSource(const Path& fileName, const std::wstring& swizzle, float scale, TrimSheetLayer layer)
 {
 	const Path filePath = FileSystem::getInstance().getAbsolutePath(m_assetPath, fileName);
 	const bool sRGB = (layer == TrimSheetLayer::Albedo);
 
+	// Report each invalid swizzle once; not only when source is loaded since it might resolve to an already cached swizzle.
+	int32_t swizzleSources[4];
+	if (!parseSwizzle(swizzle, swizzleSources) && m_invalidSwizzles.insert(swizzle).second)
+		log::warning << L"Invalid swizzle \"" << swizzle << L"\" of trim sheet source image \"" << filePath.getPathName() << L"\"; expected four of R, G, B, A, 0 or 1. Invalid channels are kept as is." << Endl;
+
 	StringOutputStream ss;
-	ss << filePath.getPathName() << L"|" << scale << L"|" << (sRGB ? L"sRGB" : L"linear");
+	ss << filePath.getPathName() << L"|" << scale << L"|" << (sRGB ? L"sRGB" : L"linear") << L"|";
+	for (int32_t i = 0; i < 4; ++i)
+		ss << swizzleSources[i];
 	Source& source = m_sources[ss.str()];
 
 	Ref< File > file = FileSystem::getInstance().get(filePath);
@@ -375,7 +520,7 @@ const drawing::Image* TrimSheetComposer::getSource(const Path& fileName, float s
 	source.lastWriteTime = lastWriteTime;
 	source.size = size;
 	source.missing = false;
-	source.image = loadSource(filePath, scale, sRGB);
+	source.image = loadSource(filePath, swizzleSources, scale, sRGB);
 	if (!source.image)
 		log::error << L"Unable to load trim sheet source image \"" << filePath.getPathName() << L"\"." << Endl;
 
@@ -385,14 +530,14 @@ const drawing::Image* TrimSheetComposer::getSource(const Path& fileName, float s
 void TrimSheetComposer::placeRegion(const TrimSheetSetupAsset* setup, TrimSheetLayer layer, const TrimSheetSetupAsset::RegionLayout& regionLayout, drawing::Image* sheet)
 {
 	const TrimSheetRegion* region = setup->getRegion(regionLayout.slab, regionLayout.region);
-	if (!region || regionLayout.rect.empty())
+	if (!region || regionLayout.content.empty())
 		return;
 
 	const Path& fileName = region->getFileName(layer);
 	if (fileName.empty())
 		return;
 
-	const drawing::Image* source = getSource(fileName, region->getScale(), layer);
+	const drawing::Image* source = getSource(fileName, region->getSwizzle(layer), region->getScale(), layer);
 	if (!source)
 		return;
 
@@ -401,9 +546,13 @@ void TrimSheetComposer::placeRegion(const TrimSheetSetupAsset* setup, TrimSheetL
 		normalSign = (setup->getNormalConvention() == TrimSheetSetupAsset::NormalConvention::DirectX) ? 1.0f : -1.0f;
 
 	if (source->getPixelFormat().isFloatPoint())
-		placeImage< float >(source, region, regionLayout.rect, normalSign, sheet);
+		placeImage< float >(source, region, regionLayout.content, normalSign, sheet);
 	else
-		placeImage< uint8_t >(source, region, regionLayout.rect, normalSign, sheet);
+		placeImage< uint8_t >(source, region, regionLayout.content, normalSign, sheet);
+
+	// Repeat edge pixels into region's margin; may be less than slab's margin.
+	const bool horizontal = (setup->getSlabs()[regionLayout.slab]->getOrientation() == TrimSheetSlab::Orientation::Horizontal);
+	fillMargin(sheet, regionLayout.content, region->getMargin(), horizontal);
 }
 
 }
