@@ -62,6 +62,7 @@
 #include "Render/Editor/Shader/UniformDeclaration.h"
 #include "Render/Editor/Shader/UniformLinker.h"
 #include "Render/Editor/Texture/TextureAsset.h"
+#include "Render/Editor/Texture/TrimSheetTextureAsset.h"
 #include "Ui/Application.h"
 #include "Ui/Clipboard.h"
 #include "Ui/Command.h"
@@ -543,7 +544,7 @@ bool ShaderGraphEditorPage::dropInstance(db::Instance* instance, const ui::Point
 	T_ASSERT(primaryType);
 
 	// Create texture node in case of a TextureAsset.
-	if (is_type_of< TextureAsset >(*primaryType))
+	if (is_type_of< TextureAsset >(*primaryType) || is_type_of< TrimSheetTextureAsset >(*primaryType))
 	{
 		Ref< Texture > shaderNode = new Texture(instance->getGuid());
 		shaderNode->setId(Guid::create());

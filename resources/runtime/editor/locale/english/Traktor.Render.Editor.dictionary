@@ -726,6 +726,122 @@
 			<second>Import texture batch...</second>
 		</item>
 		<item>
+			<first>TRIMSHEET_EDITOR_ADD_HORIZONTAL_SLAB</first>
+			<second>Add horizontal slab</second>
+		</item>
+		<item>
+			<first>TRIMSHEET_EDITOR_ADD_VERTICAL_SLAB</first>
+			<second>Add vertical slab</second>
+		</item>
+		<item>
+			<first>TRIMSHEET_EDITOR_EXPORT</first>
+			<second>Export</second>
+		</item>
+		<item>
+			<first>TRIMSHEET_EDITOR_EXPORT_ALL_LAYERS</first>
+			<second>Export all layers...</second>
+		</item>
+		<item>
+			<first>TRIMSHEET_EDITOR_EXPORT_LAYER</first>
+			<second>Export layer...</second>
+		</item>
+		<item>
+			<first>TRIMSHEET_EDITOR_EXPORT_LAYER_GUIDES</first>
+			<second>Export layer with guides...</second>
+		</item>
+		<item>
+			<first>TRIMSHEET_EDITOR_EXPORT_TITLE</first>
+			<second>Export trim sheet image</second>
+		</item>
+		<item>
+			<first>TRIMSHEET_EDITOR_LAYER</first>
+			<second>Layer</second>
+		</item>
+		<item>
+			<first>TRIMSHEET_EDITOR_LAYER_ALBEDO</first>
+			<second>Albedo</second>
+		</item>
+		<item>
+			<first>TRIMSHEET_EDITOR_LAYER_HEIGHT</first>
+			<second>Height</second>
+		</item>
+		<item>
+			<first>TRIMSHEET_EDITOR_LAYER_NORMAL</first>
+			<second>Normal</second>
+		</item>
+		<item>
+			<first>TRIMSHEET_EDITOR_LAYER_ROUGHNESS</first>
+			<second>Roughness</second>
+		</item>
+		<item>
+			<first>TRIMSHEET_EDITOR_LAYER_SPECULAR</first>
+			<second>Specular</second>
+		</item>
+		<item>
+			<first>TRIMSHEET_EDITOR_MOVE_DOWN</first>
+			<second>Move down</second>
+		</item>
+		<item>
+			<first>TRIMSHEET_EDITOR_MOVE_UP</first>
+			<second>Move up</second>
+		</item>
+		<item>
+			<first>TRIMSHEET_EDITOR_REGION</first>
+			<second>Region {0}.{1}</second>
+		</item>
+		<item>
+			<first>TRIMSHEET_EDITOR_RELOAD</first>
+			<second>Reload</second>
+		</item>
+		<item>
+			<first>TRIMSHEET_EDITOR_REMOVE</first>
+			<second>Remove</second>
+		</item>
+		<item>
+			<first>TRIMSHEET_EDITOR_ROTATE_IMAGE</first>
+			<second>Rotate image</second>
+		</item>
+		<item>
+			<first>TRIMSHEET_EDITOR_SHEET</first>
+			<second>Sheet ({0} x {1})</second>
+		</item>
+		<item>
+			<first>TRIMSHEET_EDITOR_SLAB_HORIZONTAL</first>
+			<second>Horizontal slab {0} ({1})</second>
+		</item>
+		<item>
+			<first>TRIMSHEET_EDITOR_SLAB_VERTICAL</first>
+			<second>Vertical slab {0} ({1})</second>
+		</item>
+		<item>
+			<first>TRIMSHEET_EDITOR_SPLIT_REGION</first>
+			<second>Split</second>
+		</item>
+		<item>
+			<first>TRIMSHEET_EDITOR_STATUS_IMAGE</first>
+			<second>Image {0} x {1} at {2}, {3}</second>
+		</item>
+		<item>
+			<first>TRIMSHEET_EDITOR_STATUS_IMAGE_MISSING</first>
+			<second>Image "{0}" missing</second>
+		</item>
+		<item>
+			<first>TRIMSHEET_EDITOR_STATUS_SHEET</first>
+			<second>{0} x {1}, {2}</second>
+		</item>
+		<item>
+			<first>TRIMSHEET_EDITOR_STATUS_SIZE</first>
+			<second>Size {0}</second>
+		</item>
+		<item>
+			<first>TRIMSHEET_EDITOR_TOGGLE_GUIDES</first>
+			<second>Guides</second>
+		</item>
+		<item>
+			<first>TRIMSHEET_EDITOR_TOGGLE_NAMES</first>
+			<second>Names</second>
+		</item>
+		<item>
 			<first>IMAGEGRAPH_CENTER</first>
 			<second>Center</second>
 		</item>

@@ -19,6 +19,7 @@
 #include "Render/Editor/Shader/Nodes.h"
 #include "Render/Editor/Shader/Facades/TextureNodeFacade.h"
 #include "Render/Editor/Texture/TextureAsset.h"
+#include "Render/Editor/Texture/TrimSheetBrowsePreview.h"
 #include "Ui/Application.h"
 #include "Ui/Bitmap.h"
 #include "Ui/Graph/DefaultNodeShape.h"
@@ -154,6 +155,27 @@ void TextureNodeFacade::updateThumb(editor::IEditor* editor, ui::GraphControl* g
 						editorNode->setImage(nodeImage);
 						return;
 					}
+				}
+			}
+		}
+		else
+		{
+			// Trim sheet textures are composed from multiple images.
+			const std::wstring assetPath = editor->getSettings()->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
+			Ref< drawing::Image > thumbnail = TrimSheetBrowsePreview::generateImage(
+				assetPath,
+				editor->getSourceDatabase(),
+				textureGuid,
+				graphControl->pixel(64_ut),
+				graphControl->pixel(64_ut)
+			);
+			if (thumbnail)
+			{
+				Ref< ui::Bitmap > nodeImage = new ui::Bitmap();
+				if (nodeImage->create(thumbnail))
+				{
+					editorNode->setImage(nodeImage);
+					return;
 				}
 			}
 		}

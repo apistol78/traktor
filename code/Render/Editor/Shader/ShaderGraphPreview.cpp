@@ -11,6 +11,7 @@
 #include "Render/Editor/Shader/ShaderGraphPreview.h"
 #include "Render/Editor/Shader/Algorithms/ShaderGraphEvaluator.h"
 #include "Render/Editor/Texture/TextureAsset.h"
+#include "Render/Editor/Texture/TrimSheetBrowsePreview.h"
 
 namespace traktor::render
 {
@@ -94,6 +95,8 @@ Ref< drawing::Image > ShaderGraphPreview::generate(const ShaderGraph* shaderGrap
 					}
 				}
 			}
+			else
+				image = TrimSheetBrowsePreview::generateImage(m_assetPath, m_database, textureNode->getExternal(), width, height);
 		}
 	}
 

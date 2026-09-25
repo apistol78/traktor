@@ -122,6 +122,14 @@
 			<second>Texture</second>
 		</item>
 		<item>
+			<first>TRAKTOR_RENDER_TRIMSHEETSETUPASSET</first>
+			<second>Trim sheet setup</second>
+		</item>
+		<item>
+			<first>TRAKTOR_RENDER_TRIMSHEETTEXTUREASSET</first>
+			<second>Trim sheet texture</second>
+		</item>
+		<item>
 			<first>TRAKTOR_RESOURCE_RESOURCEBUNDLEASSET</first>
 			<second>Resource bundle</second>
 		</item>

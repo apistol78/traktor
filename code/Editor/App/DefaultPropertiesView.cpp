@@ -249,8 +249,14 @@ void DefaultPropertiesView::eventPropertyCommand(ui::PropertyCommandEvent* event
 				Path path = fileItem->getPath();
 				if (fileDialog.showModal(path) == ui::DialogResult::Ok)
 				{
+					ui::ContentChangingEvent changingEvent(this);
+					raiseEvent(&changingEvent);
+
 					fileItem->setPath(path);
 					m_propertyList->apply();
+
+					ui::PropertyContentChangeEvent changeEvent(this, fileItem);
+					raiseEvent(&changeEvent);
 				}
 
 				fileDialog.destroy();
@@ -264,8 +270,14 @@ void DefaultPropertiesView::eventPropertyCommand(ui::PropertyCommandEvent* event
 				Path path = fileItem->getPath();
 				if (pathDialog.showModal(path) == ui::DialogResult::Ok)
 				{
+					ui::ContentChangingEvent changingEvent(this);
+					raiseEvent(&changingEvent);
+
 					fileItem->setPath(path);
 					m_propertyList->apply();
+
+					ui::PropertyContentChangeEvent changeEvent(this, fileItem);
+					raiseEvent(&changeEvent);
 				}
 
 				pathDialog.destroy();
