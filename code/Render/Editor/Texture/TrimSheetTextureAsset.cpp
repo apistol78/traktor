@@ -25,6 +25,7 @@ void TrimSheetTextureAsset::serialize(ISerializer& s)
 		{ L"Albedo", TrimSheetLayer::Albedo },
 		{ L"Specular", TrimSheetLayer::Specular },
 		{ L"Roughness", TrimSheetLayer::Roughness },
+		{ L"Metallic", TrimSheetLayer::Metallic },
 		{ L"Normal", TrimSheetLayer::Normal },
 		{ L"Height", TrimSheetLayer::Height },
 		{ 0 }

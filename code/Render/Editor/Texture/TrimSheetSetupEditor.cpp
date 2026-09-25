@@ -50,8 +50,8 @@ namespace traktor::render
 namespace
 {
 
-const wchar_t* c_layerNames[] = { L"Albedo", L"Specular", L"Roughness", L"Normal", L"Height" };
-const wchar_t* c_layerTextIds[] = { L"TRIMSHEET_EDITOR_LAYER_ALBEDO", L"TRIMSHEET_EDITOR_LAYER_SPECULAR", L"TRIMSHEET_EDITOR_LAYER_ROUGHNESS", L"TRIMSHEET_EDITOR_LAYER_NORMAL", L"TRIMSHEET_EDITOR_LAYER_HEIGHT" };
+const wchar_t* c_layerNames[] = { L"Albedo", L"Specular", L"Roughness", L"Metallic", L"Normal", L"Height" };
+const wchar_t* c_layerTextIds[] = { L"TRIMSHEET_EDITOR_LAYER_ALBEDO", L"TRIMSHEET_EDITOR_LAYER_SPECULAR", L"TRIMSHEET_EDITOR_LAYER_ROUGHNESS", L"TRIMSHEET_EDITOR_LAYER_METALLIC", L"TRIMSHEET_EDITOR_LAYER_NORMAL", L"TRIMSHEET_EDITOR_LAYER_HEIGHT" };
 
 static_assert(sizeof_array(c_layerNames) == TrimSheetLayerCount, "Layer names out of sync with layers.");
 static_assert(sizeof_array(c_layerTextIds) == TrimSheetLayerCount, "Layer texts out of sync with layers.");

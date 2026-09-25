@@ -132,7 +132,8 @@ Ref< TextureOutput > TrimSheetTexturePipeline::createTextureOutput(const TrimShe
 		break;
 
 	case TrimSheetLayer::Roughness:
-		// Materials sample roughness from red; exact single channel if not compressed.
+	case TrimSheetLayer::Metallic:
+		// Materials sample roughness and metalness from red; exact single channel if not compressed.
 		if (!asset->getEnableCompression())
 			output->m_textureFormat = TfR8;
 		output->m_ignoreAlpha = true;

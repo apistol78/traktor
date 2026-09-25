@@ -58,7 +58,7 @@ struct LegacyImage
 
 }
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.TrimSheetRegion", 4, TrimSheetRegion, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.TrimSheetRegion", 5, TrimSheetRegion, ISerializable)
 
 void TrimSheetRegion::Image::serialize(ISerializer& s)
 {
@@ -121,6 +121,8 @@ void TrimSheetRegion::serialize(ISerializer& s)
 		s >> MemberComposite< Image >(L"albedo", m_images[(int32_t)TrimSheetLayer::Albedo]);
 		s >> MemberComposite< Image >(L"specular", m_images[(int32_t)TrimSheetLayer::Specular]);
 		s >> MemberComposite< Image >(L"roughness", m_images[(int32_t)TrimSheetLayer::Roughness]);
+		if (s.getVersion< TrimSheetRegion >() >= 5)
+			s >> MemberComposite< Image >(L"metallic", m_images[(int32_t)TrimSheetLayer::Metallic]);
 		s >> MemberComposite< Image >(L"normal", m_images[(int32_t)TrimSheetLayer::Normal]);
 		s >> MemberComposite< Image >(L"height", m_images[(int32_t)TrimSheetLayer::Height]);
 	}

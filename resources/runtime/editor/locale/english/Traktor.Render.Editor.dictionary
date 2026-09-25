@@ -766,6 +766,10 @@
 			<second>Height</second>
 		</item>
 		<item>
+			<first>TRIMSHEET_EDITOR_LAYER_METALLIC</first>
+			<second>Metallic</second>
+		</item>
+		<item>
 			<first>TRIMSHEET_EDITOR_LAYER_NORMAL</first>
 			<second>Normal</second>
 		</item>

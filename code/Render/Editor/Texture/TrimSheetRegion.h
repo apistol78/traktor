@@ -32,11 +32,12 @@ enum class TrimSheetLayer : int32_t
 	Albedo = 0,
 	Specular = 1,
 	Roughness = 2,
-	Normal = 3,
-	Height = 4
+	Metallic = 3,
+	Normal = 4,
+	Height = 5
 };
 
-constexpr int32_t TrimSheetLayerCount = 5;
+constexpr int32_t TrimSheetLayerCount = 6;
 
 /*! Trim sheet region.
  * \ingroup Render

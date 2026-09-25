@@ -28,8 +28,8 @@ namespace traktor::render
  *
  * The layer determine how the texture is built; albedo is sRGB color,
  * normal is a tangent space normal map, height is a single channel
- * linear map, roughness is linear single channel data (exact only if
- * compression is disabled) and specular is linear color.
+ * linear map, roughness and metallic are linear single channel data
+ * (exact only if compression is disabled) and specular is linear color.
  */
 class T_DLLCLASS TrimSheetTextureAsset : public ISerializable
 {

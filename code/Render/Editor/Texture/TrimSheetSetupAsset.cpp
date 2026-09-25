@@ -22,15 +22,20 @@
 namespace traktor::render
 {
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.render.TrimSheetSetupAsset", 1, TrimSheetSetupAsset, ISerializable)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.render.TrimSheetSetupAsset", 2, TrimSheetSetupAsset, ISerializable)
 
 TrimSheetSetupAsset::TrimSheetSetupAsset()
 {
+	// Mid gray; 128 when converted to 8-bit (0.5 would truncate to 127), and
+	// unchanged when written to and read from XML which keeps six digits.
+	const float mid = 0.501961f;
+
 	m_backgrounds[(int32_t)TrimSheetLayer::Albedo] = Color4f(0.0f, 0.0f, 0.0f, 1.0f);
-	m_backgrounds[(int32_t)TrimSheetLayer::Specular] = Color4f(0.0f, 0.0f, 0.0f, 1.0f);
+	m_backgrounds[(int32_t)TrimSheetLayer::Specular] = Color4f(mid, mid, mid, 1.0f);
 	m_backgrounds[(int32_t)TrimSheetLayer::Roughness] = Color4f(1.0f, 1.0f, 1.0f, 1.0f);
+	m_backgrounds[(int32_t)TrimSheetLayer::Metallic] = Color4f(0.0f, 0.0f, 0.0f, 1.0f);
 	m_backgrounds[(int32_t)TrimSheetLayer::Normal] = Color4f(0.5f, 0.5f, 1.0f, 1.0f);
-	m_backgrounds[(int32_t)TrimSheetLayer::Height] = Color4f(0.0f, 0.0f, 0.0f, 1.0f);
+	m_backgrounds[(int32_t)TrimSheetLayer::Height] = Color4f(mid, mid, mid, 1.0f);
 }
 
 void TrimSheetSetupAsset::insertSlab(int32_t index, TrimSheetSlab* slab)
@@ -164,6 +169,8 @@ void TrimSheetSetupAsset::serialize(ISerializer& s)
 	s >> Member< Color4f >(L"backgroundSpecular", m_backgrounds[(int32_t)TrimSheetLayer::Specular]);
 	if (s.getVersion< TrimSheetSetupAsset >() >= 1)
 		s >> Member< Color4f >(L"backgroundRoughness", m_backgrounds[(int32_t)TrimSheetLayer::Roughness]);
+	if (s.getVersion< TrimSheetSetupAsset >() >= 2)
+		s >> Member< Color4f >(L"backgroundMetallic", m_backgrounds[(int32_t)TrimSheetLayer::Metallic]);
 	s >> Member< Color4f >(L"backgroundNormal", m_backgrounds[(int32_t)TrimSheetLayer::Normal]);
 	s >> Member< Color4f >(L"backgroundHeight", m_backgrounds[(int32_t)TrimSheetLayer::Height]);
 
