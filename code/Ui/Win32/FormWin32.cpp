@@ -157,7 +157,18 @@ bool FormWin32::hasNativeCaption() const
 
 bool FormWin32::beginMove()
 {
-	return false;
+	// System move loop only ends on release of the left button.
+	if ((GetKeyState(VK_LBUTTON) & 0x8000) == 0)
+		return false;
+
+	// Enter the same modal move loop as a press on a native caption, so the system
+	// provides snapping, drag to restore from maximized etc. Returns once the button
+	// has been released.
+	POINT pt;
+	GetCursorPos(&pt);
+	ReleaseCapture();
+	SendMessage(m_hWnd, WM_NCLBUTTONDOWN, HTCAPTION, MAKELPARAM(pt.x, pt.y));
+	return true;
 }
 
 void FormWin32::hideProgress()

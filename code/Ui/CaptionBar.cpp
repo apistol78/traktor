@@ -149,9 +149,6 @@ void CaptionBar::eventMouseButtonDown(MouseButtonDownEvent* event)
 	if (!parentForm)
 		return;
 
-	if (parentForm->isMaximized())
-		return;
-
 	m_pressPosition = event->getPosition();
 	m_moveBegun = false;
 	m_mousePosition = getParent()->clientToScreen(event->getPosition());
@@ -205,14 +202,23 @@ void CaptionBar::eventMouseMove(MouseMoveEvent* event)
 		m_moveBegun = true;
 
 		// Let the window system move the form if possible; required where
-		// clients cannot position their own windows (Wayland).
+		// clients cannot position their own windows (Wayland) and provides
+		// snapping etc (Win32). Release capture first as the system takes
+		// the pointer; losing it while held would synthesize a button up.
+		m_haveCapture = false;
+		releaseCapture();
 		if (parentForm->beginMove())
 		{
-			m_haveCapture = false;
-			releaseCapture();
 			event->consume();
 			return;
 		}
+
+		// Moving the form ourselves; not possible while maximized.
+		if (parentForm->isMaximized())
+			return;
+
+		m_haveCapture = true;
+		setCapture();
 	}
 
 	const Point position = parentForm->clientToScreen(event->getPosition());

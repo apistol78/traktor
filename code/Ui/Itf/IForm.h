@@ -41,6 +41,9 @@ public:
 
 	/*! Hand an interactive move of the form, from the currently pressed mouse button, to the window system.
 	 *
+	 * Caller should release any mouse capture first. Might not return until
+	 * the move has finished.
+	 *
 	 * \return False if not supported; caller should then move the form itself.
 	 */
 	virtual bool beginMove() = 0;
