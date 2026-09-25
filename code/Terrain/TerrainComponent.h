@@ -181,6 +181,7 @@ private:
 	Ref< render::ITexture > m_defaultCutMap;
 	render::Primitives m_primitives[LodCount];
 	AlignedVector< uint32_t > m_indices;
+	Ref< render::Buffer > m_rtIndexBuffer;
 	RefArray< render::Buffer > m_rtVertexBuffers;
 	AlignedVector< world::RTWorldComponent::Part > m_rtParts;
 	world::RTWorldComponent::Instance* m_rtwInstance = nullptr;

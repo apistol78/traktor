@@ -58,6 +58,9 @@ const render::Handle c_handleTerrain_TargetSize(L"Terrain_TargetSize");
 const render::Handle c_handleTerrain_DrawBuffer(L"Terrain_DrawBuffer");
 const render::Handle c_handleTerrain_CulledDrawBuffer(L"Terrain_CulledDrawBuffer");
 
+const uint32_t c_rtPatchCells = 64;	//!< Number of cells along each side of a ray tracing patch.
+const float c_rtCellSize = 2.0f;	//!< Approximate size of a ray tracing cell, in world units.
+
 const int32_t c_patchLodSteps = 3;
 
 struct CullPatch
@@ -828,11 +831,24 @@ bool TerrainComponent::createRayTracingPatches()
 	if (!m_renderSystem->supportRayTracing())
 		return true;
 
-	const uint32_t heightfieldSize = m_heightfield->getSize();
-	T_ASSERT(heightfieldSize > 0);
+	// Ray tracing patches are laid out on a grid of their own, sized only by world extent. Raster
+	// patches are sized by patch dimension and detail skip and, at high detail, amount to thousands
+	// of patches; far too many bottom level structures for what is a coarse approximation anyway.
+	const Vector4& worldExtent = m_heightfield->getWorldExtent();
+	const float rtPatchSize = c_rtPatchCells * c_rtCellSize;
+	const uint32_t rtPatchCountX = std::max< uint32_t >((uint32_t)(worldExtent.x() / rtPatchSize + 0.5f), 1);
+	const uint32_t rtPatchCountZ = std::max< uint32_t >((uint32_t)(worldExtent.z() / rtPatchSize + 0.5f), 1);
 
-	const uint32_t patchDim = m_terrain->getPatchDim();
-	const uint32_t patchVertexCount = patchDim * patchDim;
+	const uint32_t patchVertexDim = c_rtPatchCells + 1;
+	const uint32_t patchVertexCount = patchVertexDim * patchVertexDim;
+	const uint32_t patchTriangleCount = c_rtPatchCells * c_rtPatchCells * 2;
+
+	// Vertices are placed on a single grid spanning all patches so neighbouring
+	// patches share their border vertices exactly.
+	const float cellSizeX = worldExtent.x() / float(rtPatchCountX * c_rtPatchCells);
+	const float cellSizeZ = worldExtent.z() / float(rtPatchCountZ * c_rtPatchCells);
+	const float originX = -worldExtent.x() * 0.5f;
+	const float originZ = -worldExtent.z() * 0.5f;
 
 	AlignedVector< render::VertexElement > vertexElements;
 	vertexElements.push_back(render::VertexElement(render::DataUsage::Position, render::DtFloat3, 0));
@@ -842,29 +858,74 @@ bool TerrainComponent::createRayTracingPatches()
 	if (!vertexLayout)
 		return false;
 
-	const Vector4& worldExtent = m_heightfield->getWorldExtent();
-	const Vector4 patchExtent(worldExtent.x() / float(m_patchCount), worldExtent.y(), worldExtent.z() / float(m_patchCount), 0.0f);
-	const Vector4 patchDeltaHalf = patchExtent * Vector4(0.5f, 0.5f, 0.5f, 0.0f);
-	const Vector4 patchDeltaX = patchExtent * Vector4(1.0f, 0.0f, 0.0f, 0.0f);
-	const Vector4 patchDeltaZ = patchExtent * Vector4(0.0f, 0.0f, 1.0f, 0.0f);
-	Vector4 patchTopLeft = (-worldExtent * 0.5_simd).xyz1();
+	// All patches are triangulated alike, two triangles per cell, thus share index buffer.
+	AlignedVector< uint32_t > indices;
+	indices.reserve(patchTriangleCount * 3);
+	for (uint32_t z = 0; z < c_rtPatchCells; ++z)
+	{
+		for (uint32_t x = 0; x < c_rtPatchCells; ++x)
+		{
+			const uint32_t offset = x + z * patchVertexDim;
+
+			indices.push_back(offset);
+			indices.push_back(offset + 1);
+			indices.push_back(offset + patchVertexDim);
+
+			indices.push_back(offset + 1);
+			indices.push_back(offset + 1 + patchVertexDim);
+			indices.push_back(offset + patchVertexDim);
+		}
+	}
+
+	if (!m_rtIndexBuffer)
+	{
+		m_rtIndexBuffer = m_renderSystem->createBuffer(
+			render::BuIndex,
+			(uint32_t)indices.size() * sizeof(uint32_t),
+			false,
+			T_FILE_LINE_W);
+		if (!m_rtIndexBuffer)
+			return false;
+
+		uint32_t* index = static_cast< uint32_t* >(m_rtIndexBuffer->lock());
+		T_ASSERT_M(index, L"Unable to lock index buffer");
+		for (uint32_t i = 0; i < (uint32_t)indices.size(); ++i)
+			index[i] = indices[i];
+		m_rtIndexBuffer->unlock();
+	}
+
+	const render::Primitives primitives = render::Primitives::setIndexed(
+		render::PrimitiveType::Triangles,
+		0,
+		patchTriangleCount);
 
 	safeDestroy(m_rtwInstance);
 
-	m_rtVertexBuffers.resize(m_patchCount * m_patchCount);
-	m_rtParts.resize(m_patchCount * m_patchCount);
-
-	for (uint32_t pz = 0; pz < m_patchCount; ++pz)
+	// Per-vertex attribute buffers are kept, and rewritten, as long as there are as many patches.
+	if (m_rtParts.size() != rtPatchCountX * rtPatchCountZ)
 	{
-		Vector4 patchOrigin = patchTopLeft;
-		for (uint32_t px = 0; px < m_patchCount; ++px)
-		{
-			const int32_t patchId = px + pz * m_patchCount;
-			const Vector4 patchCenterWorld = patchOrigin + patchDeltaHalf;
+		m_rtParts.resize(0);
+		m_rtParts.resize(rtPatchCountX * rtPatchCountZ);
+	}
+	m_rtVertexBuffers.resize(rtPatchCountX * rtPatchCountZ);
 
-			const Aabb3 patchAabb(
-				patchCenterWorld * Vector4(1.0f, 0.0f, 1.0f, 1.0f) + Vector4(-patchDeltaHalf.x(), 0.0f, -patchDeltaHalf.z(), 0.0f),
-				patchCenterWorld * Vector4(1.0f, 0.0f, 1.0f, 1.0f) + Vector4(patchDeltaHalf.x(), 0.0f, patchDeltaHalf.z(), 0.0f));
+	// Shrink the RT terrain a bit to reduce self intersection due
+	// to mismatch between GBuffer and RT geometry.
+	const Scalar elevationOffset = -1.0_simd;
+
+	const float heightfieldSize = (float)m_heightfield->getSize();
+	const auto albedoMap = (m_surfaceCache != nullptr && m_surfaceCache->getBaseTexture() != nullptr) ? m_surfaceCache->getBaseTexture()->getBindlessIndex() : -1;
+
+	// Attributes are fetched per triangle corner; normals and texture coordinates
+	// are calculated once per vertex and then gathered for each corner.
+	AlignedVector< Vector4 > normals(patchVertexCount);
+	AlignedVector< float > texCoords(patchVertexCount * 2);
+
+	for (uint32_t pz = 0; pz < rtPatchCountZ; ++pz)
+	{
+		for (uint32_t px = 0; px < rtPatchCountX; ++px)
+		{
+			const uint32_t patchId = px + pz * rtPatchCountX;
 
 			// Create vertex buffer.
 			m_rtVertexBuffers[patchId] = m_renderSystem->createBuffer(
@@ -875,27 +936,25 @@ bool TerrainComponent::createRayTracingPatches()
 			if (!m_rtVertexBuffers[patchId])
 				return false;
 
-			// Shrink the RT terrain a bit to reduce self intersection due
-			// to mismatch between GBuffer and RT geometry.
-			const Scalar elevationOffset = -1.0_simd;
-
 			float* vertex = static_cast< float* >(m_rtVertexBuffers[patchId]->lock());
 			T_ASSERT_M(vertex, L"Unable to lock vertex buffer");
-			for (uint32_t z = 0; z < patchDim; ++z)
+			for (uint32_t z = 0; z < patchVertexDim; ++z)
 			{
-				for (uint32_t x = 0; x < patchDim; ++x)
+				for (uint32_t x = 0; x < patchVertexDim; ++x)
 				{
-					const float fx = float(x) / (patchDim - 1);
-					const float fz = float(z) / (patchDim - 1);
+					const uint32_t i = x + z * patchVertexDim;
 
-					const float worldX = lerp(patchAabb.mn.x(), patchAabb.mx.x(), fx);
-					const float worldZ = lerp(patchAabb.mn.z(), patchAabb.mx.z(), fz);
+					const float worldX = originX + float(px * c_rtPatchCells + x) * cellSizeX;
+					const float worldZ = originZ + float(pz * c_rtPatchCells + z) * cellSizeZ;
 					const float worldY = m_heightfield->getWorldHeight(worldX, worldZ);
 
 					float gridX, gridZ;
 					m_heightfield->worldToGrid(worldX, worldZ, gridX, gridZ);
 
 					const Vector4 normal = m_heightfield->normalAt(gridX, gridZ);
+					normals[i] = normal;
+					texCoords[i * 2 + 0] = gridX / heightfieldSize;
+					texCoords[i * 2 + 1] = gridZ / heightfieldSize;
 
 					*vertex++ = worldX + normal.x() * elevationOffset;
 					*vertex++ = worldY + normal.y() * elevationOffset;
@@ -905,7 +964,7 @@ bool TerrainComponent::createRayTracingPatches()
 			m_rtVertexBuffers[patchId]->unlock();
 
 			// Create "per-vertex" attribute buffer.
-			const uint32_t vertexAttribCount = m_primitives[1].count * 3;
+			const uint32_t vertexAttribCount = (uint32_t)indices.size();
 
 			Ref< render::Buffer > perVertexData = const_cast< render::Buffer* >(m_rtParts[patchId].perVertexData.ptr());
 			if (!perVertexData)
@@ -923,30 +982,16 @@ bool TerrainComponent::createRayTracingPatches()
 			T_ASSERT_M(va, L"Unable to lock vertex attribute buffer");
 			for (uint32_t i = 0; i < vertexAttribCount; ++i)
 			{
-				const uint32_t index = m_indices[m_primitives[1].offset + i];
-
-				const int32_t ix = index % patchDim;
-				const int32_t iz = index / patchDim;
-
-				const float fx = float(ix) / (patchDim - 1);
-				const float fz = float(iz) / (patchDim - 1);
-
-				const float worldX = lerp(patchAabb.mn.x(), patchAabb.mx.x(), fx);
-				const float worldZ = lerp(patchAabb.mn.z(), patchAabb.mx.z(), fz);
-
-				float gridX, gridZ;
-				m_heightfield->worldToGrid(worldX, worldZ, gridX, gridZ);
-
-				const Vector4 normal = m_heightfield->normalAt(gridX, gridZ);
+				const uint32_t index = indices[i];
 
 				Vector4(0.2f, 0.4f, 0.1f, 0.0f).storeUnaligned3(va->albedo);
-				normal.storeUnaligned3(va->normal);
+				normals[index].storeUnaligned3(va->normal);
 
 				va->emissive = 0.0f;
 
-				va->texCoord[0] = gridX / m_heightfield->getSize();
-				va->texCoord[1] = gridZ / m_heightfield->getSize();
-				va->albedoMap = (m_surfaceCache != nullptr && m_surfaceCache->getBaseTexture() != nullptr) ? m_surfaceCache->getBaseTexture()->getBindlessIndex() : -1;
+				va->texCoord[0] = texCoords[index * 2 + 0];
+				va->texCoord[1] = texCoords[index * 2 + 1];
+				va->albedoMap = albedoMap;
 
 				va++;
 			}
@@ -955,14 +1000,10 @@ bool TerrainComponent::createRayTracingPatches()
 			m_rtParts[patchId].perVertexData = perVertexData;
 
 			// Create bottom level acceleration structure.
-			m_rtParts[patchId].blas = m_renderSystem->createAccelerationStructure(m_rtVertexBuffers[patchId], vertexLayout, m_indexBuffer, render::IndexType::UInt32, { { m_primitives[1], true } }, false);
+			m_rtParts[patchId].blas = m_renderSystem->createAccelerationStructure(m_rtVertexBuffers[patchId], vertexLayout, m_rtIndexBuffer, render::IndexType::UInt32, { { primitives, true } }, false);
 			if (!m_rtParts[patchId].blas)
 				return false;
-
-			patchOrigin += patchDeltaX;
 		}
-
-		patchTopLeft += patchDeltaZ;
 	}
 
 	// Reset world to create new RT instance.

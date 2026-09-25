@@ -94,6 +94,13 @@ Context::~Context()
 		m_descriptorPool = 0;
 	}
 
+	// Destroy upload semaphore.
+	if (m_uploadSemaphore != VK_NULL_HANDLE)
+	{
+		vkDestroySemaphore(m_logicalDevice, m_uploadSemaphore, nullptr);
+		m_uploadSemaphore = VK_NULL_HANDLE;
+	}
+
 #if !defined(__ANDROID__) && !defined(__APPLE__)
 	for (char* name : m_debugNames)
 		free(name);
@@ -111,6 +118,23 @@ bool Context::create()
 		m_computeQueue = m_graphicsQueue;
 	else
 		m_computeQueue = Queue::create(this, m_computeQueueIndex);
+
+	// Create upload timeline semaphore; work on other queues than the graphics queue
+	// waits on it for uploads to be consumed. \sa performUploads
+	const VkSemaphoreTypeCreateInfo stci = {
+		.sType = VK_STRUCTURE_TYPE_SEMAPHORE_TYPE_CREATE_INFO,
+		.semaphoreType = VK_SEMAPHORE_TYPE_TIMELINE,
+		.initialValue = 0
+	};
+	const VkSemaphoreCreateInfo sci = {
+		.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO,
+		.pNext = &stci
+	};
+	if (vkCreateSemaphore(m_logicalDevice, &sci, nullptr, &m_uploadSemaphore) != VK_SUCCESS)
+	{
+		log::error << L"Failed to create Vulkan; failed to create upload semaphore." << Endl;
+		return false;
+	}
 
 	// Create pipeline cache.
 	VkPipelineCacheCreateInfo pcci = {};
@@ -467,14 +491,18 @@ void Context::performUploads()
 	if (m_uploadFns.empty())
 		return;
 
-	{
-		T_PROFILER_SCOPE(L"Context::performUploads");
+	T_PROFILER_SCOPE(L"Context::performUploads");
 
+	AlignedVector< upload_fn_t > uploadFns;
+	Ref< CommandBuffer > commandBuffer;
+	{
+		// Only the graphics queue is held, and only while recording and submitting, so other
+		// threads can keep submitting while the uploads are consumed. Later work on the graphics
+		// queue is ordered after the uploads and work on other queues waits on the upload
+		// semaphore for them. \sa Queue::submit
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_graphicsQueue->m_lock);
-		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_computeQueue->m_lock);
 
 		// Grab the deferred upload queue.
-		AlignedVector< upload_fn_t > uploadFns;
 		uint32_t uploadSize;
 		{
 			T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_updateLock);
@@ -486,7 +514,7 @@ void Context::performUploads()
 			return;
 
 		// Create command buffer and execute the upload queue.
-		auto commandBuffer = m_graphicsQueue->acquireCommandBuffer(L"Context::performUploads");
+		commandBuffer = m_graphicsQueue->acquireCommandBuffer(L"Context::performUploads");
 		if (!commandBuffer)
 		{
 			// Failed to create command buffer; put back deferred uploads to queue.
@@ -496,12 +524,42 @@ void Context::performUploads()
 			return;
 		}
 
+		// Uploads release staging resources as they are recorded; reserve the submission first
+		// so those cleanups are held back until the uploads have been consumed.
+		commandBuffer->reserveSubmission();
+
 		for (const upload_fn_t& fn : uploadFns)
 			fn(this, commandBuffer);
 
-		commandBuffer->submitAndWait();
-		commandBuffer = nullptr;
+		// Make uploads available, and visible, to all work submitted later to this queue.
+		const VkMemoryBarrier mb = {
+			.sType = VK_STRUCTURE_TYPE_MEMORY_BARRIER,
+			.pNext = nullptr,
+			.srcAccessMask = VK_ACCESS_MEMORY_WRITE_BIT,
+			.dstAccessMask = VK_ACCESS_MEMORY_READ_BIT | VK_ACCESS_MEMORY_WRITE_BIT
+		};
+		vkCmdPipelineBarrier(
+			*commandBuffer,
+			VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
+			VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
+			0,
+			1,
+			&mb,
+			0,
+			nullptr,
+			0,
+			nullptr);
+
+		const uint64_t uploadValue = m_uploadValue + 1;
+		if (!commandBuffer->submitSignal(m_uploadSemaphore, uploadValue))
+			return;
+
+		m_uploadValue = uploadValue;
 	}
+
+	// Wait, with the queue released, as callers expect the uploads to have been consumed on
+	// return; staging resources, referenced by the upload functions, are kept alive until then.
+	commandBuffer->wait();
 }
 
 void Context::recycle()

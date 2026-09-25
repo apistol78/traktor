@@ -23,6 +23,11 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.CommandBuffer", CommandBuffer, Object)
 CommandBuffer::~CommandBuffer()
 {
 	T_FATAL_ASSERT_M(!m_submitted, L"Cannot destroy in-flight command buffer, must wait until finished.");
+
+	// Never submitted; release reservation so cleanups are not held back by it.
+	if (m_reservedEpoch != 0)
+		m_context->endSubmission(m_reservedEpoch, VK_NULL_HANDLE);
+
 	vkFreeCommandBuffers(
 		m_context->getLogicalDevice(),
 		m_commandPool,
@@ -47,6 +52,13 @@ bool CommandBuffer::reset()
 
 	m_submitted = false;
 	return true;
+}
+
+void CommandBuffer::reserveSubmission()
+{
+	T_FATAL_ASSERT(!m_submitted);
+	T_FATAL_ASSERT(m_reservedEpoch == 0);
+	m_reservedEpoch = m_context->beginSubmission(m_inFlight);
 }
 
 bool CommandBuffer::submit(const StaticVector< VkSemaphore, 2 >& waitSemaphores, const StaticVector< VkPipelineStageFlags, 2 >& waitStageFlags, VkSemaphore signalSemaphore)
@@ -77,7 +89,7 @@ bool CommandBuffer::submit(const StaticVector< VkSemaphore, 2 >& waitSemaphores,
 		si.pSignalSemaphores = &signalSemaphore;
 	}
 
-	const uint64_t epoch = m_context->beginSubmission(m_inFlight);
+	const uint64_t epoch = beginSubmission();
 	if ((result = m_queue->submit(si, m_inFlight)) != VK_SUCCESS)
 	{
 		m_context->endSubmission(epoch, m_inFlight);
@@ -114,7 +126,7 @@ bool CommandBuffer::submitSignal(VkSemaphore semaphore, uint64_t semaphoreValue)
 		.pSignalSemaphores = &semaphore
 	};
 
-	const uint64_t epoch = m_context->beginSubmission(m_inFlight);
+	const uint64_t epoch = beginSubmission();
 	if ((result = m_queue->submit(submitInfo, m_inFlight)) != VK_SUCCESS)
 	{
 		m_context->endSubmission(epoch, m_inFlight);
@@ -152,7 +164,7 @@ bool CommandBuffer::submitWait(VkSemaphore semaphore, uint64_t semaphoreValue, V
 		.pCommandBuffers = &m_commandBuffer
 	};
 
-	const uint64_t epoch = m_context->beginSubmission(m_inFlight);
+	const uint64_t epoch = beginSubmission();
 	if ((result = m_queue->submit(submitInfo, m_inFlight)) != VK_SUCCESS)
 	{
 		m_context->endSubmission(epoch, m_inFlight);
@@ -221,6 +233,18 @@ CommandBuffer::CommandBuffer(Context* context, Queue* queue, VkCommandPool comma
 	m_context->setObjectDebugName(T_FILE_LINE_W, (uint64_t)m_inFlight, VK_OBJECT_TYPE_FENCE);
 
 	m_thread = ThreadManager::getInstance().getCurrentThread();
+}
+
+uint64_t CommandBuffer::beginSubmission()
+{
+	// Use reserved submission if any; \sa reserveSubmission
+	if (m_reservedEpoch != 0)
+	{
+		const uint64_t epoch = m_reservedEpoch;
+		m_reservedEpoch = 0;
+		return epoch;
+	}
+	return m_context->beginSubmission(m_inFlight);
 }
 
 }

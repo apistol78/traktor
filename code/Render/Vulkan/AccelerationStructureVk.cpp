@@ -181,12 +181,6 @@ Ref< AccelerationStructureVk > AccelerationStructureVk::createTopLevel(Context* 
 
 Ref< AccelerationStructureVk > AccelerationStructureVk::createBottomLevel(Context* context, const Buffer* vertexBuffer, const IVertexLayout* vertexLayout, const Buffer* indexBuffer, IndexType indexType, const AlignedVector< RaytracingPrimitives >& primitives, bool dynamic, uint32_t inFlightCount)
 {
-	// The BLAS are commonly build from vertex/index buffers when meshes are loaded. And since
-	// those buffers are most likely queueud for upload we need to flush the upload queue.
-	context->performUploads();
-
-	auto commandBuffer = context->getGraphicsQueue()->acquireCommandBuffer(L"AccelerationStructureVk::createBottomLevel");
-
 	Ref< AccelerationStructureVk > as = new AccelerationStructureVk(context, dynamic);
 	as->m_scratchAlignment = getScratchAlignment(context);
 
@@ -196,9 +190,53 @@ Ref< AccelerationStructureVk > AccelerationStructureVk::createBottomLevel(Contex
 	as->m_as.resize(count, 0);
 	as->m_index = count - 1;
 
-	as->writeGeometry(commandBuffer, vertexBuffer->getBufferView(), vertexLayout, indexBuffer->getBufferView(), indexType, primitives, true);
+	// The structure, and its buffers, are created here so it can be referenced right away but
+	// the build is deferred into the upload command buffer. The BLAS are commonly built from
+	// vertex/index buffers when meshes are loaded and those buffers are most likely queued for
+	// upload as well; they are uploaded ahead of the build by the same command buffer, and
+	// structures created in a row are built by a single submission rather than one each.
+	GeometryBuild build;
+	if (!as->prepareGeometry(vertexBuffer->getBufferView(), vertexLayout, indexBuffer->getBufferView(), indexType, primitives, true, build))
+		return nullptr;
 
-	commandBuffer->submitAndWait();
+	// Static structures are never updated, thus scratch is only needed until built.
+	Ref< ApiBuffer > scratchBuffer = as->m_scratchBuffers[as->m_index];
+	const uint32_t scratchSize = scratchBuffer->getSize();
+	if (!dynamic)
+		as->m_scratchBuffers[as->m_index] = nullptr;
+
+	// Buffers are referenced until the build has been recorded, and consumed.
+	Ref< const Buffer > buildVertexBuffer = vertexBuffer;
+	Ref< const Buffer > buildIndexBuffer = indexBuffer;
+
+	context->addDeferredUpload(
+		[as, buildVertexBuffer, buildIndexBuffer, build, scratchBuffer, dynamic](Context* cx, CommandBuffer* commandBuffer) mutable {
+			// Uploads recorded ahead of the build must be visible to it.
+			const VkMemoryBarrier mb = {
+				.sType = VK_STRUCTURE_TYPE_MEMORY_BARRIER,
+				.pNext = nullptr,
+				.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT,
+				.dstAccessMask = VK_ACCESS_SHADER_READ_BIT
+			};
+			vkCmdPipelineBarrier(
+				*commandBuffer,
+				VK_PIPELINE_STAGE_TRANSFER_BIT,
+				VK_PIPELINE_STAGE_ACCELERATION_STRUCTURE_BUILD_BIT_KHR,
+				0,
+				1,
+				&mb,
+				0,
+				nullptr,
+				0,
+				nullptr);
+
+			recordGeometry(commandBuffer, build);
+
+			// Released once the upload command buffer has been consumed. \sa Context::performUploads
+			if (!dynamic)
+				safeDestroy(scratchBuffer);
+		},
+		scratchSize);
 
 	return as;
 }
@@ -328,6 +366,22 @@ bool AccelerationStructureVk::writeInstances(CommandBuffer* commandBuffer, const
 
 bool AccelerationStructureVk::writeGeometry(CommandBuffer* commandBuffer, const IBufferView* vertexBuffer, const IVertexLayout* vertexLayout, const IBufferView* indexBuffer, IndexType indexType, const AlignedVector< RaytracingPrimitives >& primitives, bool rebuild)
 {
+	GeometryBuild build;
+	if (!prepareGeometry(vertexBuffer, vertexLayout, indexBuffer, indexType, primitives, rebuild, build))
+		return false;
+
+	recordGeometry(commandBuffer, build);
+	return true;
+}
+
+AccelerationStructureVk::AccelerationStructureVk(Context* context, bool dynamic)
+	: m_context(context)
+	, m_dynamic(dynamic)
+{
+}
+
+bool AccelerationStructureVk::prepareGeometry(const IBufferView* vertexBuffer, const IVertexLayout* vertexLayout, const IBufferView* indexBuffer, IndexType indexType, const AlignedVector< RaytracingPrimitives >& primitives, bool rebuild, GeometryBuild& outBuild)
+{
 	bool recreateAS = false;
 	VkResult result;
 
@@ -359,7 +413,8 @@ bool AccelerationStructureVk::writeGeometry(CommandBuffer* commandBuffer, const 
 	// distinguished by their build ranges. The structure is sized for these ranges
 	// only, not the entire index buffer, which may hold far more (other LODs, other
 	// parts) than what is built here.
-	AlignedVector< VkAccelerationStructureBuildRangeInfoKHR > buildRanges;
+	AlignedVector< VkAccelerationStructureBuildRangeInfoKHR >& buildRanges = outBuild.ranges;
+	buildRanges.resize(0);
 	for (const auto& rtp : primitives)
 	{
 		const auto& primitives = rtp.primitives;
@@ -385,7 +440,9 @@ bool AccelerationStructureVk::writeGeometry(CommandBuffer* commandBuffer, const 
 		.flags = VK_GEOMETRY_OPAQUE_BIT_KHR
 	};
 
-	AlignedVector< VkAccelerationStructureGeometryKHR > bottomLevelAccelerationStructureGeometries(buildRanges.size(), bottomLevelAccelerationStructureGeometry);
+	AlignedVector< VkAccelerationStructureGeometryKHR >& bottomLevelAccelerationStructureGeometries = outBuild.geometries;
+	bottomLevelAccelerationStructureGeometries.resize(0);
+	bottomLevelAccelerationStructureGeometries.resize(buildRanges.size(), bottomLevelAccelerationStructureGeometry);
 	AlignedVector< uint32_t > bottomLevelMaxPrimitiveCountList;
 	for (const auto& buildRange : buildRanges)
 		bottomLevelMaxPrimitiveCountList.push_back(buildRange.primitiveCount);
@@ -512,22 +569,23 @@ bool AccelerationStructureVk::writeGeometry(CommandBuffer* commandBuffer, const 
 	// Build AS.
 	bottomLevelAccelerationStructureBuildGeometryInfo.dstAccelerationStructure = m_as[slot];
 	bottomLevelAccelerationStructureBuildGeometryInfo.scratchData.deviceAddress = alignUp(m_scratchBuffers[slot]->getDeviceAddress(), m_scratchAlignment);
-
-	// A single build info takes one pointer to an array of ranges, one per geometry.
-	const VkAccelerationStructureBuildRangeInfoKHR* buildRangePtr = buildRanges.ptr();
-	vkCmdBuildAccelerationStructuresKHR(
-		*commandBuffer,
-		1,
-		&bottomLevelAccelerationStructureBuildGeometryInfo,
-		&buildRangePtr);
-
+	outBuild.info = bottomLevelAccelerationStructureBuildGeometryInfo;
 	return true;
 }
 
-AccelerationStructureVk::AccelerationStructureVk(Context* context, bool dynamic)
-	: m_context(context)
-	, m_dynamic(dynamic)
+void AccelerationStructureVk::recordGeometry(CommandBuffer* commandBuffer, const GeometryBuild& build)
 {
+	VkAccelerationStructureBuildGeometryInfoKHR info = build.info;
+	info.geometryCount = (uint32_t)build.geometries.size();
+	info.pGeometries = build.geometries.c_ptr();
+
+	// A single build info takes one pointer to an array of ranges, one per geometry.
+	const VkAccelerationStructureBuildRangeInfoKHR* buildRangePtr = build.ranges.c_ptr();
+	vkCmdBuildAccelerationStructuresKHR(
+		*commandBuffer,
+		1,
+		&info,
+		&buildRangePtr);
 }
 
 }

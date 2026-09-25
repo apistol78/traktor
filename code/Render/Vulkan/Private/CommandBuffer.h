@@ -38,6 +38,14 @@ public:
 
 	bool reset();
 
+	/*! Reserve submission ahead of submitting.
+	 *
+	 * Cleanups added from now on are held back until this command buffer has been
+	 * consumed, as if it had been submitted already; for resources which are released
+	 * as their use is being recorded. \sa Context::addDeferredCleanup
+	 */
+	void reserveSubmission();
+
 	bool submit(const StaticVector< VkSemaphore, 2 >& waitSemaphores, const StaticVector< VkPipelineStageFlags, 2 >& waitStageFlags, VkSemaphore signalSemaphore);
 
 	bool submitSignal(VkSemaphore semaphore, uint64_t semaphoreValue);
@@ -63,9 +71,12 @@ private:
 	VkFence m_inFlight = 0;
 	Thread* m_thread = nullptr;
 	uint64_t m_epoch = 0;	//!< Submission epoch, valid while submitted; \sa Context::beginSubmission.
+	uint64_t m_reservedEpoch = 0;	//!< Submission epoch reserved ahead of submitting; \sa reserveSubmission.
 	bool m_submitted = false;
 
 	explicit CommandBuffer(Context* context, Queue* queue, VkCommandPool commandPool, VkCommandBuffer commandBuffer);
+
+	uint64_t beginSubmission();
 };
 
 }

@@ -6,6 +6,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Core/Containers/StaticVector.h"
 #include "Core/Thread/Acquire.h"
 #include "Core/Thread/ThreadLocal.h"
 #include "Render/Vulkan/Private/ApiLoader.h"
@@ -88,9 +89,71 @@ Ref< CommandBuffer > Queue::acquireCommandBuffer(const wchar_t* const tag)
 
 VkResult Queue::submit(const VkSubmitInfo& si, VkFence fence)
 {
+	// Uploads are submitted to the graphics queue and other work is no longer held back
+	// until they have been consumed; work on any other queue might consume uploaded
+	// resources thus has to wait for uploads submitted ahead of it. Uploads are dequeued,
+	// recorded and submitted with the graphics queue held, reading the value with it held
+	// thus ensures every dequeued upload has also been submitted and is waited upon here.
+	// \sa Context::performUploads
+	uint64_t uploadValue = 0;
+	Queue* graphicsQueue = m_context->getGraphicsQueue();
+	if (graphicsQueue != this)
+	{
+		T_ANONYMOUS_VAR(Acquire< Semaphore >)(graphicsQueue->m_lock);
+		uploadValue = m_context->getUploadValue();
+	}
+
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-	const VkResult result = vkQueueSubmit(m_queue, 1, &si, fence);
+
+	// A semaphore wait also orders all later work on the queue, thus only wait once per upload.
+	if (uploadValue <= m_uploadValueWaited)
+	{
+		const VkResult result = vkQueueSubmit(m_queue, 1, &si, fence);
+		T_ASSERT(result == VK_SUCCESS);
+		return result;
+	}
+
+	// Append a wait on the upload timeline to the waits of the submission; the timeline
+	// submit info, if any, must be amended as it has to cover every wait.
+	const VkTimelineSemaphoreSubmitInfo* tsi = nullptr;
+	for (const VkBaseInStructure* it = (const VkBaseInStructure*)si.pNext; it != nullptr; it = it->pNext)
+	{
+		T_FATAL_ASSERT_M(it->sType == VK_STRUCTURE_TYPE_TIMELINE_SEMAPHORE_SUBMIT_INFO, L"Unsupported submit info extension.");
+		tsi = (const VkTimelineSemaphoreSubmitInfo*)it;
+	}
+
+	StaticVector< VkSemaphore, 8 > waitSemaphores;
+	StaticVector< VkPipelineStageFlags, 8 > waitStageFlags;
+	StaticVector< uint64_t, 8 > waitValues;
+	for (uint32_t i = 0; i < si.waitSemaphoreCount; ++i)
+	{
+		waitSemaphores.push_back(si.pWaitSemaphores[i]);
+		waitStageFlags.push_back(si.pWaitDstStageMask[i]);
+		waitValues.push_back((tsi != nullptr && i < tsi->waitSemaphoreValueCount) ? tsi->pWaitSemaphoreValues[i] : 0);
+	}
+	waitSemaphores.push_back(m_context->getUploadSemaphore());
+	waitStageFlags.push_back(VK_PIPELINE_STAGE_ALL_COMMANDS_BIT);
+	waitValues.push_back(uploadValue);
+
+	const VkTimelineSemaphoreSubmitInfo timelineInfo = {
+		.sType = VK_STRUCTURE_TYPE_TIMELINE_SEMAPHORE_SUBMIT_INFO,
+		.pNext = nullptr,
+		.waitSemaphoreValueCount = (uint32_t)waitValues.size(),
+		.pWaitSemaphoreValues = waitValues.c_ptr(),
+		.signalSemaphoreValueCount = (tsi != nullptr) ? tsi->signalSemaphoreValueCount : 0,
+		.pSignalSemaphoreValues = (tsi != nullptr) ? tsi->pSignalSemaphoreValues : nullptr
+	};
+
+	VkSubmitInfo usi = si;
+	usi.pNext = &timelineInfo;
+	usi.waitSemaphoreCount = (uint32_t)waitSemaphores.size();
+	usi.pWaitSemaphores = waitSemaphores.c_ptr();
+	usi.pWaitDstStageMask = waitStageFlags.c_ptr();
+
+	const VkResult result = vkQueueSubmit(m_queue, 1, &usi, fence);
 	T_ASSERT(result == VK_SUCCESS);
+	if (result == VK_SUCCESS)
+		m_uploadValueWaited = uploadValue;
 	return result;
 }
 

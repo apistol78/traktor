@@ -48,6 +48,7 @@ private:
 	VkQueue m_queue;
 	uint32_t m_queueIndex;
 	Semaphore m_lock;
+	uint64_t m_uploadValueWaited = 0;	//!< Upload submission value which work on this queue already waits on; \sa Context::performUploads
 
 	explicit Queue(Context* context, VkQueue queue, uint32_t queueIndex);
 };

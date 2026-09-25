@@ -144,7 +144,20 @@ public:
 	 */
 	void addDeferredUpload(const upload_fn_t& fn, uint32_t uploadSize = 0);
 
+	/*! Perform queued uploads; returns once they have been consumed by the GPU.
+	 *
+	 * Uploads are submitted to the graphics queue, which is only held while recording
+	 * and submitting; work submitted later to the graphics queue is ordered after the
+	 * uploads and work submitted to other queues waits on the upload semaphore.
+	 * \sa Queue::submit
+	 */
 	void performUploads();
+
+	/*! Timeline semaphore signalled with the value of each upload submission. */
+	VkSemaphore getUploadSemaphore() const { return m_uploadSemaphore; }
+
+	/*! Value of last upload submission; must be read with graphics queue held. */
+	uint64_t getUploadValue() const { return m_uploadValue; }
 
 	void recycle();
 
@@ -245,6 +258,8 @@ private:
 	AlignedVector< ICleanupListener* > m_cleanupListeners;
 	AlignedVector< upload_fn_t > m_uploadFns;
 	uint32_t m_pendingUploadSize = 0;
+	VkSemaphore m_uploadSemaphore = VK_NULL_HANDLE;
+	uint64_t m_uploadValue = 0;	//!< Value of last upload submission; guarded by graphics queue lock.
 	VkDescriptorSetLayout m_bindlessTexturesDescriptorLayout = 0;
 	VkDescriptorSet m_bindlessTexturesDescriptorSet = 0;
 	VkDescriptorSetLayout m_bindlessImagesDescriptorLayout = 0;

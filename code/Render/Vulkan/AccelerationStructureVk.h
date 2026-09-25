@@ -50,10 +50,6 @@ public:
 protected:
 	Context* m_context = nullptr;
 	Ref< BufferDynamicVk > m_instanceBuffer;
-	// Ring of acceleration structures. Top level and dynamic bottom level structures are
-	// rebuilt on the asynchronous compute queue while prior frames' graphics ray queries
-	// still read them, so they are buffered to the in-flight count; each rebuild writes a
-	// fresh slot. Static bottom level structures are built once and use a single slot.
 	AlignedVector< Ref< ApiBuffer > > m_hierarchyBuffers;
 	AlignedVector< Ref< ApiBuffer > > m_scratchBuffers;
 	AlignedVector< VkAccelerationStructureKHR > m_as;
@@ -64,7 +60,20 @@ protected:
 	explicit AccelerationStructureVk(Context* context, bool dynamic);
 
 private:
+	struct GeometryBuild
+	{
+		AlignedVector< VkAccelerationStructureGeometryKHR > geometries;
+		AlignedVector< VkAccelerationStructureBuildRangeInfoKHR > ranges;
+		VkAccelerationStructureBuildGeometryInfoKHR info;	//!< Geometries are referenced when recorded, as the build might have been copied since prepared.
+	};
+
 	void teardown();
+
+	/*! Prepare build of bottom level structure; (re-)creates buffers and structure of the next slot as required. */
+	bool prepareGeometry(const IBufferView* vertexBuffer, const IVertexLayout* vertexLayout, const IBufferView* indexBuffer, IndexType indexType, const AlignedVector< RaytracingPrimitives >& primitives, bool rebuild, GeometryBuild& outBuild);
+
+	/*! Record prepared build of bottom level structure. */
+	static void recordGeometry(CommandBuffer* commandBuffer, const GeometryBuild& build);
 };
 
 }
