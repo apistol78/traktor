@@ -83,9 +83,9 @@ void LogList::add(uint32_t threadId, LogLevel level, const std::wstring& text)
 				break;
 
 			const Guid id(e.text.substr(j));
-			if (id.isValid())
+			if (id.isValid() && id.isNotNull())
 			{
-				e.symbolId = id;
+				e.symbolIds.push_back(id);
 
 				std::wstring symbol;
 				if (m_lookup->lookupLogSymbol(id, symbol))
@@ -534,9 +534,9 @@ void LogList::eventMouseDoubleClick(MouseDoubleClickEvent* event)
 		return;
 
 	const auto& entry = m_logFull[m_logFiltered[m_selectedEntry]];
-	if (entry.symbolId.isNotNull())
+	if (!entry.symbolIds.empty())
 	{
-		LogActivateEvent event(this, entry.symbolId);
+		LogActivateEvent event(this, entry.symbolIds);
 		raiseEvent(&event);
 	}
 }

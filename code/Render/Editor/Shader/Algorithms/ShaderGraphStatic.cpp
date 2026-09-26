@@ -31,6 +31,15 @@ namespace traktor::render
 namespace
 {
 
+/*! Describe node in log; id is embedded so user can navigate to node from log. */
+std::wstring describeNode(const Node* node)
+{
+	std::wstring description = L"node " + node->getId().format() + L" (" + type_name(node);
+	if (!node->getComment().empty())
+		description += L" / " + node->getComment();
+	return description + L")";
+}
+
 #if defined(_DEBUG)
 #	define T_VALIDATE_SHADERGRAPH(sg) T_FATAL_ASSERT(ShaderGraphValidator(sg).validateIntegrity())
 #else
@@ -373,14 +382,14 @@ Ref< ShaderGraph > ShaderGraphStatic::getTypePermutation() const
 
 		if (!inputPinName)
 		{
-			log::error << L"Shader type permutation error; cannot determine input pin name (" << (int32_t)inputType << L")." << Endl;
+			log::error << L"Shader type permutation error; cannot determine input pin name (" << (int32_t)inputType << L") of " << describeNode(node) << L"." << Endl;
 			return nullptr;
 		}
 
 		const InputPin* inputPin = node->findInputPin(inputPinName);
 		if (!inputPin)
 		{
-			log::error << L"Shader type permutation error; no input pin \"" << inputPinName << L"\"." << Endl;
+			log::error << L"Shader type permutation error; no input pin \"" << inputPinName << L"\" of " << describeNode(node) << L"." << Endl;
 			return nullptr;
 		}
 
@@ -393,7 +402,7 @@ Ref< ShaderGraph > ShaderGraphStatic::getTypePermutation() const
 			sourceEdge = shaderGraph->findEdge(inputPin);
 			if (!sourceEdge)
 			{
-				log::error << L"Shader type permutation error; input pin \"" << inputPinName << L"\" not connected (nor \"Default\")." << Endl;
+				log::error << L"Shader type permutation error; input pin \"" << inputPinName << L"\" of " << describeNode(node) << L" not connected (nor \"Default\")." << Endl;
 				return nullptr;
 			}
 		}
@@ -831,7 +840,7 @@ Ref< ShaderGraph > ShaderGraphStatic::getBundleResolved() const
 			const OutputPin* sourcePin = shaderGraph->findSourcePin(splitNode->getInputPin(0));
 			if (!sourcePin)
 			{
-				log::error << L"No bundle connected to split node " << splitNode->getId().format() << L"." << Endl;
+				log::error << L"No bundle connected to split " << describeNode(splitNode) << L"." << Endl;
 				return nullptr;
 			}
 
@@ -846,7 +855,7 @@ Ref< ShaderGraph > ShaderGraphStatic::getBundleResolved() const
 				}
 				else
 				{
-					log::error << L"Incorrect input connected to split node, must be a bundle (is \"" << type_name(sourcePin->getNode()) << L"\")." << Endl;
+					log::error << L"Incorrect input connected to split " << describeNode(splitNode) << L", must be a bundle (is " << describeNode(sourcePin->getNode()) << L")." << Endl;
 					return nullptr;
 				}
 			}
@@ -880,12 +889,13 @@ Ref< ShaderGraph > ShaderGraphStatic::getBundleResolved() const
 					const OutputPin* parentBundleSourcePin = shaderGraph->findSourcePin(parentBundleInputPin);
 					if (parentBundleSourcePin)
 					{
-						uniteNodeIt = dynamic_type_cast< BundleUnite* >(parentBundleSourcePin->getNode());
-						if (uniteNodeIt == nullptr)
+						BundleUnite* parentUniteNode = dynamic_type_cast< BundleUnite* >(parentBundleSourcePin->getNode());
+						if (parentUniteNode == nullptr)
 						{
-							log::error << L"Input \"Input\" into a bundle unite node must be a bundle itself." << Endl;
+							log::error << L"Input \"Input\" into bundle unite " << describeNode(uniteNodeIt) << L" must be a bundle itself (is " << describeNode(parentBundleSourcePin->getNode()) << L")." << Endl;
 							return nullptr;
 						}
+						uniteNodeIt = parentUniteNode;
 					}
 					else
 						uniteNodeIt = nullptr;
@@ -998,7 +1008,7 @@ Ref< ShaderGraph > ShaderGraphStatic::removeDisabledOutputs() const
 			}
 		}
 		else // if (!is_a< InputPort >(enableSource->getNode()))
-			log::warning << L"Unsupported node type of input; Only Scalar nodes can be connected to \"Enable\" of \"traktor.render.PixelOutput\". " << type_name(enableSource->getNode()) << L" not supported." << Endl;
+			log::warning << L"Unsupported node type of input; Only Scalar nodes can be connected to \"Enable\" of " << describeNode(pixelOutputNode) << L", " << describeNode(enableSource->getNode()) << L" not supported." << Endl;
 	}
 
 	for (const auto computeOutputNode : shaderGraph->findNodesOf< ComputeOutput >())
@@ -1020,7 +1030,7 @@ Ref< ShaderGraph > ShaderGraphStatic::removeDisabledOutputs() const
 			}
 		}
 		else // if (!is_a< InputPort >(enableSource->getNode()))
-			log::warning << L"Unsupported node type of input; Only Scalar nodes can be connected to \"Enable\" of \"traktor.render.ComputeOutput\". " << type_name(enableSource->getNode()) << L" not supported." << Endl;
+			log::warning << L"Unsupported node type of input; Only Scalar nodes can be connected to \"Enable\" of " << describeNode(computeOutputNode) << L", " << describeNode(enableSource->getNode()) << L" not supported." << Endl;
 	}
 
 	T_VALIDATE_SHADERGRAPH(shaderGraph);

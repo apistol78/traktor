@@ -15,15 +15,20 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.LogActivateEvent", LogActivateEvent, Event)
 
-LogActivateEvent::LogActivateEvent(EventSubject* sender, const Guid& symbolId)
+LogActivateEvent::LogActivateEvent(EventSubject* sender, const AlignedVector< Guid >& symbolIds)
 :	Event(sender)
-,	m_symbolId(symbolId)
+,	m_symbolIds(symbolIds)
 {
 }
 
 const Guid& LogActivateEvent::getSymbolId() const
 {
-	return m_symbolId;
+	return !m_symbolIds.empty() ? m_symbolIds.front() : Guid::null;
+}
+
+const AlignedVector< Guid >& LogActivateEvent::getSymbolIds() const
+{
+	return m_symbolIds;
 }
 
 	}

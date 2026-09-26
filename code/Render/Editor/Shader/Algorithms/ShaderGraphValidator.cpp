@@ -58,7 +58,16 @@ public:
 
 	void addError(const std::wstring& errorStr, const Node* errorNode = nullptr)
 	{
-		log::error << L"(" << ++m_errorCount << L") : " << errorStr << Endl;
+		// Embed node id so user can navigate to node from log.
+		std::wstring nodeStr;
+		if (errorNode)
+		{
+			nodeStr = L" [node " + errorNode->getId().format() + L" (" + type_name(errorNode);
+			if (!errorNode->getComment().empty())
+				nodeStr += L" / " + errorNode->getComment();
+			nodeStr += L")]";
+		}
+		log::error << L"(" << ++m_errorCount << L") : " << errorStr << nodeStr << Endl;
 		if (m_outErrorNodes && errorNode)
 			m_outErrorNodes->push_back(errorNode);
 	}
@@ -108,9 +117,9 @@ public:
 				continue;
 			}
 			if (std::find(nodes.begin(), nodes.end(), edge->getSource()->getNode()) == nodes.end())
-				outReport.addError(L"Edge referencing invalid node (source, " + std::wstring(type_name(edge->getSource()->getNode())) + L")");
+				outReport.addError(L"Edge referencing invalid node (source, " + std::wstring(type_name(edge->getSource()->getNode())) + L" " + edge->getSource()->getNode()->getId().format() + L")");
 			if (std::find(nodes.begin(), nodes.end(), edge->getDestination()->getNode()) == nodes.end())
-				outReport.addError(L"Edge referencing invalid node (destination, " + std::wstring(type_name(edge->getDestination()->getNode())) + L")");
+				outReport.addError(L"Edge referencing invalid node (destination, " + std::wstring(type_name(edge->getDestination()->getNode())) + L" " + edge->getDestination()->getNode()->getId().format() + L")");
 		}
 	}
 };
@@ -147,7 +156,7 @@ public:
 			{
 				const InputPin* inputPin = activeNode->getInputPin(j);
 				if (!inputPin->isOptional() && !shaderGraph->findSourcePin(inputPin))
-					outReport.addError(L"Input pin \"" + inputPin->getName() + L"\" of " + activeNode->getId().format() + L" (" + type_name(activeNode) + L") not connected.", activeNode);
+					outReport.addError(L"Input pin \"" + inputPin->getName() + L"\" not connected.", activeNode);
 			}
 		}
 	}
@@ -314,7 +323,7 @@ public:
 				{
 					const auto& name = variableNode->getName();
 					if (written.find(name) != written.end())
-						outReport.addError(L"Variable \"" + name + L"\" already being written to.");
+						outReport.addError(L"Variable \"" + name + L"\" already being written to.", variableNode);
 					else
 						written.insert(name);
 				}
@@ -342,7 +351,7 @@ public:
 				{
 					const auto& name = variableNode->getName();
 					if (written.find(name) == written.end())
-						outReport.addError(L"Cannot read local variable \"" + name + L"\" as it's not being written to.");
+						outReport.addError(L"Cannot read local variable \"" + name + L"\" as it's not being written to.", variableNode);
 				}
 			}
 		}
@@ -373,7 +382,7 @@ public:
 
 				if (!traits->isInputTypeValid(shaderGraph, activeNode, edge->getDestination(), value.getType()))
 					outReport.addError(
-						L"Invalid data type (" + str(L"%d", (int32_t)value.getType()) + L") into \"" + edge->getDestination()->getName() + L"\" of " + type_name(activeNode)  + L".",
+						L"Invalid data type (" + str(L"%d", (int32_t)value.getType()) + L") into \"" + edge->getDestination()->getName() + L"\".",
 						activeNode);
 			}
 		}

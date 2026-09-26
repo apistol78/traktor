@@ -6,10 +6,12 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Core/Containers/SmallSet.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/String.h"
 #include "Core/Reflection/Reflection.h"
+#include "Core/Reflection/RfmObject.h"
 #include "Core/Reflection/RfmPrimitive.h"
 #include "Core/Reflection/RfpMemberType.h"
 #include "Core/Settings/PropertyGroup.h"
@@ -20,6 +22,7 @@
 #include "Database/Instance.h"
 #include "Database/Traverse.h"
 #include "Editor/IEditor.h"
+#include "Editor/IEditorPage.h"
 #include "Editor/LogView.h"
 #include "I18N/Text.h"
 #include "Ui/Edit.h"
@@ -38,6 +41,51 @@ namespace traktor::editor
 {
 	namespace
 	{
+
+/*! Recursively check if object, or any child object, has a reflected guid member matching objectId. */
+bool containObject(const ISerializable* object, const Guid& objectId, SmallSet< const ISerializable* >& visited)
+{
+	if (!visited.insert(object))
+		return false;
+
+	Ref< Reflection > r = Reflection::create(object);
+	if (!r)
+		return false;
+
+	RefArray< RfmPrimitiveGuid > guidMembers;
+	r->findMembers(RfpMemberType(type_of< RfmPrimitiveGuid >()), (RefArray< ReflectionMember >&)guidMembers);
+	for (auto guidMember : guidMembers)
+	{
+		if (guidMember->get() == objectId)
+			return true;
+	}
+
+	RefArray< RfmObject > objectMembers;
+	r->findMembers(RfpMemberType(type_of< RfmObject >()), (RefArray< ReflectionMember >&)objectMembers);
+	for (auto objectMember : objectMembers)
+	{
+		const ISerializable* childObject = objectMember->get();
+		if (childObject && containObject(childObject, objectId, visited))
+			return true;
+	}
+
+	return false;
+}
+
+Ref< db::Instance > findOwnerInstance(const RefArray< db::Instance >& instances, const Guid& objectId)
+{
+	for (auto instance : instances)
+	{
+		Ref< ISerializable > object = instance->getObject();
+		if (!object)
+			continue;
+
+		SmallSet< const ISerializable* > visited;
+		if (containObject(object, objectId, visited))
+			return instance;
+	}
+	return nullptr;
+}
 
 class LogListTarget : public ILogTarget
 {
@@ -192,42 +240,51 @@ void LogView::eventButtonDown(ui::MouseButtonDownEvent* event)
 
 void LogView::eventLogActivate(ui::LogActivateEvent* event)
 {
-	if (m_editor->getSourceDatabase() == nullptr)
+	db::Database* database = m_editor->getSourceDatabase();
+	if (database == nullptr)
 		return;
 
-	Ref< db::Instance > instance = m_editor->getSourceDatabase()->getInstance(event->getSymbolId());
-	if (instance)
-		m_editor->openEditor(instance);
-	else
+	// Symbols which isn't an instance are assumed to identify an object
+	// inside an instance, such as a node in a shader graph.
+	RefArray< db::Instance > symbolInstances;
+	AlignedVector< Guid > objectIds;
+	for (const auto& symbolId : event->getSymbolIds())
 	{
-		RefArray< db::Instance > instances;
-		db::recursiveFindChildInstances(
-			m_editor->getSourceDatabase()->getRootGroup(),
-			db::FindInstanceAll(),
-			instances
-		);
-		for (auto instance : instances)
-		{
-			auto object = instance->getObject();
-			if (!object)
-				continue;
-
-			Ref< Reflection > r = Reflection::create(object);
-			if (!r)
-				continue;
-
-			RefArray< RfmPrimitiveGuid > members;
-			r->findMembers(RfpMemberType(type_of< RfmPrimitiveGuid >()), (RefArray< ReflectionMember >&)members);
-			for (auto member : members)
-			{
-				if (member->get() == event->getSymbolId())
-				{
-					m_editor->openEditor(instance);
-					return;
-				}
-			}
-		}
+		Ref< db::Instance > instance = database->getInstance(symbolId);
+		if (instance)
+			symbolInstances.push_back(instance);
+		else
+			objectIds.push_back(symbolId);
 	}
+
+	// Objects are more specific than instances so they take precedence; open
+	// owning instance and let the editor page focus on the object.
+	RefArray< db::Instance > allInstances;
+	for (const auto& objectId : objectIds)
+	{
+		// Search instances mentioned in the same log line first since
+		// object ids can be duplicated in copies of an instance.
+		Ref< db::Instance > ownerInstance = findOwnerInstance(symbolInstances, objectId);
+		if (!ownerInstance)
+		{
+			if (allInstances.empty())
+				db::recursiveFindChildInstances(database->getRootGroup(), db::FindInstanceAll(), allInstances);
+			ownerInstance = findOwnerInstance(allInstances, objectId);
+		}
+		if (!ownerInstance)
+			continue;
+
+		if (m_editor->openEditor(ownerInstance))
+		{
+			IEditorPage* editorPage = m_editor->getActiveEditorPage();
+			if (editorPage)
+				editorPage->handleCommand(ui::Command(L"Editor.FocusObject", new PropertyString(objectId.format())));
+		}
+		return;
+	}
+
+	if (!symbolInstances.empty())
+		m_editor->openEditor(symbolInstances.front());
 }
 
 bool LogView::lookupLogSymbol(const Guid& symbolId, std::wstring& outSymbol) const
@@ -241,5 +298,6 @@ bool LogView::lookupLogSymbol(const Guid& symbolId, std::wstring& outSymbol) con
 	outSymbol = instance->getPath();
 	return true;
 }
+
 
 }

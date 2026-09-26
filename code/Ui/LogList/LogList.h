@@ -82,7 +82,7 @@ private:
 		uint32_t threadId;
 		LogLevel level;
 		std::wstring text;
-		Guid symbolId;
+		AlignedVector< Guid > symbolIds;
 		bool rendered;
 	};
 

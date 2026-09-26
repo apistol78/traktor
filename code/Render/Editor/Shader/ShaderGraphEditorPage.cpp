@@ -779,6 +779,34 @@ bool ShaderGraphEditorPage::handleCommand(const ui::Command& command)
 				createEditorGraph();
 			}
 		}
+		else if (command == L"Editor.FocusObject")
+		{
+			const PropertyString* objectIdProperty = dynamic_type_cast< const PropertyString* >(command.getData());
+			if (!objectIdProperty)
+				return false;
+
+			const Guid objectId(PropertyString::get(objectIdProperty));
+
+			const RefArray< ui::Node >& editorNodes = m_editorGraph->getNodes();
+			auto it = std::find_if(editorNodes.begin(), editorNodes.end(), [&](ui::Node* editorNode) {
+				return editorNode->getData< Node >(L"SHADERNODE")->getId() == objectId;
+			});
+			if (it == editorNodes.end())
+				return false;
+
+			ui::Node* editorNode = *it;
+			m_editorGraph->deselectAllNodes();
+			editorNode->setSelected(true);
+			m_editorGraph->center(true);
+
+			// Flag focused node as invalid; object is focused from error reports so
+			// it's most probably the culprit. Indicator is reset when graph is updated.
+			Ref< INodeFacade > nodeFacade = editorNode->getData< INodeFacade >(L"FACADE");
+			if (nodeFacade)
+				nodeFacade->setValidationIndicator(editorNode, false);
+
+			m_propertiesView->setPropertyObject(editorNode->getData< Node >(L"SHADERNODE"));
+		}
 		else if (command == L"ShaderGraph.Editor.Center")
 		{
 			m_editorGraph->center();

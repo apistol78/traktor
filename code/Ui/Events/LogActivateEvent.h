@@ -8,6 +8,7 @@
  */
 #pragma once
 
+#include "Core/Containers/AlignedVector.h"
 #include "Core/Guid.h"
 #include "Ui/Event.h"
 
@@ -26,18 +27,23 @@ namespace traktor
 
 /*! Log symbol activated.
  * \ingroup UI
+ *
+ * Carry all symbols found in the activated log line,
+ * in order of appearance.
  */
 class T_DLLCLASS LogActivateEvent : public Event
 {
 	T_RTTI_CLASS;
 
 public:
-	explicit LogActivateEvent(EventSubject* sender, const Guid& symbolId);
+	explicit LogActivateEvent(EventSubject* sender, const AlignedVector< Guid >& symbolIds);
 
 	const Guid& getSymbolId() const;
 
+	const AlignedVector< Guid >& getSymbolIds() const;
+
 private:
-	Guid m_symbolId;
+	AlignedVector< Guid > m_symbolIds;
 };
 
 	}

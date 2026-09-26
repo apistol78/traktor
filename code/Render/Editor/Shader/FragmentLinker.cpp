@@ -216,7 +216,7 @@ Ref< ShaderGraph > FragmentLinker::resolve(const ShaderGraph* shaderGraph, const
 				}
 				else if (!inputPort->isOptional())
 				{
-					log::error << errorPrefix << L"mandatory input port \"" << inputPort->getName() << L"\" of fragment \"" << fragmentId.format() << L"\" not connected." << Endl;
+					log::error << errorPrefix << L"mandatory input \"" << inputPort->getName() << L"\" of external node " << externalNode->getId().format() << L" (fragment \"" << fragmentId.format() << L"\") not connected." << Endl;
 					return nullptr;
 				}
 			}

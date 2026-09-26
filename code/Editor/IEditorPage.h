@@ -88,6 +88,12 @@ public:
 	 * "Editor.SettingsChanged"
 	 *  Issued when Editor settings has changed.
 	 *
+	 * "Editor.FocusObject"
+	 *  Issued when user want to focus on an object inside
+	 *  the edited instance, such as when activating an error
+	 *  in the log. Command data is a PropertyString with the
+	 *  object's id.
+	 *
 	 * Commands are also propagated from shortcuts
 	 * or toolbar clicks.
 	 *
