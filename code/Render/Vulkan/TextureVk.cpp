@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -38,7 +38,10 @@ TextureVk::TextureVk(Context* context, uint32_t& instances)
 
 TextureVk::~TextureVk()
 {
-	teardown();
+	safeDestroy(m_stagingBuffer);
+	safeDestroy(m_textureImage);
+	m_context = nullptr;
+
 	Atomic::decrement((int32_t&)m_instances);
 }
 
@@ -405,13 +408,6 @@ void TextureVk::destroy()
 	// render context which references this texture is rendered. Teardown is
 	// performed by the destructor which runs once the retirement fence has been
 	// passed. \sa ResourceMorgue
-}
-
-void TextureVk::teardown()
-{
-	safeDestroy(m_stagingBuffer);
-	safeDestroy(m_textureImage);
-	m_context = nullptr;
 }
 
 ITexture* TextureVk::resolve()

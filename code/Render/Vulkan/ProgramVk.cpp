@@ -141,7 +141,32 @@ ProgramVk::ProgramVk(Context* context, uint32_t& instances)
 
 ProgramVk::~ProgramVk()
 {
-	teardown();
+	for (uint32_t i = 0; i < 3; ++i)
+	{
+		if (m_uniformBuffers[i].range.ptr)
+			m_context->getUniformBufferPool(i)->free(m_uniformBuffers[i].range);
+		m_uniformBuffers[i].range.ptr = nullptr;
+	}
+
+	for (const auto& it : m_descriptorSets)
+		m_context->addDeferredCleanup(
+			[descriptorSet = it.second](Context* cx) {
+			vkFreeDescriptorSets(cx->getLogicalDevice(), cx->getDescriptorPool(), 1, &descriptorSet);
+		},
+			Context::CleanupNone);
+	m_descriptorSets.clear();
+
+	m_vertexShaderModule = 0;
+	m_fragmentShaderModule = 0;
+	m_computeShaderModule = 0;
+	m_descriptorSetLayout = 0;
+	m_pipelineLayout = 0;
+
+	m_samplers.clear();
+	m_textures.clear();
+	m_images.clear();
+	m_sbuffers.clear();
+
 	m_context->removeCleanupListener(this);
 	Atomic::decrement((int32_t&)m_instances);
 }
@@ -514,35 +539,6 @@ void ProgramVk::destroy()
 	// validated, when a render context which references it is rendered. Teardown
 	// is performed by the destructor which runs once the retirement fence has
 	// been passed. \sa ResourceMorgue
-}
-
-void ProgramVk::teardown()
-{
-	for (uint32_t i = 0; i < 3; ++i)
-	{
-		if (m_uniformBuffers[i].range.ptr)
-			m_context->getUniformBufferPool(i)->free(m_uniformBuffers[i].range);
-		m_uniformBuffers[i].range.ptr = nullptr;
-	}
-
-	for (const auto& it : m_descriptorSets)
-		m_context->addDeferredCleanup(
-			[descriptorSet = it.second](Context* cx) {
-			vkFreeDescriptorSets(cx->getLogicalDevice(), cx->getDescriptorPool(), 1, &descriptorSet);
-		},
-			Context::CleanupNone);
-	m_descriptorSets.clear();
-
-	m_vertexShaderModule = 0;
-	m_fragmentShaderModule = 0;
-	m_computeShaderModule = 0;
-	m_descriptorSetLayout = 0;
-	m_pipelineLayout = 0;
-
-	m_samplers.clear();
-	m_textures.clear();
-	m_images.clear();
-	m_sbuffers.clear();
 }
 
 void ProgramVk::setFloatParameter(handle_t handle, float param)

@@ -22,7 +22,14 @@ BufferReadBackVk::BufferReadBackVk(Context* context, uint32_t bufferSize, uint32
 
 BufferReadBackVk::~BufferReadBackVk()
 {
-	teardown();
+	if (m_readBack)
+	{
+		m_buffer->unlock();
+		m_readBack = nullptr;
+	}
+
+	safeDestroy(m_buffer);
+	m_context = nullptr;
 }
 
 bool BufferReadBackVk::create(uint32_t usageBits)
@@ -49,18 +56,6 @@ void BufferReadBackVk::destroy()
 	// to stay valid until every context which might reference it has been
 	// rendered. Teardown is performed by the destructor which runs once the
 	// retirement fence has been passed. \sa ResourceMorgue
-}
-
-void BufferReadBackVk::teardown()
-{
-	if (m_readBack)
-	{
-		m_buffer->unlock();
-		m_readBack = nullptr;
-	}
-
-	safeDestroy(m_buffer);
-	m_context = nullptr;
 }
 
 void* BufferReadBackVk::lock()

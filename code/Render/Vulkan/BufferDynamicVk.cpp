@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -22,7 +22,21 @@ BufferDynamicVk::BufferDynamicVk(Context* context, uint32_t bufferSize, uint32_t
 
 BufferDynamicVk::~BufferDynamicVk()
 {
-	teardown();
+	if (m_bufferViews)
+	{
+		delete[] m_bufferViews;
+		m_bufferViews = nullptr;
+	}
+
+	if (m_buffer)
+	{
+		m_buffer->unlock();
+		m_buffer->destroy();
+		m_buffer = nullptr;
+	}
+
+	m_context = nullptr;
+	m_ptr = nullptr;
 }
 
 bool BufferDynamicVk::create(uint32_t usageBits, int32_t inFlightCount)
@@ -68,25 +82,6 @@ void BufferDynamicVk::destroy()
 	// have to stay valid until every context which might reference them has been
 	// rendered. Teardown is performed by the destructor which runs once the
 	// retirement fence has been passed. \sa ResourceMorgue
-}
-
-void BufferDynamicVk::teardown()
-{
-	if (m_bufferViews)
-	{
-		delete[] m_bufferViews;
-		m_bufferViews = nullptr;
-	}
-
-	if (m_buffer)
-	{
-		m_buffer->unlock();
-		m_buffer->destroy();
-		m_buffer = nullptr;
-	}
-
-	m_context = nullptr;
-	m_ptr = nullptr;
 }
 
 void* BufferDynamicVk::lock()
