@@ -28,6 +28,9 @@
 		return false; \
 	}
 
+#define T_RESOLVE_VK_EXT_OPTIONAL(fn) \
+	fn = (PFN_##fn)vkGetInstanceProcAddr(instance, #fn); \
+
 T_DEFINE_VK(vkCreateInstance);
 T_DEFINE_VK(vkEnumerateInstanceLayerProperties);
 T_DEFINE_VK(vkEnumerateInstanceExtensionProperties);
@@ -290,9 +293,7 @@ bool initializeVulkanExtensions(VkInstance instance)
 	T_RESOLVE_VK_EXT(vkCmdEndDebugUtilsLabelEXT);
 	T_RESOLVE_VK_EXT(vkGetBufferMemoryRequirements2KHR);
 	T_RESOLVE_VK_EXT(vkGetImageMemoryRequirements2KHR);
-
-	// Optional; Vulkan 1.2, used by time queries.
-	vkResetQueryPool = (PFN_vkResetQueryPool)vkGetInstanceProcAddr(instance, "vkResetQueryPool");
+	T_RESOLVE_VK_EXT_OPTIONAL(vkResetQueryPool);
 	return true;
 }
 

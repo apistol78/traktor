@@ -27,6 +27,9 @@
 		return false; \
 	}
 
+#define T_RESOLVE_VK_EXT_OPTIONAL(fn) \
+	*(void**)&fn = vkGetInstanceProcAddr(instance, #fn); \
+
 T_DEFINE_VK(vkCreateInstance);
 T_DEFINE_VK(vkDestroyInstance);
 T_DEFINE_VK(vkEnumerateInstanceLayerProperties);
@@ -323,9 +326,7 @@ bool initializeVulkanExtensions(VkInstance instance)
 	T_RESOLVE_VK_EXT(vkCmdBuildAccelerationStructuresKHR);
 	T_RESOLVE_VK_EXT(vkGetRayTracingShaderGroupHandlesKHR);
 	T_RESOLVE_VK_EXT(vkCmdTraceRaysKHR);
-
-	// Optional; Vulkan 1.2, used by time queries.
-	*(void**)&vkResetQueryPool = vkGetInstanceProcAddr(instance, "vkResetQueryPool");
+	T_RESOLVE_VK_EXT_OPTIONAL(vkResetQueryPool);
 	return true;
 }
 
