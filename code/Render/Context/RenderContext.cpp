@@ -186,6 +186,21 @@ void RenderContext::mergeComputeIntoRender()
 	m_computeQueue.resize(0);
 }
 
+void RenderContext::mergeAsyncComputeIntoRender()
+{
+	// Merge asynchronous compute blocks into render queue; keep synchronous blocks in order.
+	size_t pending = 0;
+	for (size_t i = 0; i < m_computeQueue.size(); ++i)
+	{
+		RenderBlock* renderBlock = m_computeQueue[i];
+		if (renderBlock->asynchronous)
+			m_renderQueue.push_back(renderBlock);
+		else
+			m_computeQueue[pending++] = renderBlock;
+	}
+	m_computeQueue.resize(pending);
+}
+
 void RenderContext::mergeDrawIntoRender()
 {
 	// Merge draw blocks into render queue.

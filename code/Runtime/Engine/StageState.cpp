@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -48,8 +48,9 @@ StageState::StageState(
 	m_renderGraph = new render::RenderGraph(
 		environment->getRender()->getRenderSystem(),
 		environment->getRender()->getMultiSample(),
-		[](int32_t pass, int32_t level, const std::wstring& name, double start, double duration) {
-			Profiler::getInstance().addEvent(name, start, duration);
+		[](int32_t pass, int32_t level, render::RenderPass::Queue queue, const std::wstring& name, double start, double duration) {
+			// Asynchronous compute overlaps graphics work; add at another depth so they don't overlap in profiler.
+			Profiler::getInstance().addEvent(name, start, duration, (queue == render::RenderPass::Queue::AsyncCompute) ? 1 : 0);
 		}
 	);
 }
@@ -119,7 +120,10 @@ StageState::BuildResult StageState::build(uint32_t frame, const UpdateInfo& info
 	{
 		T_PROFILER_SCOPE(L"Stage build");
 		renderContext->flush();
-		m_renderGraph->build(renderContext, width, height);		
+
+		// Only measure passes when there is someone consuming the profiler events.
+		m_renderGraph->setProfilerEnable(Profiler::getInstance().haveListener());
+		m_renderGraph->build(renderContext, width, height);
 	}
 	return BrOk;
 }

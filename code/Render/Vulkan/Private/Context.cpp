@@ -58,7 +58,8 @@ Context::Context(
 	uint32_t graphicsQueueIndex,
 	uint32_t computeQueueIndex,
 	bool rayTracing,
-	bool smoothLines)
+	bool smoothLines,
+	bool hostQueryReset)
 	: m_instance(instance)
 	, m_physicalDevice(physicalDevice)
 	, m_logicalDevice(logicalDevice)
@@ -67,6 +68,7 @@ Context::Context(
 	, m_computeQueueIndex(computeQueueIndex)
 	, m_rayTracing(rayTracing)
 	, m_smoothLines(smoothLines)
+	, m_hostQueryReset(hostQueryReset)
 	, m_sampledResourceIndexAllocator(0, MaxBindlessResources - 1)
 	, m_storageResourceIndexAllocator(0, MaxBindlessResources - 1)
 	, m_bufferResourceIndexAllocator(0, MaxBindlessResources - 1)

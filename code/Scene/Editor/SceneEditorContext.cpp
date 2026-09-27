@@ -90,6 +90,7 @@ SceneEditorContext::SceneEditorContext(
 	, m_snapSpacing(0.0f)
 	, m_physicsEnable(false)
 	, m_modifyInProgress(false)
+	, m_measurementEnable(false)
 	, m_playing(false)
 	, m_timeScale(1.0f)
 	, m_time(0.0f)
@@ -259,6 +260,16 @@ void SceneEditorContext::setModifyInProgress(bool modifyInProgress)
 bool SceneEditorContext::isModifyInProgress() const
 {
 	return m_modifyInProgress;
+}
+
+void SceneEditorContext::setMeasurementEnable(bool measurementEnable)
+{
+	m_measurementEnable = measurementEnable;
+}
+
+bool SceneEditorContext::getMeasurementEnable() const
+{
+	return m_measurementEnable;
 }
 
 void SceneEditorContext::resetPhysics()
@@ -905,9 +916,9 @@ bool SceneEditorContext::raiseRedraw(ISceneRenderControl* renderControl)
 	return redrawEvent.consumed();
 }
 
-void SceneEditorContext::raiseMeasurement(int32_t pass, int32_t level, const std::wstring& name, double start, double duration)
+void SceneEditorContext::raiseMeasurement(int32_t viewport, int32_t pass, int32_t level, bool asynchronous, const std::wstring& name, double start, double duration)
 {
-	MeasurementEvent measurementEvent(this, pass, level, name, start, duration);
+	MeasurementEvent measurementEvent(this, viewport, pass, level, asynchronous, name, start, duration);
 	raiseEvent(&measurementEvent);
 }
 

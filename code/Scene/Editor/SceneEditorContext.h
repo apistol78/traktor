@@ -181,6 +181,15 @@ public:
 
 	bool isModifyInProgress() const;
 
+	/*! Set if render passes should be measured.
+	 *
+	 * Measuring isn't free so render controls should only
+	 * measure render passes while the measurements are visible.
+	 */
+	void setMeasurementEnable(bool measurementEnable);
+
+	bool getMeasurementEnable() const;
+
 	void resetPhysics();
 
 	//@}
@@ -332,7 +341,7 @@ public:
 
 	bool raiseRedraw(ISceneRenderControl* renderControl);
 
-	void raiseMeasurement(int32_t pass, int32_t level, const std::wstring& name, double start, double duration);
+	void raiseMeasurement(int32_t viewport, int32_t pass, int32_t level, bool asynchronous, const std::wstring& name, double start, double duration);
 
 	//@}
 
@@ -358,6 +367,7 @@ private:
 	float m_snapSpacing;
 	bool m_physicsEnable;
 	bool m_modifyInProgress;
+	bool m_measurementEnable;
 	bool m_playing;
 	float m_timeScale;
 	double m_time;

@@ -126,6 +126,13 @@ public:
 	/*! Merge compute queues into render queue. */
 	void mergeComputeIntoRender();
 
+	/*! Merge asynchronous compute blocks into render queue.
+	 *
+	 * Synchronous compute blocks are kept pending, in order, until
+	 * next mergeComputeIntoRender.
+	 */
+	void mergeAsyncComputeIntoRender();
+
 	/*! Merge draw queues into render queue. */
 	void mergeDrawIntoRender();
 

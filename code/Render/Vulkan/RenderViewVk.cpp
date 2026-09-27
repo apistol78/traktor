@@ -384,6 +384,10 @@ void RenderViewVk::close()
 		vkDestroyQueryPool(m_context->getLogicalDevice(), m_queryPool, nullptr);
 		m_queryPool = 0;
 	}
+	m_asynchronousTimeQueries = false;
+	m_firstQueryIndex = 0;
+	m_nextQueryIndex = 0;
+	m_lastQueryIndex = 0;
 #endif
 
 	for (auto& imageAvailableSemaphore : m_imageAvailableSemaphores)
@@ -780,13 +784,39 @@ bool RenderViewVk::beginFrame()
 	T_PROFILER_END();
 
 #if defined(T_USE_QUERY)
-	// Reset time queries. Keyed on the acquired image index (always in [0, m_frames.size())) so it indexes
-	// the pool directly and matches the per-image command buffers whose prior GPU work was awaited above.
-	const int32_t queryFrom = (int32_t)m_currentImageIndex * 2 * T_QUERY_SEGMENT_SIZE;
-	vkCmdResetQueryPool(*frame.graphicsCommandBuffer, m_queryPool, queryFrom, 2 * T_QUERY_SEGMENT_SIZE);
-	m_nextQueryIndex = queryFrom;
-	m_lastQueryIndex = queryFrom + 2 * T_QUERY_SEGMENT_SIZE;
-	m_openTimeQueries.resize(0);
+	// Resolve and reset time queries. The query segment is keyed on the acquired image index (always in
+	// [0, m_frames.size())) so it matches the per-image command buffers whose prior GPU work was awaited
+	// above; thus stamps written by the previous frame rendered with this image are final. Queries are
+	// reset from the host, before any of this frame's work is submitted, so stamps can be written by any
+	// queue and the resolved stamps don't depend on when this frame's work is submitted.
+	if (m_queryPool != 0)
+	{
+		const int32_t queryFrom = (int32_t)m_currentImageIndex * 2 * T_QUERY_SEGMENT_SIZE;
+
+		frame.queryStamps.resize(frame.queryCount);
+		if (frame.queryCount > 0)
+		{
+			// Unavailable stamps, e.g. a query which never got ended, are flagged as such.
+			const VkResult result = vkGetQueryPoolResults(
+				m_context->getLogicalDevice(),
+				m_queryPool,
+				queryFrom,
+				frame.queryCount,
+				frame.queryCount * sizeof(TimeQueryStamp),
+				frame.queryStamps.ptr(),
+				sizeof(TimeQueryStamp),
+				VK_QUERY_RESULT_64_BIT | VK_QUERY_RESULT_WITH_AVAILABILITY_BIT);
+			if (result != VK_SUCCESS && result != VK_NOT_READY)
+				frame.queryStamps.resize(0);
+		}
+
+		vkResetQueryPool(m_context->getLogicalDevice(), m_queryPool, queryFrom, 2 * T_QUERY_SEGMENT_SIZE);
+
+		frame.queryCount = 0;
+		m_firstQueryIndex = queryFrom;
+		m_nextQueryIndex = queryFrom;
+		m_lastQueryIndex = queryFrom + 2 * T_QUERY_SEGMENT_SIZE;
+	}
 #endif
 
 	// Reset misc counters.
@@ -1520,10 +1550,6 @@ void RenderViewVk::synchronize()
 	frame.boundIndexBuffer = BufferViewVk();
 	frame.boundVertexBuffer = BufferViewVk();
 
-#if defined(T_USE_QUERY)
-	rerecordTimeQueryReset(frame);
-#endif
-
 	// All asynchronous compute work has been flushed.
 	frame.computeRecordValue = 0;
 	frame.computeSubmittedValue = m_timelineSemaphoreValue;
@@ -1636,10 +1662,6 @@ void RenderViewVk::waitAsynchronousCompute(ComputeHandle handle)
 	frame.boundGraphicsPipeline = 0;
 	frame.boundIndexBuffer = BufferViewVk();
 	frame.boundVertexBuffer = BufferViewVk();
-
-#if defined(T_USE_QUERY)
-	rerecordTimeQueryReset(frame);
-#endif
 }
 
 bool RenderViewVk::copy(ITexture* destinationTexture, const Region& destinationRegion, ITexture* sourceTexture, const Region& sourceRegion)
@@ -1767,54 +1789,67 @@ void RenderViewVk::writeAccelerationStructure(IAccelerationStructure* accelerati
 		openComputeBatch(frame);
 }
 
-int32_t RenderViewVk::beginTimeQuery()
+int32_t RenderViewVk::beginTimeQuery(bool asynchronous)
 {
 #if defined(T_USE_QUERY)
 	if (m_nextQueryIndex >= m_lastQueryIndex)
 		return -1;
+	if (asynchronous && !m_asynchronousTimeQueries)
+		return -1;
 
 	auto& frame = m_frames[m_currentImageIndex];
+	CommandBuffer* commandBuffer = asynchronous ? frame.computeCommandBuffer : frame.graphicsCommandBuffer;
+
 	const int32_t query = m_nextQueryIndex;
-	vkCmdWriteTimestamp(*frame.graphicsCommandBuffer, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, m_queryPool, query + 0);
+	vkCmdWriteTimestamp(*commandBuffer, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, m_queryPool, query + 0);
 	m_nextQueryIndex += 2;
 
-	// Track the pair as open (begin written, end pending); a split before endTimeQuery must re-reset
-	// the end-half into the fresh command buffer (see rerecordTimeQueryReset).
-	m_openTimeQueries.push_back(query);
+	// Number of written stamps, resolved when this frame's segment is reused; \sa beginFrame
+	frame.queryCount = m_nextQueryIndex - m_firstQueryIndex;
 	return query;
 #else
-	return 0;
+	return -1;
 #endif
 }
 
-void RenderViewVk::endTimeQuery(int32_t query)
+void RenderViewVk::endTimeQuery(int32_t query, bool asynchronous)
 {
 #if defined(T_USE_QUERY)
-	auto& frame = m_frames[m_currentImageIndex];
-	vkCmdWriteTimestamp(*frame.graphicsCommandBuffer, VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, m_queryPool, query + 1);
+	// Ignore invalid queries and queries not begun this frame.
+	if (query < m_firstQueryIndex || query >= m_nextQueryIndex)
+		return;
 
-	// Pair closed; both halves written so a subsequent split no longer needs to reset it.
-	const auto it = std::find(m_openTimeQueries.begin(), m_openTimeQueries.end(), query);
-	if (it != m_openTimeQueries.end())
-		m_openTimeQueries.erase(it);
+	auto& frame = m_frames[m_currentImageIndex];
+	CommandBuffer* commandBuffer = asynchronous ? frame.computeCommandBuffer : frame.graphicsCommandBuffer;
+	vkCmdWriteTimestamp(*commandBuffer, VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, m_queryPool, query + 1);
 #endif
 }
 
 bool RenderViewVk::getTimeQuery(int32_t query, bool wait, double& outStart, double& outEnd) const
 {
 #if defined(T_USE_QUERY)
-	uint32_t flags = VK_QUERY_RESULT_64_BIT;
-	if (wait)
-		flags |= VK_QUERY_RESULT_WAIT_BIT;
+	// Stamps are resolved when a frame begins, i.e. the stamps returned are those written into the query by
+	// the previous frame rendered with the same segment. Thus waiting isn't applicable.
+	if (query < 0)
+		return false;
 
-	uint64_t stamps[2] = { 0, 0 };
-	VkResult result = vkGetQueryPoolResults(m_context->getLogicalDevice(), m_queryPool, query, 2, 2 * sizeof(uint64_t), stamps, sizeof(uint64_t), flags);
-	if (result != VK_SUCCESS)
+	const int32_t frameIndex = query / (2 * T_QUERY_SEGMENT_SIZE);
+	if (frameIndex >= (int32_t)m_frames.size())
+		return false;
+
+	const auto& queryStamps = m_frames[frameIndex].queryStamps;
+	const int32_t stamp = query - frameIndex * 2 * T_QUERY_SEGMENT_SIZE;
+	if (stamp + 1 >= (int32_t)queryStamps.size())
+		return false;
+
+	const TimeQueryStamp& start = queryStamps[stamp + 0];
+	const TimeQueryStamp& end = queryStamps[stamp + 1];
+	if (!start.available || !end.available)
 		return false;
 
 	const double c_divend = 1000000000.0 / m_deviceProperties.limits.timestampPeriod;
-	outStart = (double)stamps[0] / c_divend;
-	outEnd = (double)stamps[1] / c_divend;
+	outStart = (double)start.value / c_divend;
+	outEnd = (double)end.value / c_divend;
 	return true;
 #else
 	return false;
@@ -2227,31 +2262,43 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, uint32_t multiSample,
 			vkDestroyQueryPool(m_context->getLogicalDevice(), m_queryPool, nullptr);
 			m_queryPool = 0;
 		}
+		m_asynchronousTimeQueries = false;
 #endif
 	}
 
 #if defined(T_USE_QUERY)
-	// Create time query pool sized to imageCount; reused across resets unless imageCount changes.
-	if (m_queryPool == 0)
+	// Create time query pool sized to imageCount; reused across resets unless imageCount changes. Queries are
+	// resolved, and reset, from the host when a frame begins thus require host query reset; \sa beginFrame
+	if (m_queryPool == 0 && m_context->haveHostQueryReset())
 	{
-		const VkQueryPoolCreateInfo qpci = {
-			.sType = VK_STRUCTURE_TYPE_QUERY_POOL_CREATE_INFO,
-			.pNext = nullptr,
-			.queryType = VK_QUERY_TYPE_TIMESTAMP,
-			.queryCount = imageCount * 2 * T_QUERY_SEGMENT_SIZE
+		uint32_t queueFamilyCount = 0;
+		vkGetPhysicalDeviceQueueFamilyProperties(m_context->getPhysicalDevice(), &queueFamilyCount, nullptr);
+
+		AlignedVector< VkQueueFamilyProperties > queueFamilyProperties(queueFamilyCount);
+		vkGetPhysicalDeviceQueueFamilyProperties(m_context->getPhysicalDevice(), &queueFamilyCount, queueFamilyProperties.ptr());
+
+		const auto haveTimestamps = [&](const Queue* queue) {
+			const uint32_t queueIndex = queue->getQueueIndex();
+			return queueIndex < queueFamilyCount && queueFamilyProperties[queueIndex].timestampValidBits > 0;
 		};
-		if (vkCreateQueryPool(m_context->getLogicalDevice(), &qpci, nullptr, &m_queryPool) != VK_SUCCESS)
-			return false;
 
-		// Freshly created queries are "uninitialized" until a reset is queue-submitted and observed, but
-		// ProfileReportRenderBlock reads results inline before endFrame's reset; do one up-front reset here.
+		if (haveTimestamps(m_context->getGraphicsQueue()))
 		{
-			Ref< CommandBuffer > commandBuffer = m_context->getGraphicsQueue()->acquireCommandBuffer(L"RenderViewVk::create");
-			vkCmdResetQueryPool(*commandBuffer, m_queryPool, 0, imageCount * 2 * T_QUERY_SEGMENT_SIZE);
-			if (!commandBuffer->submitAndWait())
+			const VkQueryPoolCreateInfo qpci = {
+				.sType = VK_STRUCTURE_TYPE_QUERY_POOL_CREATE_INFO,
+				.pNext = nullptr,
+				.queryType = VK_QUERY_TYPE_TIMESTAMP,
+				.queryCount = imageCount * 2 * T_QUERY_SEGMENT_SIZE
+			};
+			if (vkCreateQueryPool(m_context->getLogicalDevice(), &qpci, nullptr, &m_queryPool) != VK_SUCCESS)
 				return false;
-		}
 
+			m_asynchronousTimeQueries = haveTimestamps(m_context->getComputeQueue());
+		}
+		else
+			log::debug << L"Vulkan; time queries not supported by graphics queue." << Endl;
+
+		m_firstQueryIndex = 0;
 		m_nextQueryIndex = 0;
 		m_lastQueryIndex = 0;
 	}
@@ -2385,18 +2432,6 @@ uint64_t RenderViewVk::openComputeBatch(Frame& frame)
 	if (frame.computeRecordValue == 0)
 		frame.computeRecordValue = ++m_timelineSemaphoreValue;
 	return frame.computeRecordValue;
-}
-
-void RenderViewVk::rerecordTimeQueryReset(Frame& frame)
-{
-#if defined(T_USE_QUERY)
-	// A split submitted the buffer holding beginFrame's reset, which the layer only honours in the write's own stream.
-	// Re-reset the not-yet-written queries: each open pair's end-half (not its already-submitted begin) plus the unused tail.
-	for (const int32_t query : m_openTimeQueries)
-		vkCmdResetQueryPool(*frame.graphicsCommandBuffer, m_queryPool, query + 1, 1);
-	if (m_nextQueryIndex < m_lastQueryIndex)
-		vkCmdResetQueryPool(*frame.graphicsCommandBuffer, m_queryPool, m_nextQueryIndex, m_lastQueryIndex - m_nextQueryIndex);
-#endif
 }
 
 #if defined(_WIN32)

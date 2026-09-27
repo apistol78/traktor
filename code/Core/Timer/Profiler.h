@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -89,6 +89,10 @@ public:
 	 */
 	void setListener(IReportListener* listener);
 
+	/*! Check if a report listener is set, i.e. if events are consumed.
+	 */
+	bool haveListener() const { return m_listener != nullptr; }
+
 	/*! Begin recording event.
 	 */
 	void beginEvent(const std::wstring_view& name);
@@ -97,8 +101,14 @@ public:
 	 */
 	void endEvent();
 
-	/*! Add manual event. */
-	void addEvent(const std::wstring_view& name, double start, double duration);
+	/*! Add manual event.
+	 *
+	 * \param name Name of event.
+	 * \param start Start time of event.
+	 * \param duration Duration of event.
+	 * \param depth Depth of event; events which overlap should be added at different depths.
+	 */
+	void addEvent(const std::wstring_view& name, double start, double duration, uint8_t depth = 0);
 
 	/*! Get current time.
 	 */

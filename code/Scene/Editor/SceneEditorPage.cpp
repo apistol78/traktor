@@ -116,6 +116,12 @@ constexpr int32_t c_instanceGridLocked = 3;
 /*! Distance, in front of camera, where new entities are placed. */
 constexpr float c_placementDistance = 4.0f;
 
+/*! Number of frames a pass isn't measured before its history is discarded. */
+constexpr uint32_t c_measurementHistoryFrames = 256;
+
+/*! Number of frames a viewport isn't measured before its measurements are discarded. */
+constexpr uint32_t c_measurementViewportFrames = 30;
+
 /*! Get world position in front of camera. */
 Vector4 getPlacementPosition(const Camera* camera)
 {
@@ -437,6 +443,7 @@ bool SceneEditorPage::create(ui::Container* parent)
 	m_gridMeasurements->create(tabPageMeasurements, ui::WsDoubleBuffer | ui::WsTabStop);
 	m_gridMeasurements->addColumn(new ui::GridColumn(L"", 50_ut));
 	m_gridMeasurements->addColumn(new ui::GridColumn(i18n::Text(L"SCENE_EDITOR_MEASUREMENTS_NAME"), 150_ut));
+	m_gridMeasurements->addColumn(new ui::GridColumn(i18n::Text(L"SCENE_EDITOR_MEASUREMENTS_QUEUE"), 90_ut));
 	m_gridMeasurements->addColumn(new ui::GridColumn(i18n::Text(L"SCENE_EDITOR_MEASUREMENTS_DURATION"), 90_ut));
 
 	// Create resources panel.
@@ -1831,6 +1838,87 @@ void SceneEditorPage::eventContextCameraMoved(CameraMovedEvent* event)
 
 void SceneEditorPage::eventContextPostFrame(PostFrameEvent* event)
 {
+	m_postFrameCount++;
+
+	// Only measure render passes while measurements are visible since measuring isn't free.
+	const bool measurementsVisible = m_gridMeasurements->isVisible(true);
+	m_context->setMeasurementEnable(measurementsVisible);
+	if (measurementsVisible)
+	{
+		// Discard viewports which are no longer measured, such as when view or layout has changed.
+		for (auto it = m_measurements.begin(); it != m_measurements.end();)
+		{
+			if (m_postFrameCount - it->second.updated > c_measurementViewportFrames)
+			{
+				it = m_measurements.erase(it);
+				m_measurementsDirty = true;
+			}
+			else
+				++it;
+		}
+
+		if (m_measurementsDirty)
+		{
+			const std::wstring queues[] = {
+				i18n::Text(L"SCENE_EDITOR_MEASUREMENTS_QUEUE_GRAPHICS"),
+				i18n::Text(L"SCENE_EDITOR_MEASUREMENTS_QUEUE_ASYNC_COMPUTE")
+			};
+
+			m_gridMeasurements->removeAllRows();
+			for (const auto& it : m_measurements)
+			{
+				// Separate viewports if more than one viewport is measured.
+				if (m_measurements.size() > 1)
+				{
+					Ref< ui::GridRow > row = new ui::GridRow();
+					row->add(L"");
+					row->add(i18n::Text(L"SCENE_EDITOR_MEASUREMENTS_VIEWPORT").str() + L" " + toString(it.first + 1), m_instanceGridFontBold);
+					row->add(L"");
+					row->add(L"");
+					m_gridMeasurements->addRow(row);
+				}
+
+				// Asynchronous compute passes overlap graphics passes; thus totals are accumulated per queue.
+				double totals[] = { 0.0, 0.0 };
+				int32_t counts[] = { 0, 0 };
+
+				for (const auto& measurement : it.second.measurements)
+				{
+					const int32_t queue = measurement.asynchronous ? 1 : 0;
+
+					Ref< ui::GridRow > row = new ui::GridRow();
+					row->add(str(L"%d [%d]", measurement.pass, measurement.level));
+					row->add(measurement.name);
+					row->add(queues[queue]);
+					row->add(str(L"%d \xb5s", (int32_t)(measurement.duration * 1000000.0)));
+					m_gridMeasurements->addRow(row);
+
+					totals[queue] += measurement.duration;
+					counts[queue]++;
+				}
+
+				for (int32_t queue = 0; queue < 2; ++queue)
+				{
+					if (counts[queue] <= 0)
+						continue;
+
+					Ref< ui::GridRow > row = new ui::GridRow();
+					row->add(L"");
+					row->add(i18n::Text(L"SCENE_EDITOR_MEASUREMENTS_TOTAL"), m_instanceGridFontBold);
+					row->add(queues[queue], m_instanceGridFontBold);
+					row->add(str(L"%d \xb5s", (int32_t)(totals[queue] * 1000000.0)), m_instanceGridFontBold);
+					m_gridMeasurements->addRow(row);
+				}
+			}
+			m_measurementsDirty = false;
+		}
+	}
+	else if (!m_measurements.empty())
+	{
+		m_measurements.clear();
+		m_measurementsDirty = true;
+	}
+
 	if (m_gridResources->isVisible(true))
 	{
 		m_gridResources->removeAllRows();
@@ -1892,22 +1980,45 @@ void SceneEditorPage::eventContextMeasurement(MeasurementEvent* event)
 	if (!m_gridMeasurements->isVisible(true))
 		return;
 
-	if (event->getPass() <= 0)
-		m_gridMeasurements->removeAllRows();
+	auto& vm = m_measurements[event->getViewport()];
+	vm.updated = m_postFrameCount;
 
-	auto& v = m_measurementVariance[event->getPass()];
-	v.push_back(event->getDuration());
+	// Passes of a frame are reported in order; thus a new frame begins when pass doesn't increase.
+	if (event->getPass() <= vm.lastPass)
+	{
+		vm.frame++;
+		vm.occurrences.reset();
+		vm.measurements.resize(0);
+
+		// Discard history of passes which are no longer measured.
+		for (auto it = vm.history.begin(); it != vm.history.end();)
+		{
+			if (vm.frame - it->second.frame > c_measurementHistoryFrames)
+				it = vm.history.erase(it);
+			else
+				++it;
+		}
+	}
+	vm.lastPass = event->getPass();
+
+	// Pass names aren't necessarily unique; thus identify pass by name and occurrence.
+	const int32_t occurrence = vm.occurrences[event->getName()]++;
+	auto& history = vm.history[event->getName() + L"#" + toString(occurrence)];
+	history.durations.push_back(event->getDuration());
+	history.frame = vm.frame;
 
 	double total = 0.0;
-	for (uint32_t i = 0; i < v.size(); ++i)
-		total += v[i];
-	total /= (double)v.size();
+	for (uint32_t i = 0; i < history.durations.size(); ++i)
+		total += history.durations[i];
 
-	Ref< ui::GridRow > row = new ui::GridRow();
-	row->add(str(L"%d [%d]", event->getPass(), event->getLevel()));
-	row->add(event->getName());
-	row->add(str(L"%d \xb5s", (int32_t)(total * 1000000.0)));
-	m_gridMeasurements->addRow(row);
+	auto& measurement = vm.measurements.push_back();
+	measurement.pass = event->getPass();
+	measurement.level = event->getLevel();
+	measurement.asynchronous = event->isAsynchronous();
+	measurement.name = event->getName();
+	measurement.duration = total / (double)history.durations.size();
+
+	m_measurementsDirty = true;
 }
 
 }

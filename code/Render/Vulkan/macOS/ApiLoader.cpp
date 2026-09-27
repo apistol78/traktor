@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -124,6 +124,7 @@ T_DEFINE_VK(vkDestroyQueryPool);
 T_DEFINE_VK(vkCmdResetQueryPool);
 T_DEFINE_VK(vkCmdWriteTimestamp);
 T_DEFINE_VK(vkGetQueryPoolResults);
+T_DEFINE_VK(vkResetQueryPool);
 T_DEFINE_VK(vkCreatePipelineCache);
 T_DEFINE_VK(vkGetPipelineCacheData);
 T_DEFINE_VK(vkFreeDescriptorSets);
@@ -288,7 +289,10 @@ bool initializeVulkanExtensions(VkInstance instance)
 	T_RESOLVE_VK_EXT(vkCmdBeginDebugUtilsLabelEXT);
 	T_RESOLVE_VK_EXT(vkCmdEndDebugUtilsLabelEXT);
 	T_RESOLVE_VK_EXT(vkGetBufferMemoryRequirements2KHR);
-	T_RESOLVE_VK_EXT(vkGetImageMemoryRequirements2KHR);	
+	T_RESOLVE_VK_EXT(vkGetImageMemoryRequirements2KHR);
+
+	// Optional; Vulkan 1.2, used by time queries.
+	vkResetQueryPool = (PFN_vkResetQueryPool)vkGetInstanceProcAddr(instance, "vkResetQueryPool");
 	return true;
 }
 

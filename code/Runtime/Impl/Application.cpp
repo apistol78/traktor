@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -838,7 +838,7 @@ bool Application::update()
 						bool submittedQuery = false;
 						if (m_renderGpuDurationQuery < 0)
 						{
-							m_renderGpuDurationQuery = renderView->beginTimeQuery();
+							m_renderGpuDurationQuery = renderView->beginTimeQuery(false);
 							submittedQuery = true;
 						}
 
@@ -846,7 +846,7 @@ bool Application::update()
 							currentState->render(m_frameRender, m_updateInfoRender);
 
 						if (submittedQuery)
-							renderView->endTimeQuery(m_renderGpuDurationQuery);
+							renderView->endTimeQuery(m_renderGpuDurationQuery, false);
 
 						T_PROFILER_BEGIN(L"Application render endFrame");
 						renderView->endFrame();
@@ -1115,7 +1115,7 @@ void Application::threadRender()
 						bool submittedQuery = false;
 						if (m_renderGpuDurationQuery < 0)
 						{
-							m_renderGpuDurationQuery = renderView->beginTimeQuery();
+							m_renderGpuDurationQuery = renderView->beginTimeQuery(false);
 							submittedQuery = true;
 						}
 
@@ -1123,7 +1123,7 @@ void Application::threadRender()
 							m_stateRender->render(m_frameRender, m_updateInfoRender);
 
 						if (submittedQuery)
-							renderView->endTimeQuery(m_renderGpuDurationQuery);
+							renderView->endTimeQuery(m_renderGpuDurationQuery, false);
 
 						T_PROFILER_BEGIN(L"Application render endFrame");
 						renderView->endFrame();

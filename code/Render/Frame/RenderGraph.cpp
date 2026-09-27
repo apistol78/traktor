@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2025 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -635,6 +635,7 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 	}
 
 #if !defined(__ANDROID__) && !defined(__IOS__)
+	const bool profile = (bool)m_profiler && m_profilerEnable;
 	double referenceOffset = Profiler::getInstance().getTime();
 
 	int32_t* queryHandles = nullptr;
@@ -642,11 +643,14 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 	int32_t* passQueryHandles = nullptr;
 	int32_t* profiling = nullptr;
 
-	if (m_profiler)
+	if (profile)
 	{
 		// Allocate query handles from render context's heap since they get automatically
-		// freed when the context is reset.
-		queryHandles = (int32_t*)renderContext->alloc((uint32_t)(m_passes.size() + 1) * sizeof(int32_t), (uint32_t)alignOf< int32_t >());
+		// freed when the context is reset. Initialized as invalid so a pass which doesn't
+		// get measured isn't reported.
+		const uint32_t queryHandleCount = (uint32_t)m_passes.size() + 1;
+		queryHandles = (int32_t*)renderContext->alloc(queryHandleCount * sizeof(int32_t), (uint32_t)alignOf< int32_t >());
+		std::fill(queryHandles, queryHandles + queryHandleCount, -1);
 		referenceQueryHandle = queryHandles;
 		passQueryHandles = queryHandles + 1;
 
@@ -701,7 +705,9 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 
 			// Begin render pass. An asynchronous compute pass doesn't interact with the
 			// graphics queue, except when it's conservatively waited upon immediately, so
-			// any current render pass is left open.
+			// any current render pass, and work of previous pass, is left pending. When
+			// waited upon immediately the work of the previous pass is flushed first so it
+			// isn't also delayed by the wait.
 			if (asyncCompute)
 			{
 				if (waitAfter && currentOutput.resourceId != ~0U)
@@ -717,6 +723,13 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 
 					currentTarget = nullptr;
 					currentOutput = RenderPass::Output();
+				}
+				else if (waitAfter)
+				{
+					T_PASS_PROFILE_BEGIN();
+					renderContext->mergeComputeIntoRender();
+					renderContext->mergeDrawIntoRender();
+					T_PASS_PROFILE_END();
 				}
 			}
 			else if (pass->haveOutput())
@@ -862,7 +875,7 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 			m_buildingPasses = true;
 
 #if !defined(__ANDROID__) && !defined(__IOS__)
-			if (m_profiler && !asyncCompute)
+			if (profile && !asyncCompute)
 			{
 				T_FATAL_ASSERT(profiling == nullptr);
 				profiling = &passQueryHandles[index];
@@ -881,6 +894,13 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 					renderContext->compute< BarrierRenderBlock >(Stage::AccelerationStructureUpdate, Stage::AccelerationStructureUpdate | Stage::Compute, nullptr, 0, true);
 				}
 				renderContext->beginAsyncCompute();
+
+#if !defined(__ANDROID__) && !defined(__IOS__)
+				// Stamps are recorded inside the scope, thus on the asynchronous compute
+				// queue, so they bracket the execution of the asynchronous work.
+				if (profile)
+					renderContext->compute< ProfileBeginRenderBlock >(&passQueryHandles[index]);
+#endif
 			}
 
 			for (const auto& build : pass->getBuilds())
@@ -893,26 +913,23 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 
 			if (asyncCompute)
 			{
-				renderContext->endAsyncCompute();
+#if !defined(__ANDROID__) && !defined(__IOS__)
+				if (profile)
+					renderContext->compute< ProfileEndRenderBlock >(&passQueryHandles[index]);
+#endif
 
 				// Fence the asynchronous work with a handle so consumer passes can wait
-				// upon it; merged into the render queue immediately so the work is
-				// recorded, and possibly submitted, as early as possible.
+				// upon it; the signal is part of the asynchronous work.
 				ComputeHandle* handle = renderContext->alloc< ComputeHandle >();
 				asyncComputeHandles[index] = handle;
 				renderContext->compute< SignalComputeRenderBlock >(handle);
 
-#if !defined(__ANDROID__) && !defined(__IOS__)
-				// The timestamps only bracket the graphics queue while the asynchronous
-				// work is recorded; not the execution of the work itself.
-				if (m_profiler)
-					renderContext->direct< ProfileBeginRenderBlock >(&passQueryHandles[index]);
-#endif
-				renderContext->mergeComputeIntoRender();
-#if !defined(__ANDROID__) && !defined(__IOS__)
-				if (m_profiler)
-					renderContext->direct< ProfileEndRenderBlock >(&passQueryHandles[index]);
-#endif
+				renderContext->endAsyncCompute();
+
+				// Merge the asynchronous work into the render queue immediately so it's
+				// recorded, and possibly submitted, as early as possible. Synchronous compute
+				// of the previous, still pending, pass is kept since it belongs to that pass.
+				renderContext->mergeAsyncComputeIntoRender();
 
 				// No consumer pass known; conservatively make all subsequent graphics work
 				// observe the result.
@@ -954,9 +971,17 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 		if (currentTarget && currentTarget->doubleBuffered)
 			currentTarget->targetSet->swap();
 	}
+	else
+	{
+		// Last pass doesn't render into a target; flush its pending work.
+		T_PASS_PROFILE_BEGIN();
+		renderContext->mergeComputeIntoRender();
+		renderContext->mergeDrawIntoRender();
+		T_PASS_PROFILE_END();
+	}
 
 #if !defined(__ANDROID__) && !defined(__IOS__)
-	if (m_profiler)
+	if (profile)
 	{
 		renderContext->direct< ProfileEndRenderBlock >(referenceQueryHandle);
 
@@ -974,8 +999,8 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 				pr->queryHandle = &passQueryHandles[index];
 				pr->referenceQueryHandle = referenceQueryHandle;
 				pr->offset = referenceOffset;
-				pr->sink = [=, name = pass->getName(), this](double start, double duration) {
-					m_profiler(ordinal, i, name, start, duration);
+				pr->sink = [=, name = pass->getName(), queue = pass->getQueue(), this](double start, double duration) {
+					m_profiler(ordinal, i, queue, name, start, duration);
 				};
 				renderContext->direct(pr);
 

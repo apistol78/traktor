@@ -140,8 +140,8 @@ bool PerspectiveRenderControl::create(ui::Widget* parent, SceneEditorContext* co
 	m_renderGraph = new render::RenderGraph(
 		m_context->getRenderSystem(),
 		m_multiSample,
-		[=, this](int32_t pass, int32_t level, const std::wstring& name, double start, double duration) {
-		m_context->raiseMeasurement(pass, level, name, start, duration);
+		[=, this](int32_t pass, int32_t level, render::RenderPass::Queue queue, const std::wstring& name, double start, double duration) {
+		m_context->raiseMeasurement(cameraId, pass, level, queue == render::RenderPass::Queue::AsyncCompute, name, start, duration);
 		});
 
 	m_primitiveRenderer = new render::PrimitiveRenderer();
@@ -777,8 +777,9 @@ void PerspectiveRenderControl::eventPaint(ui::PaintEvent* event)
 	if (!m_renderGraph->validate())
 		return;
 
-	// Build render context.
+	// Build render context; only measure passes when measurements are visible.
 	m_renderContext->flush();
+	m_renderGraph->setProfilerEnable(m_context->getMeasurementEnable());
 	m_renderGraph->build(m_renderContext, m_dirtySize.cx, m_dirtySize.cy);
 
 	// Render frame.

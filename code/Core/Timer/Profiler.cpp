@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -119,7 +119,7 @@ void Profiler::endEvent()
 	}
 }
 
-void Profiler::addEvent(const std::wstring_view& name, double start, double duration)
+void Profiler::addEvent(const std::wstring_view& name, double start, double duration, uint8_t depth)
 {
 	if (!m_listener)
 		return;
@@ -146,13 +146,19 @@ void Profiler::addEvent(const std::wstring_view& name, double start, double dura
 		auto& e = m_events.push_back();
 		e.name = id;
 		e.threadId = -1;
-		e.depth = 0;
+		e.depth = depth;
 		e.start = start;
 		e.end = start + duration;
 
 		// Report events if we've queued enough.
 		if (m_events.full())
 		{
+			if (m_dictionaryDirty)
+			{
+				m_listener->reportProfilerDictionary(m_dictionary);
+				m_dictionaryDirty = false;
+			}
+
 			m_listener->reportProfilerEvents(m_timer.getElapsedTime(), m_events);
 			m_events.resize(0);
 		}

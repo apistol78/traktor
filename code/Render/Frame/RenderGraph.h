@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2025 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -54,7 +54,12 @@ class T_DLLCLASS RenderGraph : public Object
 	T_RTTI_CLASS;
 
 public:
-	typedef std::function< void(int32_t, int32_t, const std::wstring&, double, double) > fn_profiler_t;
+	/*! Profiler callback; pass ordinal, level, queue, name, start and duration of each measured pass.
+	 *
+	 * Passes on the asynchronous compute queue overlap graphics passes; thus
+	 * their durations shouldn't be accumulated with graphics passes.
+	 */
+	typedef std::function< void(int32_t, int32_t, RenderPass::Queue, const std::wstring&, double, double) > fn_profiler_t;
 
 	struct TargetSize
 	{
@@ -269,6 +274,17 @@ public:
 	/*! */
 	bool build(RenderContext* renderContext, int32_t width, int32_t height);
 
+	/*! Enable measuring passes with the profiler.
+	 *
+	 * Measuring isn't free, each pass is rendered in a separate
+	 * render pass, so it should only be enabled when the measurements
+	 * are consumed. Enabled by default; ignored if no profiler has
+	 * been provided.
+	 *
+	 * \param profilerEnable Enable profiler.
+	 */
+	void setProfilerEnable(bool profilerEnable) { m_profilerEnable = profilerEnable; }
+
 	/*! */
 	const SmallMap< RGTargetSet, TargetResource >& getTargets() const { return m_targets; }
 
@@ -297,6 +313,7 @@ private:
 	uint32_t m_multiSample;
 	handle_t m_nextResourceId;
 	fn_profiler_t m_profiler;
+	bool m_profilerEnable = true;
 	bool m_buildingPasses = false;
 	bool m_ownContext = false;
 

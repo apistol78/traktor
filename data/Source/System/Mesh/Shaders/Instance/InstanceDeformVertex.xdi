@@ -16,8 +16,8 @@ other instances use the vertex stream. Remaining attributes come from the stream
 			<id>{A9271697-F62E-4144-BC14-D694B21A138F}</id>
 			<comment/>
 			<position>
-				<first>-1500</first>
-				<second>700</second>
+				<first>-714</first>
+				<second>856</second>
 			</position>
 			<fragmentGuid>{20E08173-83A8-D949-903E-D1ABB63CDA52}</fragmentGuid>
 			<inputPins/>
@@ -56,11 +56,11 @@ other instances use the vertex stream. Remaining attributes come from the stream
 			<id>{B4F1887D-2784-458E-8C96-AFFFE0234F21}</id>
 			<comment/>
 			<position>
-				<first>-1800</first>
-				<second>300</second>
+				<first>-1481</first>
+				<second>757</second>
 			</position>
 			<name>Instance Index</name>
-			<technique></technique>
+			<technique/>
 			<domain>Undefined</domain>
 			<localSize>
 				<X>1</X>
@@ -85,8 +85,8 @@ $Output = gl_InstanceIndex;
 			<id>{AB31C9D7-3D2D-4BBA-AFD6-6192B076D2A6}</id>
 			<comment/>
 			<position>
-				<first>-1800</first>
-				<second>240</second>
+				<first>-1492</first>
+				<second>693</second>
 			</position>
 			<parameterDeclaration>{181F88C6-D41E-4A1A-835D-97ED11490858}</parameterDeclaration>
 		</item>
@@ -94,16 +94,16 @@ $Output = gl_InstanceIndex;
 			<id>{21464CCC-ACDC-465F-9587-89C690027672}</id>
 			<comment/>
 			<position>
-				<first>-1600</first>
-				<second>270</second>
+				<first>-1236</first>
+				<second>708</second>
 			</position>
 		</item>
 		<item type="traktor.render.MemberValue" version="traktor.render.Node:1">
 			<id>{7FA83CB5-75D1-48ED-BCA4-21AF66DE4519}</id>
 			<comment/>
 			<position>
-				<first>-1450</first>
-				<second>270</second>
+				<first>-999</first>
+				<second>593</second>
 			</position>
 			<memberName>deform</memberName>
 		</item>
@@ -111,8 +111,8 @@ $Output = gl_InstanceIndex;
 			<id>{DD87734A-DB31-4696-9C39-BB822D40A198}</id>
 			<comment/>
 			<position>
-				<first>-1000</first>
-				<second>400</second>
+				<first>-1013</first>
+				<second>887</second>
 			</position>
 			<name>Position</name>
 			<usage>Position</usage>
@@ -123,8 +123,8 @@ $Output = gl_InstanceIndex;
 			<id>{D43D272B-1CFE-410D-831F-65BF23C93F82}</id>
 			<comment/>
 			<position>
-				<first>-1000</first>
-				<second>900</second>
+				<first>-712</first>
+				<second>471</second>
 			</position>
 			<name>Normal</name>
 			<usage>Normal</usage>
@@ -135,8 +135,8 @@ $Output = gl_InstanceIndex;
 			<id>{696ADB09-C5AE-4C99-BD86-290D7C073D49}</id>
 			<comment/>
 			<position>
-				<first>-1000</first>
-				<second>960</second>
+				<first>-712</first>
+				<second>788</second>
 			</position>
 			<name>Tangent</name>
 			<usage>Tangent</usage>
@@ -147,8 +147,8 @@ $Output = gl_InstanceIndex;
 			<id>{B5071EC9-44E9-4715-86C3-8795F2841979}</id>
 			<comment/>
 			<position>
-				<first>-1000</first>
-				<second>1020</second>
+				<first>-712</first>
+				<second>316</second>
 			</position>
 			<name>Binormal</name>
 			<usage>Binormal</usage>
@@ -159,8 +159,8 @@ $Output = gl_InstanceIndex;
 			<id>{48E08208-28EF-439A-931E-A9A3941445BD}</id>
 			<comment/>
 			<position>
-				<first>-1000</first>
-				<second>1100</second>
+				<first>-140</first>
+				<second>590</second>
 			</position>
 			<name>Color</name>
 			<usage>Color</usage>
@@ -171,8 +171,8 @@ $Output = gl_InstanceIndex;
 			<id>{5E531138-CDAA-48BB-8FF7-2D5153876FD9}</id>
 			<comment/>
 			<position>
-				<first>-1000</first>
-				<second>1180</second>
+				<first>116</first>
+				<second>609</second>
 			</position>
 			<name>TexCoord0</name>
 			<usage>Custom</usage>
@@ -183,8 +183,8 @@ $Output = gl_InstanceIndex;
 			<id>{683E8161-6528-49FD-B5B6-0C0A4A7B4705}</id>
 			<comment/>
 			<position>
-				<first>-1000</first>
-				<second>1240</second>
+				<first>116</first>
+				<second>673</second>
 			</position>
 			<name>TexCoord1</name>
 			<usage>Custom</usage>
@@ -195,8 +195,8 @@ $Output = gl_InstanceIndex;
 			<id>{C7AD1111-7E25-42B1-929D-B1C6B0BAA424}</id>
 			<comment/>
 			<position>
-				<first>-1000</first>
-				<second>470</second>
+				<first>-1002</first>
+				<second>759</second>
 			</position>
 			<parameterDeclaration>{F42FBF49-22F6-4B0C-AAC0-870839A45E95}</parameterDeclaration>
 		</item>
@@ -204,8 +204,8 @@ $Output = gl_InstanceIndex;
 			<id>{4515B144-4C28-47E4-83B5-B0D97B39F864}</id>
 			<comment/>
 			<position>
-				<first>-1000</first>
-				<second>530</second>
+				<first>-1010</first>
+				<second>823</second>
 			</position>
 			<parameterDeclaration>{7E03977B-BF43-40B1-9E97-2C38F6649642}</parameterDeclaration>
 		</item>
@@ -213,8 +213,8 @@ $Output = gl_InstanceIndex;
 			<id>{CF9D590B-9090-4590-B19D-6D8CDCF79A8D}</id>
 			<comment/>
 			<position>
-				<first>-1000</first>
-				<second>590</second>
+				<first>-1018</first>
+				<second>695</second>
 			</position>
 			<parameterDeclaration>{122A4F21-EC63-4B1C-9F98-5355CA068FAF}</parameterDeclaration>
 		</item>
@@ -222,11 +222,11 @@ $Output = gl_InstanceIndex;
 			<id>{9CD42688-FC93-497C-A8ED-41621E3EB9EB}</id>
 			<comment/>
 			<position>
-				<first>-700</first>
-				<second>450</second>
+				<first>-746</first>
+				<second>638</second>
 			</position>
 			<name>Deform Position</name>
-			<technique></technique>
+			<technique/>
 			<domain>Undefined</domain>
 			<localSize>
 				<X>1</X>
@@ -288,24 +288,24 @@ else
 			<id>{1AE35F59-B645-4B04-97BE-AE6317D65EB4}</id>
 			<comment/>
 			<position>
-				<first>-450</first>
-				<second>450</second>
+				<first>-344</first>
+				<second>489</second>
 			</position>
 		</item>
 		<item type="traktor.render.Interpolator" version="traktor.render.Node:1">
 			<id>{AAE18965-2212-4E66-8EA7-699389812E71}</id>
 			<comment/>
 			<position>
-				<first>-450</first>
-				<second>520</second>
+				<first>-344</first>
+				<second>735</second>
 			</position>
 		</item>
 		<item type="traktor.render.External" version="3,traktor.render.Node:1">
 			<id>{5C774C16-5805-424E-9C46-55D9437081CF}</id>
 			<comment/>
 			<position>
-				<first>-200</first>
-				<second>450</second>
+				<first>-150</first>
+				<second>718</second>
 			</position>
 			<fragmentGuid>{ED92EDEC-EAFA-4A37-91A3-21F32B1BE644}</fragmentGuid>
 			<inputPins>
@@ -336,8 +336,8 @@ else
 			<id>{00EE69FB-5762-4B07-B91B-6AF472C6076A}</id>
 			<comment/>
 			<position>
-				<first>-200</first>
-				<second>550</second>
+				<first>-150</first>
+				<second>900</second>
 			</position>
 			<fragmentGuid>{ED92EDEC-EAFA-4A37-91A3-21F32B1BE644}</fragmentGuid>
 			<inputPins>
@@ -368,8 +368,8 @@ else
 			<id>{7CB2E1FB-BAFD-4C9C-9F6B-F6AA0E2E6267}</id>
 			<comment/>
 			<position>
-				<first>-200</first>
-				<second>900</second>
+				<first>-416</first>
+				<second>617</second>
 			</position>
 			<fragmentGuid>{ED92EDEC-EAFA-4A37-91A3-21F32B1BE644}</fragmentGuid>
 			<inputPins>
@@ -400,8 +400,8 @@ else
 			<id>{18E90309-2806-45A5-961C-E964CC2E5B2A}</id>
 			<comment/>
 			<position>
-				<first>-200</first>
-				<second>960</second>
+				<first>-416</first>
+				<second>799</second>
 			</position>
 			<fragmentGuid>{ED92EDEC-EAFA-4A37-91A3-21F32B1BE644}</fragmentGuid>
 			<inputPins>
@@ -432,8 +432,8 @@ else
 			<id>{4BF4F788-1E6E-42F4-B36C-61982FAEF519}</id>
 			<comment/>
 			<position>
-				<first>-200</first>
-				<second>1020</second>
+				<first>-416</first>
+				<second>371</second>
 			</position>
 			<fragmentGuid>{ED92EDEC-EAFA-4A37-91A3-21F32B1BE644}</fragmentGuid>
 			<inputPins>
@@ -464,8 +464,8 @@ else
 			<id>{4DFD8365-1CD7-4FDD-A368-95E559BA7D95}</id>
 			<comment/>
 			<position>
-				<first>0</first>
-				<second>900</second>
+				<first>-121</first>
+				<second>836</second>
 			</position>
 			<swizzle>xyz</swizzle>
 		</item>
@@ -473,8 +473,8 @@ else
 			<id>{BB97107D-3869-4E08-910D-BB8221FC28A6}</id>
 			<comment/>
 			<position>
-				<first>0</first>
-				<second>960</second>
+				<first>-121</first>
+				<second>1018</second>
 			</position>
 			<swizzle>xyz</swizzle>
 		</item>
@@ -482,8 +482,8 @@ else
 			<id>{CD47CBB6-6D34-49B0-972B-A9C3A657C0F8}</id>
 			<comment/>
 			<position>
-				<first>0</first>
-				<second>1020</second>
+				<first>-121</first>
+				<second>654</second>
 			</position>
 			<swizzle>xyz</swizzle>
 		</item>
@@ -491,8 +491,8 @@ else
 			<id>{6758C63A-5B62-446F-AA01-E7CA608AA500}</id>
 			<comment/>
 			<position>
-				<first>200</first>
-				<second>600</second>
+				<first>122</first>
+				<second>823</second>
 			</position>
 			<fragmentGuid>{93C8C2C3-BE05-EA45-9C6C-BE87B6E6D412}</fragmentGuid>
 			<inputPins>
@@ -545,8 +545,8 @@ else
 			<id>{3C446219-C08B-496A-B6DF-3D3EB378A6E2}</id>
 			<comment/>
 			<position>
-				<first>200</first>
-				<second>900</second>
+				<first>130</first>
+				<second>442</second>
 			</position>
 			<fragmentGuid>{699DA285-CE14-4C70-BE47-453A33DD840A}</fragmentGuid>
 			<inputPins>
@@ -592,8 +592,8 @@ else
 			<id>{06FD56C4-47D1-4227-AF83-1034D1CCFFCC}</id>
 			<comment/>
 			<position>
-				<first>200</first>
-				<second>1100</second>
+				<first>130</first>
+				<second>737</second>
 			</position>
 			<fragmentGuid>{0F359947-AADA-6748-B492-44CE56038205}</fragmentGuid>
 			<inputPins>
@@ -614,8 +614,8 @@ else
 			<id>{DF0DA1FE-D72F-4F3C-B689-FD789598FA9B}</id>
 			<comment/>
 			<position>
-				<first>200</first>
-				<second>1200</second>
+				<first>151</first>
+				<second>973</second>
 			</position>
 			<swizzle>xyz1</swizzle>
 		</item>
@@ -623,8 +623,8 @@ else
 			<id>{C1EE3208-3CB2-445C-A805-8D7DFF39B88E}</id>
 			<comment/>
 			<position>
-				<first>600</first>
-				<second>700</second>
+				<first>394</first>
+				<second>665</second>
 			</position>
 			<fragmentGuid>{B32FEC7C-53C3-4A9C-B8D2-4928D7EED490}</fragmentGuid>
 			<inputPins>
@@ -685,8 +685,8 @@ else
 			<id>{3221B203-B2E8-4B5D-A9B6-41996D11ED24}</id>
 			<comment/>
 			<position>
-				<first>1000</first>
-				<second>700</second>
+				<first>692</first>
+				<second>683</second>
 			</position>
 			<name>Attributes</name>
 		</item>

@@ -64,7 +64,8 @@ public:
 		uint32_t graphicsQueueIndex,
 		uint32_t computeQueueIndex,
 		bool rayTracing,
-		bool smoothLines
+		bool smoothLines,
+		bool hostQueryReset
 	);
 
 	virtual ~Context();
@@ -179,6 +180,9 @@ public:
 
 	Queue* getComputeQueue() const { return m_computeQueue; }
 
+	/*! Queries can be reset from the host, vkResetQueryPool. */
+	bool haveHostQueryReset() const { return m_hostQueryReset; }
+
 	UniformBufferPool* getUniformBufferPool(int32_t index) const { return m_uniformBufferPools[index]; }
 
 	VkDescriptorSetLayout getBindlessTexturesSetLayout() const { return m_bindlessTexturesDescriptorLayout; }
@@ -242,6 +246,7 @@ private:
 	uint32_t m_computeQueueIndex;
 	bool m_rayTracing = false;
 	bool m_smoothLines = false;
+	bool m_hostQueryReset = false;
 	VkPipelineCache m_pipelineCache = 0;
 	VkDescriptorPool m_descriptorPool = 0;
 	int32_t m_views = 0;

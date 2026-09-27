@@ -525,30 +525,35 @@ void RenderViewVrfy::writeAccelerationStructure(IAccelerationStructure* accelera
 	m_renderView->writeAccelerationStructure(as->getWrappedAS(), vbv->getWrappedBufferView(), vl->getWrappedVertexLayout(), ibv->getWrappedBufferView(), indexType, primitives, rebuild, asynchronous);
 }
 
-int32_t RenderViewVrfy::beginTimeQuery()
+int32_t RenderViewVrfy::beginTimeQuery(bool asynchronous)
 {
 	T_CAPTURE_TRACE(L"beginTimeQuery");
 
-	const int32_t query = m_renderView->beginTimeQuery();
+	const int32_t query = m_renderView->beginTimeQuery(asynchronous);
 	if (query < 0)
 		return query;
 
 	T_CAPTURE_ASSERT(m_queriesPending.find(query) == m_queriesPending.end(), L"Invalid query index returned from renderer.");
-	m_queriesPending.insert(query);
+	m_queriesPending[query] = asynchronous;
 	return query;
 }
 
-void RenderViewVrfy::endTimeQuery(int32_t query)
+void RenderViewVrfy::endTimeQuery(int32_t query, bool asynchronous)
 {
 	T_CAPTURE_TRACE(L"endTimeQuery");
 
 	if (query < 0)
 		return;
 
-	T_CAPTURE_ASSERT(m_queriesPending.find(query) != m_queriesPending.end(), L"Invalid query.");
+	const auto it = m_queriesPending.find(query);
+	T_CAPTURE_ASSERT(it != m_queriesPending.end(), L"Invalid query.");
+	if (it != m_queriesPending.end())
+	{
+		T_CAPTURE_ASSERT(it->second == asynchronous, L"Query must be ended on the same queue as it was begun.");
+		m_queriesPending.erase(it);
+	}
 
-	m_renderView->endTimeQuery(query);
-	m_queriesPending.erase(query);
+	m_renderView->endTimeQuery(query, asynchronous);
 }
 
 bool RenderViewVrfy::getTimeQuery(int32_t query, bool wait, double& outStart, double& outEnd) const

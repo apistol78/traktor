@@ -284,13 +284,13 @@ void LambdaRenderBlock::render(IRenderView* renderView) const
 void ProfileBeginRenderBlock::render(IRenderView* renderView) const
 {
 	if (queryHandle)
-		*queryHandle = renderView->beginTimeQuery();
+		*queryHandle = renderView->beginTimeQuery(asynchronous);
 }
 
 void ProfileEndRenderBlock::render(IRenderView* renderView) const
 {
-	if (queryHandle)
-		renderView->endTimeQuery(*queryHandle);
+	if (queryHandle && *queryHandle >= 0)
+		renderView->endTimeQuery(*queryHandle, asynchronous);
 }
 
 void ProfileReportRenderBlock::render(IRenderView* renderView) const
@@ -298,10 +298,14 @@ void ProfileReportRenderBlock::render(IRenderView* renderView) const
 	double start, end;
 	double offsetGPU = 0.0;
 
+	// Query might not have been recorded, e.g. pass not measured or queries not supported.
+	if (!queryHandle || *queryHandle < 0)
+		return;
+
 	// Get GPU offset from a reference query.
 	if (referenceQueryHandle)
 	{
-		if (!renderView->getTimeQuery(*referenceQueryHandle, false, start, end))
+		if (*referenceQueryHandle < 0 || !renderView->getTimeQuery(*referenceQueryHandle, false, start, end))
 			return;
 
 		offsetGPU = start;

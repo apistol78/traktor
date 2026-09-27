@@ -8,7 +8,7 @@
  */
 #pragma once
 
-#include "Core/Containers/SmallSet.h"
+#include "Core/Containers/SmallMap.h"
 #include "Render/IRenderView.h"
 
 namespace traktor
@@ -115,9 +115,9 @@ public:
 
 	virtual void writeAccelerationStructure(IAccelerationStructure* accelerationStructure, const IBufferView* vertexBuffer, const IVertexLayout* vertexLayout, const IBufferView* indexBuffer, IndexType indexType, const AlignedVector< RaytracingPrimitives >& primitives, bool rebuild, bool asynchronous) override final;
 
-	virtual int32_t beginTimeQuery() override final;
+	virtual int32_t beginTimeQuery(bool asynchronous) override final;
 
-	virtual void endTimeQuery(int32_t query) override final;
+	virtual void endTimeQuery(int32_t query, bool asynchronous) override final;
 
 	virtual bool getTimeQuery(int32_t query, bool wait, double& outStart, double& outEnd) const override final;
 
@@ -147,7 +147,7 @@ private:
 	bool m_insidePass = false;
 	Thread* m_threadFrame = nullptr;
 	AlignedVector< ProfileVrfy > m_timeStamps;
-	mutable SmallSet< int32_t > m_queriesPending;
+	SmallMap< int32_t, bool > m_queriesPending;	//!< Pending queries, and if query is on the asynchronous compute queue.
 };
 
 }

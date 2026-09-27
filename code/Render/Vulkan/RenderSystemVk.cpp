@@ -465,6 +465,26 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 		}
 	}
 
+	// Check if queries can be reset from host; required by time queries.
+	bool hostQueryResetSupported = false;
+#if !defined(__ANDROID__) && !defined(__IOS__) && !defined(__RPI__)
+	if (vkResetQueryPool != nullptr)
+	{
+		VkPhysicalDeviceVulkan12Features queryFeatures1_2 = {
+			.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_2_FEATURES,
+			.pNext = nullptr
+		};
+		VkPhysicalDeviceFeatures2 queryFeatures2 = {
+			.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2,
+			.pNext = &queryFeatures1_2
+		};
+		vkGetPhysicalDeviceFeatures2(m_physicalDevice, &queryFeatures2);
+		hostQueryResetSupported = (queryFeatures1_2.hostQueryReset == VK_TRUE);
+	}
+	if (!hostQueryResetSupported)
+		log::debug << L"Host query reset not supported; time queries disabled." << Endl;
+#endif
+
 	// Create logical device.
 	const VkPhysicalDeviceFeatures features = {
 		.sampleRateShading = VK_TRUE,
@@ -510,6 +530,7 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 		.descriptorBindingPartiallyBound = VK_TRUE,
 		.descriptorBindingVariableDescriptorCount = VK_TRUE,
 		.runtimeDescriptorArray = VK_TRUE,
+		.hostQueryReset = hostQueryResetSupported ? VK_TRUE : VK_FALSE,
 		.timelineSemaphore = VK_TRUE,
 		.bufferDeviceAddress = VK_TRUE,
 		.bufferDeviceAddressCaptureReplay = VK_FALSE,
@@ -664,7 +685,8 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 		graphicsQueueIndex,
 		computeQueueIndex,
 		desc.rayTracing,
-		smoothLinesSupported);
+		smoothLinesSupported,
+		hostQueryResetSupported);
 	if (!m_context->create())
 	{
 		log::error << L"Failed to create Vulkan; failed to create context." << Endl;

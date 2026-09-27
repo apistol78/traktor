@@ -10,6 +10,7 @@
 
 #include "Core/Containers/AlignedVector.h"
 #include "Core/Containers/CircularVector.h"
+#include "Core/Containers/SmallMap.h"
 #include "Core/Containers/SmallSet.h"
 #include "Core/RefArray.h"
 #include "Editor/IEditorPage.h"
@@ -106,6 +107,33 @@ public:
 	virtual void handleDatabaseEvent(db::Database* database, const Guid& eventId) override final;
 
 private:
+	//! Measured durations of a render pass.
+	struct MeasurementHistory
+	{
+		CircularVector< double, 256 > durations;
+		uint32_t frame = 0;	//!< Frame when pass was last measured.
+	};
+
+	struct Measurement
+	{
+		int32_t pass;
+		int32_t level;
+		bool asynchronous;	//!< Pass was executed on the asynchronous compute queue.
+		std::wstring name;
+		double duration;	//!< Average duration of pass.
+	};
+
+	//! Measurements of a viewport's render passes.
+	struct ViewportMeasurements
+	{
+		uint32_t frame = 0;
+		uint32_t updated = 0;	//!< Post frame count when last measured.
+		int32_t lastPass = -1;
+		SmallMap< std::wstring, int32_t > occurrences;			//!< Occurrences of pass names in current frame.
+		SmallMap< std::wstring, MeasurementHistory > history;	//!< History of passes, by pass name and occurrence.
+		AlignedVector< Measurement > measurements;				//!< Measurements of current frame, in render order.
+	};
+
 	editor::IEditor* m_editor = nullptr;
 	editor::IEditorPageSite* m_site = nullptr;
 	editor::IDocument* m_document = nullptr;
@@ -140,7 +168,9 @@ private:
 	const TypeInfo* m_entityFilterType = nullptr;
 	AlignedVector< const TypeInfo* > m_componentPanelEditorTypes;
 	bool m_componentPanelEditorsCreated = false;
-	CircularVector< double, 256 > m_measurementVariance[64];
+	SmallMap< int32_t, ViewportMeasurements > m_measurements;	//!< Measurements, by viewport.
+	uint32_t m_postFrameCount = 0;
+	bool m_measurementsDirty = false;
 
 	bool createSceneAsset();
 

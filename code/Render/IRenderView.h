@@ -247,11 +247,19 @@ public:
 	/*! \name Time queries. */
 	//@{
 
-	/*! Insert a beginning of time query into the recording command buffer. */
-	virtual int32_t beginTimeQuery() = 0;
+	/*! Insert a beginning of time query into the recording command buffer.
+	 *
+	 * \param asynchronous Record the stamp on the asynchronous compute queue instead of the graphics queue.
+	 * \return Query handle, negative if no query could be recorded.
+	 */
+	virtual int32_t beginTimeQuery(bool asynchronous) = 0;
 
-	/*! Insert an end of a time query into the recording command buffer. */
-	virtual void endTimeQuery(int32_t query) = 0;
+	/*! Insert an end of a time query into the recording command buffer.
+	 *
+	 * \param query Query handle, from beginTimeQuery; negative handles are ignored.
+	 * \param asynchronous Record the stamp on the asynchronous compute queue; must match beginTimeQuery.
+	 */
+	virtual void endTimeQuery(int32_t query, bool asynchronous) = 0;
 
 	/*! Get start and end stamps of a time query. */
 	virtual bool getTimeQuery(int32_t query, bool wait, double& outStart, double& outEnd) const = 0;

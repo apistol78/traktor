@@ -129,9 +129,9 @@ public:
 
 	virtual void writeAccelerationStructure(IAccelerationStructure* accelerationStructure, const IBufferView* vertexBuffer, const IVertexLayout* vertexLayout, const IBufferView* indexBuffer, IndexType indexType, const AlignedVector< RaytracingPrimitives >& primitives, bool rebuild, bool asynchronous) override final;
 
-	virtual int32_t beginTimeQuery() override final;
+	virtual int32_t beginTimeQuery(bool asynchronous) override final;
 
-	virtual void endTimeQuery(int32_t query) override final;
+	virtual void endTimeQuery(int32_t query, bool asynchronous) override final;
 
 	virtual bool getTimeQuery(int32_t query, bool wait, double& outStart, double& outEnd) const override final;
 
@@ -148,6 +148,13 @@ public:
 	CommandBuffer* getGraphicsCommandBuffer();
 
 private:
+	//! Time query stamp as resolved with VK_QUERY_RESULT_64_BIT | VK_QUERY_RESULT_WITH_AVAILABILITY_BIT.
+	struct TimeQueryStamp
+	{
+		uint64_t value;
+		uint64_t available;
+	};
+
 	struct Frame
 	{
 		Ref< CommandBuffer > graphicsCommandBuffer;
@@ -166,6 +173,8 @@ private:
 		uint64_t computeRecordValue = 0;	//!< Timeline value of the open (not yet submitted) asynchronous compute batch; 0 if none open.
 		uint64_t computeSubmittedValue = 0;	//!< Highest asynchronous compute batch value already submitted to the compute queue this frame.
 		uint64_t graphicsWaitedValue = 0;	//!< Highest asynchronous compute batch value the graphics queue already waits upon this frame.
+		int32_t queryCount = 0;							//!< Number of time query stamps written into the frame's query segment.
+		AlignedVector< TimeQueryStamp > queryStamps;	//!< Stamps written by the previous frame rendered with the frame's query segment.
 	};
 
 	Context* m_context = nullptr;
@@ -176,6 +185,7 @@ private:
 	Ref< Queue > m_presentQueue;
 #if !defined(__ANDROID__) && !defined(__IOS__)
 	VkQueryPool m_queryPool = 0;
+	bool m_asynchronousTimeQueries = false;	//!< Time queries can be recorded on the asynchronous compute queue.
 #endif
 	bool m_lost = true;
 
@@ -228,9 +238,9 @@ private:
 	// Stats.
 	bool m_haveDebugMarkers = false;
 	bool m_cursorVisible = true;
+	int32_t m_firstQueryIndex = 0;
 	int32_t m_nextQueryIndex = 0;
 	int32_t m_lastQueryIndex = 0;
-	AlignedVector< int32_t > m_openTimeQueries;
 	uint32_t m_counter = -1;
 	uint32_t m_passCount = 0;
 	uint32_t m_drawCalls = 0;
@@ -244,9 +254,6 @@ private:
 
 	//! Reserve (or return the already reserved) timeline value for the current frame's open asynchronous compute batch.
 	uint64_t openComputeBatch(Frame& frame);
-
-	//! Re-record time query resets into the fresh graphics command buffer after a mid-frame queue split.
-	void rerecordTimeQueryReset(Frame& frame);
 
 #if defined(_WIN32)
 	// \name IWindowListener implementation.

@@ -282,6 +282,26 @@
 			<second>Duration</second>
 		</item>
 		<item>
+			<first>SCENE_EDITOR_MEASUREMENTS_VIEWPORT</first>
+			<second>Viewport</second>
+		</item>
+		<item>
+			<first>SCENE_EDITOR_MEASUREMENTS_QUEUE</first>
+			<second>Queue</second>
+		</item>
+		<item>
+			<first>SCENE_EDITOR_MEASUREMENTS_QUEUE_GRAPHICS</first>
+			<second>Graphics</second>
+		</item>
+		<item>
+			<first>SCENE_EDITOR_MEASUREMENTS_QUEUE_ASYNC_COMPUTE</first>
+			<second>Async compute</second>
+		</item>
+		<item>
+			<first>SCENE_EDITOR_MEASUREMENTS_TOTAL</first>
+			<second>Total</second>
+		</item>
+		<item>
 			<first>SCENE_EDITOR_RESOURCES</first>
 			<second>Resources</second>
 		</item>

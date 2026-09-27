@@ -116,7 +116,7 @@ void WorldRendererDeferred::setup(
 {
 	WorldRenderView worldRenderView = immutableWorldRenderView;
 	const uint32_t count = m_state[worldRenderView.getIndex()].count;
-	const bool needJitter = m_postProcessPass->needCameraJitter();
+	const bool needJitter =  (m_postProcessPass != nullptr) ? m_postProcessPass->needCameraJitter() : false;
 
 	// Adjust view size to properly reflect our internal resolution.
 	const float resolutionScale = (m_postProcessPass != nullptr) ? m_postProcessPass->getResolutionScale() : 1.0f;
