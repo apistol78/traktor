@@ -67,6 +67,8 @@ const int32_t c_latitudes = 24;
 const int32_t c_vertexCount = (c_longitudes + 1) * c_latitudes;
 const int32_t c_triangleCount = ((c_latitudes - 1) * ((c_longitudes + 1) * 2));
 const int32_t c_indexCount = c_triangleCount * 3;
+const int32_t c_cloudDomeWidth = 1024; // 2048;
+const int32_t c_cloudDomeHeight = 256; //512;
 
 }
 
@@ -169,8 +171,8 @@ bool SkyComponent::create(resource::IResourceManager* resourceManager, render::I
 		vtcd.shaderStorage = true;
 		m_cloudTextures[1] = renderSystem->createVolumeTexture(vtcd, T_FILE_LINE_W);
 
-		stcd.width = 1024 * 2;
-		stcd.height = 256 * 2;
+		stcd.width = c_cloudDomeWidth;
+		stcd.height = c_cloudDomeHeight;
 		stcd.mipCount = 1;
 		stcd.format = render::TfR16G16B16A16F;
 		stcd.shaderStorage = true;
@@ -340,8 +342,8 @@ void SkyComponent::setup(
 			rp->addBuild([=, this](const render::RenderGraph&, render::RenderContext* renderContext) {
 				auto renderBlock = renderContext->allocNamed< render::ComputeRenderBlock >(L"Sky clouds dome");
 				renderBlock->program = m_shaderCloudsDome->getProgram().program;
-				renderBlock->workSize[0] = 1024 * 2;
-				renderBlock->workSize[1] = 256 * 2;
+				renderBlock->workSize[0] = c_cloudDomeWidth;
+				renderBlock->workSize[1] = c_cloudDomeHeight;
 				renderBlock->workSize[2] = 1;
 
 				renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
