@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.script.Script" version="2">
-	<text>
-	<![CDATA[
+	<text><![CDATA[
+	
 -- Tween
 #using \{69AA52D0-3FC4-C94B-BF72-E93F230F2E9C}
 
 Tween = Tween or class("Tween")
 
-Tween._instances = {}
+Tween._instances = Tween._instances or {}
 
 function Tween:new(startValue, endValue, duration, fn)
 	self._startValue = startValue
@@ -16,25 +16,66 @@ function Tween:new(startValue, endValue, duration, fn)
 	self._time = 0
 	self._fn = fn
 	self._finished = false
-	table.insert(Tween._instances, self)
+	self:_insert()
 	self._fn(self._startValue, false)
 end
 
 function Tween:continueTo(endValue, duration)
-	local k < const > = self._time / self._duration
+	local k < const > = math.min(self._time / self._duration, 1)
 	self._startValue = self._startValue * (1 - k) + self._endValue * k
 	self._endValue = endValue
 	self._duration = duration
 	self._time = 0
 
-	if self._finished then
+	if not self._active then
 		self._finished = false
-		table.insert(Tween._instances, self)
+		self:_insert()
 		self._fn(self._startValue, false)
 	end
 end
 
 function Tween:stop()
+	self:_remove()
+end
+
+function Tween.update(dT)
+	local n < const > = #Tween._instances
+	local snapshot < const > = table.move(Tween._instances, 1, n, 1, {})
+	for i = 1, n do
+		local t < const > = snapshot[i]
+		if t._active then
+			local k < const > = t._time / t._duration
+			local value < const > = t._startValue * (1 - k) + t._endValue * k
+			if t._fn ~= nil then
+				t._fn(value, false)
+			end
+			-- The callback may have stopped or restarted it.
+			if t._active then
+				t._time = t._time + dT
+				if t._time > t._duration then
+					t._finished = true
+					t:_remove()
+					if t._fn ~= nil then
+						t._fn(t._endValue, true)
+					end
+				end
+			end
+		end
+	end
+end
+
+-- Private
+
+function Tween:_insert()
+	self._active = true
+	table.insert(Tween._instances, self)
+end
+
+function Tween:_remove()
+	if not self._active then
+		return
+	end
+	self._active = false
 	for i, t in ipairs(Tween._instances) do
 		if t == self then
 			table.remove(Tween._instances, i)
@@ -43,31 +84,6 @@ function Tween:stop()
 	end
 end
 
-function Tween.update(dT)
-	local n = #Tween._instances
-	local i = 1
-	while i <= n do
-		local t < const > = Tween._instances[i]
-		local k < const > = t._time / t._duration
-		local value < const > = t._startValue * (1 - k) + t._endValue * k
-		if t._fn ~= nil then
-			t._fn(value, false)
-		end
-		t._time = t._time + dT
-		if t._time <= t._duration then
-			i = i + 1
-		else
-			if t._fn ~= nil then
-				t._fn(t._endValue, true)
-			end
-			t._finished = true
-			Tween._instances[i] = Tween._instances[n]
-			Tween._instances[n] = nil
-			n = n - 1
-		end
-	end
-end
-
-	]]>
-	</text>
+	
+	]]></text>
 </object>

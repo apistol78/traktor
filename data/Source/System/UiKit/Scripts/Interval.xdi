@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.script.Script" version="2">
-	<text>
-	<![CDATA[
+	<text><![CDATA[
+	
 -- Interval
 
 Interval = Interval or class("Interval")
 
-Interval._instances = {}
+Interval._instances = Interval._instances or {}
 
 function Interval:new(duration, callFn)
 	assert (duration > 0)
@@ -54,6 +54,6 @@ function Interval.update(dT)
 		end
 	end
 end
-	]]>
-	</text>
+	
+	]]></text>
 </object>
