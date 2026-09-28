@@ -9,12 +9,14 @@
 #pragma once
 
 #if defined(T_USE_DIRECT2D)
-#include <d2d1_1.h>
-#include <d2d1effects_2.h>
-#include <dwrite.h>
-#include "Core/Containers/SmallMap.h"
-#include "Core/Misc/ComRef.h"
-#include "Ui/Win32/CanvasWin32.h"
+#	include "Core/Containers/SmallMap.h"
+#	include "Core/Misc/ComRef.h"
+#	include "Ui/Win32/BitmapWin32.h"
+#	include "Ui/Win32/CanvasWin32.h"
+
+#	include <d2d1_1.h>
+#	include <d2d1effects_2.h>
+#	include <dwrite.h>
 
 namespace traktor::ui
 {
@@ -122,7 +124,9 @@ public:
 private:
 	struct CachedBitmap
 	{
+		Ref< const BitmapWin32::Lifetime > lifetime;
 		int32_t revision;
+		bool alpha;
 		ComRef< ID2D1Bitmap > bitmap;
 	};
 
@@ -148,6 +152,7 @@ private:
 	mutable ComRef< IDWriteFontFace > m_dwFontFace;
 	mutable DWRITE_FONT_METRICS m_fontMetrics = {};
 	SmallMap< int32_t, CachedBitmap > m_cachedBitmaps;
+	int32_t m_destroyedBitmapCount = 0;
 	mutable SmallMap< std::pair< Font, int32_t >, CachedFont > m_cachedFonts;
 	Font m_font;
 	float m_strokeWidth = 1.0f;
@@ -159,6 +164,10 @@ private:
 	mutable ComRef< IDWriteTextFormat > m_dwTextFormatOffScreen;
 
 	ID2D1Bitmap* getCachedBitmap(const ISystemBitmap* bm);
+
+	bool uploadBitmap(ID2D1Bitmap* d2dBitmap, const BitmapWin32* bmw32, bool alpha, const Rect& rc);
+
+	void evictDestroyedBitmaps();
 
 	void flushCachedBitmaps();
 

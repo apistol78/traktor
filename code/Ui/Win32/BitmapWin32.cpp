@@ -1,24 +1,51 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include "Core/Math/Color4ub.h"
+#include "Core/Thread/Acquire.h"
 #include "Drawing/Image.h"
 #include "Drawing/PixelFormat.h"
 #include "Ui/Win32/BitmapWin32.h"
 
 namespace traktor::ui
 {
+namespace
+{
+
+/*! Pre-multiply color with alpha, rounded; opaque colors are kept as is. */
+T_FORCE_INLINE uint32_t premultiplyAlpha(uint32_t c)
+{
+	const uint32_t a = c >> 24;
+	if (a == 255)
+		return c;
+
+	const auto mul = [a](uint32_t x) {
+		return (x * a + 127) / 255;
+	};
+	return (a << 24) | (mul((c >> 16) & 0xff) << 16) | (mul((c >> 8) & 0xff) << 8) | mul(c & 0xff);
+}
+
+}
 
 std::atomic< int32_t > BitmapWin32::ms_nextTag(1);
+std::atomic< int32_t > BitmapWin32::ms_destroyedCount(0);
 
 BitmapWin32::BitmapWin32()
+	: m_lifetime(new Lifetime())
 {
 	m_tag = ms_nextTag++;
+}
+
+BitmapWin32::~BitmapWin32()
+{
+	// Flag must be cleared before count is incremented.
+	m_lifetime->m_alive = false;
+	ms_destroyedCount++;
 }
 
 bool BitmapWin32::create(uint32_t width, uint32_t height)
@@ -105,9 +132,14 @@ void BitmapWin32::copySubImage(const drawing::Image* image, const Rect& srcRect,
 	if (rc.getHeight() > height)
 		rc.bottom = rc.top + height;
 
-	// Convert image into a known pixel format.
-	Ref< drawing::Image > color = image->clone();
-	color->convert(drawing::PixelFormat::getA8R8G8B8());
+	// Convert image into a known pixel format; images already in that format are read as is.
+	Ref< const drawing::Image > color = image;
+	if (image->getPixelFormat() != drawing::PixelFormat::getA8R8G8B8())
+	{
+		Ref< drawing::Image > converted = image->clone();
+		converted->convert(drawing::PixelFormat::getA8R8G8B8());
+		color = converted;
+	}
 
 	// Extract bits from image.
 	const uint32_t* src = (const uint32_t*)color->getData();
@@ -125,14 +157,9 @@ void BitmapWin32::copySubImage(const drawing::Image* image, const Rect& srcRect,
 			// Do not copy alpha channel into color buffer.
 			dstColor[dstOffset] = c & 0x00ffffff;
 
-			// Pre-multiply color with alpha, needed for blending in GDI.
+			// Pre-multiply color with alpha.
 			if (srcHasAlpha)
-			{
-				uint8_t* h = reinterpret_cast< uint8_t* >(&c);
-				h[0] = (h[0] * h[3]) >> 8;
-				h[1] = (h[1] * h[3]) >> 8;
-				h[2] = (h[2] * h[3]) >> 8;
-			}
+				c = premultiplyAlpha(c);
 
 			if (dstAlpha)
 				dstAlpha[dstOffset] = c;
@@ -142,8 +169,15 @@ void BitmapWin32::copySubImage(const drawing::Image* image, const Rect& srcRect,
 	// As soon as an image with alpha has been copied we tag this system image as containing alpha.
 	m_haveAlpha |= srcHasAlpha;
 
-	// Increment revision of system image.
-	m_revision++;
+	// Record modified area with new revision of system image.
+	{
+		T_ANONYMOUS_VAR(Acquire< SpinLock >)(m_modificationsLock);
+		const int32_t revision = m_revision + 1;
+		Modification& modification = m_modifications[revision % sizeof_array(m_modifications)];
+		modification.revision = revision;
+		modification.rect = Rect(destPos, rc.getSize());
+		m_revision = revision;
+	}
 }
 
 Ref< drawing::Image > BitmapWin32::getImage() const
@@ -229,12 +263,34 @@ HICON BitmapWin32::createIcon() const
 
 	HICON hIcon = CreateIconIndirect(&ii);
 
-	// Cleanup
+	// Cleanup.
 	DeleteObject(hBitmapPreMulAlpha);
 	DeleteObject(hMask);
 
 	ReleaseDC(NULL, hScreenDC);
 	return hIcon;
+}
+
+int32_t BitmapWin32::getModified(int32_t revision, Rect& outRect) const
+{
+	T_ANONYMOUS_VAR(Acquire< SpinLock >)(m_modificationsLock);
+	const int32_t current = m_revision;
+
+	outRect = Rect(0, 0, (int32_t)m_width, (int32_t)m_height);
+	if (revision < 0 || revision > current || current - revision > (int32_t)sizeof_array(m_modifications))
+		return current;
+
+	Rect modified;
+	for (int32_t r = revision + 1; r <= current; ++r)
+	{
+		const Modification& modification = m_modifications[r % sizeof_array(m_modifications)];
+		if (modification.revision != r)
+			return current;
+		modified = (r > revision + 1) ? modified.contain(modification.rect) : modification.rect;
+	}
+
+	outRect = modified;
+	return current;
 }
 
 }

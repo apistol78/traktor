@@ -72,6 +72,8 @@ bool CanvasDirect2DWin32::beginPaint(Window& hWnd, const Font& font, bool double
 		return false;
 	}
 
+	evictDestroyedBitmaps();
+
 	if (!m_d2dRenderTarget)
 	{
 		flushCachedBitmaps();
@@ -95,7 +97,7 @@ bool CanvasDirect2DWin32::beginPaint(Window& hWnd, const Font& font, bool double
 			return false;
 	}
 
-	// Force DPI to be 96 as DPI handling is performed outside of Canvas.
+	// Force DPI to be 96 so coordinates are in pixels.
 	m_d2dRenderTarget->SetDpi(96, 96);
 
 	m_d2dRenderTarget->BeginDraw();
@@ -783,7 +785,7 @@ void CanvasDirect2DWin32::drawText(const Point& at, const std::wstring& text)
 		dwLayout->SetUnderline(TRUE, range);
 	}
 
-	// Remove line gap; it's being added on top of ascent.
+	// Remove line gap above ascent.
 	const int32_t lineGap = m_dwTextFormat->GetFontSize() * m_fontMetrics.lineGap / m_fontMetrics.designUnitsPerEm;
 
 	m_d2dRenderTarget->DrawTextLayout(
@@ -856,43 +858,85 @@ void CanvasDirect2DWin32::shutdown()
 ID2D1Bitmap* CanvasDirect2DWin32::getCachedBitmap(const ISystemBitmap* bm)
 {
 	const BitmapWin32* bmw32 = reinterpret_cast< const BitmapWin32* >(bm);
+	const Size size = bmw32->getSize();
+	const bool alpha = bmw32->haveAlpha();
 
 	const auto it = m_cachedBitmaps.find(bmw32->getTag());
 	if (it != m_cachedBitmaps.end())
 	{
-		if (it->second.revision == bmw32->getRevision())
-			return it->second.bitmap;
-		else
-			m_cachedBitmaps.erase(it);
+		CachedBitmap& cached = it->second;
+		if (cached.revision == bmw32->getRevision())
+			return cached.bitmap;
+
+		// Update only modified area; alpha mode is fixed when bitmap is created.
+		if (cached.alpha == alpha)
+		{
+			Rect rc;
+			const int32_t revision = bmw32->getModified(cached.revision, rc);
+			if (uploadBitmap(cached.bitmap, bmw32, alpha, rc))
+			{
+				cached.revision = revision;
+				return cached.bitmap;
+			}
+		}
+
+		m_cachedBitmaps.erase(it);
 	}
 
-	const Size size = bmw32->getSize();
-
-	const uint32_t* colorBits = (const uint32_t*)(bmw32->haveAlpha() ? bmw32->getBitsPreMulAlpha() : bmw32->getBits());
-	AutoArrayPtr< uint32_t > bits(new uint32_t[size.cx * size.cy]);
-
-	for (uint32_t y = 0; y < size.cy; ++y)
-	{
-		const uint32_t srcOffset = (size.cy - y - 1) * size.cx;
-		const uint32_t dstOffset = y * size.cx;
-		std::memcpy(&bits[dstOffset], &colorBits[srcOffset], size.cx * sizeof(uint32_t));
-	}
-
-	const D2D1_PIXEL_FORMAT pixelFormat = D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, bmw32->haveAlpha() ? D2D1_ALPHA_MODE_PREMULTIPLIED : D2D1_ALPHA_MODE_IGNORE);
+	const D2D1_PIXEL_FORMAT pixelFormat = D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, alpha ? D2D1_ALPHA_MODE_PREMULTIPLIED : D2D1_ALPHA_MODE_IGNORE);
 	const D2D1_BITMAP_PROPERTIES bitmapProps = D2D1::BitmapProperties(pixelFormat);
 
 	ComRef< ID2D1Bitmap > d2dBitmap;
 	HRESULT hr = m_d2dRenderTarget->CreateBitmap(
 		D2D1::SizeU(size.cx, size.cy),
-		bits.c_ptr(),
-		size.cx * 4,
 		bitmapProps,
 		&d2dBitmap.getAssign());
 	if (FAILED(hr))
 		return nullptr;
 
-	m_cachedBitmaps[bmw32->getTag()] = { bmw32->getRevision(), d2dBitmap };
+	// Get revision before upload; pixels modified meanwhile are uploaded next time.
+	const int32_t revision = bmw32->getRevision();
+	if (!uploadBitmap(d2dBitmap, bmw32, alpha, Rect(0, 0, size.cx, size.cy)))
+		return nullptr;
+
+	m_cachedBitmaps[bmw32->getTag()] = { bmw32->getLifetime(), revision, alpha, d2dBitmap };
 	return d2dBitmap;
+}
+
+bool CanvasDirect2DWin32::uploadBitmap(ID2D1Bitmap* d2dBitmap, const BitmapWin32* bmw32, bool alpha, const Rect& rc)
+{
+	const int32_t width = rc.getWidth();
+	const int32_t height = rc.getHeight();
+	if (width <= 0 || height <= 0)
+		return true;
+
+	const Size size = bmw32->getSize();
+	const uint32_t* colorBits = (const uint32_t*)(alpha ? bmw32->getBitsPreMulAlpha() : bmw32->getBits());
+	AutoArrayPtr< uint32_t > bits(new uint32_t[width * height]);
+
+	for (int32_t y = 0; y < height; ++y)
+	{
+		const uint32_t srcOffset = (size.cy - (rc.top + y) - 1) * size.cx + rc.left;
+		const uint32_t dstOffset = y * width;
+		std::memcpy(&bits[dstOffset], &colorBits[srcOffset], width * sizeof(uint32_t));
+	}
+
+	const D2D1_RECT_U dstRect = D2D1::RectU(rc.left, rc.top, rc.right, rc.bottom);
+	return SUCCEEDED(d2dBitmap->CopyFromMemory(&dstRect, bits.c_ptr(), width * 4));
+}
+
+void CanvasDirect2DWin32::evictDestroyedBitmaps()
+{
+	const int32_t destroyedBitmapCount = BitmapWin32::getDestroyedCount();
+	if (destroyedBitmapCount == m_destroyedBitmapCount)
+		return;
+
+	m_destroyedBitmapCount = destroyedBitmapCount;
+	for (auto it = m_cachedBitmaps.begin(); it != m_cachedBitmaps.end();)
+		if (!it->second.lifetime->alive())
+			it = m_cachedBitmaps.erase(it);
+		else
+			++it;
 }
 
 void CanvasDirect2DWin32::flushCachedBitmaps()
