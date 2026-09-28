@@ -39,7 +39,6 @@
 #include "Ui/ToolBar/ToolBar.h"
 #include "Ui/ToolBar/ToolBarButton.h"
 #include "Ui/ToolBar/ToolBarButtonClickEvent.h"
-#include "Ui/ToolBar/ToolBarDropDown.h"
 #include "Ui/ToolBar/ToolBarMenu.h"
 #include "Ui/ToolBar/ToolBarSeparator.h"
 #include "Ui/TreeView/TreeView.h"
@@ -174,11 +173,6 @@ bool TrimSheetSetupEditor::create(ui::Container* parent)
 	m_toolBar->addImage(new ui::StyleBitmap(L"Scene.Rotate"));
 	m_toolBar->addImage(new ui::StyleBitmap(L"Scene.ToggleGuide"));
 
-	m_toolLayer = new ui::ToolBarDropDown(ui::Command(L"Render.TrimSheet.Editor.Layer"), 100_ut, i18n::Text(L"TRIMSHEET_EDITOR_LAYER"));
-	for (int32_t i = 0; i < TrimSheetLayerCount; ++i)
-		m_toolLayer->add(i18n::Text(c_layerTextIds[i]));
-	m_toolLayer->select((int32_t)m_layer);
-
 	m_toolToggleGuides = new ui::ToolBarButton(i18n::Text(L"TRIMSHEET_EDITOR_TOGGLE_GUIDES"), 4, ui::Command(L"Render.TrimSheet.Editor.ToggleGuides"), ui::ToolBarButton::BsDefaultToggle);
 	m_toolToggleNames = new ui::ToolBarButton(i18n::Text(L"TRIMSHEET_EDITOR_TOGGLE_NAMES"), ui::Command(L"Render.TrimSheet.Editor.ToggleNames"), ui::ToolBarButton::BsText | ui::ToolBarButton::BsToggle);
 
@@ -187,8 +181,6 @@ bool TrimSheetSetupEditor::create(ui::Container* parent)
 	menuExport->add(new ui::MenuItem(ui::Command(L"Render.TrimSheet.Editor.ExportLayerGuides"), i18n::Text(L"TRIMSHEET_EDITOR_EXPORT_LAYER_GUIDES")));
 	menuExport->add(new ui::MenuItem(ui::Command(L"Render.TrimSheet.Editor.ExportAllLayers"), i18n::Text(L"TRIMSHEET_EDITOR_EXPORT_ALL_LAYERS")));
 
-	m_toolBar->addItem(m_toolLayer);
-	m_toolBar->addItem(new ui::ToolBarSeparator());
 	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"TRIMSHEET_EDITOR_ADD_HORIZONTAL_SLAB"), ui::Command(L"Render.TrimSheet.Editor.AddHorizontalSlab")));
 	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"TRIMSHEET_EDITOR_ADD_VERTICAL_SLAB"), ui::Command(L"Render.TrimSheet.Editor.AddVerticalSlab")));
 	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"TRIMSHEET_EDITOR_SPLIT_REGION"), ui::Command(L"Render.TrimSheet.Editor.SplitRegion")));
@@ -214,6 +206,8 @@ bool TrimSheetSetupEditor::create(ui::Container* parent)
 
 	m_control = new TrimSheetControl();
 	m_control->create(splitter);
+	for (int32_t i = 0; i < TrimSheetLayerCount; ++i)
+		m_control->setLayerLabel((TrimSheetLayer)i, i18n::Text(c_layerTextIds[i]));
 	m_control->setImageMeasure([this](const TrimSheetRegion* region, int32_t& outWidth, int32_t& outHeight) {
 		// Fit largest image of all layers since they share placement.
 		bool found = false;
@@ -279,33 +273,34 @@ void TrimSheetSetupEditor::destroy()
 	safeDestroy(m_propertiesView);
 
 	m_composer = nullptr;
-	m_sheet = nullptr;
 	m_asset = nullptr;
 	m_site = nullptr;
 }
 
 bool TrimSheetSetupEditor::dropInstance(db::Instance* instance, const ui::Point& position)
 {
-	// Dropping a texture asset on a region place its image in the current layer.
+	// Dropping a texture asset on a region, in any layer, place its image in that layer.
 	Ref< TextureAsset > textureAsset = instance->getObject< TextureAsset >();
 	if (!textureAsset)
 		return false;
 
-	// Sheet can extend outside of control when zoomed in, only accept drops over the control.
+	// Layers can extend outside of control when zoomed in, only accept drops over the control.
 	const ui::Point clientPosition = m_control->screenToClient(position);
 	if (!m_control->getInnerRect().inside(clientPosition))
 		return false;
 
+	TrimSheetLayer layer;
 	int32_t slab, region;
-	if (!m_control->hitRegion(clientPosition, slab, region))
+	if (!m_control->hitRegion(clientPosition, layer, slab, region))
 		return false;
 
 	m_document->push();
 
 	TrimSheetRegion* dropRegion = m_asset->getRegion(slab, region);
-	dropRegion->setFileName(m_layer, textureAsset->getFileName());
+	dropRegion->setFileName(layer, textureAsset->getFileName());
 	makeRelativePaths(dropRegion);
 
+	m_layer = layer;
 	m_selectedSlab = slab;
 	m_selectedRegion = region;
 
@@ -320,12 +315,7 @@ bool TrimSheetSetupEditor::handleCommand(const ui::Command& command)
 	if (m_propertiesView->handleCommand(command))
 		return true;
 
-	if (command == L"Render.TrimSheet.Editor.Layer")
-	{
-		m_layer = (TrimSheetLayer)clamp< int32_t >(m_toolLayer->getSelected(), 0, TrimSheetLayerCount - 1);
-		updateSheet();
-	}
-	else if (command == L"Render.TrimSheet.Editor.AddHorizontalSlab")
+	if (command == L"Render.TrimSheet.Editor.AddHorizontalSlab")
 		addSlab(TrimSheetSlab::Orientation::Horizontal);
 	else if (command == L"Render.TrimSheet.Editor.AddVerticalSlab")
 		addSlab(TrimSheetSlab::Orientation::Vertical);
@@ -345,7 +335,10 @@ bool TrimSheetSetupEditor::handleCommand(const ui::Command& command)
 		m_control->setShowNames(m_toolToggleNames->isToggled());
 	else if (command == L"Render.TrimSheet.Editor.Reload")
 	{
+		// Source images might have been modified; compose all layers again.
 		m_composer->flush();
+		for (auto& layerKey : m_layerKeys)
+			layerKey.clear();
 		updateSheet();
 	}
 	else if (command == L"Render.TrimSheet.Editor.ExportLayer")
@@ -439,10 +432,36 @@ void TrimSheetSetupEditor::updateTree()
 
 void TrimSheetSetupEditor::updateSheet()
 {
-	m_sheet = m_composer->compose(m_asset, m_layer);
-	m_control->setSheet(m_asset, m_layer, m_sheet);
+	m_control->setSetup(m_asset);
+
+	// Composing all layers of a large sheet is slow; only compose layers which would change.
+	for (int32_t i = 0; i < TrimSheetLayerCount; ++i)
+	{
+		std::wstring layerKey = TrimSheetComposer::getLayerKey(m_asset, (TrimSheetLayer)i);
+		if (layerKey == m_layerKeys[i])
+			continue;
+
+		Ref< drawing::Image > sheet = m_composer->compose(m_asset, (TrimSheetLayer)i);
+		m_control->setLayer((TrimSheetLayer)i, sheet);
+		m_layerKeys[i] = std::move(layerKey);
+	}
+
 	updateImageBounds();
 	updateStatus();
+}
+
+void TrimSheetSetupEditor::updateRegion(TrimSheetLayer layer)
+{
+	for (const auto& regionLayout : m_control->getRegionLayouts())
+	{
+		if (regionLayout.slab != m_selectedSlab || regionLayout.region != m_selectedRegion)
+			continue;
+
+		Ref< drawing::Image > image = m_composer->composeRegion(m_asset, layer, regionLayout);
+		m_control->updateLayer(layer, image, regionLayout.rect);
+		m_layerKeys[(int32_t)layer] = TrimSheetComposer::getLayerKey(m_asset, layer);
+		break;
+	}
 }
 
 void TrimSheetSetupEditor::updateSelection(bool updateProperties)
@@ -450,6 +469,7 @@ void TrimSheetSetupEditor::updateSelection(bool updateProperties)
 	validateSelection();
 
 	m_control->setSelection(m_selectedSlab, m_selectedRegion);
+	m_control->setActiveLayer(m_layer);
 
 	for (auto item : m_treeStructure->getItems(ui::TreeView::GfDescendants))
 	{
@@ -482,26 +502,34 @@ void TrimSheetSetupEditor::updateImageBounds()
 {
 	const TrimSheetRegion* region = m_asset->getRegion(m_selectedSlab, m_selectedRegion);
 
-	TrimSheetLayer layer;
-	int32_t width, height;
-	if (region && getPlacementLayer(region, m_layer, layer) && m_composer->getPlacedSize(region, layer, width, height))
+	const TrimSheetSetupAsset::RegionLayout* selectedLayout = nullptr;
+	for (const auto& regionLayout : m_control->getRegionLayouts())
 	{
-		for (const auto& regionLayout : m_control->getRegionLayouts())
+		if (regionLayout.slab == m_selectedSlab && regionLayout.region == m_selectedRegion)
 		{
-			if (regionLayout.slab == m_selectedSlab && regionLayout.region == m_selectedRegion)
-			{
-				const TrimSheetRect bounds = {
-					regionLayout.content.x + region->getOffsetX(),
-					regionLayout.content.y + region->getOffsetY(),
-					width,
-					height
-				};
-				m_control->setImageBounds(&bounds);
-				return;
-			}
+			selectedLayout = &regionLayout;
+			break;
 		}
 	}
-	m_control->setImageBounds(nullptr);
+
+	// Images of a region share placement but each layer's image can have a different size.
+	for (int32_t i = 0; i < TrimSheetLayerCount; ++i)
+	{
+		const TrimSheetLayer layer = (TrimSheetLayer)i;
+		int32_t width, height;
+		if (region && selectedLayout && m_composer->getPlacedSize(region, layer, width, height))
+		{
+			const TrimSheetRect bounds = {
+				selectedLayout->content.x + region->getOffsetX(),
+				selectedLayout->content.y + region->getOffsetY(),
+				width,
+				height
+			};
+			m_control->setImageBounds(layer, &bounds);
+		}
+		else
+			m_control->setImageBounds(layer, nullptr);
+	}
 }
 
 void TrimSheetSetupEditor::updateStatus()
@@ -705,9 +733,6 @@ void TrimSheetSetupEditor::rotateImage()
 
 void TrimSheetSetupEditor::exportLayer(bool guides)
 {
-	if (!m_sheet)
-		return;
-
 	const std::wstring name = m_document->getInstance(0)->getName() + L" - " + c_layerNames[(int32_t)m_layer] + L".png";
 	Path fileName = FileSystem::getInstance().getAbsolutePath(Path(m_assetPath), Path(name));
 
@@ -721,7 +746,11 @@ void TrimSheetSetupEditor::exportLayer(bool guides)
 	if (fileName.getExtension().empty())
 		fileName = Path(fileName.getPathName() + L".png");
 
-	Ref< drawing::Image > image = m_sheet->clone();
+	// Shown layers are only kept in display format; compose active layer again.
+	Ref< drawing::Image > image = m_composer->compose(m_asset, m_layer);
+	if (!image)
+		return;
+
 	if (guides)
 		drawGuides(image, m_asset);
 
@@ -779,9 +808,12 @@ void TrimSheetSetupEditor::eventTreeSelect(ui::SelectionChangeEvent* event)
 
 void TrimSheetSetupEditor::eventControlSelect(ui::SelectionChangeEvent* event)
 {
+	// Clicking same region in another layer only changes active layer; keep properties as they are.
+	const bool selectionChanged = (m_control->getSelectedSlab() != m_selectedSlab || m_control->getSelectedRegion() != m_selectedRegion);
 	m_selectedSlab = m_control->getSelectedSlab();
 	m_selectedRegion = m_control->getSelectedRegion();
-	updateSelection(true);
+	m_layer = m_control->getActiveLayer();
+	updateSelection(selectionChanged);
 }
 
 void TrimSheetSetupEditor::eventControlChanging(ui::ContentChangingEvent* event)
@@ -796,18 +828,15 @@ void TrimSheetSetupEditor::eventControlChange(ui::ContentChangeEvent* event)
 
 	if (dragMode == TrimSheetControl::DragMode::Image)
 	{
-		// Only dragged region changes; recompose it alone to stay interactive.
-		for (const auto& regionLayout : m_control->getRegionLayouts())
-		{
-			if (regionLayout.slab == m_selectedSlab && regionLayout.region == m_selectedRegion)
-			{
-				m_composer->composeRegion(m_asset, m_layer, regionLayout, m_sheet);
-				m_control->updateSheet(m_sheet, regionLayout.rect);
-				break;
-			}
-		}
+		// Only dragged region changes; recompose it alone, and only in layer being dragged, to stay
+		// interactive also with large sheets. Other layers are recomposed when drag is released.
+		const TrimSheetRegion* region = m_asset->getRegion(m_selectedSlab, m_selectedRegion);
+		TrimSheetLayer layer;
+		if (region && getPlacementLayer(region, m_layer, layer))
+			updateRegion(layer);
 		updateImageBounds();
 		updateStatus();
+		m_regionDirty = true;
 		m_propertiesDirty = true;
 	}
 	else if (dragMode == TrimSheetControl::DragMode::SlabSize || dragMode == TrimSheetControl::DragMode::RegionSize)
@@ -829,6 +858,14 @@ void TrimSheetSetupEditor::eventControlChange(ui::ContentChangeEvent* event)
 
 void TrimSheetSetupEditor::eventControlMouseUp(ui::MouseButtonUpEvent* event)
 {
+	if (m_regionDirty)
+	{
+		// Region's images have been dragged; bring remaining layers up to date.
+		m_regionDirty = false;
+		for (int32_t i = 0; i < TrimSheetLayerCount; ++i)
+			if (TrimSheetComposer::getLayerKey(m_asset, (TrimSheetLayer)i) != m_layerKeys[i])
+				updateRegion((TrimSheetLayer)i);
+	}
 	if (m_sheetDirty)
 	{
 		m_sheetDirty = false;
@@ -844,18 +881,19 @@ void TrimSheetSetupEditor::eventControlMouseUp(ui::MouseButtonUpEvent* event)
 
 void TrimSheetSetupEditor::eventControlMouseMove(ui::MouseMoveEvent* event)
 {
+	TrimSheetLayer layer;
 	int32_t x, y;
-	if (!m_control->clientToSheet(event->getPosition(), x, y))
+	if (!m_control->clientToSheet(event->getPosition(), layer, x, y))
 	{
 		m_statusBar->setText(1, L"");
 		m_statusBar->update();
 		return;
 	}
 
-	std::wstring text = str(L"%d, %d", x, y);
+	std::wstring text = std::wstring(i18n::Text(c_layerTextIds[(int32_t)layer])) + L": " + str(L"%d, %d", x, y);
 
 	int32_t slab, region;
-	if (m_control->hitRegion(event->getPosition(), slab, region))
+	if (m_control->hitRegion(event->getPosition(), layer, slab, region))
 		text += L" - " + getRegionName(m_asset->getRegion(slab, region), slab, region);
 
 	m_statusBar->setText(1, text);
@@ -869,8 +907,7 @@ void TrimSheetSetupEditor::eventPropertiesChanging(ui::ContentChangingEvent* eve
 
 void TrimSheetSetupEditor::eventPropertiesChanged(ui::ContentChangeEvent* event)
 {
-	// Property list isn't rebound here as we're called from within it; items
-	// show absolute paths until next time selection is updated.
+	// Property list isn't rebound from within its own event; items show absolute paths until selection is updated.
 	TrimSheetRegion* region = m_asset->getRegion(m_selectedSlab, m_selectedRegion);
 	if (region)
 		makeRelativePaths(region);

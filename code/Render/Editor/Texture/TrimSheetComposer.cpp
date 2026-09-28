@@ -14,6 +14,7 @@
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
 #include "Core/Math/MathUtils.h"
+#include "Core/Thread/JobManager.h"
 #include "Drawing/Filters/GammaFilter.h"
 #include "Drawing/Filters/ScaleFilter.h"
 #include "Drawing/Image.h"
@@ -24,6 +25,7 @@
 #include <algorithm>
 #include <cmath>
 #include <cwctype>
+#include <functional>
 
 namespace traktor::render
 {
@@ -39,6 +41,33 @@ int32_t wrap(int32_t v, int32_t n)
 	return (r >= 0) ? r : r + n;
 }
 
+/*! Call function with slices of rows, from y0 to y1, where slices are processed in parallel if enabled. */
+void forRows(bool parallel, int32_t y0, int32_t y1, const std::function< void(int32_t, int32_t) >& fn)
+{
+	const int32_t rows = y1 - y0;
+	if (rows <= 0)
+		return;
+
+	const int32_t sliceCount = parallel ? clamp< int32_t >(rows / 16, 1, (int32_t)JobManager::getInstance().getWorkerCount() * 4 + 1) : 1;
+	if (sliceCount <= 1)
+	{
+		fn(y0, y1);
+		return;
+	}
+
+	AlignedVector< Job::task_t > tasks;
+	tasks.reserve(sliceCount);
+	for (int32_t i = 0; i < sliceCount; ++i)
+	{
+		const int32_t sy0 = y0 + (rows * i) / sliceCount;
+		const int32_t sy1 = y0 + (rows * (i + 1)) / sliceCount;
+		tasks.push_back([&fn, sy0, sy1]() {
+			fn(sy0, sy1);
+		});
+	}
+	JobManager::getInstance().fork(tasks.c_ptr(), tasks.size());
+}
+
 float normalized(uint8_t v)
 {
 	return v * (1.0f / 255.0f);
@@ -49,12 +78,8 @@ float normalized(float v)
 	return v;
 }
 
-/*! Parse swizzle, same characters as TextureOutput, into source of each output channel.
- *
- * Sources are 0 to 3 for red to alpha, 4 for zero and 5 for one. Missing,
- * or invalid, characters keep channel as is.
- *
- * \return False if swizzle is invalid; empty swizzle is valid.
+/*! Parse swizzle into source of each output channel; 0 to 3 for red to alpha, 4 for zero and 5 for one.
+ * Missing or invalid characters keep channel as is; false if swizzle is invalid, empty swizzle is valid.
  */
 bool parseSwizzle(const std::wstring& swizzle, int32_t outSources[4])
 {
@@ -113,9 +138,7 @@ void swizzleChannels(ChannelType* p, int32_t count, const int32_t sources[4], Ch
 }
 
 /*! Load source image and convert into a format which is fast to sample.
- *
- * Sources with at most 8 bits per channel are kept as 8 bit RGBA, others
- * as RGBA F32; both have channels in RGBA order in memory.
+ * At most 8 bits per channel become 8 bit RGBA, others RGBA F32; both have channels in RGBA order in memory.
  */
 Ref< drawing::Image > loadSource(const Path& filePath, const int32_t swizzle[4], float scale, bool sRGB)
 {
@@ -197,12 +220,10 @@ Ref< drawing::Image > loadSource(const Path& filePath, const int32_t swizzle[4],
 }
 
 /*! Place image into region of sheet, using region's placement.
- *
- * \param normalSign Non-zero if image is a normal map which XY need to be rotated
- *                   along with the image; +1 if green points down in image, -1 if up.
+ * Non-zero normalSign rotates normal map XY along with image; +1 if green points down in image, -1 if up.
  */
 template < typename SourceType >
-void placeImage(const drawing::Image* source, const TrimSheetRegion* region, const TrimSheetRect& rect, float normalSign, drawing::Image* sheet)
+void placeImage(const drawing::Image* source, const TrimSheetRegion* region, const TrimSheetRect& rect, float normalSign, bool parallel, drawing::Image* sheet)
 {
 	const SourceType* src = static_cast< const SourceType* >(source->getData());
 	float* dst = static_cast< float* >(sheet->getData());
@@ -223,94 +244,93 @@ void placeImage(const drawing::Image* source, const TrimSheetRegion* region, con
 	const int32_t x1 = std::min(rect.x + rect.width, sheet->getWidth());
 	const int32_t y1 = std::min(rect.y + rect.height, sheet->getHeight());
 
-	for (int32_t y = y0; y < y1; ++y)
-	{
-		int32_t v = y - rect.y - offsetY;
-		if (tileV)
-			v = wrap(v, ph);
-		else if (v < 0 || v >= ph)
-			continue;
-
-		for (int32_t x = x0; x < x1; ++x)
+	forRows(parallel, y0, y1, [&](int32_t ry0, int32_t ry1) {
+		for (int32_t y = ry0; y < ry1; ++y)
 		{
-			int32_t u = x - rect.x - offsetX;
-			if (tileH)
-				u = wrap(u, pw);
-			else if (u < 0 || u >= pw)
+			int32_t v = y - rect.y - offsetY;
+			if (tileV)
+				v = wrap(v, ph);
+			else if (v < 0 || v >= ph)
 				continue;
 
-			// Map from placed, rotated clockwise, image into source image.
-			int32_t sx, sy;
-			switch (rotation)
+			for (int32_t x = x0; x < x1; ++x)
 			{
-			default:
-			case TrimSheetRegion::Rotation::Deg0:
-				sx = u;
-				sy = v;
-				break;
+				int32_t u = x - rect.x - offsetX;
+				if (tileH)
+					u = wrap(u, pw);
+				else if (u < 0 || u >= pw)
+					continue;
 
-			case TrimSheetRegion::Rotation::Deg90:
-				sx = v;
-				sy = sh - 1 - u;
-				break;
-
-			case TrimSheetRegion::Rotation::Deg180:
-				sx = sw - 1 - u;
-				sy = sh - 1 - v;
-				break;
-
-			case TrimSheetRegion::Rotation::Deg270:
-				sx = sw - 1 - v;
-				sy = u;
-				break;
-			}
-
-			const SourceType* s = &src[(sx + sy * sw) * 4];
-			float* d = &dst[(x + y * sheet->getWidth()) * 4];
-
-			d[0] = normalized(s[0]);
-			d[1] = normalized(s[1]);
-			d[2] = normalized(s[2]);
-			d[3] = normalized(s[3]);
-
-			// Rotate tangent space XY of normal; image space is Y down so a clockwise
-			// rotation is (x, y) -> (-y, x) where normal's Y is scaled by normalSign.
-			if (rotateNormals)
-			{
-				const float nx = d[0] * 2.0f - 1.0f;
-				const float ny = d[1] * 2.0f - 1.0f;
-				float rx = nx, ry = ny;
+				// Map from placed, rotated clockwise, image into source image.
+				int32_t sx, sy;
 				switch (rotation)
 				{
 				default:
+				case TrimSheetRegion::Rotation::Deg0:
+					sx = u;
+					sy = v;
 					break;
 
 				case TrimSheetRegion::Rotation::Deg90:
-					rx = -normalSign * ny;
-					ry = normalSign * nx;
+					sx = v;
+					sy = sh - 1 - u;
 					break;
 
 				case TrimSheetRegion::Rotation::Deg180:
-					rx = -nx;
-					ry = -ny;
+					sx = sw - 1 - u;
+					sy = sh - 1 - v;
 					break;
 
 				case TrimSheetRegion::Rotation::Deg270:
-					rx = normalSign * ny;
-					ry = -normalSign * nx;
+					sx = sw - 1 - v;
+					sy = u;
 					break;
 				}
-				d[0] = rx * 0.5f + 0.5f;
-				d[1] = ry * 0.5f + 0.5f;
+
+				const SourceType* s = &src[(sx + sy * sw) * 4];
+				float* d = &dst[(x + y * sheet->getWidth()) * 4];
+
+				d[0] = normalized(s[0]);
+				d[1] = normalized(s[1]);
+				d[2] = normalized(s[2]);
+				d[3] = normalized(s[3]);
+
+				// Rotate tangent space XY of normal; image space is Y down so a clockwise
+				// rotation is (x, y) -> (-y, x) where normal's Y is scaled by normalSign.
+				if (rotateNormals)
+				{
+					const float nx = d[0] * 2.0f - 1.0f;
+					const float ny = d[1] * 2.0f - 1.0f;
+					float rx = nx, ry = ny;
+					switch (rotation)
+					{
+					default:
+						break;
+
+					case TrimSheetRegion::Rotation::Deg90:
+						rx = -normalSign * ny;
+						ry = normalSign * nx;
+						break;
+
+					case TrimSheetRegion::Rotation::Deg180:
+						rx = -nx;
+						ry = -ny;
+						break;
+
+					case TrimSheetRegion::Rotation::Deg270:
+						rx = normalSign * ny;
+						ry = -normalSign * nx;
+						break;
+					}
+					d[0] = rx * 0.5f + 0.5f;
+					d[1] = ry * 0.5f + 0.5f;
+				}
 			}
 		}
-	}
+	});
 }
 
-/*! Fill margin around content by repeating content's edge pixels.
- *
- * \param horizontal True if margin is above and below content, else to the left and right.
- */
+/*! Fill margin around content by repeating content's edge pixels; above and below if horizontal, else left and right. */
 void fillMargin(drawing::Image* sheet, const TrimSheetRect& content, int32_t margin, bool horizontal)
 {
 	if (content.empty() || margin <= 0)
@@ -369,7 +389,7 @@ void fillMargin(drawing::Image* sheet, const TrimSheetRect& content, int32_t mar
 	}
 }
 
-void fillRect(drawing::Image* sheet, const TrimSheetRect& rect, const Color4f& color)
+void fillRect(drawing::Image* sheet, const TrimSheetRect& rect, const Color4f& color, bool parallel)
 {
 	float T_MATH_ALIGN16 c[4];
 	color.storeAligned(c);
@@ -381,25 +401,28 @@ void fillRect(drawing::Image* sheet, const TrimSheetRect& rect, const Color4f& c
 	const int32_t x1 = std::min(rect.x + rect.width, sheet->getWidth());
 	const int32_t y1 = std::min(rect.y + rect.height, sheet->getHeight());
 
-	for (int32_t y = y0; y < y1; ++y)
-	{
-		for (int32_t x = x0; x < x1; ++x)
+	forRows(parallel, y0, y1, [&](int32_t ry0, int32_t ry1) {
+		for (int32_t y = ry0; y < ry1; ++y)
 		{
-			float* d = &dst[(x + y * sheet->getWidth()) * 4];
-			d[0] = c[0];
-			d[1] = c[1];
-			d[2] = c[2];
-			d[3] = c[3];
+			for (int32_t x = x0; x < x1; ++x)
+			{
+				float* d = &dst[(x + y * sheet->getWidth()) * 4];
+				d[0] = c[0];
+				d[1] = c[1];
+				d[2] = c[2];
+				d[3] = c[3];
+			}
 		}
-	}
+	});
 }
 
 }
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.TrimSheetComposer", TrimSheetComposer, Object)
 
-TrimSheetComposer::TrimSheetComposer(const Path& assetPath)
+TrimSheetComposer::TrimSheetComposer(const Path& assetPath, bool parallel)
 :	m_assetPath(assetPath)
+,	m_parallel(parallel)
 {
 }
 
@@ -414,7 +437,7 @@ Ref< drawing::Image > TrimSheetComposer::compose(const TrimSheetSetupAsset* setu
 	}
 
 	Ref< drawing::Image > sheet = new drawing::Image(drawing::PixelFormat::getRGBAF32(), width, height);
-	fillRect(sheet, { 0, 0, width, height }, setup->getBackground(layer));
+	fillRect(sheet, { 0, 0, width, height }, setup->getBackground(layer), m_parallel);
 
 	AlignedVector< TrimSheetRect > slabs;
 	AlignedVector< TrimSheetSetupAsset::RegionLayout > regions;
@@ -441,13 +464,24 @@ Ref< drawing::Image > TrimSheetComposer::composeThumbnail(const TrimSheetSetupAs
 	return sheet;
 }
 
-void TrimSheetComposer::composeRegion(const TrimSheetSetupAsset* setup, TrimSheetLayer layer, const TrimSheetSetupAsset::RegionLayout& regionLayout, drawing::Image* sheet)
+Ref< drawing::Image > TrimSheetComposer::composeRegion(const TrimSheetSetupAsset* setup, TrimSheetLayer layer, const TrimSheetSetupAsset::RegionLayout& regionLayout)
 {
-	if (!sheet || sheet->getWidth() != setup->getWidth() || sheet->getHeight() != setup->getHeight())
-		return;
+	const TrimSheetRect& rect = regionLayout.rect;
+	if (rect.empty())
+		return nullptr;
 
-	fillRect(sheet, regionLayout.rect, setup->getBackground(layer));
-	placeRegion(setup, layer, regionLayout, sheet);
+	Ref< drawing::Image > image = new drawing::Image(drawing::PixelFormat::getRGBAF32(), rect.width, rect.height);
+	fillRect(image, { 0, 0, rect.width, rect.height }, setup->getBackground(layer), m_parallel);
+
+	// Place region as if image is the region's part of the sheet; region's images and margins never extend outside of region.
+	TrimSheetSetupAsset::RegionLayout imageLayout = regionLayout;
+	imageLayout.rect.x = 0;
+	imageLayout.rect.y = 0;
+	imageLayout.content.x -= rect.x;
+	imageLayout.content.y -= rect.y;
+	placeRegion(setup, layer, imageLayout, image);
+
+	return image;
 }
 
 bool TrimSheetComposer::getPlacedSize(const TrimSheetRegion* region, TrimSheetLayer layer, int32_t& outWidth, int32_t& outHeight)
@@ -482,6 +516,38 @@ void TrimSheetComposer::collectFiles(const TrimSheetSetupAsset* setup, TrimSheet
 				outFiles.insert(fileName.getOriginal());
 		}
 	}
+}
+
+std::wstring TrimSheetComposer::getLayerKey(const TrimSheetSetupAsset* setup, TrimSheetLayer layer)
+{
+	StringOutputStream ss;
+
+	float background[4];
+	setup->getBackground(layer).storeUnaligned(background);
+	ss << setup->getWidth() << L"|" << setup->getHeight() << L"|" << background[0] << L"|" << background[1] << L"|" << background[2] << L"|" << background[3];
+	if (layer == TrimSheetLayer::Normal)
+		ss << L"|" << (int32_t)setup->getNormalConvention();
+
+	AlignedVector< TrimSheetRect > slabs;
+	AlignedVector< TrimSheetSetupAsset::RegionLayout > regions;
+	setup->calculateLayout(slabs, regions);
+
+	for (const auto& regionLayout : regions)
+	{
+		// Regions without an image in layer only show background, same as sheet outside of regions.
+		const TrimSheetRegion* region = setup->getRegion(regionLayout.slab, regionLayout.region);
+		if (!region || region->getFileName(layer).empty())
+			continue;
+
+		const TrimSheetRect& content = regionLayout.content;
+		const bool horizontal = (setup->getSlabs()[regionLayout.slab]->getOrientation() == TrimSheetSlab::Orientation::Horizontal);
+
+		ss << L"|" << content.x << L"|" << content.y << L"|" << content.width << L"|" << content.height << L"|" << (horizontal ? L"H" : L"V") << L"|" << region->getMargin();
+		ss << L"|" << region->getFileName(layer).getOriginal() << L"|" << region->getSwizzle(layer);
+		ss << L"|" << (int32_t)region->getRotation() << L"|" << region->getOffsetX() << L"|" << region->getOffsetY() << L"|" << region->getScale() << L"|" << (int32_t)region->getTiling();
+	}
+
+	return ss.str();
 }
 
 const drawing::Image* TrimSheetComposer::getSource(const Path& fileName, const std::wstring& swizzle, float scale, TrimSheetLayer layer)
@@ -546,9 +612,9 @@ void TrimSheetComposer::placeRegion(const TrimSheetSetupAsset* setup, TrimSheetL
 		normalSign = (setup->getNormalConvention() == TrimSheetSetupAsset::NormalConvention::DirectX) ? 1.0f : -1.0f;
 
 	if (source->getPixelFormat().isFloatPoint())
-		placeImage< float >(source, region, regionLayout.content, normalSign, sheet);
+		placeImage< float >(source, region, regionLayout.content, normalSign, m_parallel, sheet);
 	else
-		placeImage< uint8_t >(source, region, regionLayout.content, normalSign, sheet);
+		placeImage< uint8_t >(source, region, regionLayout.content, normalSign, m_parallel, sheet);
 
 	// Repeat edge pixels into region's margin; may be less than slab's margin.
 	const bool horizontal = (setup->getSlabs()[regionLayout.slab]->getOrientation() == TrimSheetSlab::Orientation::Horizontal);

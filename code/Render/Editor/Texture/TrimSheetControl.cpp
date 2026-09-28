@@ -10,6 +10,7 @@
 
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Math/MathUtils.h"
+#include "Core/Thread/JobManager.h"
 #include "Drawing/Image.h"
 #include "Drawing/PixelFormat.h"
 #include "Render/Editor/Texture/TrimSheetRegion.h"
@@ -20,6 +21,7 @@
 
 #include <algorithm>
 #include <cmath>
+#include <limits>
 
 namespace traktor::render
 {
@@ -37,6 +39,59 @@ int32_t snap(int32_t value)
 uint32_t toByte(float v)
 {
 	return (uint32_t)(clamp(v, 0.0f, 1.0f) * 255.0f + 0.5f);
+}
+
+/*! Convert composed RGBA F32 image, positioned at x, y in sheet, into a displayable image. */
+Ref< drawing::Image > convertDisplay(const drawing::Image* image, TrimSheetLayer layer, int32_t x, int32_t y)
+{
+	const int32_t width = image->getWidth();
+	const int32_t height = image->getHeight();
+
+	Ref< drawing::Image > display = new drawing::Image(drawing::PixelFormat::getA8R8G8B8(), width, height);
+
+	const float* src = static_cast< const float* >(image->getData());
+	uint32_t* dst = static_cast< uint32_t* >(display->getData());
+
+	// Only color layers carry meaningful alpha; show it as a checker pattern, aligned to sheet.
+	const bool showAlpha = (layer == TrimSheetLayer::Albedo || layer == TrimSheetLayer::Specular);
+
+	const auto convertRows = [=](int32_t y0, int32_t y1) {
+		for (int32_t iy = y0; iy < y1; ++iy)
+		{
+			for (int32_t ix = 0; ix < width; ++ix)
+			{
+				const float* s = &src[(ix + iy * width) * 4];
+
+				float r = s[0], g = s[1], b = s[2];
+				if (showAlpha && s[3] < 1.0f)
+				{
+					const float a = std::max(s[3], 0.0f);
+					const float checker = ((((x + ix) >> 3) ^ ((y + iy) >> 3)) & 1) ? 0.4f : 0.6f;
+					r = r * a + checker * (1.0f - a);
+					g = g * a + checker * (1.0f - a);
+					b = b * a + checker * (1.0f - a);
+				}
+
+				dst[ix + iy * width] = 0xff000000 | (toByte(r) << 16) | (toByte(g) << 8) | toByte(b);
+			}
+		}
+	};
+
+	// Convert slices of rows in parallel; sheets are large.
+	const int32_t sliceCount = clamp< int32_t >(height / 16, 1, (int32_t)JobManager::getInstance().getWorkerCount() * 4 + 1);
+	AlignedVector< Job::task_t > tasks;
+	tasks.reserve(sliceCount);
+	for (int32_t i = 0; i < sliceCount; ++i)
+	{
+		const int32_t y0 = (height * i) / sliceCount;
+		const int32_t y1 = (height * (i + 1)) / sliceCount;
+		tasks.push_back([=]() {
+			convertRows(y0, y1);
+		});
+	}
+	JobManager::getInstance().fork(tasks.c_ptr(), tasks.size());
+
+	return display;
 }
 
 }
@@ -60,65 +115,59 @@ bool TrimSheetControl::create(ui::Widget* parent)
 
 void TrimSheetControl::destroy()
 {
-	m_bitmap = nullptr;
-	m_display = nullptr;
+	for (auto& layer : m_layers)
+		layer.bitmap = nullptr;
 	m_setup = nullptr;
 	ui::Widget::destroy();
 }
 
-void TrimSheetControl::setSheet(TrimSheetSetupAsset* setup, TrimSheetLayer layer, const drawing::Image* sheet)
+void TrimSheetControl::setSetup(TrimSheetSetupAsset* setup)
 {
 	m_setup = setup;
-	m_layer = layer;
 	updateLayout();
+}
 
+void TrimSheetControl::setLayer(TrimSheetLayer layer, const drawing::Image* sheet)
+{
+	Layer& l = m_layers[(int32_t)layer];
 	if (sheet)
 	{
-		const bool sizeChanged = (!m_display || m_display->getWidth() != sheet->getWidth() || m_display->getHeight() != sheet->getHeight());
-		if (sizeChanged)
-		{
-			m_display = new drawing::Image(drawing::PixelFormat::getA8R8G8B8(), sheet->getWidth(), sheet->getHeight());
-			m_autoFit = true;
-		}
-
-		convertDisplay(sheet, { 0, 0, sheet->getWidth(), sheet->getHeight() });
-
-		if (sizeChanged || !m_bitmap)
-			m_bitmap = new ui::Bitmap(m_display);
+		Ref< drawing::Image > display = convertDisplay(sheet, layer, 0, 0);
+		if (l.bitmap && l.width == display->getWidth() && l.height == display->getHeight())
+			l.bitmap->copyImage(display);
 		else
-			m_bitmap->copyImage(m_display);
+		{
+			l.bitmap = new ui::Bitmap(display);
+			l.width = display->getWidth();
+			l.height = display->getHeight();
+		}
 	}
 	else
 	{
-		m_display = nullptr;
-		m_bitmap = nullptr;
+		l.bitmap = nullptr;
+		l.width = l.height = 0;
 	}
+	update();
+}
+
+void TrimSheetControl::updateLayer(TrimSheetLayer layer, const drawing::Image* image, const TrimSheetRect& rect)
+{
+	Layer& l = m_layers[(int32_t)layer];
+	if (!l.bitmap || l.width != m_sheetWidth || l.height != m_sheetHeight)
+		return;
+	if (!image || image->getWidth() != rect.width || image->getHeight() != rect.height)
+		return;
+
+	// Only transfer modified part into bitmap.
+	Ref< drawing::Image > display = convertDisplay(image, layer, rect.x, rect.y);
+	l.bitmap->copySubImage(display, ui::Rect(0, 0, rect.width, rect.height), ui::Point(rect.x, rect.y));
 
 	update();
 }
 
-void TrimSheetControl::updateSheet(const drawing::Image* sheet, const TrimSheetRect& rect)
+void TrimSheetControl::setLayerLabel(TrimSheetLayer layer, const std::wstring& label)
 {
-	if (!m_display || !m_bitmap || !sheet)
-		return;
-	if (sheet->getWidth() != m_display->getWidth() || sheet->getHeight() != m_display->getHeight())
-		return;
-
-	const int32_t x0 = std::max(rect.x, 0);
-	const int32_t y0 = std::max(rect.y, 0);
-	const int32_t x1 = std::min(rect.x + rect.width, m_display->getWidth());
-	const int32_t y1 = std::min(rect.y + rect.height, m_display->getHeight());
-	if (x1 <= x0 || y1 <= y0)
-		return;
-
-	const TrimSheetRect clipped = { x0, y0, x1 - x0, y1 - y0 };
-	convertDisplay(sheet, clipped);
-
-	// Only transfer modified part of display into bitmap.
-	Ref< drawing::Image > part = new drawing::Image(drawing::PixelFormat::getA8R8G8B8(), clipped.width, clipped.height);
-	part->copy(m_display, clipped.x, clipped.y, clipped.width, clipped.height);
-	m_bitmap->copySubImage(part, ui::Rect(0, 0, clipped.width, clipped.height), ui::Point(clipped.x, clipped.y));
-
+	m_layers[(int32_t)layer].label = label;
 	update();
 }
 
@@ -129,15 +178,22 @@ void TrimSheetControl::setSelection(int32_t slab, int32_t region)
 	update();
 }
 
-void TrimSheetControl::setImageBounds(const TrimSheetRect* bounds)
+void TrimSheetControl::setActiveLayer(TrimSheetLayer layer)
 {
+	m_activeLayer = layer;
+	update();
+}
+
+void TrimSheetControl::setImageBounds(TrimSheetLayer layer, const TrimSheetRect* bounds)
+{
+	Layer& l = m_layers[(int32_t)layer];
 	if (bounds)
 	{
-		m_imageBounds = *bounds;
-		m_imageBoundsVisible = true;
+		l.imageBounds = *bounds;
+		l.imageBoundsVisible = true;
 	}
 	else
-		m_imageBoundsVisible = false;
+		l.imageBoundsVisible = false;
 	update();
 }
 
@@ -159,33 +215,33 @@ void TrimSheetControl::fit()
 	update();
 }
 
-bool TrimSheetControl::clientToSheet(const ui::Point& position, int32_t& outX, int32_t& outY) const
+bool TrimSheetControl::clientToSheet(const ui::Point& position, TrimSheetLayer& outLayer, int32_t& outX, int32_t& outY) const
 {
-	if (!m_setup)
+	const int32_t layer = hitLayer(position, 0);
+	if (layer < 0)
 		return false;
 
-	outX = (int32_t)std::floor((position.x - m_offset.x) / m_scale);
-	outY = (int32_t)std::floor((position.y - m_offset.y) / m_scale);
-	return outX >= 0 && outY >= 0 && outX < m_setup->getWidth() && outY < m_setup->getHeight();
+	const ui::Point origin = getLayerOrigin(layer);
+	const int32_t x = (int32_t)std::floor((position.x - origin.x) / m_scale);
+	const int32_t y = (int32_t)std::floor((position.y - origin.y) / m_scale);
+	if (x < 0 || y < 0 || x >= m_sheetWidth || y >= m_sheetHeight)
+		return false;
+
+	outLayer = (TrimSheetLayer)layer;
+	outX = x;
+	outY = y;
+	return true;
 }
 
-bool TrimSheetControl::hitRegion(const ui::Point& position, int32_t& outSlab, int32_t& outRegion) const
+bool TrimSheetControl::hitRegion(const ui::Point& position, TrimSheetLayer& outLayer, int32_t& outSlab, int32_t& outRegion) const
 {
+	TrimSheetLayer layer;
 	int32_t x, y;
-	if (!clientToSheet(position, x, y))
+	if (!clientToSheet(position, layer, x, y) || !findRegion(x, y, outSlab, outRegion))
 		return false;
 
-	for (const auto& regionLayout : m_regionLayouts)
-	{
-		if (regionLayout.rect.inside(x, y))
-		{
-			outSlab = regionLayout.slab;
-			outRegion = regionLayout.region;
-			return true;
-		}
-	}
-
-	return false;
+	outLayer = layer;
+	return true;
 }
 
 TrimSheetControl::DragMode TrimSheetControl::getDragMode(int32_t* outValue) const
@@ -197,13 +253,27 @@ TrimSheetControl::DragMode TrimSheetControl::getDragMode(int32_t* outValue) cons
 
 void TrimSheetControl::updateLayout()
 {
+	int32_t width = 0, height = 0;
 	if (m_setup)
+	{
 		m_setup->calculateLayout(m_slabRects, m_regionLayouts);
+		width = m_setup->getWidth();
+		height = m_setup->getHeight();
+	}
 	else
 	{
 		m_slabRects.resize(0);
 		m_regionLayouts.resize(0);
 	}
+
+	// Fit sheet in view when its size change.
+	if (width != m_sheetWidth || height != m_sheetHeight)
+	{
+		m_sheetWidth = width;
+		m_sheetHeight = height;
+		m_autoFit = true;
+	}
+
 	update();
 }
 
@@ -215,32 +285,134 @@ ui::Size TrimSheetControl::getPreferredSize(const ui::Size& hint) const
 void TrimSheetControl::calculateFit()
 {
 	const ui::Rect rcInner = getInnerRect();
-	if (!m_display || rcInner.getWidth() <= 0 || rcInner.getHeight() <= 0)
+	if (m_sheetWidth <= 0 || m_sheetHeight <= 0 || rcInner.getWidth() <= 0 || rcInner.getHeight() <= 0)
 		return;
 
 	const int32_t margin = pixel(16_ut);
-	const float sx = float(std::max(rcInner.getWidth() - margin * 2, 1)) / m_display->getWidth();
-	const float sy = float(std::max(rcInner.getHeight() - margin * 2, 1)) / m_display->getHeight();
-	m_scale = std::min(sx, sy);
+	const int32_t spacing = pixel(16_ut);
+	const int32_t labelHeight = getLabelHeight();
 
-	m_offset.x = (rcInner.getWidth() - (int32_t)(m_display->getWidth() * m_scale)) / 2;
-	m_offset.y = (rcInner.getHeight() - (int32_t)(m_display->getHeight() * m_scale)) / 2;
+	// Arrange layers into as many columns as make layers largest.
+	float bestScale = 0.0f;
+	for (int32_t columns = 1; columns <= TrimSheetLayerCount; ++columns)
+	{
+		const int32_t rows = (TrimSheetLayerCount + columns - 1) / columns;
+		const int32_t width = std::max(rcInner.getWidth() - margin * 2 - spacing * (columns - 1), 1);
+		const int32_t height = std::max(rcInner.getHeight() - margin * 2 - spacing * (rows - 1) - labelHeight * rows, 1);
+		const float scale = std::min(float(width) / (columns * m_sheetWidth), float(height) / (rows * m_sheetHeight));
+		if (scale > bestScale)
+		{
+			bestScale = scale;
+			m_columns = columns;
+		}
+	}
+	m_scale = bestScale;
+
+	// Center layers in view.
+	const ui::Size size = getLayerSize();
+	const int32_t rows = (TrimSheetLayerCount + m_columns - 1) / m_columns;
+	const int32_t width = m_columns * (size.cx + spacing) - spacing;
+	const int32_t height = rows * (size.cy + spacing + labelHeight) - spacing;
+	m_offset.x = (rcInner.getWidth() - width) / 2;
+	m_offset.y = (rcInner.getHeight() - height) / 2 + labelHeight;
 }
 
-ui::Point TrimSheetControl::sheetToClient(int32_t x, int32_t y) const
+int32_t TrimSheetControl::getLabelHeight() const
 {
-	return ui::Point(
-		m_offset.x + (int32_t)std::floor(x * m_scale),
-		m_offset.y + (int32_t)std::floor(y * m_scale)
+	return getFontMetric().getHeight() + pixel(4_ut);
+}
+
+ui::Size TrimSheetControl::getLayerSize() const
+{
+	return ui::Size(
+		(int32_t)std::floor(m_sheetWidth * m_scale),
+		(int32_t)std::floor(m_sheetHeight * m_scale)
 	);
 }
 
-ui::Rect TrimSheetControl::sheetToClient(const TrimSheetRect& rect) const
+ui::Point TrimSheetControl::getLayerOrigin(int32_t layer) const
+{
+	// Layers are spaced by a fixed amount of pixels, independent of scale, to always fit labels.
+	const ui::Size size = getLayerSize();
+	const int32_t spacing = pixel(16_ut);
+	const int32_t column = layer % m_columns;
+	const int32_t row = layer / m_columns;
+	return ui::Point(
+		m_offset.x + column * (size.cx + spacing),
+		m_offset.y + row * (size.cy + spacing + getLabelHeight())
+	);
+}
+
+ui::Point TrimSheetControl::sheetToClient(int32_t layer, int32_t x, int32_t y) const
+{
+	const ui::Point origin = getLayerOrigin(layer);
+	return ui::Point(
+		origin.x + (int32_t)std::floor(x * m_scale),
+		origin.y + (int32_t)std::floor(y * m_scale)
+	);
+}
+
+ui::Rect TrimSheetControl::sheetToClient(int32_t layer, const TrimSheetRect& rect) const
 {
 	return ui::Rect(
-		sheetToClient(rect.x, rect.y),
-		sheetToClient(rect.x + rect.width, rect.y + rect.height)
+		sheetToClient(layer, rect.x, rect.y),
+		sheetToClient(layer, rect.x + rect.width, rect.y + rect.height)
 	);
+}
+
+int32_t TrimSheetControl::hitLayer(const ui::Point& position, int32_t margin) const
+{
+	if (m_sheetWidth <= 0 || m_sheetHeight <= 0)
+		return -1;
+
+	const ui::Size size = getLayerSize();
+	for (int32_t i = 0; i < TrimSheetLayerCount; ++i)
+	{
+		const ui::Point origin = getLayerOrigin(i);
+		if (
+			position.x >= origin.x - margin && position.x <= origin.x + size.cx + margin &&
+			position.y >= origin.y - margin && position.y <= origin.y + size.cy + margin
+		)
+			return i;
+	}
+
+	return -1;
+}
+
+int32_t TrimSheetControl::closestLayer(const ui::Point& position) const
+{
+	const ui::Size size = getLayerSize();
+	int32_t closest = 0;
+	int64_t closestDistance = std::numeric_limits< int64_t >::max();
+
+	for (int32_t i = 0; i < TrimSheetLayerCount; ++i)
+	{
+		const ui::Point origin = getLayerOrigin(i);
+		const int64_t dx = std::max({ origin.x - position.x, position.x - (origin.x + size.cx), 0 });
+		const int64_t dy = std::max({ origin.y - position.y, position.y - (origin.y + size.cy), 0 });
+		const int64_t distance = dx * dx + dy * dy;
+		if (distance < closestDistance)
+		{
+			closest = i;
+			closestDistance = distance;
+		}
+	}
+
+	return closest;
+}
+
+bool TrimSheetControl::findRegion(int32_t x, int32_t y, int32_t& outSlab, int32_t& outRegion) const
+{
+	for (const auto& regionLayout : m_regionLayouts)
+	{
+		if (regionLayout.rect.inside(x, y))
+		{
+			outSlab = regionLayout.slab;
+			outRegion = regionLayout.region;
+			return true;
+		}
+	}
+	return false;
 }
 
 TrimSheetControl::DragMode TrimSheetControl::hitEdge(const ui::Point& position, int32_t& outSlab, int32_t& outRegion) const
@@ -248,7 +420,12 @@ TrimSheetControl::DragMode TrimSheetControl::hitEdge(const ui::Point& position, 
 	if (!m_setup)
 		return DragMode::None;
 
+	// Edges can be grabbed in any layer, also slightly outside of layer.
 	const int32_t tolerance = pixel(4_ut);
+	const int32_t layer = hitLayer(position, tolerance);
+	if (layer < 0)
+		return DragMode::None;
+
 	const RefArray< TrimSheetSlab >& slabs = m_setup->getSlabs();
 
 	// Far edge of slab; resize slab thickness.
@@ -257,7 +434,7 @@ TrimSheetControl::DragMode TrimSheetControl::hitEdge(const ui::Point& position, 
 		if (m_slabRects[i].empty())
 			continue;
 
-		const ui::Rect rc = sheetToClient(m_slabRects[i]);
+		const ui::Rect rc = sheetToClient(layer, m_slabRects[i]);
 		if (slabs[i]->getOrientation() == TrimSheetSlab::Orientation::Horizontal)
 		{
 			if (std::abs(position.y - rc.bottom) <= tolerance && position.x >= rc.left && position.x <= rc.right)
@@ -285,7 +462,7 @@ TrimSheetControl::DragMode TrimSheetControl::hitEdge(const ui::Point& position, 
 		if (regionLayout.region >= (int32_t)slab->getRegions().size() - 1 || regionLayout.rect.empty())
 			continue;
 
-		const ui::Rect rc = sheetToClient(regionLayout.rect);
+		const ui::Rect rc = sheetToClient(layer, regionLayout.rect);
 		if (slab->getOrientation() == TrimSheetSlab::Orientation::Horizontal)
 		{
 			if (std::abs(position.x - rc.right) <= tolerance && position.y >= rc.top && position.y <= rc.bottom)
@@ -355,8 +532,7 @@ bool TrimSheetControl::fitEdge(DragMode edge, int32_t slab, int32_t region)
 	const bool horizontal = (fitSlab->getOrientation() == TrimSheetSlab::Orientation::Horizontal);
 	const RefArray< TrimSheetRegion >& regions = fitSlab->getRegions();
 
-	// Operate on a copy first to find out if anything changes, as a change
-	// must be notified before the setup is modified.
+	// Fit a copy first to find out if anything changes; a change must be notified before setup is modified.
 	Ref< TrimSheetSlab > fittedSlab = new TrimSheetSlab(fitSlab->getOrientation(), fitSlab->getSize());
 	for (auto fitRegion : regions)
 		fittedSlab->getRegions().push_back(new TrimSheetRegion(fitRegion->getSize()));
@@ -415,34 +591,155 @@ bool TrimSheetControl::fitEdge(DragMode edge, int32_t slab, int32_t region)
 	return true;
 }
 
-void TrimSheetControl::convertDisplay(const drawing::Image* sheet, const TrimSheetRect& rect)
+void TrimSheetControl::paintLayer(ui::Canvas& canvas, int32_t layer)
 {
-	const float* src = static_cast< const float* >(sheet->getData());
-	uint32_t* dst = static_cast< uint32_t* >(m_display->getData());
-	const int32_t width = sheet->getWidth();
+	const Layer& l = m_layers[layer];
+	const TrimSheetRect sheetRect = { 0, 0, m_sheetWidth, m_sheetHeight };
+	const ui::Rect rcSheet = sheetToClient(layer, sheetRect);
 
-	// Only color layers carry meaningful alpha; show it as a checker pattern.
-	const bool showAlpha = (m_layer == TrimSheetLayer::Albedo || m_layer == TrimSheetLayer::Specular);
+	if (l.bitmap)
+		canvas.drawBitmap(
+			rcSheet.getTopLeft(),
+			rcSheet.getSize(),
+			ui::Point(0, 0),
+			ui::Size(l.width, l.height),
+			l.bitmap,
+			ui::BlendMode::Opaque,
+			(m_scale >= 1.0f) ? ui::Filter::Nearest : ui::Filter::Linear
+		);
 
-	for (int32_t y = rect.y; y < rect.y + rect.height; ++y)
+	canvas.setForeground(Color4ub(0, 0, 0, 255));
+	canvas.drawRect(rcSheet.inflate(1, 1));
+
+	if (m_showGuides)
 	{
-		for (int32_t x = rect.x; x < rect.x + rect.width; ++x)
-		{
-			const float* s = &src[(x + y * width) * 4];
+		canvas.setForeground(Color4ub(255, 255, 255, 160));
+		for (const auto& regionLayout : m_regionLayouts)
+			if (!regionLayout.rect.empty())
+				canvas.drawRect(sheetToClient(layer, regionLayout.rect));
 
-			float r = s[0], g = s[1], b = s[2];
-			if (showAlpha && s[3] < 1.0f)
+		// Content of regions within slabs with margins.
+		canvas.setForeground(Color4ub(0, 220, 255, 200));
+		canvas.setLineStyle(ui::LineStyle::Dot);
+		for (const auto& regionLayout : m_regionLayouts)
+		{
+			if (regionLayout.content.empty() || (regionLayout.content.width == regionLayout.rect.width && regionLayout.content.height == regionLayout.rect.height))
+				continue;
+			canvas.drawRect(sheetToClient(layer, regionLayout.content));
+		}
+		canvas.setLineStyle(ui::LineStyle::Solid);
+
+		canvas.setForeground(Color4ub(255, 255, 255, 255));
+		canvas.setPenThickness(2);
+		for (const auto& slabRect : m_slabRects)
+			if (!slabRect.empty())
+				canvas.drawRect(sheetToClient(layer, slabRect));
+		canvas.setPenThickness(1);
+	}
+
+	if (m_showNames)
+	{
+		const int32_t margin = pixel(4_ut);
+		const int32_t textHeight = getFontMetric().getHeight();
+
+		for (const auto& regionLayout : m_regionLayouts)
+		{
+			const ui::Rect rc = sheetToClient(layer, regionLayout.rect).inflate(-margin, -margin);
+			if (rc.getHeight() < textHeight || rc.getWidth() < textHeight * 2)
+				continue;
+
+			const TrimSheetRegion* region = m_setup->getRegion(regionLayout.slab, regionLayout.region);
+			std::wstring name = region->getName();
+			if (name.empty())
 			{
-				const float a = std::max(s[3], 0.0f);
-				const float checker = (((x >> 3) ^ (y >> 3)) & 1) ? 0.4f : 0.6f;
-				r = r * a + checker * (1.0f - a);
-				g = g * a + checker * (1.0f - a);
-				b = b * a + checker * (1.0f - a);
+				StringOutputStream ss;
+				ss << regionLayout.slab << L"." << regionLayout.region;
+				name = ss.str();
 			}
 
-			dst[x + y * width] = 0xff000000 | (toByte(r) << 16) | (toByte(g) << 8) | toByte(b);
+			canvas.setClipRect(rc);
+			canvas.setForeground(Color4ub(0, 0, 0, 255));
+			canvas.drawText(rc.offset(1, 1), name, ui::AnLeft, ui::AnTop);
+			canvas.setForeground(Color4ub(255, 255, 255, 255));
+			canvas.drawText(rc, name, ui::AnLeft, ui::AnTop);
+			canvas.resetClipRect();
 		}
 	}
+
+	// Bounds of selected region's image in this layer, clipped to region's content.
+	if (l.imageBoundsVisible)
+	{
+		for (const auto& regionLayout : m_regionLayouts)
+		{
+			if (regionLayout.slab != m_selectedSlab || regionLayout.region != m_selectedRegion)
+				continue;
+
+			canvas.setClipRect(sheetToClient(layer, regionLayout.content).inflate(1, 1));
+			canvas.setForeground(Color4ub(255, 255, 0, 255));
+			canvas.setLineStyle(ui::LineStyle::Dot);
+			canvas.drawRect(sheetToClient(layer, l.imageBounds));
+			canvas.setLineStyle(ui::LineStyle::Solid);
+			canvas.resetClipRect();
+		}
+	}
+
+	// Selection; region, slab or entire sheet.
+	canvas.setForeground(Color4ub(255, 160, 0, 255));
+	canvas.setPenThickness(2);
+	if (m_selectedSlab >= 0 && m_selectedRegion >= 0)
+	{
+		for (const auto& regionLayout : m_regionLayouts)
+			if (regionLayout.slab == m_selectedSlab && regionLayout.region == m_selectedRegion)
+				canvas.drawRect(sheetToClient(layer, regionLayout.rect));
+	}
+	else if (m_selectedSlab >= 0 && m_selectedSlab < (int32_t)m_slabRects.size())
+		canvas.drawRect(sheetToClient(layer, m_slabRects[m_selectedSlab]));
+	else
+		canvas.drawRect(rcSheet);
+	canvas.setPenThickness(1);
+}
+
+void TrimSheetControl::paintLabel(ui::Canvas& canvas, int32_t layer)
+{
+	const Layer& l = m_layers[layer];
+	if (l.label.empty())
+		return;
+
+	const ui::StyleSheet* ss = getStyleSheet();
+	const ui::Rect rcInner = getInnerRect();
+	const ui::Rect rcLayer(getLayerOrigin(layer), getLayerSize());
+	const bool active = (layer == (int32_t)m_activeLayer);
+	const int32_t padding = pixel(4_ut);
+
+	ui::Font font = getFont();
+	font.setBold(active);
+	canvas.setFont(font);
+
+	// Label is above layer; pinned inside layer while layer is partially scrolled out of view.
+	const int32_t labelWidth = canvas.getFontMetric().getExtent(l.label).cx + padding * 2;
+	ui::Rect rcLabel(rcLayer.left, rcLayer.top - getLabelHeight(), rcLayer.left + labelWidth, rcLayer.top);
+
+	const int32_t dy = std::min(rcInner.top - rcLabel.top, rcLayer.bottom - rcLabel.bottom);
+	if (dy > 0)
+		rcLabel = rcLabel.offset(0, dy);
+
+	const int32_t dx = std::min(rcInner.left - rcLabel.left, rcLayer.right - rcLabel.right);
+	if (dx > 0)
+		rcLabel = rcLabel.offset(dx, 0);
+
+	if (rcLabel.intersect(rcInner))
+	{
+		// Keep label readable when pinned on top of layer.
+		if (dy > 0)
+		{
+			canvas.setBackground(ss->getColor(this, L"background-color"));
+			canvas.fillRect(rcLabel);
+		}
+		canvas.setForeground(active ? Color4ub(255, 160, 0, 255) : ss->getColor(this, L"color"));
+		canvas.drawText(rcLabel.inflate(-padding, 0), l.label, ui::AnLeft, ui::AnCenter);
+	}
+
+	canvas.setFont(getFont());
 }
 
 void TrimSheetControl::eventMouseDown(ui::MouseButtonDownEvent* event)
@@ -490,17 +787,22 @@ void TrimSheetControl::eventMouseDown(ui::MouseButtonDownEvent* event)
 		return;
 	}
 
-	// Select region under mouse, or sheet if none.
-	if (!hitRegion(position, slab, region))
+	// Select region under mouse, or sheet if none; clicked layer become active.
+	TrimSheetLayer layer = m_activeLayer;
+	TrimSheetLayer hit;
+	int32_t x, y;
+	slab = region = -1;
+	if (clientToSheet(position, hit, x, y))
 	{
-		slab = -1;
-		region = -1;
+		layer = hit;
+		findRegion(x, y, slab, region);
 	}
 
-	if (slab != m_selectedSlab || region != m_selectedRegion)
+	if (slab != m_selectedSlab || region != m_selectedRegion || layer != m_activeLayer)
 	{
 		m_selectedSlab = slab;
 		m_selectedRegion = region;
+		m_activeLayer = layer;
 		update();
 
 		ui::SelectionChangeEvent selectionChangeEvent(this);
@@ -654,14 +956,25 @@ void TrimSheetControl::eventMouseMove(ui::MouseMoveEvent* event)
 
 void TrimSheetControl::eventMouseWheel(ui::MouseWheelEvent* event)
 {
+	if (m_sheetWidth <= 0 || m_sheetHeight <= 0)
+		return;
+
 	const ui::Point position = screenToClient(event->getPosition());
 	const float scale = clamp(m_scale * (event->getRotation() > 0 ? 1.25f : 0.8f), 1.0f / 64.0f, 64.0f);
 
-	// Keep sheet point under mouse at the same client position.
-	m_offset.x = position.x - (int32_t)((position.x - m_offset.x) * (scale / m_scale));
-	m_offset.y = position.y - (int32_t)((position.y - m_offset.y) * (scale / m_scale));
+	// Keep sheet point under mouse, in closest layer, at the same client position; layers
+	// are spaced by a fixed amount of pixels thus layer's origin doesn't scale with the view.
+	const int32_t layer = closestLayer(position);
+	const ui::Point origin = getLayerOrigin(layer);
+	const float x = (position.x - origin.x) / m_scale;
+	const float y = (position.y - origin.y) / m_scale;
+
 	m_scale = scale;
 	m_autoFit = false;
+
+	const ui::Size layerOffset = getLayerOrigin(layer) - m_offset;
+	m_offset.x = position.x - (int32_t)std::floor(x * scale + 0.5f) - layerOffset.cx;
+	m_offset.y = position.y - (int32_t)std::floor(y * scale + 0.5f) - layerOffset.cy;
 
 	update();
 }
@@ -706,122 +1019,23 @@ void TrimSheetControl::eventPaint(ui::PaintEvent* event)
 	canvas.setBackground(ss->getColor(this, L"background-color"));
 	canvas.fillRect(rcInner);
 
-	if (!m_setup || !m_bitmap || !m_display)
+	bool shown = false;
+	for (const auto& layer : m_layers)
+		shown |= (layer.bitmap != nullptr);
+
+	if (m_setup && shown && m_sheetWidth > 0 && m_sheetHeight > 0)
 	{
-		event->consume();
-		return;
+		// Skip layers outside of view; labels last to be on top when pinned inside layers.
+		const ui::Size size = getLayerSize();
+		for (int32_t i = 0; i < TrimSheetLayerCount; ++i)
+		{
+			const ui::Rect rcLayer(getLayerOrigin(i), size);
+			if (rcLayer.inflate(2, 2).intersect(rcInner))
+				paintLayer(canvas, i);
+		}
+		for (int32_t i = 0; i < TrimSheetLayerCount; ++i)
+			paintLabel(canvas, i);
 	}
-
-	const TrimSheetRect sheetRect = { 0, 0, m_display->getWidth(), m_display->getHeight() };
-	const ui::Rect rcSheet = sheetToClient(sheetRect);
-
-	canvas.drawBitmap(
-		rcSheet.getTopLeft(),
-		rcSheet.getSize(),
-		ui::Point(0, 0),
-		ui::Size(sheetRect.width, sheetRect.height),
-		m_bitmap,
-		ui::BlendMode::Opaque,
-		(m_scale >= 1.0f) ? ui::Filter::Nearest : ui::Filter::Linear
-	);
-
-	canvas.setForeground(Color4ub(0, 0, 0, 255));
-	canvas.drawRect(rcSheet.inflate(1, 1));
-
-	const RefArray< TrimSheetSlab >& slabs = m_setup->getSlabs();
-
-	if (m_showGuides)
-	{
-		canvas.setForeground(Color4ub(255, 255, 255, 160));
-		for (const auto& regionLayout : m_regionLayouts)
-		{
-			if (!regionLayout.rect.empty())
-				canvas.drawRect(sheetToClient(regionLayout.rect));
-		}
-
-		// Content of regions within slabs with margins; distinct color as not all canvases support line styles.
-		canvas.setForeground(Color4ub(0, 220, 255, 200));
-		canvas.setLineStyle(ui::LineStyle::Dot);
-		for (const auto& regionLayout : m_regionLayouts)
-		{
-			if (regionLayout.content.empty() || (regionLayout.content.width == regionLayout.rect.width && regionLayout.content.height == regionLayout.rect.height))
-				continue;
-			canvas.drawRect(sheetToClient(regionLayout.content));
-		}
-		canvas.setLineStyle(ui::LineStyle::Solid);
-
-		canvas.setForeground(Color4ub(255, 255, 255, 255));
-		canvas.setPenThickness(2);
-		for (const auto& slabRect : m_slabRects)
-		{
-			if (!slabRect.empty())
-				canvas.drawRect(sheetToClient(slabRect));
-		}
-		canvas.setPenThickness(1);
-	}
-
-	if (m_showNames)
-	{
-		const int32_t margin = pixel(4_ut);
-		const int32_t textHeight = getFontMetric().getHeight();
-
-		for (const auto& regionLayout : m_regionLayouts)
-		{
-			const ui::Rect rc = sheetToClient(regionLayout.rect).inflate(-margin, -margin);
-			if (rc.getHeight() < textHeight || rc.getWidth() < textHeight * 2)
-				continue;
-
-			const TrimSheetRegion* region = m_setup->getRegion(regionLayout.slab, regionLayout.region);
-			std::wstring name = region->getName();
-			if (name.empty())
-			{
-				StringOutputStream ss;
-				ss << regionLayout.slab << L"." << regionLayout.region;
-				name = ss.str();
-			}
-
-			canvas.setClipRect(rc);
-			canvas.setForeground(Color4ub(0, 0, 0, 255));
-			canvas.drawText(rc.offset(1, 1), name, ui::AnLeft, ui::AnTop);
-			canvas.setForeground(Color4ub(255, 255, 255, 255));
-			canvas.drawText(rc, name, ui::AnLeft, ui::AnTop);
-			canvas.resetClipRect();
-		}
-	}
-
-	// Bounds of selected region's image, clipped to region's content.
-	if (m_imageBoundsVisible)
-	{
-		for (const auto& regionLayout : m_regionLayouts)
-		{
-			if (regionLayout.slab != m_selectedSlab || regionLayout.region != m_selectedRegion)
-				continue;
-
-			canvas.setClipRect(sheetToClient(regionLayout.content).inflate(1, 1));
-			canvas.setForeground(Color4ub(255, 255, 0, 255));
-			canvas.setLineStyle(ui::LineStyle::Dot);
-			canvas.drawRect(sheetToClient(m_imageBounds));
-			canvas.setLineStyle(ui::LineStyle::Solid);
-			canvas.resetClipRect();
-		}
-	}
-
-	// Selection; region, slab or entire sheet.
-	canvas.setForeground(Color4ub(255, 160, 0, 255));
-	canvas.setPenThickness(2);
-	if (m_selectedSlab >= 0 && m_selectedRegion >= 0)
-	{
-		for (const auto& regionLayout : m_regionLayouts)
-		{
-			if (regionLayout.slab == m_selectedSlab && regionLayout.region == m_selectedRegion)
-				canvas.drawRect(sheetToClient(regionLayout.rect));
-		}
-	}
-	else if (m_selectedSlab >= 0 && m_selectedSlab < (int32_t)m_slabRects.size())
-		canvas.drawRect(sheetToClient(m_slabRects[m_selectedSlab]));
-	else
-		canvas.drawRect(rcSheet);
-	canvas.setPenThickness(1);
 
 	event->consume();
 }

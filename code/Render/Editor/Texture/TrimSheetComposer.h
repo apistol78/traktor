@@ -35,41 +35,27 @@ class Image;
 namespace traktor::render
 {
 
-/*! Compose trim sheet layers from source images.
+/*! Compose trim sheet layers from source images, which are cached and reloaded if modified; not thread safe.
  * \ingroup Render
- *
- * Source images are cached, and reloaded if modified, so keeping the
- * composer alive is beneficial when composing repeatedly. Not thread safe.
  */
 class T_DLLCLASS TrimSheetComposer : public Object
 {
 	T_RTTI_CLASS;
 
 public:
-	/*!
-	 * \param assetPath Path which relative source image paths are relative to.
-	 */
-	explicit TrimSheetComposer(const Path& assetPath);
+	/*! Relative source image paths are resolved against assetPath; parallel composes using jobs, must be false within a job. */
+	explicit TrimSheetComposer(const Path& assetPath, bool parallel = true);
 
-	/*! Compose layer.
-	 *
-	 * \return RGBA F32 image, size of the sheet; albedo is sRGB, other layers linear.
-	 */
+	/*! Compose layer into an RGBA F32 image of sheet size; albedo is sRGB, other layers linear. */
 	Ref< drawing::Image > compose(const TrimSheetSetupAsset* setup, TrimSheetLayer layer);
 
 	/*! Compose layer and scale result to thumbnail size. */
 	Ref< drawing::Image > composeThumbnail(const TrimSheetSetupAsset* setup, TrimSheetLayer layer, int32_t width, int32_t height);
 
-	/*! Recompose a single region of a layer.
-	 *
-	 * \param sheet Image previously composed from same setup and layer.
-	 */
-	void composeRegion(const TrimSheetSetupAsset* setup, TrimSheetLayer layer, const TrimSheetSetupAsset::RegionLayout& regionLayout, drawing::Image* sheet);
+	/*! Compose a single region of a layer, including margins; same pixels as region's part of composed layer. */
+	Ref< drawing::Image > composeRegion(const TrimSheetSetupAsset* setup, TrimSheetLayer layer, const TrimSheetSetupAsset::RegionLayout& regionLayout);
 
-	/*! Get size of region's image in a layer as placed in sheet, i.e. after scale and rotation.
-	 *
-	 * \return False if region has no image in layer or if image cannot be loaded.
-	 */
+	/*! Get size of region's image in a layer after scale and rotation; false if there is no image or it cannot be loaded. */
 	bool getPlacedSize(const TrimSheetRegion* region, TrimSheetLayer layer, int32_t& outWidth, int32_t& outHeight);
 
 	/*! Release all cached source images. */
@@ -77,6 +63,9 @@ public:
 
 	/*! Collect all source image files used by a layer, as specified in setup. */
 	static void collectFiles(const TrimSheetSetupAsset* setup, TrimSheetLayer layer, std::set< std::wstring >& outFiles);
+
+	/*! Get key identifying everything in setup which composition of a layer depends on. */
+	static std::wstring getLayerKey(const TrimSheetSetupAsset* setup, TrimSheetLayer layer);
 
 private:
 	struct Source
@@ -88,6 +77,7 @@ private:
 	};
 
 	Path m_assetPath;
+	bool m_parallel;
 	std::map< std::wstring, Source > m_sources;
 	std::set< std::wstring > m_invalidSwizzles;
 

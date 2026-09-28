@@ -56,7 +56,8 @@ Ref< drawing::Image > TrimSheetBrowsePreview::generateImage(const std::wstring& 
 	if (!setup)
 		return nullptr;
 
-	Ref< drawing::Image > image = TrimSheetComposer(Path(assetPath)).composeThumbnail(setup, layer, width, height);
+	// Running in a job; compose without forking more jobs.
+	Ref< drawing::Image > image = TrimSheetComposer(Path(assetPath), false).composeThumbnail(setup, layer, width, height);
 	if (!image)
 		return nullptr;
 

@@ -754,10 +754,6 @@
 			<second>Export trim sheet image</second>
 		</item>
 		<item>
-			<first>TRIMSHEET_EDITOR_LAYER</first>
-			<second>Layer</second>
-		</item>
-		<item>
 			<first>TRIMSHEET_EDITOR_LAYER_ALBEDO</first>
 			<second>Albedo</second>
 		</item>

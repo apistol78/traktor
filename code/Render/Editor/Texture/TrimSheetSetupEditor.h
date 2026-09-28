@@ -21,13 +21,6 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor::drawing
-{
-
-class Image;
-
-}
-
 namespace traktor::editor
 {
 
@@ -50,7 +43,6 @@ class StatusBar;
 class ToolBar;
 class ToolBarButton;
 class ToolBarButtonClickEvent;
-class ToolBarDropDown;
 class TreeView;
 
 }
@@ -88,16 +80,16 @@ private:
 	editor::IDocument* m_document;
 	Ref< TrimSheetSetupAsset > m_asset;
 	Ref< TrimSheetComposer > m_composer;
-	Ref< drawing::Image > m_sheet;
 	std::wstring m_assetPath;
-	TrimSheetLayer m_layer = TrimSheetLayer::Albedo;
+	std::wstring m_layerKeys[TrimSheetLayerCount];	//!< Key of each shown layer's composition.
+	TrimSheetLayer m_layer = TrimSheetLayer::Albedo;	//!< Active layer, last layer clicked or dropped on.
 	int32_t m_selectedSlab = -1;
 	int32_t m_selectedRegion = -1;
 	bool m_sheetDirty = false;
+	bool m_regionDirty = false;
 	bool m_propertiesDirty = false;
 
 	Ref< ui::ToolBar > m_toolBar;
-	Ref< ui::ToolBarDropDown > m_toolLayer;
 	Ref< ui::ToolBarButton > m_toolToggleGuides;
 	Ref< ui::ToolBarButton > m_toolToggleNames;
 	Ref< ui::TreeView > m_treeStructure;
@@ -108,13 +100,16 @@ private:
 	/*! Rebuild structure tree. */
 	void updateTree();
 
-	/*! Compose current layer and show it. */
+	/*! Compose all layers, which have been modified since last shown, and show them. */
 	void updateSheet();
+
+	/*! Compose selected region in a layer and show it; only valid if nothing but selected region has been modified. */
+	void updateRegion(TrimSheetLayer layer);
 
 	/*! Propagate selection to control, tree and properties. */
 	void updateSelection(bool updateProperties);
 
-	/*! Show bounds of selected region's image in current layer. */
+	/*! Show bounds of selected region's image in each layer. */
 	void updateImageBounds();
 
 	void updateStatus();
