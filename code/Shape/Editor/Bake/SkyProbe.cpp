@@ -46,7 +46,8 @@ SkyProbe::SkyProbe(const Color4f& skyOverHorizon, const Color4f& skyUnderHorizon
 
 	// Project sky radiance; the tracer sample radiance of escaping rays so no convolution.
 	WrappedSHFunction shFunction([&](const Vector4& rd) -> Vector4 {
-		Vector4 col = Vector4(skyOverHorizon.linear()) - max(rd.y(), 0.01_simd) * max(rd.y(), 0.01_simd) * 0.5_simd;
+		// Clamp since darkening towards zenith goes negative with dim, linear, colors.
+		Vector4 col = max(Vector4(skyOverHorizon.linear()) - max(rd.y(), 0.01_simd) * max(rd.y(), 0.01_simd) * 0.5_simd, Vector4::zero());
 		col = lerp(col, skyUnderHorizon.linear(), power(1.0_simd - max(rd.y(), 0.0_simd), 6.0_simd));
 
 		// Apply saturation.

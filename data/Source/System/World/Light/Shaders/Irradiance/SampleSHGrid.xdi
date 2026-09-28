@@ -1924,12 +1924,16 @@ const vec3 mn = $GridBoundsMin.xyz;
 const vec3 mx = $GridBoundsMax.xyz;
 const vec3 gs = $GridSize.xyz;
 
+// Probes are baked at the bounds and evenly in between, so the bounds span
+// size - 1 cells.
+const vec3 cells = max(gs - vec3(1.0f), vec3(0.0f));
+
 const vec3 t = clamp((wp - mn) / (mx - mn), vec3(0.0f), vec3(1.0f));
-const vec3 p = t * gs;
+const vec3 p = t * cells;
 
 $BlendFactors = vec4(fract(p), 0.0f);
 $GridPosition = vec4(trunc(p), 0.0f);
-$GridWorldCenter = vec4(mn + (mx - mn) * trunc(p) / gs, 1.0f);
+$GridWorldCenter = vec4(mn + (mx - mn) * trunc(p) / max(cells, vec3(1.0f)), 1.0f);
 			
 			]]></script>
 		</item>

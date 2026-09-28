@@ -8,7 +8,8 @@
 vec3 GetSkyColor(vec3 sunDirection, vec3 sunColor, vec3 overHorizon, vec3 underHorizon, vec3 rd)
 {
     const float sundot = clamp(dot(rd, sunDirection), 0.0f, 1.0f);
-	vec3 col = overHorizon - max(rd.y, 0.01f) * max(rd.y, 0.01f) * 0.5f;
+	// Clamp since darkening towards zenith goes negative with dim, linear, colors.
+	vec3 col = max(overHorizon - max(rd.y, 0.01f) * max(rd.y, 0.01f) * 0.5f, vec3(0.0f));
     col = mix(col, underHorizon, pow(1.0f - max(rd.y, 0.0f), 6.0f));
 	col += sunColor * pow(max(sundot - 0.1, 0), 16.0f);
     return col;

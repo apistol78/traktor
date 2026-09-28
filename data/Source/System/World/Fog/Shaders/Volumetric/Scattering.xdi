@@ -983,8 +983,10 @@ const vec3 mx = $GridBoundsMax.xyz;
 // The grid size is uploaded biased by half a unit, so truncate to recover it.
 const vec3 gs = trunc($GridSize.xyz);
 
+// Probes are baked at the bounds and evenly in between, so the bounds span
+// size - 1 cells.
 const vec3 t = clamp((wp - mn) / max(mx - mn, vec3(0.0001f)), vec3(0.0f), vec3(1.0f));
-const vec3 p = t * gs;
+const vec3 p = t * max(gs - vec3(1.0f), vec3(0.0f));
 const vec3 gp = trunc(p);
 const vec3 f = fract(p);
 

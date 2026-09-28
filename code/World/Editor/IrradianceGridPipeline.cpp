@@ -207,7 +207,7 @@ bool IrradianceGridPipeline::buildOutput(
 				
 				// Over horizon.
 				const Vector4 OverHorizon(0.2f, 0.5f, 0.85f, 0.0f);
-				Vector4 col = OverHorizon - max(direction.y(), 0.01_simd) * max(direction.y(), 0.01_simd) * 0.5_simd;
+				Vector4 col = max(OverHorizon - max(direction.y(), 0.01_simd) * max(direction.y(), 0.01_simd) * 0.5_simd, Vector4::zero());
 
 				// Under horizon
 				const Vector4 UnderHorizon(0.1f, 0.1f, 0.12f, 0.0f);
