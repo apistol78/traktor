@@ -59,6 +59,7 @@ extern PFN_vkBindImageMemory vkBindImageMemory;
 extern PFN_vkCreateRenderPass vkCreateRenderPass;
 extern PFN_vkCreateFramebuffer vkCreateFramebuffer;
 extern PFN_vkDestroyFramebuffer vkDestroyFramebuffer;
+extern PFN_vkDestroyRenderPass vkDestroyRenderPass;
 extern PFN_vkCmdEndRenderPass vkCmdEndRenderPass;
 extern PFN_vkCmdBindVertexBuffers vkCmdBindVertexBuffers;
 extern PFN_vkCmdDraw vkCmdDraw;

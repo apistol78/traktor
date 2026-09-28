@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2025 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -36,18 +36,22 @@ std::wstring getHumanResult(VkResult result);
 
 VkFormat determineSupportedTargetFormat(VkPhysicalDevice physicalDevice, TextureFormat textureFormat, bool sRGB);
 
-/*! Pick the first depth (or depth/stencil) format from \a candidates that the
- * device supports as a depth/stencil attachment with optimal tiling. Pass
- * \a usedAsTexture to additionally require sampled-image support.
- *
- * Returns VK_FORMAT_UNDEFINED if no candidate is supported (should not happen
- * for the depth formats mandated by the Vulkan spec).
+/*! Pick the first of \a candidates supported as an optimal tiling depth/stencil attachment.
+ * Also requires sampled image support if \a usedAsTexture; VK_FORMAT_UNDEFINED if none is supported.
  */
 VkFormat determineSupportedDepthTargetFormat(VkPhysicalDevice physicalDevice, const VkFormat* candidates, int32_t candidateCount, bool usedAsTexture);
 
+/*! Pipeline stages which can access an image in the given layout. */
 VkPipelineStageFlags getPipelineStageFlags(const VkImageLayout layout);
 
+/*! Access types an image in the given layout can be accessed with. */
 VkAccessFlags getAccessMask(const VkImageLayout layout);
+
+/*! Restrict a stage mask to the stages of a queue without graphics; an empty result is replaced with \a fallback. */
+VkPipelineStageFlags restrictToComputeStages(VkPipelineStageFlags stages, VkPipelineStageFlags fallback);
+
+/*! Restrict an access mask to the access types of a queue without graphics. */
+VkAccessFlags restrictToComputeAccess(VkAccessFlags access);
 
 }
 

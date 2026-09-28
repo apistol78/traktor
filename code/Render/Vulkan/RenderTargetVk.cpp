@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -102,37 +102,41 @@ bool RenderTargetVk::create(const RenderTargetSetCreateDesc& setDesc, const Rend
 	m_width = setDesc.width;
 	m_height = setDesc.height;
 
-	// Prepare target so it can be read by shader without first being rendered to.
-	auto commandBuffer = m_context->getGraphicsQueue()->acquireCommandBuffer(L"RenderTargetVk::create");
+	// Clear so it can be read by shader without first being rendered to.
+	Ref< ITexture > self = this;
+	m_context->addDeferredUpload(
+		[self, this](Context* cx, CommandBuffer* commandBuffer) {
+			if (!m_imageResolved)
+				return;
 
-	m_imageResolved->changeLayout(commandBuffer, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1);
+			m_imageResolved->changeLayoutExplicit(commandBuffer, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1);
 
-	const VkClearColorValue color = {};
-	const VkImageSubresourceRange range = {
-		.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
-		.baseMipLevel = 0,
-		.levelCount = 1,
-		.baseArrayLayer = 0,
-		.layerCount = 1
-	};
-	vkCmdClearColorImage(
-		*commandBuffer,
-		m_imageResolved->getVkImage(),
-		VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
-		&color,
-		1,
-		&range);
+			const VkClearColorValue color = {};
+			const VkImageSubresourceRange range = {
+				.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
+				.baseMipLevel = 0,
+				.levelCount = 1,
+				.baseArrayLayer = 0,
+				.layerCount = 1
+			};
+			vkCmdClearColorImage(
+				*commandBuffer,
+				m_imageResolved->getVkImage(),
+				VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+				&color,
+				1,
+				&range);
 
-	m_imageResolved->changeLayout(commandBuffer, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1);
+			m_imageResolved->changeLayoutExplicit(commandBuffer, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1);
+		});
 
-	commandBuffer->submitAndWait();
+	m_imageResolved->setVkImageLayout(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, 0, 1, 0, 1);
 	return true;
 }
 
 void RenderTargetVk::destroy()
 {
-	// Only relinquish ownership; teardown is performed by the destructor which
-	// runs once the retirement fence has been passed. \sa ResourceMorgue
+	// Only relinquish ownership; the destructor performs teardown.
 }
 
 void RenderTargetVk::teardown()

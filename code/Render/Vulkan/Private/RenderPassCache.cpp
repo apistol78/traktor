@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -10,28 +10,13 @@
 
 #include "Core/Containers/StaticVector.h"
 #include "Core/Log/Log.h"
-#include "Core/Misc/Murmur3.h"
+#include "Core/Thread/Acquire.h"
 #include "Render/Vulkan/Private/ApiLoader.h"
 
 #include <cstring>
 
 namespace traktor::render
 {
-
-bool operator<(const RenderPassCache::Specification& lh, const RenderPassCache::Specification& rh)
-{
-	return std::memcmp(&lh, &rh, sizeof(RenderPassCache::Specification)) < 0;
-}
-
-bool operator>(const RenderPassCache::Specification& lh, const RenderPassCache::Specification& rh)
-{
-	return std::memcmp(&lh, &rh, sizeof(RenderPassCache::Specification)) > 0;
-}
-
-bool operator==(const RenderPassCache::Specification& lh, const RenderPassCache::Specification& rh)
-{
-	return std::memcmp(&lh, &rh, sizeof(RenderPassCache::Specification)) == 0;
-}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderPassCache", RenderPassCache, Object)
 
@@ -40,13 +25,22 @@ RenderPassCache::RenderPassCache(VkDevice logicalDevice)
 {
 }
 
+RenderPassCache::~RenderPassCache()
+{
+	for (const auto& it : m_renderPasses)
+		vkDestroyRenderPass(m_logicalDevice, it.second, nullptr);
+	m_renderPasses.clear();
+}
+
 bool RenderPassCache::get(
 	const Specification& spec,
 	VkRenderPass& outRenderPass)
 {
-	const uint32_t h = spec.hash();
+	// Shared by all views, thus used from multiple threads.
+	T_ANONYMOUS_VAR(Acquire< CriticalSection >)(m_lock);
 
-	auto it = m_renderPasses.find(h);
+	// Keyed on the entire specification, so each handle identifies exactly one specification.
+	auto it = m_renderPasses.find(spec);
 	if (it != m_renderPasses.end())
 	{
 		outRenderPass = it->second;
@@ -57,8 +51,7 @@ bool RenderPassCache::get(
 
 	StaticVector< VkAttachmentDescription, RenderTargetSetCreateDesc::MaxTargets * 2 + 1 > passAttachments;
 
-	// We do not wish to support loading of MSAA target which implies
-	// we might need to store it also.
+	// We do not wish to support loading of MSAA targets, which implies we might need to store them also.
 	// #if defined(_DEBUG)
 	// 	if (msaaResolve)
 	// 	{
@@ -221,19 +214,10 @@ bool RenderPassCache::get(
 	if (vkCreateRenderPass(m_logicalDevice, &rpci, nullptr, &outRenderPass) != VK_SUCCESS)
 		return false;
 
-	m_renderPasses.insert(h, outRenderPass);
+	m_renderPasses.insert(spec, outRenderPass);
 
 	log::debug << L"Render pass created (" << (uint32_t)m_renderPasses.size() << L" render passes)." << Endl;
 	return true;
-}
-
-uint32_t RenderPassCache::Specification::hash() const
-{
-	Murmur3 ch;
-	ch.begin();
-	ch.feed(*this);
-	ch.end();
-	return ch.get();
 }
 
 }

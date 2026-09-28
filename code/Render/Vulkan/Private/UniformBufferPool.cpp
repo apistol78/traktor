@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -16,22 +16,40 @@ void UniformBufferPool::destroy()
 	flush();
 }
 
-void UniformBufferPool::recycle()
+void UniformBufferPool::recycle(uint64_t issuedEpoch, uint64_t completedEpoch)
 {
-	const uint32_t idx = (m_count - sizeof_array(m_frees) + 1) % sizeof_array(m_frees);
+	// Blocks freed since last time were used by commands submitted at or before the issued epoch.
+	if (!m_freed.empty())
+	{
+		if (!m_retired.empty() && m_retired.back().epoch == issuedEpoch)
+			m_retired.back().ranges.insert(m_retired.back().ranges.end(), m_freed.begin(), m_freed.end());
+		else
+		{
+			auto& retired = m_retired.push_back();
+			retired.epoch = issuedEpoch;
+			retired.ranges.swap(m_freed);
+		}
+		m_freed.resize(0);
+	}
 
-	auto& frees = m_frees[idx];
-	for (auto free : frees)
-		free.chain->free(free);
-	frees.resize(0);
-
-	m_count++;
+	// Return blocks the GPU is done with.
+	size_t count = 0;
+	for (; count < m_retired.size(); ++count)
+	{
+		const Retired& retired = m_retired[count];
+		if (retired.epoch > completedEpoch)
+			break;
+		for (const auto& range : retired.ranges)
+			range.chain->free(range);
+	}
+	if (count > 0)
+		m_retired.erase(m_retired.begin(), m_retired.begin() + count);
 }
 
 void UniformBufferPool::flush()
 {
-	for (int32_t i = 0; i < sizeof_array(m_frees); ++i)
-		m_frees[i].resize(0);
+	m_freed.resize(0);
+	m_retired.resize(0);
 
 	SmallMap< uint32_t, RefArray< UniformBufferChain > > chains;
 	chains.swap(m_chains);
@@ -65,8 +83,7 @@ bool UniformBufferPool::allocate(uint32_t size, UniformBufferRange& outRange)
 
 void UniformBufferPool::free(const UniformBufferRange& range)
 {
-	const uint32_t idx = m_count % sizeof_array(m_frees);
-	m_frees[idx].push_back(range);
+	m_freed.push_back(range);
 }
 
 UniformBufferPool::UniformBufferPool(Context* context, uint32_t blockCount, const wchar_t* const name)

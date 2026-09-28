@@ -58,8 +58,6 @@
 #	include "Render/Vulkan/XeSS/RenderPluginXeSS.h"
 #endif
 
-// https://github.com/WilliamLewww/vulkan_ray_tracing_minimal_abstraction/blob/master/headless/src/main.cpp
-
 namespace traktor::render
 {
 namespace
@@ -81,7 +79,6 @@ const char* c_extensions[] = { "VK_KHR_surface", "VK_EXT_debug_utils", "VK_KHR_g
 #if defined(__ANDROID__) || defined(__RPI__)
 const char* c_deviceExtensions[] = { "VK_KHR_swapchain" };
 const char* c_deviceExtensionsRayTracing[] = {
-	// Ray tracing
 	"VK_KHR_deferred_host_operations",
 	"VK_KHR_ray_tracing_pipeline",
 	"VK_KHR_acceleration_structure",
@@ -101,7 +98,6 @@ const char* c_deviceExtensions[] = {
 	"VK_KHR_buffer_device_address"
 };
 const char* c_deviceExtensionsRayTracing[] = {
-	// Ray tracing
 	"VK_KHR_deferred_host_operations",
 	"VK_KHR_ray_tracing_pipeline",
 	"VK_KHR_acceleration_structure",
@@ -115,8 +111,7 @@ VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
 	const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
 	void* pUserData)
 {
-	// #note We're ignoring VUID-VkShaderModuleCreateInfo-pCode-08737 since it's been a known bug in Vulkan
-	// validation layer and are still causing issues.
+	// #note Ignoring VUID-VkShaderModuleCreateInfo-pCode-08737 since it is a false positive.
 	if (pCallbackData && pCallbackData->pMessage && pCallbackData->messageIdNumber != 0xa5625282)
 	{
 		std::wstring message = mbstows(pCallbackData->pMessage);
@@ -355,16 +350,8 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 		return false;
 	}
 
-	// Select compute queue. Prefer a dedicated (asynchronous) compute family, i.e. one
-	// that supports compute but not graphics, so asynchronous compute runs on a separate
-	// queue.
-	//
-	// NOTE (proof of concept): the synchronization point is currently within the same
-	// frame, so there is no real graphics/compute overlap, and asynchronously written /
-	// graphics read resources (skinned vertex buffers, dynamic BLAS) are not yet buffered
-	// to the in-flight count, so the dynamic BLAS in-place update may race the previous
-	// frame's ray query reads and show as visual corruption. Buffers are created with
-	// concurrent sharing (see ApiBuffer) so no queue family ownership transfer is needed.
+	// Select compute queue; prefer a dedicated family (compute but not graphics) so
+	// asynchronous compute runs on a separate queue.
 	uint32_t computeQueueIndex = ~0;
 	for (uint32_t i = 0; i < queueFamilyCount; ++i)
 	{
@@ -485,6 +472,43 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 		log::debug << L"Host query reset not supported; time queries disabled." << Endl;
 #endif
 
+	// Timeline semaphores are required; enabled here when not through the Vulkan 1.2 features.
+#if !defined(__ANDROID__) && !defined(__RPI__)
+	constexpr bool c_haveVulkan12Features = true;
+#else
+	constexpr bool c_haveVulkan12Features = false;
+#endif
+	bool enableTimelineSemaphore = false;
+	if (!c_haveVulkan12Features)
+	{
+		VkPhysicalDeviceTimelineSemaphoreFeatures queryTimelineFeatures = {
+			.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TIMELINE_SEMAPHORE_FEATURES,
+			.pNext = nullptr
+		};
+		VkPhysicalDeviceFeatures2 queryFeatures2 = {
+			.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2,
+			.pNext = &queryTimelineFeatures
+		};
+		vkGetPhysicalDeviceFeatures2(m_physicalDevice, &queryFeatures2);
+		if (queryTimelineFeatures.timelineSemaphore == VK_TRUE)
+		{
+			// Core since Vulkan 1.2; earlier devices expose it as an extension.
+			VkPhysicalDeviceProperties pdp = {};
+			vkGetPhysicalDeviceProperties(m_physicalDevice, &pdp);
+			if (pdp.apiVersion < VK_API_VERSION_1_2)
+			{
+				const auto it = std::find_if(availableExtensions.begin(), availableExtensions.end(), [](const VkExtensionProperties& ext) {
+					return std::strcmp(VK_KHR_TIMELINE_SEMAPHORE_EXTENSION_NAME, ext.extensionName) == 0;
+				});
+				if (it != availableExtensions.end())
+					deviceExtensions.push_back(VK_KHR_TIMELINE_SEMAPHORE_EXTENSION_NAME);
+			}
+			enableTimelineSemaphore = true;
+		}
+		else
+			log::error << L"Timeline semaphores not supported by device; asynchronous compute and upload ordering will not work." << Endl;
+	}
+
 	// Create logical device.
 	const VkPhysicalDeviceFeatures features = {
 		.sampleRateShading = VK_TRUE,
@@ -559,6 +583,15 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 		headFeature = &featuresRayQuery;
 #endif
 
+	VkPhysicalDeviceTimelineSemaphoreFeatures featuresTimelineSemaphore = {
+		.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TIMELINE_SEMAPHORE_FEATURES,
+		.pNext = (void*)headFeature,
+		.timelineSemaphore = VK_TRUE
+	};
+
+	if (enableTimelineSemaphore)
+		headFeature = &featuresTimelineSemaphore;
+
 	const VkPhysicalDeviceShaderIntegerDotProductFeaturesKHR deviceShaderIntegerDotProduct = {
 		.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_INTEGER_DOT_PRODUCT_FEATURES_KHR,
 		.pNext = (void*)headFeature,
@@ -587,10 +620,10 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 	if (desc.aftermath)
 	{
 		const VkDeviceDiagnosticsConfigFlagsNV aftermathFlags =
-			VK_DEVICE_DIAGNOSTICS_CONFIG_ENABLE_AUTOMATIC_CHECKPOINTS_BIT_NV | // Enable automatic call stack checkpoints.
-			VK_DEVICE_DIAGNOSTICS_CONFIG_ENABLE_RESOURCE_TRACKING_BIT_NV |	   // Enable tracking of resources.
-			VK_DEVICE_DIAGNOSTICS_CONFIG_ENABLE_SHADER_DEBUG_INFO_BIT_NV |	   // Generate debug information for shaders.
-			VK_DEVICE_DIAGNOSTICS_CONFIG_ENABLE_SHADER_ERROR_REPORTING_BIT_NV; // Enable additional runtime shader error reporting.
+			VK_DEVICE_DIAGNOSTICS_CONFIG_ENABLE_AUTOMATIC_CHECKPOINTS_BIT_NV |
+			VK_DEVICE_DIAGNOSTICS_CONFIG_ENABLE_RESOURCE_TRACKING_BIT_NV |
+			VK_DEVICE_DIAGNOSTICS_CONFIG_ENABLE_SHADER_DEBUG_INFO_BIT_NV |
+			VK_DEVICE_DIAGNOSTICS_CONFIG_ENABLE_SHADER_ERROR_REPORTING_BIT_NV;
 
 		static const VkDeviceDiagnosticsConfigCreateInfoNV aftermathInfo = {
 			.sType = VK_STRUCTURE_TYPE_DEVICE_DIAGNOSTICS_CONFIG_CREATE_INFO_NV,
@@ -705,8 +738,7 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 
 void RenderSystemVk::destroy()
 {
-	// All views are gone by now so nothing can advance the fence any more; drain
-	// whatever is still retired before the device is torn down.
+	// Rendering is idle; destroy all retired resources before the device is torn down.
 	ResourceMorgue::getInstance().flush();
 
 	m_shaderModuleCache = nullptr;
@@ -1019,11 +1051,13 @@ Ref< IProgram > RenderSystemVk::createProgram(const ProgramResource* programReso
 	Ref< ProgramVk > program = new ProgramVk(m_context, m_statistics.programs);
 	if (program->create(m_shaderModuleCache, m_pipelineLayoutCache, resource, m_maxAnisotropy, m_mipBias, tag))
 	{
-		// Pre-heat compute shader pipeline.
+		// Pre-heat compute shader pipeline; kept by the program so dispatches need not look it up.
 		if (program->getComputeVkShaderModule() != 0)
 		{
 			const VkPipeline pipeline = m_context->validateComputePipeline(program);
-			if (!pipeline)
+			if (pipeline)
+				program->setComputePipeline(pipeline);
+			else
 				log::warning << L"Failed to create compute shader pipeline." << Endl;
 		}
 		return program;

@@ -33,7 +33,6 @@ class CommandBuffer;
 class Context;
 class ProgramVk;
 class Queue;
-class RenderPassCache;
 class RenderTargetSetVk;
 class VertexLayoutVk;
 
@@ -147,6 +146,9 @@ public:
 
 	CommandBuffer* getGraphicsCommandBuffer();
 
+	/*! Forget cached bindings; must be called after recording directly into the view's command buffers. */
+	void invalidateBindings();
+
 private:
 	//! Time query stamp as resolved with VK_QUERY_RESULT_64_BIT | VK_QUERY_RESULT_WITH_AVAILABILITY_BIT.
 	struct TimeQueryStamp
@@ -163,18 +165,33 @@ private:
 		VkSemaphore computeFinishedSemaphore;
 		Ref< RenderTargetSetVk > primaryTarget;
 		VkPipeline boundGraphicsPipeline = 0;
-		VkPipeline boundComputePipeline = 0;
-		VkPipeline boundAsyncComputePipeline = 0;
+		VkPipeline boundComputePipeline = 0;	//!< Compute pipeline bound in boundComputeCommandBuffer.
+		CommandBuffer* boundComputeCommandBuffer = nullptr;
+		VkPipeline boundAsyncComputePipeline = 0;	//!< Compute pipeline bound in boundAsyncComputeCommandBuffer.
+		CommandBuffer* boundAsyncComputeCommandBuffer = nullptr;
 		BufferViewVk boundIndexBuffer;
 		BufferViewVk boundVertexBuffer;
-		RefArray< CommandBuffer > flyingCommandBuffers;
+		RefArray< CommandBuffer > flyingGraphicsCommandBuffers;	//!< Graphics command buffers submitted by splits during the frame.
+		RefArray< CommandBuffer > flyingComputeCommandBuffers;	//!< Compute command buffers submitted by splits during the frame.
+		RefArray< CommandBuffer > spareGraphicsCommandBuffers;	//!< Consumed graphics command buffers, reused by the next splits.
+		RefArray< CommandBuffer > spareComputeCommandBuffers;	//!< Consumed compute command buffers, reused by the next splits.
 		std::list< std::string > markers;
 		AlignedVector< bool > markerStack;
 		uint64_t computeRecordValue = 0;	//!< Timeline value of the open (not yet submitted) asynchronous compute batch; 0 if none open.
 		uint64_t computeSubmittedValue = 0;	//!< Highest asynchronous compute batch value already submitted to the compute queue this frame.
-		uint64_t graphicsWaitedValue = 0;	//!< Highest asynchronous compute batch value the graphics queue already waits upon this frame.
+		uint64_t graphicsWaitedValue = 0;	//!< Highest asynchronous compute batch value graphics work recorded from now on already waits upon this frame.
 		int32_t queryCount = 0;							//!< Number of time query stamps written into the frame's query segment.
 		AlignedVector< TimeQueryStamp > queryStamps;	//!< Stamps written by the previous frame rendered with the frame's query segment.
+	};
+
+	//! Most recently validated graphics pipeline, and its key.
+	struct LastPipeline
+	{
+		VkPipeline pipeline = 0;
+		VkRenderPass renderPass = 0;
+		uint32_t declHash = 0;
+		uint32_t shaderHash = 0;
+		PrimitiveType primitiveType = PrimitiveType::Points;
 	};
 
 	Context* m_context = nullptr;
@@ -194,11 +211,8 @@ private:
 	// Swap chain.
 	VkSwapchainKHR m_swapChain = 0;
 
-	// Pool of binary semaphores for vkAcquireNextImageKHR. We hold imageCount+1
-	// semaphores: one in m_imageAvailableSemaphores[image_index] for each swap
-	// chain image (the one consumed by the submit that produced that image's
-	// content) plus a single spare passed to the next acquire. After each
-	// acquire, the per-image slot and the spare are swapped — see beginFrame.
+	// Binary acquire semaphores; one per swap chain image plus a spare passed to the next acquire,
+	// after which the spare and the acquired image's slot are swapped.
 	AlignedVector< VkSemaphore > m_imageAvailableSemaphores;
 	VkSemaphore m_imageAvailableSemaphoreFree = 0;
 	AlignedVector< VkSemaphore > m_retiredImageAvailableSemaphores;
@@ -210,7 +224,7 @@ private:
 	bool m_allowHDR = false;
 	bool m_hdr = false;
 
-	// Cached surface state, populated lazily on first create() and kept across reset().
+	// Surface state, queried once per surface and kept across resets.
 	bool m_surfaceCacheValid = false;
 	VkFormat m_colorFormat = VK_FORMAT_UNDEFINED;
 	VkColorSpaceKHR m_colorSpace = VK_COLOR_SPACE_SRGB_NONLINEAR_KHR;
@@ -221,15 +235,14 @@ private:
 	Semaphore m_eventQueueLock;
 	std::list< RenderEvent > m_eventQueue;
 
-	// Render pass cache.
-	Ref< RenderPassCache > m_renderPassCache;
-
 	// Current pass's target.
 	Ref< RenderTargetSetVk > m_targetSet;
 	int32_t m_targetColorIndex = 0;
 	VkRenderPass m_targetRenderPass = 0;
 	VkFramebuffer m_targetFrameBuffer = 0;
-	uint32_t m_targetRenderPassHash = 0;
+
+	// Pipeline lookup; consecutive draws mostly use the same pipeline.
+	LastPipeline m_lastPipeline;
 
 	// Cross queue synchronization.
 	VkSemaphore m_timelineSemaphore = VK_NULL_HANDLE;
@@ -254,6 +267,15 @@ private:
 
 	//! Reserve (or return the already reserved) timeline value for the current frame's open asynchronous compute batch.
 	uint64_t openComputeBatch(Frame& frame);
+
+	//! Get a command buffer to continue recording the frame into after a split; reuses consumed command buffers.
+	Ref< CommandBuffer > acquireFrameCommandBuffer(Frame& frame, bool compute);
+
+	//! Submit the frame's compute command buffer signalling the timeline value, and continue in a fresh command buffer.
+	bool splitCompute(Frame& frame, uint64_t value);
+
+	//! Submit the frame's graphics command buffer waiting upon the timeline value, and continue in a fresh command buffer.
+	bool splitGraphics(Frame& frame, uint64_t waitValue);
 
 #if defined(_WIN32)
 	// \name IWindowListener implementation.

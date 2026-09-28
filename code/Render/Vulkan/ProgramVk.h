@@ -107,6 +107,11 @@ public:
 
 	uint32_t getShaderHash() const { return m_shaderHash; }
 
+	/*! Compute pipeline of the program, once created. */
+	VkPipeline getComputePipeline() const { return m_computePipeline; }
+
+	void setComputePipeline(VkPipeline computePipeline) const { m_computePipeline = computePipeline; }
+
 #if defined(_DEBUG)
 	const std::wstring& getTag() const { return m_tag; }
 #endif
@@ -200,7 +205,9 @@ private:
 	uint32_t m_stencilReference = 0;
 	uint32_t m_shaderHash = 0;
 	bool m_useTargetSize = false;
+	bool m_reportedAsyncStorageTarget = false;
 	int32_t m_localWorkGroupSize[3] = { 1, 1, 1 };
+	mutable VkPipeline m_computePipeline = 0;	//!< Owned by the context; pipelines live as long as it.
 
 	bool validateDescriptorSet();
 

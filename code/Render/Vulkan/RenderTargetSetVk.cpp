@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -106,17 +106,26 @@ bool RenderTargetSetVk::create(
 
 void RenderTargetSetVk::destroy()
 {
-	// Only relinquish ownership; the targets are still bound by render blocks in
-	// contexts which have not yet been rendered. Teardown is performed by the
-	// destructor which runs once the retirement fence has been passed, and the
-	// targets are in turn retired when this set releases them.
-	// \sa ResourceMorgue
+	// Only relinquish ownership; pending renders may still bind the targets.
 }
 
 void RenderTargetSetVk::teardown()
 {
-	// Releasing is enough; a shared depth target stays alive until the set which
-	// owns it is retired as well.
+	// Framebuffers may still be referenced by submissions in flight.
+	for (const auto& it : m_frameBuffers)
+	{
+		if (it.second.frameBuffer == 0)
+			continue;
+		m_context->addDeferredCleanup(
+			[frameBuffer = it.second.frameBuffer](Context* cx) {
+				vkDestroyFramebuffer(cx->getLogicalDevice(), frameBuffer, nullptr);
+			},
+			Context::CleanupNone
+		);
+	}
+	m_frameBuffers.clear();
+
+	// Releasing is enough; a shared depth target stays alive until its owning set is retired.
 	m_colorTargets.resize(0);
 	m_depthTarget = nullptr;
 }

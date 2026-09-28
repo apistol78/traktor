@@ -12,6 +12,7 @@
 #include "Core/Math/MathUtils.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/TString.h"
+#include "Core/Thread/Acquire.h"
 #include "Core/Thread/Atomic.h"
 #include "Render/Types.h"
 #include "Render/Vulkan/Private/ApiBuffer.h"
@@ -77,7 +78,8 @@ bool TextureVk::create(
 	const uint32_t imageSize = getTextureSize(desc.format, desc.width, desc.height, desc.mipCount);
 
 	m_stagingBuffer = new ApiBuffer(m_context);
-	m_stagingBuffer->create(imageSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, true, true);
+	if (!m_stagingBuffer->create(imageSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, true, true))
+		return false;
 
 	uint8_t* bits = (uint8_t*)m_stagingBuffer->lock();
 	if (!bits)
@@ -97,24 +99,17 @@ bool TextureVk::create(
 
 	m_stagingBuffer->unlock();
 
-	// Layout the deferred upload leaves the image in, and thus the layout it is in as
-	// far as any frame work which consumes this texture is concerned.
-	const VkImageLayout uploadedLayout = desc.shaderStorage ? VK_IMAGE_LAYOUT_GENERAL : VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+	// Layout the deferred upload leaves the image in, i.e. the layout consumers see.
+	m_restingLayout = desc.shaderStorage ? VK_IMAGE_LAYOUT_GENERAL : VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 
 	Ref< ITexture > self = this;
 	m_context->addDeferredUpload(
-		[desc, uploadedLayout, self, this](Context* cx, CommandBuffer* commandBuffer) {
+		[desc, self, this](Context* cx, CommandBuffer* commandBuffer) {
 
-			// Drop out if no texture image still exist; this texture
-			// has been destroyed while the upload was in the queue.
 			if (!m_textureImage)
 				return;
 
-			// Transitions are explicit as the tracked layout was already advanced to
-			// uploadedLayout when this upload was queued; the upload command buffer is
-			// submitted, and waited upon, ahead of any frame work which consumes this
-			// texture, so the image is still UNDEFINED here regardless of what has been
-			// recorded against it since. \sa Context::performUploads
+			// Explicit as the tracked layout was advanced when queued; the image is still undefined here.
 			m_textureImage->changeLayoutExplicit(commandBuffer, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_ASPECT_COLOR_BIT, 0, desc.mipCount, 0, 1);
 
 			// Copy staging buffer into texture.
@@ -149,26 +144,20 @@ bool TextureVk::create(
 				offset += mipSize;
 			}
 
-			// Change layout of texture to optimal sampling.
-			m_textureImage->changeLayoutExplicit(
-				commandBuffer,
-				VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
-				uploadedLayout,
-				VK_IMAGE_ASPECT_COLOR_BIT,
-				0,
-				desc.mipCount,
-				0,
-				1);
+			// Change layout of texture to its resting layout.
+			m_textureImage->changeLayoutExplicit(commandBuffer, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, m_restingLayout, VK_IMAGE_ASPECT_COLOR_BIT, 0, desc.mipCount, 0, 1);
 
+			// Mutable textures keep the staging buffer for updates, thus have to know when it is read.
 			if (desc.immutable)
 				safeDestroy(m_stagingBuffer);
+			else
+				stagingRead(commandBuffer);
 		},
 		desc.immutable ? imageSize : 0);
 
-	// Track the layout the queued upload will have established; the upload is guaranteed
-	// to execute before any frame work which consumes this texture, so the image must not
-	// read as UNDEFINED for the remainder of the frame in which it was created.
-	m_textureImage->setVkImageLayout(uploadedLayout, 0, desc.mipCount, 0, 1);
+	// Track the layout the queued upload will establish; it executes before any work
+	// consuming this texture, so the image must not read as UNDEFINED.
+	m_textureImage->setVkImageLayout(m_restingLayout, 0, desc.mipCount, 0, 1);
 
 	m_size = { desc.width, desc.height, 1, desc.mipCount };
 	m_format = desc.format;
@@ -207,11 +196,7 @@ bool TextureVk::create(
 	const uint32_t imageSize = getTextureSize(desc.format, desc.side, desc.side, desc.mipCount) * 6;
 
 	m_stagingBuffer = new ApiBuffer(m_context);
-	m_stagingBuffer->create(imageSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, true, true);
-
-	// Upload initial data.
-	auto commandBuffer = m_context->getGraphicsQueue()->acquireCommandBuffer(L"TextureVk::create");
-	if (!commandBuffer)
+	if (!m_stagingBuffer->create(imageSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, true, true))
 		return false;
 
 	uint8_t* bits = (uint8_t*)m_stagingBuffer->lock();
@@ -235,61 +220,64 @@ bool TextureVk::create(
 
 	m_stagingBuffer->unlock();
 
-	// Change layout of texture to be able to copy staging buffer into texture.
-	m_textureImage->changeLayout(commandBuffer, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_ASPECT_COLOR_BIT, 0, desc.mipCount, 0, 6);
+	m_restingLayout = desc.shaderStorage ? VK_IMAGE_LAYOUT_GENERAL : VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 
-	// Copy staging buffer into texture.
-	uint32_t offset = 0;
-	for (int32_t side = 0; side < 6; ++side)
-	{
-		for (int32_t mip = 0; mip < desc.mipCount; ++mip)
-		{
-			const uint32_t mipSide = getTextureMipSize(desc.side, mip);
-			const uint32_t mipSize = getTextureMipPitch(desc.format, desc.side, desc.side, mip);
+	// Copy staging buffer into texture as a deferred upload.
+	Ref< ITexture > self = this;
+	m_context->addDeferredUpload(
+		[desc, self, this](Context* cx, CommandBuffer* commandBuffer) {
+			if (!m_textureImage)
+				return;
 
-			const VkBufferImageCopy region = {
-				.bufferOffset = offset,
-				.bufferRowLength = 0,
-				.bufferImageHeight = 0,
-				.imageSubresource = {
-					.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
-					.mipLevel = (uint32_t)mip,
-					.baseArrayLayer = (uint32_t)side,
-					.layerCount = 1,
-				},
-				.imageOffset = { 0, 0, 0 },
-				.imageExtent = { mipSide, mipSide, 1 }
-			};
+			m_textureImage->changeLayoutExplicit(commandBuffer, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_ASPECT_COLOR_BIT, 0, desc.mipCount, 0, 6);
 
-			vkCmdCopyBufferToImage(
-				*commandBuffer,
-				*m_stagingBuffer,
-				m_textureImage->getVkImage(),
-				VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
-				1,
-				&region);
+			uint32_t offset = 0;
+			for (int32_t side = 0; side < 6; ++side)
+			{
+				for (int32_t mip = 0; mip < desc.mipCount; ++mip)
+				{
+					const uint32_t mipSide = getTextureMipSize(desc.side, mip);
+					const uint32_t mipSize = getTextureMipPitch(desc.format, desc.side, desc.side, mip);
 
-			offset += mipSize;
-		}
-	}
+					const VkBufferImageCopy region = {
+						.bufferOffset = offset,
+						.bufferRowLength = 0,
+						.bufferImageHeight = 0,
+						.imageSubresource = {
+							.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
+							.mipLevel = (uint32_t)mip,
+							.baseArrayLayer = (uint32_t)side,
+							.layerCount = 1,
+						},
+						.imageOffset = { 0, 0, 0 },
+						.imageExtent = { mipSide, mipSide, 1 }
+					};
 
-	// Change layout of texture to optimal sampling.
-	m_textureImage->changeLayout(
-		commandBuffer,
-		desc.shaderStorage ? VK_IMAGE_LAYOUT_GENERAL : VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
-		VK_IMAGE_ASPECT_COLOR_BIT,
-		0,
-		desc.mipCount,
-		0,
-		6);
+					vkCmdCopyBufferToImage(
+						*commandBuffer,
+						*m_stagingBuffer,
+						m_textureImage->getVkImage(),
+						VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+						1,
+						&region);
 
-	// Submit command buffer to perform transfer of stage to texture.
-	commandBuffer->submitAndWait();
+					offset += mipSize;
+				}
+			}
 
-	if (desc.immutable)
-		safeDestroy(m_stagingBuffer);
+			m_textureImage->changeLayoutExplicit(commandBuffer, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, m_restingLayout, VK_IMAGE_ASPECT_COLOR_BIT, 0, desc.mipCount, 0, 6);
+
+			if (desc.immutable)
+				safeDestroy(m_stagingBuffer);
+			else
+				stagingRead(commandBuffer);
+		},
+		desc.immutable ? imageSize : 0);
+
+	m_textureImage->setVkImageLayout(m_restingLayout, 0, desc.mipCount, 0, 6);
 
 	m_size = { desc.side, desc.side, 1, desc.mipCount };
+	m_sideCount = 6;
 	m_format = desc.format;
 	return true;
 }
@@ -323,79 +311,93 @@ bool TextureVk::create(
 		return false;
 	}
 
-	const uint32_t imageSize = getTextureSize(desc.format, desc.width, desc.height, 1) * desc.depth;
+	// Every mip is uploaded with its own depth; initial data holds one entry per mip, slices slicePitch apart.
+	const int32_t mipCount = std::max< int32_t >(desc.mipCount, 1);
+	uint32_t imageSize = 0;
+	for (int32_t mip = 0; mip < mipCount; ++mip)
+	{
+		const uint32_t mipDepth = getTextureMipSize(desc.depth, mip);
+		imageSize += getTextureMipPitch(desc.format, desc.width, desc.height, mip) * mipDepth;
+	}
 
 	// Create staging buffer.
 	m_stagingBuffer = new ApiBuffer(m_context);
-	m_stagingBuffer->create(imageSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, true, true);
+	if (!m_stagingBuffer->create(imageSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, true, true))
+		return false;
 
-	// Copy data into staging buffer.
+	// Copy data into staging buffer; slices tightly packed within each mip.
 	uint8_t* data = (uint8_t*)m_stagingBuffer->lock();
 	if (!data)
 		return false;
-	for (int32_t slice = 0; slice < desc.depth; ++slice)
+	for (int32_t mip = 0; mip < mipCount; ++mip)
 	{
-		const uint32_t mipSize = getTextureMipPitch(desc.format, desc.width, desc.height, 0);
-		if (desc.immutable)
-			std::memcpy(data, (uint8_t*)desc.initialData[0].data + desc.initialData[0].slicePitch * slice, mipSize);
-		else
-			std::memset(data, 0, mipSize);
-		data += mipSize;
+		const uint32_t mipDepth = getTextureMipSize(desc.depth, mip);
+		const uint32_t mipSize = getTextureMipPitch(desc.format, desc.width, desc.height, mip);
+		const TextureInitialData& initialData = desc.initialData[mip];
+		for (uint32_t slice = 0; slice < mipDepth; ++slice)
+		{
+			if (desc.immutable && initialData.data != nullptr)
+				std::memcpy(data, (const uint8_t*)initialData.data + initialData.slicePitch * slice, mipSize);
+			else
+				std::memset(data, 0, mipSize);
+			data += mipSize;
+		}
 	}
 	m_stagingBuffer->unlock();
 
-	auto commandBuffer = m_context->getGraphicsQueue()->acquireCommandBuffer(L"TextureVk::create");
+	m_restingLayout = desc.shaderStorage ? VK_IMAGE_LAYOUT_GENERAL : VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 
-	// Change layout of texture to be able to copy staging buffer into texture.
-	m_textureImage->changeLayout(commandBuffer, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1);
+	// Copy staging buffer into texture as a deferred upload.
+	Ref< ITexture > self = this;
+	m_context->addDeferredUpload(
+		[desc, mipCount, self, this](Context* cx, CommandBuffer* commandBuffer) {
+			if (!m_textureImage)
+				return;
 
-	uint32_t offset = 0;
-	for (int32_t slice = 0; slice < desc.depth; ++slice)
-	{
-		// Copy staging buffer into texture.
-		const uint32_t mipWidth = getTextureMipSize(desc.width, 0);
-		const uint32_t mipHeight = getTextureMipSize(desc.height, 0);
-		const uint32_t mipSize = getTextureMipPitch(desc.format, desc.width, desc.height, 0);
+			m_textureImage->changeLayoutExplicit(commandBuffer, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_ASPECT_COLOR_BIT, 0, mipCount, 0, 1);
 
-		const VkBufferImageCopy region = {
-			.bufferOffset = offset,
-			.bufferRowLength = 0,
-			.bufferImageHeight = 0,
-			.imageSubresource = {
-				.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
-				.mipLevel = 0,
-				.baseArrayLayer = 0,
-				.layerCount = 1 },
-			.imageOffset = { 0, 0, slice },
-			.imageExtent = { mipWidth, mipHeight, 1 }
-		};
+			uint32_t offset = 0;
+			for (int32_t mip = 0; mip < mipCount; ++mip)
+			{
+				const uint32_t mipWidth = getTextureMipSize(desc.width, mip);
+				const uint32_t mipHeight = getTextureMipSize(desc.height, mip);
+				const uint32_t mipDepth = getTextureMipSize(desc.depth, mip);
+				const uint32_t mipSize = getTextureMipPitch(desc.format, desc.width, desc.height, mip);
 
-		vkCmdCopyBufferToImage(
-			*commandBuffer,
-			*m_stagingBuffer,
-			m_textureImage->getVkImage(),
-			VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
-			1,
-			&region);
+				const VkBufferImageCopy region = {
+					.bufferOffset = offset,
+					.bufferRowLength = 0,
+					.bufferImageHeight = 0,
+					.imageSubresource = {
+						.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
+						.mipLevel = (uint32_t)mip,
+						.baseArrayLayer = 0,
+						.layerCount = 1 },
+					.imageOffset = { 0, 0, 0 },
+					.imageExtent = { mipWidth, mipHeight, mipDepth }
+				};
 
-		offset += mipSize;
-	}
+				vkCmdCopyBufferToImage(
+					*commandBuffer,
+					*m_stagingBuffer,
+					m_textureImage->getVkImage(),
+					VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+					1,
+					&region);
 
-	// Change layout of texture to optimal sampling.
-	m_textureImage->changeLayout(
-		commandBuffer,
-		desc.shaderStorage ? VK_IMAGE_LAYOUT_GENERAL : VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
-		VK_IMAGE_ASPECT_COLOR_BIT,
-		0,
-		1,
-		0,
-		1);
+				offset += mipSize * mipDepth;
+			}
 
-	// Submit command buffer to perform transfer of stage to texture.
-	commandBuffer->submitAndWait();
+			m_textureImage->changeLayoutExplicit(commandBuffer, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, m_restingLayout, VK_IMAGE_ASPECT_COLOR_BIT, 0, mipCount, 0, 1);
 
-	if (desc.immutable)
-		safeDestroy(m_stagingBuffer);
+			if (desc.immutable)
+				safeDestroy(m_stagingBuffer);
+			else
+				stagingRead(commandBuffer);
+		},
+		desc.immutable ? imageSize : 0);
+
+	m_textureImage->setVkImageLayout(m_restingLayout, 0, mipCount, 0, 1);
 
 	m_size = { desc.width, desc.height, desc.depth, desc.mipCount };
 	m_format = desc.format;
@@ -404,10 +406,7 @@ bool TextureVk::create(
 
 void TextureVk::destroy()
 {
-	// Only relinquish ownership; the image is still resolved by ProgramVk when a
-	// render context which references this texture is rendered. Teardown is
-	// performed by the destructor which runs once the retirement fence has been
-	// passed. \sa ResourceMorgue
+	// Only relinquish ownership; pending renders may still use the texture.
 }
 
 ITexture* TextureVk::resolve()
@@ -427,14 +426,32 @@ int32_t TextureVk::getBindlessIndex() const
 
 bool TextureVk::lock(int32_t side, int32_t level, Lock& lock)
 {
-	if (m_stagingBuffer != nullptr)
-	{
-		lock.bits = m_stagingBuffer->lock();
-		lock.pitch = getTextureRowPitch(m_format, m_size.x, level);
-		return true;
-	}
-	else
+	if (m_stagingBuffer == nullptr)
 		return false;
+	if (side < 0 || side >= m_sideCount || level < 0 || level >= m_size.mips)
+		return false;
+
+	// Wait until no submitted copy reads the staging buffer, then hold the staging lock until unlock.
+	for (;;)
+	{
+		m_stagingLock.wait();
+		const uint64_t stagingEpoch = m_stagingEpoch;
+		if (stagingEpoch == 0 || m_context->getCompletedEpoch() >= stagingEpoch)
+			break;
+		m_stagingLock.release();
+		m_context->waitForEpoch(stagingEpoch);
+	}
+
+	uint8_t* bits = (uint8_t*)m_stagingBuffer->lock();
+	if (!bits)
+	{
+		m_stagingLock.release();
+		return false;
+	}
+
+	lock.bits = bits + getStagingOffset(side, level);
+	lock.pitch = getTextureRowPitch(m_format, m_size.x, level);
+	return true;
 }
 
 void TextureVk::unlock(int32_t side, int32_t level)
@@ -451,6 +468,7 @@ void TextureVk::unlock(int32_t side, int32_t level)
 void TextureVk::unlock(int32_t side, int32_t level, const Region& region)
 {
 	m_stagingBuffer->unlock();
+	m_stagingLock.release();
 
 	const int32_t mipWidth = (int32_t)getTextureMipSize(m_size.x, level);
 	const int32_t mipHeight = (int32_t)getTextureMipSize(m_size.y, level);
@@ -467,9 +485,8 @@ void TextureVk::unlock(int32_t side, int32_t level, const Region& region)
 	const uint32_t rowPitch = getTextureRowPitch(m_format, m_size.x, level);
 	const uint32_t texelSize = getTextureBlockSize(m_format);
 
-	// Vulkan require buffer offset to be a multiple of both 4 and the texel size; align
-	// the region out until it is. Block compressed formats are transferred in whole since
-	// the staging layout is expressed in blocks.
+	// Buffer offset must be a multiple of both 4 and the texel size, so align the region out.
+	// Block compressed formats are transferred whole since the staging layout is in blocks.
 	const bool partial = (getTextureBlockDenom(m_format) == 1 && (rowPitch % 4) == 0);
 	if (partial)
 	{
@@ -484,19 +501,8 @@ void TextureVk::unlock(int32_t side, int32_t level, const Region& region)
 		y1 = mipHeight;
 	}
 
-	// This submits ahead of endFrame; a texture created this frame still has its initial
-	// layout transition pending in the upload command buffer, which must execute first for
-	// the transition recorded below to start from the layout the image is actually in.
-	m_context->performUploads();
-
-	auto commandBuffer = m_context->getGraphicsQueue()->acquireCommandBuffer(L"TextureVk::unlock");
-
-	// Change layout of texture to be able to copy staging buffer into texture.
-	m_textureImage->changeLayout(commandBuffer, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_ASPECT_COLOR_BIT, level, 1, 0, 1);
-
-	// Copy staging buffer into texture.
 	const VkBufferImageCopy copyRegion = {
-		.bufferOffset = partial ? ((uint32_t)y0 * rowPitch + (uint32_t)x0 * texelSize) : 0,
+		.bufferOffset = getStagingOffset(side, level) + (partial ? ((uint32_t)y0 * rowPitch + (uint32_t)x0 * texelSize) : 0),
 		.bufferRowLength = partial ? (rowPitch / texelSize) : 0,
 		.bufferImageHeight = 0,
 		.imageSubresource = {
@@ -508,19 +514,50 @@ void TextureVk::unlock(int32_t side, int32_t level, const Region& region)
 		.imageExtent = { (uint32_t)(x1 - x0), (uint32_t)(y1 - y0), 1 }
 	};
 
-	vkCmdCopyBufferToImage(
-		*commandBuffer,
-		*m_stagingBuffer,
-		m_textureImage->getVkImage(),
-		VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
-		1,
-		&copyRegion);
+	// The image is in its resting layout whenever uploads execute; the tracked layout is left as-is.
+	Ref< ITexture > self = this;
+	m_context->addDeferredUpload(
+		[copyRegion, level, side, self, this](Context* cx, CommandBuffer* commandBuffer) {
+			if (!m_textureImage || !m_stagingBuffer)
+				return;
 
-	// Change layout of texture to optimal sampling.
-	m_textureImage->changeLayout(commandBuffer, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_ASPECT_COLOR_BIT, level, 1, 0, 1);
+			T_ANONYMOUS_VAR(Acquire< CriticalSection >)(m_stagingLock);
 
-	// Submit command buffer to perform transfer of stage to texture.
-	commandBuffer->submitAndWait();
+			m_textureImage->changeLayoutExplicit(commandBuffer, m_restingLayout, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_ASPECT_COLOR_BIT, level, 1, side, 1);
+
+			vkCmdCopyBufferToImage(
+				*commandBuffer,
+				*m_stagingBuffer,
+				m_textureImage->getVkImage(),
+				VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+				1,
+				&copyRegion);
+
+			m_textureImage->changeLayoutExplicit(commandBuffer, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, m_restingLayout, VK_IMAGE_ASPECT_COLOR_BIT, level, 1, side, 1);
+
+			m_stagingEpoch = commandBuffer->getSubmissionEpoch();
+		});
+}
+
+void TextureVk::stagingRead(CommandBuffer* commandBuffer)
+{
+	T_ANONYMOUS_VAR(Acquire< CriticalSection >)(m_stagingLock);
+	m_stagingEpoch = commandBuffer->getSubmissionEpoch();
+}
+
+uint32_t TextureVk::getStagingOffset(int32_t side, int32_t level) const
+{
+	uint32_t sideSize = 0;
+	uint32_t levelOffset = 0;
+	for (int32_t mip = 0; mip < m_size.mips; ++mip)
+	{
+		const uint32_t mipDepth = getTextureMipSize(m_size.z, mip);
+		const uint32_t mipSize = getTextureMipPitch(m_format, m_size.x, m_size.y, mip) * mipDepth;
+		if (mip < level)
+			levelOffset += mipSize;
+		sideSize += mipSize;
+	}
+	return (uint32_t)side * sideSize + levelOffset;
 }
 
 }

@@ -9,6 +9,7 @@
 #pragma once
 
 #include "Core/Ref.h"
+#include "Core/Thread/CriticalSection.h"
 #include "Render/ITexture.h"
 #include "Render/Types.h"
 #include "Render/Vulkan/Private/ApiHeader.h"
@@ -17,6 +18,7 @@ namespace traktor::render
 {
 
 class ApiBuffer;
+class CommandBuffer;
 class Context;
 class Image;
 
@@ -71,7 +73,18 @@ private:
 	Ref< ApiBuffer > m_stagingBuffer;
 	Ref< Image > m_textureImage;
 	ITexture::Size m_size;
+	int32_t m_sideCount = 1;	//!< Number of array layers; 6 for cube textures.
 	TextureFormat m_format;
+	VkImageLayout m_restingLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;	//!< Layout the image is in between uses; GENERAL for storage textures.
+
+	CriticalSection m_stagingLock;	//!< Held from lock until unlock, and while recording a copy out of the staging buffer.
+	uint64_t m_stagingEpoch = 0;	//!< Submission epoch of the latest recorded copy out of the staging buffer; guarded by the staging lock.
+
+	/*! Record that the upload being recorded into commandBuffer reads the staging buffer. */
+	void stagingRead(CommandBuffer* commandBuffer);
+
+	/*! Offset of a side and level in the staging buffer; every side and level has its own part. */
+	uint32_t getStagingOffset(int32_t side, int32_t level) const;
 };
 
 }

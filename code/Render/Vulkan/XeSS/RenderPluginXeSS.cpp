@@ -41,7 +41,7 @@ void RenderPluginXeSS::getDeviceExtensions(VkInstance instance, VkPhysicalDevice
 		for (size_t extensionIdx = 0; extensionIdx < extensionCount; ++extensionIdx)
 			outExtensions.push_back(extensions[extensionIdx]);
 
-		// This is required but XeSS seem to fail to report that.
+		// Required, although missing from the reported extensions.
 		outExtensions.push_back("VK_KHR_shader_integer_dot_product");
 	}
 }
@@ -77,25 +77,19 @@ void RenderPluginXeSS::render(IRenderView* renderView, ITexture* colorTexture, I
 			XESS_QUALITY_SETTING_AA,
 			/* Initialization flags. */
 			XESS_INIT_FLAG_ENABLE_AUTOEXPOSURE, // XESS_INIT_FLAG_HIGH_RES_MV,
-			/* Specfies the node mask for internally created resources on
-			 * multi-adapter systems. */
+			/* Node mask for internally created resources on multi-adapter systems. */
 			0,
-			/* Specfies the node visibility mask for internally created resources
-			 * on multi-adapter systems. */
+			/* Node visibility mask for internally created resources on multi-adapter systems. */
 			0,
-			/* Optional externally allocated buffers storage for XeSS-SR. If NULL the
-			 * storage is allocated internally. If allocated, the heap type must be
-			 * D3D12_HEAP_TYPE_DEFAULT. This heap is not accessed by the CPU. */
+			/* Optional externally allocated buffer storage; allocated internally if null. */
 			nullptr,
 			/* Offset in the externally allocated heap for temporary buffers storage. */
 			0,
-			/* Optional externally allocated textures storage for XeSS-SR. If NULL the
-			 * storage is allocated internally. If allocated, the heap type must be
-			 * D3D12_HEAP_TYPE_DEFAULT. This heap is not accessed by the CPU. */
+			/* Optional externally allocated texture storage; allocated internally if null. */
 			nullptr,
 			/* Offset in the externally allocated heap for temporary textures storage. */
 			0,
-			/* No pipeline library */
+			/* No pipeline cache */
 			NULL
 		};
 
@@ -155,6 +149,9 @@ void RenderPluginXeSS::render(IRenderView* renderView, ITexture* colorTexture, I
 
 	CommandBuffer* commandBuffer = rv->getGraphicsCommandBuffer();
 	result = xessVKExecute(m_xessContext, *commandBuffer, &exec_params);
+
+	// XeSS binds pipelines of its own into the command buffer.
+	rv->invalidateBindings();
 
 	rv->barrier(Stage::Compute, Stage::Fragment, nullptr, 0, false);
 }

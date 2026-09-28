@@ -39,7 +39,7 @@ bool BufferReadBackVk::create(uint32_t usageBits)
 		return false;
 
 	m_buffer = new ApiBuffer(m_context);
-	if (!m_buffer->create(bufferSize, usageBits | VK_BUFFER_USAGE_TRANSFER_DST_BIT, true, true))
+	if (!m_buffer->createReadBack(bufferSize, usageBits | VK_BUFFER_USAGE_TRANSFER_DST_BIT))
 		return false;
 
 	m_bufferView = BufferViewVk(*m_buffer, 0, bufferSize, bufferSize);
@@ -52,10 +52,7 @@ bool BufferReadBackVk::create(uint32_t usageBits)
 
 void BufferReadBackVk::destroy()
 {
-	// Only relinquish ownership; the buffer view handed out to render blocks has
-	// to stay valid until every context which might reference it has been
-	// rendered. Teardown is performed by the destructor which runs once the
-	// retirement fence has been passed. \sa ResourceMorgue
+	// Only relinquish ownership; the buffer view must stay valid for pending renders.
 }
 
 void* BufferReadBackVk::lock()

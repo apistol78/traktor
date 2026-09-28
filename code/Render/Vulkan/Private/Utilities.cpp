@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2025 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -522,17 +522,19 @@ VkPipelineStageFlags getPipelineStageFlags(const VkImageLayout layout)
 	case VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL:
 		return VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
 
+	// Sampled images are read by every shader stage, compute included.
 	case VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL:
-		return VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT | VK_PIPELINE_STAGE_VERTEX_SHADER_BIT;
+		return VK_PIPELINE_STAGE_VERTEX_SHADER_BIT | VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT | VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT;
 
 	case VK_IMAGE_LAYOUT_PRESENT_SRC_KHR:
 		return VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
 
+	// Depth is tested, and written, in both early and late fragment tests.
 	case VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL:
-		return VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT; // \fixme possibly "LATE"?
+		return VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT | VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT;
 
 	case VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL:
-		return VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
+		return VK_PIPELINE_STAGE_VERTEX_SHADER_BIT | VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT | VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT;
 
 	default:
 		break;
@@ -578,7 +580,8 @@ VkAccessFlags getAccessMask(const VkImageLayout layout)
 		return 0;
 
 	case VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL:
-		return VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
+		return VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT |
+			VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
 
 	case VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL:
 		return VK_ACCESS_SHADER_READ_BIT;
@@ -587,6 +590,41 @@ VkAccessFlags getAccessMask(const VkImageLayout layout)
 		break;
 	}
 	return 0;
+}
+
+VkPipelineStageFlags restrictToComputeStages(VkPipelineStageFlags stages, VkPipelineStageFlags fallback)
+{
+	const VkPipelineStageFlags computeStages =
+		VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT |
+		VK_PIPELINE_STAGE_DRAW_INDIRECT_BIT |
+		VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT |
+		VK_PIPELINE_STAGE_TRANSFER_BIT |
+		VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT |
+		VK_PIPELINE_STAGE_HOST_BIT |
+		VK_PIPELINE_STAGE_ALL_COMMANDS_BIT |
+		VK_PIPELINE_STAGE_ACCELERATION_STRUCTURE_BUILD_BIT_KHR;
+
+	stages &= computeStages;
+	return (stages != 0) ? stages : fallback;
+}
+
+VkAccessFlags restrictToComputeAccess(VkAccessFlags access)
+{
+	const VkAccessFlags computeAccess =
+		VK_ACCESS_INDIRECT_COMMAND_READ_BIT |
+		VK_ACCESS_UNIFORM_READ_BIT |
+		VK_ACCESS_SHADER_READ_BIT |
+		VK_ACCESS_SHADER_WRITE_BIT |
+		VK_ACCESS_TRANSFER_READ_BIT |
+		VK_ACCESS_TRANSFER_WRITE_BIT |
+		VK_ACCESS_HOST_READ_BIT |
+		VK_ACCESS_HOST_WRITE_BIT |
+		VK_ACCESS_MEMORY_READ_BIT |
+		VK_ACCESS_MEMORY_WRITE_BIT |
+		VK_ACCESS_ACCELERATION_STRUCTURE_READ_BIT_KHR |
+		VK_ACCESS_ACCELERATION_STRUCTURE_WRITE_BIT_KHR;
+
+	return access & computeAccess;
 }
 
 }

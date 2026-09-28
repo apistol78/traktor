@@ -19,6 +19,7 @@
 #include "Render/Vulkan/Private/Context.h"
 #include "Render/Vulkan/Private/Image.h"
 #include "Render/Vulkan/Private/PipelineLayoutCache.h"
+#include "Render/Vulkan/Private/Queue.h"
 #include "Render/Vulkan/Private/ShaderModuleCache.h"
 #include "Render/Vulkan/Private/Utilities.h"
 #include "Render/Vulkan/ProgramResourceVk.h"
@@ -473,20 +474,32 @@ bool ProgramVk::validate(
 	if (!validateDescriptorSet())
 		return false;
 
-	// A render target bound as a storage image must reside in GENERAL layout for the
-	// dispatch to match its descriptor; unlike plain storage textures (created in GENERAL),
-	// render targets otherwise rest in SHADER_READ_ONLY. Layout transitions are only valid
-	// outside a render pass, hence compute only.
+	// Render targets bound as storage images must be in GENERAL layout to match the descriptor;
+	// layout transitions are only valid outside a render pass, hence compute only.
 	if (bindPoint == VK_PIPELINE_BIND_POINT_COMPUTE)
 	{
+		const bool graphicsQueue = commandBuffer->getQueue()->supportsGraphics();
 		for (const auto& image : m_images)
 		{
 			if (!image.texture)
 				continue;
 
 			RenderTargetVk* resolved = dynamic_type_cast< RenderTargetVk* >(image.texture->resolve());
-			if (resolved)
-				resolved->getImageResolved()->changeLayout(commandBuffer, VK_IMAGE_LAYOUT_GENERAL, VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1);
+			if (!resolved)
+				continue;
+
+			// Render targets are exclusive to the graphics queue family.
+			if (!graphicsQueue)
+			{
+				if (!m_reportedAsyncStorageTarget)
+				{
+					log::error << L"Render target bound as storage image in asynchronous compute (" << m_tag << L"); not supported, use a storage texture." << Endl;
+					m_reportedAsyncStorageTarget = true;
+				}
+				continue;
+			}
+
+			resolved->getImageResolved()->changeLayout(commandBuffer, VK_IMAGE_LAYOUT_GENERAL, VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1);
 		}
 	}
 
@@ -506,7 +519,7 @@ bool ProgramVk::validate(
 		bufferOffsets.push_back(bvvk->getVkBufferOffset());
 	}
 
-	// Must match order defined in GlslResource.h
+	// Order must match the descriptor set indices used by shaders.
 	const VkDescriptorSet descriptorSets[] = {
 		m_descriptorSet,
 		m_context->getBindlessTexturesDescriptorSet(),
@@ -535,10 +548,7 @@ bool ProgramVk::validate(
 
 void ProgramVk::destroy()
 {
-	// Only relinquish ownership; the program is bound, and its descriptor sets
-	// validated, when a render context which references it is rendered. Teardown
-	// is performed by the destructor which runs once the retirement fence has
-	// been passed. \sa ResourceMorgue
+	// Only relinquish ownership; pending renders may still use the program.
 }
 
 void ProgramVk::setFloatParameter(handle_t handle, float param)
@@ -688,9 +698,7 @@ bool ProgramVk::validateDescriptorSet()
 		key.push_back((intptr_t)sbuffer.bufferView->getVkBuffer());
 	}
 
-	// Add acceleration structures to key. The handle must be part of the key since
-	// ring buffered structures resolve to a different handle after each rebuild; a
-	// cached set would otherwise keep referencing the slot being rebuilt.
+	// Add acceleration structures to key; the handle may change between rebuilds.
 	for (const auto& as : m_accelerationStructures)
 	{
 		if (as.binding < 0)
@@ -870,17 +878,14 @@ void ProgramVk::postCleanup()
 	for (const auto& it : m_descriptorSets)
 		descriptorSets.push_back(it.second);
 
-	// Drop the cache before the sets are handed over for cleanup; adding a
-	// cleanup can, when no view is rendering, perform every pending cleanup
-	// right away and thus call us again.
+	// Drop the cache first; handing the sets over for cleanup may re-enter this method.
 	m_descriptorSets.reset();
 	m_descriptorSet = 0;
 
 	if (descriptorSets.empty())
 		return;
 
-	// Sets bound in a submission the GPU hasn't consumed yet must not be freed
-	// until it has; \sa Context::addDeferredCleanup.
+	// Sets may still be used by in-flight submissions, so free them deferred.
 	m_context->addDeferredCleanup(
 		[descriptorSets = std::move(descriptorSets)](Context* cx) {
 		vkFreeDescriptorSets(cx->getLogicalDevice(), cx->getDescriptorPool(), (uint32_t)descriptorSets.size(), descriptorSets.c_ptr());

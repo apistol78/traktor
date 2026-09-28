@@ -23,7 +23,8 @@ class UniformBufferPool : public Object
 public:
 	void destroy();
 
-	void recycle();
+	/*! Return blocks to their chains once every submission up until the epoch issued when freed has been consumed. */
+	void recycle(uint64_t issuedEpoch, uint64_t completedEpoch);
 
 	void flush();
 
@@ -34,12 +35,18 @@ public:
 private:
 	friend class Context;
 
+	struct Retired
+	{
+		uint64_t epoch;	//!< Blocks can be reused once every submission up until this epoch has been consumed.
+		AlignedVector< UniformBufferRange > ranges;
+	};
+
 	const wchar_t* const m_name;
 	Context* m_context = nullptr;
 	SmallMap< uint32_t, RefArray< UniformBufferChain > > m_chains;	//!< Map of chains; map size of block to chain.
-	AlignedVector< UniformBufferRange > m_frees[4];
+	AlignedVector< UniformBufferRange > m_freed;	//!< Blocks freed since last recycle.
+	AlignedVector< Retired > m_retired;	//!< Freed blocks waiting for the GPU, in increasing epoch order.
 	uint32_t m_blockCount = 0;
-	uint32_t m_count = 0;
 
 	explicit UniformBufferPool(Context* context, uint32_t blockCount, const wchar_t* const name);
 };

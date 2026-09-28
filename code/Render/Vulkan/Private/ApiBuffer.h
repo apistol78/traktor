@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -37,6 +37,9 @@ public:
 
 	bool create(uint32_t bufferSize, uint32_t usageBits, bool cpuAccess, bool gpuAccess, bool concurrent = false);
 
+	/*! Create buffer written by the GPU and read, through its mapping, by the CPU. */
+	bool createReadBack(uint32_t bufferSize, uint32_t usageBits);
+
 	void destroy();
 
 	void* lock();
@@ -58,6 +61,8 @@ private:
 	uint32_t m_bufferSize = 0;
 	mutable uint32_t m_resourceIndex = ~0U;
 	void* m_locked = nullptr;
+
+	bool create(uint32_t bufferSize, uint32_t usageBits, const VmaAllocationCreateInfo& aci);
 };
 		
 }

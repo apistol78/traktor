@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2025 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,6 +8,7 @@
  */
 #pragma once
 
+#include "Core/Containers/AlignedVector.h"
 #include "Core/Containers/SmallMap.h"
 #include "Core/Object.h"
 #include "Core/Thread/Semaphore.h"
@@ -40,15 +41,14 @@ public:
 private:
 	struct Entry
 	{
+		AlignedVector< VkDescriptorSetLayoutBinding > bindings;	//!< Layout description; compared on lookup as the hash can collide.
+		bool useTargetSize;
 		VkDescriptorSetLayout descriptorSetLayout;
 		VkPipelineLayout pipelineLayout;
-#if defined(_DEBUG)
-		std::wstring debug;
-#endif
 	};
 
 	Context* m_context;
-	SmallMap< uint32_t, Entry > m_entries;
+	SmallMap< uint32_t, AlignedVector< Entry > > m_entries;
 	SmallMap< uint32_t, VkSampler > m_samplers;
 	Semaphore m_lock;
 };

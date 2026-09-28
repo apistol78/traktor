@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -13,10 +13,30 @@
 #include "Render/Vulkan/Private/ApiLoader.h"
 #include "Render/Vulkan/Private/CommandBuffer.h"
 #include "Render/Vulkan/Private/Context.h"
+#include "Render/Vulkan/Private/Queue.h"
 #include "Render/Vulkan/Private/Utilities.h"
 
 namespace traktor::render
 {
+namespace
+{
+
+/*! Share storage images across graphics and compute families; others stay exclusive to keep compression. */
+void setupSharingMode(Context* context, uint32_t usageBits, VkImageCreateInfo& ici, uint32_t (&queueFamilyIndices)[2])
+{
+	queueFamilyIndices[0] = context->getGraphicsQueue()->getQueueIndex();
+	queueFamilyIndices[1] = context->getComputeQueue()->getQueueIndex();
+	if ((usageBits & VK_IMAGE_USAGE_STORAGE_BIT) != 0 && queueFamilyIndices[0] != queueFamilyIndices[1])
+	{
+		ici.sharingMode = VK_SHARING_MODE_CONCURRENT;
+		ici.queueFamilyIndexCount = 2;
+		ici.pQueueFamilyIndices = queueFamilyIndices;
+	}
+	else
+		ici.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+}
+
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.Image", Image, Object)
 
@@ -52,9 +72,11 @@ bool Image::createSimple(
 	ici.tiling = VK_IMAGE_TILING_OPTIMAL;
 	ici.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
 	ici.usage = usageBits;
-	ici.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 	ici.samples = VK_SAMPLE_COUNT_1_BIT;
 	ici.flags = 0;
+
+	uint32_t queueFamilyIndices[2];
+	setupSharingMode(m_context, usageBits, ici, queueFamilyIndices);
 
 	VmaAllocationCreateInfo aci = {};
 	aci.flags = VMA_ALLOCATION_CREATE_STRATEGY_MIN_MEMORY_BIT;
@@ -142,9 +164,11 @@ bool Image::createCube(
 	ici.tiling = VK_IMAGE_TILING_OPTIMAL;
 	ici.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
 	ici.usage = usageBits;
-	ici.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 	ici.samples = VK_SAMPLE_COUNT_1_BIT;
 	ici.flags = VK_IMAGE_CREATE_CUBE_COMPATIBLE_BIT;
+
+	uint32_t queueFamilyIndices[2];
+	setupSharingMode(m_context, usageBits, ici, queueFamilyIndices);
 
 	VmaAllocationCreateInfo aci = {};
 	aci.flags = VMA_ALLOCATION_CREATE_STRATEGY_MIN_MEMORY_BIT;
@@ -233,9 +257,11 @@ bool Image::createVolume(
 	ici.tiling = VK_IMAGE_TILING_OPTIMAL;
 	ici.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
 	ici.usage = usageBits;
-	ici.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 	ici.samples = VK_SAMPLE_COUNT_1_BIT;
 	ici.flags = 0;
+
+	uint32_t queueFamilyIndices[2];
+	setupSharingMode(m_context, usageBits, ici, queueFamilyIndices);
 
 	VmaAllocationCreateInfo aci = {};
 	aci.flags = VMA_ALLOCATION_CREATE_STRATEGY_MIN_MEMORY_BIT;
@@ -572,22 +598,84 @@ bool Image::changeLayout(
 	T_ASSERT(mipLevel + mipCount <= m_mipCount);
 	T_ASSERT(layerLevel + layerCount <= m_layerCount);
 
-	auto imageLayout = m_imageLayouts[layerLevel * m_mipCount + mipLevel];
-	if (imageLayout == newLayout)
+	// Common case; every subresource in the range is in the same layout.
+	const VkImageLayout firstLayout = m_imageLayouts[layerLevel * m_mipCount + mipLevel];
+	bool uniform = true;
+	for (uint32_t layer = layerLevel; uniform && layer < layerLevel + layerCount; ++layer)
+		for (uint32_t mip = mipLevel; uniform && mip < mipLevel + mipCount; ++mip)
+			uniform = (m_imageLayouts[layer * m_mipCount + mip] == firstLayout);
+
+	if (uniform)
+	{
+		if (firstLayout == newLayout)
+			return true;
+
+		changeLayoutExplicit(
+			commandBuffer,
+			(firstLayout != VK_IMAGE_LAYOUT_PRESENT_SRC_KHR) ? firstLayout : VK_IMAGE_LAYOUT_UNDEFINED,
+			newLayout,
+			aspectMask,
+			mipLevel,
+			mipCount,
+			layerLevel,
+			layerCount);
+
+		setVkImageLayout(newLayout, mipLevel, mipCount, layerLevel, layerCount);
 		return true;
+	}
 
-	if (imageLayout == VK_IMAGE_LAYOUT_PRESENT_SRC_KHR)
-		imageLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+	// Transition each run of consecutive mips sharing a layout from the layout it is in.
+	AlignedVector< VkImageMemoryBarrier > barriers;
+	VkPipelineStageFlags srcStageMask = 0;
+	for (uint32_t layer = layerLevel; layer < layerLevel + layerCount; ++layer)
+	{
+		for (uint32_t mip = mipLevel; mip < mipLevel + mipCount;)
+		{
+			const VkImageLayout runLayout = m_imageLayouts[layer * m_mipCount + mip];
 
-	changeLayoutExplicit(
-		commandBuffer,
-		imageLayout,
-		newLayout,
-		aspectMask,
-		mipLevel,
-		mipCount,
-		layerLevel,
-		layerCount);
+			uint32_t end = mip + 1;
+			while (end < mipLevel + mipCount && m_imageLayouts[layer * m_mipCount + end] == runLayout)
+				++end;
+
+			if (runLayout != newLayout)
+			{
+				const VkImageLayout oldLayout = (runLayout != VK_IMAGE_LAYOUT_PRESENT_SRC_KHR) ? runLayout : VK_IMAGE_LAYOUT_UNDEFINED;
+
+				VkImageMemoryBarrier& imb = barriers.push_back();
+				imb = {};
+				imb.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+				imb.srcAccessMask = getAccessMask(oldLayout);
+				imb.dstAccessMask = getAccessMask(newLayout);
+				imb.oldLayout = oldLayout;
+				imb.newLayout = newLayout;
+				imb.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+				imb.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+				imb.image = m_image;
+				imb.subresourceRange.aspectMask = aspectMask;
+				imb.subresourceRange.baseMipLevel = mip;
+				imb.subresourceRange.levelCount = end - mip;
+				imb.subresourceRange.baseArrayLayer = layer;
+				imb.subresourceRange.layerCount = 1;
+
+				srcStageMask |= getPipelineStageFlags(oldLayout);
+			}
+
+			mip = end;
+		}
+	}
+
+	if (!barriers.empty())
+		vkCmdPipelineBarrier(
+			*commandBuffer,
+			srcStageMask,
+			getPipelineStageFlags(newLayout),
+			0,
+			0,
+			nullptr,
+			0,
+			nullptr,
+			(uint32_t)barriers.size(),
+			barriers.c_ptr());
 
 	setVkImageLayout(newLayout, mipLevel, mipCount, layerLevel, layerCount);
 	return true;
@@ -676,13 +764,7 @@ bool Image::updateSampledResource()
 	write.dstArrayElement = m_sampledResourceIndex;
 	write.dstBinding = Context::BindlessTexturesBinding;
 
-	vkUpdateDescriptorSets(
-		m_context->getLogicalDevice(),
-		1,
-		&write,
-		0,
-		nullptr);
-
+	m_context->updateBindlessDescriptors(&write, 1);
 	return true;
 }
 
@@ -717,12 +799,7 @@ bool Image::updateStorageResource()
 		write.dstArrayElement = m_storageResourceIndex + i;
 		write.dstBinding = Context::BindlessImagesBinding;
 
-		vkUpdateDescriptorSets(
-			m_context->getLogicalDevice(),
-			1,
-			&write,
-			0,
-			nullptr);
+		m_context->updateBindlessDescriptors(&write, 1);
 	}
 
 	return true;

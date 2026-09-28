@@ -61,36 +61,57 @@ void CommandBuffer::reserveSubmission()
 	m_reservedEpoch = m_context->beginSubmission(m_inFlight);
 }
 
-bool CommandBuffer::submit(const StaticVector< VkSemaphore, 2 >& waitSemaphores, const StaticVector< VkPipelineStageFlags, 2 >& waitStageFlags, VkSemaphore signalSemaphore)
+bool CommandBuffer::submit(const Wait* waits, uint32_t waitCount, const Signal* signals, uint32_t signalCount)
 {
 	T_FATAL_ASSERT(ThreadManager::getInstance().getCurrentThread() == m_thread);
 	T_FATAL_ASSERT(!m_submitted);
+	T_FATAL_ASSERT(waitCount <= 4 && signalCount <= 4);
 	VkResult result;
 
 	vkEndCommandBuffer(m_commandBuffer);
 
-	VkSubmitInfo si = {};
-	si.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-
-	if (!waitSemaphores.empty())
+	StaticVector< VkSemaphore, 4 > waitSemaphores;
+	StaticVector< VkPipelineStageFlags, 4 > waitStageFlags;
+	StaticVector< uint64_t, 4 > waitValues;
+	for (uint32_t i = 0; i < waitCount; ++i)
 	{
-		T_ASSERT(waitSemaphores.size() == waitStageFlags.size());
-		si.waitSemaphoreCount = (uint32_t)waitSemaphores.size();
-		si.pWaitSemaphores = waitSemaphores.c_ptr();
-		si.pWaitDstStageMask = waitStageFlags.c_ptr();
+		waitSemaphores.push_back(waits[i].semaphore);
+		waitStageFlags.push_back(waits[i].stages);
+		waitValues.push_back(waits[i].value);
 	}
 
-	si.commandBufferCount = 1;
-	si.pCommandBuffers = &m_commandBuffer;
-
-	if (signalSemaphore != VK_NULL_HANDLE)
+	StaticVector< VkSemaphore, 4 > signalSemaphores;
+	StaticVector< uint64_t, 4 > signalValues;
+	for (uint32_t i = 0; i < signalCount; ++i)
 	{
-		si.signalSemaphoreCount = 1;
-		si.pSignalSemaphores = &signalSemaphore;
+		signalSemaphores.push_back(signals[i].semaphore);
+		signalValues.push_back(signals[i].value);
 	}
+
+	// Binary semaphores ignore their values, thus one timeline info covers any mix.
+	const VkTimelineSemaphoreSubmitInfo timelineInfo = {
+		.sType = VK_STRUCTURE_TYPE_TIMELINE_SEMAPHORE_SUBMIT_INFO,
+		.pNext = nullptr,
+		.waitSemaphoreValueCount = (uint32_t)waitValues.size(),
+		.pWaitSemaphoreValues = waitValues.c_ptr(),
+		.signalSemaphoreValueCount = (uint32_t)signalValues.size(),
+		.pSignalSemaphoreValues = signalValues.c_ptr()
+	};
+
+	const VkSubmitInfo submitInfo = {
+		.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
+		.pNext = (waitCount > 0 || signalCount > 0) ? &timelineInfo : nullptr,
+		.waitSemaphoreCount = (uint32_t)waitSemaphores.size(),
+		.pWaitSemaphores = waitSemaphores.c_ptr(),
+		.pWaitDstStageMask = waitStageFlags.c_ptr(),
+		.commandBufferCount = 1,
+		.pCommandBuffers = &m_commandBuffer,
+		.signalSemaphoreCount = (uint32_t)signalSemaphores.size(),
+		.pSignalSemaphores = signalSemaphores.c_ptr()
+	};
 
 	const uint64_t epoch = beginSubmission();
-	if ((result = m_queue->submit(si, m_inFlight)) != VK_SUCCESS)
+	if ((result = m_queue->submit(submitInfo, m_inFlight)) != VK_SUCCESS)
 	{
 		m_context->endSubmission(epoch, m_inFlight);
 		log::error << L"Unable to submit command buffer, \"" << getHumanResult(result) << L"\"." << Endl;
@@ -101,81 +122,30 @@ bool CommandBuffer::submit(const StaticVector< VkSemaphore, 2 >& waitSemaphores,
 	m_epoch = epoch;
 	m_submitted = true;
 	return true;
+}
+
+bool CommandBuffer::submit(const StaticVector< VkSemaphore, 2 >& waitSemaphores, const StaticVector< VkPipelineStageFlags, 2 >& waitStageFlags, VkSemaphore signalSemaphore)
+{
+	T_ASSERT(waitSemaphores.size() == waitStageFlags.size());
+
+	StaticVector< Wait, 2 > waits;
+	for (uint32_t i = 0; i < (uint32_t)waitSemaphores.size(); ++i)
+		waits.push_back({ .semaphore = waitSemaphores[i], .stages = waitStageFlags[i] });
+
+	const Signal signal = { .semaphore = signalSemaphore };
+	return submit(waits.c_ptr(), (uint32_t)waits.size(), &signal, (signalSemaphore != VK_NULL_HANDLE) ? 1 : 0);
 }
 
 bool CommandBuffer::submitSignal(VkSemaphore semaphore, uint64_t semaphoreValue)
 {
-	T_FATAL_ASSERT(ThreadManager::getInstance().getCurrentThread() == m_thread);
-	T_FATAL_ASSERT(!m_submitted);
-	VkResult result;
-
-	vkEndCommandBuffer(m_commandBuffer);
-
-	const VkTimelineSemaphoreSubmitInfo timelineInfo = {
-		.sType = VK_STRUCTURE_TYPE_TIMELINE_SEMAPHORE_SUBMIT_INFO,
-		.signalSemaphoreValueCount = 1,
-		.pSignalSemaphoreValues = &semaphoreValue
-	};
-
-	const VkSubmitInfo submitInfo = {
-		.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
-		.pNext = &timelineInfo,
-		.commandBufferCount = 1,
-		.pCommandBuffers = &m_commandBuffer,
-		.signalSemaphoreCount = 1,
-		.pSignalSemaphores = &semaphore
-	};
-
-	const uint64_t epoch = beginSubmission();
-	if ((result = m_queue->submit(submitInfo, m_inFlight)) != VK_SUCCESS)
-	{
-		m_context->endSubmission(epoch, m_inFlight);
-		log::error << L"Unable to submit command buffer, \"" << getHumanResult(result) << L"\"." << Endl;
-		return false;
-	}
-	m_context->submissionIssued(epoch);
-
-	m_epoch = epoch;
-	m_submitted = true;
-	return true;
+	const Signal signal = { .semaphore = semaphore, .value = semaphoreValue };
+	return submit(nullptr, 0, &signal, 1);
 }
 
 bool CommandBuffer::submitWait(VkSemaphore semaphore, uint64_t semaphoreValue, VkPipelineStageFlags stages)
 {
-	T_FATAL_ASSERT(ThreadManager::getInstance().getCurrentThread() == m_thread);
-	T_FATAL_ASSERT(!m_submitted);
-	VkResult result;
-
-	vkEndCommandBuffer(m_commandBuffer);
-
-	const VkTimelineSemaphoreSubmitInfo timelineInfo = {
-		.sType = VK_STRUCTURE_TYPE_TIMELINE_SEMAPHORE_SUBMIT_INFO,
-		.waitSemaphoreValueCount = 1,
-		.pWaitSemaphoreValues = &semaphoreValue
-	};
-
-	const VkSubmitInfo submitInfo = {
-		.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
-		.pNext = &timelineInfo,
-		.waitSemaphoreCount = 1,
-		.pWaitSemaphores = &semaphore,
-		.pWaitDstStageMask = &stages,
-		.commandBufferCount = 1,
-		.pCommandBuffers = &m_commandBuffer
-	};
-
-	const uint64_t epoch = beginSubmission();
-	if ((result = m_queue->submit(submitInfo, m_inFlight)) != VK_SUCCESS)
-	{
-		m_context->endSubmission(epoch, m_inFlight);
-		log::error << L"Unable to submit command buffer, \"" << getHumanResult(result) << L"\"." << Endl;
-		return false;
-	}
-	m_context->submissionIssued(epoch);
-
-	m_epoch = epoch;
-	m_submitted = true;
-	return true;
+	const Wait wait = { .semaphore = semaphore, .stages = stages, .value = semaphoreValue };
+	return submit(&wait, 1, nullptr, 0);
 }
 
 bool CommandBuffer::wait()
@@ -185,21 +155,11 @@ bool CommandBuffer::wait()
 
 	const bool result = (vkWaitForFences(m_context->getLogicalDevice(), 1, &m_inFlight, VK_TRUE, UINT64_MAX) == VK_SUCCESS);
 
-	// Fence is reset from within the context as it, until the submission has been
-	// ended, might be polled from another thread; \sa Context::endSubmission.
+	// Fence is reset as the submission ends; until then it might be polled from another thread.
 	m_context->endSubmission(m_epoch, m_inFlight);
 
 	m_submitted = false;
 	return result;
-}
-
-bool CommandBuffer::submitAndWait()
-{
-	if (!submit({}, {}, VK_NULL_HANDLE))
-		return false;
-	if (!wait())
-		return false;
-	return true;
 }
 
 void CommandBuffer::externalSynced()
@@ -237,7 +197,7 @@ CommandBuffer::CommandBuffer(Context* context, Queue* queue, VkCommandPool comma
 
 uint64_t CommandBuffer::beginSubmission()
 {
-	// Use reserved submission if any; \sa reserveSubmission
+	// Use reserved submission if any.
 	if (m_reservedEpoch != 0)
 	{
 		const uint64_t epoch = m_reservedEpoch;

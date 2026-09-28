@@ -99,8 +99,7 @@ RenderViewVk::~RenderViewVk()
 {
 	close();
 
-	// Drop the view from the context first; whatever the final drain releases can
-	// then be cleaned up right away instead of waiting for a view which is gone.
+	// Unregister from the context first so resources released by the final drain are destroyed at once.
 	m_context->decrementViews();
 	ResourceMorgue::getInstance().removeView();
 }
@@ -108,9 +107,7 @@ RenderViewVk::~RenderViewVk()
 bool RenderViewVk::create(const RenderViewDefaultDesc& desc)
 {
 #if defined(_WIN32) || defined(__LINUX__) || defined(__RPI__) || defined(__MAC__)
-	// Create render window.
-	// The window enters fullscreen as part of its creation; a view configured as
-	// fullscreen would otherwise come up windowed until something else reset it.
+	// Create render window; fullscreen is entered as part of its creation.
 	m_window = new Window();
 	if (!m_window->create(desc.display, desc.displayMode.width, desc.displayMode.height, desc.fullscreen))
 	{
@@ -147,7 +144,6 @@ bool RenderViewVk::create(const RenderViewDefaultDesc& desc)
 	}
 #elif defined(__MAC__)
 
-	// Attach Metal layer to provided view.
 	attachMetalLayer(m_window->getView());
 
 	VkMetalSurfaceCreateInfoEXT sci = {};
@@ -160,8 +156,7 @@ bool RenderViewVk::create(const RenderViewDefaultDesc& desc)
 	}
 #endif
 
-	// The window is authoritative for the swap chain extent; in fullscreen the size
-	// is decided by the display or the compositor, not by the descriptor.
+	// Use the window's size; in fullscreen it's decided by the display or compositor, not the descriptor.
 	int32_t width = desc.displayMode.width;
 	int32_t height = desc.displayMode.height;
 #if defined(_WIN32) || defined(__LINUX__) || defined(__RPI__)
@@ -260,7 +255,6 @@ bool RenderViewVk::create(const RenderViewEmbeddedDesc& desc)
 	height = ANativeWindow_getHeight(sci.window) / resolutionDenom;
 #elif defined(__MAC__)
 
-	// Attach Metal layer to provided view.
 	attachMetalLayer(desc.syswin.view);
 
 	VkMetalSurfaceCreateInfoEXT sci = {};
@@ -333,7 +327,7 @@ void RenderViewVk::close()
 	vkDeviceWaitIdle(m_context->getLogicalDevice());
 
 	// Perform queued uploads, pending cleanups etc.
-	m_context->performUploads();
+	m_context->performUploads(true);
 	m_context->savePipelineCache();
 	ResourceMorgue::getInstance().flush();
 	m_context->performCleanupAll();
@@ -348,10 +342,15 @@ void RenderViewVk::close()
 	// Destroy frame resources.
 	for (auto& frame : m_frames)
 	{
-		// Drain any command buffers left flying by synchronize before they are destroyed.
-		for (auto commandBuffer : frame.flyingCommandBuffers)
+		// Drain any command buffers left flying by splits before they are destroyed.
+		for (auto commandBuffer : frame.flyingGraphicsCommandBuffers)
 			commandBuffer->wait();
-		frame.flyingCommandBuffers.resize(0);
+		for (auto commandBuffer : frame.flyingComputeCommandBuffers)
+			commandBuffer->wait();
+		frame.flyingGraphicsCommandBuffers.resize(0);
+		frame.flyingComputeCommandBuffers.resize(0);
+		frame.spareGraphicsCommandBuffers.resize(0);
+		frame.spareComputeCommandBuffers.resize(0);
 
 		if (frame.graphicsCommandBuffer)
 			frame.graphicsCommandBuffer->wait();
@@ -462,10 +461,7 @@ bool RenderViewVk::reset(const RenderViewDefaultDesc& desc)
 	m_window->addListener(this);
 #	endif
 
-	// The window is authoritative for the swap chain extent; in fullscreen the size
-	// is decided by the display or the compositor, not by the descriptor. On Wayland
-	// the descriptor's display mode is the union of all outputs, so it must not be
-	// used here.
+	// Use the window's size; in fullscreen it's decided by the display or compositor, not the descriptor.
 	if (!reset(m_window->getWidth(), m_window->getHeight()))
 		return false;
 #else
@@ -491,13 +487,22 @@ bool RenderViewVk::reset(int32_t width, int32_t height)
 	}
 
 	// Destroy only size-dependent per-frame resources (the primary target owns swap chain image views);
-	// semaphores, command buffers and the query pool are size-independent and reused by create().
+	// semaphores, command buffers and the query pool are size-independent and reused.
 	for (auto& frame : m_frames)
 	{
 		// GPU is idle (vkDeviceWaitIdle above); mark flying command buffers synced so they recycle.
-		for (auto commandBuffer : frame.flyingCommandBuffers)
+		for (auto commandBuffer : frame.flyingGraphicsCommandBuffers)
+		{
 			commandBuffer->externalSynced();
-		frame.flyingCommandBuffers.resize(0);
+			frame.spareGraphicsCommandBuffers.push_back(commandBuffer);
+		}
+		for (auto commandBuffer : frame.flyingComputeCommandBuffers)
+		{
+			commandBuffer->externalSynced();
+			frame.spareComputeCommandBuffers.push_back(commandBuffer);
+		}
+		frame.flyingGraphicsCommandBuffers.resize(0);
+		frame.flyingComputeCommandBuffers.resize(0);
 
 		if (frame.graphicsCommandBuffer)
 			frame.graphicsCommandBuffer->externalSynced();
@@ -510,8 +515,7 @@ bool RenderViewVk::reset(int32_t width, int32_t height)
 		}
 	}
 
-	// Frames hold render-target references that need to drain via the retirement
-	// and deferred cleanup queues; rendering is idle so both can run right away.
+	// Rendering is idle; drain the released render targets from both cleanup queues right away.
 	ResourceMorgue::getInstance().flush();
 	m_context->performCleanupAll();
 	m_counter = -1;
@@ -653,16 +657,12 @@ bool RenderViewVk::beginFrame()
 	if (m_lost)
 		return false;
 
-	// Advance the retirement fence; resources released a couple of frames ago are
-	// destroyed here, from the thread which consumes the render contexts. Done
-	// before anything else so the GPU objects they in turn release are picked up
-	// by the deferred cleanup at endFrame.
+	// Destroy resources retired a couple of frames ago; done first so the GPU objects they
+	// release can be cleaned up as this frame ends.
 	ResourceMorgue::getInstance().advance();
 
-	// Do this first so we remember, count number of frames.
 	m_counter++;
 
-	// Update VMA once each frame.
 	vmaSetCurrentFrameIndex(m_context->getAllocator(), m_counter);
 
 	// Get next target from swap chain.
@@ -679,8 +679,7 @@ bool RenderViewVk::beginFrame()
 	{
 		log::warning << L"vkAcquireNextImageKHR failed; result = " << getHumanResult(result) << L"; need to reset renderer." << Endl;
 
-		// Issue an event in order to reset view; the swap chain will not recover on
-		// its own, so without this the view would keep failing to acquire forever.
+		// Issue an event in order to reset view; the swap chain will not recover on its own.
 		RenderEvent evt;
 		evt.type = RenderEventType::Lost;
 		{
@@ -703,13 +702,22 @@ bool RenderViewVk::beginFrame()
 	auto& frame = m_frames[m_currentImageIndex];
 	frame.markers.clear();
 
-	// Reset command buffers.
-	// #hack Lazy create since we don't know the rendering thread until beginFrame; assumes no
-	// other thread performs rendering during the life time of the render view.
+	// Reset command buffers; #hack created lazily since the rendering thread is first known here,
+	// assuming no other thread renders during the life time of the render view.
 
-	for (auto commandBuffer : frame.flyingCommandBuffers)
+	// Command buffers of splits the previous time this slot was used; reused by this frame's splits.
+	for (auto commandBuffer : frame.flyingGraphicsCommandBuffers)
+	{
 		commandBuffer->wait();
-	frame.flyingCommandBuffers.resize(0);
+		frame.spareGraphicsCommandBuffers.push_back(commandBuffer);
+	}
+	for (auto commandBuffer : frame.flyingComputeCommandBuffers)
+	{
+		commandBuffer->wait();
+		frame.spareComputeCommandBuffers.push_back(commandBuffer);
+	}
+	frame.flyingGraphicsCommandBuffers.resize(0);
+	frame.flyingComputeCommandBuffers.resize(0);
 
 	T_PROFILER_BEGIN(L"Wait graphics queue");
 	if (frame.graphicsCommandBuffer)
@@ -784,11 +792,8 @@ bool RenderViewVk::beginFrame()
 	T_PROFILER_END();
 
 #if defined(T_USE_QUERY)
-	// Resolve and reset time queries. The query segment is keyed on the acquired image index (always in
-	// [0, m_frames.size())) so it matches the per-image command buffers whose prior GPU work was awaited
-	// above; thus stamps written by the previous frame rendered with this image are final. Queries are
-	// reset from the host, before any of this frame's work is submitted, so stamps can be written by any
-	// queue and the resolved stamps don't depend on when this frame's work is submitted.
+	// Resolve and reset the acquired image's query segment; its prior work was awaited above so the
+	// stamps are final. Reset from the host, before submitting, so any queue can write stamps.
 	if (m_queryPool != 0)
 	{
 		const int32_t queryFrom = (int32_t)m_currentImageIndex * 2 * T_QUERY_SEGMENT_SIZE;
@@ -824,6 +829,9 @@ bool RenderViewVk::beginFrame()
 	m_drawCalls = 0;
 	m_primitiveCount = 0;
 
+	// Command buffers have been reset; nothing is bound in them.
+	invalidateBindings();
+
 	// No asynchronous compute batch open for the new frame.
 	frame.computeRecordValue = 0;
 	frame.computeSubmittedValue = m_timelineSemaphoreValue;
@@ -836,29 +844,25 @@ void RenderViewVk::endFrame()
 	T_PROFILER_SCOPE(L"RenderViewVk::endFrame");
 	auto& frame = m_frames[m_currentImageIndex];
 
-	frame.boundGraphicsPipeline = 0;
-	frame.boundComputePipeline = 0;
-	frame.boundAsyncComputePipeline = 0;
-	frame.boundIndexBuffer = BufferViewVk();
-	frame.boundVertexBuffer = BufferViewVk();
+	invalidateBindings();
 
-	// Submit any upload command buffers.
+	// Submit any upload command buffers; they are ordered ahead of the frame's work.
 	m_context->performUploads();
 
-	// Prepare primary color for presentation.
 	frame.primaryTarget->getColorTargetVk(0)->prepareForPresentation(frame.graphicsCommandBuffer);
 
-	// Submit compute command buffer.
 	frame.computeCommandBuffer->submit(
 		{},
 		{},
 		frame.computeFinishedSemaphore);
 
-	// Submit graphics command buffer.
 	frame.graphicsCommandBuffer->submit(
 		{ m_imageAvailableSemaphores[m_currentImageIndex] },
 		{ VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT },
 		frame.renderFinishedSemaphore);
+
+	// Everything recorded during the frame has been submitted now.
+	m_context->frameSubmitted();
 
 #if 0
 	// Release unused pipelines.
@@ -909,8 +913,7 @@ void RenderViewVk::present()
 		return;
 	}
 
-	// Cleanup destroyed resources whose submissions the GPU has consumed; the rest
-	// are held back until a later frame rather than stalling the device here.
+	// Destroy released resources the GPU is done with; the rest are kept for a later frame.
 	m_context->performCleanup();
 
 	// Recycle uniform buffers.
@@ -953,13 +956,9 @@ bool RenderViewVk::beginPass(IRenderTargetSet* renderTargetSet, const Clear* cle
 		rp.depthTargetFormat = m_targetSet->getDepthTargetVk()->getVkFormat();
 	else if (m_targetSet->usingPrimaryDepthStencil())
 		rp.depthTargetFormat = frame.primaryTarget->getDepthTargetVk()->getVkFormat();
-	if (!m_renderPassCache->get(rp, m_targetRenderPass))
+	if (!m_context->getRenderPassCache()->get(rp, m_targetRenderPass))
 		return false;
 
-	// Store hash of render pass specification for pipeline cache.
-	m_targetRenderPassHash = rp.hash();
-
-	// Prepare render target set as targets.
 	if (!m_targetSet->prepareAsTarget(
 			frame.graphicsCommandBuffer,
 			m_targetColorIndex,
@@ -1013,7 +1012,7 @@ bool RenderViewVk::beginPass(IRenderTargetSet* renderTargetSet, const Clear* cle
 	};
 	vkCmdSetViewport(*frame.graphicsCommandBuffer, 0, 1, &vp);
 
-	// Set scissor
+	// Set scissor.
 	VkRect2D vkScissor = {
 		.offset = VkOffset2D{
 			.x = 0,
@@ -1054,13 +1053,9 @@ bool RenderViewVk::beginPass(IRenderTargetSet* renderTargetSet, int32_t renderTa
 		rp.depthTargetFormat = m_targetSet->getDepthTargetVk()->getVkFormat();
 	else if (m_targetSet->usingPrimaryDepthStencil())
 		rp.depthTargetFormat = frame.primaryTarget->getDepthTargetVk()->getVkFormat();
-	if (!m_renderPassCache->get(rp, m_targetRenderPass))
+	if (!m_context->getRenderPassCache()->get(rp, m_targetRenderPass))
 		return false;
 
-	// Store hash of render pass specification for pipeline cache.
-	m_targetRenderPassHash = rp.hash();
-
-	// Prepare render target set as targets.
 	if (!m_targetSet->prepareAsTarget(
 			frame.graphicsCommandBuffer,
 			m_targetColorIndex,
@@ -1127,7 +1122,7 @@ bool RenderViewVk::beginPass(IRenderTargetSet* renderTargetSet, int32_t renderTa
 	};
 	vkCmdSetViewport(*frame.graphicsCommandBuffer, 0, 1, &vp);
 
-	// Set scissor
+	// Set scissor.
 	VkRect2D vkScissor = {
 		.offset = VkOffset2D{
 			.x = 0,
@@ -1144,7 +1139,6 @@ void RenderViewVk::endPass()
 {
 	const auto& frame = m_frames[m_currentImageIndex];
 
-	// Close current render pass.
 	vkCmdEndRenderPass(*frame.graphicsCommandBuffer);
 
 	// Transition target to texture if necessary.
@@ -1165,14 +1159,11 @@ void RenderViewVk::clear(const Clear* clear, const Rectangle& rectangle)
 
 	const auto& frame = m_frames[m_currentImageIndex];
 
-	// Clearing attachments inside the pass lets the driver use its "fast clear"
-	// path (clearing tile or compression meta data) instead of rasterizing a
-	// depth or color filling primitive.
+	// Clearing inside the pass lets the driver use its fast clear path (tile or compression meta data).
 	StaticVector< VkClearAttachment, 16 + 1 > attachments;
 	if ((clear->mask & CfColor) != 0)
 	{
-		// Clear attachment index refer to the subpass's color attachments, so when
-		// a single target of the set is bound it's attachment 0.
+		// Indices refer to the subpass's color attachments; a single bound target is attachment 0.
 		const int32_t colorCount = (m_targetColorIndex >= 0) ? 1 : (int32_t)m_targetSet->getColorTargetCount();
 		for (int32_t i = 0; i < colorCount; ++i)
 		{
@@ -1255,8 +1246,7 @@ void RenderViewVk::draw(const IBufferView* vertexBuffer, const IVertexLayout* ve
 	if (!p->validate(frame.graphicsCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, targetSize))
 		return;
 
-	// Only forget the bound vertex buffer when the draw doesn't use one; keeping the
-	// cache when the same buffer is drawn again is the entire point of tracking it.
+	// Skip rebinding the same vertex buffer; forget the binding only when the draw uses none.
 	if (vbv != nullptr)
 	{
 		if (frame.boundVertexBuffer != *vbv)
@@ -1325,7 +1315,6 @@ void RenderViewVk::drawIndirect(const IBufferView* vertexBuffer, const IVertexLa
 	if (!p->validate(frame.graphicsCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, targetSize))
 		return;
 
-	// \sa draw
 	if (vbv != nullptr)
 	{
 		if (frame.boundVertexBuffer != *vbv)
@@ -1366,9 +1355,9 @@ void RenderViewVk::drawIndirect(const IBufferView* vertexBuffer, const IVertexLa
 		vkCmdDrawIndirect(
 			*frame.graphicsCommandBuffer,
 			dbv->getVkBuffer(),
-			dbv->getVkBufferOffset(),
+			dbv->getVkBufferOffset() + drawOffset,
 			drawCount,
-			sizeof(VkDrawIndexedIndirectCommand));
+			sizeof(VkDrawIndirectCommand));
 	}
 
 	m_drawCalls++;
@@ -1394,8 +1383,7 @@ void RenderViewVk::compute(IProgram* program, const int32_t* workSize, bool asyn
 		(workSize[1] + lwgs[1] - 1) / lwgs[1],
 		(workSize[2] + lwgs[2] - 1) / lwgs[2]);
 
-	// Reserve (or extend) the open asynchronous compute batch so a subsequent
-	// signalAsynchronousCompute fences this work with a single timeline value.
+	// Add the work to the open asynchronous compute batch; the batch shares one timeline value.
 	if (asynchronous)
 		openComputeBatch(frame);
 }
@@ -1437,11 +1425,24 @@ void RenderViewVk::barrier(Stage from, Stage to, ITexture* written, uint32_t wri
 	if ((to & Stage::AccelerationStructureUpdate) != Stage::Invalid)
 		dstAccessMask |= VK_ACCESS_ACCELERATION_STRUCTURE_READ_BIT_KHR;
 
+	VkPipelineStageFlags srcStageMask = convertStage(from);
+	VkPipelineStageFlags dstStageMask = convertStage(to);
+
+	// Graphics stages are not permitted on a compute only queue.
+	if (!commandBuffer->getQueue()->supportsGraphics())
+	{
+		srcStageMask = restrictToComputeStages(srcStageMask, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT);
+		dstStageMask = restrictToComputeStages(dstStageMask, VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT);
+
+		// A side left with only the fallback stage performs no memory access on this queue.
+		srcAccessMask = (srcStageMask != VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT) ? restrictToComputeAccess(srcAccessMask) : 0;
+		dstAccessMask = (dstStageMask != VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT) ? restrictToComputeAccess(dstAccessMask) : 0;
+	}
+
 	Image* img = (written != nullptr) ? resolveImage(written) : nullptr;
 
-	// An image barrier is only used to scope the memory dependency to a single subresource;
-	// it never transitions, so an image whose layout is not yet known falls back to a global
-	// memory barrier rather than being dropped. An UNDEFINED newLayout is not permitted.
+	// An image barrier only scopes the dependency to one subresource, never transitioning; an image
+	// still in UNDEFINED layout uses a global memory barrier as UNDEFINED isn't a valid newLayout.
 	if (img != nullptr && img->getVkImageLayout(writtenMip, 0) == VK_IMAGE_LAYOUT_UNDEFINED)
 		img = nullptr;
 
@@ -1450,8 +1451,8 @@ void RenderViewVk::barrier(Stage from, Stage to, ITexture* written, uint32_t wri
 		// No memory access; only add an execution barrier.
 		vkCmdPipelineBarrier(
 			*commandBuffer,
-			convertStage(from),
-			convertStage(to),
+			srcStageMask,
+			dstStageMask,
 			0,
 			0,
 			nullptr,
@@ -1481,8 +1482,8 @@ void RenderViewVk::barrier(Stage from, Stage to, ITexture* written, uint32_t wri
 
 		vkCmdPipelineBarrier(
 			*commandBuffer,
-			convertStage(from),
-			convertStage(to),
+			srcStageMask,
+			dstStageMask,
 			0,
 			0,
 			nullptr,
@@ -1501,8 +1502,8 @@ void RenderViewVk::barrier(Stage from, Stage to, ITexture* written, uint32_t wri
 
 		vkCmdPipelineBarrier(
 			*commandBuffer,
-			convertStage(from),
-			convertStage(to),
+			srcStageMask,
+			dstStageMask,
 			0,
 			1,
 			&mb,
@@ -1518,42 +1519,21 @@ void RenderViewVk::synchronize()
 	T_PROFILER_SCOPE(L"RenderViewVk::synchronize");
 	auto& frame = m_frames[m_currentImageIndex];
 
-	// Frame work is being submitted before endFrame; resources created this frame
-	// have their uploads, including initial layout transitions, pending in the
-	// upload command buffer which must execute first. \sa waitAsynchronousCompute
+	// Pending uploads, including initial layout transitions, must execute ahead of the frame's work.
 	m_context->performUploads();
 
-	++m_timelineSemaphoreValue;
+	const uint64_t value = ++m_timelineSemaphoreValue;
 
-	// Submit compute command buffer.
-	frame.computeCommandBuffer->submitSignal(
-		m_timelineSemaphore,
-		m_timelineSemaphoreValue);
+	// Submit compute command buffer signalling the value; recording continues in a fresh one.
+	splitCompute(frame, value);
 
 	// Submit graphics command buffer; wait until compute queue has finished.
-	frame.graphicsCommandBuffer->submitWait(
-		m_timelineSemaphore,
-		m_timelineSemaphoreValue,
-		VK_PIPELINE_STAGE_ALL_COMMANDS_BIT);
-
-	// Defer release at end of frame.
-	frame.flyingCommandBuffers.push_back(frame.computeCommandBuffer);
-	frame.flyingCommandBuffers.push_back(frame.graphicsCommandBuffer);
-
-	// Allocate new command buffers.
-	frame.computeCommandBuffer = m_context->getComputeQueue()->acquireCommandBuffer(L"Compute");
-	frame.graphicsCommandBuffer = m_context->getGraphicsQueue()->acquireCommandBuffer(L"Graphics");
-
-	// Both buffers were submitted and replaced; invalidate the graphics bind caches so work rebinds into
-	// the fresh buffers (the compute pipeline cache is command buffer aware and rebinds itself).
-	frame.boundGraphicsPipeline = 0;
-	frame.boundIndexBuffer = BufferViewVk();
-	frame.boundVertexBuffer = BufferViewVk();
+	splitGraphics(frame, value);
 
 	// All asynchronous compute work has been flushed.
 	frame.computeRecordValue = 0;
-	frame.computeSubmittedValue = m_timelineSemaphoreValue;
-	frame.graphicsWaitedValue = m_timelineSemaphoreValue;
+	frame.computeSubmittedValue = value;
+	frame.graphicsWaitedValue = value;
 }
 
 ComputeHandle RenderViewVk::signalAsynchronousCompute()
@@ -1561,8 +1541,7 @@ ComputeHandle RenderViewVk::signalAsynchronousCompute()
 	T_PROFILER_SCOPE(L"RenderViewVk::signalAsynchronousCompute");
 	auto& frame = m_frames[m_currentImageIndex];
 
-	// Nothing recorded since the last fence; return the most recently submitted value so a subsequent
-	// wait still observes earlier asynchronous work (an all-zero value is treated as invalid).
+	// Nothing recorded since the last fence; return the last submitted value, which covers earlier work.
 	if (frame.computeRecordValue == 0)
 		return { frame.computeSubmittedValue };
 
@@ -1574,17 +1553,11 @@ ComputeHandle RenderViewVk::signalAsynchronousCompute()
 	// before graphics), so ordering is implicit; avoid splitting the compute command buffer here.
 	if (m_context->getComputeQueue()->getQueueIndex() != m_context->getGraphicsQueue()->getQueueIndex())
 	{
-		// The batch is submitted before endFrame; resources created this frame have
-		// their uploads pending in the upload command buffer which must execute
-		// first as the batch may consume them. Uploads are waited upon so ordering
-		// holds across queues. \sa waitAsynchronousCompute
+		// The batch may consume resources created this frame; their pending uploads must execute first.
 		m_context->performUploads();
 
-		// Dedicated compute queue; flush the open compute batch signalling its timeline value and
-		// continue recording subsequent asynchronous work into a fresh buffer.
-		frame.computeCommandBuffer->submitSignal(m_timelineSemaphore, value);
-		frame.flyingCommandBuffers.push_back(frame.computeCommandBuffer);
-		frame.computeCommandBuffer = m_context->getComputeQueue()->acquireCommandBuffer(L"Compute");
+		// Dedicated compute queue; submit the batch signalling its value and continue in a fresh buffer.
+		splitCompute(frame, value);
 	}
 
 	return { value };
@@ -1598,8 +1571,7 @@ void RenderViewVk::waitAsynchronousCompute(ComputeHandle handle)
 
 	auto& frame = m_frames[m_currentImageIndex];
 
-	// The graphics queue already waits upon this value; a redundant wait would
-	// only split the graphics command buffer again.
+	// The graphics queue already waits upon this value; skip a redundant split.
 	if (handle.value <= frame.graphicsWaitedValue)
 		return;
 
@@ -1630,38 +1602,20 @@ void RenderViewVk::waitAsynchronousCompute(ComputeHandle handle)
 		return;
 	}
 
-	// Splitting the graphics queue submits this frame's work recorded so far, ahead
-	// of endFrame's upload submission. Resources created this frame have their
-	// uploads, including the initial layout transition of storage textures, pending
-	// in the upload command buffer; those must execute before any frame work which
-	// consumes the resources, so flush them, waited upon, before submitting.
+	// Resources created this frame are initialized by pending uploads; flush them before submitting.
 	m_context->performUploads();
 
-	// Dedicated compute queue; if the requested value has not been signalled yet, flush the open
-	// compute batch signalling it now.
+	// Dedicated compute queue; submit the open batch, signalling the value, unless already submitted.
 	if (handle.value > frame.computeSubmittedValue)
 	{
-		frame.computeCommandBuffer->submitSignal(m_timelineSemaphore, handle.value);
-		frame.flyingCommandBuffers.push_back(frame.computeCommandBuffer);
-		frame.computeCommandBuffer = m_context->getComputeQueue()->acquireCommandBuffer(L"Compute");
+		splitCompute(frame, handle.value);
 		frame.computeSubmittedValue = handle.value;
 		frame.computeRecordValue = 0;
 	}
 
 	// Split the graphics queue so that all subsequent graphics work waits on the value.
-	frame.graphicsCommandBuffer->submitWait(
-		m_timelineSemaphore,
-		handle.value,
-		VK_PIPELINE_STAGE_ALL_COMMANDS_BIT);
-	frame.flyingCommandBuffers.push_back(frame.graphicsCommandBuffer);
-	frame.graphicsCommandBuffer = m_context->getGraphicsQueue()->acquireCommandBuffer(L"Graphics");
+	splitGraphics(frame, handle.value);
 	frame.graphicsWaitedValue = handle.value;
-
-	// Graphics command buffer swapped; invalidate the graphics bind caches so the next draw rebinds into
-	// the fresh buffer (the compute pipeline cache is command buffer aware and rebinds itself).
-	frame.boundGraphicsPipeline = 0;
-	frame.boundIndexBuffer = BufferViewVk();
-	frame.boundVertexBuffer = BufferViewVk();
 }
 
 bool RenderViewVk::copy(ITexture* destinationTexture, const Region& destinationRegion, ITexture* sourceTexture, const Region& sourceRegion)
@@ -1727,7 +1681,6 @@ bool RenderViewVk::copy(ITexture* destinationTexture, const Region& destinationR
 			1))
 		return false;
 
-	// Perform texture image copy.
 	vkCmdCopyImage(
 		*frame.graphicsCommandBuffer,
 		sourceImage->getVkImage(),
@@ -1769,8 +1722,7 @@ void RenderViewVk::writeAccelerationStructure(IAccelerationStructure* accelerati
 	AccelerationStructureVk* as = mandatory_non_null_type_cast< AccelerationStructureVk* >(accelerationStructure);
 	as->writeInstances(commandBuffer, instances);
 
-	// Reserve (or extend) the open asynchronous compute batch so a subsequent
-	// signalAsynchronousCompute fences this work with a single timeline value.
+	// Add the work to the open asynchronous compute batch; the batch shares one timeline value.
 	if (asynchronous)
 		openComputeBatch(frame);
 }
@@ -1783,8 +1735,7 @@ void RenderViewVk::writeAccelerationStructure(IAccelerationStructure* accelerati
 	AccelerationStructureVk* as = mandatory_non_null_type_cast< AccelerationStructureVk* >(accelerationStructure);
 	as->writeGeometry(commandBuffer, vertexBuffer, vertexLayout, indexBuffer, indexType, primitives, rebuild);
 
-	// Reserve (or extend) the open asynchronous compute batch so a subsequent
-	// signalAsynchronousCompute fences this work with a single timeline value.
+	// Add the work to the open asynchronous compute batch; the batch shares one timeline value.
 	if (asynchronous)
 		openComputeBatch(frame);
 }
@@ -1804,7 +1755,7 @@ int32_t RenderViewVk::beginTimeQuery(bool asynchronous)
 	vkCmdWriteTimestamp(*commandBuffer, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, m_queryPool, query + 0);
 	m_nextQueryIndex += 2;
 
-	// Number of written stamps, resolved when this frame's segment is reused; \sa beginFrame
+	// Number of written stamps, resolved when this frame's segment is reused.
 	frame.queryCount = m_nextQueryIndex - m_firstQueryIndex;
 	return query;
 #else
@@ -1828,8 +1779,7 @@ void RenderViewVk::endTimeQuery(int32_t query, bool asynchronous)
 bool RenderViewVk::getTimeQuery(int32_t query, bool wait, double& outStart, double& outEnd) const
 {
 #if defined(T_USE_QUERY)
-	// Stamps are resolved when a frame begins, i.e. the stamps returned are those written into the query by
-	// the previous frame rendered with the same segment. Thus waiting isn't applicable.
+	// Returns stamps written by the previous frame rendered with the same segment, thus never waits.
 	if (query < 0)
 		return false;
 
@@ -1929,6 +1879,18 @@ CommandBuffer* RenderViewVk::getGraphicsCommandBuffer()
 	return frame.graphicsCommandBuffer;
 }
 
+void RenderViewVk::invalidateBindings()
+{
+	auto& frame = m_frames[m_currentImageIndex];
+	frame.boundGraphicsPipeline = 0;
+	frame.boundComputePipeline = 0;
+	frame.boundComputeCommandBuffer = nullptr;
+	frame.boundAsyncComputePipeline = 0;
+	frame.boundAsyncComputeCommandBuffer = nullptr;
+	frame.boundIndexBuffer = BufferViewVk();
+	frame.boundVertexBuffer = BufferViewVk();
+}
+
 bool RenderViewVk::create(uint32_t width, uint32_t height, uint32_t multiSample, float multiSampleShading, int32_t vblanks, bool allowHDR)
 {
 	log::debug << L"Vulkan; Render view create:" << Endl;
@@ -1946,9 +1908,8 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, uint32_t multiSample,
 	m_vblanks = vblanks;
 	m_allowHDR = allowHDR;
 
-	// Populate cached surface-static state once per surface; subsequent resets reuse it.
-	// Note this must happen even when we've yet to get a valid size since state such
-	// as HDR is queried by owners before the first reset.
+	// Query surface state once per surface and keep it across resets; also without a valid size
+	// since the HDR state must be known before the first reset.
 	if (!m_surfaceCacheValid)
 	{
 		vkGetPhysicalDeviceProperties(m_context->getPhysicalDevice(), &m_deviceProperties);
@@ -2104,7 +2065,7 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, uint32_t multiSample,
 		m_surfaceCacheValid = true;
 	}
 
-	// Do not fail if requested size, assume it will get reset later.
+	// Do not fail on zero size; assume the view gets reset later.
 	if (width == 0 || height == 0)
 	{
 		log::debug << L"Vulkan: View size 0 * 0, wait for view to be reset." << Endl;
@@ -2120,9 +2081,8 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, uint32_t multiSample,
 	height = std::max(surfaceCapabilities.minImageExtent.height, height);
 	height = std::min(surfaceCapabilities.maxImageExtent.height, height);
 
-	// Surfaces which have no size of their own (Wayland), or no size yet, adopt the
-	// size we ask for; everywhere else the surface's own extent is the truth as the
-	// swap chain has to match it.
+	// Surfaces without a size of their own (Wayland), or none yet, adopt the requested size;
+	// otherwise the swap chain must match the surface's extent.
 	VkExtent2D surfaceResolution = surfaceCapabilities.currentExtent;
 	if (
 		surfaceResolution.width == 0xffffffff || surfaceResolution.height == 0xffffffff ||
@@ -2182,8 +2142,8 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, uint32_t multiSample,
 		return false;
 	}
 
-	// Destroy previous swap chain. Old image-available semaphores may hold a pending, unconsumed signal
-	// (VUID-vkAcquireNextImageKHR-semaphore-01779), so retire them and defer destruction to teardown (device idle).
+	// Destroy previous swap chain; its acquire semaphores may still hold an unconsumed signal,
+	// so retire them until teardown when the device is idle.
 	if (scci.oldSwapchain != 0)
 	{
 		vkDestroySwapchainKHR(m_context->getLogicalDevice(), scci.oldSwapchain, 0);
@@ -2211,7 +2171,7 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, uint32_t multiSample,
 	log::debug << L"Got " << imageCount << L" images in swap chain; requested " << desiredImageCount << L" image(s)." << Endl;
 
 	// One binary semaphore per swap chain image plus a spare fed to the next acquire, then swapped into the
-	// per-image slot (see beginFrame); slots recycle only when the swap chain returns the image.
+	// per-image slot; slots recycle only when the swap chain returns the image.
 	if (m_imageAvailableSemaphores.empty())
 	{
 		m_imageAvailableSemaphores.resize(imageCount, 0);
@@ -2251,8 +2211,7 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, uint32_t multiSample,
 		}
 		m_frames.clear();
 
-		// Primary targets wrap swap chain images; their views must be gone before
-		// the old swap chain is. Rendering is idle here so drain immediately.
+		// Rendering is idle; drain the released frame resources immediately.
 		ResourceMorgue::getInstance().flush();
 		m_context->performCleanupAll();
 
@@ -2267,8 +2226,8 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, uint32_t multiSample,
 	}
 
 #if defined(T_USE_QUERY)
-	// Create time query pool sized to imageCount; reused across resets unless imageCount changes. Queries are
-	// resolved, and reset, from the host when a frame begins thus require host query reset; \sa beginFrame
+	// Create time query pool sized to imageCount; reused across resets unless imageCount changes.
+	// Queries are resolved and reset from the host when a frame begins, thus require host query reset.
 	if (m_queryPool == 0 && m_context->haveHostQueryReset())
 	{
 		uint32_t queueFamilyCount = 0;
@@ -2341,7 +2300,9 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, uint32_t multiSample,
 
 		frame.boundGraphicsPipeline = 0;
 		frame.boundComputePipeline = 0;
+		frame.boundComputeCommandBuffer = nullptr;
 		frame.boundAsyncComputePipeline = 0;
+		frame.boundAsyncComputeCommandBuffer = nullptr;
 		frame.boundIndexBuffer = BufferViewVk();
 		frame.boundVertexBuffer = BufferViewVk();
 
@@ -2374,19 +2335,29 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, uint32_t multiSample,
 		m_timelineSemaphoreValue = 0;
 	}
 
-	// Render pass cache is keyed by attachment format hashes and is independent of size.
-	if (!m_renderPassCache)
-		m_renderPassCache = new RenderPassCache(m_context->getLogicalDevice());
-
 	m_lost = false;
 	return true;
 }
 
 bool RenderViewVk::validateGraphicsPipeline(const VertexLayoutVk* vertexLayout, const ProgramVk* program, PrimitiveType pt)
 {
-	VkPipeline pipeline = m_context->validateGraphicsPipeline(vertexLayout, program, pt, m_targetRenderPassHash, m_targetSet, m_targetRenderPass, m_multiSampleShading);
-	if (!pipeline)
-		return false;
+	const uint32_t declHash = (vertexLayout != nullptr) ? vertexLayout->getHash() : 0;
+	const uint32_t shaderHash = program->getShaderHash();
+
+	// Consecutive draws mostly use the same pipeline; skip the shared lookup then.
+	VkPipeline pipeline = 0;
+	if (m_lastPipeline.pipeline != 0 &&
+		m_lastPipeline.renderPass == m_targetRenderPass &&
+		m_lastPipeline.declHash == declHash &&
+		m_lastPipeline.shaderHash == shaderHash &&
+		m_lastPipeline.primitiveType == pt)
+		pipeline = m_lastPipeline.pipeline;
+	else
+	{
+		if ((pipeline = m_context->validateGraphicsPipeline(vertexLayout, program, pt, m_targetSet, m_targetRenderPass, m_multiSampleShading)) == 0)
+			return false;
+		m_lastPipeline = { pipeline, m_targetRenderPass, declHash, shaderHash, pt };
+	}
 
 	auto& frame = m_frames[m_currentImageIndex];
 	if (pipeline != frame.boundGraphicsPipeline)
@@ -2399,39 +2370,72 @@ bool RenderViewVk::validateGraphicsPipeline(const VertexLayoutVk* vertexLayout, 
 
 bool RenderViewVk::validateComputePipeline(CommandBuffer* commandBuffer, const ProgramVk* p, bool asynchronous)
 {
-	VkPipeline pipeline = m_context->validateComputePipeline(p);
+	// The program keeps its compute pipeline; create it here if missing.
+	VkPipeline pipeline = p->getComputePipeline();
 	if (!pipeline)
-		return false;
+	{
+		if ((pipeline = m_context->validateComputePipeline(p)) == 0)
+			return false;
+		p->setComputePipeline(pipeline);
+	}
 
 	auto& frame = m_frames[m_currentImageIndex];
+	VkPipeline& boundPipeline = asynchronous ? frame.boundAsyncComputePipeline : frame.boundComputePipeline;
+	CommandBuffer*& boundCommandBuffer = asynchronous ? frame.boundAsyncComputeCommandBuffer : frame.boundComputeCommandBuffer;
 
-	if (asynchronous)
+	// Bindings belong to the command buffer; after a split recording continues in another one.
+	if (pipeline != boundPipeline || commandBuffer != boundCommandBuffer)
 	{
-		// if (pipeline != frame.boundAsyncComputePipeline)
-		{
-			vkCmdBindPipeline(*commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, pipeline);
-			frame.boundAsyncComputePipeline = pipeline;
-		}
+		vkCmdBindPipeline(*commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, pipeline);
+		boundPipeline = pipeline;
+		boundCommandBuffer = commandBuffer;
 	}
-	else
-	{
-		// if (pipeline != frame.boundComputePipeline)
-		{
-			vkCmdBindPipeline(*commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, pipeline);
-			frame.boundComputePipeline = pipeline;
-		}
-	}
-
 	return true;
 }
 
 uint64_t RenderViewVk::openComputeBatch(Frame& frame)
 {
-	// All async work in the current compute buffer shares one timeline value, reserved lazily here and
-	// completing together when the batch is flushed (waitAsynchronousCompute, synchronize or endFrame).
+	// All asynchronous work in the open batch shares one timeline value, reserved lazily here.
 	if (frame.computeRecordValue == 0)
 		frame.computeRecordValue = ++m_timelineSemaphoreValue;
 	return frame.computeRecordValue;
+}
+
+Ref< CommandBuffer > RenderViewVk::acquireFrameCommandBuffer(Frame& frame, bool compute)
+{
+	RefArray< CommandBuffer >& spares = compute ? frame.spareComputeCommandBuffers : frame.spareGraphicsCommandBuffers;
+	while (!spares.empty())
+	{
+		Ref< CommandBuffer > commandBuffer = spares.back();
+		spares.pop_back();
+		if (commandBuffer->reset())
+			return commandBuffer;
+	}
+
+	Queue* queue = compute ? m_context->getComputeQueue() : m_context->getGraphicsQueue();
+	return queue->acquireCommandBuffer(compute ? L"Compute" : L"Graphics");
+}
+
+bool RenderViewVk::splitCompute(Frame& frame, uint64_t value)
+{
+	const bool result = frame.computeCommandBuffer->submitSignal(m_timelineSemaphore, value);
+	frame.flyingComputeCommandBuffers.push_back(frame.computeCommandBuffer);
+	frame.computeCommandBuffer = acquireFrameCommandBuffer(frame, true);
+	return result;
+}
+
+bool RenderViewVk::splitGraphics(Frame& frame, uint64_t waitValue)
+{
+	// Work recorded so far waits as well; nothing else keeps it from overlapping the asynchronous batch.
+	const bool result = frame.graphicsCommandBuffer->submitWait(m_timelineSemaphore, waitValue, VK_PIPELINE_STAGE_ALL_COMMANDS_BIT);
+	frame.flyingGraphicsCommandBuffers.push_back(frame.graphicsCommandBuffer);
+	frame.graphicsCommandBuffer = acquireFrameCommandBuffer(frame, false);
+
+	// Nothing is bound in the fresh graphics command buffer; compute bindings track their command buffer.
+	frame.boundGraphicsPipeline = 0;
+	frame.boundIndexBuffer = BufferViewVk();
+	frame.boundVertexBuffer = BufferViewVk();
+	return result;
 }
 
 #if defined(_WIN32)
@@ -2447,7 +2451,6 @@ bool RenderViewVk::windowListenerEvent(Window* window, UINT message, WPARAM wPar
 	}
 	else if (message == WM_SIZE)
 	{
-		// Remove all pending resize events.
 		m_eventQueue.remove_if([](const RenderEvent& evt) {
 			return evt.type == RenderEventType::Resize;
 		});
@@ -2494,9 +2497,8 @@ bool RenderViewVk::windowListenerEvent(Window* window, UINT message, WPARAM wPar
 	}
 	else if (message == WM_SYSKEYDOWN)
 	{
-		// Only Alt+Enter is ours; every other system key must fall through to the
-		// default handling, or Alt+F4, Alt+Space and F10 stop working. Alt+F4 in
-		// particular is the only way out of a borderless fullscreen window.
+		// Only Alt+Enter is handled; other system keys (Alt+F4, Alt+Space, F10) get default handling,
+		// Alt+F4 being the only way out of a borderless fullscreen window.
 		if (wParam != VK_RETURN || (lParam & (1 << 29)) == 0)
 			return false;
 

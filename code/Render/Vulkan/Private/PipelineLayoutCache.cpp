@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2025 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,7 +8,6 @@
  */
 #include "Render/Vulkan/Private/PipelineLayoutCache.h"
 
-#include "Core/Io/StringOutputStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/Murmur3.h"
 #include "Core/Thread/Acquire.h"
@@ -21,42 +20,24 @@ namespace traktor::render
 namespace
 {
 
-#if defined(_DEBUG)
-
-const wchar_t* c_descriptorTypes[] = {
-	L"VK_DESCRIPTOR_TYPE_SAMPLER",
-	L"VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER",
-	L"VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE",
-	L"VK_DESCRIPTOR_TYPE_STORAGE_IMAGE",
-	L"VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER",
-	L"VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER",
-	L"VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER",
-	L"VK_DESCRIPTOR_TYPE_STORAGE_BUFFER",
-	L"VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC",
-	L"VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC",
-	L"VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT"
-};
-
-std::wstring describe(const VkDescriptorSetLayoutCreateInfo& dlci)
+bool equal(const VkDescriptorSetLayoutBinding& lh, const VkDescriptorSetLayoutBinding& rh)
 {
-	StringOutputStream ss;
-	ss << L"bindingCount = " << dlci.bindingCount << Endl;
-	for (uint32_t i = 0; i < dlci.bindingCount; ++i)
-	{
-		const auto& binding = dlci.pBindings[i];
-		ss << L".pBindings[" << i << L"] = {" << Endl;
-		ss << L"\t.binding = " << binding.binding << Endl;
-		if (binding.descriptorType < sizeof_array(c_descriptorTypes))
-			ss << L"\t.descriptorType = " << c_descriptorTypes[binding.descriptorType] << Endl;
-		else if (binding.descriptorType == VK_DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE_KHR)
-			ss << L"\t.descriptorType = VK_DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE_KHR" << Endl;
-		ss << L"\t.stageFlags = " << (uint32_t)binding.stageFlags << Endl;
-		ss << L"}" << Endl;
-	}
-	return ss.str();
+	return lh.binding == rh.binding &&
+		lh.descriptorType == rh.descriptorType &&
+		lh.descriptorCount == rh.descriptorCount &&
+		lh.stageFlags == rh.stageFlags &&
+		lh.pImmutableSamplers == rh.pImmutableSamplers;
 }
 
-#endif
+bool equal(const AlignedVector< VkDescriptorSetLayoutBinding >& bindings, const VkDescriptorSetLayoutCreateInfo& dlci)
+{
+	if (bindings.size() != dlci.bindingCount)
+		return false;
+	for (uint32_t i = 0; i < dlci.bindingCount; ++i)
+		if (!equal(bindings[i], dlci.pBindings[i]))
+			return false;
+	return true;
+}
 
 }
 
@@ -69,8 +50,11 @@ PipelineLayoutCache::~PipelineLayoutCache()
 {
 	for (auto& it : m_entries)
 	{
-		vkDestroyDescriptorSetLayout(m_context->getLogicalDevice(), it.second.descriptorSetLayout, 0);
-		vkDestroyPipelineLayout(m_context->getLogicalDevice(), it.second.pipelineLayout, 0);
+		for (auto& entry : it.second)
+		{
+			vkDestroyDescriptorSetLayout(m_context->getLogicalDevice(), entry.descriptorSetLayout, 0);
+			vkDestroyPipelineLayout(m_context->getLogicalDevice(), entry.pipelineLayout, 0);
+		}
 	}
 
 	for (auto& it : m_samplers)
@@ -81,68 +65,61 @@ bool PipelineLayoutCache::get(uint32_t pipelineHash, bool useTargetSize, const V
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
-	auto it = m_entries.find(pipelineHash);
-	if (it != m_entries.end())
+	// The hash is only a hint; reuse a layout only if it describes the same bindings.
+	auto& entries = m_entries[pipelineHash];
+	for (const auto& entry : entries)
 	{
-		outDescriptorSetLayout = it->second.descriptorSetLayout;
-		outPipelineLayout = it->second.pipelineLayout;
-
-#if defined(_DEBUG)
-		std::wstring d = describe(dlci);
-		if (d != it->second.debug)
+		if (entry.useTargetSize == useTargetSize && equal(entry.bindings, dlci))
 		{
-			log::error << L"Descriptor layout mismatch;" << Endl;
-			log::error << L"cached:" << Endl;
-			log::error << it->second.debug;
-			log::error << L"requested:" << Endl;
-			log::error << d;
-			T_FATAL_ERROR;
+			outDescriptorSetLayout = entry.descriptorSetLayout;
+			outPipelineLayout = entry.pipelineLayout;
+			return true;
 		}
-#endif
-		return true;
 	}
-	else
+	if (!entries.empty())
+		log::warning << L"Pipeline layout hash collision; creating separate layout." << Endl;
+
+	if (vkCreateDescriptorSetLayout(m_context->getLogicalDevice(), &dlci, nullptr, &outDescriptorSetLayout) != VK_SUCCESS)
+		return false;
+
+	// Order defines each layout's set index, as used by generated shaders.
+	const VkDescriptorSetLayout setLayouts[] = {
+		outDescriptorSetLayout,
+		m_context->getBindlessTexturesSetLayout(),
+		m_context->getBindlessImagesSetLayout(),
+		m_context->getBindlessBuffersSetLayout()
+	};
+
+	VkPushConstantRange pcr = {};
+	pcr.offset = 0;
+	pcr.size = 4 * sizeof(float);
+	pcr.stageFlags = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT;
+
+	VkPipelineLayoutCreateInfo lci = {};
+	lci.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
+	lci.setLayoutCount = sizeof_array(setLayouts);
+	lci.pSetLayouts = setLayouts;
+	lci.pushConstantRangeCount = 0;
+	lci.pPushConstantRanges = nullptr;
+
+	if (useTargetSize)
 	{
-		if (vkCreateDescriptorSetLayout(m_context->getLogicalDevice(), &dlci, nullptr, &outDescriptorSetLayout) != VK_SUCCESS)
-			return false;
-
-		// Must match order defined in GlslResource.h
-		const VkDescriptorSetLayout setLayouts[] = {
-			outDescriptorSetLayout,
-			m_context->getBindlessTexturesSetLayout(),
-			m_context->getBindlessImagesSetLayout(),
-			m_context->getBindlessBuffersSetLayout()
-		};
-
-		VkPushConstantRange pcr = {};
-		pcr.offset = 0;
-		pcr.size = 4 * sizeof(float);
-		pcr.stageFlags = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT;
-
-		VkPipelineLayoutCreateInfo lci = {};
-		lci.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
-		lci.setLayoutCount = sizeof_array(setLayouts);
-		lci.pSetLayouts = setLayouts;
-		lci.pushConstantRangeCount = 0;
-		lci.pPushConstantRanges = nullptr;
-
-		if (useTargetSize)
-		{
-			lci.pushConstantRangeCount = 1;
-			lci.pPushConstantRanges = &pcr;
-		}
-
-		if (vkCreatePipelineLayout(m_context->getLogicalDevice(), &lci, nullptr, &outPipelineLayout) != VK_SUCCESS)
-			return false;
-
-		auto& entry = m_entries[pipelineHash];
-		entry.descriptorSetLayout = outDescriptorSetLayout;
-		entry.pipelineLayout = outPipelineLayout;
-#if defined(_DEBUG)
-		entry.debug = describe(dlci);
-#endif
-		return true;
+		lci.pushConstantRangeCount = 1;
+		lci.pPushConstantRanges = &pcr;
 	}
+
+	if (vkCreatePipelineLayout(m_context->getLogicalDevice(), &lci, nullptr, &outPipelineLayout) != VK_SUCCESS)
+	{
+		vkDestroyDescriptorSetLayout(m_context->getLogicalDevice(), outDescriptorSetLayout, 0);
+		return false;
+	}
+
+	auto& entry = entries.push_back();
+	entry.bindings.insert(entry.bindings.end(), dlci.pBindings, dlci.pBindings + dlci.bindingCount);
+	entry.useTargetSize = useTargetSize;
+	entry.descriptorSetLayout = outDescriptorSetLayout;
+	entry.pipelineLayout = outPipelineLayout;
+	return true;
 }
 
 VkSampler PipelineLayoutCache::getSampler(const VkSamplerCreateInfo& sci)

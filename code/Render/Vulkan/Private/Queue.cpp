@@ -1,14 +1,14 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include "Core/Containers/StaticVector.h"
+#include "Core/Misc/AutoPtr.h"
 #include "Core/Thread/Acquire.h"
-#include "Core/Thread/ThreadLocal.h"
 #include "Render/Vulkan/Private/ApiLoader.h"
 #include "Render/Vulkan/Private/Context.h"
 #include "Render/Vulkan/Private/CommandBuffer.h"
@@ -17,57 +17,60 @@
 
 namespace traktor::render
 {
-	namespace
-	{
-
-ThreadLocal s_commandPools;
-
-VkCommandPool getCommandPool(VkDevice logicalDevice, uint32_t queueIndex)
-{
-	VkCommandPool* commandPools = (VkCommandPool*)s_commandPools.get();
-	if (!commandPools)
-	{
-		commandPools = new VkCommandPool[32];
-		for (int32_t i = 0; i < 32; ++i)
-			commandPools[i] = 0;
-		s_commandPools.set(commandPools);
-	}
-	T_FATAL_ASSERT(queueIndex < 32);
-	if (commandPools[queueIndex] == 0)
-	{
-		const VkCommandPoolCreateInfo cpci =
-		{
-			.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO,
-			.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT | VK_COMMAND_POOL_CREATE_TRANSIENT_BIT,
-			.queueFamilyIndex = queueIndex
-		};
-		VkCommandPool commandPool;
-		if (vkCreateCommandPool(logicalDevice, &cpci, 0, &commandPool) != VK_SUCCESS)
-			return 0;
-		commandPools[queueIndex] = commandPool;
-	}
-	return commandPools[queueIndex];
-}
-
-	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.Queue", Queue, Object)
 
+Queue::~Queue()
+{
+	// Destroying a pool implicitly frees any command buffer still allocated from it.
+	for (const auto& it : m_commandPools)
+		vkDestroyCommandPool(m_context->getLogicalDevice(), it.second, nullptr);
+	m_commandPools.clear();
+}
+
 Ref< Queue > Queue::create(Context* context, uint32_t queueIndex)
 {
+	uint32_t queueFamilyCount = 0;
+	vkGetPhysicalDeviceQueueFamilyProperties(context->getPhysicalDevice(), &queueFamilyCount, nullptr);
+
+	AutoArrayPtr< VkQueueFamilyProperties > queueFamilyProperties(new VkQueueFamilyProperties[queueFamilyCount]);
+	vkGetPhysicalDeviceQueueFamilyProperties(context->getPhysicalDevice(), &queueFamilyCount, queueFamilyProperties.ptr());
+
+	const VkQueueFlags queueFlags = (queueIndex < queueFamilyCount) ? queueFamilyProperties[queueIndex].queueFlags : 0;
+
 	VkQueue queue;
 	vkGetDeviceQueue(context->getLogicalDevice(), queueIndex, 0, &queue);
-	return new Queue(context, queue, queueIndex);
+	return new Queue(context, queue, queueIndex, queueFlags);
 }
 
 Ref< CommandBuffer > Queue::acquireCommandBuffer(const wchar_t* const tag)
+{
+	// Command pools require external synchronization, thus every thread records from a pool of its own.
+	VkCommandPool commandPool = 0;
+	{
+		T_ANONYMOUS_VAR(Acquire< CriticalSection >)(m_commandPoolsLock);
+		const std::thread::id threadId = std::this_thread::get_id();
+		auto it = m_commandPools.find(threadId);
+		if (it != m_commandPools.end())
+			commandPool = it->second;
+		else
+		{
+			if ((commandPool = createCommandPool()) == 0)
+				return nullptr;
+			m_commandPools.insert(threadId, commandPool);
+		}
+	}
+	return acquireCommandBuffer(tag, commandPool);
+}
+
+Ref< CommandBuffer > Queue::acquireCommandBuffer(const wchar_t* const tag, VkCommandPool commandPool)
 {
 	VkCommandBuffer commandBuffer = 0;
 
 	const VkCommandBufferAllocateInfo cbai =
 	{
 		.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
-		.commandPool = getCommandPool(m_context->getLogicalDevice(), m_queueIndex),
+		.commandPool = commandPool,
 		.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY,
 		.commandBufferCount = 1
 	};
@@ -82,19 +85,31 @@ Ref< CommandBuffer > Queue::acquireCommandBuffer(const wchar_t* const tag)
 		.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT
 	};
 	if (vkBeginCommandBuffer(commandBuffer, &cbbi) != VK_SUCCESS)
+	{
+		vkFreeCommandBuffers(m_context->getLogicalDevice(), commandPool, 1, &commandBuffer);
 		return nullptr;
+	}
 
-	return new CommandBuffer(m_context, this, cbai.commandPool, commandBuffer);
+	return new CommandBuffer(m_context, this, commandPool, commandBuffer);
+}
+
+VkCommandPool Queue::createCommandPool() const
+{
+	const VkCommandPoolCreateInfo cpci =
+	{
+		.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO,
+		.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT | VK_COMMAND_POOL_CREATE_TRANSIENT_BIT,
+		.queueFamilyIndex = m_queueIndex
+	};
+	VkCommandPool commandPool = 0;
+	if (vkCreateCommandPool(m_context->getLogicalDevice(), &cpci, nullptr, &commandPool) != VK_SUCCESS)
+		return 0;
+	return commandPool;
 }
 
 VkResult Queue::submit(const VkSubmitInfo& si, VkFence fence)
 {
-	// Uploads are submitted to the graphics queue and other work is no longer held back
-	// until they have been consumed; work on any other queue might consume uploaded
-	// resources thus has to wait for uploads submitted ahead of it. Uploads are dequeued,
-	// recorded and submitted with the graphics queue held, reading the value with it held
-	// thus ensures every dequeued upload has also been submitted and is waited upon here.
-	// \sa Context::performUploads
+	// Work on other queues might use uploaded resources, thus waits for uploads; the value is guarded by the graphics queue.
 	uint64_t uploadValue = 0;
 	Queue* graphicsQueue = m_context->getGraphicsQueue();
 	if (graphicsQueue != this)
@@ -113,8 +128,7 @@ VkResult Queue::submit(const VkSubmitInfo& si, VkFence fence)
 		return result;
 	}
 
-	// Append a wait on the upload timeline to the waits of the submission; the timeline
-	// submit info, if any, must be amended as it has to cover every wait.
+	// Append a wait on the upload timeline; the timeline submit info, if any, is amended to cover every wait.
 	const VkTimelineSemaphoreSubmitInfo* tsi = nullptr;
 	for (const VkBaseInStructure* it = (const VkBaseInStructure*)si.pNext; it != nullptr; it = it->pNext)
 	{
@@ -164,10 +178,11 @@ VkResult Queue::present(const VkPresentInfoKHR& pi)
 	return result;
 }
 
-Queue::Queue(Context* context, VkQueue queue, uint32_t queueIndex)
+Queue::Queue(Context* context, VkQueue queue, uint32_t queueIndex, VkQueueFlags queueFlags)
 :	m_context(context)
 ,	m_queue(queue)
 ,	m_queueIndex(queueIndex)
+,	m_queueFlags(queueFlags)
 {
 }
 

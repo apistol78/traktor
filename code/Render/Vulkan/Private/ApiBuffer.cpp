@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -30,48 +30,31 @@ ApiBuffer::~ApiBuffer()
 
 bool ApiBuffer::create(uint32_t bufferSize, uint32_t usageBits, bool cpuAccess, bool gpuAccess, bool concurrent)
 {
-	T_FATAL_ASSERT(m_buffer == 0);
-	T_FATAL_ASSERT(bufferSize > 0);
-
-	VkBufferCreateInfo bci{ VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO };
-	bci.size = bufferSize;
-	bci.usage = usageBits;
-	bci.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
-
-	// When a dedicated (asynchronous) compute queue family is in use, buffers may be
-	// accessed from both the graphics and compute families. Use concurrent sharing so no
-	// explicit queue family ownership transfer is required between them. (The concurrent
-	// argument is retained for callers but sharing is decided by the queue topology.)
-	(void)concurrent;
-	const uint32_t queueFamilyIndices[] = {
-		m_context->getGraphicsQueue()->getQueueIndex(),
-		m_context->getComputeQueue()->getQueueIndex()
-	};
-	if (queueFamilyIndices[0] != queueFamilyIndices[1])
-	{
-		bci.sharingMode = VK_SHARING_MODE_CONCURRENT;
-		bci.queueFamilyIndexCount = sizeof_array(queueFamilyIndices);
-		bci.pQueueFamilyIndices = queueFamilyIndices;
-	}
-
 	VmaAllocationCreateInfo aci = {};
-    if (cpuAccess && gpuAccess)
+	if (cpuAccess && gpuAccess)
 	{
-	    aci.usage = VMA_MEMORY_USAGE_CPU_TO_GPU;
+		aci.usage = VMA_MEMORY_USAGE_CPU_TO_GPU;
 		aci.requiredFlags = VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;
 	}
-    else if (!cpuAccess && gpuAccess)
-        aci.usage = VMA_MEMORY_USAGE_GPU_ONLY;
-    else if (cpuAccess && !gpuAccess)
-        aci.usage = VMA_MEMORY_USAGE_CPU_ONLY;
-    else
-        return false;
-
-	if (vmaCreateBuffer(m_context->getAllocator(), &bci, &aci, &m_buffer, &m_allocation, nullptr) != VK_SUCCESS)
+	else if (!cpuAccess && gpuAccess)
+		aci.usage = VMA_MEMORY_USAGE_GPU_ONLY;
+	else if (cpuAccess && !gpuAccess)
+		aci.usage = VMA_MEMORY_USAGE_CPU_ONLY;
+	else
 		return false;
 
-	m_bufferSize = bufferSize;
-    return true;
+	(void)concurrent;
+	return create(bufferSize, usageBits, aci);
+}
+
+bool ApiBuffer::createReadBack(uint32_t bufferSize, uint32_t usageBits)
+{
+	// Read by the CPU; prefer host cached memory as write-combined memory is slow to read.
+	VmaAllocationCreateInfo aci = {};
+	aci.usage = VMA_MEMORY_USAGE_GPU_TO_CPU;
+	aci.requiredFlags = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;
+	aci.preferredFlags = VK_MEMORY_PROPERTY_HOST_CACHED_BIT;
+	return create(bufferSize, usageBits, aci);
 }
 
 void ApiBuffer::destroy()
@@ -144,15 +127,37 @@ uint32_t ApiBuffer::makeResourceIndex() const
 		.pBufferInfo = &bufferInfo
 	};
 
-	vkUpdateDescriptorSets(
-		m_context->getLogicalDevice(),
-		1,
-		&write,
-		0,
-		nullptr
-	);
-
+	m_context->updateBindlessDescriptors(&write, 1);
 	return m_resourceIndex;
+}
+
+bool ApiBuffer::create(uint32_t bufferSize, uint32_t usageBits, const VmaAllocationCreateInfo& aci)
+{
+	T_FATAL_ASSERT(m_buffer == 0);
+	T_FATAL_ASSERT(bufferSize > 0);
+
+	VkBufferCreateInfo bci{ VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO };
+	bci.size = bufferSize;
+	bci.usage = usageBits;
+	bci.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+
+	// Accessed from both graphics and compute families; concurrent sharing needs no ownership transfers.
+	const uint32_t queueFamilyIndices[] = {
+		m_context->getGraphicsQueue()->getQueueIndex(),
+		m_context->getComputeQueue()->getQueueIndex()
+	};
+	if (queueFamilyIndices[0] != queueFamilyIndices[1])
+	{
+		bci.sharingMode = VK_SHARING_MODE_CONCURRENT;
+		bci.queueFamilyIndexCount = sizeof_array(queueFamilyIndices);
+		bci.pQueueFamilyIndices = queueFamilyIndices;
+	}
+
+	if (vmaCreateBuffer(m_context->getAllocator(), &bci, &aci, &m_buffer, &m_allocation, nullptr) != VK_SUCCESS)
+		return false;
+
+	m_bufferSize = bufferSize;
+	return true;
 }
 
 }

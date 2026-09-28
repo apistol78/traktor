@@ -1,0 +1,1906 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>Traktor Vulkan Renderer</title>
+<style>
+:root {
+	color-scheme: light;
+	--paper: #f3f6f7;
+	--surface: #ffffff;
+	--surface-2: #edf2f4;
+	--ink: #14232a;
+	--ink-2: #3c5058;
+	--muted: #647880;
+	--rule: #d2dce0;
+	--rule-strong: #b4c3c9;
+	--accent: #006680;
+	--accent-soft: #e0eff3;
+	--code-bg: #e8eff1;
+	--cpu: #5b6d75;
+	--cpu-fill: #e2e9ec;
+	--stall: #c0392f;
+	--stall-fill: #fbeae8;
+	--gfx: #2c63c6;
+	--gfx-fill: #dde7fa;
+	--old: #8aa1c9;
+	--old-fill: #f0f3f9;
+	--cmp: #0e8347;
+	--cmp-fill: #d8f0e2;
+	--upl: #a3620a;
+	--upl-fill: #fbecd4;
+	--prs: #7446be;
+	--prs-fill: #ece3f8;
+	--hazard: #b3261e;
+	--hazard-bg: #fbe7e5;
+	--warn: #8d5a00;
+	--warn-bg: #fbf0dc;
+	--info: #1f5d8c;
+	--info-bg: #e3eef8;
+	--font-display: "Bahnschrift", "DIN Alternate", "Barlow", "Roboto Condensed", "Segoe UI", system-ui, sans-serif;
+	--font-text: "Segoe UI Variable Text", "Segoe UI", system-ui, -apple-system, "Helvetica Neue", "Noto Sans", Arial, sans-serif;
+	--font-mono: "Cascadia Mono", "Cascadia Code", "JetBrains Mono", "SF Mono", Consolas, "DejaVu Sans Mono", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+	:root:not([data-theme="light"]) {
+		color-scheme: dark;
+		--paper: #0e1417;
+		--surface: #141c20;
+		--surface-2: #1a252a;
+		--ink: #e1e9ec;
+		--ink-2: #b0c1c7;
+		--muted: #8a9da5;
+		--rule: #283840;
+		--rule-strong: #3a4d55;
+		--accent: #54bcd4;
+		--accent-soft: #123039;
+		--code-bg: #1b272c;
+		--cpu: #94a7ae;
+		--cpu-fill: #23313a;
+		--stall: #ff7b6e;
+		--stall-fill: #3a1d1b;
+		--gfx: #7ea8ff;
+		--gfx-fill: #1b2b4a;
+		--old: #56698d;
+		--old-fill: #161e2c;
+		--cmp: #52cf8c;
+		--cmp-fill: #163426;
+		--upl: #eeb257;
+		--upl-fill: #372912;
+		--prs: #b699f3;
+		--prs-fill: #2a2140;
+		--hazard: #ff8a80;
+		--hazard-bg: #3a1b1a;
+		--warn: #f0bf66;
+		--warn-bg: #33270f;
+		--info: #8ec3ee;
+		--info-bg: #14283a;
+	}
+}
+:root[data-theme="dark"] {
+	color-scheme: dark;
+	--paper: #0e1417;
+	--surface: #141c20;
+	--surface-2: #1a252a;
+	--ink: #e1e9ec;
+	--ink-2: #b0c1c7;
+	--muted: #8a9da5;
+	--rule: #283840;
+	--rule-strong: #3a4d55;
+	--accent: #54bcd4;
+	--accent-soft: #123039;
+	--code-bg: #1b272c;
+	--cpu: #94a7ae;
+	--cpu-fill: #23313a;
+	--stall: #ff7b6e;
+	--stall-fill: #3a1d1b;
+	--gfx: #7ea8ff;
+	--gfx-fill: #1b2b4a;
+	--old: #56698d;
+	--old-fill: #161e2c;
+	--cmp: #52cf8c;
+	--cmp-fill: #163426;
+	--upl: #eeb257;
+	--upl-fill: #372912;
+	--prs: #b699f3;
+	--prs-fill: #2a2140;
+	--hazard: #ff8a80;
+	--hazard-bg: #3a1b1a;
+	--warn: #f0bf66;
+	--warn-bg: #33270f;
+	--info: #8ec3ee;
+	--info-bg: #14283a;
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+	margin: 0;
+	background: var(--paper);
+	color: var(--ink);
+	font: 16px/1.6 var(--font-text);
+}
+a { color: var(--accent); text-underline-offset: 2px; }
+a:focus-visible, summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 2px; }
+code { font-family: var(--font-mono); font-size: .86em; }
+p code, li code, dd code, figcaption code, .note code, h3 code {
+	background: var(--code-bg);
+	padding: .06em .32em;
+	border-radius: 3px;
+	overflow-wrap: anywhere;
+}
+td code { overflow-wrap: anywhere; }
+
+.wrap { max-width: 86rem; margin-inline: auto; padding-inline: 24px; }
+@media (max-width: 520px) { .wrap { padding-inline: 16px; } }
+
+/* Masthead */
+.masthead { background: var(--surface); border-bottom: 1px solid var(--rule); }
+.masthead .wrap { padding-block: 40px 30px; }
+.eyebrow {
+	margin: 0 0 14px;
+	font: 600 .76rem/1.2 var(--font-text);
+	letter-spacing: .09em;
+	text-transform: uppercase;
+	color: var(--accent);
+}
+.eyebrow code { font-size: 1em; text-transform: none; letter-spacing: 0; background: none; padding: 0; }
+h1 {
+	margin: 0;
+	font-family: var(--font-display);
+	font-weight: 600;
+	font-size: clamp(2rem, 4.4vw, 3rem);
+	line-height: 1.08;
+	letter-spacing: -.005em;
+	text-wrap: balance;
+}
+.lede { margin: 14px 0 0; max-width: 46rem; font-size: 1.14rem; color: var(--ink-2); }
+.meta { margin: 14px 0 0; max-width: 46rem; font-size: .85rem; color: var(--muted); }
+
+/* Layout */
+.layout {
+	display: grid;
+	grid-template-columns: 15rem minmax(0, 1fr);
+	gap: 56px;
+	align-items: start;
+	padding-block: 32px 72px;
+}
+.toc {
+	position: sticky;
+	top: 16px;
+	max-height: calc(100vh - 32px);
+	overflow-y: auto;
+	font-size: .9rem;
+}
+.toc summary {
+	cursor: pointer;
+	padding-block: 4px;
+	font: 600 .76rem/1.2 var(--font-text);
+	letter-spacing: .09em;
+	text-transform: uppercase;
+	color: var(--muted);
+}
+.toc ol { list-style: none; margin: 10px 0 0; padding: 0; display: grid; gap: 1px; }
+.toc a {
+	display: grid;
+	grid-template-columns: 1.7rem 1fr;
+	gap: 4px;
+	padding: 4px 8px;
+	border-radius: 4px;
+	color: var(--ink-2);
+	text-decoration: none;
+}
+.toc a:hover { background: var(--surface-2); color: var(--ink); }
+.toc .n { font-family: var(--font-mono); font-size: .82em; color: var(--muted); padding-top: .12em; }
+main.doc { min-width: 0; max-width: 64rem; }
+@media (max-width: 1080px) {
+	.layout { grid-template-columns: minmax(0, 1fr); gap: 24px; }
+	.toc { position: static; max-height: none; background: var(--surface); border: 1px solid var(--rule); border-radius: 6px; padding: 10px 14px; }
+}
+
+/* Text */
+.doc section { border-top: 1px solid var(--rule); margin-top: 28px; padding-top: 6px; }
+.doc section:first-of-type { border-top: 0; margin-top: 0; padding-top: 0; }
+h2 {
+	display: flex;
+	gap: 14px;
+	align-items: baseline;
+	margin: 22px 0 12px;
+	font-family: var(--font-display);
+	font-weight: 600;
+	font-size: 1.7rem;
+	line-height: 1.2;
+	text-wrap: balance;
+}
+h2 .n { min-width: 1.7rem; font-family: var(--font-mono); font-size: .88rem; font-weight: 600; color: var(--accent); }
+h3 { margin: 28px 0 8px; font-family: var(--font-display); font-weight: 600; font-size: 1.18rem; line-height: 1.3; text-wrap: balance; }
+.doc p, .doc ul, .doc ol { max-width: 46rem; }
+.doc p { margin: 0 0 14px; }
+.doc ul, .doc ol { margin: 0 0 16px; padding-left: 1.35rem; }
+.doc li { margin: 5px 0; }
+ol.steps > li::marker { font-family: var(--font-mono); font-weight: 600; color: var(--accent); }
+
+/* At a glance */
+.glance {
+	display: grid;
+	grid-template-columns: 11.5rem minmax(0, 1fr);
+	max-width: 54rem;
+	margin: 18px 0 22px;
+	border-top: 1px solid var(--rule);
+}
+.glance dt, .glance dd { margin: 0; padding: 10px 0; border-bottom: 1px solid var(--rule); }
+.glance dt { padding-right: 16px; font-weight: 600; }
+.glance dd { color: var(--ink-2); }
+@media (max-width: 620px) {
+	.glance { grid-template-columns: minmax(0, 1fr); }
+	.glance dt { border-bottom: 0; padding-bottom: 0; }
+}
+
+/* Notes */
+.note {
+	max-width: 46rem;
+	margin: 18px 0;
+	padding: 12px 16px;
+	background: var(--surface);
+	border: 1px solid var(--rule-strong);
+	border-radius: 6px;
+}
+.note p { margin: 0 0 8px; }
+.note p:last-child { margin-bottom: 0; }
+.tag {
+	display: inline-block;
+	margin-bottom: 8px;
+	padding: 4px 7px;
+	border-radius: 3px;
+	font: 700 .68rem/1 var(--font-text);
+	letter-spacing: .09em;
+	text-transform: uppercase;
+}
+.note.inv .tag { background: var(--accent-soft); color: var(--accent); }
+.note.perf .tag { background: var(--warn-bg); color: var(--warn); }
+.note.beh .tag { background: var(--info-bg); color: var(--info); }
+
+/* Tables */
+.tbl { overflow-x: auto; margin: 16px 0 24px; background: var(--surface); border: 1px solid var(--rule); border-radius: 6px; }
+table { width: 100%; border-collapse: collapse; font-size: .875rem; line-height: 1.45; }
+th, td { padding: 9px 12px; text-align: left; vertical-align: top; border-bottom: 1px solid var(--rule); }
+th { background: var(--surface-2); font-weight: 600; white-space: nowrap; }
+tr:last-child td { border-bottom: 0; }
+td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+td.hot { background: var(--accent-soft); font-weight: 600; }
+tr.rule td { border-top: 2px solid var(--rule-strong); }
+table.narrow { min-width: 36rem; }
+table.wide { min-width: 52rem; }
+
+/* Figures */
+figure { margin: 22px 0 30px; }
+.fig { overflow-x: auto; padding: 14px 16px; background: var(--surface); border: 1px solid var(--rule); border-radius: 6px; }
+.fig + .fig { margin-top: 10px; }
+.fig svg.dg { min-width: 780px; }
+.fig-title { margin: 0 0 6px; font: 600 .76rem/1.3 var(--font-text); letter-spacing: .07em; text-transform: uppercase; color: var(--muted); }
+figcaption { max-width: 46rem; margin-top: 10px; font-size: .88rem; color: var(--ink-2); }
+figcaption b { color: var(--ink); font-weight: 600; }
+
+/* SVG diagram vocabulary */
+svg.dg { display: block; width: 100%; height: auto; font-family: var(--font-text); }
+.dg text { fill: var(--ink); font-size: 12px; }
+.dg .lbl { font-size: 12px; font-weight: 600; fill: var(--ink-2); }
+.dg .sm { font-size: 11px; fill: var(--ink-2); }
+.dg .fs { font-size: 11px; font-weight: 600; fill: var(--stall); }
+.dg .on { font-size: 11px; fill: var(--ink); }
+.dg .onb { font-size: 11px; font-weight: 600; fill: var(--ink); }
+.dg .tb { font-size: 12px; font-weight: 600; fill: var(--ink); }
+.dg .mono { font-family: var(--font-mono); font-size: 11px; fill: var(--ink); }
+.dg .mono13 { font-family: var(--font-mono); font-size: 13px; font-weight: 600; fill: var(--ink); }
+.dg .lane { stroke: var(--rule); stroke-width: 1; }
+.dg .grid { stroke: var(--rule); stroke-width: 1; stroke-dasharray: 3 4; }
+.dg .box { fill: var(--surface-2); stroke: var(--rule-strong); stroke-width: 1; }
+.dg .dash { stroke-dasharray: 4 3; }
+.dg .cpu { fill: var(--cpu-fill); stroke: var(--cpu); stroke-width: 1; }
+.dg .cpu-a { fill: var(--cpu-fill); stroke: var(--cmp); stroke-width: 1.4; stroke-dasharray: 4 2; }
+.dg .gfx { fill: var(--gfx-fill); stroke: var(--gfx); stroke-width: 1; }
+.dg .old { fill: var(--old-fill); stroke: var(--old); stroke-width: 1; stroke-dasharray: 3 2; }
+.dg .cmp { fill: var(--cmp-fill); stroke: var(--cmp); stroke-width: 1; }
+.dg .upl { fill: var(--upl-fill); stroke: var(--upl); stroke-width: 1; }
+.dg .prs { fill: var(--prs); stroke: var(--prs); stroke-width: 1; }
+.dg .prs-o { fill: var(--surface); stroke: var(--prs); stroke-width: 1.5; }
+.dg .blk { stroke: var(--stall); stroke-width: 1; }
+.dg .hl { stroke: var(--accent); stroke-width: 2.2; }
+.dg .hb { fill: var(--stall-fill); }
+.dg .hline { stroke: var(--stall); stroke-width: 1.6; stroke-opacity: .5; }
+.dg .sem { fill: none; stroke: var(--ink-2); stroke-width: 1.4; stroke-dasharray: 5 3; }
+.dg .fen { fill: none; stroke: var(--stall); stroke-width: 1.7; stroke-dasharray: 2 3; }
+.dg .flow { fill: none; stroke: var(--ink-2); stroke-width: 1.2; }
+.dg .tick { fill: none; stroke: var(--ink-2); stroke-width: 1; }
+.dg .mk { fill: var(--ink-2); }
+.dg .mkf { fill: var(--stall); }
+.dg .dot-p { fill: var(--prs); }
+.dg .dot-s { fill: var(--stall); }
+.dg .sq { fill: var(--accent); }
+.dg .sq-o { fill: var(--surface); stroke: var(--accent); stroke-width: 1.5; }
+
+/* Legend */
+.legend {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px 20px;
+	margin: 12px 0 8px;
+	padding: 10px 14px;
+	font-size: .84rem;
+	color: var(--ink-2);
+	background: var(--surface);
+	border: 1px solid var(--rule);
+	border-radius: 6px;
+}
+.legend span { display: inline-flex; align-items: center; gap: 8px; }
+.legend svg { width: 30px; height: 14px; flex: none; }
+
+/* Ownership map (figure 2) */
+.own { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.own-wide { grid-column: 1 / -1; }
+.own-box { padding: 12px 14px; background: var(--surface); border: 1px solid var(--rule-strong); border-radius: 6px; }
+.own-box .own-box { margin-top: 10px; background: var(--surface-2); border-color: var(--rule); }
+.own-title { margin: 0; font-family: var(--font-mono); font-size: .9rem; font-weight: 600; }
+.own-title span { margin-left: .5em; font-family: var(--font-text); font-size: .8rem; font-weight: 400; color: var(--muted); }
+.own ul { margin: 6px 0 0; padding-left: 1.1rem; font-size: .85rem; color: var(--ink-2); }
+.own li { margin: 2px 0; }
+.own-res { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-top: 8px; }
+.own-res div { padding: 8px 10px; font-size: .84rem; color: var(--ink-2); background: var(--surface-2); border: 1px solid var(--rule); border-radius: 4px; }
+.own-res b { display: block; font-family: var(--font-mono); font-size: .84rem; color: var(--ink); }
+@media (max-width: 760px) {
+	.own { grid-template-columns: minmax(0, 1fr); }
+	.own-res { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* Observations */
+.obs { list-style: none; margin: 16px 0; padding: 0; display: grid; gap: 12px; max-width: 54rem; }
+.obs > li { margin: 0; padding: 12px 16px; background: var(--surface); border: 1px solid var(--rule); border-radius: 6px; }
+.obs h4 { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 0 0 6px; font-family: var(--font-text); font-size: 1rem; font-weight: 600; }
+.obs p { margin: 0 0 6px; }
+.obs .where { margin: 6px 0 0; font-size: .82rem; color: var(--muted); }
+.chip { padding: 4px 7px; border-radius: 3px; font: 700 .66rem/1 var(--font-text); letter-spacing: .08em; text-transform: uppercase; }
+.chip.hz { background: var(--hazard-bg); color: var(--hazard); }
+.chip.lt { background: var(--warn-bg); color: var(--warn); }
+.chip.pf { background: var(--info-bg); color: var(--info); }
+.chip.mn { background: var(--surface-2); color: var(--muted); }
+.chip.ok { background: var(--cmp-fill); color: var(--cmp); }
+.chip.kp { background: var(--accent-soft); color: var(--accent); }
+.obs .fix { margin: 8px 0 0; padding-top: 8px; border-top: 1px dashed var(--rule); }
+.obs .fix b { color: var(--cmp); font-weight: 600; }
+.obs .kept b { color: var(--accent); }
+
+footer { border-top: 1px solid var(--rule); color: var(--muted); font-size: .85rem; }
+footer .wrap { padding-block: 20px 36px; }
+
+@media print {
+	.toc { display: none; }
+	.layout { display: block; }
+	body { background: #fff; }
+	.fig, .tbl, .note, .obs > li { break-inside: avoid; }
+}
+</style>
+</head>
+<body>
+
+<header class="masthead">
+	<div class="wrap">
+		<p class="eyebrow">Traktor engine · <code>code/Render/Vulkan</code></p>
+		<h1>Traktor Vulkan Renderer</h1>
+		<p class="lede">How the Vulkan backend brings up the device, records and submits frames, keeps the graphics and asynchronous compute queues in step, uploads and retires resources, and measures GPU time.</p>
+		<p class="meta">Describes <code>master</code> at <code>1a6d0f625</code> (27 September 2026). Paths are relative to the repository root. References name classes and functions rather than line numbers, so they stay valid as the files change.</p>
+	</div>
+</header>
+
+<div class="wrap layout">
+
+<nav class="toc" aria-label="Contents">
+	<details open>
+		<summary>Contents</summary>
+		<ol>
+			<li><a href="#overview"><span class="n">1</span><span>Overview</span></a></li>
+			<li><a href="#architecture"><span class="n">2</span><span>Architecture and ownership</span></a></li>
+			<li><a href="#bringup"><span class="n">3</span><span>Device and view bring-up</span></a></li>
+			<li><a href="#queues"><span class="n">4</span><span>Queues and command buffers</span></a></li>
+			<li><a href="#sync"><span class="n">5</span><span>Synchronization primitives</span></a></li>
+			<li><a href="#frame"><span class="n">6</span><span>The frame loop</span></a></li>
+			<li><a href="#async"><span class="n">7</span><span>Asynchronous compute</span></a></li>
+			<li><a href="#uploads"><span class="n">8</span><span>Resource uploads</span></a></li>
+			<li><a href="#cleanup"><span class="n">9</span><span>Destruction and cleanup</span></a></li>
+			<li><a href="#memory"><span class="n">10</span><span>Memory, descriptors, uniforms</span></a></li>
+			<li><a href="#pipelines"><span class="n">11</span><span>Pipelines and render passes</span></a></li>
+			<li><a href="#layouts"><span class="n">12</span><span>Image layouts and barriers</span></a></li>
+			<li><a href="#timers"><span class="n">13</span><span>GPU timers</span></a></li>
+			<li><a href="#threads"><span class="n">14</span><span>Threads and locks</span></a></li>
+			<li><a href="#debugging"><span class="n">15</span><span>Debugging aids</span></a></li>
+			<li><a href="#observations"><span class="n">16</span><span>Observations</span></a></li>
+			<li><a href="#sources"><span class="n">A</span><span>Source map</span></a></li>
+		</ol>
+	</details>
+</nav>
+
+<main class="doc">
+
+<!-- ============================================================ 1 -->
+<section id="overview">
+<h2><span class="n">1</span>Overview</h2>
+
+<p>The Vulkan backend implements <code>IRenderSystem</code> as <code>RenderSystemVk</code> and <code>IRenderView</code> as <code>RenderViewVk</code>. Nothing above those two classes sees Vulkan. On the build thread the render graph turns passes into render blocks inside a <code>RenderContext</code>. The render thread replays those blocks against the view, and each block becomes a few calls such as <code>beginPass</code>, <code>draw</code>, <code>compute</code>, <code>barrier</code> or <code>waitAsynchronousCompute</code>. The view records the calls into per-frame command buffers and submits them.</p>
+
+<figure>
+	<div class="fig">
+		<svg class="dg" viewBox="0 0 990 116" role="img" aria-label="Call path. On the build thread RenderGraph::build fills a RenderContext with render blocks. On the render thread RenderContext::render replays each RenderBlock, which calls RenderViewVk; the view records into CommandBuffer objects that are submitted through Queue.">
+			<defs>
+				<marker id="f1a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="mk"/></marker>
+			</defs>
+			<text x="15" y="16" class="lbl">Build thread</text>
+			<text x="104" y="16" class="sm">runtime: main thread</text>
+			<path d="M15,30 V25 H305 V30" class="tick"/>
+			<text x="355" y="16" class="lbl">Render thread</text>
+			<text x="452" y="16" class="sm">runtime: Application::threadRender · editor: the UI thread</text>
+			<path d="M355,30 V25 H985 V30" class="tick"/>
+
+			<rect x="15" y="44" width="120" height="60" rx="4" class="box"/>
+			<text x="75" y="70" text-anchor="middle" class="tb">RenderGraph</text>
+			<text x="75" y="88" text-anchor="middle" class="mono">build()</text>
+			<rect x="185" y="44" width="120" height="60" rx="4" class="box"/>
+			<text x="245" y="70" text-anchor="middle" class="tb">RenderContext</text>
+			<text x="245" y="88" text-anchor="middle" class="mono">render blocks</text>
+			<rect x="355" y="44" width="120" height="60" rx="4" class="box"/>
+			<text x="415" y="70" text-anchor="middle" class="tb">RenderBlock</text>
+			<text x="415" y="88" text-anchor="middle" class="mono">render()</text>
+			<rect x="525" y="44" width="120" height="60" rx="4" class="box"/>
+			<text x="585" y="70" text-anchor="middle" class="tb">RenderViewVk</text>
+			<text x="585" y="88" text-anchor="middle" class="mono">IRenderView</text>
+			<rect x="695" y="44" width="120" height="60" rx="4" class="box"/>
+			<text x="755" y="70" text-anchor="middle" class="tb">CommandBuffer</text>
+			<text x="755" y="88" text-anchor="middle" class="mono">vkCmd*</text>
+			<rect x="865" y="44" width="120" height="60" rx="4" class="box"/>
+			<text x="925" y="70" text-anchor="middle" class="tb">Queue</text>
+			<text x="925" y="88" text-anchor="middle" class="mono">vkQueueSubmit</text>
+
+			<line x1="139" y1="74" x2="181" y2="74" class="flow" marker-end="url(#f1a)"/>
+			<text x="160" y="66" text-anchor="middle" class="sm">fills</text>
+			<line x1="309" y1="74" x2="351" y2="74" class="flow" marker-end="url(#f1a)"/>
+			<text x="330" y="66" text-anchor="middle" class="sm">replays</text>
+			<line x1="479" y1="74" x2="521" y2="74" class="flow" marker-end="url(#f1a)"/>
+			<text x="500" y="66" text-anchor="middle" class="sm">calls</text>
+			<line x1="649" y1="74" x2="691" y2="74" class="flow" marker-end="url(#f1a)"/>
+			<text x="670" y="66" text-anchor="middle" class="sm">records</text>
+			<line x1="819" y1="74" x2="861" y2="74" class="flow" marker-end="url(#f1a)"/>
+			<text x="840" y="66" text-anchor="middle" class="sm">submits</text>
+		</svg>
+	</div>
+	<figcaption><b>Figure 1.</b> Where the backend sits. In the runtime the build thread fills one of two render contexts while the render thread replays the other. Editor render controls build and render back to back on the UI thread, so there the UI thread is the render thread.</figcaption>
+</figure>
+
+<h3>At a glance</h3>
+<dl class="glance">
+	<dt>API level</dt>
+	<dd>Vulkan 1.2 instance and device. Shaders are GLSL, compiled offline by glslang to SPIR-V 1.5 and optimized with spirv-tools (<code>ProgramCompilerVk</code>, editor only).</dd>
+	<dt>Queues</dt>
+	<dd>One graphics queue, plus one queue from a compute-only family when the device has one. Without such a family, "asynchronous" work goes to the graphics queue. Presentation uses the graphics queue unless the surface needs another family.</dd>
+	<dt>Frames in flight</dt>
+	<dd>One <code>Frame</code> slot per swap chain image; three images are requested. The acquired image index selects the slot, and <code>beginFrame</code> blocks only on that slot's previous submissions.</dd>
+	<dt>Command buffers</dt>
+	<dd>Primary and one-time-submit, allocated from transient pools that each <code>Queue</code> keeps per thread; uploads have a pool of their own. Every <code>CommandBuffer</code> owns one fence.</dd>
+	<dt>Cross-queue sync</dt>
+	<dd>A timeline semaphore per view orders asynchronous compute before graphics; a timeline semaphore per device orders uploads before work on other queues. Binary semaphores handle acquire and present.</dd>
+	<dt>Uploads</dt>
+	<dd>Deferred lambdas are recorded into one command buffer on the graphics queue, normally at <code>endFrame</code>. The CPU does not wait for it: the command buffer is released once its epoch has completed, and work on other queues waits on the upload timeline instead.</dd>
+	<dt>Destruction</dt>
+	<dd>Two fences in series. The <code>ResourceMorgue</code> keeps a released object for three frames on the CPU; then <code>Context</code> defers the Vulkan destroy until the GPU has consumed every submission that could still use it.</dd>
+	<dt>Binding model</dt>
+	<dd>A per-program descriptor set 0 (dynamic uniform buffers, samplers, non-bindless images, storage buffers, acceleration structures) plus three global bindless sets of 16536 entries each, allocated from a pool of their own.</dd>
+	<dt>Uniforms</dt>
+	<dd>Three pools by update frequency (Once, Frame, Draw) hand out fixed-size blocks in persistently mapped buffers; they are bound with dynamic offsets. A released block is reused once the submissions issued before its release have completed.</dd>
+	<dt>Passes and pipelines</dt>
+	<dd>Classic <code>VkRenderPass</code> and <code>VkFramebuffer</code> objects, created on demand and cached; render passes are shared by all views. Pipelines are created at first use, keyed by render pass handle, and kept in a <code>VkPipelineCache</code> that is saved to disk.</dd>
+	<dt>Image layouts</dt>
+	<dd>Tracked on the CPU per mip and layer. Each transition's barrier is derived from the old and the new layout.</dd>
+	<dt>GPU timers</dt>
+	<dd>Timestamp queries in one 4096-query segment per frame slot. Results are read when the slot comes round again.</dd>
+</dl>
+
+<h3>Rules the backend relies on</h3>
+<p>These come up again in the sections that explain them; they are listed here because code outside <code>code/Render/Vulkan</code> has to follow them.</p>
+<ol class="steps">
+	<li>Record and submit a view only from the thread that rendered its first frame (<a href="#threads">§14</a>).</li>
+	<li>Anything that submits frame work before <code>endFrame</code> calls <code>Context::performUploads</code> first (<a href="#uploads">§8</a>).</li>
+	<li>Code that records into a view's command buffers directly, such as a render plugin, calls <code>RenderViewVk::invalidateBindings</code> afterwards (<a href="#queues">§4</a>).</li>
+	<li>A resource that the CPU or the asynchronous queue rewrites every frame while graphics reads it must be ring-buffered deeper than the frames in flight (<a href="#frame">§6</a>, <a href="#async">§7</a>).</li>
+	<li>A resource whose Vulkan handle changes between frames must be part of <code>ProgramVk</code>'s descriptor-set key (<a href="#memory">§10</a>).</li>
+	<li>Vulkan handles are released only through <code>Context::addDeferredCleanup</code>; a resource's <code>destroy()</code> never frees GPU objects itself (<a href="#cleanup">§9</a>).</li>
+	<li>Asynchronous compute passes never consume graphics output from the same frame (<a href="#async">§7</a>).</li>
+	<li>GPU results are read through <code>BuReadBack</code> buffers with the caller's own sentinel and ring; nothing fences a read-back (<a href="#memory">§10</a>).</li>
+	<li>Time query results are one slot rotation old, so a frame must issue its queries in the same order every time (<a href="#timers">§13</a>).</li>
+</ol>
+</section>
+
+<!-- ============================================================ 2 -->
+<section id="architecture">
+<h2><span class="n">2</span>Architecture and ownership</h2>
+
+<p><code>RenderSystemVk</code> owns the device-level objects and one <code>Context</code>. The context is shared by every view and every resource: it owns the queues, the upload and cleanup machinery, the descriptor pool and the pipeline map. Each <code>RenderViewVk</code> owns a surface, a swap chain and one <code>Frame</code> per swap chain image.</p>
+
+<figure>
+	<div class="own" role="img" aria-label="Ownership map. RenderSystemVk owns the device, VMA allocator, shader module and pipeline layout caches and the shared Context. RenderViewVk owns the surface, swap chain, semaphores, query pool and one Frame per swap chain image. Resource classes wrap ApiBuffer and Image.">
+		<div class="own-box">
+			<p class="own-title">RenderSystemVk<span>one per device</span></p>
+			<ul>
+				<li><code>VkInstance</code>, <code>VkPhysicalDevice</code>, <code>VkDevice</code>, debug messenger</li>
+				<li><code>VmaAllocator</code></li>
+				<li><code>ShaderModuleCache</code>: <code>VkShaderModule</code> by SPIR-V hash</li>
+				<li><code>PipelineLayoutCache</code>: set and pipeline layouts by layout hash, <code>VkSampler</code> by create-info hash</li>
+				<li>enabled render plugins (XeSS)</li>
+			</ul>
+			<div class="own-box">
+				<p class="own-title">Context<span>shared by every view and resource</span></p>
+				<ul>
+					<li>graphics <code>Queue</code> and compute <code>Queue</code> (the same object when the families match), each with its per-thread command pools</li>
+					<li>upload timeline semaphore, the deferred upload queue, the upload command pool and the upload command buffers in flight</li>
+					<li>deferred cleanup list and cleanup listeners (programs)</li>
+					<li>in-flight submissions with their fences (epochs)</li>
+					<li>descriptor pool for program sets; bindless pool with the three bindless sets and their index allocators</li>
+					<li>three <code>UniformBufferPool</code>s: Once, Frame, Draw</li>
+					<li><code>RenderPassCache</code>, graphics and compute <code>VkPipeline</code> maps, <code>VkPipelineCache</code></li>
+				</ul>
+			</div>
+		</div>
+		<div class="own-box">
+			<p class="own-title">RenderViewVk<span>one per window or embedded view</span></p>
+			<ul>
+				<li><code>VkSurfaceKHR</code>, <code>VkSwapchainKHR</code>, present <code>Queue</code></li>
+				<li>image-available semaphores, one per image plus a spare, and retired ones from older swap chains</li>
+				<li>timeline semaphore for asynchronous compute</li>
+				<li><code>VkQueryPool</code> with 4096 timestamps per image</li>
+				<li>window event queue, the most recently used graphics pipeline</li>
+			</ul>
+			<div class="own-box">
+				<p class="own-title">Frame × N<span>one per swap chain image</span></p>
+				<ul>
+					<li>graphics and compute <code>CommandBuffer</code></li>
+					<li>flying and spare command buffers of mid-frame splits</li>
+					<li><code>renderFinished</code> and <code>computeFinished</code> binary semaphores</li>
+					<li>primary <code>RenderTargetSetVk</code>: the swap chain image plus the shared primary depth</li>
+					<li>bind caches, asynchronous batch values, resolved timestamps</li>
+				</ul>
+			</div>
+		</div>
+		<div class="own-box own-wide">
+			<p class="own-title">Resources<span>created by RenderSystemVk::create*, any thread</span></p>
+			<div class="own-res">
+				<div><b>BufferStaticVk · BufferDynamicVk · BufferReadBackVk</b>wrap one <code>ApiBuffer</code> (<code>VkBuffer</code> + VMA allocation, lazy bindless index)</div>
+				<div><b>TextureVk · RenderTargetVk · RenderTargetDepthVk</b>wrap <code>Image</code> (<code>VkImage</code>, views, bindless indices, tracked layouts)</div>
+				<div><b>RenderTargetSetVk</b>colour and depth targets plus one cached <code>VkFramebuffer</code> per render pass</div>
+				<div><b>ProgramVk</b>uniform shadow data, uniform blocks, descriptor-set cache, samplers</div>
+				<div><b>AccelerationStructureVk</b>growing ring of <code>VkAccelerationStructureKHR</code> with hierarchy and scratch buffers, and instance buffers for top level structures</div>
+				<div><b>ResourceMorgue</b>render-module singleton that delays the deletion of released resources by three frames</div>
+			</div>
+		</div>
+	</div>
+	<figcaption><b>Figure 2.</b> Ownership. Nesting means ownership. The Context is created by the render system and handed to every view and resource by pointer, which is why uploads and cleanups are device-wide rather than per view.</figcaption>
+</figure>
+
+<p>Resources are handed out as interfaces (<code>Buffer</code>, <code>ITexture</code>, <code>IRenderTargetSet</code>, <code>IProgram</code>, <code>IAccelerationStructure</code>, <code>IVertexLayout</code>). Their Vulkan objects live in two private primitives: <code>ApiBuffer</code> (a <code>VkBuffer</code> and its VMA allocation) and <code>Image</code> (a <code>VkImage</code>, its views, their bindless indices and the tracked layouts). Both hand their handles to <code>Context::addDeferredCleanup</code> when destroyed.</p>
+</section>
+
+<!-- ============================================================ 3 -->
+<section id="bringup">
+<h2><span class="n">3</span>Device and view bring-up</h2>
+
+<h3>RenderSystemVk::create</h3>
+<p>Runs once per process, in this order:</p>
+<ol class="steps">
+	<li>Load the Vulkan loader and resolve the core entry points (<code>initializeVulkanApi</code>): <code>vulkan-1.dll</code> on Windows, <code>libvulkan.so.1</code> on Linux, <code>libvulkan.so</code> on Android, <code>libMoltenVK.dylib</code> on macOS.</li>
+	<li>Create the instance with API version 1.2. Extensions: the platform's surface extensions, <code>VK_EXT_debug_utils</code>, <code>VK_KHR_get_physical_device_properties2</code>, on Windows and Linux also <code>VK_EXT_swapchain_colorspace</code>, plus whatever XeSS asks for. With <code>RenderSystemDesc::validation</code>, <code>VK_LAYER_KHRONOS_validation</code> is enabled when installed, and a debug messenger routes validation warnings and errors to the log. One known-bogus message, <code>VUID-VkShaderModuleCreateInfo-pCode-08737</code>, is dropped.</li>
+	<li>Resolve instance-level extension entry points (<code>initializeVulkanExtensions</code>). <code>vkResetQueryPool</code> is optional.</li>
+	<li>Pick the physical device: the first discrete GPU, else the first integrated GPU, else device 0.</li>
+	<li>Pick the graphics and compute queue families (<a href="#queues">§4</a>).</li>
+	<li>Enable the device extensions and features below and create the device with one queue, priority 1.0, per family used.</li>
+	<li>Create the VMA allocator. Desktop builds pass <code>BUFFER_DEVICE_ADDRESS</code> and <code>EXT_MEMORY_BUDGET</code>; iOS uses 32 MiB heap blocks.</li>
+	<li>Create the <code>Context</code>: queues, upload semaphore and upload command pool, pipeline cache (loaded from <code>&lt;writable folder&gt;/Traktor/Vulkan/Pipeline.cache</code>), both descriptor pools, uniform pools, render pass cache, bindless sets.</li>
+	<li>Create the <code>ShaderModuleCache</code> and the <code>PipelineLayoutCache</code>.</li>
+</ol>
+
+<div class="tbl">
+<table class="wide">
+	<thead><tr><th>Group</th><th>Extensions and features</th></tr></thead>
+	<tbody>
+		<tr><td>Device extensions, desktop</td><td><code>VK_KHR_swapchain</code>, <code>VK_KHR_storage_buffer_storage_class</code>, <code>VK_KHR_16bit_storage</code>, <code>VK_KHR_8bit_storage</code>, <code>VK_KHR_shader_non_semantic_info</code>, <code>VK_KHR_shader_float16_int8</code>, <code>VK_EXT_shader_subgroup_ballot</code>, <code>VK_EXT_memory_budget</code>, <code>VK_EXT_descriptor_indexing</code>, <code>VK_KHR_buffer_device_address</code></td></tr>
+		<tr><td>Device extensions, Android and Raspberry Pi</td><td><code>VK_KHR_swapchain</code>; <code>VK_KHR_timeline_semaphore</code> when the device is older than Vulkan 1.2. These builds skip the Vulkan 1.2 feature structure, so the <code>timelineSemaphore</code> feature is queried and enabled on its own; a device without it logs an error, as neither asynchronous compute nor upload ordering can work then.</td></tr>
+		<tr><td><code>RenderSystemDesc::rayTracing</code></td><td><code>VK_KHR_deferred_host_operations</code>, <code>VK_KHR_ray_tracing_pipeline</code>, <code>VK_KHR_acceleration_structure</code>, <code>VK_KHR_ray_query</code>; features <code>accelerationStructure</code> and <code>rayQuery</code></td></tr>
+		<tr><td>When the device supports it</td><td><code>VK_KHR_line_rasterization</code> with <code>smoothLines</code>; <code>hostQueryReset</code> (needed by the GPU timers); the XeSS device extensions, enabled only when all of them are present</td></tr>
+		<tr><td><code>RenderSystemDesc::aftermath</code></td><td><code>VK_NV_device_diagnostics_config</code> with automatic checkpoints, resource tracking, shader debug info and shader error reporting</td></tr>
+		<tr><td>Core features</td><td><code>sampleRateShading</code>, <code>multiDrawIndirect</code>, <code>samplerAnisotropy</code>, <code>shaderStorageImageWriteWithoutFormat</code>, <code>shaderClipDistance</code></td></tr>
+		<tr><td>Vulkan 1.1 features (desktop)</td><td><code>storageBuffer16BitAccess</code>, <code>uniformAndStorageBuffer16BitAccess</code>, <code>shaderDrawParameters</code></td></tr>
+		<tr><td>Vulkan 1.2 features (desktop)</td><td><code>uniformAndStorageBuffer8BitAccess</code>, <code>shaderFloat16</code>, <code>shaderInt8</code>, <code>descriptorIndexing</code> with update-after-bind for sampled images, storage images and storage buffers, <code>descriptorBindingUpdateUnusedWhilePending</code>, <code>descriptorBindingPartiallyBound</code>, <code>descriptorBindingVariableDescriptorCount</code>, <code>runtimeDescriptorArray</code>, <code>timelineSemaphore</code>, <code>bufferDeviceAddress</code></td></tr>
+		<tr><td>Other feature structs</td><td><code>shaderIntegerDotProduct</code>, <code>mutableDescriptorType</code></td></tr>
+	</tbody>
+</table>
+</div>
+
+<h3>RenderViewVk::create</h3>
+<p>A view is created either with its own window (<code>RenderViewDefaultDesc</code>: Win32, Wayland on Linux, a Metal layer on macOS) or on a system window owned by someone else (<code>RenderViewEmbeddedDesc</code>: Win32, Xlib or Wayland, Android, macOS, iOS). The surface is created first; everything below that depends only on the surface is computed once and kept across resets:</p>
+<ul>
+	<li>Device properties, including <code>timestampPeriod</code>.</li>
+	<li>The present family: the first family that can present to the surface. When it is not the graphics family the view creates its own <code>Queue</code> for it.</li>
+	<li>The surface format. With <code>allowHDR</code>, the first format in the HDR10 ST2084 (PQ) colour space; otherwise the first <code>R8G8B8A8_UNORM</code> or <code>B8G8R8A8_UNORM</code>; otherwise the first format reported.</li>
+	<li>The present mode, from the table below.</li>
+	<li>Whether debug labels can be used (<a href="#debugging">§15</a>).</li>
+</ul>
+
+<div class="tbl">
+<table class="narrow">
+	<thead><tr><th><code>waitVBlanks</code></th><th>Platform</th><th>Present mode, first one available</th></tr></thead>
+	<tbody>
+		<tr><td class="num">&gt; 0</td><td>all except iOS</td><td><code>FIFO</code></td></tr>
+		<tr><td class="num">&gt; 0</td><td>iOS</td><td><code>MAILBOX</code>, <code>FIFO</code></td></tr>
+		<tr><td class="num">≤ 0</td><td>all except iOS</td><td><code>IMMEDIATE</code>, <code>MAILBOX</code>, <code>FIFO_RELAXED</code>, <code>FIFO</code></td></tr>
+		<tr><td class="num">≤ 0</td><td>iOS</td><td><code>IMMEDIATE</code>, <code>MAILBOX</code>, <code>FIFO</code></td></tr>
+	</tbody>
+</table>
+</div>
+
+<p>Then the size-dependent part:</p>
+<ul>
+	<li>The extent is the surface's <code>currentExtent</code>. Surfaces that have no size of their own (Wayland reports <code>0xFFFFFFFF</code>) or report zero get the requested size, clamped to the surface limits. A requested size of zero leaves the view lost until it is reset.</li>
+	<li>The swap chain asks for three images, clamped to the surface's <code>minImageCount</code> and <code>maxImageCount</code>. Usage is <code>COLOR_ATTACHMENT</code> only, sharing is <code>EXCLUSIVE</code> unless the present family differs from the graphics family (then <code>CONCURRENT</code> across both), the pre-transform is identity when supported, composite alpha is opaque, <code>clipped</code> is set and the previous swap chain is passed as <code>oldSwapchain</code>.</li>
+	<li>One primary depth target is shared by every frame: <code>D32_SFLOAT_S8_UINT</code>, or <code>D16_UNORM_S8_UINT</code> on iOS and <code>D24_UNORM_S8_UINT</code> on Raspberry Pi. With MSAA, each frame renders into a multisampled image that resolves into the swap chain image.</li>
+	<li>Per swap chain image: a <code>Frame</code> with its two binary semaphores and a primary <code>RenderTargetSetVk</code> wrapping the image. Semaphores, command buffers, the query pool and the timeline semaphore survive resets; only the primary targets are rebuilt. Render passes belong to the context and outlive every view.</li>
+</ul>
+
+<h3>Reset, loss and close</h3>
+<ul>
+	<li><code>reset(width, height)</code> waits for the device to go idle, marks the view lost, drops pending window events, marks every frame and flying command buffer as consumed with <code>externalSynced()</code> (flying ones become spares), destroys the primary targets, drains <code>ResourceMorgue::flush</code> and <code>Context::performCleanupAll</code>, and runs <code>create</code> again. The old swap chain's image-available semaphores can still hold a signal nobody will consume (<code>VUID-vkAcquireNextImageKHR-semaphore-01779</code>), so they are parked in <code>m_retiredImageAvailableSemaphores</code> until <code>close()</code>.</li>
+	<li>If the new swap chain has a different number of images, all frames and the query pool are rebuilt.</li>
+	<li>A failed <code>vkAcquireNextImageKHR</code> or <code>vkQueuePresentKHR</code> (any result other than <code>SUCCESS</code> or <code>SUBOPTIMAL_KHR</code>), or a failed fence wait, posts <code>RenderEventType::Lost</code> and sets <code>m_lost</code>. <code>beginFrame</code> and <code>beginPass</code> then return false until the owner resets the view.</li>
+	<li><code>close()</code> waits for the device, performs pending uploads and waits for them, saves the pipeline cache, drains the morgue and all cleanups, waits for every command buffer, then destroys frames, semaphores, the query pool, the swap chain, the retired semaphores, the surface and the window.</li>
+	<li>On Windows the view coalesces <code>WM_SIZE</code> into a single <code>Resize</code> event (only when the size differs from the swap chain), turns <code>WM_CLOSE</code> into <code>Close</code>, Alt+Enter and Ctrl+Enter into <code>ToggleFullScreen</code>, and keeps the window at least 320 × 200.</li>
+</ul>
+</section>
+
+<!-- ============================================================ 4 -->
+<section id="queues">
+<h2><span class="n">4</span>Queues and command buffers</h2>
+
+<h3>Queue families</h3>
+<div class="tbl">
+<table class="wide">
+	<thead><tr><th>Queue</th><th>How the family is chosen</th><th>Receives</th></tr></thead>
+	<tbody>
+		<tr><td>Graphics, <code>Context::getGraphicsQueue</code></td><td>The first family with <code>GRAPHICS</code>.</td><td>Frame graphics command buffers, the upload command buffers (which also carry the initialisation of textures, cube and volume textures, render targets and texture updates), and presentation when the family can present.</td></tr>
+		<tr><td>Compute, <code>Context::getComputeQueue</code></td><td>The first family with <code>COMPUTE</code> but without <code>GRAPHICS</code>; else the first family with <code>COMPUTE</code>; else the graphics family. When it matches the graphics family, the context uses the same <code>Queue</code> object for both.</td><td>Frame compute command buffers: dispatches, acceleration structure builds, barriers, labels and timestamps recorded with <code>asynchronous = true</code>.</td></tr>
+		<tr><td>Present, per view</td><td>The first family for which <code>vkGetPhysicalDeviceSurfaceSupportKHR</code> is true. The graphics <code>Queue</code> when it is the same family.</td><td><code>vkQueuePresentKHR</code>.</td></tr>
+	</tbody>
+</table>
+</div>
+<p>The log line <code>Using graphics queue G, compute queue C.</code> shows which families were picked. The backend always uses queue 0 of each family.</p>
+
+<h3>Queue</h3>
+<p>Vulkan requires external synchronization of a <code>VkQueue</code>, so <code>Queue::submit</code> and <code>Queue::present</code> hold <code>Queue::m_lock</code> around <code>vkQueueSubmit</code> and <code>vkQueuePresentKHR</code>. <code>submit</code> also enforces upload ordering for every queue except the graphics queue (<a href="#uploads">§8</a>): it reads the latest upload value while holding the graphics queue's lock and, if this queue has not waited on that value yet, appends a wait on the upload timeline semaphore at <code>ALL_COMMANDS</code>. Any timeline submit info already on the submission is merged, with wait value 0 for binary semaphores. The last value waited is kept in <code>m_uploadValueWaited</code>, because one wait also orders everything submitted after it. <code>supportsGraphics()</code> reports whether the family has <code>GRAPHICS</code>, which <code>barrier</code> needs to pick legal stages (<a href="#layouts">§12</a>).</p>
+
+<h3>Command pools</h3>
+<p>Command pools need external synchronization, so every thread records from a pool of its own. Each <code>Queue</code> keeps a map from thread id to pool, guarded by <code>m_commandPoolsLock</code>; a thread's pool is created with <code>RESET_COMMAND_BUFFER</code> and <code>TRANSIENT</code> the first time it acquires a command buffer from that queue, and the queue destroys its pools when the device goes away. A command buffer can therefore only be recorded, reset and submitted on the thread that allocated it, which <code>CommandBuffer</code> asserts.</p>
+<p>The upload command buffers are the one exception. Whichever thread flushes the uploads records them, and whichever thread notices they have been consumed releases them, so they come from a pool of their own (<code>Queue::createCommandPool</code>, owned by the context) that the graphics queue lock guards.</p>
+
+<h3>CommandBuffer</h3>
+<p><code>Queue::acquireCommandBuffer(tag)</code> allocates a primary command buffer from the calling thread's pool, or from the pool passed in, names it, begins it with <code>ONE_TIME_SUBMIT</code> and wraps it in a <code>CommandBuffer</code> that creates an unsignalled fence. Every submit ends the buffer, takes a submission epoch (<a href="#sync">§5</a>) and goes through <code>Queue::submit</code>. The general form, <code>submit(waits, waitCount, signals, signalCount)</code>, takes any mix of binary and timeline semaphores; it always attaches one timeline submit info that covers every wait and signal, since values of binary semaphores are ignored. The others are shorthands for it:</p>
+<ul>
+	<li><code>submit(waits, stages, signal)</code> with binary semaphores, used at <code>endFrame</code>.</li>
+	<li><code>submitSignal(semaphore, value)</code> signals a timeline value, used for compute batches and uploads.</li>
+	<li><code>submitWait(semaphore, value, stages)</code> waits for a timeline value, used for graphics splits.</li>
+</ul>
+<p><code>wait()</code> blocks on the fence without a timeout and then calls <code>Context::endSubmission</code>, which resets the fence under the submission lock. <code>externalSynced()</code> does the same bookkeeping without waiting, for use after <code>vkDeviceWaitIdle</code>. <code>reserveSubmission()</code> takes the epoch before recording has finished, so that cleanups queued while the buffer is being recorded wait for it; only the upload buffer uses it. <code>getSubmissionEpoch()</code> returns the reserved epoch while recording and the submitted epoch while in flight, which lets code that records into an upload note which epoch has to complete before its memory may be reused. Destroying a command buffer that is still in flight is a fatal assert.</p>
+
+<figure>
+	<div class="fig">
+		<svg class="dg" viewBox="0 0 900 150" role="img" aria-label="CommandBuffer states. Recording, then a submit call assigns an epoch and moves it to in flight; wait or externalSynced moves it to consumed; reset on the creating thread returns it to recording.">
+			<defs>
+				<marker id="f3a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="mk"/></marker>
+			</defs>
+			<text x="40" y="30" class="sm">reserveSubmission() can take the epoch while still recording</text>
+			<text x="700" y="30" class="sm">destroy: never while in flight</text>
+			<rect x="40" y="46" width="160" height="44" rx="6" class="box"/>
+			<text x="120" y="73" text-anchor="middle" class="tb">Recording</text>
+			<rect x="370" y="46" width="160" height="44" rx="6" class="box"/>
+			<text x="450" y="73" text-anchor="middle" class="tb">In flight</text>
+			<rect x="700" y="46" width="160" height="44" rx="6" class="box"/>
+			<text x="780" y="73" text-anchor="middle" class="tb">Consumed</text>
+			<line x1="204" y1="68" x2="366" y2="68" class="flow" marker-end="url(#f3a)"/>
+			<text x="285" y="60" text-anchor="middle" class="mono">submit*()</text>
+			<text x="285" y="86" text-anchor="middle" class="sm">epoch assigned, fence armed</text>
+			<line x1="534" y1="68" x2="696" y2="68" class="flow" marker-end="url(#f3a)"/>
+			<text x="615" y="60" text-anchor="middle" class="mono">wait()</text>
+			<text x="615" y="86" text-anchor="middle" class="sm">or externalSynced()</text>
+			<path d="M780,94 C780,134 120,134 120,96" class="flow" marker-end="url(#f3a)"/>
+			<text x="450" y="146" text-anchor="middle" class="sm">reset(), on the creating thread only; frame buffers are reused this way</text>
+		</svg>
+	</div>
+	<figcaption><b>Figure 3.</b> Life of a <code>CommandBuffer</code>. The fence is reset inside <code>Context::endSubmission</code>, not by the caller, because other threads may be polling it at the same time (<a href="#sync">§5</a>).</figcaption>
+</figure>
+
+<h3>Frame command buffers</h3>
+<p>Each <code>Frame</code> has one graphics and one compute command buffer. They are created lazily in the first <code>beginFrame</code>, which ties them to the render thread's pools, and then reused: wait, reset, record, submit. When the frame is split in the middle (<a href="#async">§7</a>), the submitted buffer moves to <code>flyingGraphicsCommandBuffers</code> or <code>flyingComputeCommandBuffers</code> and recording continues in another one. The next time the same slot begins a frame, the flying buffers are waited for and moved to <code>spareGraphicsCommandBuffers</code> and <code>spareComputeCommandBuffers</code>, and later splits reset and reuse the spares before allocating new ones. A frame that splits the same way every time therefore allocates nothing after warm-up.</p>
+<p>Bind caches remember which pipeline, vertex and index buffer are bound. The compute caches also remember which command buffer they were bound in, so a split never skips a bind into the new buffer. <code>invalidateBindings()</code> forgets everything; <code>beginFrame</code> and <code>endFrame</code> call it, and so must any code that records into the view's command buffers directly, as the XeSS plugin does.</p>
+</section>
+
+<!-- ============================================================ 5 -->
+<section id="sync">
+<h2><span class="n">5</span>Synchronization primitives</h2>
+
+<p>Every object below is used for exactly one ordering problem. Knowing which is which makes the rest of this document easier to follow.</p>
+
+<div class="tbl">
+<table class="wide">
+	<thead><tr><th>Object</th><th>Kind</th><th>Owner and count</th><th>Signalled by</th><th>Waited on by</th><th>Orders</th></tr></thead>
+	<tbody>
+		<tr><td><code>m_imageAvailableSemaphores</code> + spare</td><td>binary semaphore</td><td>view, images + 1</td><td><code>vkAcquireNextImageKHR</code></td><td>graphics submission at <code>endFrame</code>, at <code>COLOR_ATTACHMENT_OUTPUT</code></td><td>presentation engine done with the image → rendering into it</td></tr>
+		<tr><td><code>Frame::renderFinishedSemaphore</code></td><td>binary semaphore</td><td>one per frame</td><td>graphics submission at <code>endFrame</code></td><td><code>vkQueuePresentKHR</code></td><td>graphics work → present</td></tr>
+		<tr><td><code>Frame::computeFinishedSemaphore</code></td><td>binary semaphore</td><td>one per frame</td><td>compute submission at <code>endFrame</code></td><td><code>vkQueuePresentKHR</code></td><td>the frame's last compute batch → present</td></tr>
+		<tr><td><code>RenderViewVk::m_timelineSemaphore</code></td><td>timeline semaphore</td><td>view, 1</td><td>compute submissions in <code>signalAsynchronousCompute</code>, <code>waitAsynchronousCompute</code>, <code>synchronize</code></td><td>graphics submissions (<code>submitWait</code>), at <code>ALL_COMMANDS</code></td><td>asynchronous compute → graphics within a frame</td></tr>
+		<tr><td><code>Context::m_uploadSemaphore</code></td><td>timeline semaphore</td><td>device, 1</td><td>the upload command buffer, value <code>m_uploadValue</code></td><td><code>Queue::submit</code> on every other queue, at <code>ALL_COMMANDS</code></td><td>uploads → compute work</td></tr>
+		<tr><td><code>CommandBuffer::m_inFlight</code></td><td>fence</td><td>every command buffer</td><td>its <code>vkQueueSubmit</code></td><td><code>CommandBuffer::wait</code>; polled by <code>Context::getCompletedEpoch</code></td><td>GPU done → CPU reuse or release</td></tr>
+		<tr><td>submission epochs</td><td>CPU counter</td><td><code>Context</code></td><td><code>beginSubmission</code> hands out 1, 2, 3, …</td><td>deferred cleanups</td><td>"every submission that could use this resource has finished"</td></tr>
+		<tr><td><code>ResourceMorgue</code> buckets</td><td>CPU frame fence</td><td>singleton, 3 buckets</td><td><code>retire()</code></td><td><code>advance()</code> in every <code>beginFrame</code></td><td>render contexts consumed → object deleted</td></tr>
+		<tr><td><code>UniformBufferPool::m_retired</code></td><td>epoch tags</td><td>each pool</td><td><code>recycle()</code> in every <code>present</code> tags the blocks freed since the last call with the latest issued epoch</td><td><code>recycle()</code>, against the completed epoch</td><td>GPU done reading → block reused</td></tr>
+		<tr><td><code>TextureVk::m_stagingEpoch</code></td><td>epoch tag</td><td>each mutable texture</td><td>the upload that copies out of the staging buffer</td><td><code>lock()</code>, through <code>Context::waitForEpoch</code></td><td>GPU done copying → CPU rewrites the staging buffer</td></tr>
+		<tr><td>pipeline barriers</td><td>in a command buffer</td><td>recorded as needed</td><td>n/a</td><td>n/a</td><td>layout transitions, <code>IRenderView::barrier</code>, upload visibility, shared-family compute waits</td></tr>
+	</tbody>
+</table>
+</div>
+
+<h3>Submission epochs</h3>
+<p>The cleanup system needs to know whether every submission issued so far has been consumed, independently of which queue or thread issued it. <code>Context</code> numbers submissions:</p>
+<ul>
+	<li><code>beginSubmission(fence)</code> assigns the next epoch and appends <code>{epoch, fence, issued = false}</code> to <code>m_inFlightSubmissions</code>.</li>
+	<li><code>submissionIssued(epoch)</code> sets <code>issued</code> once <code>vkQueueSubmit</code> has returned. Until then the fence belongs to the submitting thread and must not be polled.</li>
+	<li><code>endSubmission(epoch, fence)</code> resets the fence and removes the entry, both under the submission lock.</li>
+	<li><code>getCompletedEpoch()</code> retires entries from the front while they are issued and their fence reports <code>VK_SUCCESS</code>, then returns the front epoch minus one. A view that stops rendering never waits on its last command buffer, so retiring by polling keeps cleanups from being held back indefinitely.</li>
+</ul>
+
+<div class="tbl">
+<table class="wide">
+	<thead><tr><th>Step</th><th>In flight, front first</th><th class="num">Completed epoch</th><th>Effect</th></tr></thead>
+	<tbody>
+		<tr><td>Frame F submits compute and graphics while 54 finishes</td><td>55 issued · 56 issued</td><td class="num">54</td><td><code>getCompletedEpoch</code> retired 54 from the front and stopped at 55.</td></tr>
+		<tr><td>A texture is destroyed</td><td>unchanged</td><td class="num">54</td><td>Its cleanups get <code>waitEpoch = 56</code>, the last epoch handed out.</td></tr>
+		<tr><td>An upload buffer reserves an epoch and releases staging buffers while recording</td><td>55 · 56 · 57 reserved, not issued</td><td class="num">54</td><td>The staging cleanups get <code>waitEpoch = 57</code>.</td></tr>
+		<tr><td>55 and 56 signal; 57 is still recording</td><td>57 reserved</td><td class="num">56</td><td>The next <code>performCleanup</code> destroys the texture; the staging buffers stay.</td></tr>
+		<tr><td>57 is submitted and signals</td><td>empty</td><td class="num">57</td><td>The staging buffers are destroyed.</td></tr>
+	</tbody>
+</table>
+</div>
+
+<h3>Guarantees the code relies on</h3>
+<ul>
+	<li>Barrier scopes extend across submissions on the same queue. The upload buffer ends with an <code>ALL_COMMANDS</code> to <code>ALL_COMMANDS</code> memory barrier, which orders it before all later work on the graphics queue.</li>
+	<li>A signal defined by <code>vkQueueSubmit</code> covers every command submitted earlier to the same queue. The specification says so explicitly for semaphore signals, and fence signals defined by <code>vkQueueSubmit</code> have the same scope. Waiting on any fence therefore also waits for everything queued before it, and a completed epoch means every submission numbered before it has completed too.</li>
+	<li>A semaphore wait blocks the submission that carries it and, through queue order, everything submitted after it. Nothing ever makes the compute queue wait for graphics, so the only thing keeping a frame's graphics work from running alongside an asynchronous batch is a wait that is submitted <em>ahead</em> of that work (<a href="#async">§7</a>).</li>
+	<li>Timeline values only grow, and a wait for <em>v</em> is satisfied by any later signal of a value ≥ <em>v</em>. That is why all asynchronous work recorded between two flushes can share one value, and why a value that was reserved but never signalled is harmless.</li>
+	<li>Binary semaphores are reused only after the wait on their previous signal is known to have executed (<a href="#frame">Figure 6</a>).</li>
+</ul>
+</section>
+
+<!-- ============================================================ 6 -->
+<section id="frame">
+<h2><span class="n">6</span>The frame loop</h2>
+
+<p>In the runtime, <code>Application</code> builds and renders on two threads. The main thread runs <code>IState::build</code>, which runs the render graph into a <code>RenderContext</code>. The render thread, <code>Application::threadRender</code>, waits for a built frame and then calls <code>beginFrame</code>, <code>IState::render</code> (which replays the context), <code>endFrame</code> and <code>present</code>. <code>RenderServer::getThreadFrameQueueCount()</code> returns 2, so two contexts alternate, and the main thread waits up to one second for the render thread to finish the previous frame before it hands over the next. In the editor both roles run back to back on the UI thread.</p>
+
+<p>The diagrams in this document share one set of marks:</p>
+<div class="legend" role="list">
+	<span role="listitem"><svg class="dg" viewBox="0 0 30 14" aria-hidden="true"><rect x="1" y="1" width="28" height="12" rx="2" class="cpu"/></svg>CPU work</span>
+	<span role="listitem"><svg class="dg" viewBox="0 0 30 14" aria-hidden="true"><defs><pattern id="lgh" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="6" height="6" class="hb"/><line x1="0" y1="0" x2="0" y2="6" class="hline"/></pattern></defs><rect x="1" y="1" width="28" height="12" rx="2" fill="url(#lgh)" class="blk"/></svg>CPU blocked</span>
+	<span role="listitem"><svg class="dg" viewBox="0 0 30 14" aria-hidden="true"><rect x="1" y="1" width="28" height="12" rx="2" class="gfx"/></svg>Graphics queue</span>
+	<span role="listitem"><svg class="dg" viewBox="0 0 30 14" aria-hidden="true"><rect x="1" y="1" width="28" height="12" rx="2" class="old"/></svg>Earlier frames on the GPU</span>
+	<span role="listitem"><svg class="dg" viewBox="0 0 30 14" aria-hidden="true"><rect x="1" y="1" width="28" height="12" rx="2" class="cmp"/></svg>Asynchronous compute queue</span>
+	<span role="listitem"><svg class="dg" viewBox="0 0 30 14" aria-hidden="true"><rect x="1" y="1" width="28" height="12" rx="2" class="upl"/></svg>Upload command buffer</span>
+	<span role="listitem"><svg class="dg" viewBox="0 0 30 14" aria-hidden="true"><path d="M15,1 L21,7 L15,13 L9,7 z" class="prs"/></svg>Presentation</span>
+	<span role="listitem"><svg class="dg" viewBox="0 0 30 14" aria-hidden="true"><line x1="2" y1="7" x2="28" y2="7" class="sem"/></svg>Semaphore, signal to wait</span>
+	<span role="listitem"><svg class="dg" viewBox="0 0 30 14" aria-hidden="true"><line x1="2" y1="7" x2="28" y2="7" class="fen"/></svg>Fence, GPU to waiting CPU</span>
+	<span role="listitem"><svg class="dg" viewBox="0 0 30 14" aria-hidden="true"><line x1="2" y1="7" x2="28" y2="7" class="flow"/></svg>Submission or call</span>
+</div>
+
+<figure>
+	<div class="fig">
+		<svg class="dg" viewBox="0 0 1030 200" role="img" aria-label="GPU-bound steady state with three swap chain images. The build thread builds frame k plus one while the render thread records frame k. From frame 3 on, beginFrame blocks until the fence of the frame that last used the same slot signals, so the render thread records at most three frames ahead of the GPU.">
+			<defs>
+				<marker id="f4a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="mk"/></marker>
+				<marker id="f4f" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="mkf"/></marker>
+				<pattern id="f4h" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="6" height="6" class="hb"/><line x1="0" y1="0" x2="0" y2="6" class="hline"/></pattern>
+			</defs>
+			<text x="150" y="16" class="sm">three swap chain images, acquired round-robin</text>
+			<text x="1014" y="16" text-anchor="end" class="sm">time →</text>
+			<line x1="10" y1="63" x2="1020" y2="63" class="lane"/>
+			<line x1="10" y1="107" x2="1020" y2="107" class="lane"/>
+			<line x1="10" y1="151" x2="1020" y2="151" class="lane"/>
+			<text x="138" y="45" text-anchor="end" class="lbl">Build thread</text>
+			<text x="138" y="89" text-anchor="end" class="lbl">Render thread</text>
+			<text x="138" y="133" text-anchor="end" class="lbl">Graphics queue</text>
+			<text x="138" y="177" text-anchor="end" class="lbl">Presentation</text>
+
+			<rect x="150" y="30" width="72" height="22" rx="2" class="cpu"/><text x="186" y="45" text-anchor="middle" class="on">build F0</text>
+			<rect x="222" y="30" width="72" height="22" rx="2" class="cpu"/><text x="258" y="45" text-anchor="middle" class="on">build F1</text>
+			<rect x="294" y="30" width="72" height="22" rx="2" class="cpu"/><text x="330" y="45" text-anchor="middle" class="on">build F2</text>
+			<rect x="366" y="30" width="72" height="22" rx="2" class="cpu"/><text x="402" y="45" text-anchor="middle" class="on">build F3</text>
+			<rect x="438" y="30" width="72" height="22" rx="2" class="cpu"/><text x="474" y="45" text-anchor="middle" class="on">build F4</text>
+			<rect x="510" y="30" width="24" height="22" rx="2" fill="url(#f4h)" class="blk"/>
+			<rect x="534" y="30" width="72" height="22" rx="2" class="cpu"/><text x="570" y="45" text-anchor="middle" class="on">build F5</text>
+			<rect x="606" y="30" width="96" height="22" rx="2" fill="url(#f4h)" class="blk"/><text x="654" y="45" text-anchor="middle" class="onb">wait render</text>
+			<rect x="702" y="30" width="72" height="22" rx="2" class="cpu"/><text x="738" y="45" text-anchor="middle" class="on">build F6</text>
+			<rect x="774" y="30" width="96" height="22" rx="2" fill="url(#f4h)" class="blk"/><text x="822" y="45" text-anchor="middle" class="onb">wait render</text>
+			<rect x="870" y="30" width="72" height="22" rx="2" class="cpu"/><text x="906" y="45" text-anchor="middle" class="on">build F7</text>
+			<rect x="942" y="30" width="72" height="22" rx="2" fill="url(#f4h)" class="blk"/><text x="978" y="45" text-anchor="middle" class="onb">wait render</text>
+
+			<rect x="222" y="74" width="72" height="22" rx="2" class="cpu"/><text x="258" y="89" text-anchor="middle" class="on">record F0</text>
+			<rect x="294" y="74" width="72" height="22" rx="2" class="cpu"/><text x="330" y="89" text-anchor="middle" class="on">record F1</text>
+			<rect x="366" y="74" width="72" height="22" rx="2" class="cpu"/><text x="402" y="89" text-anchor="middle" class="on">record F2</text>
+			<rect x="438" y="74" width="24" height="22" rx="2" fill="url(#f4h)" class="blk"/>
+			<rect x="462" y="74" width="72" height="22" rx="2" class="cpu"/><text x="498" y="89" text-anchor="middle" class="on">record F3</text>
+			<rect x="534" y="74" width="96" height="22" rx="2" fill="url(#f4h)" class="blk"/><text x="582" y="89" text-anchor="middle" class="onb">wait fence</text>
+			<rect x="630" y="74" width="72" height="22" rx="2" class="cpu"/><text x="666" y="89" text-anchor="middle" class="on">record F4</text>
+			<rect x="702" y="74" width="96" height="22" rx="2" fill="url(#f4h)" class="blk"/><text x="750" y="89" text-anchor="middle" class="onb">wait fence</text>
+			<rect x="798" y="74" width="72" height="22" rx="2" class="cpu"/><text x="834" y="89" text-anchor="middle" class="on">record F5</text>
+			<rect x="870" y="74" width="96" height="22" rx="2" fill="url(#f4h)" class="blk"/><text x="918" y="89" text-anchor="middle" class="onb">wait fence</text>
+			<rect x="966" y="74" width="48" height="22" rx="2" class="cpu"/><text x="990" y="89" text-anchor="middle" class="on">F6</text>
+
+			<rect x="294" y="118" width="168" height="22" rx="2" class="gfx"/><text x="378" y="133" text-anchor="middle" class="on">F0 · slot 0</text>
+			<rect x="462" y="118" width="168" height="22" rx="2" class="gfx"/><text x="546" y="133" text-anchor="middle" class="on">F1 · slot 1</text>
+			<rect x="630" y="118" width="168" height="22" rx="2" class="gfx"/><text x="714" y="133" text-anchor="middle" class="on">F2 · slot 2</text>
+			<rect x="798" y="118" width="168" height="22" rx="2" class="gfx"/><text x="882" y="133" text-anchor="middle" class="on">F3 · slot 0</text>
+			<rect x="966" y="118" width="48" height="22" rx="2" class="gfx"/><text x="990" y="133" text-anchor="middle" class="on">F4</text>
+
+			<line x1="462" y1="117" x2="462" y2="99" class="fen" marker-end="url(#f4f)"/><text x="467" y="112" class="fs">slot 0</text>
+			<line x1="630" y1="117" x2="630" y2="99" class="fen" marker-end="url(#f4f)"/><text x="635" y="112" class="fs">slot 1</text>
+			<line x1="798" y1="117" x2="798" y2="99" class="fen" marker-end="url(#f4f)"/><text x="803" y="112" class="fs">slot 2</text>
+			<line x1="966" y1="117" x2="966" y2="99" class="fen" marker-end="url(#f4f)"/><text x="971" y="112" class="fs">slot 0</text>
+
+			<line x1="462" y1="141" x2="462" y2="163" class="sem" marker-end="url(#f4a)"/>
+			<path d="M462,165 L469,172 L462,179 L455,172 z" class="prs"/><text x="474" y="176" class="sm">F0 shown</text>
+			<line x1="630" y1="141" x2="630" y2="163" class="sem" marker-end="url(#f4a)"/>
+			<path d="M630,165 L637,172 L630,179 L623,172 z" class="prs"/><text x="642" y="176" class="sm">F1 shown</text>
+			<line x1="798" y1="141" x2="798" y2="163" class="sem" marker-end="url(#f4a)"/>
+			<path d="M798,165 L805,172 L798,179 L791,172 z" class="prs"/><text x="810" y="176" class="sm">F2 shown</text>
+			<line x1="966" y1="141" x2="966" y2="163" class="sem" marker-end="url(#f4a)"/>
+			<path d="M966,165 L973,172 L966,179 L959,172 z" class="prs"/><text x="978" y="176" class="sm">F3 shown</text>
+		</svg>
+	</div>
+	<figcaption><b>Figure 4.</b> Frame pipelining when the GPU is the bottleneck. Recording F3 must wait for the fence of F0, the last frame that used slot 0; from then on the render thread blocks in <code>beginFrame</code> every frame and the build thread in turn waits for the render thread. With N swap chain images, the render thread records frame F while F−N+1 … F−1 are queued or executing. With <code>FIFO</code>, <code>vkAcquireNextImageKHR</code> can block as well.</figcaption>
+</figure>
+
+<h3>beginFrame</h3>
+<ol class="steps">
+	<li>Return false while the view is lost.</li>
+	<li><code>ResourceMorgue::advance()</code> deletes the objects retired three advances ago (<a href="#cleanup">§9</a>). Doing it first lets the Vulkan objects they release be picked up by this frame's cleanup.</li>
+	<li>Increment the frame counter and pass it to <code>vmaSetCurrentFrameIndex</code>.</li>
+	<li><code>vkAcquireNextImageKHR</code> with no timeout, signalling the spare semaphore. The returned index <em>i</em> selects <code>Frame</code> <em>i</em>. Failure posts <code>Lost</code>.</li>
+	<li>Swap the spare semaphore into slot <em>i</em> (Figure 6).</li>
+	<li>Wait for the slot's flying command buffers and keep them as spares for this frame's splits.</li>
+	<li>Wait for the slot's graphics command buffer from its previous use, then reset it (or create it on first use). The same for the compute command buffer. The profiler shows these waits as "Wait graphics queue" and "Wait command queue".</li>
+	<li>Read back the timestamps the slot wrote last time and reset its query segment from the host (<a href="#timers">§13</a>).</li>
+	<li>Reset the statistics, forget every cached binding, and reset the asynchronous batch state: no open batch, and the submitted and waited values set to the current timeline value.</li>
+</ol>
+
+<h3>Recording</h3>
+<ul>
+	<li>Every frame caches the bound graphics pipeline, vertex buffer view and index buffer view, and skips rebinding when a draw uses the same ones. The caches are cleared at <code>beginFrame</code>, at <code>endFrame</code> and whenever the graphics command buffer is replaced.</li>
+	<li>A draw first compares its pipeline key with the view's most recently used pipeline and otherwise looks up or creates the pipeline (<a href="#pipelines">§11</a>). It calls <code>ProgramVk::validate</code> to upload uniforms and bind descriptor sets (<a href="#memory">§10</a>), binds buffers, and records <code>vkCmdDraw</code> or <code>vkCmdDrawIndexed</code> with vertex offset and first instance 0.</li>
+	<li>A dispatch uses the compute pipeline the program keeps and binds it unless it is already bound in the same command buffer. It validates the program with the compute bind point, which also moves render targets bound as storage images to <code>GENERAL</code> when recording on the graphics queue (<a href="#layouts">§12</a>), and records <code>vkCmdDispatch</code> with the work size divided by the local work group size, rounded up. <code>computeIndirect</code> only exists on the graphics queue.</li>
+	<li><code>copy()</code> moves the source to <code>TRANSFER_SRC</code> and the destination to <code>TRANSFER_DST</code>, records <code>vkCmdCopyImage</code> and restores both previous layouts.</li>
+</ul>
+
+<h3>endFrame and present</h3>
+<ol class="steps">
+	<li><code>endFrame</code> clears the bind caches and calls <code>Context::performUploads()</code>, which submits the queued uploads without waiting for them (<a href="#uploads">§8</a>). Being submitted first, they execute ahead of the frame's graphics work.</li>
+	<li>It moves the primary colour target to <code>PRESENT_SRC_KHR</code>.</li>
+	<li>It submits the compute command buffer, signalling <code>computeFinished</code>.</li>
+	<li>It submits the graphics command buffer, waiting for <code>imageAvailable[i]</code> at <code>COLOR_ATTACHMENT_OUTPUT</code> and signalling <code>renderFinished</code>, and registers the frame as submitted with <code>Context::frameSubmitted</code>.</li>
+	<li><code>present</code> queues <code>vkQueuePresentKHR</code>, waiting for both semaphores.</li>
+	<li>It calls <code>Context::performCleanup()</code>, which destroys what the GPU has finished with and keeps the rest for a later frame, without waiting (<a href="#cleanup">§9</a>).</li>
+	<li>It calls <code>Context::recycle()</code>, which hands back the uniform blocks whose release has been consumed by the GPU (<a href="#memory">§10</a>).</li>
+</ol>
+
+<figure>
+	<div class="fig">
+		<svg class="dg" viewBox="0 0 1045 214" role="img" aria-label="One frame's submissions. beginFrame acquires an image and waits for the slot's fences. At endFrame the upload command buffer is submitted without waiting; the graphics queue runs it after the earlier frames and ahead of frame F. The compute command buffer waits on the GPU for the upload value. Graphics waits for imageAvailable, and present waits for renderFinished and computeFinished.">
+			<defs>
+				<marker id="f5a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="mk"/></marker>
+				<pattern id="f5h" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="6" height="6" class="hb"/><line x1="0" y1="0" x2="0" y2="6" class="hline"/></pattern>
+			</defs>
+			<text x="240" y="15" text-anchor="middle" class="sm">beginFrame</text>
+			<path d="M152,27 V21 H328 V27" class="tick"/>
+			<text x="420" y="15" text-anchor="middle" class="sm">record</text>
+			<path d="M332,27 V21 H508 V27" class="tick"/>
+			<text x="570" y="15" text-anchor="middle" class="sm">endFrame</text>
+			<path d="M512,27 V21 H628 V27" class="tick"/>
+			<text x="690" y="15" text-anchor="middle" class="sm">present</text>
+			<path d="M632,27 V21 H748 V27" class="tick"/>
+
+			<line x1="10" y1="71" x2="1035" y2="71" class="lane"/>
+			<line x1="10" y1="115" x2="1035" y2="115" class="lane"/>
+			<line x1="10" y1="159" x2="1035" y2="159" class="lane"/>
+			<text x="138" y="53" text-anchor="end" class="lbl">Render thread</text>
+			<text x="138" y="97" text-anchor="end" class="lbl">Presentation</text>
+			<text x="138" y="141" text-anchor="end" class="lbl">Graphics queue</text>
+			<text x="138" y="185" text-anchor="end" class="lbl">Compute queue</text>
+
+			<rect x="150" y="38" width="60" height="22" rx="2" class="cpu"/><text x="180" y="53" text-anchor="middle" class="on">acquire</text>
+			<rect x="210" y="38" width="60" height="22" rx="2" fill="url(#f5h)" class="blk"/><text x="240" y="53" text-anchor="middle" class="onb">wait slot</text>
+			<rect x="270" y="38" width="60" height="22" rx="2" class="cpu"/><text x="300" y="53" text-anchor="middle" class="on">reset CBs</text>
+			<rect x="330" y="38" width="180" height="22" rx="2" class="cpu"/><text x="420" y="53" text-anchor="middle" class="on">record passes</text>
+			<rect x="510" y="38" width="60" height="22" rx="2" class="cpu"/><text x="540" y="53" text-anchor="middle" class="on">uploads</text>
+			<rect x="570" y="38" width="60" height="22" rx="2" class="cpu"/><text x="600" y="53" text-anchor="middle" class="on">submit C, G</text>
+			<rect x="630" y="38" width="60" height="22" rx="2" class="cpu"/><text x="660" y="53" text-anchor="middle" class="on">present</text>
+			<rect x="690" y="38" width="60" height="22" rx="2" class="cpu"/><text x="720" y="53" text-anchor="middle" class="on">cleanup</text>
+			<text x="760" y="53" class="sm">next frame's beginFrame →</text>
+
+			<circle cx="180" cy="93" r="4" class="dot-p"/>
+			<path d="M180,97 V108 H720 V123" class="sem" marker-end="url(#f5a)"/>
+			<text x="400" y="103" text-anchor="middle" class="sm">imageAvailable[i], waited at colour-attachment output</text>
+			<line x1="660" y1="61" x2="660" y2="85" class="flow" marker-end="url(#f5a)"/>
+			<path d="M660,86 L667,93 L660,100 L653,93 z" class="prs-o"/>
+			<text x="672" y="97" class="sm">present queued</text>
+			<path d="M1003,86 L1010,93 L1003,100 L996,93 z" class="prs"/>
+			<text x="1003" y="81" text-anchor="middle" class="sm">shown</text>
+
+			<rect x="150" y="126" width="490" height="22" rx="2" class="old"/><text x="395" y="141" text-anchor="middle" class="on">earlier frames still executing</text>
+			<rect x="640" y="126" width="60" height="22" rx="2" class="upl"/><text x="670" y="141" text-anchor="middle" class="on">upload</text>
+			<rect x="700" y="126" width="260" height="22" rx="2" class="gfx"/><text x="830" y="141" text-anchor="middle" class="on">frame F graphics</text>
+			<rect x="720" y="170" width="140" height="22" rx="2" class="cmp"/><text x="790" y="185" text-anchor="middle" class="on">frame F compute</text>
+
+			<line x1="700" y1="149" x2="718" y2="168" class="sem" marker-end="url(#f5a)"/>
+			<text x="694" y="164" text-anchor="end" class="sm">upload ≥ v</text>
+			<line x1="960" y1="125" x2="996" y2="100" class="sem" marker-end="url(#f5a)"/>
+			<text x="954" y="121" text-anchor="end" class="sm">renderFinished</text>
+			<path d="M860,181 H1024 V95 H1014" class="sem" marker-end="url(#f5a)"/>
+			<text x="1016" y="167" text-anchor="end" class="sm">computeFinished</text>
+		</svg>
+	</div>
+	<figcaption><b>Figure 5.</b> One frame's submissions with pending uploads. The render thread submits the upload command buffer and moves on. The graphics queue executes it after the earlier frames and before frame F, in submission order. The compute buffer carries an injected wait for the upload value, which holds the compute queue on the GPU until the upload has executed. A later flush or cleanup releases the upload command buffer once its fence has signalled.</figcaption>
+</figure>
+
+<div class="note inv">
+	<p class="tag">Invariant</p>
+	<p>The number of frames in flight is the swap chain image count: three by request, but the driver may create more. <code>beginFrame</code> waits only for the acquired slot, and modes such as <code>MAILBOX</code> or <code>IMMEDIATE</code> do not promise round-robin acquisition. Anything the CPU or the compute queue rewrites every frame while graphics may still read an older copy must be ring-buffered deeper than that. The count is per view: a resource that every view rewrites, such as the world's top level structure or a skinned mesh's skin, needs frames in flight times views. Current rings: 12 slots per <code>BufferDynamicVk</code>, 6 for skinned and deformed vertex buffers, and acceleration structures, which start with 4 slots and grow on demand (<a href="#async">§7</a>).</p>
+</div>
+
+<h3>Acquire semaphore rotation</h3>
+<p>A binary semaphore handed to <code>vkAcquireNextImageKHR</code> must not have a pending signal or wait. The image index is not known until the call returns, so the view cannot pick the image's own semaphore up front. It keeps one semaphore per image plus a spare: the acquire always signals the spare, which is then swapped into the acquired image's slot.</p>
+
+<figure>
+	<div class="fig">
+		<svg class="dg" viewBox="0 0 980 150" role="img" aria-label="Acquire semaphore rotation. Before the acquire, slots 0 to 2 hold S0, S1 and S2 and the spare is S3. The acquire returns image 1 and signals S3. beginFrame swaps S3 into slot 1, and S1 becomes the spare.">
+			<defs>
+				<marker id="f6a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="mk"/></marker>
+			</defs>
+			<text x="20" y="20" class="lbl">Before the acquire</text>
+			<text x="58" y="40" text-anchor="middle" class="sm">slot 0</text>
+			<text x="146" y="40" text-anchor="middle" class="sm">slot 1</text>
+			<text x="234" y="40" text-anchor="middle" class="sm">slot 2</text>
+			<text x="354" y="40" text-anchor="middle" class="sm">spare</text>
+			<rect x="20" y="46" width="76" height="40" rx="4" class="box"/><text x="58" y="71" text-anchor="middle" class="mono13">S0</text>
+			<rect x="108" y="46" width="76" height="40" rx="4" class="box"/><text x="146" y="71" text-anchor="middle" class="mono13">S1</text>
+			<rect x="196" y="46" width="76" height="40" rx="4" class="box"/><text x="234" y="71" text-anchor="middle" class="mono13">S2</text>
+			<rect x="316" y="46" width="76" height="40" rx="4" class="box dash"/><text x="354" y="71" text-anchor="middle" class="mono13">S3</text>
+			<text x="20" y="112" class="sm">S1 was waited on by the frame that last rendered image 1</text>
+
+			<line x1="412" y1="66" x2="518" y2="66" class="flow" marker-end="url(#f6a)"/>
+			<text x="465" y="57" text-anchor="middle" class="mono">acquire(S3)</text>
+			<text x="465" y="84" text-anchor="middle" class="sm">returns image 1</text>
+
+			<text x="540" y="20" class="lbl">After the swap in beginFrame</text>
+			<text x="578" y="40" text-anchor="middle" class="sm">slot 0</text>
+			<text x="666" y="40" text-anchor="middle" class="sm">slot 1</text>
+			<text x="754" y="40" text-anchor="middle" class="sm">slot 2</text>
+			<text x="874" y="40" text-anchor="middle" class="sm">spare</text>
+			<rect x="540" y="46" width="76" height="40" rx="4" class="box"/><text x="578" y="71" text-anchor="middle" class="mono13">S0</text>
+			<rect x="628" y="46" width="76" height="40" rx="4" class="box hl"/><text x="666" y="71" text-anchor="middle" class="mono13">S3</text>
+			<rect x="716" y="46" width="76" height="40" rx="4" class="box"/><text x="754" y="71" text-anchor="middle" class="mono13">S2</text>
+			<rect x="836" y="46" width="76" height="40" rx="4" class="box dash hl"/><text x="874" y="71" text-anchor="middle" class="mono13">S1</text>
+			<path d="M666,90 C666,126 874,126 874,90" class="flow" marker-start="url(#f6a)" marker-end="url(#f6a)"/>
+			<text x="770" y="140" text-anchor="middle" class="mono">std::swap(slot[1], spare)</text>
+		</svg>
+	</div>
+	<figcaption><b>Figure 6.</b> Acquire rotation with three images. S1 can become the spare because the presentation engine has returned image 1, which implies the present that waited for the previous frame on image 1 has completed, and with it that frame's wait on S1.</figcaption>
+</figure>
+</section>
+
+<!-- ============================================================ 7 -->
+<section id="async">
+<h2><span class="n">7</span>Asynchronous compute</h2>
+
+<p>Callers put work on the asynchronous queue by passing <code>asynchronous = true</code> to <code>compute</code>, <code>writeAccelerationStructure</code>, <code>barrier</code>, <code>beginTimeQuery</code>/<code>endTimeQuery</code> and the marker calls. <code>RenderViewVk</code> records such work into <code>Frame::computeCommandBuffer</code>. On a device with a compute-only family that buffer goes to the dedicated queue; otherwise it goes to the graphics queue, and the same calls turn into barriers.</p>
+
+<h3>Batches and handles</h3>
+<ul>
+	<li>The first asynchronous dispatch or acceleration structure build after a flush reserves a timeline value (<code>openComputeBatch</code>, <code>++m_timelineSemaphoreValue</code>). Everything recorded until the next flush shares that value.</li>
+	<li><code>signalAsynchronousCompute()</code> closes the batch and returns <code>ComputeHandle{value}</code>. With nothing recorded since the last flush it returns the last submitted value, so a later wait still covers earlier work.</li>
+	<li><code>waitAsynchronousCompute(handle)</code> makes later graphics work observe the batch. Values at or below <code>Frame::graphicsWaitedValue</code> are skipped, and an invalid handle is ignored.</li>
+	<li><code>synchronize()</code> flushes both command buffers with a fresh value that compute signals and graphics waits for.</li>
+	<li>A handle is only valid within the frame that produced it.</li>
+</ul>
+
+<div class="tbl">
+<table class="wide">
+	<thead><tr><th>Call</th><th>Dedicated compute family</th><th>Shared family</th></tr></thead>
+	<tbody>
+		<tr><td><code>signalAsynchronousCompute</code></td><td><code>performUploads()</code>; submit the compute buffer with <code>submitSignal(value)</code> and move it to the flying list (<code>splitCompute</code>); continue in a spare or new compute buffer.</td><td>Return the value; nothing is submitted.</td></tr>
+		<tr><td><code>waitAsynchronousCompute</code></td><td><code>performUploads()</code>; if the value has not been submitted, flush compute with <code>submitSignal(value)</code>; submit the graphics buffer with <code>submitWait(value, ALL_COMMANDS)</code> (<code>splitGraphics</code>); continue in a spare or new graphics buffer and clear the graphics bind caches.</td><td>Record a global barrier in the graphics buffer: <code>COMPUTE_SHADER | ACCELERATION_STRUCTURE_BUILD</code>, <code>SHADER_WRITE | ACCELERATION_STRUCTURE_WRITE</code> to <code>ALL_COMMANDS</code>, <code>SHADER_READ | ACCELERATION_STRUCTURE_READ</code>.</td></tr>
+		<tr><td><code>synchronize</code></td><td colspan="2"><code>performUploads()</code>; compute <code>submitSignal(++value)</code>; graphics <code>submitWait(value, ALL_COMMANDS)</code>; both buffers replaced. The same on either topology.</td></tr>
+		<tr><td><code>endFrame</code></td><td colspan="2">The compute buffer is submitted first, signalling <code>computeFinished</code>, then the graphics buffer. On a shared family both go to the same <code>VkQueue</code> in that order, which is what makes the barrier form above valid.</td></tr>
+	</tbody>
+</table>
+</div>
+
+<figure>
+	<div class="fig">
+		<p class="fig-title">Dedicated compute family</p>
+		<svg class="dg" viewBox="0 0 1000 180" role="img" aria-label="Dedicated compute family. Skin and TLAS work is recorded as asynchronous and submitted as compute batches C0 and C1 that signal timeline values 5 and 6. The graphics buffer G0, holding shadow work recorded before wait v5, is submitted with the wait attached and cannot start until C0 signals. G1 waits for value 6. G2 is submitted at endFrame.">
+			<defs>
+				<marker id="f7a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="mk"/></marker>
+				<pattern id="f7h" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="6" height="6" class="hb"/><line x1="0" y1="0" x2="0" y2="6" class="hline"/></pattern>
+			</defs>
+			<text x="200" y="28" text-anchor="end" class="sm">signal → v5</text>
+			<text x="262" y="28" class="sm">signal → v6</text>
+			<text x="334" y="28" class="sm">wait v5</text>
+			<text x="424" y="28" class="sm">wait v6</text>
+			<line x1="204" y1="32" x2="204" y2="42" class="tick"/>
+			<line x1="258" y1="32" x2="258" y2="42" class="tick"/>
+			<line x1="330" y1="32" x2="330" y2="42" class="tick"/>
+			<line x1="420" y1="32" x2="420" y2="42" class="tick"/>
+
+			<line x1="10" y1="75" x2="990" y2="75" class="lane"/>
+			<line x1="10" y1="119" x2="990" y2="119" class="lane"/>
+			<text x="138" y="57" text-anchor="end" class="lbl">Render thread</text>
+			<text x="138" y="101" text-anchor="end" class="lbl">Graphics queue</text>
+			<text x="138" y="145" text-anchor="end" class="lbl">Compute queue</text>
+
+			<rect x="150" y="42" width="54" height="22" rx="2" class="cpu-a"/><text x="177" y="57" text-anchor="middle" class="on">skin</text>
+			<rect x="204" y="42" width="54" height="22" rx="2" class="cpu-a"/><text x="231" y="57" text-anchor="middle" class="on">TLAS</text>
+			<rect x="258" y="42" width="72" height="22" rx="2" class="cpu"/><text x="294" y="57" text-anchor="middle" class="on">shadows</text>
+			<rect x="330" y="42" width="90" height="22" rx="2" class="cpu"/><text x="375" y="57" text-anchor="middle" class="on">z-pre · GBuffer</text>
+			<rect x="420" y="42" width="126" height="22" rx="2" class="cpu"/><text x="483" y="57" text-anchor="middle" class="on">RT · lighting · post</text>
+			<rect x="546" y="42" width="54" height="22" rx="2" class="cpu"/><text x="573" y="57" text-anchor="middle" class="on">endFrame</text>
+
+			<rect x="330" y="86" width="36" height="22" rx="2" fill="url(#f7h)" class="blk"/><text x="348" y="101" text-anchor="middle" class="onb">wait</text>
+			<rect x="366" y="86" width="72" height="22" rx="2" class="gfx"/><text x="402" y="101" text-anchor="middle" class="on">G0 shadows</text>
+			<rect x="438" y="86" width="90" height="22" rx="2" class="gfx"/><text x="483" y="101" text-anchor="middle" class="on">G1 z-pre · GB</text>
+			<rect x="609" y="86" width="135" height="22" rx="2" class="gfx"/><text x="676" y="101" text-anchor="middle" class="on">G2 RT · light · post</text>
+			<text x="750" y="101" class="sm">→ renderFinished</text>
+
+			<rect x="204" y="130" width="162" height="22" rx="2" class="cmp"/><text x="285" y="145" text-anchor="middle" class="on">C0 · skin · signals v5</text>
+			<rect x="366" y="130" width="54" height="22" rx="2" class="cmp"/><text x="393" y="145" text-anchor="middle" class="on">C1 · v6</text>
+			<rect x="591" y="130" width="18" height="22" rx="2" class="cmp"/>
+			<text x="614" y="145" class="sm">C2: rest of the frame → computeFinished</text>
+
+			<line x1="204" y1="65" x2="204" y2="128" class="flow" marker-end="url(#f7a)"/>
+			<line x1="258" y1="65" x2="258" y2="128" class="flow" marker-end="url(#f7a)"/>
+			<line x1="330" y1="65" x2="330" y2="84" class="flow" marker-end="url(#f7a)"/>
+			<line x1="420" y1="65" x2="436" y2="84" class="flow" marker-end="url(#f7a)"/>
+			<line x1="591" y1="65" x2="591" y2="128" class="flow" marker-end="url(#f7a)"/>
+			<line x1="600" y1="65" x2="607" y2="84" class="flow" marker-end="url(#f7a)"/>
+			<line x1="366" y1="129" x2="366" y2="111" class="sem" marker-end="url(#f7a)"/>
+			<text x="371" y="124" class="sm">v5</text>
+			<line x1="420" y1="129" x2="436" y2="111" class="sem" marker-end="url(#f7a)"/>
+			<text x="432" y="126" class="sm">v6</text>
+
+			<text x="150" y="174" class="sm">G0 holds the shadow work recorded before the wait call and is submitted with the wait attached, so it cannot start before C0 signals v5.</text>
+		</svg>
+	</div>
+	<div class="fig">
+		<p class="fig-title">Shared graphics and compute family</p>
+		<svg class="dg" viewBox="0 0 1000 164" role="img" aria-label="Shared family. Nothing is split while recording. At endFrame the compute buffer is submitted before the graphics buffer on the same queue. Each wait became a barrier in the graphics buffer; the first barrier holds the rest of graphics until the compute buffer is done.">
+			<defs>
+				<marker id="f7b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="mk"/></marker>
+				<pattern id="f7i" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="6" height="6" class="hb"/><line x1="0" y1="0" x2="0" y2="6" class="hline"/></pattern>
+			</defs>
+			<text x="204" y="28" text-anchor="middle" class="sm">signal</text>
+			<text x="258" y="28" text-anchor="middle" class="sm">signal</text>
+			<text x="334" y="28" class="sm">wait → barrier</text>
+			<text x="424" y="28" class="sm">wait → barrier</text>
+			<line x1="204" y1="32" x2="204" y2="42" class="tick"/>
+			<line x1="258" y1="32" x2="258" y2="42" class="tick"/>
+			<line x1="330" y1="32" x2="330" y2="42" class="tick"/>
+			<line x1="420" y1="32" x2="420" y2="42" class="tick"/>
+
+			<line x1="10" y1="75" x2="990" y2="75" class="lane"/>
+			<text x="138" y="57" text-anchor="end" class="lbl">Render thread</text>
+			<text x="138" y="111" text-anchor="end" class="lbl">Shared queue</text>
+			<text x="138" y="125" text-anchor="end" class="sm">one VkQueue</text>
+
+			<rect x="150" y="42" width="396" height="22" rx="2" class="cpu"/><text x="348" y="57" text-anchor="middle" class="on">record: skin · TLAS · shadows · z-pre · GBuffer · RT · post</text>
+			<rect x="546" y="42" width="54" height="22" rx="2" class="cpu"/><text x="573" y="57" text-anchor="middle" class="on">endFrame</text>
+
+			<rect x="605" y="82" width="85" height="18" rx="2" class="gfx"/><text x="647" y="95" text-anchor="middle" class="on">shadows</text>
+			<rect x="690" y="82" width="72" height="18" rx="2" fill="url(#f7i)" class="blk"/><text x="726" y="95" text-anchor="middle" class="onb">barrier</text>
+			<rect x="762" y="82" width="90" height="18" rx="2" class="gfx"/><text x="807" y="95" text-anchor="middle" class="on">z-pre · GBuffer</text>
+			<rect x="852" y="82" width="126" height="18" rx="2" class="gfx"/><text x="915" y="95" text-anchor="middle" class="on">RT · light · post</text>
+			<line x1="852" y1="78" x2="852" y2="104" class="tick"/>
+			<rect x="600" y="116" width="162" height="18" rx="2" class="cmp"/><text x="681" y="129" text-anchor="middle" class="on">compute CB · skin, TLAS</text>
+
+			<line x1="600" y1="65" x2="605" y2="80" class="flow" marker-end="url(#f7b)"/>
+			<line x1="591" y1="65" x2="596" y2="114" class="flow" marker-end="url(#f7b)"/>
+			<line x1="762" y1="115" x2="762" y2="103" class="sem" marker-end="url(#f7b)"/>
+			<text x="768" y="112" class="sm">compute → all commands</text>
+			<text x="852" y="152" text-anchor="middle" class="sm">second barrier: compute already done</text>
+		</svg>
+	</div>
+	<figcaption><b>Figure 7.</b> The same frame on both topologies, drawn for a GPU that is idle when the frame starts. Green-outlined recording is asynchronous work. On a dedicated family each signal submits a compute batch early and each wait splits the graphics command buffer. On a shared family nothing is split; graphics work before the first barrier may overlap the compute buffer, and everything after it waits for all of it.</figcaption>
+</figure>
+
+<div class="note inv">
+	<p class="tag">Invariant</p>
+	<p><code>submitWait</code> attaches the wait to the submission that carries the work recorded <em>before</em> the <code>waitAsynchronousCompute</code> call, and that is deliberate. On a dedicated queue that work (G0 above) therefore also waits for the batch, although it does not consume its results. Nothing makes the compute queue wait for graphics, so this wait is the only thing that keeps G0 from executing concurrently with C0. The render graph declares only which graphics passes consume asynchronous outputs; the passes recorded before the wait may still touch what the batch reads or rewrites, and they rely on the batch having finished first. <code>synchronize()</code> behaves the same way.</p>
+	<p>The cost shows only when the GPU is idle at the start of a frame, which puts the frame's first graphics work behind compute; when the graphics queue is still busy with earlier frames it costs nothing, since the compute batch was submitted long before. Submitting G0 without the wait and attaching it to the next graphics submission was tried. It lost the device within seconds of the 3D scene appearing in the Zombie main menu, with no validation message beforehand, and with the wait put back the fault has not recurred. Removing the stall safely needs a graphics → compute dependency: a graphics timeline signalled by each graphics split and waited on by the next compute batch.</p>
+</div>
+
+<h3>Render graph integration</h3>
+<ul>
+	<li>Passes created with <code>RenderPass::Queue::AsyncCompute</code> are built between <code>RenderContext::beginAsyncCompute</code> and <code>endAsyncCompute</code>; compute blocks added in that scope are tagged asynchronous. Build code checks <code>renderContext-&gt;isAsyncCompute()</code>. Today's asynchronous passes are "Skinned mesh skin", "Skinned mesh AS", "Static mesh deform", "Static mesh deform AS", "Instance mesh deform", "Instance mesh deform AS" and "RT world setup" (the TLAS build).</li>
+	<li>After each asynchronous pass <code>RenderGraph::build</code> appends a <code>SignalComputeRenderBlock</code> and merges the pass's blocks into the render queue at once, so they are recorded, and on a dedicated queue submitted, early.</li>
+	<li><code>RenderGraph::validate</code> puts one <code>WaitComputeRenderBlock</code> before the earliest graphics consumer of each asynchronous pass; a wait covers everything recorded before its signal, so later consumers need nothing. A consumer on the asynchronous queue gets three barriers instead: Compute → Compute, Compute → AccelerationStructureUpdate, and AccelerationStructureUpdate → AccelerationStructureUpdate | Compute. An asynchronous pass without a known consumer is waited for right after it.</li>
+	<li>A pass that waits starts a new render pass, because a queue split cannot happen inside one.</li>
+	<li>An asynchronous pass may not consume graphics output from the same frame, since the compute queue never waits for graphics. <code>validate</code> asserts this in debug builds.</li>
+</ul>
+
+<div class="note inv">
+	<p class="tag">Invariant</p>
+	<p>A wait orders compute before graphics within one frame only. Frame F+1's compute work can run while frame F's graphics work still reads the previous results, so everything the asynchronous queue rewrites per frame is ring-buffered: the TLAS and dynamic BLAS (<code>AccelerationStructureVk</code>), and 6 slots for skinned and deformed vertex buffers. <code>ProgramVk</code> includes the current acceleration structure handle in its descriptor-set key, so a cached set never points at a slot that is being rebuilt.</p>
+</div>
+
+<h3>Acceleration structure rings</h3>
+<p>A fixed ring depth is not enough for acceleration structures. The world's top level structure belongs to its <code>RTWorldComponent</code>, so every view rendering that world rebuilds the same structure, and so does every probe capture face rendered within a frame. Skinned and deformed meshes refit their bottom level structures once per view as well. On top of that the asynchronous queue can trail the CPU by all frames in flight, since its batches wait on the upload timeline behind the graphics work queued ahead of the uploads. With two views each rebuilding the world every frame, a 4-slot ring came round while an earlier build was still pending, and the CPU rewrote the instance data under it. The build then read instances of a later frame, whose bottom level structures might not have been built yet, and NVIDIA's build shader failed with a misaligned address.</p>
+<p>So <code>AccelerationStructureVk::advance</code> only rewrites a slot when no work can read it any longer, and otherwise inserts a fresh slot into the ring:</p>
+<ul>
+	<li>When a slot stops being current, it notes how many frames have been submitted so far. Views register every frame at <code>endFrame</code>, after its last submission (<code>Context::frameSubmitted</code>), and the context remembers the issued epoch of the last 64 frames.</li>
+	<li>Views render one after another, so the first frame submitted after the slot was left is the frame that left it. Once that frame has been submitted, every reader of the slot has been, and the slot is free when the epoch issued with that frame has completed.</li>
+	<li>A slot left by the frame still being recorded is never free: its readers may sit in command buffers that have not been submitted, so waiting for them would never end. A slot that is not free gets a new slot inserted in front of it. Top level slots are created at once, with instance, hierarchy and scratch buffers of their own; bottom level slots get their buffers when first built, which is then a full build rather than a refit.</li>
+	<li>Rings therefore grow to what the views, probe captures and GPU lag need. In the Zombie gameplay stage, rings started at one slot grew to five. Each growth is logged at debug level.</li>
+</ul>
+
+<p>Resources cross families without ownership transfers. When the graphics and compute families differ, <code>ApiBuffer</code> creates buffers with <code>CONCURRENT</code> sharing, and <code>Image</code> does the same for images with storage usage (textures created with shader storage), which stay in <code>GENERAL</code> between uses. Render targets remain <code>EXCLUSIVE</code> and their layouts are tracked in graphics queue order, so they cannot be written by the dedicated queue: binding one as a storage image in asynchronous compute logs an error once per program and skips the layout transition. Present waits for <code>computeFinished</code>, so the part of the frame's compute work recorded after the last signal also completes before the image is shown.</p>
+</section>
+
+<!-- ============================================================ 8 -->
+<section id="uploads">
+<h2><span class="n">8</span>Resource uploads</h2>
+
+<p>Creating or updating a resource never records into a frame command buffer, and nothing submits a command buffer of its own any longer. A resource either writes straight into host-visible memory (dynamic, read-back and uniform buffers) or queues a deferred upload with <code>Context::addDeferredUpload(fn, size)</code>: a lambda that records transfer work into an upload command buffer later.</p>
+
+<h3>When queued uploads run</h3>
+<ul>
+	<li>In <code>endFrame</code>, before the frame's command buffers are submitted.</li>
+	<li>Before any submission of frame work in the middle of a frame: <code>signalAsynchronousCompute</code> and <code>waitAsynchronousCompute</code> on a dedicated compute queue, and <code>synchronize</code>.</li>
+	<li>At once, on the calling thread, when the queued uploads hold 32 MiB or more of staging memory (<code>c_maxPendingUploadSize</code>). The size counts static buffer data, immutable texture data and BLAS scratch buffers. A loading thread can create resources far faster than frames go by, and without the cap every staging buffer created between two frames would be alive at once.</li>
+	<li>At once when no view exists, as in the pipeline tools. This flush waits for the upload and then runs every cleanup, because no frame will.</li>
+	<li>In <code>RenderViewVk::close</code>, which waits for it too.</li>
+</ul>
+
+<h3>Context::performUploads</h3>
+<ol class="steps">
+	<li>Take the graphics queue lock. It is held only while recording and submitting.</li>
+	<li>Release the upload command buffers of earlier flushes that the GPU has consumed (<code>retireUploads</code>).</li>
+	<li>Swap out the queued lambdas and the pending size under <code>m_updateLock</code>.</li>
+	<li>Acquire a command buffer from the context's upload command pool. If that fails the lambdas are put back.</li>
+	<li><code>reserveSubmission()</code>, so the staging buffers the lambdas release while recording are held back until this buffer has been consumed.</li>
+	<li>Run every lambda: buffer copies, image transitions, copies and clears, BLAS builds. Each one releases its staging buffer, or notes the epoch when it keeps it.</li>
+	<li>Record a global barrier, <code>ALL_COMMANDS</code> to <code>ALL_COMMANDS</code>, <code>MEMORY_WRITE</code> to <code>MEMORY_READ | MEMORY_WRITE</code>.</li>
+	<li><code>submitSignal</code> on the upload timeline semaphore with <code>m_uploadValue + 1</code>, then store the new value while the lock is still held.</li>
+	<li>Keep the command buffer in <code>m_uploadCommandBuffers</code> and return. Only <code>performUploads(true)</code> waits: it releases the lock, waits for the fence and releases the command buffer with the lock held again.</li>
+</ol>
+<p>Later graphics work is ordered after the uploads by submission order and the closing barrier. Work on other queues is ordered by the wait that <code>Queue::submit</code> injects (<a href="#queues">§4</a>). That wait reads <code>m_uploadValue</code> under the graphics queue lock, and uploads are dequeued, recorded and submitted under the same lock, so every upload that has left the queue has also been submitted by the time the value is read.</p>
+<p>An upload command buffer is released by whichever thread gets there first once <code>getCompletedEpoch</code> has passed its epoch: the next flush, or <code>performCleanup</code> at every present. <code>performCleanupAll</code> and the context's destructor wait for the device and release them all. Releasing only needs the fence to have signalled, so neither path blocks.</p>
+
+<figure>
+	<div class="fig">
+		<p class="fig-title">Normal flush at endFrame</p>
+		<svg class="dg" viewBox="0 0 1000 214" role="img" aria-label="Deferred uploads flushed at endFrame. The loader thread creates texture T and updates buffer B, queueing two deferred uploads. At endFrame the render thread records them into the upload command buffer, submits it signalling upload value v, and moves straight on to submit compute and graphics. The graphics queue runs the upload after the earlier frames and before frame F; compute waits on the GPU for upload value v. A later cleanup polls the upload fence and releases the command buffer.">
+			<defs>
+				<marker id="f8a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="mk"/></marker>
+				<marker id="f8f" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="mkf"/></marker>
+			</defs>
+			<text x="570" y="15" text-anchor="middle" class="sm">endFrame</text>
+			<path d="M512,27 V21 H628 V27" class="tick"/>
+			<text x="870" y="15" text-anchor="middle" class="sm">a later present</text>
+			<path d="M840,27 V21 H900 V27" class="tick"/>
+			<line x1="10" y1="71" x2="990" y2="71" class="lane"/>
+			<line x1="10" y1="115" x2="990" y2="115" class="lane"/>
+			<line x1="10" y1="159" x2="990" y2="159" class="lane"/>
+			<text x="138" y="53" text-anchor="end" class="lbl">Render thread</text>
+			<text x="138" y="97" text-anchor="end" class="lbl">Loader thread</text>
+			<text x="138" y="141" text-anchor="end" class="lbl">Graphics queue</text>
+			<text x="138" y="185" text-anchor="end" class="lbl">Compute queue</text>
+
+			<rect x="150" y="38" width="360" height="22" rx="2" class="cpu"/><text x="330" y="53" text-anchor="middle" class="on">record frame F</text>
+			<rect x="510" y="38" width="60" height="22" rx="2" class="cpu"/><text x="540" y="53" text-anchor="middle" class="on">uploads</text>
+			<rect x="570" y="38" width="60" height="22" rx="2" class="cpu"/><text x="600" y="53" text-anchor="middle" class="on">C, G</text>
+			<rect x="630" y="38" width="210" height="22" rx="2" class="cpu"/><text x="735" y="53" text-anchor="middle" class="on">present · record frame F+1</text>
+			<rect x="840" y="38" width="60" height="22" rx="2" class="cpu"/><text x="870" y="53" text-anchor="middle" class="on">cleanup</text>
+
+			<rect x="190" y="82" width="140" height="22" rx="2" class="cpu"/><text x="260" y="97" text-anchor="middle" class="on">create T · fill staging</text>
+			<rect x="370" y="82" width="60" height="22" rx="2" class="cpu"/><text x="400" y="97" text-anchor="middle" class="on">update B</text>
+			<line x1="330" y1="104" x2="330" y2="110" class="tick"/>
+			<line x1="430" y1="104" x2="430" y2="110" class="tick"/>
+			<text x="326" y="120" text-anchor="end" class="sm">addDeferredUpload (T)</text>
+			<text x="434" y="120" class="sm">addDeferredUpload (B)</text>
+
+			<rect x="150" y="126" width="480" height="22" rx="2" class="old"/><text x="390" y="141" text-anchor="middle" class="on">F−1, F−2 still executing</text>
+			<rect x="630" y="126" width="60" height="22" rx="2" class="upl"/><text x="660" y="141" text-anchor="middle" class="on">upload</text>
+			<rect x="690" y="126" width="220" height="22" rx="2" class="gfx"/><text x="800" y="141" text-anchor="middle" class="on">frame F graphics</text>
+			<rect x="700" y="170" width="120" height="22" rx="2" class="cmp"/><text x="760" y="185" text-anchor="middle" class="on">frame F compute</text>
+
+			<line x1="570" y1="61" x2="570" y2="124" class="flow" marker-end="url(#f8a)"/>
+			<text x="564" y="76" text-anchor="end" class="sm">submit, signals upload = v</text>
+			<line x1="690" y1="149" x2="698" y2="168" class="sem" marker-end="url(#f8a)"/>
+			<text x="692" y="164" text-anchor="end" class="sm">waits upload ≥ v</text>
+			<path d="M690,125 V112 H870 V63" class="fen" marker-end="url(#f8f)"/>
+			<text x="864" y="104" text-anchor="end" class="fs">fence polled, CB released</text>
+		</svg>
+	</div>
+	<div class="fig">
+		<p class="fig-title">Flush on the loader thread at the 32 MiB cap</p>
+		<svg class="dg" viewBox="0 0 1000 170" role="img" aria-label="Flush at the 32 MiB cap. The loader thread's pending staging memory reaches 32 MiB, so it records and submits the upload command buffer itself while holding the graphics queue lock, then carries on loading. A render thread submission during the recording waits briefly for the lock.">
+			<defs>
+				<marker id="f8b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="mk"/></marker>
+				<pattern id="f8i" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="6" height="6" class="hb"/><line x1="0" y1="0" x2="0" y2="6" class="hline"/></pattern>
+			</defs>
+			<text x="390" y="18" text-anchor="middle" class="sm">a submission here waits for the graphics queue lock</text>
+			<line x1="390" y1="22" x2="390" y2="36" class="tick"/>
+			<line x1="10" y1="71" x2="990" y2="71" class="lane"/>
+			<line x1="10" y1="115" x2="990" y2="115" class="lane"/>
+			<text x="138" y="53" text-anchor="end" class="lbl">Render thread</text>
+			<text x="138" y="97" text-anchor="end" class="lbl">Loader thread</text>
+			<text x="138" y="141" text-anchor="end" class="lbl">Graphics queue</text>
+
+			<rect x="150" y="38" width="220" height="22" rx="2" class="cpu"/><text x="260" y="53" text-anchor="middle" class="on">record frame F</text>
+			<rect x="370" y="38" width="40" height="22" rx="2" fill="url(#f8i)" class="blk"/>
+			<rect x="410" y="38" width="180" height="22" rx="2" class="cpu"/><text x="500" y="53" text-anchor="middle" class="on">record frame F</text>
+			<rect x="590" y="38" width="60" height="22" rx="2" class="cpu"/><text x="620" y="53" text-anchor="middle" class="on">endFrame</text>
+
+			<rect x="150" y="82" width="200" height="22" rx="2" class="cpu"/><text x="250" y="97" text-anchor="middle" class="on">create resources · fill staging</text>
+			<rect x="350" y="82" width="60" height="22" rx="2" class="cpu"/><text x="380" y="97" text-anchor="middle" class="on">record</text>
+			<rect x="410" y="82" width="340" height="22" rx="2" class="cpu"/><text x="580" y="97" text-anchor="middle" class="on">continue loading</text>
+			<line x1="350" y1="104" x2="350" y2="110" class="tick"/>
+			<text x="350" y="120" text-anchor="middle" class="sm">pending ≥ 32 MiB</text>
+
+			<rect x="150" y="126" width="300" height="22" rx="2" class="old"/><text x="300" y="141" text-anchor="middle" class="on">F−1 still executing</text>
+			<rect x="450" y="126" width="120" height="22" rx="2" class="upl"/><text x="510" y="141" text-anchor="middle" class="on">upload (loader)</text>
+			<rect x="650" y="126" width="180" height="22" rx="2" class="gfx"/><text x="740" y="141" text-anchor="middle" class="on">frame F</text>
+
+			<line x1="410" y1="105" x2="410" y2="124" class="flow" marker-end="url(#f8b)"/>
+			<text x="416" y="120" class="sm">submit</text>
+		</svg>
+	</div>
+	<figcaption><b>Figure 8.</b> Upload timing. Top: the normal case. The render thread records and submits the uploads at <code>endFrame</code> and carries on; a cleanup at a later present finds the fence signalled and releases the command buffer. Bottom: a loader thread that passes the cap flushes on its own thread, holding the graphics queue lock only while it records and submits, and carries on loading too.</figcaption>
+</figure>
+
+<div class="note perf">
+	<p class="tag">Performance</p>
+	<p>A flush costs the CPU only the time to record and submit. The paths that still wait are off the frame path: <code>performUploads(true)</code> without a view and in <code>close</code>, and <code>TextureVk::lock</code> when the GPU has not yet consumed the previous copy out of the same texture's staging buffer. A texture updated every frame therefore waits, at most, for the upload submitted at the previous <code>endFrame</code>, which the graphics queue runs ahead of that frame's graphics work.</p>
+</div>
+
+<div class="tbl">
+<table class="wide">
+	<thead><tr><th>Resource or call</th><th>Host side</th><th>GPU work</th><th>Blocks the caller</th></tr></thead>
+	<tbody>
+		<tr><td><code>BufferStaticVk</code> <code>lock</code>/<code>unlock</code></td><td><code>lock</code> creates a host-visible staging buffer and returns its mapping.</td><td>Deferred: <code>vkCmdCopyBuffer</code> of the whole buffer, then the staging buffer is released.</td><td>No</td></tr>
+		<tr><td><code>BufferDynamicVk</code> <code>lock</code>/<code>unlock</code></td><td>Writes into the next of 12 slots of one persistently mapped buffer; <code>unlock</code> makes that slot the current view.</td><td>None. The view's offset is passed as a dynamic offset.</td><td>No</td></tr>
+		<tr><td><code>BufferReadBackVk</code> <code>lock</code></td><td>Returns the persistent coherent mapping for reading.</td><td>None.</td><td>No; nothing fences it</td></tr>
+		<tr><td>Uniform parameters</td><td><code>ProgramVk</code> copies its shadow into a pool block at draw time.</td><td>None.</td><td>No</td></tr>
+		<tr><td><code>TextureVk</code> 2D create</td><td>Image created in <code>UNDEFINED</code>; staging filled with the initial data, or zeros.</td><td>Deferred: <code>UNDEFINED</code> → <code>TRANSFER_DST</code>, a copy per mip, → the resting layout: <code>SHADER_READ_ONLY_OPTIMAL</code>, or <code>GENERAL</code> for storage textures. Staging released when immutable; a mutable texture keeps it and notes the upload's epoch.</td><td>No</td></tr>
+		<tr><td><code>TextureVk</code> cube and volume create</td><td>Staging filled: six sides of every mip, or every mip of a volume with its own depth, slices tightly packed.</td><td>Deferred, as for 2D: one copy per side and mip, or per volume mip, then → the resting layout.</td><td>No</td></tr>
+		<tr><td><code>TextureVk</code> <code>lock</code>/<code>unlock</code> (mutable textures)</td><td><code>lock</code> waits until the GPU has consumed the latest copy out of the staging buffer, then holds the staging lock until <code>unlock</code>. It returns the side's and level's own part of the staging buffer, laid out as for the initial upload.</td><td>Deferred: resting layout → <code>TRANSFER_DST</code>, copy of the region (row-aligned partial copies for uncompressed formats, whole mip otherwise), → resting layout. The upload notes its epoch for the next <code>lock</code>.</td><td><code>lock</code> may, see above</td></tr>
+		<tr><td><code>RenderTargetVk</code> create</td><td>Tracked layout set to <code>SHADER_READ_ONLY_OPTIMAL</code> at once.</td><td>Deferred: <code>UNDEFINED</code> → <code>TRANSFER_DST</code>, clear to zero, → <code>SHADER_READ_ONLY_OPTIMAL</code>, so it can be sampled before it is rendered.</td><td>No</td></tr>
+		<tr><td><code>RenderTargetDepthVk</code> create</td><td>n/a</td><td>None; the first pass transitions it.</td><td>No</td></tr>
+		<tr><td>BLAS create (<code>createBottomLevel</code>)</td><td>Structure and buffers created at once, so the BLAS can be referenced right away.</td><td>Deferred: a <code>TRANSFER</code> → <code>ACCELERATION_STRUCTURE_BUILD</code> barrier, so vertex and index uploads in the same batch are visible, then the build. Static scratch released afterwards. Consecutive creations share one submission.</td><td>No</td></tr>
+		<tr><td>TLAS (<code>writeInstances</code>)</td><td>Instance data written into the ring slot's own host-visible buffer, which no pending build reads (<a href="#async">§7</a>).</td><td>Built inside the frame by <code>writeAccelerationStructure</code>.</td><td>No</td></tr>
+		<tr><td><code>ProgramVk</code> create</td><td>Shader modules, layouts, samplers.</td><td>None. The compute pipeline is created at once; graphics pipelines at first draw.</td><td>No</td></tr>
+	</tbody>
+</table>
+</div>
+
+<h3>Why a texture's tracked layout runs ahead</h3>
+<p><code>TextureVk::create</code> and <code>RenderTargetVk::create</code> set the image's tracked layout to its final layout as soon as the upload is queued (<code>Image::setVkImageLayout</code>), and the upload lambda records its transitions with <code>changeLayoutExplicit</code>, starting from <code>UNDEFINED</code>. The upload buffer always executes before any frame work that can use the resource, so from the frame's point of view the image already is in its final layout, even while the upload is still queued. Texture updates rely on the same ordering: a texture is always in its resting layout when upload buffers execute, so <code>unlock</code>'s copy transitions from and back to that layout without touching the tracked one.</p>
+
+<div class="note inv">
+	<p class="tag">Invariant</p>
+	<p>Any path that submits frame work before <code>endFrame</code> must call <code>Context::performUploads</code> first. A resource created during the frame has its first transfer and initial layout transition in the upload queue; frame work submitted ahead of it would see an <code>UNDEFINED</code> image. This was the cause of the "expects GENERAL, is UNDEFINED" crash in streaming games.</p>
+</div>
+</section>
+
+<!-- ============================================================ 9 -->
+<section id="cleanup">
+<h2><span class="n">9</span>Destruction and cleanup</h2>
+
+<p>When its owner lets go, a render resource can still be referenced from three places: a render context that has not been rendered yet (render blocks and program parameters hold raw pointers), a command buffer that has been recorded but not executed, and cached descriptor sets. Two mechanisms in series cover this.</p>
+
+<h3>Stage 1: ResourceMorgue, on the CPU</h3>
+<ul>
+	<li><code>Buffer</code>, <code>ITexture</code>, <code>IProgram</code>, <code>IRenderTargetSet</code>, <code>IAccelerationStructure</code> and <code>IVertexLayout</code> override <code>release()</code>. When the count reaches zero the object is retired instead of deleted.</li>
+	<li><code>retire()</code>, callable from any thread, takes a reference and pushes the object into the current bucket. There are three buckets, one more than the runtime's frame queue depth of two.</li>
+	<li><code>advance()</code> runs at the start of every view's <code>beginFrame</code>, on the render thread. It moves the head and releases the bucket it lands on, which was filled three advances ago. If something referenced the object again meanwhile (<code>ProgramVk</code> holds references to the textures it binds), the morgue only drops its own reference.</li>
+	<li>With no view registered, <code>retire()</code> deletes at once; tools that never render are unaffected. Removing the last view drains the queue.</li>
+	<li>The Vulkan resource classes' <code>destroy()</code> methods only relinquish ownership. Teardown happens in their destructors, which the morgue triggers.</li>
+</ul>
+
+<h3>Stage 2: deferred cleanup, on the GPU timeline</h3>
+<ul>
+	<li>Destructors pass Vulkan handles to <code>Context::addDeferredCleanup(fn, flags)</code>. The cleanup records <code>waitEpoch</code>, the last epoch handed out: the resource is being destroyed, so nothing new can reference it and only submissions already made can still read it.</li>
+	<li><code>present()</code> calls <code>performCleanup()</code>. It computes the completed epoch and releases the upload command buffers that are done. Then, holding the graphics and compute queue locks and the cleanup lock, it runs every cleanup whose <code>waitEpoch</code> has completed and keeps the rest. It repeats while cleanups queue further cleanups.</li>
+	<li>If any cleanup that ran carried <code>CleanupFreeDescriptorSets</code>, every live <code>ProgramVk</code> (they register as cleanup listeners) drops its whole descriptor-set cache and hands the sets to a new deferred cleanup, because a cached set may reference the destroyed view or buffer. Every destroyed buffer or image thus makes every program rebuild its descriptor sets on its next use.</li>
+	<li>With no view, <code>addDeferredCleanup</code> calls <code>performCleanupAll</code> on the caller's thread. It waits for the device to go idle, releases every upload command buffer and runs every cleanup whose epoch has completed. With the device idle that is all of them, except cleanups held back by an upload command buffer that this very thread is recording, such as staging buffers released by the upload lambdas. Those stay queued, and the flush that is recording runs <code>performCleanupAll</code> again once its upload has been consumed.</li>
+	<li><code>close()</code>, <code>reset()</code> and a change of swap chain image count flush the morgue and run <code>performCleanupAll</code>.</li>
+</ul>
+
+<figure>
+	<div class="fig">
+		<svg class="dg" viewBox="0 0 1010 240" role="img" aria-label="Destruction timeline of a texture T. During build of frame N plus one the last reference is released and T is retired into morgue bucket 0. The render thread renders the context that still uses T. The third advance, at beginFrame of N plus three, deletes T, whose destructor queues its cleanups with wait epoch 54. At present of N plus three epoch 54 is still running, so the cleanups are kept. At present of N plus four they run, and the descriptor sets they invalidated are queued with wait epoch 58.">
+			<line x1="150" y1="26" x2="150" y2="238" class="grid"/>
+			<line x1="310" y1="26" x2="310" y2="238" class="grid"/>
+			<line x1="470" y1="26" x2="470" y2="238" class="grid"/>
+			<line x1="630" y1="26" x2="630" y2="238" class="grid"/>
+			<line x1="790" y1="26" x2="790" y2="238" class="grid"/>
+			<line x1="950" y1="26" x2="950" y2="238" class="grid"/>
+			<text x="230" y="18" text-anchor="middle" class="sm">frame N</text>
+			<text x="390" y="18" text-anchor="middle" class="sm">frame N+1</text>
+			<text x="550" y="18" text-anchor="middle" class="sm">frame N+2</text>
+			<text x="710" y="18" text-anchor="middle" class="sm">frame N+3</text>
+			<text x="870" y="18" text-anchor="middle" class="sm">frame N+4</text>
+
+			<line x1="10" y1="69" x2="1000" y2="69" class="lane"/>
+			<line x1="10" y1="113" x2="1000" y2="113" class="lane"/>
+			<line x1="10" y1="157" x2="1000" y2="157" class="lane"/>
+			<text x="138" y="51" text-anchor="end" class="lbl">Owner thread</text>
+			<text x="138" y="95" text-anchor="end" class="lbl">Render thread</text>
+			<text x="138" y="139" text-anchor="end" class="lbl">Graphics queue</text>
+			<text x="138" y="193" text-anchor="end" class="lbl">Deferred cleanups</text>
+
+			<rect x="150" y="36" width="120" height="22" rx="2" class="cpu"/><text x="210" y="51" text-anchor="middle" class="on">build N+1</text>
+			<rect x="310" y="36" width="120" height="22" rx="2" class="cpu"/><text x="370" y="51" text-anchor="middle" class="on">build N+2</text>
+			<rect x="470" y="36" width="120" height="22" rx="2" class="cpu"/><text x="530" y="51" text-anchor="middle" class="on">build N+3</text>
+			<rect x="630" y="36" width="120" height="22" rx="2" class="cpu"/><text x="690" y="51" text-anchor="middle" class="on">build N+4</text>
+			<rect x="790" y="36" width="120" height="22" rx="2" class="cpu"/><text x="850" y="51" text-anchor="middle" class="on">build N+5</text>
+			<circle cx="258" cy="47" r="4.5" class="dot-s"/>
+			<text x="264" y="66" class="sm">last Ref released → retire(T) into bucket 0</text>
+
+			<rect x="160" y="80" width="120" height="22" rx="2" class="cpu"/><text x="220" y="95" text-anchor="middle" class="on">render N</text>
+			<rect x="320" y="80" width="120" height="22" rx="2" class="cpu"/><text x="380" y="95" text-anchor="middle" class="on">render N+1 · uses T</text>
+			<rect x="480" y="80" width="120" height="22" rx="2" class="cpu"/><text x="540" y="95" text-anchor="middle" class="on">render N+2</text>
+			<rect x="640" y="80" width="120" height="22" rx="2" class="cpu"/><text x="700" y="95" text-anchor="middle" class="on">render N+3</text>
+			<rect x="800" y="80" width="120" height="22" rx="2" class="cpu"/><text x="860" y="95" text-anchor="middle" class="on">render N+4</text>
+			<path d="M284,86 L289,91 L284,96 L279,91 z" class="prs"/>
+			<path d="M444,86 L449,91 L444,96 L439,91 z" class="prs"/>
+			<path d="M604,86 L609,91 L604,96 L599,91 z" class="prs"/>
+			<path d="M764,86 L769,91 L764,96 L759,91 z" class="prs"/>
+			<path d="M924,86 L929,91 L924,96 L919,91 z" class="prs"/>
+			<text x="313" y="112" class="sm">head → 1</text>
+			<text x="473" y="112" class="sm">head → 2</text>
+			<circle cx="630" cy="91" r="4.5" class="dot-s"/>
+			<text x="633" y="112" class="fs">head → 0: delete T</text>
+
+			<rect x="290" y="124" width="160" height="22" rx="2" class="gfx"/><text x="370" y="139" text-anchor="middle" class="on">N · epoch 50</text>
+			<rect x="450" y="124" width="160" height="22" rx="2" class="gfx"/><text x="530" y="139" text-anchor="middle" class="on">N+1 · epoch 52</text>
+			<rect x="610" y="124" width="160" height="22" rx="2" class="gfx hl"/><text x="690" y="139" text-anchor="middle" class="onb">N+2 · epoch 54</text>
+			<rect x="770" y="124" width="160" height="22" rx="2" class="gfx"/><text x="850" y="139" text-anchor="middle" class="on">N+3 · epoch 56</text>
+			<rect x="930" y="124" width="60" height="22" rx="2" class="gfx"/><text x="960" y="139" text-anchor="middle" class="on">N+4</text>
+
+			<rect x="626" y="181" width="9" height="9" class="sq"/>
+			<text x="642" y="183" class="on">cleanups queued</text>
+			<text x="642" y="197" class="sm">waitEpoch = 54</text>
+			<rect x="760" y="181" width="9" height="9" class="sq-o"/>
+			<text x="776" y="183" class="on">present N+3: 54 not done</text>
+			<text x="776" y="197" class="sm">cleanups kept</text>
+			<rect x="924" y="181" width="9" height="9" class="sq"/>
+			<text x="914" y="217" text-anchor="end" class="on">present N+4: 54 done → destroy image, views, bindless indices</text>
+			<text x="914" y="231" text-anchor="end" class="sm">postCleanup → programs' descriptor sets queued, waitEpoch = 58</text>
+		</svg>
+	</div>
+	<figcaption><b>Figure 9.</b> Destruction of a texture T in a GPU-bound runtime. Diamonds on the render thread are <code>present</code> calls. Each frame also submits a compute command buffer with the odd epoch in between, not drawn. The morgue protects the render context of N+1, which still points at T; the epoch protects the GPU work of N+2, the last submission made before T was deleted.</figcaption>
+</figure>
+
+<div class="tbl">
+<table class="narrow">
+	<thead><tr><th>Deferred object</th><th>Queued by</th><th>Flushes descriptor sets</th></tr></thead>
+	<tbody>
+		<tr><td><code>VkBuffer</code> with its VMA allocation, and its bindless buffer index</td><td><code>ApiBuffer::destroy</code></td><td>yes</td></tr>
+		<tr><td><code>VkImage</code> with its VMA allocation</td><td><code>Image::destroy</code></td><td>yes</td></tr>
+		<tr><td>Image views: the sampled view and the per-mip storage views</td><td><code>Image::destroy</code></td><td>yes</td></tr>
+		<tr><td>Bindless sampled and storage indices</td><td><code>Image::destroy</code></td><td>yes</td></tr>
+		<tr><td><code>VkAccelerationStructureKHR</code></td><td><code>AccelerationStructureVk</code> teardown, and slot re-creation when a BLAS grows</td><td>yes</td></tr>
+		<tr><td><code>VkFramebuffer</code> that references a replaced primary depth view</td><td><code>RenderTargetSetVk::prepareAsTarget</code></td><td>no</td></tr>
+		<tr><td>Every cached <code>VkFramebuffer</code> of a render target set</td><td><code>RenderTargetSetVk</code> teardown</td><td>no</td></tr>
+		<tr><td><code>VkDescriptorSet</code></td><td><code>~ProgramVk</code>, <code>ProgramVk::postCleanup</code></td><td>no</td></tr>
+	</tbody>
+</table>
+</div>
+<p>"Flushes descriptor sets" means the cleanup is queued with <code>CleanupFreeDescriptorSets</code>, which triggers <code>ProgramVk::postCleanup</code> on every program when it runs.</p>
+<p>Not deferred through the context: uniform blocks, which <code>UniformBufferPool</code> tags with epochs of its own (<a href="#memory">§10</a>); command buffers, which are fenced explicitly; and pipelines, layouts, samplers, shader modules and render passes, which live until their cache or the context is destroyed. The context's destructor waits for the device, then destroys the upload command pool, the pipelines, the render passes, the uniform pools, both descriptor pools, the bindless set layouts and the upload semaphore.</p>
+</section>
+
+<!-- ============================================================ 10 -->
+<section id="memory">
+<h2><span class="n">10</span>Memory, descriptors and uniforms</h2>
+
+<h3>Allocation</h3>
+<div class="tbl">
+<table class="wide">
+	<thead><tr><th>VMA usage</th><th>Mapping</th><th>Used for</th></tr></thead>
+	<tbody>
+		<tr><td><code>GPU_ONLY</code></td><td>none</td><td>Textures, render and depth targets, static buffers, acceleration structure hierarchy and scratch buffers. Textures ask for <code>STRATEGY_MIN_MEMORY</code>.</td></tr>
+		<tr><td><code>CPU_TO_GPU</code>, <code>HOST_COHERENT</code> required</td><td>persistent</td><td>Dynamic buffers, uniform chains, the TLAS instance buffer.</td></tr>
+		<tr><td><code>GPU_TO_CPU</code>, <code>HOST_VISIBLE | HOST_COHERENT</code> required, <code>HOST_CACHED</code> preferred</td><td>persistent</td><td>Read-back buffers (<code>ApiBuffer::createReadBack</code>). Cached memory makes the CPU's reads fast; write-combined memory, which <code>CPU_TO_GPU</code> tends to pick, is very slow to read.</td></tr>
+		<tr><td><code>CPU_TO_GPU</code>, <code>HOST_COHERENT</code> required</td><td>per lock</td><td>Staging buffers for static buffers and textures.</td></tr>
+	</tbody>
+</table>
+</div>
+<ul>
+	<li>Mappings are coherent, so the backend never calls <code>vmaFlushAllocation</code> or <code>vmaInvalidateAllocation</code>. Host writes made before a <code>vkQueueSubmit</code> are visible to the work it submits.</li>
+	<li>Buffers, and images with storage usage, use <code>CONCURRENT</code> sharing across the graphics and compute families when those differ. Other images are <code>EXCLUSIVE</code>.</li>
+	<li>All buffers usable as vertex, index or storage buffers get <code>SHADER_DEVICE_ADDRESS</code>, and with ray tracing also <code>ACCELERATION_STRUCTURE_BUILD_INPUT_READ_ONLY</code>.</li>
+	<li>Read-back buffers (<code>BuReadBack</code>) have no fence tying their contents to a frame. Callers write a sentinel on the CPU when queuing the GPU write, keep a small ring of slots, and treat a slot as ready once the sentinel is overwritten.</li>
+</ul>
+
+<h3>Descriptor pools</h3>
+<p>Two pools. The bindless sets come from a pool of their own, sized exactly for them, so they cannot use up the descriptors that program sets need.</p>
+<div class="tbl">
+<table class="narrow">
+	<thead><tr><th>Descriptor type</th><th class="num">Program pool</th><th class="num">Bindless pool</th></tr></thead>
+	<tbody>
+		<tr><td>Flags</td><td class="num"><code>FREE_DESCRIPTOR_SET</code></td><td class="num"><code>UPDATE_AFTER_BIND</code></td></tr>
+		<tr><td><code>maxSets</code></td><td class="num">32 000</td><td class="num">3</td></tr>
+		<tr><td><code>UNIFORM_BUFFER_DYNAMIC</code></td><td class="num">80 000</td><td class="num">–</td></tr>
+		<tr><td><code>SAMPLER</code></td><td class="num">80 000</td><td class="num">–</td></tr>
+		<tr><td><code>SAMPLED_IMAGE</code></td><td class="num">16 536</td><td class="num">16 536</td></tr>
+		<tr><td><code>STORAGE_BUFFER_DYNAMIC</code></td><td class="num">8 000</td><td class="num">–</td></tr>
+		<tr><td><code>STORAGE_IMAGE</code></td><td class="num">16 536</td><td class="num">16 536</td></tr>
+		<tr><td><code>STORAGE_BUFFER</code></td><td class="num">–</td><td class="num">16 536</td></tr>
+		<tr><td><code>ACCELERATION_STRUCTURE_KHR</code> (ray tracing only)</td><td class="num">8 000</td><td class="num">–</td></tr>
+	</tbody>
+</table>
+</div>
+
+<h3>Descriptor sets</h3>
+<p>The order is fixed by <code>GlslResource::Set</code> in <code>code/Render/Editor/Glsl/GlslResource.h</code>; <code>PipelineLayoutCache</code> and <code>ProgramVk::validate</code> must match it.</p>
+<div class="tbl">
+<table class="wide">
+	<thead><tr><th class="num">Set</th><th>Binding</th><th>Descriptor</th><th>Filled from</th></tr></thead>
+	<tbody>
+		<tr><td class="num">0</td><td>3, 4, 5</td><td><code>UNIFORM_BUFFER_DYNAMIC</code> for <code>UbOnce</code>, <code>UbFrame</code>, <code>UbDraw</code></td><td>The program's current uniform blocks; the offset is dynamic.</td></tr>
+		<tr><td class="num">0</td><td>per shader</td><td><code>SAMPLER</code></td><td><code>PipelineLayoutCache::getSampler</code>; anisotropy and mip bias come from <code>RenderSystemDesc</code>.</td></tr>
+		<tr><td class="num">0</td><td>per shader</td><td><code>SAMPLED_IMAGE</code>, non-bindless textures</td><td>The resolved image view in its tracked layout, or <code>DEPTH_STENCIL_READ_ONLY_OPTIMAL</code> for depth.</td></tr>
+		<tr><td class="num">0</td><td>per shader</td><td><code>STORAGE_IMAGE</code>, non-bindless images</td><td>The per-mip storage view, in <code>GENERAL</code>.</td></tr>
+		<tr><td class="num">0</td><td>per shader</td><td><code>STORAGE_BUFFER_DYNAMIC</code></td><td>The buffer view; its offset is the dynamic offset, so a dynamic buffer's ring slot never needs a new set.</td></tr>
+		<tr><td class="num">0</td><td>per shader</td><td><code>ACCELERATION_STRUCTURE_KHR</code></td><td>The current ring slot.</td></tr>
+		<tr><td class="num">1</td><td>0</td><td>bindless <code>SAMPLED_IMAGE[16536]</code></td><td><code>Image::updateSampledResource</code>, layout <code>SHADER_READ_ONLY_OPTIMAL</code>.</td></tr>
+		<tr><td class="num">2</td><td>1</td><td>bindless <code>STORAGE_IMAGE[16536]</code>, one entry per mip</td><td><code>Image::updateStorageResource</code>, layout <code>GENERAL</code>.</td></tr>
+		<tr><td class="num">3</td><td>2</td><td>bindless <code>STORAGE_BUFFER[16536]</code></td><td><code>ApiBuffer::makeResourceIndex</code>, on first use.</td></tr>
+		<tr><td class="num">push</td><td>bytes 0–15</td><td><code>vec4</code> target size, vertex and fragment stages</td><td><code>ProgramVk::validate</code>, only for shaders that use it.</td></tr>
+	</tbody>
+</table>
+</div>
+<ul>
+	<li>Bindless bindings are partially bound, variable-count, update-after-bind and update-unused-while-pending, visible to all stages. Each set is allocated with a variable count of 16536, covering every index the allocators hand out. Indices come from <code>IdAllocator</code>s under <code>m_resourceIndexLock</code> and are freed through deferred cleanup. Writes into the bindless sets go through <code>Context::updateBindlessDescriptors</code>, which serializes them under <code>m_bindlessLock</code>, since resources are created on any thread and Vulkan requires writes into one set to be externally synchronized.</li>
+	<li>Shaders receive bindless indices as uniform members: <code>ProgramVk::validate</code> writes each bound texture's or image's index into the uniform shadow before uploading it. The TLAS stores each instance's per-vertex buffer index in <code>instanceCustomIndex</code>.</li>
+	<li><code>ProgramVk</code> caches descriptor sets in a map keyed on the uniform chains, the resolved textures and images, the storage buffers' <code>VkBuffer</code>s and the acceleration structure handles. A resource whose Vulkan handle changes between frames must be part of that key.</li>
+</ul>
+
+<h3>Uniform buffers</h3>
+<ul>
+	<li><code>Context</code> creates three pools: Once with 1 000 blocks per chain, Frame with 10 000, Draw with 100 000. A chain is one persistently mapped, host-visible <code>UNIFORM_BUFFER</code> of <em>blockCount × blockSize</em>; each pool keeps a list of chains per block size. The block size is the program's uniform buffer size rounded up to <code>minUniformBufferOffsetAlignment</code>.</li>
+	<li><code>ProgramVk</code> keeps a CPU shadow of each of its uniform buffers. The <code>set*Parameter</code> calls write the shadow only when the value changed, and then mark it dirty.</li>
+	<li>At each draw or dispatch, <code>ProgramVk::validate</code> frees the dirty buffers' previous blocks, allocates new ones, copies the shadows in, finds or creates the descriptor set, binds set 0 and the three bindless sets with the dynamic offsets, and sets the stencil reference.</li>
+	<li>A freed block goes into <code>m_freed</code>. <code>recycle()</code>, called from every <code>present</code>, tags the blocks freed since the last call with the latest issued epoch, since every command that referenced them has been recorded and submitted by then. It then returns every block whose tag has completed to its chain.</li>
+</ul>
+<div class="tbl">
+<table class="narrow">
+	<thead><tr><th></th><th class="num">present F</th><th class="num">present F+1</th><th class="num">present F+2</th></tr></thead>
+	<tbody>
+		<tr><td>Latest issued epoch</td><td class="num">54</td><td class="num">56</td><td class="num">58</td></tr>
+		<tr><td>Completed epoch</td><td class="num">50</td><td class="num">53</td><td class="num">55</td></tr>
+		<tr><td>Blocks freed while recording F</td><td class="num hot">tagged 54</td><td class="num">kept</td><td class="num hot">returned</td></tr>
+	</tbody>
+</table>
+</div>
+<p>How long a block is kept follows the GPU, not a count of presents: it is reused once the submissions made up to the present that tagged it have completed. That holds whatever the number of swap chain images and whatever the number of views presenting, as long as views are rendered one after another on one thread, which the pools require anyway since they take no lock.</p>
+</section>
+
+<!-- ============================================================ 11 -->
+<section id="pipelines">
+<h2><span class="n">11</span>Pipelines and render passes</h2>
+
+<h3>Pipelines</h3>
+<ul>
+	<li><code>Context::validateGraphicsPipeline</code> looks up <em>(primitive type, render pass handle, vertex layout hash, shader hash)</em> in <code>m_pipelines</code> and calls <code>vkCreateGraphicsPipelines</code> with the context's <code>VkPipelineCache</code> on a miss. The handle identifies the render pass exactly, since render passes are shared and live as long as the pipelines. The map is guarded by <code>m_pipelinesLock</code>, because every thread that renders a view looks pipelines up and <code>createProgram</code> creates compute pipelines on loader threads.</li>
+	<li>Before that shared lookup, <code>RenderViewVk</code> compares the key with the pipeline it used last, which most consecutive draws share.</li>
+	<li>State comes from the program's <code>RenderState</code>: cull mode, front face <code>CLOCKWISE</code>, fill or wireframe, depth test, write and compare, stencil operations (compare and write masks are all ones), blending per colour attachment, colour write mask, alpha to coverage. The sample count comes from the target set; sample shading is enabled when <code>multiSampleShading</code> is above zero, except for lines; line topologies use smooth rectangular lines when the device supports them.</li>
+	<li>Viewport and scissor are dynamic, plus the stencil reference when stencil is enabled.</li>
+	<li>Compute pipelines live in a map of their own, keyed by shader hash. <code>RenderSystemVk::createProgram</code> creates them, so the first dispatch does not hitch, and hands them to the program, so a dispatch needs no lookup at all.</li>
+	<li><code>PipelineLayoutCache</code> keys layouts by a hash of the bindings but compares the bindings on a hit. A collision is logged and gets a layout of its own, instead of silently sharing a wrong one.</li>
+	<li>Pipelines are never destroyed before the context; the collection code in <code>endFrame</code> is disabled.</li>
+	<li>The pipeline cache is loaded in <code>Context::create</code> from <code>&lt;writable folder&gt;/Traktor/Vulkan/Pipeline.cache</code> (<code>~/Library/Caches/Traktor/Vulkan/Pipeline.cache</code> on iOS) and saved in <code>RenderViewVk::close</code> and <code>RenderSystemVk::purge</code>.</li>
+</ul>
+
+<h3>Render passes</h3>
+<p>The context has one <code>RenderPassCache</code>, shared by every view and guarded by a lock of its own. A <code>Specification</code> holds the MSAA sample count, the clear mask, the load and store flags, up to <code>MaxTargets</code> colour formats and the depth format. It is a plain structure compared byte for byte, so two specifications never share a render pass by accident. The render passes are destroyed together with the context.</p>
+<div class="tbl">
+<table class="wide">
+	<thead><tr><th>Attachment</th><th>loadOp</th><th>storeOp</th><th>initialLayout</th><th>finalLayout</th></tr></thead>
+	<tbody>
+		<tr><td>Colour</td><td><code>CLEAR</code> with the colour clear bit, <code>LOAD</code> with the colour load flag, else <code>DONT_CARE</code></td><td><code>STORE</code> with the store flag and no MSAA, else <code>DONT_CARE</code></td><td><code>UNDEFINED</code> when clearing, else <code>COLOR_ATTACHMENT_OPTIMAL</code></td><td><code>COLOR_ATTACHMENT_OPTIMAL</code></td></tr>
+		<tr><td>MSAA resolve</td><td><code>DONT_CARE</code></td><td><code>STORE</code></td><td><code>UNDEFINED</code></td><td><code>COLOR_ATTACHMENT_OPTIMAL</code></td></tr>
+		<tr><td>Depth and stencil</td><td><code>CLEAR</code>, <code>LOAD</code> (depth load flag) or <code>DONT_CARE</code>; stencil the same with the stencil clear bit</td><td><code>STORE</code> with the depth store flag</td><td><code>DEPTH_STENCIL_ATTACHMENT_OPTIMAL</code></td><td><code>DEPTH_STENCIL_ATTACHMENT_OPTIMAL</code></td></tr>
+	</tbody>
+</table>
+</div>
+<p>Every render pass has one subpass. Only MSAA passes declare subpass dependencies (external to 0 and 0 to external, by region). The others rely on the image barriers recorded before the pass by <code>prepareAsTarget</code> and after it by <code>prepareAsTexture</code>.</p>
+
+<h3>beginPass, endPass, clear</h3>
+<ol class="steps">
+	<li><code>beginPass</code> builds the specification from the target set and gets the render pass, whose handle becomes part of the pipeline key.</li>
+	<li><code>RenderTargetSetVk::prepareAsTarget</code> finds or creates the <code>VkFramebuffer</code> for this render pass, rebuilding it if the primary depth view was replaced, and moves colour targets to <code>COLOR_ATTACHMENT_OPTIMAL</code> and depth to <code>DEPTH_STENCIL_ATTACHMENT_OPTIMAL</code>.</li>
+	<li><code>vkCmdBeginRenderPass</code> with one clear value per colour target, one per resolve target and one for depth; then viewport and scissor are set to the whole target.</li>
+	<li><code>endPass</code> ends the render pass and, for targets other than the primary one, calls <code>prepareAsTexture</code>: colour to <code>SHADER_READ_ONLY_OPTIMAL</code>, depth to <code>DEPTH_STENCIL_READ_ONLY_OPTIMAL</code> when the set was created with <code>usingDepthStencilAsTexture</code>.</li>
+	<li><code>clear()</code> uses <code>vkCmdClearAttachments</code> inside the pass, so drivers can take their fast-clear path. The rectangle is clamped to the target and only aspects present in the depth format are cleared.</li>
+</ol>
+</section>
+
+<!-- ============================================================ 12 -->
+<section id="layouts">
+<h2><span class="n">12</span>Image layouts and barriers</h2>
+
+<p><code>Image</code> keeps one <code>VkImageLayout</code> per layer and mip. <code>changeLayout(cb, newLayout, aspect, mips, layers)</code> checks whether every subresource in the range is in the same layout. If so, it returns when that layout already matches and otherwise records one <code>VkImageMemoryBarrier</code> from it. If not, it records one barrier per run of consecutive mips within a layer that share a layout, each from the layout that run is actually in, so that for example a mip chain whose top mip was just rendered transitions correctly. <code>PRESENT_SRC_KHR</code> is treated as <code>UNDEFINED</code>. The new layout is then stored for the whole range. <code>changeLayoutExplicit</code> records a barrier without touching the tracking, and <code>setVkImageLayout</code> updates the tracking without recording anything; deferred uploads use the pair (<a href="#uploads">§8</a>).</p>
+
+<div class="tbl">
+<table class="wide">
+	<thead><tr><th>Layout</th><th>Stage mask</th><th>Access mask</th></tr></thead>
+	<tbody>
+		<tr><td><code>UNDEFINED</code></td><td><code>TOP_OF_PIPE</code></td><td>none</td></tr>
+		<tr><td><code>GENERAL</code></td><td><code>ALL_COMMANDS</code></td><td>colour and depth attachment read and write, transfer read and write, shader read, host read and write, input attachment read, memory read and write</td></tr>
+		<tr><td><code>TRANSFER_SRC_OPTIMAL</code>, <code>TRANSFER_DST_OPTIMAL</code></td><td><code>TRANSFER</code></td><td>transfer read, transfer write</td></tr>
+		<tr><td><code>COLOR_ATTACHMENT_OPTIMAL</code></td><td><code>COLOR_ATTACHMENT_OUTPUT</code></td><td>colour attachment read and write</td></tr>
+		<tr><td><code>SHADER_READ_ONLY_OPTIMAL</code></td><td><code>VERTEX_SHADER | FRAGMENT_SHADER | COMPUTE_SHADER</code></td><td>shader read, input attachment read</td></tr>
+		<tr><td><code>DEPTH_STENCIL_ATTACHMENT_OPTIMAL</code></td><td><code>EARLY_FRAGMENT_TESTS | LATE_FRAGMENT_TESTS</code></td><td>depth attachment read and write</td></tr>
+		<tr><td><code>DEPTH_STENCIL_READ_ONLY_OPTIMAL</code></td><td><code>VERTEX_SHADER | FRAGMENT_SHADER | COMPUTE_SHADER</code></td><td>shader read</td></tr>
+		<tr><td><code>PRESENT_SRC_KHR</code></td><td><code>BOTTOM_OF_PIPE</code></td><td>none</td></tr>
+		<tr><td><code>PREINITIALIZED</code></td><td><code>HOST</code></td><td>host write</td></tr>
+	</tbody>
+</table>
+</div>
+
+<div class="tbl">
+<table class="wide">
+	<thead><tr><th>Resource</th><th>Resting layout</th><th>Other layouts</th></tr></thead>
+	<tbody>
+		<tr><td>Sampled texture</td><td><code>SHADER_READ_ONLY_OPTIMAL</code></td><td><code>TRANSFER_DST_OPTIMAL</code> during its upload or an update</td></tr>
+		<tr><td>Storage texture</td><td><code>GENERAL</code>, set by its upload</td><td><code>TRANSFER_DST_OPTIMAL</code> during an update</td></tr>
+		<tr><td>Colour render target</td><td><code>SHADER_READ_ONLY_OPTIMAL</code></td><td><code>COLOR_ATTACHMENT_OPTIMAL</code> inside passes; <code>GENERAL</code> once bound as a storage image in a compute dispatch on the graphics queue; <code>TRANSFER_SRC</code>/<code>DST</code> around <code>copy()</code></td></tr>
+		<tr><td>Depth target</td><td><code>DEPTH_STENCIL_ATTACHMENT_OPTIMAL</code>, or <code>DEPTH_STENCIL_READ_ONLY_OPTIMAL</code> after a pass when used as a texture</td><td>n/a</td></tr>
+		<tr><td>Swap chain image</td><td><code>PRESENT_SRC_KHR</code> between frames</td><td><code>COLOR_ATTACHMENT_OPTIMAL</code> inside passes</td></tr>
+	</tbody>
+</table>
+</div>
+
+<h3>IRenderView::barrier</h3>
+<p><code>barrier(from, to, written, mip, asynchronous)</code> is recorded in the compute command buffer when <code>asynchronous</code> is set, otherwise in the graphics one.</p>
+<ul>
+	<li>Stages: Vertex → <code>VERTEX_SHADER</code>, Fragment → <code>FRAGMENT_SHADER</code>, Compute → <code>COMPUTE_SHADER</code>, Indirect → <code>DRAW_INDIRECT</code>, AccelerationStructureUpdate → <code>ACCELERATION_STRUCTURE_BUILD</code>.</li>
+	<li>Access: shader stages on the source side give <code>SHADER_WRITE</code>, AccelerationStructureUpdate gives <code>ACCELERATION_STRUCTURE_WRITE</code>. On the destination side shader stages give <code>SHADER_READ</code>, Indirect gives <code>INDIRECT_COMMAND_READ</code>, AccelerationStructureUpdate gives <code>ACCELERATION_STRUCTURE_READ</code>.</li>
+	<li>Without access on one of the sides the barrier is execution-only. With a written texture whose layout is known, it is an image memory barrier on that mip with the same old and new layout, so it never transitions. Otherwise it is a global memory barrier; that includes images still in <code>UNDEFINED</code>, because an image barrier may not use it as a new layout.</li>
+	<li>On a queue without graphics, the dedicated compute queue, both stage masks are restricted to what the queue supports: compute, indirect, transfer, acceleration structure build, host, all commands, top and bottom of pipe; access masks likewise. A side left with nothing falls back to <code>TOP_OF_PIPE</code> or <code>BOTTOM_OF_PIPE</code> and loses its access mask, since nothing on that queue accessed memory in those stages; graphics consumers are ordered by the timeline semaphore instead.</li>
+</ul>
+</section>
+
+<!-- ============================================================ 13 -->
+<section id="timers">
+<h2><span class="n">13</span>GPU timers</h2>
+
+<ul>
+	<li>Time queries are compiled in everywhere except Android and iOS (<code>T_USE_QUERY</code>). At run time they need the <code>hostQueryReset</code> feature and a graphics family with <code>timestampValidBits</code> &gt; 0. Timestamps on the asynchronous queue additionally need timestamp bits on the compute family (<code>m_asynchronousTimeQueries</code>).</li>
+	<li>The pool holds <code>imageCount × 2 × 2048</code> timestamp queries and is created together with the swap chain. Slot <em>i</em> owns queries <em>[i · 4096, (i + 1) · 4096)</em>.</li>
+	<li><code>beginTimeQuery(asynchronous)</code> writes a <code>TOP_OF_PIPE</code> timestamp into the graphics or compute buffer and returns its index, which is always even. It returns −1 when the frame's 2048 queries are used up, or when asynchronous timestamps are not supported. <code>endTimeQuery</code> writes a <code>BOTTOM_OF_PIPE</code> timestamp at index + 1 and ignores handles that were not begun this frame.</li>
+	<li>In <code>beginFrame</code>, after the slot's fences have been waited for, <code>vkGetQueryPoolResults</code> reads the stamps the slot wrote last time (64-bit values with availability), then <code>vkResetQueryPool</code> resets the whole segment from the host.</li>
+	<li><code>getTimeQuery(q, wait, start, end)</code> finds the slot from <em>q</em> and returns those resolved stamps in seconds: <em>ticks × timestampPeriod / 10<sup>9</sup></em>. It returns false when either stamp is unavailable. The <code>wait</code> argument has no effect.</li>
+</ul>
+
+<figure>
+	<div class="fig">
+		<svg class="dg" viewBox="0 0 1000 196" role="img" aria-label="Time query segments. The pool is split into one 4096-query segment per slot. Frame F uses slot 1 and writes stamps while it executes. Frame F plus three uses slot 1 again; after waiting for slot 1's fence, its beginFrame resolves F's stamps and resets the segment, and a later getTimeQuery in F plus three returns F's stamps.">
+			<defs>
+				<marker id="f10f" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="mkf"/></marker>
+			</defs>
+			<text x="150" y="16" class="lbl">VkQueryPool, three swap chain images</text>
+			<rect x="150" y="24" width="280" height="28" class="box"/><text x="290" y="42" text-anchor="middle" class="on">slot 0 · queries 0–4095</text>
+			<rect x="430" y="24" width="280" height="28" class="box hl"/><text x="570" y="42" text-anchor="middle" class="onb">slot 1 · 4096–8191</text>
+			<rect x="710" y="24" width="280" height="28" class="box"/><text x="850" y="42" text-anchor="middle" class="on">slot 2 · 8192–12287</text>
+			<text x="430" y="68" class="sm">handle q = begin stamp (TOP_OF_PIPE); end stamp at q + 1 (BOTTOM_OF_PIPE); 2048 pairs per frame</text>
+
+			<text x="255" y="89" text-anchor="middle" class="sm">F · slot 1</text>
+			<text x="465" y="89" text-anchor="middle" class="sm">F+1 · slot 2</text>
+			<text x="675" y="89" text-anchor="middle" class="sm">F+2 · slot 0</text>
+			<text x="885" y="89" text-anchor="middle" class="sm">F+3 · slot 1</text>
+			<line x1="150" y1="98" x2="150" y2="190" class="grid"/>
+			<line x1="360" y1="98" x2="360" y2="190" class="grid"/>
+			<line x1="570" y1="98" x2="570" y2="190" class="grid"/>
+			<line x1="780" y1="98" x2="780" y2="190" class="grid"/>
+			<line x1="990" y1="98" x2="990" y2="190" class="grid"/>
+			<line x1="10" y1="146" x2="990" y2="146" class="lane"/>
+			<text x="138" y="127" text-anchor="end" class="lbl">Render thread</text>
+			<text x="138" y="175" text-anchor="end" class="lbl">GPU</text>
+
+			<rect x="150" y="112" width="42" height="22" rx="2" class="cpu"/><text x="171" y="127" text-anchor="middle" class="on">reset</text>
+			<rect x="192" y="112" width="126" height="22" rx="2" class="cpu"/><text x="255" y="127" text-anchor="middle" class="on">record + stamps</text>
+			<rect x="360" y="112" width="168" height="22" rx="2" class="cpu"/><text x="444" y="127" text-anchor="middle" class="on">record F+1</text>
+			<rect x="570" y="112" width="168" height="22" rx="2" class="cpu"/><text x="654" y="127" text-anchor="middle" class="on">record F+2</text>
+			<rect x="780" y="112" width="63" height="22" rx="2" class="cpu hl"/><text x="811" y="127" text-anchor="middle" class="onb">resolve</text>
+			<rect x="843" y="112" width="147" height="22" rx="2" class="cpu"/><text x="916" y="127" text-anchor="middle" class="on">record F+3</text>
+			<line x1="969" y1="110" x2="969" y2="136" class="tick"/>
+			<text x="965" y="106" text-anchor="end" class="sm">getTimeQuery(q) → F's stamps</text>
+
+			<rect x="297" y="160" width="168" height="22" rx="2" class="gfx"/><text x="381" y="175" text-anchor="middle" class="on">F · writes slot 1 stamps</text>
+			<rect x="465" y="160" width="168" height="22" rx="2" class="gfx"/><text x="549" y="175" text-anchor="middle" class="on">F+1</text>
+			<rect x="633" y="160" width="168" height="22" rx="2" class="gfx"/><text x="717" y="175" text-anchor="middle" class="on">F+2</text>
+			<rect x="801" y="160" width="168" height="22" rx="2" class="gfx"/><text x="885" y="175" text-anchor="middle" class="on">F+3</text>
+
+			<path d="M465,159 V154 H795 V137" class="fen" marker-end="url(#f10f)"/>
+			<text x="630" y="147" text-anchor="middle" class="fs">slot 1 fence signalled: stamps are final</text>
+		</svg>
+	</div>
+	<figcaption><b>Figure 10.</b> A query handle names a position in the slot's segment, not a particular frame. Reading handle <em>q</em> in frame F+3 returns what frame F wrote at the same position, so the measurement is the one you expect only if every frame issues its queries in the same order.</figcaption>
+</figure>
+
+<h3>Who uses them</h3>
+<ul>
+	<li><code>Application</code> brackets <code>IState::render</code> with one graphics query and reads it after <code>present</code>; the result is the GPU duration reported through <code>RenderServer::setDurations</code>.</li>
+	<li><code>RenderGraph::build</code>, when a profiler callback is set and enabled, records a reference query around the whole graph, one query per graphics pass, and one query inside the asynchronous scope for each asynchronous pass. <code>ProfileReportRenderBlock</code>s at the end of the frame turn each pass's stamps into a start time relative to the reference query, shifted by the CPU time at which the graph was built, plus a duration, and pass them to the sink. The runtime forwards them to <code>Profiler</code> (queue 0 for graphics, 1 for asynchronous); the editor forwards them to <code>PerspectiveRenderControl</code>'s measurements.</li>
+	<li>While profiling, every graphics pass ends its own render pass, so render-pass merging is disabled and the profile differs somewhat from an unprofiled frame.</li>
+	<li>On a shared family the asynchronous command buffer is submitted before the graphics one, so asynchronous passes show up at the start of the frame's GPU time.</li>
+</ul>
+</section>
+
+<!-- ============================================================ 14 -->
+<section id="threads">
+<h2><span class="n">14</span>Threads and locks</h2>
+
+<div class="tbl">
+<table class="wide">
+	<thead><tr><th>Thread</th><th>What it may do</th><th>Notes</th></tr></thead>
+	<tbody>
+		<tr><td>Render thread: <code>Application::threadRender</code> in the runtime, the UI thread in the editor</td><td>Every <code>RenderViewVk</code> call; cleanup and uniform recycling through <code>present</code>.</td><td>The frame command buffers are created in the first <code>beginFrame</code> and belong to this thread's command pools. <code>CommandBuffer</code> asserts the thread on reset, submit and recording access.</td></tr>
+		<tr><td>Build thread: the runtime's main thread</td><td>Render graph and render context work; creating and releasing resources.</td><td>Records no Vulkan commands.</td></tr>
+		<tr><td>Any thread</td><td><code>RenderSystemVk::create*</code>; <code>lock</code>/<code>unlock</code> of resources it owns; releasing resources.</td><td>The creating thread records and submits the deferred uploads itself when the 32 MiB cap is reached, and waits for them when there is no view. <code>TextureVk::lock</code> can wait for the GPU. Releases are retired into the morgue.</td></tr>
+	</tbody>
+</table>
+</div>
+
+<p>The locks in the upper part of the table are <code>traktor::Semaphore</code>, which despite its name is a recursive mutex (<code>CreateMutex</code> on Windows, <code>std::recursive_timed_mutex</code> on Linux). That is what lets <code>Queue::submit</code> take the graphics queue lock again inside <code>performUploads</code>. The ones below the rule are <code>CriticalSection</code>, which is not recursive on Linux (<code>std::timed_mutex</code>), so none of them may be taken again by a thread that holds it.</p>
+<div class="tbl">
+<table class="wide">
+	<thead><tr><th>Lock</th><th>Protects</th><th>Taken by</th></tr></thead>
+	<tbody>
+		<tr><td>graphics <code>Queue::m_lock</code></td><td><code>vkQueueSubmit</code> and <code>vkQueuePresentKHR</code> on the graphics queue, the upload value, upload recording, the upload command pool and the upload command buffers in flight</td><td><code>Queue::submit</code>, <code>Queue::present</code>, <code>performUploads</code> (recording and submitting, releasing its command buffer), <code>performCleanup</code>, <code>performCleanupAll</code>, <code>~Context</code>, and briefly <code>Queue::submit</code> on other queues</td></tr>
+		<tr><td>compute <code>Queue::m_lock</code></td><td><code>vkQueueSubmit</code> on the compute queue</td><td><code>Queue::submit</code>, <code>performCleanup</code>, <code>performCleanupAll</code></td></tr>
+		<tr><td><code>Context::m_cleanupLock</code></td><td>cleanup list, cleanup listeners</td><td><code>addDeferredCleanup</code>, <code>add</code>/<code>removeCleanupListener</code>, <code>performCleanup</code>, <code>performCleanupAll</code></td></tr>
+		<tr><td><code>Context::m_updateLock</code></td><td>upload queue and pending size</td><td><code>addDeferredUpload</code>, <code>performUploads</code></td></tr>
+		<tr><td><code>Context::m_submissionLock</code></td><td>in-flight submissions, host access to their fences</td><td><code>beginSubmission</code>, <code>submissionIssued</code>, <code>endSubmission</code>, <code>getCompletedEpoch</code></td></tr>
+		<tr><td><code>Context::m_resourceIndexLock</code></td><td>bindless index allocators</td><td><code>allocate*ResourceIndex</code>, <code>free*ResourceIndex</code></td></tr>
+		<tr><td><code>PipelineLayoutCache::m_lock</code>, <code>ShaderModuleCache::m_lock</code></td><td>their caches</td><td><code>get</code>, <code>getSampler</code></td></tr>
+		<tr><td><code>ResourceMorgue::m_lock</code> (spin lock)</td><td>buckets</td><td><code>retire</code>, <code>advance</code>, <code>flush</code></td></tr>
+		<tr><td><code>RenderViewVk::m_eventQueueLock</code></td><td>window events</td><td>window callbacks, <code>nextEvent</code>, reset and loss handling</td></tr>
+		<tr class="rule"><td><code>TextureVk::m_stagingLock</code></td><td>a mutable texture's staging buffer and the epoch of the latest copy out of it</td><td><code>lock</code> until <code>unlock</code>, and the texture's upload lambdas while they record</td></tr>
+		<tr><td><code>Context::m_pipelinesLock</code></td><td>graphics and compute pipeline maps</td><td><code>validateGraphicsPipeline</code>, <code>validateComputePipeline</code></td></tr>
+		<tr><td><code>Context::m_bindlessLock</code></td><td>writes into the bindless sets</td><td><code>updateBindlessDescriptors</code></td></tr>
+		<tr><td><code>RenderPassCache</code> lock</td><td>render pass map</td><td><code>RenderPassCache::get</code></td></tr>
+		<tr><td><code>Queue::m_commandPoolsLock</code></td><td>per-thread command pool map</td><td><code>Queue::acquireCommandBuffer</code></td></tr>
+		<tr><td><code>Context::m_submittedFramesLock</code></td><td>epochs of the most recently submitted frames</td><td><code>frameSubmitted</code>, <code>getSubmittedFrameEpoch</code></td></tr>
+	</tbody>
+</table>
+</div>
+<p>Order: graphics queue → compute queue → cleanup → submission. The update lock is taken either alone or under the graphics queue lock. <code>Queue::submit</code> on the compute queue releases the graphics queue lock before it takes its own. A texture's staging lock sits between the graphics queue lock, under which its upload lambdas take it, and the submission lock, which <code>lock</code> takes to read the completed epoch; <code>lock</code> releases it before it waits for the GPU. The last five locks are leaves: nothing else is taken while one is held.</p>
+</section>
+
+<!-- ============================================================ 15 -->
+<section id="debugging">
+<h2><span class="n">15</span>Debugging aids</h2>
+<ul>
+	<li><b>Validation.</b> <code>RenderSystemDesc::validation</code> enables the Khronos layer and a messenger for validation warnings and errors, which are written to the log with the specification text on separate lines. In the runtime it is the <code>Render.Validation</code> setting.</li>
+	<li><b>Synchronization validation.</b> With validation on, setting <code>VK_KHRONOS_VALIDATION_VALIDATE_SYNC=true</code> in the environment makes the layer report hazards, including ones between submissions, as <code>… hazard detected</code> lines in the log. It slows rendering enough to hide timing-dependent faults, so run without it too.</li>
+	<li><b>Device loss.</b> The first sign is usually a failed fence wait ("Timeout while waiting on graphics command buffer to complete") followed by <code>vkResetFences … in use</code>; the <code>VK_ERROR_DEVICE_LOST</code> submissions and layout errors that follow are consequences. On Windows the System event log shows an <code>nvlddmkm</code> event 153 at the moment of the fault.</li>
+	<li><b>Object names.</b> <code>Context::setObjectDebugName</code> names images, views, fences, semaphores, command buffers, samplers and shader modules as <code>tag [n]</code>, with a counter per object type. Not available on Android and Apple platforms.</li>
+	<li><b>Labels.</b> <code>pushMarker</code>, <code>popMarker</code> and <code>writeMarker</code> become <code>vkCmdBeginDebugUtilsLabelEXT</code>, <code>vkCmdEndDebugUtilsLabelEXT</code> and <code>vkCmdInsertDebugUtilsLabelEXT</code> in the graphics or compute buffer. Render blocks wrap themselves in labels named after the block, so captures show the render graph's structure. Labels are enabled when the device lists <code>VK_EXT_debug_marker</code>.</li>
+	<li><b>Aftermath.</b> <code>RenderSystemDesc::aftermath</code> enables NVIDIA device diagnostics; <code>RenderSystemVrfy</code> decodes crash dumps.</li>
+	<li><b>Vrfy.</b> <code>code/Render/Vrfy</code> wraps any render system and checks the API contracts. It is the reference for what an <code>IRenderView</code> or resource call is supposed to mean.</li>
+	<li><b>Statistics.</b> <code>RenderViewVk::getStatistics</code> reports passes, draw calls and primitives per frame; <code>RenderSystemVk::getStatistics</code> reports live buffers, textures, target sets and programs.</li>
+	<li><b>Profiler scopes.</b> <code>vkAcquireNextImageKHR</code>, "Wait graphics queue", "Wait command queue", <code>RenderViewVk::endFrame</code>, <code>RenderViewVk::present</code>, <code>Context::performUploads</code>, <code>Context::performCleanup</code>, <code>RenderViewVk::synchronize</code>, <code>signalAsynchronousCompute</code> and <code>waitAsynchronousCompute</code> show where the render thread blocks.</li>
+</ul>
+</section>
+
+<!-- ============================================================ 16 -->
+<section id="observations">
+<h2><span class="n">16</span>Observations</h2>
+<p>Things noticed while reading the code for this document, and what became of them. The fixes were checked by running the Zombie runtime, main menu and gameplay stage, on a device with a dedicated compute family (RTX 5090), with the validation layer and with synchronization validation (<code>VK_KHRONOS_VALIDATION_VALIDATE_SYNC=true</code>). With the old code, synchronization validation reported 22 hazards in the main menu and 30 in the gameplay stage. With the new code the only hazard left in either stage is the swap-chain one listed under Open, which the old code reported too. The layer stops repeating a message after 10 reports, so counts above 10 are capped.</p>
+
+<h3>Open</h3>
+<ol class="obs">
+	<li>
+		<h4><span class="chip hz">Hazard</span>A mid-frame split can transition the swap chain image before the acquire has signalled</h4>
+		<p>Only the final graphics submission of a frame waits for <code>imageAvailable</code>. When a split submitted by <code>waitAsynchronousCompute</code> or <code>synchronize</code> already carries the swap chain image's first transition of the frame, nothing orders that transition after the presentation engine has released the image. Synchronization validation reports it in both stages, with the old code as well as the new: a <code>WRITE_AFTER_READ</code> hazard against <code>vkAcquireNextImageKHR</code>, raised when a submission that does not wait for <code>imageAvailable</code> transitions the swap chain image. A fix would move the <code>imageAvailable</code> wait to the first submission whose command buffer uses the primary target. That transition's source stage would then have to be <code>COLOR_ATTACHMENT_OUTPUT</code> rather than <code>TOP_OF_PIPE</code>, so that it chains with the wait.</p>
+		<p class="where"><code>RenderViewVk::splitGraphics</code>, <code>RenderViewVk::endFrame</code>, <code>RenderTargetVk::prepareAsTarget</code></p>
+	</li>
+	<li>
+		<h4><span class="chip hz">Hazard</span>Skin and deform rings advance once per view</h4>
+		<p>Skinned and deformed meshes rotate their vertex buffer rings (6 slots) at every setup, that is once per view and frame. With several views a slot comes round after fewer frames of each view than the ring was sized for. The asynchronous queue can then rewrite a slot that another view's graphics work, its velocity pass for instance, still reads; that shows as corruption rather than a fault. These rings rotate at build time, outside the backend, so the fix belongs there: skin once per world update and share the result between views, or size the rings by views.</p>
+		<p class="where"><code>SkinnedMeshComponent::setupSkin</code>, <code>DeformMesh</code></p>
+	</li>
+	<li>
+		<h4><span class="chip mn">Minor</span>Views share a top level structure culled by the eye</h4>
+		<p><code>RTWorldComponent::gatherTopLevelInstances</code> culls instances by distance from the eye and rebuilds whenever the eye has moved. Views at different positions, and probe captures, therefore rebuild the one structure every frame, each for its own eye. A view traces against whichever build was current when its passes were recorded. That is safe now, but it is wasted work, and a view may trace against another view's culling.</p>
+		<p class="where"><code>World/Entity/RTWorldComponent.cpp</code>, <code>RTWorldRenderer::setup</code></p>
+	</li>
+	<li>
+		<h4><span class="chip mn">Minor</span>Pipelines are still keyed by 32-bit hashes</h4>
+		<p>The graphics pipeline key uses the render pass handle, but the vertex layout and the shader are still identified by 32-bit hashes, and compute pipelines by the shader hash alone. Render passes and pipeline layouts no longer have this weakness.</p>
+		<p class="where"><code>Context::validateGraphicsPipeline</code>, <code>Context::validateComputePipeline</code></p>
+	</li>
+</ol>
+
+<h3>Fixed</h3>
+<ol class="obs">
+	<li>
+		<h4><span class="chip ok">Fixed</span><span class="chip hz">Hazard</span>Acceleration structure rings could be rewritten while in use</h4>
+		<p>Found after the upload changes: two views in the scene editor lost the device within seconds of moving the camera. The Aftermath dump shows a "Misaligned Address Error" in NVIDIA's internal "AS Build or Refit" shader, executing the top level build. The TLAS, its CPU-written instance data and the dynamic BLAS were 4-slot rings, sized for one view with three frames in flight. Every view, and every probe capture face, advances the shared ones, and uploads no longer block the CPU, so the asynchronous queue can trail by all frames in flight. That lets the CPU rewrite the instance data of a build that has not executed yet, which fits a fault inside the build shader.</p>
+		<p class="fix"><b>Now</b> a slot is only rewritten once the frame that left it has been submitted and its epoch has completed; otherwise the ring grows (<a href="#async">§7</a>). Instance data lives in one buffer per slot. A run with rings started at a single slot, meant to overrun them constantly, grew them to at most five slots, with no validation messages and no fault.</p>
+		<p class="where"><code>AccelerationStructureVk::advance</code>, <code>Context::frameSubmitted</code>, <code>RenderViewVk::endFrame</code></p>
+	</li>
+	<li>
+		<h4><span class="chip ok">Fixed</span><span class="chip hz">Hazard</span>Uniform blocks were aged by presents, not by frames</h4>
+		<p><code>recycle</code> ran from every view's <code>present</code> on pools shared by all views, and returned a block three presents after it was freed, which several views, or more than four swap chain images, could make premature.</p>
+		<p class="fix"><b>Now</b> <code>recycle(issuedEpoch, completedEpoch)</code> tags freed blocks with the epoch issued by the time of the present and returns them once that epoch has completed (<a href="#memory">§10</a>).</p>
+		<p class="where"><code>Private/UniformBufferPool.cpp</code>, <code>Context::recycle</code></p>
+	</li>
+	<li>
+		<h4><span class="chip ok">Fixed</span><span class="chip hz">Hazard</span>The pipeline map had no lock</h4>
+		<p>The render thread looked pipelines up for every draw and dispatch while <code>createProgram</code> inserted compute pipelines from loader threads into the same unguarded map.</p>
+		<p class="fix"><b>Now</b> graphics and compute pipelines have maps of their own under <code>m_pipelinesLock</code>. A program keeps its compute pipeline and the view remembers its last graphics pipeline, so every dispatch and most draws skip the shared lookup (<a href="#pipelines">§11</a>).</p>
+		<p class="where"><code>Private/Context.cpp</code>, <code>ProgramVk</code>, <code>RenderViewVk::validateGraphicsPipeline</code></p>
+	</li>
+	<li>
+		<h4><span class="chip ok">Fixed</span><span class="chip hz">Hazard</span>Some layout transitions left out stages that use the image</h4>
+		<p><code>SHADER_READ_ONLY_OPTIMAL</code> covered vertex and fragment shaders but not compute, and <code>DEPTH_STENCIL_ATTACHMENT_OPTIMAL</code> covered early fragment tests only, with write access only.</p>
+		<p class="fix"><b>Now</b> sampled layouts include the compute stage and depth attachments cover early and late tests with read and write access (<a href="#layouts">§12</a>). The 20 depth and shadow-atlas hazards that synchronization validation reported in each stage with the old code are gone.</p>
+		<p class="where"><code>Private/Utilities.cpp</code>, <code>getPipelineStageFlags</code>, <code>getAccessMask</code></p>
+	</li>
+	<li>
+		<h4><span class="chip ok">Fixed</span><span class="chip hz">Hazard</span>The bindless sets used up the pool's image and buffer budget</h4>
+		<p>The three bindless sets were allocated from the program pool, leaving a single sampled image and storage image descriptor for every program set. Their variable count was also one short of the indices the allocators hand out.</p>
+		<p class="fix"><b>Now</b> the bindless sets come from a pool of their own, and their variable count is 16 536 (<a href="#memory">§10</a>).</p>
+		<p class="where"><code>Context::create</code></p>
+	</li>
+	<li>
+		<h4><span class="chip ok">Fixed</span><span class="chip hz">Check</span>Bindless descriptor writes were not serialized</h4>
+		<p class="fix"><b>Now</b> every write into the bindless sets goes through <code>Context::updateBindlessDescriptors</code>, under <code>m_bindlessLock</code>.</p>
+		<p class="where"><code>Private/Image.cpp</code>, <code>Private/ApiBuffer.cpp</code></p>
+	</li>
+	<li>
+		<h4><span class="chip ok">Fixed</span><span class="chip hz">Constraint</span>Images were not shared across queue families</h4>
+		<p class="fix"><b>Now</b> images with storage usage are created <code>CONCURRENT</code> across the graphics and compute families when those differ, so asynchronous passes may write storage textures. Render targets stay <code>EXCLUSIVE</code>, and binding one as a storage image in asynchronous compute is refused with an error instead of recording a transition on the wrong queue (<a href="#async">§7</a>).</p>
+		<p class="where"><code>Private/Image.cpp</code>, <code>ProgramVk::validate</code></p>
+	</li>
+	<li>
+		<h4><span class="chip ok">Fixed</span><span class="chip pf">Performance</span>Upload flushes and synchronous paths drained the graphics queue</h4>
+		<p><code>performUploads</code> waited for its fence, as did cube and volume texture creation, <code>TextureVk::unlock</code> and <code>RenderTargetVk::create</code>, and each wait covered every earlier submission on the queue.</p>
+		<p class="fix"><b>Now</b> flushes do not wait; their command buffers are released once their epoch has completed. Every initialisation path is a deferred upload, texture updates included. <code>TextureVk::lock</code> waits only when the GPU has not yet consumed the previous copy out of the same staging buffer (<a href="#uploads">§8</a>).</p>
+		<p class="where"><code>Context::performUploads</code>, <code>TextureVk.cpp</code>, <code>RenderTargetVk::create</code></p>
+	</li>
+	<li>
+		<h4><span class="chip ok">Fixed</span><span class="chip lt">Latent bug</span>Non-indexed indirect draws used the wrong offset and stride</h4>
+		<p class="fix"><b>Now</b> the non-indexed path adds <code>drawOffset</code> and uses the 16-byte <code>VkDrawIndirectCommand</code> stride. All engine callers are still indexed.</p>
+		<p class="where"><code>RenderViewVk::drawIndirect</code></p>
+	</li>
+	<li>
+		<h4><span class="chip ok">Fixed</span><span class="chip lt">Latent bug</span>Volume textures uploaded and transitioned mip 0 only</h4>
+		<p class="fix"><b>Now</b> every mip is staged with its own depth, copied and transitioned.</p>
+		<p class="where"><code>TextureVk::create(const VolumeTextureCreateDesc&amp;)</code></p>
+	</li>
+	<li>
+		<h4><span class="chip ok">Fixed</span><span class="chip lt">Latent bug</span>Updating a storage texture left it in the wrong layout</h4>
+		<p class="fix"><b>Now</b> a texture remembers its resting layout, <code>GENERAL</code> for storage textures, and updates return it there. Each side and mip also has its own part of the staging buffer, so updates of different ones queued in the same flush cannot overwrite each other's data.</p>
+		<p class="where"><code>TextureVk::lock</code>, <code>TextureVk::unlock</code></p>
+	</li>
+	<li>
+		<h4><span class="chip ok">Fixed</span><span class="chip lt">Leak</span>Framebuffers, render passes and command pools were never destroyed</h4>
+		<p class="fix"><b>Now</b> a render target set hands every cached framebuffer to deferred cleanup when it is torn down. Render passes belong to the context's cache, which destroys them, and command pools belong to their queue. The bindless set layouts, which were never destroyed, now are. <code>setObjectDebugName</code> no longer keeps a copy of every name it ever set for the context's lifetime.</p>
+		<p class="where"><code>RenderTargetSetVk</code>, <code>Private/RenderPassCache.cpp</code>, <code>Private/Queue.cpp</code>, <code>~Context</code></p>
+	</li>
+	<li>
+		<h4><span class="chip ok">Fixed</span><span class="chip lt">Platform</span>Timeline semaphores were used without the timeline feature</h4>
+		<p class="fix"><b>Now</b> Android and Raspberry Pi builds query <code>timelineSemaphore</code>, enable it together with <code>VK_KHR_timeline_semaphore</code> on devices older than Vulkan 1.2, and log an error when it is missing (<a href="#bringup">§3</a>).</p>
+		<p class="where"><code>RenderSystemVk::create</code></p>
+	</li>
+	<li>
+		<h4><span class="chip ok">Fixed</span><span class="chip pf">Performance</span>Read-back memory was write-combined</h4>
+		<p class="fix"><b>Now</b> read-back buffers are allocated <code>GPU_TO_CPU</code>, preferring host-cached memory.</p>
+		<p class="where"><code>ApiBuffer::createReadBack</code>, <code>BufferReadBackVk::create</code></p>
+	</li>
+	<li>
+		<h4><span class="chip ok">Fixed</span><span class="chip mn">Minor</span>Small items</h4>
+		<ul>
+			<li>The stale note in <code>RenderSystemVk::create</code> that called asynchronous compute a proof of concept is gone.</li>
+			<li><code>validateComputePipeline</code> binds only when the pipeline or the command buffer changes. Mid-frame splits reuse the command buffers of the slot's previous frame instead of allocating new ones and their fences every time.</li>
+			<li><code>changeLayout</code> transitions a range whose subresources are in different layouts from each one's actual layout.</li>
+			<li>Render passes are looked up by their full specification instead of a hash, and <code>PipelineLayoutCache</code> compares bindings on every hit, not only in debug builds.</li>
+		</ul>
+	</li>
+</ol>
+
+<h3>Kept as they are</h3>
+<ol class="obs">
+	<li>
+		<h4><span class="chip kp">By design</span>A wait also holds back the work recorded before it</h4>
+		<p>This was listed as a performance problem: on a dedicated compute queue the graphics work recorded before <code>waitAsynchronousCompute</code> or <code>synchronize</code> is submitted with the wait attached, so it cannot start before the batch finishes although it does not consume its results.</p>
+		<p class="fix kept"><b>Kept</b> because it is the only thing that keeps that work from running alongside the batch (<a href="#async">§7</a>). Moving the wait to the next graphics submission made the Zombie main menu lose the device within seconds of the 3D scene appearing: an nvlddmkm GPU error, then <code>VK_ERROR_DEVICE_LOST</code>, with no validation message beforehand. Under synchronization validation, which slows everything down, the same build did not fail. With the wait back in place neither stage has failed since. Removing the stall needs a real graphics → compute dependency first.</p>
+		<p class="where"><code>RenderViewVk::waitAsynchronousCompute</code>, <code>RenderViewVk::synchronize</code>, <code>RenderViewVk::splitGraphics</code></p>
+	</li>
+	<li>
+		<h4><span class="chip kp">Kept</span>Debug labels are gated on <code>VK_EXT_debug_marker</code></h4>
+		<p>The label commands come from <code>VK_EXT_debug_utils</code>, but labels are only recorded when the device lists <code>VK_EXT_debug_marker</code>, which in practice capture tools such as RenderDoc add. That makes the check a cheap "a capture tool is attached" test. Always recording labels would add a string conversion per render block for nothing.</p>
+		<p class="where"><code>RenderViewVk::create</code>, <code>pushMarker</code></p>
+	</li>
+	<li>
+		<h4><span class="chip kp">Kept</span>Asynchronous timestamps assume a shared timebase</h4>
+		<p>The specification only promises that timestamps written on one queue are comparable. Offsetting asynchronous timings by a graphics-queue reference query works on desktop drivers; doing it properly needs calibrated timestamps (<code>VK_EXT_calibrated_timestamps</code>) to map each queue's clock to the host's.</p>
+		<p class="where"><code>code/Render/Frame/RenderGraph</code> profiling, <code>RenderViewVk::getTimeQuery</code></p>
+	</li>
+	<li>
+		<h4><span class="chip kp">Kept</span><code>MaxBindlessResources</code> is 16 536 and <code>getTimeQuery</code> ignores <code>wait</code></h4>
+		<p>Neither is a defect. The odd bindless size is only unusual (the off-by-one variable count next to it is fixed), and time query results are one slot rotation old by design (<a href="#timers">§13</a>), so there is nothing to wait for.</p>
+		<p class="where"><code>Private/Context.h</code>, <code>RenderViewVk::getTimeQuery</code></p>
+	</li>
+</ol>
+</section>
+
+<!-- ============================================================ A -->
+<section id="sources">
+<h2><span class="n">A</span>Source map</h2>
+<div class="tbl">
+<table class="wide">
+	<thead><tr><th>File</th><th>Responsibility</th></tr></thead>
+	<tbody>
+		<tr><td><code>RenderSystemVk</code></td><td>Instance, physical device, queue families, device features, VMA, resource factory, plugins.</td></tr>
+		<tr><td><code>RenderViewVk</code></td><td>Surface and swap chain, frames, <code>beginFrame</code>/<code>endFrame</code>/<code>present</code>, passes, draws, dispatches, barriers, asynchronous compute, time queries, labels, window events.</td></tr>
+		<tr><td><code>Private/Context</code></td><td>Shared state: queues, deferred uploads and their command buffers, cleanups, submission epochs, pipeline creation and cache, render pass cache, descriptor pools, bindless sets.</td></tr>
+		<tr><td><code>Private/Queue</code></td><td><code>VkQueue</code> wrapper with lock and upload-wait injection; per-thread command pools.</td></tr>
+		<tr><td><code>Private/CommandBuffer</code></td><td>Command buffer with fence, one general submit with wait and signal lists, epochs.</td></tr>
+		<tr><td><code>Private/ApiBuffer</code></td><td><code>VkBuffer</code> through VMA, sharing mode, bindless buffer index.</td></tr>
+		<tr><td><code>Private/Image</code></td><td><code>VkImage</code> through VMA, views, layout tracking, bindless indices.</td></tr>
+		<tr><td><code>Private/UniformBufferPool</code>, <code>Private/UniformBufferChain</code></td><td>Uniform block pools and their epoch-tagged reuse.</td></tr>
+		<tr><td><code>Private/PipelineLayoutCache</code>, <code>Private/ShaderModuleCache</code>, <code>Private/RenderPassCache</code></td><td>Layout, sampler, shader module and render pass caches.</td></tr>
+		<tr><td><code>Private/Utilities</code></td><td>Format tables, layout to stage and access mapping, format selection, <code>VkResult</code> names.</td></tr>
+		<tr><td><code>Private/VertexAttributes</code>, <code>VertexLayoutVk</code></td><td>Vertex attribute locations and input descriptions.</td></tr>
+		<tr><td><code>Private/ApiLoader</code> and <code>&lt;platform&gt;/ApiLoader</code></td><td>Loading the Vulkan library and resolving entry points.</td></tr>
+		<tr><td><code>Private/Allocator.cpp</code></td><td>The VMA implementation unit.</td></tr>
+		<tr><td><code>BufferStaticVk</code>, <code>BufferDynamicVk</code>, <code>BufferReadBackVk</code>, <code>BufferVk</code>, <code>BufferViewVk</code></td><td>Buffer flavours and their views.</td></tr>
+		<tr><td><code>TextureVk</code>, <code>RenderTargetVk</code>, <code>RenderTargetDepthVk</code>, <code>RenderTargetSetVk</code></td><td>Textures and their staging buffers, targets, target sets and framebuffers.</td></tr>
+		<tr><td><code>ProgramVk</code>, <code>ProgramResourceVk</code>, <code>Editor/ProgramCompilerVk</code></td><td>Program binding and uniforms, the serialized program, GLSL to SPIR-V compilation.</td></tr>
+		<tr><td><code>AccelerationStructureVk</code></td><td>TLAS and BLAS rings, deferred BLAS builds, refits.</td></tr>
+		<tr><td><code>Win32</code>, <code>Linux</code>, <code>macOS</code>, <code>iOS</code>, <code>Android</code></td><td>Windows, loaders and platform helpers.</td></tr>
+		<tr><td><code>XeSS/RenderPluginXeSS</code></td><td>Intel XeSS upscaling plugin.</td></tr>
+		<tr><td><code>code/Render/ResourceMorgue</code></td><td>Frame-fenced release of render resources.</td></tr>
+		<tr><td><code>code/Render/Frame/RenderGraph</code>, <code>code/Render/Context</code></td><td>Pass ordering, asynchronous compute sync points, profiling blocks, render blocks.</td></tr>
+		<tr><td><code>code/Render/Vrfy</code></td><td>Validating wrapper and reference for the API contracts.</td></tr>
+	</tbody>
+</table>
+</div>
+<p>Paths without a prefix are relative to <code>code/Render/Vulkan</code>.</p>
+</section>
+
+</main>
+</div>
+
+<footer>
+	<div class="wrap">Kept in <code>resources/documentation/vulkan renderer</code>. Update it when the synchronization, upload or cleanup model in <code>code/Render/Vulkan</code> changes.</div>
+</footer>
+
+</body>
+</html>

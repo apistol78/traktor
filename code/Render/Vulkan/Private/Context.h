@@ -10,10 +10,13 @@
 
 #include <atomic>
 #include <functional>
+#include <tuple>
 #include "Core/Object.h"
 #include "Core/Ref.h"
 #include "Core/Containers/AlignedVector.h"
 #include "Core/Containers/IdAllocator.h"
+#include "Core/Containers/SmallMap.h"
+#include "Core/Thread/CriticalSection.h"
 #include "Core/Thread/Semaphore.h"
 #include "Render/Types.h"
 #include "Render/Vulkan/Private/ApiHeader.h"
@@ -23,16 +26,14 @@ namespace traktor::render
 
 class CommandBuffer;
 class ProgramVk;
+class RenderPassCache;
 class RenderTargetSetVk;
 class Queue;
 class UniformBufferPool;
 class VertexLayoutVk;
 
-/*! Render system shared context.
+/*! Render system context, shared by all render views.
  * \ingroup Render
- *
- * This context is owned by render system and shared
- * across all render views.
  */
 class Context : public Object
 {
@@ -76,12 +77,7 @@ public:
 
 	void decrementViews();
 
-	/*! Add a deferred cleanup.
-	 *
-	 * Deferred cleanups are issued once every submission which was in flight when
-	 * the cleanup was added has been consumed by the GPU, from the calling thread
-	 * of present.
-	 */
+	/*! Add a deferred cleanup, performed once every submission in flight when added has been consumed by the GPU. */
 	void addDeferredCleanup(const cleanup_fn_t& fn, uint32_t cleanupFlags);
 
 	void addCleanupListener(ICleanupListener* cleanupListener);
@@ -91,68 +87,52 @@ public:
 	/*! Perform those cleanups whose submissions have been consumed by the GPU. */
 	void performCleanup();
 
-	/*! Perform every pending cleanup; waits for the device to go idle first.
-	 *
-	 * Only for tear down paths, such as closing or resetting a view, where every
-	 * resource has to be gone when the call returns.
-	 */
+	/*! Wait for the device to go idle, then perform every pending cleanup so all resources are gone on return. */
 	void performCleanupAll();
 
 	/*! \name Submission tracking.
-	 *
-	 * Every command buffer submission is tagged with a monotonically increasing
-	 * epoch, which lets deferred cleanups tell whether the submissions that could
-	 * still be reading their resource have been consumed by the GPU.
-	 *
-	 * A registered fence is polled from any thread performing cleanups, not only
-	 * from the thread owning the command buffer, so the submission lock doubles as
-	 * the external synchronization of host access to those fences; every host
-	 * operation on a registered fence must be issued through these methods.
+	 * Submissions get increasing epochs; their fences are polled from any thread, thus only reset through these methods.
 	 */
 	//@{
 
-	/*! Register a submission about to be issued; \sa submissionIssued, \sa endSubmission.
-	 *
-	 * The fence is not polled until the submission has been reported as issued, as
-	 * handing it to vkQueueSubmit is itself a host access to the fence.
-	 *
-	 * \param fence Fence signalled when the submission has been consumed.
+	/*! Register a submission about to be issued and return its epoch; fence signals once it has been consumed.
+	 * The fence isn't polled until the submission is reported issued, as vkQueueSubmit accesses it.
 	 */
 	uint64_t beginSubmission(VkFence fence);
 
 	/*! Register a submission as issued to its queue, thus its fence can be polled. */
 	void submissionIssued(uint64_t epoch);
 
-	/*! Register a submission as consumed by the GPU; also resets its fence.
-	 *
-	 * \param epoch Submission epoch, from beginSubmission.
-	 * \param fence Fence to reset, or VK_NULL_HANDLE to leave it as-is.
-	 */
+	/*! Register a submission as consumed by the GPU and reset its fence, unless fence is VK_NULL_HANDLE. */
 	void endSubmission(uint64_t epoch, VkFence fence);
 
 	/*! Get the epoch up until, and including, which all submissions are consumed. */
 	uint64_t getCompletedEpoch();
 
+	/*! Get the most recently handed out epoch; submissions made so far are all at or below it. */
+	uint64_t getIssuedEpoch() const { return m_nextSubmissionEpoch - 1; }
+
+	/*! Block the calling thread until every submission up until, and including, epoch has been consumed. */
+	void waitForEpoch(uint64_t epoch);
+
+	/*! Register that a view has submitted all work of a frame. */
+	void frameSubmitted();
+
+	/*! Get number of frames submitted so far, by all views. */
+	uint64_t getSubmittedFrameCount() const { return m_submittedFrames; }
+
+	/*! Get epoch issued when frame, numbered from 1, was submitted; frames too old get a later epoch. */
+	uint64_t getSubmittedFrameEpoch(uint64_t frame) const;
+
 	//@}
 
-	/*! Add a deferred upload.
-	 *
-	 * Uploads are recorded into a single command buffer, and performed, by the
-	 * thread which ends a frame.
-	 *
-	 * \param fn Records the upload into the flush's command buffer.
-	 * \param uploadSize Amount of staging memory held back by this upload, in bytes.
-	 */
+	/*! Add a deferred upload, recorded by fn when flushed; uploadSize is the staging memory it holds back, in bytes. */
 	void addDeferredUpload(const upload_fn_t& fn, uint32_t uploadSize = 0);
 
-	/*! Perform queued uploads; returns once they have been consumed by the GPU.
-	 *
-	 * Uploads are submitted to the graphics queue, which is only held while recording
-	 * and submitting; work submitted later to the graphics queue is ordered after the
-	 * uploads and work submitted to other queues waits on the upload semaphore.
-	 * \sa Queue::submit
+	/*! Record and submit queued uploads to the graphics queue, ordered before later work on it.
+	 * The queue is only held while recording and submitting; wait also waits until the uploads have been consumed.
 	 */
-	void performUploads();
+	void performUploads(bool wait = false);
 
 	/*! Timeline semaphore signalled with the value of each upload submission. */
 	VkSemaphore getUploadSemaphore() const { return m_uploadSemaphore; }
@@ -160,6 +140,7 @@ public:
 	/*! Value of last upload submission; must be read with graphics queue held. */
 	uint64_t getUploadValue() const { return m_uploadValue; }
 
+	/*! Return uniform buffer blocks whose last use has been consumed by the GPU. */
 	void recycle();
 
 	bool savePipelineCache();
@@ -174,6 +155,7 @@ public:
 
 	VkPipelineCache getPipelineCache() const { return m_pipelineCache; }
 
+	/*! Pool of per-program descriptor sets. */
 	VkDescriptorPool getDescriptorPool() const { return m_descriptorPool; }
 
 	Queue* getGraphicsQueue() const { return m_graphicsQueue; }
@@ -184,6 +166,9 @@ public:
 	bool haveHostQueryReset() const { return m_hostQueryReset; }
 
 	UniformBufferPool* getUniformBufferPool(int32_t index) const { return m_uniformBufferPools[index]; }
+
+	/*! Render passes, shared by every view. */
+	RenderPassCache* getRenderPassCache() const { return m_renderPassCache; }
 
 	VkDescriptorSetLayout getBindlessTexturesSetLayout() const { return m_bindlessTexturesDescriptorLayout; }
 
@@ -209,7 +194,10 @@ public:
 
 	void freeBufferResourceIndex(uint32_t resourceIndex);
 
-	VkPipeline validateGraphicsPipeline(const VertexLayoutVk* vertexLayout, const ProgramVk* program, PrimitiveType pt, uint32_t targetRenderPassHash, const RenderTargetSetVk* targetSet, VkRenderPass targetRenderPass, float multiSampleShading);
+	/*! Write descriptors into the shared bindless sets; serialized since resources are created on any thread. */
+	void updateBindlessDescriptors(const VkWriteDescriptorSet* writes, uint32_t writeCount);
+
+	VkPipeline validateGraphicsPipeline(const VertexLayoutVk* vertexLayout, const ProgramVk* program, PrimitiveType pt, const RenderTargetSetVk* targetSet, VkRenderPass targetRenderPass, float multiSampleShading);
 
 	VkPipeline validateComputePipeline(const ProgramVk* p);
 
@@ -230,13 +218,8 @@ private:
 		bool issued;	//!< Submission has been handed to its queue, thus fence can be polled.
 	};
 
-	struct PipelineEntry
-	{
-		uint32_t lastAcquired;
-		VkPipeline pipeline;
-	};
-
-	typedef std::tuple< uint8_t, uint32_t, uint32_t, uint32_t > pipeline_key_t;
+	//! Primitive type, render pass, vertex layout hash and shader hash.
+	typedef std::tuple< uint8_t, uint64_t, uint32_t, uint32_t > pipeline_key_t;
 
 	VkInstance m_instance;
 	VkPhysicalDevice m_physicalDevice;
@@ -249,22 +232,32 @@ private:
 	bool m_hostQueryReset = false;
 	VkPipelineCache m_pipelineCache = 0;
 	VkDescriptorPool m_descriptorPool = 0;
+	VkDescriptorPool m_bindlessDescriptorPool = 0;
 	int32_t m_views = 0;
 	Ref< Queue > m_graphicsQueue;
 	Ref< Queue > m_computeQueue;
 	Ref< UniformBufferPool > m_uniformBufferPools[3];
+	Ref< RenderPassCache > m_renderPassCache;
 	Semaphore m_cleanupLock;
 	Semaphore m_updateLock;
 	Semaphore m_resourceIndexLock;
 	Semaphore m_submissionLock;
+	CriticalSection m_pipelinesLock;
+	CriticalSection m_bindlessLock;
 	std::atomic< uint64_t > m_nextSubmissionEpoch = 1;
 	AlignedVector< Submission > m_inFlightSubmissions;	//!< Submissions not known to be consumed, in increasing epoch order.
+	static constexpr uint32_t c_submittedFrameHistory = 64;
+	mutable CriticalSection m_submittedFramesLock;
+	std::atomic< uint64_t > m_submittedFrames = 0;	//!< Number of frames submitted by all views.
+	uint64_t m_submittedFrameEpochs[c_submittedFrameHistory] = {};	//!< Issued epoch when frame n was submitted, at n modulo history; guarded by m_submittedFramesLock.
 	AlignedVector< DeferredCleanup > m_cleanupFns;
 	AlignedVector< ICleanupListener* > m_cleanupListeners;
 	AlignedVector< upload_fn_t > m_uploadFns;
 	uint32_t m_pendingUploadSize = 0;
 	VkSemaphore m_uploadSemaphore = VK_NULL_HANDLE;
 	uint64_t m_uploadValue = 0;	//!< Value of last upload submission; guarded by graphics queue lock.
+	VkCommandPool m_uploadCommandPool = 0;	//!< Pool of upload command buffers; guarded by graphics queue lock.
+	AlignedVector< Ref< CommandBuffer > > m_uploadCommandBuffers;	//!< Submitted upload command buffers not yet known to be consumed; guarded by graphics queue lock.
 	VkDescriptorSetLayout m_bindlessTexturesDescriptorLayout = 0;
 	VkDescriptorSet m_bindlessTexturesDescriptorSet = 0;
 	VkDescriptorSetLayout m_bindlessImagesDescriptorLayout = 0;
@@ -274,11 +267,11 @@ private:
 	IdAllocator m_sampledResourceIndexAllocator;
 	IdAllocator m_storageResourceIndexAllocator;
 	IdAllocator m_bufferResourceIndexAllocator;
-	SmallMap< pipeline_key_t, PipelineEntry > m_pipelines;
+	SmallMap< pipeline_key_t, VkPipeline > m_pipelines;	//!< Graphics pipelines; guarded by pipelines lock.
+	SmallMap< uint32_t, VkPipeline > m_computePipelines;	//!< Compute pipelines by shader hash; guarded by pipelines lock.
 
-#if !defined(__ANDROID__) && !defined(__APPLE__)
-	AlignedVector< char* > m_debugNames;
-#endif
+	/*! Release consumed upload command buffers, or all when the device is idle; caller holds the graphics queue. */
+	void retireUploads(bool all);
 };
 
 }
