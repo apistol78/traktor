@@ -20,6 +20,13 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
+#if defined(Below)
+#	undef Below
+#endif
+#if defined(Above)
+#	undef Above
+#endif
+
 namespace traktor
 {
 
