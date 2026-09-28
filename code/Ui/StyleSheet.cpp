@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2025 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -331,6 +331,11 @@ Ref< StyleSheet > StyleSheet::createDefault()
 
 	ss->setColor(L"traktor.ui.TabPage", L"background-color", Color4ub(248, 248, 250));
 	ss->setColor(L"traktor.ui.TabPage", L"page-border-color", Color4ub(218, 218, 220));
+
+	ss->setColor(L"traktor.ui.Panel", L"background-color", Color4ub(248, 248, 250));
+	ss->setColor(L"traktor.ui.Panel", L"border-color", Color4ub(218, 218, 220));
+	ss->setColor(L"traktor.ui.Panel", L"caption-color-focus", Color4ub(53, 53, 53));
+	ss->setColor(L"traktor.ui.Panel", L"caption-color-no-focus", Color4ub(137, 137, 138));
 
 	ss->setColor(L"traktor.ui.Slider", L"background-color", Color4ub(239, 239, 242));
 	ss->setColor(L"traktor.ui.Slider", L"track-color", Color4ub(201, 201, 203));

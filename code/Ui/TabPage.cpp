@@ -93,11 +93,6 @@ void TabPage::eventPaint(PaintEvent* event)
 	const Rect rcInner = Widget::getInnerRect();
 	const int32_t radius = pixel(c_surfaceRadius);
 
-	// Cover the whole client area first with the surrounding colour; the
-	// rounded page leaves the four corners of the rectangle uncovered.
-	canvas.setBackground(ss->getColor(getParent(), L"background-color"));
-	canvas.fillRect(rcInner);
-
 	canvas.setBackground(ss->getColor(this, L"background-color"));
 	canvas.fillRoundRect(rcInner, radius);
 
