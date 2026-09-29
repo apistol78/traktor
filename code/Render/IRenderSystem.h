@@ -37,8 +37,7 @@ class VertexElement;
 /*! Render system interface.
  * \ingroup Render
  *
- * The render system class is an abstraction of
- * the underlying system used.
+ * The render system class is an abstraction of the underlying system used.
  */
 class T_DLLCLASS IRenderSystem : public Object
 {
@@ -48,11 +47,7 @@ public:
 	/*! \name Render system creation. */
 	//@{
 
-	/*! Create render system.
-	 *
-	 * \param desc Create description.
-	 * \return True if successfully created.
-	 */
+	/*! Create render system; true if successfully created. */
 	virtual bool create(const RenderSystemDesc& desc) = 0;
 
 	/*! Destroy render system. */
@@ -75,24 +70,13 @@ public:
 	/*! Get number of displays. */
 	virtual uint32_t getDisplayCount() const = 0;
 
-	/*! Get number of available display modes.
-	 *
-	 * Return number of available display modes,
-	 * preferably display modes supported by both graphics card
-	 * and monitor.
-	 */
+	/*! Get number of available display modes, preferably modes supported by both graphics card and monitor. */
 	virtual uint32_t getDisplayModeCount(uint32_t display) const = 0;
 
-	/*! Get display mode.
-	 *
-	 * Get information about display mode from index 0 - (getDisplayMode() - 1).
-	 */
+	/*! Get information about display mode from index 0 - (getDisplayMode() - 1). */
 	virtual DisplayMode getDisplayMode(uint32_t display, uint32_t index) const = 0;
 
-	/*! Get current display mode.
-	 *
-	 * Get information about currently set display mode.
-	 */
+	/*! Get information about currently set display mode. */
 	virtual DisplayMode getCurrentDisplayMode(uint32_t display) const = 0;
 
 	/*! Get display aspect ratio. */
@@ -114,12 +98,7 @@ public:
 	/*! \name Factory methods. */
 	//@{
 
-	/*! Create buffer.
-	 *
-	 * \param usage Buffer usage flags.
-	 * \param bufferSize Size of buffer in bytes.
-	 * \param dynamic If index buffer is frequently updated.
-	 */
+	/*! Create buffer of usage flags and size in bytes; dynamic if frequently updated. */
 	virtual Ref< Buffer > createBuffer(uint32_t usage, uint32_t bufferSize, bool dynamic, const wchar_t* const tag) = 0;
 
 	/*! Create vertex layout. */
@@ -134,35 +113,21 @@ public:
 	/*! Create volume texture. */
 	virtual Ref< ITexture > createVolumeTexture(const VolumeTextureCreateDesc& desc, const wchar_t* const tag) = 0;
 
-	/*! Create render target set.
-	 *
-	 * \note
-	 * If "usingPrimaryDepthStencil" is set in description
-	 * then sharedDepthStencil is ignored and primary depth buffer
-	 * is used for sharing.
-	 *
-	 * \param desc Render target set description.
-	 * \param sharedDepthStencil Share depth/stencil with this render target set.
-	 * \param tag Debug tag.
-	 * \return Render target set.
+	/*! Create render target set, sharing depth/stencil with sharedDepthStencil.
+	 * If "usingPrimaryDepthStencil" is set in description then the primary depth buffer is shared instead.
 	 */
 	virtual Ref< IRenderTargetSet > createRenderTargetSet(const RenderTargetSetCreateDesc& desc, IRenderTargetSet* sharedDepthStencil, const wchar_t* const tag) = 0;
 
-	/*! */
-	virtual Ref< IAccelerationStructure > createTopLevelAccelerationStructure(uint32_t numInstances) = 0;
+	/*! Create top level acceleration structure; pooled if rewritten while pending frames might read it. */
+	virtual Ref< IAccelerationStructure > createTopLevelAccelerationStructure(uint32_t numInstances, bool pooled) = 0;
 
-	/*! */
-	virtual Ref< IAccelerationStructure > createAccelerationStructure(const Buffer* vertexBuffer, const IVertexLayout* vertexLayout, const Buffer* indexBuffer, IndexType indexType, const AlignedVector< RaytracingPrimitives >& primitives, bool dynamic) = 0;
+	/*! Create bottom level acceleration structure; dynamic if refit, pooled if rewritten while pending frames might read it. */
+	virtual Ref< IAccelerationStructure > createAccelerationStructure(const Buffer* vertexBuffer, const IVertexLayout* vertexLayout, const Buffer* indexBuffer, IndexType indexType, const AlignedVector< RaytracingPrimitives >& primitives, bool dynamic, bool pooled) = 0;
 
-	/*! Create program from program resource.
-	 *
-	 * \param programResource Compiled program resource.
-	 * \return Program suitable for rendering with this render system.
-	 */
+	/*! Create program, suitable for rendering with this render system, from compiled program resource. */
 	virtual Ref< IProgram > createProgram(const ProgramResource* programResource, const wchar_t* const tag) = 0;
 
-	/*! Purge any resource which might be pending destruction.
-	 */
+	/*! Purge any resource which might be pending destruction. */
 	virtual void purge() = 0;
 
 	//@}

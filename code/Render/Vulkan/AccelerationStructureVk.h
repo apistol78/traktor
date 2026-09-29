@@ -14,6 +14,8 @@
 #include "Render/Types.h"
 #include "Render/Vulkan/Private/ApiHeader.h"
 
+#include <atomic>
+
 namespace traktor::render
 {
 
@@ -34,11 +36,13 @@ class AccelerationStructureVk : public IAccelerationStructure
 public:
 	virtual ~AccelerationStructureVk();
 
-	static Ref< AccelerationStructureVk > createTopLevel(Context* context, uint32_t numInstances, uint32_t inFlightCount);
+	static Ref< AccelerationStructureVk > createTopLevel(Context* context, uint32_t numInstances, bool pooled);
 
-	static Ref< AccelerationStructureVk > createBottomLevel(Context* context, const Buffer* vertexBuffer, const IVertexLayout* vertexLayout, const Buffer* indexBuffer, IndexType indexType, const AlignedVector< RaytracingPrimitives >& primitives, bool dynamic, uint32_t inFlightCount);
+	static Ref< AccelerationStructureVk > createBottomLevel(Context* context, const Buffer* vertexBuffer, const IVertexLayout* vertexLayout, const Buffer* indexBuffer, IndexType indexType, const AlignedVector< RaytracingPrimitives >& primitives, bool dynamic, bool pooled);
 
 	virtual void destroy() override final;
+
+	virtual void nextFrame() override final;
 
 	bool writeInstances(CommandBuffer* commandBuffer, const AlignedVector< Instance >& instances);
 
@@ -65,10 +69,12 @@ protected:
 	uint32_t m_instanceCapacity = 0;	//!< Top level only; number of instances each slot holds.
 	VkDeviceSize m_topLevelSize = 0;	//!< Top level only; size of each slot's structure.
 	VkDeviceSize m_topLevelScratchSize = 0;	//!< Top level only; size of each slot's build scratch.
+	std::atomic< uint32_t > m_pendingFrames = 0;	//!< Frames begun by nextFrame whose write has not been rendered.
 	bool m_topLevel = false;
 	bool m_dynamic = false;
+	bool m_pooled = false;
 
-	explicit AccelerationStructureVk(Context* context, bool topLevel, bool dynamic);
+	explicit AccelerationStructureVk(Context* context, bool topLevel, bool dynamic, bool pooled);
 
 private:
 	struct GeometryBuild
@@ -79,6 +85,9 @@ private:
 	};
 
 	void teardown();
+
+	/*! Make the next ring slot current when a frame has begun. */
+	void beginWrite();
 
 	/*! Make the next ring slot current; the ring grows rather than rewrite a slot which might still be read. */
 	void advance();
@@ -92,8 +101,8 @@ private:
 	/*! Create instance, hierarchy and scratch buffers and the structure of a top level slot. */
 	bool createTopLevelSlot(uint32_t slot);
 
-	/*! Prepare build of bottom level structure; (re-)creates buffers and structure of the next slot as required. */
-	bool prepareGeometry(const IBufferView* vertexBuffer, const IVertexLayout* vertexLayout, const IBufferView* indexBuffer, IndexType indexType, const AlignedVector< RaytracingPrimitives >& primitives, bool rebuild, GeometryBuild& outBuild);
+	/*! Prepare build of bottom level structure into the current slot, refit from source unless rebuilt; (re-)creates its buffers and structure as required. */
+	bool prepareGeometry(const IBufferView* vertexBuffer, const IVertexLayout* vertexLayout, const IBufferView* indexBuffer, IndexType indexType, const AlignedVector< RaytracingPrimitives >& primitives, bool rebuild, VkAccelerationStructureKHR source, GeometryBuild& outBuild);
 
 	/*! Record prepared build of bottom level structure. */
 	static void recordGeometry(CommandBuffer* commandBuffer, const GeometryBuild& build);

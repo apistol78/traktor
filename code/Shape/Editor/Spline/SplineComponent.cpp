@@ -78,8 +78,7 @@ SplineComponent::SplineComponent(
 
 SplineComponent::~SplineComponent()
 {
-	// Need to call destroy here since editor doesn't always call destroy on components
-	// but instead rely on reference counting to do the cleanup.
+	// Components might be released without being destroyed.
 	destroy();
 }
 
@@ -334,7 +333,7 @@ void SplineComponent::update(const world::UpdateParams& update)
 								0,
 								nindices / 3), true });
 
-							Ref< render::IAccelerationStructure > blas = m_renderSystem->createAccelerationStructure(m_vertexBuffer, m_vertexLayout, m_indexBuffer, render::IndexType::UInt32, primitives, false);
+							Ref< render::IAccelerationStructure > blas = m_renderSystem->createAccelerationStructure(m_vertexBuffer, m_vertexLayout, m_indexBuffer, render::IndexType::UInt32, primitives, false, false);
 							if (blas != nullptr)
 								m_rtwInstance = rtw->createInstance(blas, vertexAttributes);
 						}

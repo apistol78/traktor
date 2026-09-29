@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2024 Anders Pistol.
+ * Copyright (c) 2024-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -63,8 +63,7 @@ RTWorldComponent::Instance* RTWorldComponent::createInstance(const AlignedVector
 	m_instances.push_back(instance);
 	m_instanceBufferDirty = true;
 
-	// Grow the top level structure here, on the instance-mutation path, so the (possibly
-	// recreated) structure is in place before the world renderer gathers it for the frame.
+	// Grown when instances are added, thus the structure is in place before the frame gathers it.
 	ensureTopLevelCapacity(countInstances());
 
 	return instance;
@@ -137,12 +136,11 @@ void RTWorldComponent::ensureTopLevelCapacity(uint32_t numInstances)
 	if (m_tlas != nullptr && numInstances <= m_tlasCapacity)
 		return;
 
-	// Round up so the structure has headroom and does not need to be recreated for every
-	// added instance. The previous structure, if any, is retired safely (deferred until its
-	// retirement fence has passed) so in-flight frames keep a valid one.
+	// Round up so the structure has headroom and isn't recreated for every added instance; the previous
+	// structure is retired, thus in-flight frames keep a valid one.
 	const uint32_t capacity = alignUp(std::max(numInstances, c_tlasCapacityGranularity), c_tlasCapacityGranularity);
 
-	Ref< render::IAccelerationStructure > tlas = m_renderSystem->createTopLevelAccelerationStructure(capacity);
+	Ref< render::IAccelerationStructure > tlas = m_renderSystem->createTopLevelAccelerationStructure(capacity, true);
 	if (!tlas)
 		return;
 

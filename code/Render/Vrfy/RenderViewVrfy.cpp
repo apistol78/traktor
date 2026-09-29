@@ -474,6 +474,9 @@ void RenderViewVrfy::writeAccelerationStructure(IAccelerationStructure* accelera
 	if (!as->getWrappedAS())
 		return;
 
+	const bool frameBegun = as->beginWrite();
+	T_CAPTURE_ASSERT(frameBegun, L"Pooled TLAS written without nextFrame; it might still be read.");
+
 	AlignedVector< IAccelerationStructure::Instance > unwrappedInstances;
 	unwrappedInstances.reserve(instances.size());
 
@@ -511,6 +514,9 @@ void RenderViewVrfy::writeAccelerationStructure(IAccelerationStructure* accelera
 	T_CAPTURE_ASSERT(as->getWrappedAS(), L"Cannot write TLAS; TLAS destroyed.");
 	if (!as->getWrappedAS())
 		return;
+
+	const bool frameBegun = as->beginWrite();
+	T_CAPTURE_ASSERT(frameBegun, L"Pooled BLAS written without nextFrame; it might still be read.");
 
 	T_CAPTURE_ASSERT(vertexBuffer, L"Missing vertex buffer.");
 	T_CAPTURE_ASSERT(indexBuffer, L"Missing index buffer.");

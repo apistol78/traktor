@@ -22,6 +22,7 @@
 #include "Render/VertexElement.h"
 #include "Render/Vulkan/AccelerationStructureVk.h"
 #include "Render/Vulkan/BufferDynamicVk.h"
+#include "Render/Vulkan/BufferPooledVk.h"
 #include "Render/Vulkan/BufferReadBackVk.h"
 #include "Render/Vulkan/BufferStaticVk.h"
 #include "Render/Vulkan/Private/ApiLoader.h"
@@ -940,6 +941,12 @@ Ref< Buffer > RenderSystemVk::createBuffer(uint32_t usage, uint32_t bufferSize, 
 		if (buffer->create(usageBits))
 			return buffer;
 	}
+	else if ((usage & BuPooled) != 0)
+	{
+		Ref< BufferPooledVk > buffer = new BufferPooledVk(m_context, bufferSize, m_statistics.buffers);
+		if (buffer->create(usageBits))
+			return buffer;
+	}
 	else if (dynamic)
 	{
 		Ref< BufferDynamicVk > buffer = new BufferDynamicVk(m_context, bufferSize, m_statistics.buffers);
@@ -1023,18 +1030,18 @@ Ref< IRenderTargetSet > RenderSystemVk::createRenderTargetSet(const RenderTarget
 		return nullptr;
 }
 
-Ref< IAccelerationStructure > RenderSystemVk::createTopLevelAccelerationStructure(uint32_t numInstances)
+Ref< IAccelerationStructure > RenderSystemVk::createTopLevelAccelerationStructure(uint32_t numInstances, bool pooled)
 {
 	if (m_rayTracing)
-		return AccelerationStructureVk::createTopLevel(m_context, numInstances, 4);
+		return AccelerationStructureVk::createTopLevel(m_context, numInstances, pooled);
 	else
 		return nullptr;
 }
 
-Ref< IAccelerationStructure > RenderSystemVk::createAccelerationStructure(const Buffer* vertexBuffer, const IVertexLayout* vertexLayout, const Buffer* indexBuffer, IndexType indexType, const AlignedVector< RaytracingPrimitives >& primitives, bool dynamic)
+Ref< IAccelerationStructure > RenderSystemVk::createAccelerationStructure(const Buffer* vertexBuffer, const IVertexLayout* vertexLayout, const Buffer* indexBuffer, IndexType indexType, const AlignedVector< RaytracingPrimitives >& primitives, bool dynamic, bool pooled)
 {
 	if (m_rayTracing)
-		return AccelerationStructureVk::createBottomLevel(m_context, vertexBuffer, vertexLayout, indexBuffer, indexType, primitives, dynamic, 4);
+		return AccelerationStructureVk::createBottomLevel(m_context, vertexBuffer, vertexLayout, indexBuffer, indexType, primitives, dynamic, pooled);
 	else
 		return nullptr;
 }

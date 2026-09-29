@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2025 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -84,7 +84,7 @@ Ref< IMesh > InstanceMeshResource::createMesh(
 
 	instanceMesh->m_renderMesh = renderMesh;
 
-	// Create deform; instances within deform distance read positions from pooled deform buffers.
+	// Create deform; instances within deform distance read positions from the pooled deform buffer.
 	if (!instanceMesh->createDeform(resourceManager, renderSystem, m_deformParts, renderMesh))
 	{
 		log::error << L"Instance mesh create failed; unable to create deform." << Endl;
@@ -115,6 +115,7 @@ Ref< IMesh > InstanceMeshResource::createMesh(
 			renderMesh->getIndexBuffer(),
 			renderMesh->getIndexType(),
 			renderMesh->getRaytracingPrimitives(),
+			false,
 			false);
 		if (!instanceMesh->m_rtAccelerationStructure)
 		{

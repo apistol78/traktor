@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2025 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -92,16 +92,15 @@ Ref< IMesh > StaticMeshResource::createMesh(
 
 	staticMesh->m_renderMesh = renderMesh;
 
-	// Create deform; deformed meshes read positions from per-instance deform buffers.
+	// Create deform; deformed instances read positions from their slot of the pooled deform buffer.
 	if (!staticMesh->createDeform(resourceManager, renderSystem, m_deformParts, renderMesh))
 	{
 		log::error << L"Static mesh create failed; unable to create deform." << Endl;
 		return nullptr;
 	}
 
-	// Create ray tracing structures. Meshes built with ray tracing disabled carry no ray
-	// tracing primitives, in which case no acceleration structure is created. Deformed
-	// instances near the eye replace this shared structure with a refit one of their own.
+	// Create ray tracing structure, unless built with ray tracing disabled and thus without primitives;
+	// deformed instances near the eye replace this shared structure with a refit one of their own.
 	if (renderSystem->supportRayTracing() && !renderMesh->getRaytracingPrimitives().empty())
 	{
 		staticMesh->m_rtAccelerationStructure = renderSystem->createAccelerationStructure(
@@ -110,6 +109,7 @@ Ref< IMesh > StaticMeshResource::createMesh(
 			renderMesh->getIndexBuffer(),
 			renderMesh->getIndexType(),
 			renderMesh->getRaytracingPrimitives(),
+			false,
 			false);
 		if (!staticMesh->m_rtAccelerationStructure)
 		{

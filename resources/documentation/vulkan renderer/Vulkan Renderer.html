@@ -509,7 +509,7 @@ footer .wrap { padding-block: 20px 36px; }
 	<li>Record and submit a view only from the thread that rendered its first frame (<a href="#threads">§14</a>).</li>
 	<li>Anything that submits frame work before <code>endFrame</code> calls <code>Context::performUploads</code> first (<a href="#uploads">§8</a>).</li>
 	<li>Code that records into a view's command buffers directly, such as a render plugin, calls <code>RenderViewVk::invalidateBindings</code> afterwards (<a href="#queues">§4</a>).</li>
-	<li>A resource that the CPU or the asynchronous queue rewrites every frame while graphics reads it must be ring-buffered deeper than the frames in flight (<a href="#frame">§6</a>, <a href="#async">§7</a>).</li>
+	<li>A resource that the CPU or the asynchronous queue rewrites every frame while graphics reads it must be pooled, with <code>nextFrame()</code> called before each rewrite, or ring-buffered deeper than the frames in flight (<a href="#frame">§6</a>, <a href="#async">§7</a>).</li>
 	<li>A resource whose Vulkan handle changes between frames must be part of <code>ProgramVk</code>'s descriptor-set key (<a href="#memory">§10</a>).</li>
 	<li>Vulkan handles are released only through <code>Context::addDeferredCleanup</code>; a resource's <code>destroy()</code> never frees GPU objects itself (<a href="#cleanup">§9</a>).</li>
 	<li>Asynchronous compute passes never consume graphics output from the same frame (<a href="#async">§7</a>).</li>
@@ -572,10 +572,11 @@ footer .wrap { padding-block: 20px 36px; }
 			<p class="own-title">Resources<span>created by RenderSystemVk::create*, any thread</span></p>
 			<div class="own-res">
 				<div><b>BufferStaticVk · BufferDynamicVk · BufferReadBackVk</b>wrap one <code>ApiBuffer</code> (<code>VkBuffer</code> + VMA allocation, lazy bindless index)</div>
+				<div><b>BufferPooledVk</b>pool of <code>ApiBuffer</code> allocations with a view each; <code>nextFrame</code> moves to one that no pending frame uses</div>
 				<div><b>TextureVk · RenderTargetVk · RenderTargetDepthVk</b>wrap <code>Image</code> (<code>VkImage</code>, views, bindless indices, tracked layouts)</div>
 				<div><b>RenderTargetSetVk</b>colour and depth targets plus one cached <code>VkFramebuffer</code> per render pass</div>
 				<div><b>ProgramVk</b>uniform shadow data, uniform blocks, descriptor-set cache, samplers</div>
-				<div><b>AccelerationStructureVk</b>growing ring of <code>VkAccelerationStructureKHR</code> with hierarchy and scratch buffers, and instance buffers for top level structures</div>
+				<div><b>AccelerationStructureVk</b>ring of <code>VkAccelerationStructureKHR</code> with hierarchy and scratch buffers, and instance buffers for top level structures; pooled structures grow it on demand</div>
 				<div><b>ResourceMorgue</b>render-module singleton that delays the deletion of released resources by three frames</div>
 			</div>
 		</div>
@@ -963,7 +964,7 @@ footer .wrap { padding-block: 20px 36px; }
 
 <div class="note inv">
 	<p class="tag">Invariant</p>
-	<p>The number of frames in flight is the swap chain image count: three by request, but the driver may create more. <code>beginFrame</code> waits only for the acquired slot, and modes such as <code>MAILBOX</code> or <code>IMMEDIATE</code> do not promise round-robin acquisition. Anything the CPU or the compute queue rewrites every frame while graphics may still read an older copy must be ring-buffered deeper than that. The count is per view: a resource that every view rewrites, such as the world's top level structure or a skinned mesh's skin, needs frames in flight times views. Current rings: 12 slots per <code>BufferDynamicVk</code>, 6 for skinned and deformed vertex buffers, and acceleration structures, which start with 4 slots and grow on demand (<a href="#async">§7</a>).</p>
+	<p>The number of frames in flight is the swap chain image count: three by request, but the driver may create more. <code>beginFrame</code> waits only for the acquired slot, and modes such as <code>MAILBOX</code> or <code>IMMEDIATE</code> do not promise round-robin acquisition. Anything the CPU or the compute queue rewrites every frame while graphics may still read an older copy must be ring-buffered deeper than that. The count is per view: a resource that every view rewrites, such as the world's top level structure or a skinned mesh's skin, needs frames in flight times views. No fixed depth fits that, so these resources are pooled: skinned and deformed vertex buffers (<code>BuPooled</code>) and acceleration structures start with one allocation and grow on demand (<a href="#async">§7</a>). <code>BufferDynamicVk</code> still has a fixed ring of 12 slots.</p>
 </div>
 
 <h3>Acquire semaphore rotation</h3>
@@ -1147,16 +1148,23 @@ footer .wrap { padding-block: 20px 36px; }
 
 <div class="note inv">
 	<p class="tag">Invariant</p>
-	<p>A wait orders compute before graphics within one frame only. Frame F+1's compute work can run while frame F's graphics work still reads the previous results, so everything the asynchronous queue rewrites per frame is ring-buffered: the TLAS and dynamic BLAS (<code>AccelerationStructureVk</code>), and 6 slots for skinned and deformed vertex buffers. <code>ProgramVk</code> includes the current acceleration structure handle in its descriptor-set key, so a cached set never points at a slot that is being rebuilt.</p>
+	<p>A wait orders compute before graphics within one frame only. Frame F+1's compute work can run while frame F's graphics work still reads the previous results, so everything the asynchronous queue rewrites per frame is pooled: the TLAS and dynamic BLAS (<code>AccelerationStructureVk</code>), and the skinned and deformed vertex buffers (<code>BufferPooledVk</code>). <code>ProgramVk</code> includes the current acceleration structure handle in its descriptor-set key, so a cached set never points at a slot that is being rebuilt.</p>
 </div>
 
-<h3>Acceleration structure rings</h3>
-<p>A fixed ring depth is not enough for acceleration structures. The world's top level structure belongs to its <code>RTWorldComponent</code>, so every view rendering that world rebuilds the same structure, and so does every probe capture face rendered within a frame. Skinned and deformed meshes refit their bottom level structures once per view as well. On top of that the asynchronous queue can trail the CPU by all frames in flight, since its batches wait on the upload timeline behind the graphics work queued ahead of the uploads. With two views each rebuilding the world every frame, a 4-slot ring came round while an earlier build was still pending, and the CPU rewrote the instance data under it. The build then read instances of a later frame, whose bottom level structures might not have been built yet, and NVIDIA's build shader failed with a misaligned address.</p>
-<p>So <code>AccelerationStructureVk::advance</code> only rewrites a slot when no work can read it any longer, and otherwise inserts a fresh slot into the ring:</p>
+<h3>Pooled buffers and acceleration structures</h3>
+<p>A fixed ring depth is not enough for resources rewritten every frame. The world's top level structure belongs to its <code>RTWorldComponent</code>, so every view rendering that world rebuilds the same structure, and so does every probe capture face rendered within a frame. Skinned and deformed meshes refit their bottom level structures once per view as well. On top of that the asynchronous queue can trail the CPU by all frames in flight, since its batches wait on the upload timeline behind the graphics work queued ahead of the uploads. With two views each rebuilding the world every frame, a 4-slot ring came round while an earlier build was still pending, and the CPU rewrote the instance data under it. The build then read instances of a later frame, whose bottom level structures might not have been built yet, and NVIDIA's build shader failed with a misaligned address.</p>
+<p>Such resources are therefore created pooled: <code>BuPooled</code> for buffers, and the <code>pooled</code> flag of <code>createTopLevelAccelerationStructure</code> and <code>createAccelerationStructure</code>. Whatever builds the frame calls <code>nextFrame()</code> before building work that rewrites one. The backend then writes into storage that no pending frame reads, and returns storage to the pool once every frame that might read it has been consumed. Buffers and acceleration structures switch at different times, because their users resolve them at different times:</p>
+<ul>
+	<li><b>Buffers</b> switch in <code>nextFrame</code> itself, on the thread building the frame, because render blocks capture buffer views while they are built. Every allocation of a <code>BufferPooledVk</code> has a view of its own, so a view taken before <code>nextFrame</code> still refers to the previous frame's data. Skinned and deformed meshes bind the previous skin or deform for velocities that way.</li>
+	<li>A retired allocation notes how many frames had been submitted when it was retired. Frames are built at most one frame ahead of the render thread, so every frame that can read the allocation is submitted within the next two frames. The allocation is reused once that frame has been submitted and its epoch has completed. Allocations retire in order, so only the oldest needs checking; if it is still in use, a new allocation is created.</li>
+	<li>A frame that is built but never rendered keeps what it retired out of the pool until later frames have been submitted. The runtime keeps rendering while minimized, since <code>RenderViewVk::isMinimized</code> always reports <code>false</code>, so this only happens briefly, for example while a lost view is being reset.</li>
+	<li><b>Acceleration structures</b> are resolved when the frame is rendered: writes, the instance references of a top level build and descriptor sets all read the current slot at that point. <code>nextFrame</code> only adds to a count of pending frames. The next rendered write consumes one of them and moves to a free slot, as described below. A dynamic structure is refit from the slot written last into the new slot, so a single full build after a geometry change is enough.</li>
+</ul>
+<p><code>AccelerationStructureVk::advance</code> only rewrites a slot when no work can read it any longer, and otherwise inserts a fresh slot into the ring:</p>
 <ul>
 	<li>When a slot stops being current, it notes how many frames have been submitted so far. Views register every frame at <code>endFrame</code>, after its last submission (<code>Context::frameSubmitted</code>), and the context remembers the issued epoch of the last 64 frames.</li>
 	<li>Views render one after another, so the first frame submitted after the slot was left is the frame that left it. Once that frame has been submitted, every reader of the slot has been, and the slot is free when the epoch issued with that frame has completed.</li>
-	<li>A slot left by the frame still being recorded is never free: its readers may sit in command buffers that have not been submitted, so waiting for them would never end. A slot that is not free gets a new slot inserted in front of it. Top level slots are created at once, with instance, hierarchy and scratch buffers of their own; bottom level slots get their buffers when first built, which is then a full build rather than a refit.</li>
+	<li>A slot left by the frame still being recorded is never free: its readers may sit in command buffers that have not been submitted, so waiting for them would never end. A slot that is not free gets a new slot inserted in front of it. Top level slots are created at once, with instance, hierarchy and scratch buffers of their own; bottom level slots get their buffers when first written.</li>
 	<li>Rings therefore grow to what the views, probe captures and GPU lag need. In the Zombie gameplay stage, rings started at one slot grew to five. Each growth is logged at debug level.</li>
 </ul>
 
@@ -1729,11 +1737,6 @@ footer .wrap { padding-block: 20px 36px; }
 		<p class="where"><code>RenderViewVk::splitGraphics</code>, <code>RenderViewVk::endFrame</code>, <code>RenderTargetVk::prepareAsTarget</code></p>
 	</li>
 	<li>
-		<h4><span class="chip hz">Hazard</span>Skin and deform rings advance once per view</h4>
-		<p>Skinned and deformed meshes rotate their vertex buffer rings (6 slots) at every setup, that is once per view and frame. With several views a slot comes round after fewer frames of each view than the ring was sized for. The asynchronous queue can then rewrite a slot that another view's graphics work, its velocity pass for instance, still reads; that shows as corruption rather than a fault. These rings rotate at build time, outside the backend, so the fix belongs there: skin once per world update and share the result between views, or size the rings by views.</p>
-		<p class="where"><code>SkinnedMeshComponent::setupSkin</code>, <code>DeformMesh</code></p>
-	</li>
-	<li>
 		<h4><span class="chip mn">Minor</span>Views share a top level structure culled by the eye</h4>
 		<p><code>RTWorldComponent::gatherTopLevelInstances</code> culls instances by distance from the eye and rebuilds whenever the eye has moved. Views at different positions, and probe captures, therefore rebuild the one structure every frame, each for its own eye. A view traces against whichever build was current when its passes were recorded. That is safe now, but it is wasted work, and a view may trace against another view's culling.</p>
 		<p class="where"><code>World/Entity/RTWorldComponent.cpp</code>, <code>RTWorldRenderer::setup</code></p>
@@ -1747,6 +1750,12 @@ footer .wrap { padding-block: 20px 36px; }
 
 <h3>Fixed</h3>
 <ol class="obs">
+	<li>
+		<h4><span class="chip ok">Fixed</span><span class="chip hz">Hazard</span>Skin and deform rings advanced once per view</h4>
+		<p>Skinned and deformed meshes rotated fixed rings of 6 vertex buffers at every setup, that is once per view and frame. With several views, or probe captures, a slot came round after fewer frames of each view than the ring was sized for, and the asynchronous queue could rewrite a slot that another view's graphics work still read.</p>
+		<p class="fix"><b>Now</b> each mesh holds one pooled buffer and calls <code>nextFrame</code> at every setup, so the pool grows to what views and frames in flight need. Their acceleration structures and the world's top level structure are pooled the same way (<a href="#async">§7</a>). The Zombie gameplay stage ran with validation and synchronization validation, with no messages other than the known swap chain acquire hazard, and dedicated video memory stayed flat.</p>
+		<p class="where"><code>BufferPooledVk</code>, <code>SkinnedMeshComponent::setupSkin</code>, <code>DeformMesh::beginDeform</code>, <code>AccelerationStructureVk::nextFrame</code></p>
+	</li>
 	<li>
 		<h4><span class="chip ok">Fixed</span><span class="chip hz">Hazard</span>Acceleration structure rings could be rewritten while in use</h4>
 		<p>Found after the upload changes: two views in the scene editor lost the device within seconds of moving the camera. The Aftermath dump shows a "Misaligned Address Error" in NVIDIA's internal "AS Build or Refit" shader, executing the top level build. The TLAS, its CPU-written instance data and the dynamic BLAS were 4-slot rings, sized for one view with three frames in flight. Every view, and every probe capture face, advances the shared ones, and uploads no longer block the CPU, so the asynchronous queue can trail by all frames in flight. That lets the CPU rewrite the instance data of a build that has not executed yet, which fits a fault inside the build shader.</p>

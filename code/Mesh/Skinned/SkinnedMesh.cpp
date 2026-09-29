@@ -81,12 +81,15 @@ void SkinnedMesh::buildAccelerationStructure(
 	if (!asynchronous)
 		renderContext->compute< render::BarrierRenderBlock >(render::Stage::Compute, render::Stage::AccelerationStructureUpdate, nullptr, 0);
 
-	// Rebuild acceleration structure.
+	// Refit from this frame's skin into a structure which no pending frame reads.
+	const render::IBufferView* skinBufferView = skinBuffer->getBufferView();
+	accelerationStructure->nextFrame();
+
 	auto rb = renderContext->allocNamed< render::LambdaRenderBlock >(L"SkinnedMesh update AS");
 	rb->lambda = [=, this](render::IRenderView* renderView) {
 		renderView->writeAccelerationStructure(
 			accelerationStructure,
-			skinBuffer->getBufferView(),
+			skinBufferView,
 			m_rtVertexLayout,
 			m_mesh->getIndexBuffer()->getBufferView(),
 			m_mesh->getIndexType(),
@@ -102,8 +105,8 @@ void SkinnedMesh::build(
 	const world::IWorldRenderPass& worldRenderPass,
 	const Transform& lastWorldTransform,
 	const Transform& worldTransform,
-	render::Buffer* lastSkinBuffer,
-	render::Buffer* skinBuffer,
+	const render::IBufferView* lastSkinBuffer,
+	const render::IBufferView* skinBuffer,
 	float distance,
 	const IMeshParameterCallback* parameterCallback) const
 {
@@ -122,8 +125,8 @@ void SkinnedMesh::build(
 	if (parameterCallback)
 		parameterCallback->setParameters(programParams);
 
-	programParams->setBufferViewParameter(s_handleSkinBufferLast, lastSkinBuffer->getBufferView());
-	programParams->setBufferViewParameter(s_handleSkinBuffer, skinBuffer->getBufferView());
+	programParams->setBufferViewParameter(s_handleSkinBufferLast, lastSkinBuffer);
+	programParams->setBufferViewParameter(s_handleSkinBuffer, skinBuffer);
 
 	programParams->endParameters(renderContext);
 
@@ -166,7 +169,7 @@ const SmallMap< std::wstring, int >& SkinnedMesh::getJointMap() const
 Ref< render::Buffer > SkinnedMesh::createSkinBuffer(render::IRenderSystem* renderSystem) const
 {
 	const uint32_t vertexCount = m_mesh->getAuxBuffer(c_fccSkinPosition)->getBufferSize() / sizeof(SkinBuffer);
-	return renderSystem->createBuffer(render::BuStructured, vertexCount * sizeof(SkinBuffer), false, T_FILE_LINE_W);
+	return renderSystem->createBuffer(render::BuStructured | render::BuPooled, vertexCount * sizeof(SkinBuffer), false, T_FILE_LINE_W);
 }
 
 Ref< render::Buffer > SkinnedMesh::createJointBuffer(render::IRenderSystem* renderSystem, uint32_t jointCount)
@@ -202,6 +205,7 @@ Ref< render::IAccelerationStructure > SkinnedMesh::createAccelerationStructure(r
 		m_mesh->getIndexBuffer(),
 		m_mesh->getIndexType(),
 		m_mesh->getRaytracingPrimitives(),
+		true,
 		true);
 }
 

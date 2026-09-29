@@ -31,10 +31,7 @@ class T_DLLCLASS Buffer : public Object
 	T_RTTI_CLASS;
 
 public:
-	/*! Release is fenced to ensure resource is alive during rendering.
-	 *
-	 * \sa ResourceMorgue.
-	 */
+	/*! Release is fenced to ensure resource is alive during rendering. */
 	virtual void release(void* owner) const noexcept override final;
 
 	/*! Get buffer size in bytes.
@@ -57,6 +54,11 @@ public:
 
 	/*! */
 	virtual const IBufferView* getBufferView() const = 0;
+
+	/*! Move pooled buffer to an allocation which no pending frame uses.
+	 * Views returned before remain valid, with their content, for the frame being built.
+	 */
+	virtual void nextFrame() = 0;
 
 protected:
 	explicit Buffer(uint32_t bufferSize);

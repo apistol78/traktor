@@ -31,6 +31,7 @@ namespace traktor::render
 
 class Buffer;
 class IAccelerationStructure;
+class IBufferView;
 class IRenderSystem;
 class IVertexLayout;
 class Mesh;
@@ -61,36 +62,21 @@ class IMeshParameterCallback;
 /*! Deformable mesh.
  * \ingroup Mesh
  *
- * Materials providing a world position offset are deformed on the compute
- * queue; the offsets are evaluated per vertex into a deform buffer, in object
- * space, which the vertex shaders and ray tracing acceleration structures read
- * positions from. Only positions are deformed.
- *
- * Deformation happens within a distance from the eye. The mesh keeps a pool of
- * deform slots, one per instance of it currently within that distance, in a ring
- * of pooled deform buffers; instances acquire a slot as they come into range and
- * release it when they leave, so GPU memory scales with what is near the eye
- * rather than with the number of instances in the world.
+ * World position offsets are evaluated per vertex on the compute queue into a deform buffer, a slot per instance near the eye.
  */
 class T_DLLCLASS DeformMesh : public IMesh
 {
 	T_RTTI_CLASS;
 
 public:
-	/*! Deform source vertices; the attributes of every vertex in a fixed layout
-	 * (see DeformVertex) so the Deform compute technique can read them.
-	 */
+	/*! Deform source vertices; attributes of every vertex in the DeformVertex layout, read by the Deform compute technique. */
 	static const FourCC c_fccDeformVertices;
 
 	/*! Deform vertex indices; the concatenated vertex index lists of the deform parts. */
 	static const FourCC c_fccDeformIndices;
 
 #pragma pack(1)
-	/*! Deform source vertex.
-	 *
-	 * Layout of the c_fccDeformVertices aux buffer; must match the Mesh_DeformVertex_Type
-	 * struct declaration read by the Deform compute technique.
-	 */
+	/*! Deform source vertex; layout of the c_fccDeformVertices aux buffer, must match the Mesh_DeformVertex_Type struct declaration. */
 	struct DeformVertex
 	{
 		float Position[4];
@@ -102,10 +88,7 @@ public:
 		half_t Color[4];
 	};
 
-	/*! Deformed vertex.
-	 *
-	 * Layout of the deform buffers; must match the Mesh_DeformPosition_Type struct declaration.
-	 */
+	/*! Deformed vertex; layout of the deform buffers, must match the Mesh_DeformPosition_Type struct declaration. */
 	struct DeformPosition
 	{
 		float Position[4];
@@ -135,13 +118,11 @@ public:
 	/*! Release a deform slot. */
 	void releaseDeformSlot(int32_t slot);
 
-	/*! Begin deforming this frame; advances the deform buffer ring. Call once per frame before building slots. */
+	/*! Begin deforming this frame; moves the deform buffer to an allocation no pending frame reads. Call before building slots. */
 	void beginDeform();
 
-	/*! Build compute work deforming an instance into its slot.
-	 *
-	 * \param shader Mesh material shader carrying the deform techniques.
-	 * \param writeLast Also write the previous frame's buffer, for slots without a valid history.
+	/*! Build compute work deforming an instance into its slot, using the deform techniques of the material shader.
+	 * writeLast also writes the previous frame's buffer, for slots without a valid history.
 	 */
 	void buildDeformSlot(
 		render::RenderContext* renderContext,
@@ -152,10 +133,7 @@ public:
 		const IMeshParameterCallback* parameterCallback,
 		bool writeLast);
 
-	/*! Build update of the slot's acceleration structure from its deformed positions.
-	 *
-	 * \return Acceleration structure of the slot, or null when the mesh isn't ray traced.
-	 */
+	/*! Build update of the slot's acceleration structure from its deformed positions; null when the mesh isn't ray traced. */
 	const render::IAccelerationStructure* buildDeformSlotAccelerationStructure(
 		render::RenderContext* renderContext,
 		int32_t slot);
@@ -163,10 +141,7 @@ public:
 	/*! Release the slot's acceleration structure; the instance is traced through the shared, undeformed, one. */
 	void releaseDeformSlotAccelerationStructure(int32_t slot);
 
-	/*! Set the deform parameters of a draw; the deform buffers and, for the slot, its offset.
-	 *
-	 * \param slot Slot the drawn instance holds, or -1 when it is drawn undeformed.
-	 */
+	/*! Set the deform parameters of a draw; slot is the one the drawn instance holds, or -1 when drawn undeformed. */
 	void setDeformParameters(render::ProgramParameters* programParams, int32_t slot);
 
 	//! \}
@@ -178,18 +153,12 @@ public:
 	static float getDeformFadeDistance();
 
 	/*! Distance from the eye within which deformed instances also refit their ray tracing geometry.
-	 *
-	 * Refitting keeps a dynamic acceleration structure per instance, which is far more
-	 * memory than the deform itself, so it is limited to the nearest instances; farther
-	 * ones trace against their undeformed geometry.
+	 * A structure per instance is far more memory than the deform, thus farther ones trace their undeformed geometry.
 	 */
 	static float getDeformRayTracingDistance();
 
-	/*! Check if a mesh instance is within deform distance of the eye.
-	 *
-	 * True when any part of the bounding box is closer than the deform distance;
-	 * vertices beyond it are faded out by the deform itself so deforming can
-	 * stop once the whole box is beyond.
+	/*! Check if any part of the mesh instance's bounding box is within deform distance of the eye.
+	 * Vertices beyond the distance are faded out by the deform, thus deforming stops once the whole box is beyond.
 	 */
 	static bool isWithinDeformDistance(const Transform& worldTransform, const Aabb3& boundingBox, const Vector4& eyePosition);
 
@@ -205,20 +174,12 @@ protected:
 		render::Mesh* renderMesh);
 
 private:
-	/*! Number of deform buffer ring entries.
-	 *
-	 * The deform is written on the asynchronous compute queue while up to the swap
-	 * chain's image count (at most 4) of prior frames' graphics may still be reading
-	 * their entries; the previous frame's entry is additionally bound for velocities.
-	 */
-	constexpr static int32_t DeformBufferCount = 6;
-
 	struct DeformSlot
 	{
 		const Object* owner = nullptr;
 		Ref< render::IAccelerationStructure > blas;
 		int32_t rtUpdates = 0;
-		int32_t rtRebuilds = 0; //!< Full builds left before refitting; covers every ring entry of the structure after a geometry change.
+		bool rtRebuild = false; //!< Geometry has changed, thus next update is a full build.
 	};
 
 	AlignedVector< DeformPart > m_deformParts;
@@ -228,8 +189,9 @@ private:
 	Ref< render::IRenderSystem > m_deformRenderSystem;
 	uint32_t m_deformVertexCount = 0;
 
-	Ref< render::Buffer > m_deformBuffer[DeformBufferCount]; //!< Pooled; each holding every slot.
-	Ref< render::Buffer > m_deformPlaceholder;				//!< Bound instead of the pool while none exists.
+	Ref< render::Buffer > m_deformBuffer;						//!< Pooled; holding every slot.
+	const render::IBufferView* m_lastDeformBufferView = nullptr; //!< Deform of the previous frame, read for velocities.
+	Ref< render::Buffer > m_deformPlaceholder;					//!< Bound instead of the pool while none exists.
 	AlignedVector< DeformSlot > m_deformSlots;
 	uint32_t m_deformCapacity = 0;
 	uint32_t m_deformWrites = 0;
@@ -245,7 +207,7 @@ private:
 		const world::WorldRenderView& worldRenderView,
 		const Transform& worldTransform,
 		const render::Shader* shader,
-		render::Buffer* deformBuffer,
+		const render::IBufferView* deformBuffer,
 		uint32_t slot,
 		const IMeshParameterCallback* parameterCallback) const;
 

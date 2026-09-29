@@ -27,9 +27,8 @@ namespace traktor::animation
 namespace
 {
 
-/*! Number of updates between pose evaluations, by distance to the view. Since the skin,
- * and thus also the ray tracing acceleration structure, is only rebuilt when the pose
- * has changed this reduce both CPU and GPU cost of distant characters. */
+/*! Number of updates between pose evaluations, by distance to the view; skin and ray tracing
+ * structure are only rebuilt when the pose has changed, thus distant characters cost less. */
 const struct
 {
 	float distance;
@@ -44,9 +43,8 @@ c_updatePeriods[] = {
 	{ std::numeric_limits< float >::max(), std::numeric_limits< int32_t >::max(), 8 }
 };
 
-/*! Additional period multiplier when not visible in any view. We must still evaluate
- * since we might cast a shadow into the view, or be hit by a ray traced probe, but at
- * a lower rate than something actually on screen. */
+/*! Period multiplier when not visible in any view; still evaluated as a shadow or ray traced
+ * probe might see us, but at a lower rate than something on screen. */
 const int32_t c_notVisibleUpdatePeriodScale = 2;
 
 }
@@ -155,8 +153,7 @@ void AnimatedMeshComponent::update(const world::UpdateParams& update)
 
 void AnimatedMeshComponent::setupSkin(const world::WorldRenderView& worldRenderView, render::RenderContext* renderContext, int32_t lodRank)
 {
-	// Reset here; the base setupSkin sets it when we actually (re)build the skin, and the
-	// inherited setupAccelerationStructure reads it to decide whether to build the BLAS.
+	// Only set when the skin is rebuilt below; the acceleration structure is built from it then.
 	m_setupBuiltSkin = false;
 
 	const Transform& worldTransform = getRenderTransform();
@@ -197,10 +194,8 @@ void AnimatedMeshComponent::setupSkin(const world::WorldRenderView& worldRenderV
 	const Scalar interval(worldRenderView.getInterval());
 	const Scalar poseInterval = (m_updatePeriod > 1) ? 1.0_simd : interval;
 
-	// Rebuild skin when the pose has changed and something is actually going to draw us.
-	// Being culled in the view is not enough to skip since a shadow or ray tracing pass
-	// might still draw us; use the visibility accumulated by the passes of the previous
-	// frame, which is one frame late but never leaves us permanently stale.
+	// Rebuild skin when the pose has changed and something draws us; shadow and ray tracing passes
+	// might even when culled in the view, thus visibility of all passes of the previous frame is used.
 	if (worldRenderView.getIndex() == 0)
 	{
 		m_visibleLastFrame = m_visibleThisFrame;
@@ -235,13 +230,8 @@ void AnimatedMeshComponent::setupSkin(const world::WorldRenderView& worldRenderV
 		m_rtwInstance->setTransform(worldTransform);
 	}
 
-	// The previous skin buffer only hold the skin of the previous frame if we've
-	// rebuilt the skin this frame; else both buffers refer to the same skin. On our
-	// very first setup there is no previous skin at all. At a reduced rate the previous
-	// skin is several frames old, which would overstate our velocities, so report no
-	// skin motion at all; the world transform still contribute proper velocities.
-	// Accumulate across views since setup is called once per view but build passes
-	// of all views are executed afterwards.
+	// Previous skin is only last frame's when rebuilt this frame at full rate, else no skin motion is reported.
+	// Accumulated across views as setup is called per view while build passes of all views run afterwards.
 	const bool skinBuilt = buildSkin && !m_firstSetup && m_updatePeriod <= 1;
 	if (worldRenderView.getIndex() == 0)
 		m_skinBuilt = skinBuilt;
@@ -276,8 +266,8 @@ void AnimatedMeshComponent::build(const world::WorldBuildContext& context, const
 			worldRenderPass,
 			m_lastWorldTransform[1],
 			worldTransform,
-			m_skinBuilt ? m_skinBuffer[1] : m_skinBuffer[0],
-			m_skinBuffer[0],
+			m_skinBuilt ? m_lastSkinBufferView : m_skinBuffer->getBufferView(),
+			m_skinBuffer->getBufferView(),
 			distance,
 			getParameterCallback());
 }

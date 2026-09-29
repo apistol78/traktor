@@ -831,9 +831,8 @@ bool TerrainComponent::createRayTracingPatches()
 	if (!m_renderSystem->supportRayTracing())
 		return true;
 
-	// Ray tracing patches are laid out on a grid of their own, sized only by world extent. Raster
-	// patches are sized by patch dimension and detail skip and, at high detail, amount to thousands
-	// of patches; far too many bottom level structures for what is a coarse approximation anyway.
+	// Ray tracing patches are laid out on a grid of their own, sized only by world extent; raster patches at
+	// high detail amount to thousands, far too many bottom level structures for a coarse approximation.
 	const Vector4& worldExtent = m_heightfield->getWorldExtent();
 	const float rtPatchSize = c_rtPatchCells * c_rtCellSize;
 	const uint32_t rtPatchCountX = std::max< uint32_t >((uint32_t)(worldExtent.x() / rtPatchSize + 0.5f), 1);
@@ -1000,7 +999,7 @@ bool TerrainComponent::createRayTracingPatches()
 			m_rtParts[patchId].perVertexData = perVertexData;
 
 			// Create bottom level acceleration structure.
-			m_rtParts[patchId].blas = m_renderSystem->createAccelerationStructure(m_rtVertexBuffers[patchId], vertexLayout, m_rtIndexBuffer, render::IndexType::UInt32, { { primitives, true } }, false);
+			m_rtParts[patchId].blas = m_renderSystem->createAccelerationStructure(m_rtVertexBuffers[patchId], vertexLayout, m_rtIndexBuffer, render::IndexType::UInt32, { { primitives, true } }, false, false);
 			if (!m_rtParts[patchId].blas)
 				return false;
 		}

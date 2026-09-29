@@ -9,6 +9,8 @@
 #pragma once
 
 #include "Core/Ref.h"
+#include "Core/RefArray.h"
+#include "Core/Thread/SpinLock.h"
 #include "Render/Buffer.h"
 #include "Render/Vrfy/BufferViewVrfy.h"
 
@@ -39,14 +41,17 @@ public:
 
 	virtual const IBufferView* getBufferView() const override final;
 
+	virtual void nextFrame() override final;
+
 	Buffer* getWrappedBuffer() const { return m_buffer; }
 
 protected:
 	Ref< ResourceTracker > m_resourceTracker;
 	Ref< Buffer > m_buffer;
 	std::wstring m_tag;
-	mutable BufferViewVrfy m_bufferViews[256];
-	mutable int32_t m_bufferViewIndex = 0;
+	uint32_t m_usage = 0;
+	mutable RefArray< BufferViewVrfy > m_bufferViews; //!< One per view of the wrapped buffer, thus views handed out never change.
+	mutable SpinLock m_bufferViewsLock;
 	bool m_locked = false;
 	uint8_t* m_device = nullptr;
 	uint8_t* m_shadow = nullptr;

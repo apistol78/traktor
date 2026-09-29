@@ -40,14 +40,16 @@ public:
 		Matrix44 transform;
 	};
 
-	/*! Release is fenced to ensure resource is alive during rendering.
-	 *
-	 * \sa ResourceMorgue.
-	 */
+	/*! Release is fenced to ensure resource is alive during rendering. */
 	virtual void release(void* owner) const noexcept override final;
 
 	/*! */
 	virtual void destroy() = 0;
+
+	/*! Next write of pooled structure goes into a structure which no pending frame uses.
+	 * Called when building the write; the structure is switched when the write is rendered.
+	 */
+	virtual void nextFrame() = 0;
 };
 
 }

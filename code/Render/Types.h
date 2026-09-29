@@ -38,16 +38,8 @@ namespace traktor::render
 /*! \ingroup Render */
 //@{
 
-/*! Handle to a fence signalled on the asynchronous compute queue.
- *
- * Returned by IRenderView::signalAsynchronousCompute and asynchronous acceleration
- * structure builds. Pass the handle to IRenderView::waitAsynchronousCompute to make
- * subsequent graphics queue work observe the result of the asynchronous work.
- *
- * The value is backend specific (a timeline value on Vulkan) and is only valid
- * within the frame in which it was produced. A default constructed handle, or a
- * handle returned from a non-asynchronous call, is invalid and ignored by
- * waitAsynchronousCompute.
+/*! Handle to a fence signalled on the asynchronous compute queue, waited on to make later graphics work observe the result.
+ * Only valid within the frame which produced it; a default constructed handle is invalid and ignored when waited on.
  */
 struct ComputeHandle
 {
@@ -222,7 +214,8 @@ enum BufferUsage
 	BuIndex = 2,
 	BuStructured = 4,
 	BuIndirect = 8,
-	BuReadBack = 16
+	BuReadBack = 16,
+	BuPooled = 32 //!< Pool of allocations; nextFrame() moves to one no pending frame uses.
 };
 
 /*! Clear target flags. */
@@ -730,35 +723,16 @@ struct IndirectCompute
 /*! Shader parameter handle. */
 typedef uint32_t handle_t;
 
-/*! Return handle from parameter name.
- *
- * \param name Parameter name.
- * \return Parameter handle.
- */
+/*! Return handle from parameter name. */
 handle_t T_DLLCLASS getParameterHandle(const std::wstring& name);
 
-/*! Get name of handle.
- *
- * Useful for debugging purposes only,
- * since resolving name from handle is very slow.
- *
- * \param handle Parameter handle.
- * \return Parameter name.
- */
+/*! Get name of handle; for debugging purposes only, since resolving name from handle is very slow. */
 std::wstring T_DLLCLASS getParameterName(handle_t handle);
 
-/*! Synthesize parameter name from index.
- *
- * \param index Texture reference index.
- * \return Parameter name.
- */
+/*! Synthesize parameter name from texture reference index. */
 std::wstring T_DLLCLASS getParameterNameFromTextureReferenceIndex(int32_t index);
 
-/*! Synthesize parameter handle from index.
- *
- * \param index Texture reference index.
- * \return Parameter handle.
- */
+/*! Synthesize parameter handle from texture reference index. */
 handle_t T_DLLCLASS getParameterHandleFromTextureReferenceIndex(int32_t index);
 
 /*! Return human readable description of data usage. */
@@ -773,72 +747,28 @@ uint32_t T_DLLCLASS getDataElementCount(DataType dataType);
 /*! Return human readable description of texture format. */
 std::wstring T_DLLCLASS getTextureFormatName(TextureFormat format);
 
-/*! Return byte size from a texture format.
- *
- * \param format Texture format.
- * \return Byte size of block.
- */
+/*! Return byte size of a block of texture format. */
 uint32_t T_DLLCLASS getTextureBlockSize(TextureFormat format);
 
-/*! Texture block denominator, i.e. block dimension (1x1 or 4x4 etc).
- *
- * \param format Texture format.
- * \return Block denominator.
- */
+/*! Texture block denominator, i.e. block dimension (1x1 or 4x4 etc). */
 uint32_t T_DLLCLASS getTextureBlockDenom(TextureFormat format);
 
-/*! Get texture mip size.
- *
- * \param textureSize Size of texture in pixels.
- * \param mipLevel Mip level.
- * \return Mip level size in pixels.
- */
+/*! Get size in pixels of mip level from size of texture in pixels. */
 uint32_t T_DLLCLASS getTextureMipSize(uint32_t textureSize, uint32_t mipLevel);
 
-/*! Calculate pitch in bytes from format and width.
- *
- * \param format Texture format.
- * \param textureWidth Width of texture in pixels.
- * \return Texture pitch in bytes.
- */
+/*! Calculate row pitch in bytes from format and width in pixels. */
 uint32_t T_DLLCLASS getTextureRowPitch(TextureFormat format, uint32_t textureWidth);
 
-/*! Calculate pitch in bytes from format and width.
- *
- * \param format Texture format.
- * \param textureWidth Width of texture in pixels.
- * \param mipLevel Mip level.
- * \return Texture pitch in bytes.
- */
+/*! Calculate row pitch in bytes of mip level from format and width in pixels. */
 uint32_t T_DLLCLASS getTextureRowPitch(TextureFormat format, uint32_t textureWidth, uint32_t mipLevel);
 
-/*! Calculate pitch in bytes from format and width, pitch of an entire mip.
- *
- * \param format Texture format.
- * \param textureWidth Width of texture in pixels.
- * \param textureHeight Height of texture in pixels.
- * \return Mip pitch in bytes.
- */
+/*! Calculate pitch in bytes of an entire mip from format, width and height in pixels. */
 uint32_t T_DLLCLASS getTextureMipPitch(TextureFormat format, uint32_t textureWidth, uint32_t textureHeight);
 
-/*! Calculate pitch in bytes from format and width, pitch of an entire mip.
- *
- * \param format Texture format.
- * \param textureWidth Width of texture in pixels.
- * \param textureHeight Height of texture in pixels.
- * \param mipLevel Mip level.
- * \return Mip pitch in bytes.
- */
+/*! Calculate pitch in bytes of an entire mip level from format, width and height in pixels. */
 uint32_t T_DLLCLASS getTextureMipPitch(TextureFormat format, uint32_t textureWidth, uint32_t textureHeight, uint32_t mipLevel);
 
-/*! Calculate texture size; assuming continious layout.
- *
- * \param format Texture format.
- * \param textureWidth Width of texture in pixels.
- * \param textureHeight Height of texture in pixels.
- * \param mipLevels Number of mip levels.
- * \return Texture size in bytes.
- */
+/*! Calculate texture size in bytes from format, width and height in pixels and number of mips; assuming continuous layout. */
 uint32_t T_DLLCLASS getTextureSize(TextureFormat format, uint32_t textureWidth, uint32_t textureHeight, uint32_t mipLevels);
 
 /*! Automatically resolved handles from literal. */

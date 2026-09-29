@@ -39,9 +39,9 @@ SkinnedMeshComponent::SkinnedMeshComponent(const resource::Proxy< SkinnedMesh >&
 	// Create buffer to contain the joint matrix palette.
 	m_jointBuffer = SkinnedMesh::createJointBuffer(renderSystem, skinJointCount);
 
-	// Create skin buffer ring.
-	for (int32_t i = 0; i < SkinBufferCount; ++i)
-		m_skinBuffer[i] = m_mesh->createSkinBuffer(renderSystem);
+	// Create pooled skin buffer; each skin is written into an allocation no pending frame reads.
+	m_skinBuffer = m_mesh->createSkinBuffer(renderSystem);
+	m_lastSkinBufferView = m_skinBuffer->getBufferView();
 
 	// Create our instance's acceleration structure.
 	m_rtAccelerationStructure = m_mesh->createAccelerationStructure(renderSystem);
@@ -55,8 +55,8 @@ void SkinnedMeshComponent::destroy()
 {
 	m_mesh.clear();
 	safeDestroy(m_jointBuffer);
-	for (int32_t i = 0; i < SkinBufferCount; ++i)
-		safeDestroy(m_skinBuffer[i]);
+	safeDestroy(m_skinBuffer);
+	m_lastSkinBufferView = nullptr;
 	safeDestroy(m_rtwInstance);
 	safeDestroy(m_rtAccelerationStructure);
 	MeshComponent::destroy();
@@ -101,15 +101,11 @@ Aabb3 SkinnedMeshComponent::getBoundingBox() const
 
 void SkinnedMeshComponent::setupSkin(const world::WorldRenderView& worldRenderView, render::RenderContext* renderContext, int32_t lodRank)
 {
-	// Advance the ring so the skin is written into the oldest slot; prior, still
-	// in-flight, frames' graphics may be reading the newer slots. Slot 0 is the
-	// current skin and slot 1 the previous frame's, read for velocities.
-	Ref< render::Buffer > oldest = m_skinBuffer[SkinBufferCount - 1];
-	for (int32_t i = SkinBufferCount - 1; i > 0; --i)
-		m_skinBuffer[i] = m_skinBuffer[i - 1];
-	m_skinBuffer[0] = oldest;
+	// Pending frames might still read the current skin, thus skin into another allocation.
+	m_lastSkinBufferView = m_skinBuffer->getBufferView();
+	m_skinBuffer->nextFrame();
 
-	m_mesh->buildSkin(renderContext, m_jointBuffer, m_skinBuffer[0]);
+	m_mesh->buildSkin(renderContext, m_jointBuffer, m_skinBuffer);
 	m_setupBuiltSkin = true;
 }
 
@@ -133,7 +129,7 @@ void SkinnedMeshComponent::setupAccelerationStructure(const world::WorldRenderVi
 				rebuild = true;
 				m_rtUpdates = 0;
 			}
-			m_mesh->buildAccelerationStructure(renderContext, m_skinBuffer[0], m_rtAccelerationStructure, rebuild);
+			m_mesh->buildAccelerationStructure(renderContext, m_skinBuffer, m_rtAccelerationStructure, rebuild);
 		}
 
 		m_rtwInstance->setTransform(worldTransform);
@@ -167,8 +163,8 @@ void SkinnedMeshComponent::build(const world::WorldBuildContext& context, const 
 		worldRenderPass,
 		lastWorldTransform,
 		worldTransform,
-		m_skinBuffer[1],
-		m_skinBuffer[0],
+		m_lastSkinBufferView,
+		m_skinBuffer->getBufferView(),
 		distance,
 		m_parameterCallback);
 }

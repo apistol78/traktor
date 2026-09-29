@@ -41,11 +41,8 @@ void RTWorldRenderer::setup(
 	const Vector4 eyePosition = worldRenderView.getEyePosition();
 	const float farDistance = worldRenderView.getViewFrustum().getFarZ();
 
-	// Build the top level structure on the asynchronous compute queue. It reads
-	// the bottom level structures whose producers output the acceleration
-	// structure dependency; passes tracing rays against the world consume the
-	// RT world dependency and the render graph synchronizes the graphics queue
-	// before the first of them.
+	// Build the top level structure on the asynchronous compute queue, after the bottom level structures;
+	// passes tracing rays against the world consume the RT world dependency.
 	Ref< render::RenderPass > rp = new render::RenderPass(L"RT world setup", render::RenderPass::Queue::AsyncCompute);
 	rp->addInput(render::RGDependency::First);
 	rp->addInput(context.getAccelerationStructureDependency());
@@ -61,6 +58,9 @@ void RTWorldRenderer::setup(
 			Ref< render::IAccelerationStructure > tlas = rtWorldComponent->gatherTopLevelInstances(eyePosition, farDistance, instances);
 			if (!tlas)
 				continue;
+
+			// Built into a structure which no pending frame traces.
+			tlas->nextFrame();
 
 			auto rb = renderContext->allocNamed< render::LambdaRenderBlock >(L"RTWorldRenderer");
 			rb->lambda = [tlas, instances = std::move(instances), asynchronous](render::IRenderView* renderView) {

@@ -28,6 +28,7 @@ namespace traktor::render
 
 class Buffer;
 class IAccelerationStructure;
+class IBufferView;
 class IRenderSystem;
 class ITexture;
 class IVertexLayout;
@@ -51,9 +52,7 @@ class IMeshParameterCallback;
 /*! Skinned mesh.
  * \ingroup Mesh
  *
- * For each vertex the skinned mesh blends
- * the final world transform from a palette of
- * transforms using per-vertex weights.
+ * Each vertex blends its world transform from a palette of transforms using per-vertex weights.
  */
 class T_DLLCLASS SkinnedMesh : public IMesh
 {
@@ -104,8 +103,8 @@ public:
 		const world::IWorldRenderPass& worldRenderPass,
 		const Transform& lastWorldTransform,
 		const Transform& worldTransform,
-		render::Buffer* lastSkinBuffer,
-		render::Buffer* skinBuffer,
+		const render::IBufferView* lastSkinBuffer,
+		const render::IBufferView* skinBuffer,
 		float distance,
 		const IMeshParameterCallback* parameterCallback) const;
 

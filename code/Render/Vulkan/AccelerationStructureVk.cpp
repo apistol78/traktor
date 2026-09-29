@@ -47,7 +47,7 @@ AccelerationStructureVk::~AccelerationStructureVk()
 	teardown();
 }
 
-Ref< AccelerationStructureVk > AccelerationStructureVk::createTopLevel(Context* context, uint32_t numInstances, uint32_t inFlightCount)
+Ref< AccelerationStructureVk > AccelerationStructureVk::createTopLevel(Context* context, uint32_t numInstances, bool pooled)
 {
 	// Addresses of the build data are not used when only querying sizes.
 	VkAccelerationStructureGeometryDataKHR topLevelAccelerationStructureGeometryData = {
@@ -98,36 +98,33 @@ Ref< AccelerationStructureVk > AccelerationStructureVk::createTopLevel(Context* 
 		topLevelMaxPrimitiveCountList.ptr(),
 		&topLevelAccelerationStructureBuildSizesInfo);
 
-	// Ring buffered; every rebuild writes a slot, and instance data, no longer read.
-	Ref< AccelerationStructureVk > as = new AccelerationStructureVk(context, true, false);
+	// Pooled structures grow a ring; each frame writes a slot, and its instance data, no longer read.
+	Ref< AccelerationStructureVk > as = new AccelerationStructureVk(context, true, false, pooled);
 	as->m_scratchAlignment = getScratchAlignment(context);
 	as->m_instanceCapacity = numInstances;
 	as->m_topLevelSize = topLevelAccelerationStructureBuildSizesInfo.accelerationStructureSize;
 	as->m_topLevelScratchSize = topLevelAccelerationStructureBuildSizesInfo.buildScratchSize;
 
-	for (uint32_t slot = 0; slot < inFlightCount; ++slot)
-		if (!as->insertSlot(slot))
-			return nullptr;
+	if (!as->insertSlot(0))
+		return nullptr;
 
-	as->m_index = inFlightCount - 1; // First writeInstances advances to slot 0.
 	return as;
 }
 
-Ref< AccelerationStructureVk > AccelerationStructureVk::createBottomLevel(Context* context, const Buffer* vertexBuffer, const IVertexLayout* vertexLayout, const Buffer* indexBuffer, IndexType indexType, const AlignedVector< RaytracingPrimitives >& primitives, bool dynamic, uint32_t inFlightCount)
+Ref< AccelerationStructureVk > AccelerationStructureVk::createBottomLevel(Context* context, const Buffer* vertexBuffer, const IVertexLayout* vertexLayout, const Buffer* indexBuffer, IndexType indexType, const AlignedVector< RaytracingPrimitives >& primitives, bool dynamic, bool pooled)
 {
-	Ref< AccelerationStructureVk > as = new AccelerationStructureVk(context, false, dynamic);
+	Ref< AccelerationStructureVk > as = new AccelerationStructureVk(context, false, dynamic, pooled);
 	as->m_scratchAlignment = getScratchAlignment(context);
 
-	const uint32_t count = dynamic ? inFlightCount : 1;
-	for (uint32_t slot = 0; slot < count; ++slot)
-		if (!as->insertSlot(slot))
-			return nullptr;
-	as->m_index = count - 1;
+	// First slot is built here, thus read as soon as the structure is referenced.
+	if (!as->insertSlot(0))
+		return nullptr;
+	as->m_slots[0].used = true;
 
 	// Create structure and buffers now so it can be referenced right away; the build is deferred
 	// into the upload command buffer, after queued vertex/index uploads, batched with other builds.
 	GeometryBuild build;
-	if (!as->prepareGeometry(vertexBuffer->getBufferView(), vertexLayout, indexBuffer->getBufferView(), indexType, primitives, true, build))
+	if (!as->prepareGeometry(vertexBuffer->getBufferView(), vertexLayout, indexBuffer->getBufferView(), indexType, primitives, true, VK_NULL_HANDLE, build))
 		return nullptr;
 
 	// Static structures are never updated, thus scratch is only needed until built.
@@ -177,6 +174,12 @@ void AccelerationStructureVk::destroy()
 	// Only relinquish ownership; pending renders may still bind the structure.
 }
 
+void AccelerationStructureVk::nextFrame()
+{
+	if (m_pooled)
+		m_pendingFrames++;
+}
+
 bool AccelerationStructureVk::writeInstances(CommandBuffer* commandBuffer, const AlignedVector< Instance >& instances)
 {
 	if (instances.size() > m_instanceCapacity)
@@ -186,7 +189,7 @@ bool AccelerationStructureVk::writeInstances(CommandBuffer* commandBuffer, const
 	}
 
 	// Readers resolve the current slot when their descriptors are recorded.
-	advance();
+	beginWrite();
 
 	ApiBuffer* instanceBuffer = m_instanceBuffers[m_index];
 	VkAccelerationStructureInstanceKHR* ptr = (VkAccelerationStructureInstanceKHR*)instanceBuffer->lock();
@@ -273,18 +276,23 @@ bool AccelerationStructureVk::writeInstances(CommandBuffer* commandBuffer, const
 
 bool AccelerationStructureVk::writeGeometry(CommandBuffer* commandBuffer, const IBufferView* vertexBuffer, const IVertexLayout* vertexLayout, const IBufferView* indexBuffer, IndexType indexType, const AlignedVector< RaytracingPrimitives >& primitives, bool rebuild)
 {
+	// Refit reads the structure written last.
+	const VkAccelerationStructureKHR source = m_as[m_index];
+	beginWrite();
+
 	GeometryBuild build;
-	if (!prepareGeometry(vertexBuffer, vertexLayout, indexBuffer, indexType, primitives, rebuild, build))
+	if (!prepareGeometry(vertexBuffer, vertexLayout, indexBuffer, indexType, primitives, rebuild, source, build))
 		return false;
 
 	recordGeometry(commandBuffer, build);
 	return true;
 }
 
-AccelerationStructureVk::AccelerationStructureVk(Context* context, bool topLevel, bool dynamic)
+AccelerationStructureVk::AccelerationStructureVk(Context* context, bool topLevel, bool dynamic, bool pooled)
 	: m_context(context)
 	, m_topLevel(topLevel)
 	, m_dynamic(dynamic)
+	, m_pooled(pooled)
 {
 }
 
@@ -315,6 +323,16 @@ void AccelerationStructureVk::teardown()
 	m_scratchBuffers.clear();
 	m_slots.clear();
 	m_context = nullptr;
+}
+
+void AccelerationStructureVk::beginWrite()
+{
+	// Writes are rendered on a single thread, thus only nextFrame changes the count meanwhile.
+	if (m_pendingFrames > 0)
+	{
+		m_pendingFrames--;
+		advance();
+	}
 }
 
 void AccelerationStructureVk::advance()
@@ -453,7 +471,7 @@ bool AccelerationStructureVk::createTopLevelSlot(uint32_t slot)
 	return true;
 }
 
-bool AccelerationStructureVk::prepareGeometry(const IBufferView* vertexBuffer, const IVertexLayout* vertexLayout, const IBufferView* indexBuffer, IndexType indexType, const AlignedVector< RaytracingPrimitives >& primitives, bool rebuild, GeometryBuild& outBuild)
+bool AccelerationStructureVk::prepareGeometry(const IBufferView* vertexBuffer, const IVertexLayout* vertexLayout, const IBufferView* indexBuffer, IndexType indexType, const AlignedVector< RaytracingPrimitives >& primitives, bool rebuild, VkAccelerationStructureKHR source, GeometryBuild& outBuild)
 {
 	bool recreateAS = false;
 	VkResult result;
@@ -548,8 +566,6 @@ bool AccelerationStructureVk::prepareGeometry(const IBufferView* vertexBuffer, c
 		bottomLevelMaxPrimitiveCountList.ptr(),
 		&bottomLevelAccelerationStructureBuildSizesInfo);
 
-	// Advance to a slot no longer read by prior builds or ray queries.
-	advance();
 	const uint32_t slot = m_index;
 
 	// Re-create buffer to hold AS hierarchical data.
@@ -603,6 +619,8 @@ bool AccelerationStructureVk::prepareGeometry(const IBufferView* vertexBuffer, c
 
 	if (recreateAS && m_as[slot] != 0)
 	{
+		if (source == m_as[slot])
+			source = VK_NULL_HANDLE;
 		m_context->addDeferredCleanup(
 			[as = m_as[slot]](Context* cx) {
 			vkDestroyAccelerationStructureKHR(cx->getLogicalDevice(), as, nullptr);
@@ -611,13 +629,12 @@ bool AccelerationStructureVk::prepareGeometry(const IBufferView* vertexBuffer, c
 		m_as[slot] = 0;
 	}
 
-	// Update this slot's structure in place, rather than rebuild, when dynamic and still valid;
+	// Refit from the structure written last, rather than rebuild, when dynamic and still valid;
 	// requires the ALLOW_UPDATE build flag and unchanged topology.
-	const bool updateInPlace = (m_dynamic && !rebuild && !recreateAS && m_as[slot] != 0);
-	if (updateInPlace)
+	if (m_dynamic && !rebuild && source != VK_NULL_HANDLE)
 	{
 		bottomLevelAccelerationStructureBuildGeometryInfo.mode = VK_BUILD_ACCELERATION_STRUCTURE_MODE_UPDATE_KHR;
-		bottomLevelAccelerationStructureBuildGeometryInfo.srcAccelerationStructure = m_as[slot];
+		bottomLevelAccelerationStructureBuildGeometryInfo.srcAccelerationStructure = source;
 	}
 
 	// Re-create if necessary.

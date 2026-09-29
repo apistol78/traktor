@@ -11,6 +11,7 @@
 #include "Core/Debug/CallStack.h"
 #include "Core/Memory/Alloc.h"
 #include "Core/Misc/SafeDestroy.h"
+#include "Core/Thread/Acquire.h"
 #include "Render/Types.h"
 #include "Render/Vrfy/Error.h"
 #include "Render/Vrfy/ResourceTracker.h"
@@ -35,6 +36,7 @@ BufferVrfy::BufferVrfy(ResourceTracker* resourceTracker, Buffer* buffer, uint32_
 	, m_resourceTracker(resourceTracker)
 	, m_buffer(buffer)
 	, m_tag(tag)
+	, m_usage(usage)
 {
 	m_resourceTracker->add(this);
 
@@ -45,9 +47,6 @@ BufferVrfy::BufferVrfy(ResourceTracker* resourceTracker, Buffer* buffer, uint32_
 	}
 
 	getCallStack(8, m_callstack, 2);
-
-	for (int32_t i = 0; i < sizeof_array(m_bufferViews); ++i)
-		m_bufferViews[i] = BufferViewVrfy(this);
 }
 
 BufferVrfy::~BufferVrfy()
@@ -114,10 +113,26 @@ void BufferVrfy::unlock()
 const IBufferView* BufferVrfy::getBufferView() const
 {
 	T_CAPTURE_ASSERT(m_buffer, L"Buffer (" << m_tag << L") destroyed.");
-	auto& bv = m_bufferViews[m_bufferViewIndex];
-	m_bufferViewIndex = (m_bufferViewIndex + 1) % sizeof_array(m_bufferViews);
-	bv.m_wrappedBufferView = m_buffer->getBufferView();
-	return &bv;
+
+	const IBufferView* wrappedBufferView = m_buffer->getBufferView();
+
+	T_ANONYMOUS_VAR(Acquire< SpinLock >)(m_bufferViewsLock);
+	for (auto bufferView : m_bufferViews)
+		if (bufferView->m_wrappedBufferView == wrappedBufferView)
+			return bufferView;
+
+	Ref< BufferViewVrfy > bufferView = new BufferViewVrfy(this);
+	bufferView->m_wrappedBufferView = wrappedBufferView;
+	m_bufferViews.push_back(bufferView);
+	return bufferView;
+}
+
+void BufferVrfy::nextFrame()
+{
+	T_CAPTURE_ASSERT(m_buffer, L"Buffer (" << m_tag << L") destroyed.");
+	T_CAPTURE_ASSERT((m_usage & BuPooled) != 0, L"Buffer (" << m_tag << L") not pooled.");
+	T_CAPTURE_ASSERT(!m_locked, L"Buffer (" << m_tag << L") locked.");
+	m_buffer->nextFrame();
 }
 
 void BufferVrfy::verifyGuard() const

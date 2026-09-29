@@ -334,6 +334,7 @@ Ref< Buffer > RenderSystemVrfy::createBuffer(uint32_t usage, uint32_t bufferSize
 	T_CAPTURE_TRACE(L"createBuffer");
 	T_CAPTURE_ASSERT(usage != 0, L"Invalid usage.");
 	T_CAPTURE_ASSERT(bufferSize > 0, L"Invalid buffer size.");
+	T_CAPTURE_ASSERT((usage & BuPooled) == 0 || (!dynamic && (usage & BuReadBack) == 0), L"Pooled buffer cannot be dynamic or read back.");
 
 	Ref< Buffer > buffer = m_renderSystem->createBuffer(usage, bufferSize, dynamic, tag);
 	if (!buffer)
@@ -466,18 +467,18 @@ Ref< IRenderTargetSet > RenderSystemVrfy::createRenderTargetSet(const RenderTarg
 	return new RenderTargetSetVrfy(m_resourceTracker, desc, renderTargetSet);
 }
 
-Ref< IAccelerationStructure > RenderSystemVrfy::createTopLevelAccelerationStructure(uint32_t numInstances)
+Ref< IAccelerationStructure > RenderSystemVrfy::createTopLevelAccelerationStructure(uint32_t numInstances, bool pooled)
 {
 	T_CAPTURE_TRACE(L"createTopLevelAccelerationStructure");
 
-	Ref< IAccelerationStructure > as = m_renderSystem->createTopLevelAccelerationStructure(numInstances);
+	Ref< IAccelerationStructure > as = m_renderSystem->createTopLevelAccelerationStructure(numInstances, pooled);
 	if (!as)
 		return nullptr;
 
-	return new AccelerationStructureVrfy(as);
+	return new AccelerationStructureVrfy(as, pooled);
 }
 
-Ref< IAccelerationStructure > RenderSystemVrfy::createAccelerationStructure(const Buffer* vertexBuffer, const IVertexLayout* vertexLayout, const Buffer* indexBuffer, IndexType indexType, const AlignedVector< RaytracingPrimitives >& primitives, bool dynamic)
+Ref< IAccelerationStructure > RenderSystemVrfy::createAccelerationStructure(const Buffer* vertexBuffer, const IVertexLayout* vertexLayout, const Buffer* indexBuffer, IndexType indexType, const AlignedVector< RaytracingPrimitives >& primitives, bool dynamic, bool pooled)
 {
 	T_CAPTURE_TRACE(L"createAccelerationStructure");
 
@@ -485,11 +486,11 @@ Ref< IAccelerationStructure > RenderSystemVrfy::createAccelerationStructure(cons
 	const BufferVrfy* ib = mandatory_non_null_type_cast< const BufferVrfy* >(indexBuffer);
 	const VertexLayoutVrfy* vl = mandatory_non_null_type_cast< const VertexLayoutVrfy* >(vertexLayout);
 
-	Ref< IAccelerationStructure > as = m_renderSystem->createAccelerationStructure(vb->getWrappedBuffer(), vl->getWrappedVertexLayout(), ib->getWrappedBuffer(), indexType, primitives, dynamic);
+	Ref< IAccelerationStructure > as = m_renderSystem->createAccelerationStructure(vb->getWrappedBuffer(), vl->getWrappedVertexLayout(), ib->getWrappedBuffer(), indexType, primitives, dynamic, pooled);
 	if (!as)
 		return nullptr;
 
-	return new AccelerationStructureVrfy(as);
+	return new AccelerationStructureVrfy(as, pooled);
 }
 
 Ref< IProgram > RenderSystemVrfy::createProgram(const ProgramResource* programResource, const wchar_t* const tag)
