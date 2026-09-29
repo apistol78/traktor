@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2025 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -232,11 +232,22 @@ External::External(const Guid& fragmentGuid, const ShaderGraph* fragmentGraph)
 			const Guid& id = inputPort->getId();
 			const std::wstring name = inputPort->getName();
 
-			m_inputPins.push_back(new InputPin(
-				this,
-				id,
-				name,
-				inputPort->isOptional()));
+			// Input ports with the same name share a pin, which is optional only if all ports are optional.
+			auto it = std::find_if(m_inputPins.begin(), m_inputPins.end(), [&](const InputPin* inputPin) {
+				return inputPin->getName() == name;
+			});
+			if (it == m_inputPins.end())
+				m_inputPins.push_back(new InputPin(
+					this,
+					id,
+					name,
+					inputPort->isOptional()));
+			else if (!inputPort->isOptional())
+				**it = InputPin(
+					this,
+					(*it)->getId(),
+					name,
+					false);
 		}
 		else if (const OutputPort* outputPort = dynamic_type_cast< const OutputPort* >(fragmentNode))
 		{

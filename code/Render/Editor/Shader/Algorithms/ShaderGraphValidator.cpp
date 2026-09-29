@@ -226,31 +226,22 @@ class PortNames : public Specification
 public:
 	virtual void check(Report& outReport, const ShaderGraph* shaderGraph, const std::set< const Node* >& activeNodes)
 	{
-		std::set< std::wstring > usedInputNames, usedOutputNames;
+		std::set< std::wstring > usedOutputNames;
 		for (auto node : activeNodes)
 		{
-			std::set< std::wstring >* usedNames;
-			std::wstring portName;
-
-			if (is_a< InputPort >(node))
+			// Input ports can share a name, output port names must be unique.
+			if (auto inputPort = dynamic_type_cast< const InputPort* >(node))
 			{
-				usedNames = &usedInputNames;
-				portName = static_cast< const InputPort* >(node)->getName();
+				if (inputPort->getName().empty())
+					outReport.addError(L"Invalid port name, no name", node);
 			}
-			else if (is_a< OutputPort >(node))
+			else if (auto outputPort = dynamic_type_cast< const OutputPort* >(node))
 			{
-				usedNames = &usedOutputNames;
-				portName = static_cast< const OutputPort* >(node)->getName();
+				if (outputPort->getName().empty())
+					outReport.addError(L"Invalid port name, no name", node);
+				else if (!usedOutputNames.insert(outputPort->getName()).second)
+					outReport.addError(L"Port name \"" + outputPort->getName() + L"\" already in use", node);
 			}
-			else
-				continue;
-
-			if (portName.empty())
-				outReport.addError(L"Invalid port name, no name", node);
-			else if (usedNames->find(portName) != usedNames->end())
-				outReport.addError(L"Port name \"" + portName + L"\" already in use", node);
-			else
-				usedNames->insert(portName);
 		}
 	}
 };

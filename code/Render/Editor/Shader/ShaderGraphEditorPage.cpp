@@ -268,7 +268,7 @@ bool ShaderGraphEditorPage::create(ui::Container* parent)
 	// Create our custom toolbar.
 	m_toolBar = new ui::ToolBar();
 	m_toolBar->create(m_container);
-	for (int32_t i = 0; i < 20; ++i)
+	for (int32_t i = 0; i < 21; ++i)
 		m_toolBar->addImage(new ui::StyleBitmap(L"Shader.Tools", i));
 	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"SHADERGRAPH_CENTER"), 7, ui::Command(L"ShaderGraph.Editor.Center")));
 	m_toolBar->addItem(new ui::ToolBarSeparator());
@@ -280,7 +280,7 @@ bool ShaderGraphEditorPage::create(ui::Container* parent)
 	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"SHADERGRAPH_EVEN_VERTICALLY"), 4, ui::Command(L"ShaderGraph.Editor.EvenSpaceVertically")));
 	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"SHADERGRAPH_EVEN_HORIZONTALLY"), 5, ui::Command(L"ShaderGraph.Editor.EventSpaceHorizontally")));
 	m_toolBar->addItem(new ui::ToolBarSeparator());
-	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"SHADERGRAPH_PRETTIFY"), 3, ui::Command(L"ShaderGraph.Editor.Prettify")));
+	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"SHADERGRAPH_PRETTIFY"), 20, ui::Command(L"ShaderGraph.Editor.Prettify")));
 	m_toolBar->addItem(new ui::ToolBarSeparator());
 	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"SHADERGRAPH_EVALUATE_CONNECTED"), 14, ui::Command(L"ShaderGraph.Editor.EvaluateConnected")));
 	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"SHADERGRAPH_EVALUATE_TYPE"), 15, ui::Command(L"ShaderGraph.Editor.EvaluateType")));
@@ -799,8 +799,7 @@ bool ShaderGraphEditorPage::handleCommand(const ui::Command& command)
 			editorNode->setSelected(true);
 			m_editorGraph->center(true);
 
-			// Flag focused node as invalid; object is focused from error reports so
-			// it's most probably the culprit. Indicator is reset when graph is updated.
+			// Focused node is most probably the cause of an error, flag it as invalid.
 			Ref< INodeFacade > nodeFacade = editorNode->getData< INodeFacade >(L"FACADE");
 			if (nodeFacade)
 				nodeFacade->setValidationIndicator(editorNode, false);
@@ -1709,9 +1708,10 @@ void ShaderGraphEditorPage::updateExternalNode(External* external)
 		return;
 	}
 
-	// Get input and output ports.
-	RefArray< InputPort > fragmentInputs = fragmentGraph->findNodesOf< InputPort >();
-	RefArray< OutputPort > fragmentOutputs = fragmentGraph->findNodesOf< OutputPort >();
+	// Get pins of fragment input and output ports.
+	Ref< External > fragmentExternal = new External(external->getFragmentGuid(), fragmentGraph);
+	AlignedVector< InputPin* > fragmentInputs = fragmentExternal->getInputPins();
+	AlignedVector< OutputPin* > fragmentOutputs = fragmentExternal->getOutputPins();
 
 	// Get input-/output pins; these might differ if fragment has been updated.
 	const uint32_t externalInputPinCount = external->getInputPinCount();
@@ -1726,7 +1726,7 @@ void ShaderGraphEditorPage::updateExternalNode(External* external)
 		externalOutputPins[i] = external->getOutputPin(i);
 
 	// Remove input ports and pins which match.
-	for (RefArray< InputPort >::iterator i = fragmentInputs.begin(); i != fragmentInputs.end();)
+	for (auto i = fragmentInputs.begin(); i != fragmentInputs.end();)
 	{
 		auto j = std::find_if(externalInputPins.begin(), externalInputPins.end(), [&](const InputPin* externalInputPin) {
 			return externalInputPin->getName() == (*i)->getName() &&
@@ -1742,7 +1742,7 @@ void ShaderGraphEditorPage::updateExternalNode(External* external)
 	}
 
 	// Remove output ports and pins which match.
-	for (RefArray< OutputPort >::iterator i = fragmentOutputs.begin(); i != fragmentOutputs.end();)
+	for (auto i = fragmentOutputs.begin(); i != fragmentOutputs.end();)
 	{
 		auto j = std::find_if(externalOutputPins.begin(), externalOutputPins.end(), [&](const OutputPin* externalOutputPin) {
 			return externalOutputPin->getName() == (*i)->getName();
@@ -1784,10 +1784,10 @@ void ShaderGraphEditorPage::updateExternalNode(External* external)
 	}
 
 	// Add new pins for new ports.
-	for (const auto& inputPort : fragmentInputs)
-		external->createInputPin(inputPort->getId(), inputPort->getName(), inputPort->isOptional());
-	for (const auto& outputPort : fragmentOutputs)
-		external->createOutputPin(outputPort->getId(), outputPort->getName());
+	for (auto fragmentInput : fragmentInputs)
+		external->createInputPin(fragmentInput->getId(), fragmentInput->getName(), fragmentInput->isOptional());
+	for (auto fragmentOutput : fragmentOutputs)
+		external->createOutputPin(fragmentOutput->getId(), fragmentOutput->getName());
 }
 
 void ShaderGraphEditorPage::updateVariableHints()
