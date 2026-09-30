@@ -30,6 +30,7 @@
 								<item>Traktor.Render.Vulkan.dll</item>
 								<item>Traktor.Render.dll</item>
 								<item>Traktor.Resource.dll</item>
+								<item>libxess.dll</item>
 							</value>
 						</second>
 					</item>
