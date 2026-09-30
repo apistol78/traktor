@@ -1,16 +1,17 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Ui/ScrollBar.h"
+
 #include "Core/Math/MathUtils.h"
 #include "Ui/Application.h"
 #include "Ui/Canvas.h"
 #include "Ui/StyleSheet.h"
-#include "Ui/ScrollBar.h"
 
 namespace traktor::ui
 {
@@ -84,6 +85,56 @@ int32_t ScrollBar::getPosition() const
 	return m_position;
 }
 
+Size ScrollBar::getPreferredSize(const Size& hint) const
+{
+	return Size(
+		pixel(16_ut),
+		pixel(16_ut)
+	);
+}
+
+Size ScrollBar::getMaximumSize() const
+{
+	if (m_vertical)
+		return Size(pixel(16_ut), 65535);
+	else
+		return Size(65535, pixel(16_ut));
+}
+
+bool ScrollBar::getSliderRect(const Rect& rcInner, Rect& outSlider) const
+{
+	if (m_range <= 0)
+		return false;
+
+	const int32_t inset = pixel(c_sliderInset);
+
+	const int32_t range = getPrimarySize(rcInner.getSize(), m_vertical) - inset * 2;
+	if (range <= 0)
+		return false;
+
+	const int32_t length = min(max(m_page * range / m_range, pixel(c_sliderMinimum)), range);
+	const int32_t travel = range - length;
+	const int32_t scrollable = m_range - (m_page - 1);
+	const int32_t offset = (travel > 0 && scrollable > 0) ? m_position * travel / scrollable : 0;
+
+	if (m_vertical)
+		outSlider = Rect(
+			rcInner.left + inset,
+			rcInner.top + inset + offset,
+			rcInner.right - inset,
+			rcInner.top + inset + offset + length
+		);
+	else
+		outSlider = Rect(
+			rcInner.left + inset + offset,
+			rcInner.top + inset,
+			rcInner.left + inset + offset + length,
+			rcInner.bottom - inset
+		);
+
+	return true;
+}
+
 void ScrollBar::eventMouseTrack(MouseTrackEvent* event)
 {
 	m_hover = event->entered();
@@ -112,10 +163,28 @@ void ScrollBar::eventMouseButtonDown(MouseButtonDownEvent* event)
 		return;
 	}
 
-	if (at < sliderBegin)
-		m_position = max(m_position - (m_page - 1), 0);
+	if ((event->getKeyState() & KsShift) == 0)
+	{
+		if (at < sliderBegin)
+			m_position = max(m_position - (m_page - 1), 0);
+		else
+			m_position = min(m_position + m_page, m_range - (m_page - 1));
+	}
 	else
-		m_position = min(m_position + m_page, m_range - (m_page - 1));
+	{
+		const int32_t inset = pixel(c_sliderInset);
+		const int32_t range = getPrimarySize(rcInner.getSize(), m_vertical) - inset * 2;
+		const int32_t length = sliderEnd - sliderBegin;
+		const int32_t travel = range - length;
+		const int32_t scrollable = m_range - (m_page - 1);
+
+		// Center slider on the clicked position.
+		if (travel > 0 && scrollable > 0)
+		{
+			m_position = (at - getPrimaryPosition(rcInner.getTopLeft(), m_vertical) - inset - length / 2) * scrollable / travel;
+			m_position = clamp(m_position, 0, scrollable);
+		}
+	}
 
 	ScrollEvent scrollEvent(this, m_position);
 	raiseEvent(&scrollEvent);
@@ -185,57 +254,6 @@ void ScrollBar::eventPaint(PaintEvent* event)
 	}
 
 	event->consume();
-}
-
-Size ScrollBar::getPreferredSize(const Size& hint) const
-{
-	return Size(
-		pixel(16_ut),
-		pixel(16_ut)
-	);
-}
-
-Size ScrollBar::getMaximumSize() const
-{
-	if (m_vertical)
-		return Size(pixel(16_ut), 65535);
-	else
-		return Size(65535, pixel(16_ut));
-}
-
-
-bool ScrollBar::getSliderRect(const Rect& rcInner, Rect& outSlider) const
-{
-	if (m_range <= 0)
-		return false;
-
-	const int32_t inset = pixel(c_sliderInset);
-
-	const int32_t range = getPrimarySize(rcInner.getSize(), m_vertical) - inset * 2;
-	if (range <= 0)
-		return false;
-
-	const int32_t length = min(max(m_page * range / m_range, pixel(c_sliderMinimum)), range);
-	const int32_t travel = range - length;
-	const int32_t scrollable = m_range - (m_page - 1);
-	const int32_t offset = (travel > 0 && scrollable > 0) ? m_position * travel / scrollable : 0;
-
-	if (m_vertical)
-		outSlider = Rect(
-			rcInner.left + inset,
-			rcInner.top + inset + offset,
-			rcInner.right - inset,
-			rcInner.top + inset + offset + length
-		);
-	else
-		outSlider = Rect(
-			rcInner.left + inset + offset,
-			rcInner.top + inset,
-			rcInner.left + inset + offset + length,
-			rcInner.bottom - inset
-		);
-
-	return true;
 }
 
 }
