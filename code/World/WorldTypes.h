@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2025 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -31,10 +31,12 @@ class IAccelerationStructure;
 namespace traktor::world
 {
 
+class ColorCorrectionComponent;
 class FogComponent;
 class IEntityRenderer;
 class IrradianceGrid;
 class LightComponent;
+class PostProcessComponent;
 class ProbeComponent;
 
 static constexpr int32_t MaxSliceCount = 4;
@@ -119,7 +121,9 @@ struct GatherView
 	AlignedVector< const LightComponent* > lights;
 	AlignedVector< const ProbeComponent* > probes;
 	const LightComponent* cascadingDirectionalLight = nullptr;
+	const ColorCorrectionComponent* colorCorrection = nullptr;
 	const FogComponent* fog = nullptr;
+	const PostProcessComponent* postProcess = nullptr;
 	const IrradianceGrid* irradianceGrid = nullptr;
 	const render::IAccelerationStructure* rtWorldTopLevel = nullptr;
 	render::RGDependency rtWorldDependency;					//!< Dependency of the ray tracing world (TLAS) update; passes tracing rays against the world take this as input.

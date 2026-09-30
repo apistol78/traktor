@@ -21,6 +21,8 @@
 #include "Render/ITexture.h"
 #include "Render/ScreenRenderer.h"
 #include "Resource/IResourceManager.h"
+#include "World/Entity/ColorCorrectionComponent.h"
+#include "World/Entity/PostProcessComponent.h"
 #include "World/IWorldRenderer.h"
 #include "World/WorldHandles.h"
 #include "World/WorldRenderView.h"
@@ -124,20 +126,6 @@ bool PostProcessPass::create(resource::IResourceManager* resourceManager, render
 	m_needCameraJitter = (bool)(desc.quality.antiAlias >= Quality::High);
 	m_resolutionScale = (bool)(desc.quality.antiAlias == Quality::Disabled || desc.quality.antiAlias >= Quality::Ultra) ? 1.0f : 0.75f;
 
-	// Create "visual" post processing filter.
-	if (desc.quality.imageProcess > Quality::Disabled)
-	{
-		const auto& visualImageGraph = desc.worldRenderSettings->imageProcess[(int32_t)desc.quality.imageProcess];
-		if (!visualImageGraph.isNull())
-		{
-			if (!resourceManager->bind(visualImageGraph, m_visual))
-			{
-				log::error << L"Unable to create visual post processing." << Endl;
-				return false;
-			}
-		}
-	}
-
 	// Create gamma correction processing.
 	m_gamma = desc.gamma;
 	if (std::abs(m_gamma - 1.0f) > FUZZY_EPSILON)
@@ -145,16 +133,6 @@ bool PostProcessPass::create(resource::IResourceManager* resourceManager, render
 		if (!resourceManager->bind(c_gammaCorrection, m_gammaCorrection))
 		{
 			log::error << L"Unable to create gamma correction process." << Endl;
-			return false;
-		}
-	}
-
-	// Create color grading texture.
-	if (m_settings.colorGrading.isValid() && !m_settings.colorGrading.isNull())
-	{
-		if (!resourceManager->bind(m_settings.colorGrading, m_colorGrading))
-		{
-			log::error << L"Unable to create color grading texture." << Endl;
 			return false;
 		}
 	}
@@ -176,6 +154,7 @@ bool PostProcessPass::create(resource::IResourceManager* resourceManager, render
 	}
 
 	m_hdr = desc.hdr;
+	m_postProcess = desc.postProcess;
 	return true;
 }
 
@@ -186,9 +165,7 @@ void PostProcessPass::destroy()
 	m_toneMap.clear();
 	m_motionBlur.clear();
 	m_antiAlias.clear();
-	m_visual.clear();
 	m_gammaCorrection.clear();
-	m_colorGrading.clear();
 }
 
 void PostProcessPass::setup(
@@ -213,15 +190,16 @@ void PostProcessPass::setup(
 		.time = (float)worldRenderView.getTime()
 	};
 
+	render::ITexture* colorGrading = (m_postProcess && gatheredView.colorCorrection != nullptr) ? gatheredView.colorCorrection->getColorGrading() : nullptr;
+
 	render::ImageGraphContext igctx;
 	igctx.associateTextureTargetSet(ShaderParameter::InputColor, visualTargetSetId.current, 0);
 	igctx.associateTextureTargetSet(ShaderParameter::InputColorLast, visualTargetSetId.previous, 0);
-	// Depth including non-GBuffer surfaces when available; fall back to GBuffer depth.
 	igctx.associateTextureTargetSet(ShaderParameter::InputDepth, (postDepthTargetSetId != render::RGTargetSet::Invalid) ? postDepthTargetSetId : gbufferTargetSetId, 0);
 	igctx.associateTextureTargetSet(ShaderParameter::InputNormal, gbufferTargetSetId, 1);
 	igctx.associateTextureTargetSet(ShaderParameter::InputVelocity, velocityTargetSetId, 0);
-	igctx.associateExplicitTexture(ShaderParameter::InputColorGrading, (bool)(m_colorGrading != nullptr) ? m_colorGrading.getResource() : whiteTexture);
-	igctx.setTechniqueFlag(ShaderPermutation::ColorGradingEnable, (bool)(m_colorGrading != nullptr));
+	igctx.associateExplicitTexture(ShaderParameter::InputColorGrading, (colorGrading != nullptr) ? colorGrading : whiteTexture);
+	igctx.setTechniqueFlag(ShaderPermutation::ColorGradingEnable, (bool)(colorGrading != nullptr));
 	igctx.setTechniqueFlag(ShaderPermutation::UpscalingEnable, (bool)(m_resolutionScale < 1.0f));
 	igctx.setTechniqueFlag(ShaderPermutation::HDR, m_hdr);
 
@@ -247,8 +225,8 @@ void PostProcessPass::setup(
 		processes.push_back(m_toneMap);
 	if (m_motionBlur)
 		processes.push_back(m_motionBlur);
-	if (m_visual)
-		processes.push_back(m_visual);
+	if (m_postProcess && gatheredView.postProcess != nullptr && gatheredView.postProcess->getImageGraph() != nullptr)
+		processes.push_back(gatheredView.postProcess->getImageGraph());
 	if (m_gammaCorrection)
 		processes.push_back(m_gammaCorrection);
 

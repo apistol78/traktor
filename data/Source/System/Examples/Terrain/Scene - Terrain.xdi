@@ -60,6 +60,9 @@
 		<item type="traktor.ai.NavMeshComponentData">
 			<navMesh>{3ACC5150-E8BE-4242-A315-A07FB0AF1B31}</navMesh>
 		</item>
+		<item type="traktor.world.ColorCorrectionComponentData">
+			<colorGrading>{3DEEC673-EDF5-364A-B796-BAC7EF575258}</colorGrading>
+		</item>
 	</worldComponents>
 	<layers>
 		<item type="traktor.world.EntityData" version="2">

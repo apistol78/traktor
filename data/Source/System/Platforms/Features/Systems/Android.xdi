@@ -188,12 +188,6 @@
 				</second>
 			</item>
 			<item>
-				<first>World.ImageProcessQuality</first>
-				<second type="traktor.PropertyInteger">
-					<value>0</value>
-				</second>
-			</item>
-			<item>
 				<first>World.MotionBlurQuality</first>
 				<second type="traktor.PropertyInteger">
 					<value>0</value>

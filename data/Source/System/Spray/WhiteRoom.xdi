@@ -66,7 +66,11 @@
 		</imageProcess>
 		<colorGrading>{3DEEC673-EDF5-364A-B796-BAC7EF575258}</colorGrading>
 	</worldRenderSettings>
-	<worldComponents/>
+	<worldComponents>
+		<item type="traktor.world.ColorCorrectionComponentData">
+			<colorGrading>{3DEEC673-EDF5-364A-B796-BAC7EF575258}</colorGrading>
+		</item>
+	</worldComponents>
 	<layers>
 		<item type="traktor.world.EntityData" version="2">
 			<id>{7C8C0A42-0691-E643-8245-0187D5F2C709}</id>

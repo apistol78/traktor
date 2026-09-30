@@ -10,12 +10,14 @@
 
 #include "Core/Log/Log.h"
 #include "Editor/IPipelineDepends.h"
+#include "World/Entity/ColorCorrectionComponentData.h"
 #include "World/Entity/DecalComponentData.h"
 #include "World/Entity/DecalEventData.h"
 #include "World/Entity/EventSetComponentData.h"
 #include "World/Entity/ExternalEntityData.h"
 #include "World/Entity/GroupComponentData.h"
 #include "World/Entity/IrradianceGridComponentData.h"
+#include "World/Entity/PostProcessComponentData.h"
 #include "World/Entity/ProbeComponentData.h"
 #include "World/Entity/ScriptComponentData.h"
 
@@ -27,12 +29,14 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.WorldEntityPipeline", 0, WorldEnt
 TypeInfoSet WorldEntityPipeline::getAssetTypes() const
 {
 	TypeInfoSet typeSet;
+	typeSet.insert< ColorCorrectionComponentData >();
 	typeSet.insert< DecalComponentData >();
 	typeSet.insert< DecalEventData >();
 	typeSet.insert< EventSetComponentData >();
 	typeSet.insert< ExternalEntityData >();
 	typeSet.insert< GroupComponentData >();
 	typeSet.insert< IrradianceGridComponentData >();
+	typeSet.insert< PostProcessComponentData >();
 	typeSet.insert< ProbeComponentData >();
 	typeSet.insert< ScriptComponentData >();
 	return typeSet;
@@ -47,6 +51,8 @@ bool WorldEntityPipeline::buildDependencies(
 {
 	if (auto scriptComponentData = dynamic_type_cast< const ScriptComponentData* >(sourceAsset))
 		pipelineDepends->addDependency(scriptComponentData->getRuntimeClass(), editor::PdfBuild);
+	else if (auto colorCorrectionComponentData = dynamic_type_cast< const ColorCorrectionComponentData* >(sourceAsset))
+		pipelineDepends->addDependency(colorCorrectionComponentData->getColorGrading(), editor::PdfBuild | editor::PdfResource);
 	else if (auto decalComponentData = dynamic_type_cast< const DecalComponentData* >(sourceAsset))
 		pipelineDepends->addDependency(decalComponentData->getShader(), editor::PdfBuild | editor::PdfResource);
 	else if (auto decalEventData = dynamic_type_cast< const DecalEventData* >(sourceAsset))
@@ -69,6 +75,8 @@ bool WorldEntityPipeline::buildDependencies(
 	}
 	else if (auto irradianceGridComponentData = dynamic_type_cast< const IrradianceGridComponentData* >(sourceAsset))
 		pipelineDepends->addDependency(irradianceGridComponentData->getIrradianceGrid(), editor::PdfBuild | editor::PdfResource);
+	else if (auto postProcessComponentData = dynamic_type_cast< const PostProcessComponentData* >(sourceAsset))
+		pipelineDepends->addDependency(postProcessComponentData->getImageGraph(), editor::PdfBuild | editor::PdfResource);
 	else if (auto probeComponentData = dynamic_type_cast< const ProbeComponentData* >(sourceAsset))
 		pipelineDepends->addDependency(probeComponentData->getTexture(), editor::PdfBuild | editor::PdfResource);
 	else

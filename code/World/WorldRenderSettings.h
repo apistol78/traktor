@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -10,7 +10,6 @@
 
 #include "Core/Serialization/ISerializable.h"
 #include "Core/Math/Color4f.h"
-#include "Resource/Id.h"
 #include "World/WorldTypes.h"
 
 // import/export mechanism.
@@ -20,14 +19,6 @@
 #else
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
-
-namespace traktor::render
-{
-
-class ImageGraph;
-class ITexture;
-
-}
 
 namespace traktor::world
 {
@@ -68,8 +59,6 @@ public:
 	ExposureMode exposureMode = Fixed;
 	float exposure = 1.0f;
 	ShadowSettings shadowSettings[(int)Quality::Last];
-	resource::Id< render::ImageGraph > imageProcess[(int)Quality::Last];
-	resource::Id< render::ITexture > colorGrading;
 
 	virtual void serialize(ISerializer& s) override final;
 };

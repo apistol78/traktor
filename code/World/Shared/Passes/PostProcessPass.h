@@ -19,6 +19,7 @@ namespace traktor::render
 class ImageGraph;
 class IRenderPlugin;
 class IRenderSystem;
+class ITexture;
 class RenderGraph;
 class ScreenRenderer;
 
@@ -74,11 +75,10 @@ private:
 	resource::Proxy< render::ImageGraph > m_toneMap;
 	resource::Proxy< render::ImageGraph > m_motionBlur;
 	resource::Proxy< render::ImageGraph > m_antiAlias;
-	resource::Proxy< render::ImageGraph > m_visual;
 	resource::Proxy< render::ImageGraph > m_gammaCorrection;
-	resource::Proxy< render::ITexture > m_colorGrading;
 	float m_gamma = 2.2f;
 	bool m_hdr = false;
+	bool m_postProcess = true;
 	bool m_needCameraJitter = false;
 	float m_resolutionScale = 1.0f;
 

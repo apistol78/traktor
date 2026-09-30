@@ -94,10 +94,6 @@
 			<second>Play</second>
 		</item>
 		<item>
-			<first>SCENE_EDITOR_POST_PROCESS</first>
-			<second>Post Process</second>
-		</item>
-		<item>
 			<first>SCENE_EDITOR_QUADRUPLE_VIEW</first>
 			<second>Four views</second>
 		</item>

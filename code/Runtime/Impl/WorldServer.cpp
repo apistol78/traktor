@@ -84,7 +84,6 @@ bool WorldServer::create(const PropertyGroup* defaultSettings, const PropertyGro
 	m_reflectionsQuality = (world::Quality)settings->getProperty< int32_t >(L"World.ReflectionsQuality", (int32_t)world::Quality::Medium);
 	m_ambientOcclusionQuality = (world::Quality)settings->getProperty< int32_t >(L"World.AmbientOcclusionQuality", (int32_t)world::Quality::Medium);
 	m_antiAliasQuality = (world::Quality)settings->getProperty< int32_t >(L"World.AntiAliasQuality", (int32_t)world::Quality::Medium);
-	m_imageProcessQuality = (world::Quality)settings->getProperty< int32_t >(L"World.ImageProcessQuality", (int32_t)world::Quality::Medium);
 	m_particleQuality = (world::Quality)settings->getProperty< int32_t >(L"World.ParticleQuality", (int32_t)world::Quality::Medium);
 	m_terrainQuality = (world::Quality)settings->getProperty< int32_t >(L"World.TerrainQuality", (int32_t)world::Quality::Medium);
 	m_irradianceQuality = (world::Quality)settings->getProperty< int32_t >(L"World.IrradianceQuality", (int32_t)world::Quality::Medium);
@@ -199,7 +198,6 @@ int32_t WorldServer::reconfigure(const PropertyGroup* settings)
 	const world::Quality reflectionsQuality = (world::Quality)settings->getProperty< int32_t >(L"World.ReflectionsQuality", (int32_t)world::Quality::Medium);
 	const world::Quality ambientOcclusionQuality = (world::Quality)settings->getProperty< int32_t >(L"World.AmbientOcclusionQuality", (int32_t)world::Quality::Medium);
 	const world::Quality antiAliasQuality = (world::Quality)settings->getProperty< int32_t >(L"World.AntiAliasQuality", (int32_t)world::Quality::Medium);
-	const world::Quality imageProcessQuality = (world::Quality)settings->getProperty< int32_t >(L"World.ImageProcessQuality", (int32_t)world::Quality::Medium);
 	const world::Quality particleQuality = (world::Quality)settings->getProperty< int32_t >(L"World.ParticleQuality", (int32_t)world::Quality::Medium);
 	const world::Quality terrainQuality = (world::Quality)settings->getProperty< int32_t >(L"World.TerrainQuality", (int32_t)world::Quality::Medium);
 	const world::Quality irradianceQuality = (world::Quality)settings->getProperty< int32_t >(L"World.IrradianceQuality", (int32_t)world::Quality::Medium);
@@ -213,7 +211,6 @@ int32_t WorldServer::reconfigure(const PropertyGroup* settings)
 		reflectionsQuality == m_reflectionsQuality &&
 		ambientOcclusionQuality == m_ambientOcclusionQuality &&
 		antiAliasQuality == m_antiAliasQuality &&
-		imageProcessQuality == m_imageProcessQuality &&
 		particleQuality == m_particleQuality &&
 		terrainQuality == m_terrainQuality &&
 		irradianceQuality == m_irradianceQuality &&
@@ -235,7 +232,6 @@ int32_t WorldServer::reconfigure(const PropertyGroup* settings)
 	m_reflectionsQuality = reflectionsQuality;
 	m_ambientOcclusionQuality = ambientOcclusionQuality;
 	m_antiAliasQuality = antiAliasQuality;
-	m_imageProcessQuality = imageProcessQuality;
 	m_particleQuality = particleQuality;
 	m_terrainQuality = terrainQuality;
 	m_irradianceQuality = irradianceQuality;
@@ -285,7 +281,6 @@ Ref< world::IWorldRenderer > WorldServer::createWorldRenderer(const world::World
 	wcd.quality.reflections = m_reflectionsQuality;
 	wcd.quality.ambientOcclusion = m_ambientOcclusionQuality;
 	wcd.quality.antiAlias = m_antiAliasQuality;
-	wcd.quality.imageProcess = m_imageProcessQuality;
 	wcd.quality.irradiance = m_irradianceQuality;
 	wcd.quality.volumetricFog = m_volumetricFogQuality;
 	wcd.multiSample = m_renderServer->getMultiSample();

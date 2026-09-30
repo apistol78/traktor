@@ -110,18 +110,6 @@ bool SceneEditorSettingsPage::create(ui::Container* parent, const PropertyGroup*
 	Ref< ui::Container > containerQuality = new ui::Container();
 	containerQuality->create(m_container, ui::WsNone, new ui::TableLayout(L"*,100%", L"*", 0_ut, 4_ut));
 
-	Ref< ui::Static > staticPostProcess = new ui::Static();
-	staticPostProcess->create(containerQuality, i18n::Text(L"SCENE_EDITOR_POST_PROCESS"));
-
-	m_dropDownPostProcess = new ui::DropDown();
-	m_dropDownPostProcess->create(containerQuality);
-	m_dropDownPostProcess->add(L"Disabled");
-	m_dropDownPostProcess->add(L"Low");
-	m_dropDownPostProcess->add(L"Medium");
-	m_dropDownPostProcess->add(L"High");
-	m_dropDownPostProcess->add(L"Ultra");
-	m_dropDownPostProcess->select(settings->getProperty< int32_t >(L"SceneEditor.PostProcessQuality", 4));
-
 	Ref< ui::Static > staticMotionBlur = new ui::Static();
 	staticMotionBlur->create(containerQuality, i18n::Text(L"SCENE_EDITOR_MOTION_BLUR"));
 
@@ -240,7 +228,6 @@ bool SceneEditorSettingsPage::apply(PropertyGroup* settings)
 	settings->setProperty< PropertyBoolean >(L"SceneEditor.InvertPanY", m_checkInvertPanY->isChecked());
 	settings->setProperty< PropertyBoolean >(L"SceneEditor.BuildWhenDrop", m_checkBuildWhenDrop->isChecked());
 	settings->setProperty< PropertyBoolean >(L"NavMeshPipeline.Build", m_checkBuildNavMesh->isChecked());
-	settings->setProperty< PropertyInteger >(L"SceneEditor.PostProcessQuality", m_dropDownPostProcess->getSelected());
 	settings->setProperty< PropertyInteger >(L"SceneEditor.MotionBlurQuality", m_dropDownMotionBlur->getSelected());
 	settings->setProperty< PropertyInteger >(L"SceneEditor.ShadowQuality", m_dropDownShadows->getSelected());
 	settings->setProperty< PropertyInteger >(L"SceneEditor.ReflectionsQuality", m_dropDownReflections->getSelected());

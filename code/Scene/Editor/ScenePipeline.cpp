@@ -84,7 +84,6 @@ bool ScenePipeline::create(const editor::IPipelineSettings* settings, db::Databa
 	m_targetEditor = settings->getPropertyIncludeHash< bool >(L"Pipeline.TargetEditor", false);
 	m_suppressShadows = settings->getPropertyIncludeHash< bool >(L"ScenePipeline.SuppressShadows", false);
 	m_suppressDepthPass = settings->getPropertyIncludeHash< bool >(L"ScenePipeline.SuppressDepthPass", false);
-	m_suppressImageProcess = settings->getPropertyIncludeHash< bool >(L"ScenePipeline.SuppressImageProcess", false);
 	m_shadowMapSizeDenom = settings->getPropertyIncludeHash< int32_t >(L"ScenePipeline.ShadowMapSizeDenom", 1);
 	m_shadowMapMaxSlices = settings->getPropertyIncludeHash< int32_t >(L"ScenePipeline.ShadowMapMaxSlices", 0);
 
@@ -178,16 +177,6 @@ bool ScenePipeline::buildDependencies(
 	if (m_targetEditor)
 		for (const auto& layer : sceneAsset->getLayers())
 			pipelineDepends->addDependency(layer);
-
-	const world::WorldRenderSettings* wrs = mutableSceneAsset->getWorldRenderSettings();
-	if (wrs)
-	{
-		if (!m_suppressImageProcess)
-			for (int32_t i = 0; i < sizeof_array(wrs->imageProcess); ++i)
-				pipelineDepends->addDependency(wrs->imageProcess[i], editor::PdfBuild);
-
-		pipelineDepends->addDependency(wrs->colorGrading, editor::PdfBuild | editor::PdfResource);
-	}
 
 	return true;
 }
@@ -285,10 +274,6 @@ bool ScenePipeline::buildOutput(
 	sceneResource->setWorldRenderSettings(sceneAsset->getWorldRenderSettings());
 	sceneResource->setWorldComponents(worldComponents);
 	sceneResource->setEntityData(groupEntityData);
-
-	for (uint32_t i = 0; i < (int32_t)world::Quality::Last; ++i)
-		if (m_suppressImageProcess)
-			sceneResource->getWorldRenderSettings()->imageProcess[i] = resource::Id< render::ImageGraph >();
 
 	for (uint32_t i = 0; i < (int32_t)world::Quality::Last; ++i)
 	{

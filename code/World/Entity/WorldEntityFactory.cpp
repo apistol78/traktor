@@ -11,11 +11,14 @@
 #include "Core/Misc/ObjectStore.h"
 #include "Core/Serialization/DeepClone.h"
 #include "Render/IRenderSystem.h"
+#include "Render/Image2/ImageGraph.h"
 #include "Render/Shader.h"
 #include "Resource/IResourceManager.h"
 #include "World/Entity.h"
 #include "World/Entity/CameraComponent.h"
 #include "World/Entity/CameraComponentData.h"
+#include "World/Entity/ColorCorrectionComponent.h"
+#include "World/Entity/ColorCorrectionComponentData.h"
 #include "World/Entity/ComputeTexture.h"
 #include "World/Entity/ComputeTextureComponent.h"
 #include "World/Entity/ComputeTextureComponentData.h"
@@ -44,6 +47,8 @@
 #include "World/Entity/PathComponentData.h"
 #include "World/Entity/PersistentIdComponent.h"
 #include "World/Entity/PersistentIdComponentData.h"
+#include "World/Entity/PostProcessComponent.h"
+#include "World/Entity/PostProcessComponentData.h"
 #include "World/Entity/ProbeComponent.h"
 #include "World/Entity/ProbeComponentData.h"
 #include "World/Entity/ScriptComponent.h"
@@ -106,10 +111,12 @@ const TypeInfoSet WorldEntityFactory::getEntityComponentTypes() const
 const TypeInfoSet WorldEntityFactory::getWorldComponentTypes() const
 {
 	return makeTypeInfoSet<
+		ColorCorrectionComponentData,
 		ComputeTextureComponentData,
 		DisplacementWorldComponentData,
 		FogComponentData,
-		IrradianceGridComponentData >();
+		IrradianceGridComponentData,
+		PostProcessComponentData >();
 }
 
 Ref< Entity > WorldEntityFactory::createEntity(const IEntityBuilder* builder, const EntityData& entityData) const
@@ -344,6 +351,24 @@ Ref< IWorldComponent > WorldEntityFactory::createWorldComponent(const IEntityBui
 
 	if (auto fogComponentData = dynamic_type_cast< const FogComponentData* >(&worldComponentData))
 		return fogComponentData->createComponent(m_resourceManager);
+
+	if (auto colorCorrectionComponentData = dynamic_type_cast< const ColorCorrectionComponentData* >(&worldComponentData))
+	{
+		resource::Proxy< render::ITexture > colorGrading;
+		if (!m_resourceManager->bind(colorCorrectionComponentData->getColorGrading(), colorGrading))
+			return nullptr;
+
+		return new ColorCorrectionComponent(colorGrading);
+	}
+
+	if (auto postProcessComponentData = dynamic_type_cast< const PostProcessComponentData* >(&worldComponentData))
+	{
+		resource::Proxy< render::ImageGraph > imageGraph;
+		if (!m_resourceManager->bind(postProcessComponentData->getImageGraph(), imageGraph))
+			return nullptr;
+
+		return new PostProcessComponent(imageGraph);
+	}
 
 	return nullptr;
 }

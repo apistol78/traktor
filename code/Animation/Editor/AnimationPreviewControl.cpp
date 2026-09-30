@@ -281,7 +281,6 @@ void AnimationPreviewControl::updateWorldRenderer()
 	// Use same quality settings as scene editor.
 	// #fixme Quality settings should probably be a general editor configuration.
 	const PropertyGroup* settings = m_editor->getSettings();
-	wcd.quality.imageProcess = (world::Quality)settings->getProperty< int32_t >(L"SceneEditor.PostProcessQuality", 4);
 	wcd.quality.motionBlur = world::Quality::Disabled;
 	wcd.quality.shadows = (world::Quality)settings->getProperty< int32_t >(L"SceneEditor.ShadowQuality", 4);
 	wcd.quality.reflections = (world::Quality)settings->getProperty< int32_t >(L"SceneEditor.ReflectionsQuality", 4);

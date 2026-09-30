@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -93,7 +93,6 @@ private:
 	world::Quality m_reflectionsQuality = world::Quality::Medium;
 	world::Quality m_ambientOcclusionQuality = world::Quality::Medium;
 	world::Quality m_antiAliasQuality = world::Quality::Medium;
-	world::Quality m_imageProcessQuality = world::Quality::Medium;
 	world::Quality m_particleQuality = world::Quality::Medium;
 	world::Quality m_terrainQuality = world::Quality::Medium;
 	world::Quality m_irradianceQuality = world::Quality::Medium;

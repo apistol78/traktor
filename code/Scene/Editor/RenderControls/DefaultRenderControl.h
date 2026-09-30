@@ -88,7 +88,6 @@ private:
 	Ref< ui::ToolBarDropDown > m_toolDebugOverlay;
 	Ref< ui::Slider > m_sliderDebugAlpha;
 	Ref< ui::Slider > m_sliderDebugMip;
-	Ref< ui::MenuItem > m_menuPostProcess;
 	Ref< ui::MenuItem > m_menuMotionBlur;
 	Ref< ui::MenuItem > m_menuShadows;
 	Ref< ui::MenuItem > m_menuReflections;

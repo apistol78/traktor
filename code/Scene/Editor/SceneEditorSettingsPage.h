@@ -61,7 +61,6 @@ private:
 	Ref< ui::CheckBox > m_checkInvertPanY;
 	Ref< ui::CheckBox > m_checkBuildWhenDrop;
 	Ref< ui::CheckBox > m_checkBuildNavMesh;
-	Ref< ui::DropDown > m_dropDownPostProcess;
 	Ref< ui::DropDown > m_dropDownMotionBlur;
 	Ref< ui::DropDown > m_dropDownShadows;
 	Ref< ui::DropDown > m_dropDownReflections;

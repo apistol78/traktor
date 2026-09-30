@@ -21,9 +21,11 @@
 #include "Render/ScreenRenderer.h"
 #include "Resource/IResourceManager.h"
 #include "World/Entity.h"
+#include "World/Entity/ColorCorrectionComponent.h"
 #include "World/Entity/FogComponent.h"
 #include "World/Entity/IrradianceGridComponent.h"
 #include "World/Entity/LightComponent.h"
+#include "World/Entity/PostProcessComponent.h"
 #include "World/Entity/ProbeComponent.h"
 #include "World/Entity/RTWorldComponent.h"
 #include "World/IEntityRenderer.h"
@@ -273,7 +275,9 @@ void WorldRendererShared::gather(const World* world, const std::function< bool(c
 	m_gatheredView.renderables.reset();
 	m_gatheredView.lights.resize(0);
 	m_gatheredView.probes.resize(0);
+	m_gatheredView.colorCorrection = nullptr;
 	m_gatheredView.fog = nullptr;
+	m_gatheredView.postProcess = nullptr;
 	m_gatheredView.irradianceGrid = nullptr;
 	m_gatheredView.rtWorldTopLevel = nullptr;
 
@@ -323,6 +327,10 @@ void WorldRendererShared::gather(const World* world, const std::function< bool(c
 			m_gatheredView.irradianceGrid = irradianceGridComponent->getIrradianceGrid();
 		else if (auto fogComponent = dynamic_type_cast< const FogComponent* >(component))
 			m_gatheredView.fog = fogComponent;
+		else if (auto colorCorrectionComponent = dynamic_type_cast< const ColorCorrectionComponent* >(component))
+			m_gatheredView.colorCorrection = colorCorrectionComponent;
+		else if (auto postProcessComponent = dynamic_type_cast< const PostProcessComponent* >(component))
+			m_gatheredView.postProcess = postProcessComponent;
 		else if (m_rayTracingEnabled)
 		{
 			if (auto rtWorldComponent = dynamic_type_cast< const RTWorldComponent* >(component))

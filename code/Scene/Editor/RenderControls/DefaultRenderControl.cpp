@@ -163,15 +163,6 @@ bool DefaultRenderControl::create(ui::Widget* parent, SceneEditorContext* contex
 
 	m_toolQualityMenu = new ui::ToolBarDropMenu(130_ut, i18n::Text(L"SCENE_EDITOR_QUALITY"), true, i18n::Text(L"SCENE_EDITOR_QUALITY_TOOLTIP"));
 
-	m_menuPostProcess = new ui::MenuItem(i18n::Text(L"SCENE_EDITOR_POST_PROCESS"));
-	m_menuPostProcess->add(new ui::MenuItem(ui::Command(0, L"Scene.Editor.PostProcessQuality"), L"Disabled", true, 0));
-	m_menuPostProcess->add(new ui::MenuItem(ui::Command(1, L"Scene.Editor.PostProcessQuality"), L"Low", true, 0));
-	m_menuPostProcess->add(new ui::MenuItem(ui::Command(2, L"Scene.Editor.PostProcessQuality"), L"Medium", true, 0));
-	m_menuPostProcess->add(new ui::MenuItem(ui::Command(3, L"Scene.Editor.PostProcessQuality"), L"High", true, 0));
-	m_menuPostProcess->add(new ui::MenuItem(ui::Command(4, L"Scene.Editor.PostProcessQuality"), L"Ultra", true, 0));
-	m_menuPostProcess->get(settings->getProperty< int32_t >(L"SceneEditor.PostProcessQuality", 4))->setChecked(true);
-	m_toolQualityMenu->add(m_menuPostProcess);
-
 	m_menuMotionBlur = new ui::MenuItem(i18n::Text(L"SCENE_EDITOR_MOTION_BLUR"));
 	m_menuMotionBlur->add(new ui::MenuItem(ui::Command(0, L"Scene.Editor.MotionBlurQuality"), L"Disabled", true, 0));
 	m_menuMotionBlur->add(new ui::MenuItem(ui::Command(1, L"Scene.Editor.MotionBlurQuality"), L"Low", true, 0));
@@ -527,7 +518,6 @@ bool DefaultRenderControl::createRenderControl(int32_t type)
 		m_renderControl->handleCommand(ui::Command(L"Scene.Editor.DisableRayTracing"));
 
 	world::QualitySettings qualitySettings;
-	qualitySettings.imageProcess = (world::Quality)getChecked(m_menuPostProcess)->getCommand().getId();
 	qualitySettings.shadows = (world::Quality)getChecked(m_menuShadows)->getCommand().getId();
 	qualitySettings.reflections = (world::Quality)getChecked(m_menuReflections)->getCommand().getId();
 	qualitySettings.irradiance = (world::Quality)getChecked(m_menuIrradiance)->getCommand().getId();
@@ -593,12 +583,6 @@ void DefaultRenderControl::eventToolClick(ui::ToolBarButtonClickEvent* event)
 	else if (event->getCommand() == L"Scene.Editor.Aspect")
 	{
 		m_renderControl->setAspect(c_aspects[m_toolAspect->getSelected()]);
-	}
-	else if (event->getCommand() == L"Scene.Editor.PostProcessQuality")
-	{
-		for (int32_t i = 0; i < m_menuPostProcess->count(); ++i)
-			m_menuPostProcess->get(i)->setChecked(bool(i == event->getCommand().getId()));
-		updateQuality = true;
 	}
 	else if (event->getCommand() == L"Scene.Editor.MotionBlurQuality")
 	{
@@ -670,7 +654,6 @@ void DefaultRenderControl::eventToolClick(ui::ToolBarButtonClickEvent* event)
 	if (updateQuality)
 	{
 		world::QualitySettings qualitySettings;
-		qualitySettings.imageProcess = (world::Quality)getChecked(m_menuPostProcess)->getCommand().getId();
 		qualitySettings.shadows = (world::Quality)getChecked(m_menuShadows)->getCommand().getId();
 		qualitySettings.reflections = (world::Quality)getChecked(m_menuReflections)->getCommand().getId();
 		qualitySettings.irradiance = (world::Quality)getChecked(m_menuIrradiance)->getCommand().getId();

@@ -65,7 +65,6 @@ struct QualitySettings
 	Quality irradiance = Quality::Disabled;
 	Quality volumetricFog = Quality::Medium;
 	Quality antiAlias = Quality::Disabled;
-	Quality imageProcess = Quality::Disabled;
 };
 
 /*! World renderer creation description.
@@ -80,6 +79,7 @@ struct WorldCreateDesc
 	float gamma = 2.2f;
 	bool hdr = false;
 	bool rt = true;
+	bool postProcess = true; //!< Apply world's PostProcessComponent and ColorCorrectionComponent.
 	EntityIdQuery* entityIdQuery = nullptr; //!< Query entity rendered at a position, only used by the editor.
 };
 
