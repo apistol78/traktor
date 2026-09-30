@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2023 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -92,19 +92,24 @@ Ref< Model > ModelFormatBlend::read(const Path& filePath, const std::wstring& fi
 
 	// Execute export script through headless blender process.
 	std::wstring blenderPath;
-	if (!OS::getInstance().getAssociatedExecutable(L"blend", blenderPath))
+	if (!OS::getInstance().whereIs(L"blender", blenderPath))
 	{
-		// No file association registered; try find executable in environment.
-		if (!OS::getInstance().whereIs(L"blender", blenderPath))
+		std::wstring associatedPath;
+		if (OS::getInstance().getAssociatedExecutable(L"blend", associatedPath))
 		{
-			// No path found; try to run executable without path in case system knowns
-			// something we don't.
-			blenderPath = L"blender.exe";
+			// Association usually points to the GUI launcher stub; use the console executable next to it.
+			const Path associated(associatedPath);
+			if (compareIgnoreCase(associated.getFileName(), L"blender-launcher.exe") == 0)
+				blenderPath = L"\"" + associated.getPathOnlyOS() + L"/blender.exe\"";
+			else
+				blenderPath = L"\"" + associated.getPathNameOS() + L"\"";
 		}
+		else
+			blenderPath = L"blender";
 	}
 
 	const Path filePathAbs = FileSystem::getInstance().getAbsolutePath(filePath);
-	const std::wstring commandLine = blenderPath + L" -b \"" + filePathAbs.getPathNameOS() + L"\" -P " + scratchPath + L"/__export__.py";
+	const std::wstring commandLine = blenderPath + L" -b \"" + filePathAbs.getPathNameOS() + L"\" -P \"" + scratchPath + L"/__export__.py\"";
 
 	Ref< IProcess > process = OS::getInstance().execute(
 		commandLine,
@@ -123,7 +128,7 @@ Ref< Model > ModelFormatBlend::read(const Path& filePath, const std::wstring& fi
 	}
 	if (process->exitCode() != 0)
 	{
-		log::error << L"Blender terminated with error code " << process->exitCode() << Endl;
+		log::error << L"Blender terminated with error code " << process->exitCode() << L" (\"" << commandLine << L"\")." << Endl;
 		return nullptr;
 	}
 
