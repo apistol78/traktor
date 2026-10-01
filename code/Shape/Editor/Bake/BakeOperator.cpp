@@ -607,6 +607,21 @@ bool BakeOperator::build(
 					if (m_entityReplicators.find(&type_of(componentData)) != m_entityReplicators.end())
 					{
 						bakeEntityData.push_back(inoutEntityData);
+
+						// Children are skipped since the replicator owns this entity's model (a prefab
+						// merges its group), but lights hung underneath, such as a lamp prop's flame,
+						// must still reach the tracer or they never contribute to the bake.
+						if (auto groupComponentData = inoutEntityData->getComponent< world::GroupComponentData >())
+						{
+							world::Traverser::visit(groupComponentData, [&](Ref< world::EntityData >& childEntityData) -> world::Traverser::Result {
+								if (!childEntityData->getState().visible || childEntityData->getState().dynamic)
+									return world::Traverser::Result::Skip;
+								if (!childEntityData->getId().isNull() && childEntityData->getComponent< world::LightComponentData >() != nullptr)
+									bakeEntityData.push_back(childEntityData);
+								return world::Traverser::Result::Continue;
+							});
+						}
+
 						return world::Traverser::Result::Skip;
 					}
 				}
