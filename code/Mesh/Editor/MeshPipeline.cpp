@@ -800,10 +800,13 @@ bool MeshPipeline::buildOutput(
 				return false;
 			}
 
-			pipelineBuilder->getProfiler()->begin(L"MeshPipeline surfaceUsesWorldPositionOffset");
-			materialDeform = surfaceUsesWorldPositionOffset(customMeshSurfaceShaderGraph, linkerFragmentReader);
-			pipelineBuilder->getProfiler()->end();
-
+			if (asset->getEnableDeform())
+			{
+				pipelineBuilder->getProfiler()->begin(L"MeshPipeline surfaceUsesWorldPositionOffset");
+				materialDeform = surfaceUsesWorldPositionOffset(customMeshSurfaceShaderGraph, linkerFragmentReader);
+				pipelineBuilder->getProfiler()->end();
+			}
+			
 			// The surface check is structural; make sure an offset really reaches the deform
 			// technique before paying for the deform buffers and passes.
 			if (materialDeform)

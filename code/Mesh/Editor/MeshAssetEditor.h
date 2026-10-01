@@ -102,6 +102,7 @@ private:
 	Ref< ui::CheckBox > m_checkGrounded;
 	Ref< ui::CheckBox > m_checkDecalResponse;
 	Ref< ui::CheckBox > m_checkEnableRaytracing;
+	Ref< ui::CheckBox > m_checkEnableDeform;
 	Ref< ui::Edit > m_editScaleFactor[3];
 	Ref< ui::Edit > m_editReduce;
 	Ref< ui::Edit > m_editRaytracingReduce;

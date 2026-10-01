@@ -150,6 +150,10 @@
 			<second>Enable Raytracing</second>
 		</item>
 		<item>
+			<first>MESHASSET_EDITOR_ENABLE_DEFORM</first>
+			<second>Enable deform</second>
+		</item>
+		<item>
 			<first>MESHASSET_EDITOR_EXTRACT_TEXTURE</first>
 			<second>Extract texture...</second>
 		</item>

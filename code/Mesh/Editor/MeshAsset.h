@@ -114,6 +114,12 @@ public:
 	/*! Check if ray tracing geometry and acceleration structure should be generated. */
 	bool getEnableRaytracing() const { return m_enableRaytracing; }
 
+	/*! */
+	void setEnableDeform(bool enableDeform) { m_enableDeform = enableDeform; }
+
+	/*! */
+	bool getEnableDeform() const { return m_enableDeform; }
+
 	/*! Set fraction of triangles to keep in the raster mesh (1 = no reduction). */
 	void setReduce(float reduce) { m_reduce = reduce; }
 
@@ -144,6 +150,7 @@ private:
 	bool m_grounded = false;
 	bool m_decalResponse = true;
 	bool m_enableRaytracing = true;
+	bool m_enableDeform = true;
 	float m_reduce = 1.0f;
 	float m_raytracingReduce = 1.0f;
 	float m_previewAngle = 0.0f;
