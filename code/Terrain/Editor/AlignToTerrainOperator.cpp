@@ -464,7 +464,6 @@ bool AlignToTerrainOperator::transform(
 
 	const AlignedVector< std::wstring >& layerFilters = data->getLayers();
 	const AlignToTerrainOperationData::GroundFit groundFit = data->getGroundFit();
-	Random rndm;
 
 	TransformContextPipelineCommon pipelineCommon(context);
 	boundingBoxCache_t boundingBoxCache;
@@ -484,6 +483,8 @@ bool AlignToTerrainOperator::transform(
 		auto group = layer->getComponent< world::GroupComponentData >();
 		if (!group)
 			continue;
+
+		Random rndm;
 
 		for (auto entityData : group->getEntityData())
 		{
