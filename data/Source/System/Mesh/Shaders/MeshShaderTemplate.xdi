@@ -573,6 +573,11 @@ Tag_LightmapTexCoord
 					<name>SurfaceAttributes</name>
 					<optional>false</optional>
 				</item>
+				<item>
+					<id>{7A0CD57F-1E98-4E13-B135-5211E9BDD4AF}</id>
+					<name>TexCoord</name>
+					<optional>true</optional>
+				</item>
 			</inputPins>
 			<outputPins>
 				<item>

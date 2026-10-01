@@ -55,6 +55,7 @@
 #include "World/WorldHandles.h"
 #include "World/WorldRenderView.h"
 
+#include <algorithm>
 #include <cstring>
 
 namespace traktor::world
@@ -74,6 +75,17 @@ const Scalar c_shadowSliceMarginMin(1.0f);
 // slice updates. The measurement is a few frames old, so geometry may have come into
 // view since it was taken; the margin is what covers that.
 const float c_sliceFarMargin = 1.25f;
+
+// Maximum number of shadow casting point lights; each appends six cube face entries to the light buffer.
+const int32_t c_maxShadowPointLights = 16;
+
+// Border, in texels, around each cube face so the shadow filter kernel stays inside the face.
+const int32_t c_pointShadowFaceBorder = 2;
+
+const float c_pointShadowNearZ = 0.1f;
+
+// View to light translation of an entry without shadow; projects outside of atlas tile so light is unshadowed.
+const Vector4 c_unshadowedTranslation(2.0f, 2.0f, 0.0f, 1.0f);
 
 Ref< render::ITexture > create1x1Texture(render::IRenderSystem* renderSystem, uint32_t value)
 {
@@ -149,7 +161,7 @@ bool WorldRendererShared::create(
 	{
 		m_state[i].lightSBuffer = renderSystem->createBuffer(
 			render::BuStructured,
-			(LightClusterPass::c_maxLightCount + 3) * sizeof(LightShaderData),
+			(LightClusterPass::c_maxLightCount + 3 + c_maxShadowPointLights * 6) * sizeof(LightShaderData),
 			true,
 			T_FILE_LINE_W);
 		if (!m_state[i].lightSBuffer)
@@ -444,14 +456,29 @@ render::RGTargetSet WorldRendererShared::setupLightPass(
 
 	// Find atlas shadow lights.
 	StaticVector< int32_t, 32 > lightAtlasIndices;
+	AlignedVector< int32_t > lightPointIndices;
 	if (shadowMapAtlasEnable)
 	{
 		for (int32_t i = 0; i < (int32_t)m_gatheredView.lights.size(); ++i)
 		{
 			const auto& light = m_gatheredView.lights[i];
-			if (light->getCastShadow() && light->getLightType() == LightType::Spot)
+			if (!light->getCastShadow())
+				continue;
+			if (light->getLightType() == LightType::Spot && !lightAtlasIndices.full())
 				lightAtlasIndices.push_back(i);
+			else if (light->getLightType() == LightType::Point)
+				lightPointIndices.push_back(i);
 		}
+
+		// Nearest point lights first so they get largest atlas regions.
+		const Vector4 eyePosition = worldRenderView.getEyePosition();
+		std::sort(lightPointIndices.begin(), lightPointIndices.end(), [&](int32_t lh, int32_t rh) {
+			const Scalar dl = (m_gatheredView.lights[lh]->getTransform().translation() - eyePosition).xyz0().length2();
+			const Scalar dr = (m_gatheredView.lights[rh]->getTransform().translation() - eyePosition).xyz0().length2();
+			return dl < dr;
+		});
+		if (lightPointIndices.size() > c_maxShadowPointLights)
+			lightPointIndices.resize(c_maxShadowPointLights);
 	}
 
 	// Write all lights to sbuffer; without shadow map information.
@@ -461,6 +488,7 @@ render::RGTargetSet WorldRendererShared::setupLightPass(
 		auto* lsd = &lightShaderData[i];
 
 		lsd->type = (float)light->getLightType();
+		lsd->shadowIndex = 0.0f;
 		lsd->rangeRadius[0] = light->getNearRange();
 		lsd->rangeRadius[1] = light->getFarRange();
 		// Cosine of the half angle of the inner, fully lit, and the outer cone of a spot light.
@@ -475,7 +503,7 @@ render::RGTargetSet WorldRendererShared::setupLightPass(
 		Vector4::zero().storeUnaligned(lsd->viewToLight0);
 		Vector4::zero().storeUnaligned(lsd->viewToLight1);
 		Vector4::zero().storeUnaligned(lsd->viewToLight2);
-		Vector4::zero().storeUnaligned(lsd->viewToLight3);
+		c_unshadowedTranslation.storeUnaligned(lsd->viewToLight3);
 		Vector4::zero().storeUnaligned(lsd->atlasTransform);
 	}
 
@@ -484,11 +512,12 @@ render::RGTargetSet WorldRendererShared::setupLightPass(
 		auto* lsd = &lightShaderData[i];
 
 		lsd->type = 0.0f;
+		lsd->shadowIndex = 0.0f;
 
 		Vector4::zero().storeUnaligned(lsd->viewToLight0);
 		Vector4::zero().storeUnaligned(lsd->viewToLight1);
 		Vector4::zero().storeUnaligned(lsd->viewToLight2);
-		Vector4::zero().storeUnaligned(lsd->viewToLight3);
+		c_unshadowedTranslation.storeUnaligned(lsd->viewToLight3);
 		Vector4::zero().storeUnaligned(lsd->atlasTransform);
 	}
 
@@ -522,6 +551,75 @@ render::RGTargetSet WorldRendererShared::setupLightPass(
 		for (const auto& attachment : m_gatheredView.setupAttachments)
 			rp->addInput(attachment);
 		rp->setOutput(shadowMapAtlasTargetSetId, render::TfDepth, render::TfDepth);
+
+		// Add render of a single shadow map tile in the atlas.
+		const auto addShadowTile = [&](const Packer::Rectangle& tile, const Matrix44& shadowLightProjection, const Matrix44& shadowLightView, const Frustum& shadowFrustum) {
+			const int32_t passShadowMapIndex = shadowMapIndex++;
+
+			rp->addBuild(
+				[=, this](const render::RenderGraph& renderGraph, render::RenderContext* renderContext) {
+				const WorldBuildContext wc(
+					m_entityRenderers,
+					renderContext);
+
+				// Render shadow map.
+				WorldRenderView shadowRenderView;
+				shadowRenderView.setIndex(worldRenderView.getIndex());
+				shadowRenderView.setShadowMapIndex(passShadowMapIndex);
+				shadowRenderView.setProjection(shadowLightProjection);
+				shadowRenderView.setView(shadowLightView, shadowLightView);
+				shadowRenderView.setViewFrustum(shadowFrustum);
+				shadowRenderView.setCullFrustum(shadowFrustum);
+				shadowRenderView.setTimes(
+					worldRenderView.getTime(),
+					worldRenderView.getDeltaTime(),
+					worldRenderView.getInterval());
+
+				// Set viewport to light atlas slot.
+				auto svrb = renderContext->alloc< render::SetViewportRenderBlock >();
+				svrb->viewport = render::Viewport(
+					tile.x,
+					tile.y,
+					tile.width,
+					tile.height,
+					0.0f,
+					1.0f);
+				renderContext->draw(svrb);
+
+				// Render entities into shadow map.
+				auto sharedParams = renderContext->alloc< render::ProgramParameters >();
+				sharedParams->beginParameters(renderContext);
+				sharedParams->setFloatParameter(ShaderParameter::Time, (float)worldRenderView.getTime());
+				sharedParams->setMatrixParameter(ShaderParameter::Projection, shadowLightProjection);
+				sharedParams->setMatrixParameter(ShaderParameter::View, shadowLightView);
+				sharedParams->setMatrixParameter(ShaderParameter::ViewInverse, shadowLightView.inverse());
+				sharedParams->endParameters(renderContext);
+
+				const WorldRenderPassShared shadowPass(
+					ShaderTechnique::Shadow,
+					sharedParams,
+					shadowRenderView);
+
+				T_ASSERT(!renderContext->havePendingDraws());
+
+				// Clear shadow map tile; use a region clear so the HW "fast clear"
+				// path is utilized instead of a fill primitive.
+				{
+					auto crb = renderContext->allocNamed< render::ClearRenderBlock >(L"Clear shadow map tile");
+					crb->clear.mask = render::CfDepth;
+					crb->clear.depth = 1.0f;
+					crb->rect = render::Rectangle(tile.x, tile.y, tile.width, tile.height);
+					renderContext->draw(crb);
+				}
+
+				for (auto it : m_gatheredView.renderables)
+				{
+					IEntityRenderer* entityRenderer = it.first;
+					const GatherView::Renderable& r = it.second;
+					entityRenderer->build(wc, shadowRenderView, shadowPass, r.objects);
+				}
+			});
+		};
 
 		if (m_gatheredView.cascadingDirectionalLight != nullptr)
 		{
@@ -759,71 +857,93 @@ render::RGTargetSet WorldRendererShared::setupLightPass(
 				(float)atlasRect.height / shmh)
 				.storeUnaligned(lsd->atlasTransform);
 
-			const int32_t passShadowMapIndex = shadowMapIndex++;
+			addShadowTile(
+				{ atlasOffset + atlasRect.x, atlasRect.y, atlasRect.width, atlasRect.height },
+				shadowLightProjection,
+				shadowLightView,
+				shadowFrustum);
+		}
 
-			rp->addBuild(
-				[=, this](const render::RenderGraph& renderGraph, render::RenderContext* renderContext) {
-				const WorldBuildContext wc(
-					m_entityRenderers,
-					renderContext);
+		for (int32_t i = 0; i < (int32_t)lightPointIndices.size(); ++i)
+		{
+			const int32_t lightPointIndex = lightPointIndices[i];
+			const auto& light = m_gatheredView.lights[lightPointIndex];
+			const Matrix44 lightTransform = light->getTransform().toMatrix44();
+			const Vector4 lightPosition = lightTransform.translation().xyz1();
 
-				// Render shadow map.
-				WorldRenderView shadowRenderView;
-				shadowRenderView.setIndex(worldRenderView.getIndex());
-				shadowRenderView.setShadowMapIndex(passShadowMapIndex);
-				shadowRenderView.setProjection(shadowLightProjection);
-				shadowRenderView.setView(shadowLightView, shadowLightView);
-				shadowRenderView.setViewFrustum(shadowFrustum);
-				shadowRenderView.setCullFrustum(shadowFrustum);
-				shadowRenderView.setTimes(
-					worldRenderView.getTime(),
-					worldRenderView.getDeltaTime(),
-					worldRenderView.getInterval());
+			// Calculate size of each cube face based on distance from eye; faces are packed 3x2 in atlas.
+			const float distance = (worldRenderView.getEyePosition() - lightPosition).xyz0().length();
+			const int32_t denom = (int32_t)std::floor(std::sqrt(distance / 4.0f));
+			int32_t faceSize = std::max(256 >> std::min(denom, 8), 16);
 
-				// Set viewport to light atlas slot.
-				auto svrb = renderContext->alloc< render::SetViewportRenderBlock >();
-				svrb->viewport = render::Viewport(
-					atlasOffset + atlasRect.x,
-					atlasRect.y,
-					atlasRect.width,
-					atlasRect.height,
-					0.0f,
-					1.0f);
-				renderContext->draw(svrb);
+			// Reduce face size until it fits in atlas.
+			Packer::Rectangle atlasRect;
+			bool inserted = false;
+			for (; faceSize >= 16; faceSize >>= 1)
+			{
+				if ((inserted = shadowAtlasPacker->insert(faceSize * 3, faceSize * 2, atlasRect)) == true)
+					break;
+			}
+			if (!inserted)
+				continue;
 
-				// Render entities into shadow map.
-				auto sharedParams = renderContext->alloc< render::ProgramParameters >();
-				sharedParams->beginParameters(renderContext);
-				sharedParams->setFloatParameter(ShaderParameter::Time, (float)worldRenderView.getTime());
-				sharedParams->setMatrixParameter(ShaderParameter::Projection, shadowLightProjection);
-				sharedParams->setMatrixParameter(ShaderParameter::View, shadowLightView);
-				sharedParams->setMatrixParameter(ShaderParameter::ViewInverse, shadowLightView.inverse());
-				sharedParams->endParameters(renderContext);
+			const int32_t faceIndex = (int32_t)m_gatheredView.lights.size() + 3 + i * 6;
 
-				const WorldRenderPassShared shadowPass(
-					ShaderTechnique::Shadow,
-					sharedParams,
-					shadowRenderView);
+			// Light axes in view space; used by shaders to select cube face.
+			auto* lsd = &lightShaderData[lightPointIndex];
+			const Matrix44 lightToView = view * lightTransform;
+			lsd->shadowIndex = (float)faceIndex;
+			lightToView.axisX().storeUnaligned(lsd->viewToLight0);
+			lightToView.axisY().storeUnaligned(lsd->viewToLight1);
+			lightToView.axisZ().storeUnaligned(lsd->viewToLight2);
 
-				T_ASSERT(!renderContext->havePendingDraws());
+			// Widen field of view so the filter kernel never samples outside of face.
+			const float fov = 2.0f * std::atan((float)faceSize / (faceSize - 2 * c_pointShadowFaceBorder));
+			const Matrix44 shadowLightProjection = perspectiveLh(fov, 1.0f, c_pointShadowNearZ, light->getFarRange());
 
-				// Clear shadow map tile; use a region clear so the HW "fast clear"
-				// path is utilized instead of a fill primitive.
-				{
-					auto crb = renderContext->allocNamed< render::ClearRenderBlock >(L"Clear shadow map tile");
-					crb->clear.mask = render::CfDepth;
-					crb->clear.depth = 1.0f;
-					crb->rect = render::Rectangle(atlasOffset + atlasRect.x, atlasRect.y, atlasRect.width, atlasRect.height);
-					renderContext->draw(crb);
-				}
+			Frustum shadowFrustum;
+			shadowFrustum.buildPerspective(fov, 1.0f, c_pointShadowNearZ, light->getFarRange());
 
-				for (auto it : m_gatheredView.renderables)
-				{
-					IEntityRenderer* entityRenderer = it.first;
-					const GatherView::Renderable& r = it.second;
-					entityRenderer->build(wc, shadowRenderView, shadowPass, r.objects);
-				}
-			});
+			// Faces in order +X, -X, +Y, -Y, +Z, -Z of light space.
+			const Vector4 lightAxes[] = { lightTransform.axisX(), lightTransform.axisY(), lightTransform.axisZ() };
+			for (int32_t face = 0; face < 6; ++face)
+			{
+				const Vector4 faceAxisZ = (face & 1) ? -lightAxes[face >> 1] : lightAxes[face >> 1];
+				Vector4 faceAxisX, faceAxisY;
+				orthogonalFrame(faceAxisZ, faceAxisY, faceAxisX);
+
+				const Matrix44 shadowLightView = Matrix44(
+					faceAxisX,
+					faceAxisY,
+					faceAxisZ,
+					lightPosition).inverse();
+
+				auto* fsd = &lightShaderData[faceIndex + face];
+				std::memset(fsd, 0, sizeof(LightShaderData));
+
+				const Matrix44 viewToLightSpace = shadowLightProjection * shadowLightView * viewInverse;
+				viewToLightSpace.axisX().storeUnaligned(fsd->viewToLight0);
+				viewToLightSpace.axisY().storeUnaligned(fsd->viewToLight1);
+				viewToLightSpace.axisZ().storeUnaligned(fsd->viewToLight2);
+				viewToLightSpace.translation().storeUnaligned(fsd->viewToLight3);
+
+				const Packer::Rectangle tile = {
+					atlasOffset + atlasRect.x + (face % 3) * faceSize,
+					atlasRect.y + (face / 3) * faceSize,
+					faceSize,
+					faceSize
+				};
+
+				// Write atlas coordinates to shaders.
+				Vector4(
+					(float)tile.x / shmw,
+					(float)tile.y / shmh,
+					(float)tile.width / shmw,
+					(float)tile.height / shmh)
+					.storeUnaligned(fsd->atlasTransform);
+
+				addShadowTile(tile, shadowLightProjection, shadowLightView, shadowFrustum);
+			}
 		}
 
 		renderGraph.addPass(rp);

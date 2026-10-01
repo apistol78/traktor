@@ -73,7 +73,8 @@ protected:
 	struct LightShaderData
 	{
 		float type;
-		float unused[3];
+		float shadowIndex;	//!< Index of first cube face entry of a shadow casting point light.
+		float unused[2];
 		float rangeRadius[4];
 		float position[4];
 		float direction[4];
