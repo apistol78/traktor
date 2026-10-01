@@ -5,7 +5,7 @@
 			<id>{F64EA18D-F655-4EA1-8A44-5301E0115128}</id>
 			<comment/>
 			<position>
-				<first>-316</first>
+				<first>-304</first>
 				<second>-42</second>
 			</position>
 			<name>Surface1</name>
@@ -15,7 +15,7 @@
 			<id>{FDD8428E-220B-455B-BCDE-902A146CDCB9}</id>
 			<comment/>
 			<position>
-				<first>-321</first>
+				<first>-304</first>
 				<second>472</second>
 			</position>
 			<name>Surface2</name>
@@ -276,6 +276,11 @@
 					<name>SurfaceAttributes</name>
 					<optional>false</optional>
 				</item>
+				<item>
+					<id>{7A0CD57F-1E98-4E13-B135-5211E9BDD4AF}</id>
+					<name>TexCoord</name>
+					<optional>true</optional>
+				</item>
 			</inputPins>
 			<outputPins>
 				<item>
@@ -297,6 +302,11 @@
 					<id>{8C2CC5B1-F74E-45FA-8731-D76E9DF42F3C}</id>
 					<name>SurfaceAttributes</name>
 					<optional>false</optional>
+				</item>
+				<item>
+					<id>{7A0CD57F-1E98-4E13-B135-5211E9BDD4AF}</id>
+					<name>TexCoord</name>
+					<optional>true</optional>
 				</item>
 			</inputPins>
 			<outputPins>
@@ -345,6 +355,26 @@
 				<first>743</first>
 				<second>378</second>
 			</position>
+		</item>
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
+			<id>{6AB93DCC-2E67-403E-B7C6-2FD8608AE0C1}</id>
+			<comment/>
+			<position>
+				<first>-320</first>
+				<second>9</second>
+			</position>
+			<name>TexCoord1</name>
+			<optional>true</optional>
+		</item>
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
+			<id>{0351960B-C353-4139-817C-1FD6EED1D825}</id>
+			<comment/>
+			<position>
+				<first>-320</first>
+				<second>519</second>
+			</position>
+			<name>TexCoord2</name>
+			<optional>true</optional>
 		</item>
 	</nodes>
 	<edges>
@@ -616,6 +646,26 @@
 			<destination>
 				<node ref="/object/nodes/item[5]"/>
 				<id>{97A6B99B-49F7-4C5C-A685-0B51840EC1C2}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[15]"/>
+				<id>{9AE16BB1-EB68-45A0-A878-8D01C210082B}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[8]"/>
+				<id>{7A0CD57F-1E98-4E13-B135-5211E9BDD4AF}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[16]"/>
+				<id>{9AE16BB1-EB68-45A0-A878-8D01C210082B}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[9]"/>
+				<id>{7A0CD57F-1E98-4E13-B135-5211E9BDD4AF}</id>
 			</destination>
 		</item>
 	</edges>

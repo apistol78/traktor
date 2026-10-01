@@ -454,8 +454,8 @@
 			<id>{DC38224D-2711-495A-A7DF-C83FB3A862F5}</id>
 			<comment/>
 			<position>
-				<first>366</first>
-				<second>-3111</second>
+				<first>359</first>
+				<second>-3124</second>
 			</position>
 			<fragmentGuid>{2E9AE5A7-2444-466C-8694-17BE1CF26CBD}</fragmentGuid>
 			<inputPins>
@@ -492,8 +492,8 @@
 			<id>{23399A88-F61F-4432-9D70-5523F1FEA5C1}</id>
 			<comment/>
 			<position>
-				<first>36</first>
-				<second>-3171</second>
+				<first>29</first>
+				<second>-3184</second>
 			</position>
 			<fragmentGuid>{BC8CF2ED-E005-4043-8E3E-0004A6392BF9}</fragmentGuid>
 			<inputPins>
@@ -534,8 +534,8 @@
 			<id>{48B5D6C3-EA98-4BDB-A8CF-331A59203252}</id>
 			<comment/>
 			<position>
-				<first>623</first>
-				<second>-3137</second>
+				<first>616</first>
+				<second>-3150</second>
 			</position>
 			<name>ViewBinormal</name>
 		</item>
@@ -543,8 +543,8 @@
 			<id>{9D8F75F9-213E-4BC0-AFC9-1FB8EB256367}</id>
 			<comment/>
 			<position>
-				<first>623</first>
-				<second>-2996</second>
+				<first>616</first>
+				<second>-3009</second>
 			</position>
 			<name>ViewTangent</name>
 		</item>
@@ -552,8 +552,8 @@
 			<id>{ACC1D5F8-1DEB-43B1-B84C-595B8473FA9B}</id>
 			<comment/>
 			<position>
-				<first>623</first>
-				<second>-3090</second>
+				<first>616</first>
+				<second>-3103</second>
 			</position>
 			<name>ViewNormal</name>
 		</item>
@@ -561,8 +561,8 @@
 			<id>{BB6BF24F-4794-4EA2-8183-F4F64EEB1BD9}</id>
 			<comment/>
 			<position>
-				<first>386</first>
-				<second>-3175</second>
+				<first>720</first>
+				<second>-3269</second>
 			</position>
 			<name>TexCoord</name>
 		</item>
@@ -751,8 +751,8 @@
 			<id>{937DB1DF-2D16-428E-9926-A2172EDCE0E6}</id>
 			<comment/>
 			<position>
-				<first>-204</first>
-				<second>-3175</second>
+				<first>-211</first>
+				<second>-3188</second>
 			</position>
 			<name>VertexAttributes</name>
 		</item>
@@ -933,8 +933,8 @@
 			<id>{5DB7A309-9C25-42AA-A4A3-AFCED50C7D0B}</id>
 			<comment/>
 			<position>
-				<first>42</first>
-				<second>-2947</second>
+				<first>35</first>
+				<second>-2960</second>
 			</position>
 			<name>SurfaceAttributes</name>
 			<optional>false</optional>
@@ -943,8 +943,8 @@
 			<id>{2A44FC4D-A7B4-4B9E-B491-462F2B1AB1FC}</id>
 			<comment/>
 			<position>
-				<first>412</first>
-				<second>-2903</second>
+				<first>405</first>
+				<second>-2916</second>
 			</position>
 			<name>L_SurfaceAttributes</name>
 		</item>
@@ -979,8 +979,8 @@
 			<id>{7847D05F-8E13-4544-BD9D-909D02AE69F3}</id>
 			<comment/>
 			<position>
-				<first>623</first>
-				<second>-3043</second>
+				<first>616</first>
+				<second>-3056</second>
 			</position>
 			<name>ViewPosition</name>
 		</item>
@@ -1616,6 +1616,24 @@ $Output = vec4(texCoord.x, texCoord.y, 0.0f, 0.0f);
 
 ]]></script>
 		</item>
+		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
+			<id>{7A0CD57F-1E98-4E13-B135-5211E9BDD4AF}</id>
+			<comment/>
+			<position>
+				<first>167</first>
+				<second>-3324</second>
+			</position>
+			<name>TexCoord</name>
+			<optional>true</optional>
+		</item>
+		<item type="traktor.render.Connected" version="traktor.render.Node:1">
+			<id>{ED4A283F-0DF2-4376-98BB-C59AA31799EF}</id>
+			<comment/>
+			<position>
+				<first>491</first>
+				<second>-3307</second>
+			</position>
+		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge" version="1">
@@ -2095,16 +2113,6 @@ $Output = vec4(texCoord.x, texCoord.y, 0.0f, 0.0f);
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[1]"/>
-				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[36]"/>
-				<id>{918845C1-3EAF-456F-B944-5E38BA6DC731}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[40]"/>
 				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
 			</destination>
 		</item>
@@ -2718,6 +2726,46 @@ $Output = vec4(texCoord.x, texCoord.y, 0.0f, 0.0f);
 				<id>{3C1A7E52-9D41-4F08-B6C3-71E5A0D42B19}</id>
 			</destination>
 		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[91]"/>
+				<id>{9AE16BB1-EB68-45A0-A878-8D01C210082B}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[92]"/>
+				<id>{197CC347-3580-4502-8AA1-976E476EA843}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[91]"/>
+				<id>{9AE16BB1-EB68-45A0-A878-8D01C210082B}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[92]"/>
+				<id>{3F36532A-8A98-4EE7-85ED-2DA35230BC3C}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[36]"/>
+				<id>{918845C1-3EAF-456F-B944-5E38BA6DC731}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[92]"/>
+				<id>{5539AA7E-F780-482E-82B8-1E817340D7C0}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[92]"/>
+				<id>{DBDA59DC-83A0-4619-BB51-792A017346DF}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[40]"/>
+				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
+			</destination>
+		</item>
 	</edges>
 	<groups>
 		<item type="traktor.render.Group">
@@ -2736,12 +2784,12 @@ $Output = vec4(texCoord.x, texCoord.y, 0.0f, 0.0f);
 			<title>Get UV and basis from Vertex attributes</title>
 			<comment/>
 			<position>
-				<first>-472</first>
-				<second>-3308</second>
+				<first>-457</first>
+				<second>-3429</second>
 			</position>
 			<size>
-				<first>1539</first>
-				<second>502</second>
+				<first>1526</first>
+				<second>628</second>
 			</size>
 		</item>
 		<item type="traktor.render.Group">
