@@ -5,7 +5,7 @@
 		},
 		{
 			"path": "data"
-		}
+		},
 		{
 			"path": "resources"
 		},
@@ -135,6 +135,9 @@
 			"slist": "cpp",
 			"*.prebuilt": "c"
 		},
-		"task.autoDetect": "off"
+		"task.autoDetect": "off",
+		"git.autoRepositoryDetection": "subFolders",
+		"git.repositoryScanMaxDepth": 0,
+		"git.openRepositoryInParentFolders": "always"
 	}
 }
