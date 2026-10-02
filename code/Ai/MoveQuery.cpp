@@ -51,6 +51,50 @@ bool MoveQuery::update(const Vector4& currentPosition, Vector4& outMoveToPositio
 	return false;
 }
 
+bool MoveQuery::constrain(const Vector4& currentPosition, const Vector4& desiredPosition, Vector4& outPosition) const
+{
+	// Tight search; an entity further off the mesh than this has bigger problems
+	// than can be solved by sliding it along the boundary.
+	const float c_searchExtents[3] = { 1.5f, 2.0f, 1.5f };
+
+	if (!m_navQuery)
+		return false;
+
+	float T_MATH_ALIGN16 currentPos[4];
+	float T_MATH_ALIGN16 desiredPos[4];
+	currentPosition.storeAligned(currentPos);
+	desiredPosition.storeAligned(desiredPos);
+
+	dtPolyRef startRef = 0;
+	float startPos[3];
+	dtStatus status = m_navQuery->findNearestPoly(
+		currentPos,
+		c_searchExtents,
+		m_filter,
+		&startRef,
+		startPos);
+	if (dtStatusFailed(status) || startRef == 0)
+		return false;
+
+	float resultPos[3];
+	dtPolyRef visited[16];
+	int32_t visitedCount = 0;
+	status = m_navQuery->moveAlongSurface(
+		startRef,
+		startPos,
+		desiredPos,
+		m_filter,
+		resultPos,
+		visited,
+		&visitedCount,
+		sizeof_array(visited));
+	if (dtStatusFailed(status))
+		return false;
+
+	outPosition = Vector4(resultPos[0], resultPos[1], resultPos[2], 1.0f);
+	return true;
+}
+
 uint32_t MoveQuery::getSteerPathCount() const
 {
 	return (uint32_t)m_steerPath.size();

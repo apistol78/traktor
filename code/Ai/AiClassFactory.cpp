@@ -29,6 +29,15 @@ Ref< BoxedVector4 > MoveQuery_update(MoveQuery* self, const Vector4& currentPosi
 		return nullptr;
 }
 
+Ref< BoxedVector4 > MoveQuery_constrain(MoveQuery* self, const Vector4& currentPosition, const Vector4& desiredPosition)
+{
+	Vector4 position;
+	if (self->constrain(currentPosition, desiredPosition, position))
+		return new BoxedVector4(position);
+	else
+		return nullptr;
+}
+
 Vector4 NavMesh_findClosestPoint(NavMesh* self, const Vector4& searchFrom, float searchDistance)
 {
 	Vector4 point;
@@ -87,6 +96,7 @@ void AiClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 {
 	auto classMoveQuery = new AutoRuntimeClass< MoveQuery >();
 	classMoveQuery->addMethod("update", &MoveQuery_update);
+	classMoveQuery->addMethod("constrain", &MoveQuery_constrain);
 	classMoveQuery->addMethod("getSteerPathCount", &MoveQuery::getSteerPathCount);
 	classMoveQuery->addMethod("getSteerPathPosition", &MoveQuery::getSteerPathPosition);
 	classMoveQuery->addMethod("getSteerIndex", &MoveQuery::getSteerIndex);

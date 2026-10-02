@@ -47,6 +47,19 @@ public:
 	 */
 	bool update(const Vector4& currentPosition, Vector4& outMoveToPosition, float nodeDistanceThreshold);
 
+	/*! Constrain a movement to the navigation mesh surface.
+	 *
+	 * Moves from the point on the mesh nearest \a currentPosition towards \a desiredPosition,
+	 * sliding along the mesh boundary rather than crossing it. An entity which has
+	 * drifted off the mesh is thus led back onto it.
+	 *
+	 * \param currentPosition Current entity position.
+	 * \param desiredPosition Position entity want to move to.
+	 * \param outPosition Constrained position, on the navigation mesh.
+	 * \return True if constrained position found; false if current position isn't near the mesh.
+	 */
+	bool constrain(const Vector4& currentPosition, const Vector4& desiredPosition, Vector4& outPosition) const;
+
 	/*! Number of positions in the steer path, including those already passed. */
 	uint32_t getSteerPathCount() const;
 
