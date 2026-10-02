@@ -41,8 +41,8 @@
 			<id>{74D309C3-371D-451E-877C-3EFCE94DFEB7}</id>
 			<comment/>
 			<position>
-				<first>637</first>
-				<second>-1407</second>
+				<first>577</first>
+				<second>-1399</second>
 			</position>
 			<name>Trace</name>
 			<technique/>
@@ -104,8 +104,8 @@ else
 			<id>{FEDCD6A4-7031-4964-9A6E-36888684E1A9}</id>
 			<comment/>
 			<position>
-				<first>388</first>
-				<second>-1471</second>
+				<first>361</first>
+				<second>-1508</second>
 			</position>
 			<name>L_ViewPosition</name>
 		</item>
@@ -113,8 +113,8 @@ else
 			<id>{A0D5DCB3-6AFB-4917-86FA-36053528E9A0}</id>
 			<comment/>
 			<position>
-				<first>388</first>
-				<second>-1422</second>
+				<first>361</first>
+				<second>-1444</second>
 			</position>
 			<name>L_ViewNormal</name>
 		</item>
@@ -122,8 +122,8 @@ else
 			<id>{C00BC9BD-A0F3-4E87-9ED1-3C8B086CBEAC}</id>
 			<comment/>
 			<position>
-				<first>390</first>
-				<second>-1275</second>
+				<first>362</first>
+				<second>-1252</second>
 			</position>
 			<minFilter>Linear</minFilter>
 			<mipFilter>Linear</mipFilter>
@@ -140,8 +140,8 @@ else
 			<id>{5A303AB2-8932-4D7F-87D5-135804F43B8C}</id>
 			<comment/>
 			<position>
-				<first>1024</first>
-				<second>-1425</second>
+				<first>880</first>
+				<second>-1306</second>
 			</position>
 			<value>0</value>
 		</item>
@@ -149,8 +149,8 @@ else
 			<id>{1BA70F8C-E7FC-45F9-92DC-2AE20D4CD0E2}</id>
 			<comment/>
 			<position>
-				<first>1229</first>
-				<second>-1493</second>
+				<first>1083</first>
+				<second>-1402</second>
 			</position>
 			<minFilter>Linear</minFilter>
 			<mipFilter>Linear</mipFilter>
@@ -214,8 +214,8 @@ else
 			<id>{3764C2E4-8EFB-442B-81AC-1CC816B8947E}</id>
 			<comment/>
 			<position>
-				<first>1014</first>
-				<second>-1476</second>
+				<first>875</first>
+				<second>-1370</second>
 			</position>
 			<swizzle>xy</swizzle>
 		</item>
@@ -223,16 +223,16 @@ else
 			<id>{89F17B5C-2A32-4F64-A539-A8802692D343}</id>
 			<comment/>
 			<position>
-				<first>1733</first>
-				<second>-1391</second>
+				<first>1557</first>
+				<second>-1362</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{4BF1EBDF-2BDA-419A-BEC3-18D2339B0B7D}</id>
 			<comment/>
 			<position>
-				<first>1264</first>
-				<second>-1303</second>
+				<first>1349</first>
+				<second>-1290</second>
 			</position>
 			<swizzle>z</swizzle>
 		</item>
@@ -258,8 +258,8 @@ else
 			<id>{453DEA23-A89C-474F-8476-D96B0F96A631}</id>
 			<comment/>
 			<position>
-				<first>1465</first>
-				<second>-1437</second>
+				<first>1349</first>
+				<second>-1385</second>
 			</position>
 			<swizzle>xyz1</swizzle>
 		</item>
@@ -391,8 +391,8 @@ $Output = ($Roughness < 0.4f && $Specular > 0.1f) ? 1.0f : 0.0f;
 			<id>{76322821-8C2E-4F79-8B75-BC3CBC32EA11}</id>
 			<comment/>
 			<position>
-				<first>147</first>
-				<second>-1177</second>
+				<first>145</first>
+				<second>-1171</second>
 			</position>
 			<swizzle>x</swizzle>
 		</item>
@@ -400,8 +400,8 @@ $Output = ($Roughness < 0.4f && $Specular > 0.1f) ? 1.0f : 0.0f;
 			<id>{9BA00BAB-6FFE-4C51-ACA8-91867B2B6BFE}</id>
 			<comment/>
 			<position>
-				<first>378</first>
-				<second>-1226</second>
+				<first>356</first>
+				<second>-1188</second>
 			</position>
 			<name>Random</name>
 			<technique/>
@@ -616,8 +616,8 @@ else
 			<id>{480E5D52-35BB-41CE-9572-7D9A5612E545}</id>
 			<comment/>
 			<position>
-				<first>2019</first>
-				<second>-1343</second>
+				<first>2009</first>
+				<second>-1345</second>
 			</position>
 			<name>L_Reflection0</name>
 		</item>
@@ -790,8 +790,8 @@ else
 			<id>{CED2A361-6E40-7147-866C-B535B686FF03}</id>
 			<comment/>
 			<position>
-				<first>388</first>
-				<second>-1373</second>
+				<first>361</first>
+				<second>-1380</second>
 			</position>
 			<parameterDeclaration>{284FF359-2F08-6A40-B256-AC194478040A}</parameterDeclaration>
 		</item>
@@ -799,8 +799,8 @@ else
 			<id>{76727696-C2A3-564A-957E-7EC4C0F74BBD}</id>
 			<comment/>
 			<position>
-				<first>1014</first>
-				<second>-1527</second>
+				<first>875</first>
+				<second>-1434</second>
 			</position>
 			<parameterDeclaration>{53A631D9-EE23-B74D-A6AE-0711FA956671}</parameterDeclaration>
 		</item>
@@ -808,8 +808,8 @@ else
 			<id>{6C21C54A-2CAA-D74C-97A9-F54D9D2EFE38}</id>
 			<comment/>
 			<position>
-				<first>372</first>
-				<second>-1324</second>
+				<first>353</first>
+				<second>-1316</second>
 			</position>
 			<parameterDeclaration>{1B7EE70B-CFE2-EF44-A21B-13A748CEAC26}</parameterDeclaration>
 		</item>
@@ -817,8 +817,8 @@ else
 			<id>{7DAA3BCF-EE48-9441-BF2C-B488A6A7163C}</id>
 			<comment/>
 			<position>
-				<first>-77</first>
-				<second>-1150</second>
+				<first>-63</first>
+				<second>-1171</second>
 			</position>
 			<parameterDeclaration>{41C095E8-1A66-A249-A474-349B74E9CC2D}</parameterDeclaration>
 		</item>
@@ -853,8 +853,8 @@ else
 			<id>{1EE4029A-B202-4E3B-8BD2-A60758C7C950}</id>
 			<comment/>
 			<position>
-				<first>3774</first>
-				<second>-1450</second>
+				<first>1791</first>
+				<second>-1362</second>
 			</position>
 			<name>Sanitize</name>
 			<technique/>
@@ -1481,12 +1481,12 @@ $Output = clamp(c, vec4(0.0f), vec4(MaxReflection));
 			<title>Trace</title>
 			<comment/>
 			<position>
-				<first>-168</first>
-				<second>-1722</second>
+				<first>-127</first>
+				<second>-1604</second>
 			</position>
 			<size>
-				<first>2392</first>
-				<second>706</second>
+				<first>2318</first>
+				<second>532</second>
 			</size>
 		</item>
 		<item type="traktor.render.Group">

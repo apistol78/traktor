@@ -127,14 +127,6 @@ render::RGTargetSet SSIrradiancePass::setup(
 			params->setVectorParameter(ShaderParameter::IrradianceGridBoundsMax, gatheredView.irradianceGrid->getBoundingBox().mx);
 			params->setBufferViewParameter(ShaderParameter::IrradianceGridSBuffer, gatheredView.irradianceGrid->getBuffer()->getBufferView());
 		}
-
-		if (lightSBuffer != nullptr)
-		{
-			params->setBufferViewParameter(ShaderParameter::LightSBuffer, lightSBuffer->getBufferView());
-			params->setFloatParameter(ShaderParameter::LightCount, (float)gatheredView.lights.size());
-		}
-		else
-			params->setFloatParameter(ShaderParameter::LightCount, 0.0f);
 	};
 
 	// Add irradiance compute pass.
