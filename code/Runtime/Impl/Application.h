@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -123,6 +123,8 @@ private:
 	double m_renderCpuDurations[2] = { 0.0, 0.0 };
 	double m_renderGpuDuration = 0.0;
 	int32_t m_renderGpuDurationQuery = -1;
+	double m_frameRateTime = 0.0;
+	int32_t m_frameRateCount = 0;
 	uint32_t m_renderCollisions = 0;
 	TicketLock m_lockRender;
 	Signal m_signalRenderBegin;

@@ -884,7 +884,14 @@ bool Application::update()
 				m_renderCpuDurations[1] = renderEnd - renderBegin;
 
 				m_renderServer->setDurations(m_renderCpuDurations[0], m_renderGpuDuration);
-				m_renderServer->setFrameRate(int32_t(1.0 / m_renderCpuDurations[1]));
+				// Average over half a second; a single frame's duration is too noisy.
+				++m_frameRateCount;
+				if (renderEnd - m_frameRateTime >= 0.5)
+				{
+					m_renderServer->setFrameRate(int32_t(m_frameRateCount / (renderEnd - m_frameRateTime) + 0.5));
+					m_frameRateTime = renderEnd;
+					m_frameRateCount = 0;
+				}
 			}
 		}
 
@@ -1163,7 +1170,14 @@ void Application::threadRender()
 				m_renderCpuDurations[1] = renderEnd - renderBegin;
 
 				m_renderServer->setDurations(m_renderCpuDurations[0], m_renderGpuDuration);
-				m_renderServer->setFrameRate(int32_t(1.0 / m_renderCpuDurations[1]));
+				// Average over half a second; a single frame's duration is too noisy.
+				++m_frameRateCount;
+				if (renderEnd - m_frameRateTime >= 0.5)
+				{
+					m_renderServer->setFrameRate(int32_t(m_frameRateCount / (renderEnd - m_frameRateTime) + 0.5));
+					m_frameRateTime = renderEnd;
+					m_frameRateCount = 0;
+				}
 				m_stateRender = nullptr;
 			}
 
