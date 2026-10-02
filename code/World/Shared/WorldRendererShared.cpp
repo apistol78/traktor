@@ -513,6 +513,8 @@ render::RGTargetSet WorldRendererShared::setupLightPass(
 
 		lsd->type = (float)light->getLightType();
 		lsd->shadowIndex = 0.0f;
+		lsd->shadowDepthScale = 0.0f;
+		lsd->shadowTexelScale = 0.0f;
 		lsd->rangeRadius[0] = light->getNearRange();
 		lsd->rangeRadius[1] = light->getFarRange();
 		// Cosine of the half angle of the inner, fully lit, and the outer cone of a spot light.
@@ -537,6 +539,8 @@ render::RGTargetSet WorldRendererShared::setupLightPass(
 
 		lsd->type = 0.0f;
 		lsd->shadowIndex = 0.0f;
+		lsd->shadowDepthScale = 0.0f;
+		lsd->shadowTexelScale = 0.0f;
 
 		Vector4::zero().storeUnaligned(lsd->viewToLight0);
 		Vector4::zero().storeUnaligned(lsd->viewToLight1);
@@ -873,6 +877,9 @@ render::RGTargetSet WorldRendererShared::setupLightPass(
 				return render::RGTargetSet::Invalid;
 			}
 
+			lsd->shadowDepthScale = light->getFarRange() / (light->getFarRange() - 1.0f);
+			lsd->shadowTexelScale = 2.0f * std::tan(light->getRadius() / 2.0f) / atlasSize;
+
 			// Write atlas coordinates to shaders.
 			Vector4(
 				(float)(atlasOffset + atlasRect.x) / shmw,
@@ -923,6 +930,7 @@ render::RGTargetSet WorldRendererShared::setupLightPass(
 
 			// Widen field of view so the filter kernel never samples outside of face.
 			const float fov = 2.0f * std::atan((float)faceSize / (faceSize - 2 * c_pointShadowFaceBorder));
+			lsd->shadowTexelScale = 2.0f * std::tan(fov / 2.0f) / faceSize;
 			const Matrix44 shadowLightProjection = perspectiveLh(fov, 1.0f, c_pointShadowNearZ, light->getFarRange());
 
 			Frustum shadowFrustum;
@@ -932,9 +940,10 @@ render::RGTargetSet WorldRendererShared::setupLightPass(
 			const Vector4 lightAxes[] = { lightTransform.axisX(), lightTransform.axisY(), lightTransform.axisZ() };
 			for (int32_t face = 0; face < 6; ++face)
 			{
+				// Face frame aligned with light axes so each face exactly covers its cube region.
 				const Vector4 faceAxisZ = (face & 1) ? -lightAxes[face >> 1] : lightAxes[face >> 1];
-				Vector4 faceAxisX, faceAxisY;
-				orthogonalFrame(faceAxisZ, faceAxisY, faceAxisX);
+				const Vector4 faceAxisY = lightAxes[((face >> 1) + 1) % 3];
+				const Vector4 faceAxisX = cross(faceAxisY, faceAxisZ);
 
 				const Matrix44 shadowLightView = Matrix44(
 					faceAxisX,
@@ -950,6 +959,8 @@ render::RGTargetSet WorldRendererShared::setupLightPass(
 				viewToLightSpace.axisY().storeUnaligned(fsd->viewToLight1);
 				viewToLightSpace.axisZ().storeUnaligned(fsd->viewToLight2);
 				viewToLightSpace.translation().storeUnaligned(fsd->viewToLight3);
+
+				fsd->shadowDepthScale = c_pointShadowNearZ * light->getFarRange() / (light->getFarRange() - c_pointShadowNearZ);
 
 				const Packer::Rectangle tile = {
 					atlasOffset + atlasRect.x + (face % 3) * faceSize,

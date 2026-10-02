@@ -74,7 +74,8 @@ protected:
 	{
 		float type;
 		float shadowIndex;	//!< Index of first cube face entry of a shadow casting point light.
-		float unused[2];
+		float shadowDepthScale;	//!< Converts metric bias to shadow map depth, scaled by inverse squared depth.
+		float shadowTexelScale;	//!< World size of a shadow map texel per unit of depth.
 		float rangeRadius[4];
 		float position[4];
 		float direction[4];
