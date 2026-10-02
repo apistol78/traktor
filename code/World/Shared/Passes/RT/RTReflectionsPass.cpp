@@ -52,6 +52,8 @@ const resource::Id< render::ImageGraph > c_reflectionsDenoise(L"{22777807-DD5F-1
 
 const render::Handle s_handleReflectionsOutput(L"World_ReflectionsOutput");
 const render::Handle s_handleReflectionsInputColor(L"World_ReflectionsInputColor");
+const render::Handle s_handleLightGridSBuffer(L"World_LightGridSBuffer");
+const render::Handle s_handleLightGridIndexSBuffer(L"World_LightGridIndexSBuffer");
 
 static Random s_random;
 
@@ -97,6 +99,8 @@ render::RGTargetSet RTReflectionsPass::setup(
 	const WorldRenderView& worldRenderView,
 	const GatherView& gatheredView,
 	const render::Buffer* lightSBuffer,
+	const render::Buffer* lightGridSBuffer,
+	const render::Buffer* lightGridIndexSBuffer,
 	render::ITexture* blackCubeTexture,
 	bool needJitter,
 	uint32_t frameCount,
@@ -193,6 +197,9 @@ render::RGTargetSet RTReflectionsPass::setup(
 			params->setFloatParameter(ShaderParameter::ProbeTextureMips, 0.0f);
 			params->setTextureParameter(ShaderParameter::ProbeTexture, blackCubeTexture);
 		}
+
+		params->setBufferViewParameter(s_handleLightGridSBuffer, lightGridSBuffer->getBufferView());
+		params->setBufferViewParameter(s_handleLightGridIndexSBuffer, lightGridIndexSBuffer->getBufferView());
 
 		if (lightSBuffer != nullptr)
 		{

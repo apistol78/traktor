@@ -58,6 +58,8 @@ public:
 		const WorldRenderView& worldRenderView,
 		const GatherView& gatheredView,
 		const render::Buffer* lightSBuffer,
+		const render::Buffer* lightGridSBuffer,
+		const render::Buffer* lightGridIndexSBuffer,
 		bool needJitter,
 		uint32_t frameCount,
 		render::RenderGraph& renderGraph,

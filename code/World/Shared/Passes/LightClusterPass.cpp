@@ -16,6 +16,9 @@
 #include "World/Entity/LightComponent.h"
 #include "World/Shared/Passes/LightClusterPass.h"
 
+#include <algorithm>
+#include <cmath>
+
 namespace traktor::world
 {
 
@@ -32,6 +35,8 @@ LightClusterPass::~LightClusterPass()
 {
 	T_FATAL_ASSERT(m_lightIndexSBuffer == nullptr);
 	T_FATAL_ASSERT(m_tileSBuffer == nullptr);
+	T_FATAL_ASSERT(m_lightGridSBuffer == nullptr);
+	T_FATAL_ASSERT(m_lightGridIndexSBuffer == nullptr);
 }
 
 bool LightClusterPass::create(render::IRenderSystem* renderSystem)
@@ -54,11 +59,31 @@ bool LightClusterPass::create(render::IRenderSystem* renderSystem)
 	if (!m_tileSBuffer)
 		return false;
 
+	// World grid cell buffer; extra last cell lists all lights.
+	m_lightGridSBuffer = renderSystem->createBuffer(
+		render::BuStructured,
+		(c_lightGridCellCount + 1) * sizeof(TileShaderData),
+		true,
+		T_FILE_LINE_W);
+	if (!m_lightGridSBuffer)
+		return false;
+
+	// World grid light index array buffer.
+	m_lightGridIndexSBuffer = renderSystem->createBuffer(
+		render::BuStructured,
+		(c_lightGridCellCount * c_maxLightsPerGridCell + c_maxLightCount) * sizeof(LightIndexShaderData),
+		true,
+		T_FILE_LINE_W);
+	if (!m_lightGridIndexSBuffer)
+		return false;
+
 	return true;
 }
 
 void LightClusterPass::destroy()
 {
+	safeDestroy(m_lightGridIndexSBuffer);
+	safeDestroy(m_lightGridSBuffer);
 	safeDestroy(m_tileSBuffer);
 	safeDestroy(m_lightIndexSBuffer);
 }
@@ -278,6 +303,80 @@ void LightClusterPass::setup(
 
 	m_lightIndexSBuffer->unlock();
 	m_tileSBuffer->unlock();
+
+	// Bin lights into camera centered world grid; each cell owns a fixed region of the index buffer.
+	TileShaderData* gridShaderData = (TileShaderData*)m_lightGridSBuffer->lock();
+	LightIndexShaderData* gridIndexShaderData = (LightIndexShaderData*)m_lightGridIndexSBuffer->lock();
+
+	const float cellSize = 2.0f * c_lightGridExtent / c_lightGridDim;
+	float gridOrigin[4];
+	(worldRenderView.getEyePosition() - Vector4(c_lightGridExtent, c_lightGridExtent, c_lightGridExtent, 0.0f)).storeUnaligned(gridOrigin);
+
+	int32_t cellCounts[c_lightGridCellCount] = { 0 };
+	for (uint32_t i = 0; i < gatheredView.lights.size(); ++i)
+	{
+		const auto light = gatheredView.lights[i];
+
+		int32_t mn[3] = { 0, 0, 0 };
+		int32_t mx[3] = { c_lightGridDim - 1, c_lightGridDim - 1, c_lightGridDim - 1 };
+		float lp[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+		float lr = 0.0f;
+
+		if (light->getLightType() != LightType::Directional)
+		{
+			light->getTransform().translation().storeUnaligned(lp);
+			lr = light->getFarRange();
+			for (int32_t k = 0; k < 3; ++k)
+			{
+				lp[k] -= gridOrigin[k];
+				mn[k] = std::max((int32_t)std::floor((lp[k] - lr) / cellSize), 0);
+				mx[k] = std::min((int32_t)std::floor((lp[k] + lr) / cellSize), c_lightGridDim - 1);
+			}
+		}
+
+		for (int32_t z = mn[2]; z <= mx[2]; ++z)
+		{
+			for (int32_t y = mn[1]; y <= mx[1]; ++y)
+			{
+				for (int32_t x = mn[0]; x <= mx[0]; ++x)
+				{
+					// Skip cells outside of light sphere.
+					if (light->getLightType() != LightType::Directional)
+					{
+						const int32_t c[3] = { x, y, z };
+						float d2 = 0.0f;
+						for (int32_t k = 0; k < 3; ++k)
+						{
+							const float d = std::max(std::max(c[k] * cellSize - lp[k], lp[k] - (c[k] + 1) * cellSize), 0.0f);
+							d2 += d * d;
+						}
+						if (d2 > lr * lr)
+							continue;
+					}
+
+					const int32_t cell = x + (y + z * c_lightGridDim) * c_lightGridDim;
+					if (cellCounts[cell] < c_maxLightsPerGridCell)
+						gridIndexShaderData[cell * c_maxLightsPerGridCell + cellCounts[cell]++].lightIndex[0] = (int32_t)i;
+				}
+			}
+		}
+	}
+
+	for (int32_t i = 0; i < c_lightGridCellCount; ++i)
+	{
+		gridShaderData[i].lightOffsetAndCount[0] = i * c_maxLightsPerGridCell;
+		gridShaderData[i].lightOffsetAndCount[1] = cellCounts[i];
+	}
+
+	// Last cell is used for hits outside of grid and lists all lights.
+	const int32_t allOffset = c_lightGridCellCount * c_maxLightsPerGridCell;
+	for (uint32_t i = 0; i < gatheredView.lights.size(); ++i)
+		gridIndexShaderData[allOffset + i].lightIndex[0] = (int32_t)i;
+	gridShaderData[c_lightGridCellCount].lightOffsetAndCount[0] = allOffset;
+	gridShaderData[c_lightGridCellCount].lightOffsetAndCount[1] = (int32_t)gatheredView.lights.size();
+
+	m_lightGridIndexSBuffer->unlock();
+	m_lightGridSBuffer->unlock();
 }
 
 }

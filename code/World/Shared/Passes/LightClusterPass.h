@@ -38,6 +38,12 @@ class LightClusterPass : public Object
 public:
 	const static int32_t c_maxLightCount = 4096;
 
+	//! Camera centered world grid used to find lights at ray hits.
+	const static int32_t c_lightGridDim = 16;
+	const static int32_t c_lightGridCellCount = c_lightGridDim * c_lightGridDim * c_lightGridDim;
+	const static int32_t c_maxLightsPerGridCell = 32;
+	static constexpr float c_lightGridExtent = 64.0f;
+
 #pragma pack(1)
 	struct LightIndexShaderData
 	{
@@ -69,10 +75,16 @@ public:
 
 	render::Buffer* getTileSBuffer() const { return m_tileSBuffer; }
 
+	render::Buffer* getLightGridSBuffer() const { return m_lightGridSBuffer; }
+
+	render::Buffer* getLightGridIndexSBuffer() const { return m_lightGridIndexSBuffer; }
+
 private:
     WorldRenderSettings m_settings;
 	Ref< render::Buffer > m_lightIndexSBuffer;
 	Ref< render::Buffer > m_tileSBuffer;
+	Ref< render::Buffer > m_lightGridSBuffer;
+	Ref< render::Buffer > m_lightGridIndexSBuffer;
 };
 
 }

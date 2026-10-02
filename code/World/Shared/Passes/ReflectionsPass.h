@@ -54,6 +54,8 @@ public:
 		const WorldRenderView& worldRenderView,
 		const GatherView& gatheredView,
 		const render::Buffer* lightSBuffer,
+		const render::Buffer* lightGridSBuffer,
+		const render::Buffer* lightGridIndexSBuffer,
 		render::ITexture* blackCubeTexture,
 		bool needJitter,
 		uint32_t frameCount,

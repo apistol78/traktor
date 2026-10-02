@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.render.ShaderModule" version="2">
+	<text><![CDATA[
+const int LightGridDim = 16;
+const float LightGridExtent = 64.0f;
+
+// Index of grid cell containing world position; last cell, listing all lights, if outside grid.
+int LightGrid_Cell(mat4 viewInverse, vec3 w)
+{
+	const vec3 origin = viewInverse[3].xyz;
+	const ivec3 c = ivec3(floor(((w - origin) / LightGridExtent * 0.5f + 0.5f) * float(LightGridDim)));
+	if (any(lessThan(c, ivec3(0))) || any(greaterThanEqual(c, ivec3(LightGridDim))))
+		return LightGridDim * LightGridDim * LightGridDim;
+	return c.x + (c.y + c.z * LightGridDim) * LightGridDim;
+}
+	]]></text>
+	<samplers/>
+	<structDeclarations/>
+</object>

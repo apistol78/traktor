@@ -5,8 +5,8 @@
 			<id>{A468EB82-EAA9-AE43-969E-013DCCE6AC18}</id>
 			<comment/>
 			<position>
-				<first>-1672</first>
-				<second>-215</second>
+				<first>-1711</first>
+				<second>-167</second>
 			</position>
 			<name>Pass</name>
 			<technique>Default</technique>
@@ -24,6 +24,7 @@
 				<item>{1C13688E-63BC-3141-ACB1-58EEE72EEF2F}</item>
 				<item>{921BBC45-4C75-624A-AA78-9B5FEC80645B}</item>
 				<item>{F6048A61-5C30-204E-8ACC-D203978866C8}</item>
+				<item>{A1675BBC-88A8-4F64-80BE-DEBE50CED923}</item>
 			</include>
 			<inputPins>
 				<item>
@@ -57,6 +58,14 @@
 				<item>
 					<id>{08D46483-83DB-B640-88F4-E221D06E1420}</id>
 					<name>LastViewInverse</name>
+				</item>
+				<item>
+					<id>{0472467C-3946-4FB4-82AF-DF1CDFA4D06F}</id>
+					<name>LightGrid</name>
+				</item>
+				<item>
+					<id>{60596584-4AF5-4A8A-BE9C-16FB4225478C}</id>
+					<name>LightGridIndices</name>
 				</item>
 			</inputPins>
 			<outputPins/>
@@ -111,9 +120,10 @@ for (int i = 0; i < N; ++i)
 		const vec3 hit = rayOrigin + rayDir * t;
 		const float attenuate = IndirectRangeFallOff(t);
 		vec3 Sacc = vec3(0.0f);
-		for (int lightIndex = 0; lightIndex < $LightCount; ++lightIndex)
+		const ivec4 cell = $LightGrid[LightGrid_Cell($ViewInverse, hit)].LightOffsetAndCount;
+		for (int i = 0; i < cell.y; ++i)
 		{
-			const $typeof(Lights) light = $Lights[lightIndex];
+			const $typeof(Lights) light = $Lights[$LightGridIndices[cell.x + i].LightIndex.x];
 			const vec4 incident = HWRT_Light_CalculateIncidentLight(
 				$AS,
 				$ViewInverse,
@@ -145,7 +155,7 @@ imageStore($Output, pt, vec4(Nacc, 0.0f));
 			<comment/>
 			<position>
 				<first>-1959</first>
-				<second>-257</second>
+				<second>-285</second>
 			</position>
 			<parameterDeclaration>{C651B846-F51A-CB49-BBAB-10C2A527DE97}</parameterDeclaration>
 		</item>
@@ -153,8 +163,8 @@ imageStore($Output, pt, vec4(Nacc, 0.0f));
 			<id>{1D33C833-8971-A14B-82D6-2FC2DD250B48}</id>
 			<comment><![CDATA[Output, current, field.]]></comment>
 			<position>
-				<first>-2039</first>
-				<second>-313</second>
+				<first>-1999</first>
+				<second>-349</second>
 			</position>
 			<parameterDeclaration>{165AC628-6F1A-DA43-96EF-D57E2BFA5D93}</parameterDeclaration>
 		</item>
@@ -162,8 +172,8 @@ imageStore($Output, pt, vec4(Nacc, 0.0f));
 			<id>{92222615-27EA-534B-936C-F95FDAED49CC}</id>
 			<comment/>
 			<position>
-				<first>-1991</first>
-				<second>-201</second>
+				<first>-1975</first>
+				<second>-221</second>
 			</position>
 			<parameterDeclaration>{3C048EC4-ED6A-0847-B08D-95F74407200F}</parameterDeclaration>
 		</item>
@@ -171,8 +181,8 @@ imageStore($Output, pt, vec4(Nacc, 0.0f));
 			<id>{B20BEC9F-48C6-BF47-8E7A-20E0DA0A51DF}</id>
 			<comment/>
 			<position>
-				<first>-1975</first>
-				<second>-145</second>
+				<first>-1967</first>
+				<second>-157</second>
 			</position>
 			<parameterDeclaration>{1527F0C9-DD5E-5C47-8A6B-5B7932CFD43D}</parameterDeclaration>
 		</item>
@@ -180,8 +190,8 @@ imageStore($Output, pt, vec4(Nacc, 0.0f));
 			<id>{C55D0566-3C08-934B-A3ED-2C8ABDF816F3}</id>
 			<comment/>
 			<position>
-				<first>-1991</first>
-				<second>-89</second>
+				<first>-1975</first>
+				<second>-93</second>
 			</position>
 			<parameterDeclaration>{C1FFA687-8FE7-C54E-AA46-23305604D4F5}</parameterDeclaration>
 		</item>
@@ -189,8 +199,8 @@ imageStore($Output, pt, vec4(Nacc, 0.0f));
 			<id>{566AD37E-85DC-9B40-A1E4-2EA4D5C3AC03}</id>
 			<comment/>
 			<position>
-				<first>-1975</first>
-				<second>-33</second>
+				<first>-1967</first>
+				<second>-29</second>
 			</position>
 			<parameterDeclaration>{46B1D101-2690-4E45-B38B-963CA9440B66}</parameterDeclaration>
 		</item>
@@ -198,8 +208,8 @@ imageStore($Output, pt, vec4(Nacc, 0.0f));
 			<id>{E6778CA1-45D0-9B42-A52D-0B8ECC95BCF9}</id>
 			<comment><![CDATA[Previous field]]></comment>
 			<position>
-				<first>-2039</first>
-				<second>23</second>
+				<first>-1999</first>
+				<second>35</second>
 			</position>
 			<parameterDeclaration>{3E83158A-0056-F54E-94B0-C23DF1573D3B}</parameterDeclaration>
 		</item>
@@ -207,10 +217,28 @@ imageStore($Output, pt, vec4(Nacc, 0.0f));
 			<id>{5F0C630C-B6A0-1240-8095-7027C0A758F9}</id>
 			<comment/>
 			<position>
-				<first>-2007</first>
-				<second>79</second>
+				<first>-1983</first>
+				<second>99</second>
 			</position>
 			<parameterDeclaration>{C50CF06B-743F-E848-A69F-FD95CA9E7676}</parameterDeclaration>
+		</item>
+		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
+			<id>{03B63B85-3859-4F31-A804-2BCF7D8BD129}</id>
+			<comment/>
+			<position>
+				<first>-1983</first>
+				<second>163</second>
+			</position>
+			<parameterDeclaration>{28E5F119-E91A-4480-B0E1-C449F6435390}</parameterDeclaration>
+		</item>
+		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
+			<id>{153AB202-711F-4B93-86FB-F64914C93542}</id>
+			<comment/>
+			<position>
+				<first>-1999</first>
+				<second>227</second>
+			</position>
+			<parameterDeclaration>{88F2DF0C-FD14-445B-876A-219E2C05234A}</parameterDeclaration>
 		</item>
 	</nodes>
 	<edges>
@@ -292,6 +320,26 @@ imageStore($Output, pt, vec4(Nacc, 0.0f));
 			<destination>
 				<node ref="/object/nodes/item"/>
 				<id>{E6B53F89-364B-2C40-A08C-91CCE471354E}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[9]"/>
+				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item"/>
+				<id>{0472467C-3946-4FB4-82AF-DF1CDFA4D06F}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[10]"/>
+				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item"/>
+				<id>{60596584-4AF5-4A8A-BE9C-16FB4225478C}</id>
 			</destination>
 		</item>
 	</edges>

@@ -431,7 +431,7 @@
 			<compare>None</compare>
 			<mipBias>0</mipBias>
 			<ignoreMips>false</ignoreMips>
-			<useAnisotropic>false</useAnisotropic>
+			<useAnisotropic>true</useAnisotropic>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{F774DB75-EED7-4AE7-999B-3B6DC42A0E7E}</id>

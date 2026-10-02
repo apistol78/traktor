@@ -170,6 +170,8 @@ void WorldRendererForward::setup(
 	const render::Buffer* lightSBuffer = m_state[worldRenderView.getIndex()].lightSBuffer;
 	const render::Buffer* tileSBuffer = m_lightClusterPass->getTileSBuffer();
 	const render::Buffer* lightIndexSBuffer = m_lightClusterPass->getLightIndexSBuffer();
+	const render::Buffer* lightGridSBuffer = m_lightClusterPass->getLightGridSBuffer();
+	const render::Buffer* lightGridIndexSBuffer = m_lightClusterPass->getLightGridIndexSBuffer();
 
 	// Add passes to render graph.
 	m_lightClusterPass->setup(worldRenderView, m_gatheredView);
@@ -185,7 +187,7 @@ void WorldRendererForward::setup(
 	// m_hiZPass->setup(worldRenderView, renderGraph, gbufferTargetSetId);
 	const auto ambientOcclusionTargetSetId = m_ambientOcclusionPass->setup(worldRenderView, m_gatheredView, needJitter, count, renderGraph, gbufferTargetSetId, halfResDepthTextureId, visualTargetSetId.current);
 	const auto fogVolumeTextureId = m_volumetricFogPass->setup(worldRenderView, m_gatheredView, lightSBuffer, tileSBuffer, lightIndexSBuffer, m_whiteTexture, count, m_state[worldRenderView.getIndex()].slicePositions, renderGraph, shadowMapAtlasTargetSetId);
-	const auto reflectionsTargetSetId = m_reflectionsPass->setup(worldRenderView, m_gatheredView, lightSBuffer, m_blackCubeTexture, needJitter, count, renderGraph, gbufferTargetSetId, dbufferTargetSetId, visualTargetSetId.previous, velocityTargetSetId, render::RGTexture::Invalid, visualTargetSetId.current);
+	const auto reflectionsTargetSetId = m_reflectionsPass->setup(worldRenderView, m_gatheredView, lightSBuffer, lightGridSBuffer, lightGridIndexSBuffer, m_blackCubeTexture, needJitter, count, renderGraph, gbufferTargetSetId, dbufferTargetSetId, visualTargetSetId.previous, velocityTargetSetId, render::RGTexture::Invalid, visualTargetSetId.current);
 
 	setupVisualPass(
 		worldRenderView,

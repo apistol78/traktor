@@ -58,6 +58,8 @@ const render::Handle s_handleTechniqueIrradiance_RT(L"World_ComputeIrradiance_RT
 const render::Handle s_handleIrradianceOutput(L"World_IrradianceOutput");
 const render::Handle s_handleIrradianceFieldImage(L"World_IrradianceFieldImage");
 const render::Handle s_handleIrradianceFieldTexture(L"World_IrradianceFieldTexture");
+const render::Handle s_handleLightGridSBuffer(L"World_LightGridSBuffer");
+const render::Handle s_handleLightGridIndexSBuffer(L"World_LightGridIndexSBuffer");
 
 static Random s_random;
 
@@ -132,6 +134,8 @@ render::RGTargetSet RTIrradiancePass::setup(
 	const WorldRenderView& worldRenderView,
 	const GatherView& gatheredView,
 	const render::Buffer* lightSBuffer,
+	const render::Buffer* lightGridSBuffer,
+	const render::Buffer* lightGridIndexSBuffer,
 	bool needJitter,
 	uint32_t frameCount,
 	render::RenderGraph& renderGraph,
@@ -213,6 +217,9 @@ render::RGTargetSet RTIrradiancePass::setup(
 			params->setVectorParameter(ShaderParameter::IrradianceGridBoundsMax, gatheredView.irradianceGrid->getBoundingBox().mx);
 			params->setBufferViewParameter(ShaderParameter::IrradianceGridSBuffer, gatheredView.irradianceGrid->getBuffer()->getBufferView());
 		}
+
+		params->setBufferViewParameter(s_handleLightGridSBuffer, lightGridSBuffer->getBufferView());
+		params->setBufferViewParameter(s_handleLightGridIndexSBuffer, lightGridIndexSBuffer->getBufferView());
 
 		if (lightSBuffer != nullptr)
 		{

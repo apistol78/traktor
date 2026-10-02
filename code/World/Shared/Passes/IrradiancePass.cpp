@@ -52,6 +52,8 @@ render::RGTargetSet IrradiancePass::setup(
 	const WorldRenderView& worldRenderView,
 	const GatherView& gatheredView,
 	const render::Buffer* lightSBuffer,
+	const render::Buffer* lightGridSBuffer,
+	const render::Buffer* lightGridIndexSBuffer,
 	bool needJitter,
 	uint32_t frameCount,
 	render::RenderGraph& renderGraph,
@@ -61,7 +63,7 @@ render::RGTargetSet IrradiancePass::setup(
 	render::RGTargetSet outputTargetSetId) const
 {
 	if (m_rt != nullptr)
-		return m_rt->setup(worldRenderView, gatheredView, lightSBuffer, needJitter, frameCount, renderGraph, gbufferTargetSetId, velocityTargetSetId, halfResDepthTextureId, outputTargetSetId);
+		return m_rt->setup(worldRenderView, gatheredView, lightSBuffer, lightGridSBuffer, lightGridIndexSBuffer, needJitter, frameCount, renderGraph, gbufferTargetSetId, velocityTargetSetId, halfResDepthTextureId, outputTargetSetId);
 	else if (m_ss != nullptr)
 		return m_ss->setup(worldRenderView, gatheredView, lightSBuffer, needJitter, frameCount, renderGraph, gbufferTargetSetId, velocityTargetSetId, halfResDepthTextureId, outputTargetSetId);
 	else
