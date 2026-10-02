@@ -697,6 +697,11 @@
 					<excludeFilter/>
 					<items/>
 				</item>
+				<item type="traktor.sb.File" version="1">
+					<fileName>xcs.c</fileName>
+					<excludeFilter/>
+					<items/>
+				</item>
 			</items>
 			<dependencies/>
 		</item>
