@@ -159,3 +159,4 @@ Exported headers start with the module's export block (`#undef T_DLLCLASS` / `#i
 - Important to keep everything as simple as possible.
 - Do not add features which is "good to have" just for the sake of it, preferably only features that has been explicitly requrested or are of immediate use.
 - Do not change shared interfaces unless absolutely necessary, try and implement feature in implementation module first.
+- Do not use local lambda functions if used only once, implement in place instead.
