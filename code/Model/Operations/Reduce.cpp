@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -41,6 +41,9 @@ namespace traktor::model
 {
 namespace
 {
+
+// Error scale for triangles touching an open edge, makes reduction prefer interior triangles.
+const float c_boundaryWeight = 8.0f;
 
 Scalar tetrahedronVolume(const Vector4& A, const Vector4& B, const Vector4& C, const Vector4& u)
 {
@@ -309,13 +312,56 @@ void triangleSingleVertexNeighbors(const Model& model, const PositionToPolygons&
 	}
 }
 
+bool isBoundaryPosition(const Model& model, const ModelAdjacency& adjacency, const PositionToPolygons& positionToPolygons, uint32_t positionId)
+{
+	if (positionId >= positionToPolygons.size())
+		return false;
+
+	// Position is on boundary if any edge using it lacks a neighbor.
+	for (uint32_t polygonId : positionToPolygons[positionId])
+	{
+		const Polygon& polygon = model.getPolygon(polygonId);
+		for (uint32_t j = 0; j < 3; ++j)
+		{
+			if (model.getVertex(polygon.getVertex(j)).getPosition() != positionId)
+				continue;
+			if (adjacency.getSharedEdges(polygonId, j).count == 0 || adjacency.getSharedEdges(polygonId, (j + 2) % 3).count == 0)
+				return true;
+		}
+	}
+
+	return false;
+}
+
+uint32_t triangleBoundaryVertices(const Model& model, const ModelAdjacency& adjacency, const PositionToPolygons& positionToPolygons, uint32_t triangleId, uint32_t& outVertexIndex)
+{
+	const Polygon& polygon = model.getPolygon(triangleId);
+	uint32_t count = 0;
+	for (uint32_t j = 0; j < polygon.getVertexCount(); ++j)
+	{
+		if (isBoundaryPosition(model, adjacency, positionToPolygons, model.getVertex(polygon.getVertex(j)).getPosition()))
+		{
+			outVertexIndex = j;
+			++count;
+		}
+	}
+	return count;
+}
+
 float triangleVolumeError(const Model& model, const ModelAdjacency& adjacency, const PositionToPolygons& positionToPolygons, uint32_t triangleId)
 {
 	const Polygon& polygon = model.getPolygon(triangleId);
 	if (polygon.getVertexCount() < 3)
 		return 0.0f;
 
-	const Vector4 tipPoint = triangleTipPoint(model, adjacency, triangleId);
+	// Collapsing onto more than one boundary vertex would destroy open edges; thus return max error.
+	uint32_t boundaryVertex = 0;
+	const uint32_t boundaryCount = triangleBoundaryVertices(model, adjacency, positionToPolygons, triangleId, boundaryVertex);
+	if (boundaryCount >= 2)
+		return std::numeric_limits< float >::max();
+
+	// Triangle touching boundary collapses onto its boundary vertex.
+	const Vector4 tipPoint = (boundaryCount == 1) ? model.getVertexPosition(polygon.getVertex(boundaryVertex)) : triangleTipPoint(model, adjacency, triangleId);
 
 	uint32_t positionIds[3];
 	for (uint32_t i = 0; i < 3; ++i)
@@ -367,6 +413,9 @@ float triangleVolumeError(const Model& model, const ModelAdjacency& adjacency, c
 			model.getVertexPosition(sharedTriangle.getVertex(2)),
 			tipPoint);
 	}
+
+	if (boundaryCount == 1)
+		error *= c_boundaryWeight;
 
 	return error;
 }
@@ -440,15 +489,30 @@ bool Reduce::apply(Model& model) const
 		for (uint32_t vertex : model.getPolygon(minErrorTriangleId).getVertices())
 			errorTrianglePositionIds.push_back(model.getVertex(vertex).getPosition());
 
-		// Calculate new join position.
-		const Vector4 tipPoint = triangleTipPoint(model, *adjacency, minErrorTriangleId);
-		const Vector4 midPoint = triangleMidPoint(model, minErrorTriangleId);
-		const Vector2 midTexCoord = triangleMidTexCoord(model, minErrorTriangleId);
-		const Vector4 joinPoint = lerp(tipPoint, midPoint, 0.6_simd).xyz1();
-		const Vector2 joinTexCoord = midTexCoord;
+		// Calculate new join position; keep boundary vertex in place so open edges are preserved.
+		Vector4 joinPoint;
+		Vector2 joinTexCoord;
+		SmallMap< uint32_t, float > joinJointInfluences;
+
+		uint32_t boundaryVertex = 0;
+		if (triangleBoundaryVertices(model, *adjacency, positionToPolygons, minErrorTriangleId, boundaryVertex) == 1)
+		{
+			const Vertex& vertex = model.getVertex(model.getPolygon(minErrorTriangleId).getVertex(boundaryVertex));
+			joinPoint = model.getPosition(vertex.getPosition());
+			joinTexCoord = model.getTexCoord(vertex.getTexCoord(0));
+			joinJointInfluences = vertex.getJointInfluences();
+		}
+		else
+		{
+			const Vector4 tipPoint = triangleTipPoint(model, *adjacency, minErrorTriangleId);
+			const Vector4 midPoint = triangleMidPoint(model, minErrorTriangleId);
+			joinPoint = lerp(tipPoint, midPoint, 0.6_simd).xyz1();
+			joinTexCoord = triangleMidTexCoord(model, minErrorTriangleId);
+			joinJointInfluences = triangleMidJointInfluences(model, minErrorTriangleId);
+		}
+
 		const uint32_t joinPointId = model.addUniquePosition(joinPoint);
 		const uint32_t joinTexCoordId = model.addUniqueTexCoord(joinTexCoord);
-		const SmallMap< uint32_t, float > joinJointInfluences = triangleMidJointInfluences(model, minErrorTriangleId);
 
 		if (joinPointId >= (uint32_t)positionToPolygons.size())
 			positionToPolygons.resize(joinPointId + 1);
