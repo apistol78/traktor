@@ -46,8 +46,23 @@ void RenderPluginXeSS::getDeviceExtensions(VkInstance instance, VkPhysicalDevice
 	}
 }
 
+RenderPluginXeSS::~RenderPluginXeSS()
+{
+	destroy();
+}
+
 void RenderPluginXeSS::destroy()
 {
+	// The context owns its history and temporary images; these are only freed by
+	// destroying it. Command buffers recorded by execute may still be in flight.
+	if (m_xessContext != nullptr)
+	{
+		vkDeviceWaitIdle(m_context->getLogicalDevice());
+		xessDestroyContext(m_xessContext);
+		m_xessContext = nullptr;
+	}
+	m_context = nullptr;
+	m_initWidth = m_initHeight = -1;
 }
 
 void RenderPluginXeSS::render(IRenderView* renderView, ITexture* colorTexture, ITexture* depthTexture, ITexture* velocityTexture, ITexture* outputTexture, const Vector4& jitter)
@@ -62,6 +77,7 @@ void RenderPluginXeSS::render(IRenderView* renderView, ITexture* colorTexture, I
 		if (result != XESS_RESULT_SUCCESS)
 			return;
 
+		m_context = ctx;
 		m_initWidth = m_initHeight = -1;
 	}
 

@@ -87,6 +87,12 @@ const float c_pointShadowNearZ = 0.1f;
 // View to light translation of an entry without shadow; projects outside of atlas tile so light is unshadowed.
 const Vector4 c_unshadowedTranslation(2.0f, 2.0f, 0.0f, 1.0f);
 
+// Longest indirect ray, lights further than this from any lit point cannot contribute.
+const Scalar c_indirectReach(20.0f);
+
+// Half extent of camera centered irradiance field volume.
+const Scalar c_irradianceFieldExtent(40.0f);
+
 Ref< render::ITexture > create1x1Texture(render::IRenderSystem* renderSystem, uint32_t value)
 {
 	render::SimpleTextureCreateDesc stcd = {};
@@ -279,10 +285,14 @@ void WorldRendererShared::destroy()
 	m_gatheredView = {};
 }
 
-void WorldRendererShared::gather(const World* world, const std::function< bool(const EntityState& state) >& filter)
+void WorldRendererShared::gather(const World* world, const WorldRenderView& worldRenderView, const std::function< bool(const EntityState& state) >& filter)
 {
 	T_PROFILER_SCOPE(L"WorldRendererShared::gather");
 	StaticVector< const LightComponent*, LightClusterPass::c_maxLightCount > lights;
+
+	const Matrix44& view = worldRenderView.getView();
+	const Frustum& viewFrustum = worldRenderView.getViewFrustum();
+	const Vector4 eyePosition = worldRenderView.getEyePosition();
 
 	m_gatheredView.renderables.reset();
 	m_gatheredView.lights.resize(0);
@@ -316,8 +326,22 @@ void WorldRendererShared::gather(const World* world, const std::function< bool(c
 			// Filter out components used to setup frame's lighting etc.
 			if (auto lightComponent = dynamic_type_cast< const LightComponent* >(component))
 			{
-				if (lightComponent->getLightType() != LightType::Disabled && !lights.full())
-					lights.push_back(lightComponent);
+				if (lightComponent->getLightType() == LightType::Disabled || lights.full())
+					continue;
+
+				// Skip local light if its range, widened by indirect reach, touches neither view frustum nor irradiance field.
+				if (lightComponent->getLightType() == LightType::Point || lightComponent->getLightType() == LightType::Spot)
+				{
+					const Vector4 position = lightComponent->getTransform().translation().xyz1();
+					const Scalar radius = lightComponent->getFarRange() + c_indirectReach;
+					if (
+						viewFrustum.inside(view * position, radius) == Frustum::Result::Outside &&
+						(position - eyePosition).xyz0().absolute().max() > c_irradianceFieldExtent + radius
+					)
+						continue;
+				}
+
+				lights.push_back(lightComponent);
 			}
 			else if (auto probeComponent = dynamic_type_cast< const ProbeComponent* >(component))
 				m_gatheredView.probes.push_back(probeComponent);

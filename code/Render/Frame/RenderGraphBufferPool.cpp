@@ -16,6 +16,12 @@
 
 namespace traktor::render
 {
+namespace
+{
+
+const int32_t c_maxUnusuedFrames = 8;
+
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderGraphBufferPool", RenderGraphBufferPool, Object)
 
@@ -69,7 +75,7 @@ Ref< Buffer > RenderGraphBufferPool::acquire(const RenderGraphBufferDesc& buffer
 	// Acquire free buffer, if no one left we need to create a new target.
 	if (!pool->free.empty())
 	{
-		Ref< Buffer > target = pool->free.back();
+		Ref< Buffer > target = pool->free.back().buffer;
 
 		pool->free.pop_back();
 		pool->acquired.push_back(target);
@@ -110,11 +116,42 @@ void RenderGraphBufferPool::release(Ref< Buffer >& buffer)
 		if (it != pool.acquired.end())
 		{
 			pool.acquired.erase(it, pool.acquired.end());
-			pool.free.push_back(buffer);
+			pool.free.push_back({ buffer, 0 });
 			break;
 		}
 	}
 	buffer = nullptr;
+}
+
+void RenderGraphBufferPool::cleanup()
+{
+	int32_t freed = 0;
+	for (auto& pool : m_pool)
+	{
+		T_FATAL_ASSERT(pool.acquired.empty());
+		auto it = std::remove_if(pool.free.begin(), pool.free.end(), [](const FreeBuffer& buffer) {
+			return buffer.unused > c_maxUnusuedFrames;
+		});
+		if (it != pool.free.end())
+		{
+			for (auto it2 = it; it2 != pool.free.end(); ++it2)
+			{
+				if (it2->buffer)
+					it2->buffer->destroy();
+				++freed;
+			}
+			pool.free.erase(it, pool.free.end());
+		}
+		for (auto& buffer : pool.free)
+			buffer.unused++;
+	}
+	if (freed > 0)
+	{
+		auto it = std::remove_if(m_pool.begin(), m_pool.end(), [](const Pool& pool) {
+			return pool.free.empty() && pool.acquired.empty();
+		});
+		m_pool.erase(it, m_pool.end());
+	}
 }
 
 }

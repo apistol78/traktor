@@ -89,6 +89,7 @@ bool WorldServer::create(const PropertyGroup* defaultSettings, const PropertyGro
 	m_irradianceQuality = (world::Quality)settings->getProperty< int32_t >(L"World.IrradianceQuality", (int32_t)world::Quality::Medium);
 	m_volumetricFogQuality = (world::Quality)settings->getProperty< int32_t >(L"World.VolumetricFogQuality", (int32_t)world::Quality::Medium);
 	m_gamma = settings->getProperty< float >(L"World.Gamma", 2.2f);
+	m_rt = settings->getProperty< bool >(L"World.RayTracing", true);
 
 	m_renderServer = renderServer;
 	m_resourceServer = resourceServer;
@@ -203,6 +204,7 @@ int32_t WorldServer::reconfigure(const PropertyGroup* settings)
 	const world::Quality irradianceQuality = (world::Quality)settings->getProperty< int32_t >(L"World.IrradianceQuality", (int32_t)world::Quality::Medium);
 	const world::Quality volumetricFogQuality = (world::Quality)settings->getProperty< int32_t >(L"World.VolumetricFogQuality", (int32_t)world::Quality::Medium);
 	const float gamma = settings->getProperty< float >(L"World.Gamma", 2.2f);
+	const bool rt = settings->getProperty< bool >(L"World.RayTracing", true);
 
 	// Check if we need to be reconfigured.
 	if (
@@ -215,7 +217,8 @@ int32_t WorldServer::reconfigure(const PropertyGroup* settings)
 		terrainQuality == m_terrainQuality &&
 		irradianceQuality == m_irradianceQuality &&
 		volumetricFogQuality == m_volumetricFogQuality &&
-		gamma == m_gamma)
+		gamma == m_gamma &&
+		rt == m_rt)
 		return CrUnaffected;
 
 	// Adjust in-place systems.
@@ -237,6 +240,7 @@ int32_t WorldServer::reconfigure(const PropertyGroup* settings)
 	m_irradianceQuality = irradianceQuality;
 	m_volumetricFogQuality = volumetricFogQuality;
 	m_gamma = gamma;
+	m_rt = rt;
 
 	return CrAccepted;
 }
@@ -286,6 +290,7 @@ Ref< world::IWorldRenderer > WorldServer::createWorldRenderer(const world::World
 	wcd.multiSample = m_renderServer->getMultiSample();
 	wcd.gamma = m_gamma;
 	wcd.hdr = m_renderServer->getRenderView()->isHDR();
+	wcd.rt = m_rt;
 
 	Ref< world::IWorldRenderer > worldRenderer = dynamic_type_cast< world::IWorldRenderer* >(m_worldType->createInstance());
 	if (!worldRenderer)

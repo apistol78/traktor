@@ -133,7 +133,7 @@ void WorldRendererForward::setup(
 	}
 
 	// Gather active renderables for this frame.
-	gather(world, filter);
+	gather(world, worldRenderView, filter);
 
 	// Add additional passes by entity renderers.
 	{

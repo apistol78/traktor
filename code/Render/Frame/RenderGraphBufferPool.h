@@ -35,7 +35,16 @@ public:
 
 	void release(Ref< Buffer >& buffer);
 
+	/*! Destroy buffers which haven't been acquired for a while. */
+	void cleanup();
+
 private:
+	struct FreeBuffer
+	{
+		Ref< Buffer > buffer;
+		int32_t unused;
+	};
+
 	struct Pool
 	{
 		// Pool identification.
@@ -43,7 +52,7 @@ private:
 		uint32_t persistentHandle;
 
 		// Pool buffers.
-		RefArray< Buffer > free;
+		AlignedVector< FreeBuffer > free;
 		RefArray< Buffer > acquired;
 	};
 

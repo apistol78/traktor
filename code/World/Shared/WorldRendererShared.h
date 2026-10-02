@@ -133,7 +133,7 @@ protected:
 	AlignedVector< render::RGDependency > m_visualAttachments;
 	State m_state[4];
 
-	void gather(const World* world, const std::function< bool(const EntityState& state) >& filter);
+	void gather(const World* world, const WorldRenderView& worldRenderView, const std::function< bool(const EntityState& state) >& filter);
 
 	void setupSliceCullDistance(
 		const WorldRenderView& worldRenderView,

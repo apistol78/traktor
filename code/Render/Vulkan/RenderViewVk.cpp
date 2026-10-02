@@ -446,6 +446,9 @@ bool RenderViewVk::reset(const RenderViewDefaultDesc& desc)
 	if (!m_window)
 		return false;
 
+	// Picked up by the swap chain recreate below, which selects present mode from it.
+	m_vblanks = desc.waitVBlanks;
+
 #	if defined(_WIN32)
 	m_window->removeListener(this);
 #	endif
@@ -465,6 +468,7 @@ bool RenderViewVk::reset(const RenderViewDefaultDesc& desc)
 	if (!reset(m_window->getWidth(), m_window->getHeight()))
 		return false;
 #else
+	m_vblanks = desc.waitVBlanks;
 	if (!reset(
 			desc.displayMode.width,
 			desc.displayMode.height))
@@ -2014,35 +2018,24 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, uint32_t multiSample,
 			return false;
 		};
 
-		VkPresentModeKHR presentationMode = VK_PRESENT_MODE_FIFO_KHR;
+		// Resolve the mode for both vblank settings up front; which one is used is decided
+		// at swap chain creation, so vsync can be toggled through a reset without re-querying.
+		VkPresentModeKHR vsyncMode = VK_PRESENT_MODE_FIFO_KHR;
+		VkPresentModeKHR noVsyncMode = VK_PRESENT_MODE_FIFO_KHR;
 #if defined(__IOS__)
 		if (hasMode(VK_PRESENT_MODE_MAILBOX_KHR))
-			presentationMode = VK_PRESENT_MODE_MAILBOX_KHR;
+			vsyncMode = noVsyncMode = VK_PRESENT_MODE_MAILBOX_KHR;
 #else
-		if (vblanks <= 0)
-		{
-			if (hasMode(VK_PRESENT_MODE_MAILBOX_KHR))
-				presentationMode = VK_PRESENT_MODE_MAILBOX_KHR;
-			else if (hasMode(VK_PRESENT_MODE_FIFO_RELAXED_KHR))
-				presentationMode = VK_PRESENT_MODE_FIFO_RELAXED_KHR;
-		}
+		if (hasMode(VK_PRESENT_MODE_MAILBOX_KHR))
+			noVsyncMode = VK_PRESENT_MODE_MAILBOX_KHR;
+		else if (hasMode(VK_PRESENT_MODE_FIFO_RELAXED_KHR))
+			noVsyncMode = VK_PRESENT_MODE_FIFO_RELAXED_KHR;
 #endif
-		if (vblanks <= 0)
-		{
-			if (hasMode(VK_PRESENT_MODE_IMMEDIATE_KHR))
-				presentationMode = VK_PRESENT_MODE_IMMEDIATE_KHR;
-		}
+		if (hasMode(VK_PRESENT_MODE_IMMEDIATE_KHR))
+			noVsyncMode = VK_PRESENT_MODE_IMMEDIATE_KHR;
 
-		if (presentationMode == VK_PRESENT_MODE_FIFO_KHR)
-			log::debug << L"Using FIFO presentation mode." << Endl;
-		else if (presentationMode == VK_PRESENT_MODE_FIFO_RELAXED_KHR)
-			log::debug << L"Using FIFO (relaxed) presentation mode." << Endl;
-		else if (presentationMode == VK_PRESENT_MODE_IMMEDIATE_KHR)
-			log::debug << L"Using IMMEDIATE presentation mode." << Endl;
-		else if (presentationMode == VK_PRESENT_MODE_MAILBOX_KHR)
-			log::debug << L"Using MAILBOX presentation mode." << Endl;
-
-		m_presentMode = presentationMode;
+		m_presentModeVSync = vsyncMode;
+		m_presentModeNoVSync = noVsyncMode;
 
 		// Check if debug marker extension is available; this also never changes for the device.
 		m_haveDebugMarkers = false;
@@ -2099,7 +2092,15 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, uint32_t multiSample,
 
 	const VkFormat colorFormat = m_colorFormat;
 	const VkColorSpaceKHR colorSpace = m_colorSpace;
-	const VkPresentModeKHR presentationMode = m_presentMode;
+	const VkPresentModeKHR presentationMode = (m_vblanks > 0) ? m_presentModeVSync : m_presentModeNoVSync;
+	if (presentationMode == VK_PRESENT_MODE_FIFO_KHR)
+		log::debug << L"Using FIFO presentation mode." << Endl;
+	else if (presentationMode == VK_PRESENT_MODE_FIFO_RELAXED_KHR)
+		log::debug << L"Using FIFO (relaxed) presentation mode." << Endl;
+	else if (presentationMode == VK_PRESENT_MODE_IMMEDIATE_KHR)
+		log::debug << L"Using IMMEDIATE presentation mode." << Endl;
+	else if (presentationMode == VK_PRESENT_MODE_MAILBOX_KHR)
+		log::debug << L"Using MAILBOX presentation mode." << Endl;
 
 	// Check so desired image count is supported.
 	uint32_t desiredImageCount = 3;

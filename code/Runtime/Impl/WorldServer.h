@@ -98,6 +98,7 @@ private:
 	world::Quality m_irradianceQuality = world::Quality::Medium;
 	world::Quality m_volumetricFogQuality = world::Quality::Medium;
 	float m_gamma = 2.2f;
+	bool m_rt = true;
 };
 
 }

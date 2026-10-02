@@ -228,7 +228,8 @@ private:
 	bool m_surfaceCacheValid = false;
 	VkFormat m_colorFormat = VK_FORMAT_UNDEFINED;
 	VkColorSpaceKHR m_colorSpace = VK_COLOR_SPACE_SRGB_NONLINEAR_KHR;
-	VkPresentModeKHR m_presentMode = VK_PRESENT_MODE_FIFO_KHR;
+	VkPresentModeKHR m_presentModeVSync = VK_PRESENT_MODE_FIFO_KHR;
+	VkPresentModeKHR m_presentModeNoVSync = VK_PRESENT_MODE_FIFO_KHR;
 	uint32_t m_presentQueueFamilyIndex = ~0u;
 
 	// System window event queue.

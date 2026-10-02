@@ -121,6 +121,8 @@ bool RTIrradiancePass::create(resource::IResourceManager* resourceManager, rende
 
 void RTIrradiancePass::destroy()
 {
+	safeDestroy(m_irradianceFieldTextures[0]);
+	safeDestroy(m_irradianceFieldTextures[1]);
 	safeDestroy(m_screenRenderer);
 	m_irradianceComputeShader.clear();
 	m_irradianceDenoise.clear();

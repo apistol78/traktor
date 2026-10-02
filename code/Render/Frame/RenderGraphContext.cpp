@@ -41,6 +41,7 @@ void RenderGraphContext::destroy()
 void RenderGraphContext::cleanup()
 {
 	m_targetSetPool->cleanup();
+	m_bufferPool->cleanup();
 	m_texturePool->cleanup();
 }
 

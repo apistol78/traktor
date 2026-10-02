@@ -8,6 +8,10 @@
  */
 #pragma once
 
+// Must precede XeSS; it includes vulkan.h which otherwise declares prototypes
+// rather than the dynamically loaded entry points.
+#include "Render/Vulkan/Private/ApiLoader.h"
+
 #include <xess/xess_vk.h>
 
 #include "Render/IRenderPlugin.h"
@@ -23,11 +27,15 @@
 namespace traktor::render
 {
 
+class Context;
+
 class T_DLLCLASS RenderPluginXeSS : public IRenderPlugin
 {
 	T_RTTI_CLASS;
 
 public:
+	virtual ~RenderPluginXeSS();
+
 	static void getExtensions(AlignedVector< const char* >& outExtensions);
 
 	static void getDeviceExtensions(VkInstance instance, VkPhysicalDevice physicalDevice, AlignedVector< const char* >& outExtensions);
@@ -37,6 +45,7 @@ public:
 	virtual void render(IRenderView* renderView, ITexture* colorTexture, ITexture* depthTexture, ITexture* velocityTexture, ITexture* outputTexture, const Vector4& jitter) override final;
 
 private:
+	Ref< Context > m_context;
 	xess_context_handle_t m_xessContext = nullptr;
 
 	int32_t m_initWidth = -1;
