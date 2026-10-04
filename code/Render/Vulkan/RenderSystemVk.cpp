@@ -393,7 +393,21 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 	AlignedVector< const char* > deviceExtensions;
 	for (int32_t i = 0; i < sizeof_array(c_deviceExtensions); ++i)
 		deviceExtensions.push_back(c_deviceExtensions[i]);
-	if (desc.rayTracing)
+
+	// Disable ray tracing if any required extension isn't supported by device.
+	bool rayTracing = desc.rayTracing;
+	for (int32_t i = 0; rayTracing && i < sizeof_array(c_deviceExtensionsRayTracing); ++i)
+	{
+		const auto it = std::find_if(availableExtensions.begin(), availableExtensions.end(), [&](const VkExtensionProperties& ext) {
+			return std::strcmp(c_deviceExtensionsRayTracing[i], ext.extensionName) == 0;
+		});
+		if (it == availableExtensions.end())
+		{
+			log::warning << L"Ray tracing require \"" << mbstows(c_deviceExtensionsRayTracing[i]) << L"\" but is not supported on device; ray tracing disabled." << Endl;
+			rayTracing = false;
+		}
+	}
+	if (rayTracing)
 		for (int32_t i = 0; i < sizeof_array(c_deviceExtensionsRayTracing); ++i)
 			deviceExtensions.push_back(c_deviceExtensionsRayTracing[i]);
 
@@ -580,7 +594,7 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 		.rayQuery = VK_TRUE
 	};
 
-	if (desc.rayTracing)
+	if (rayTracing)
 		headFeature = &featuresRayQuery;
 #endif
 
@@ -718,7 +732,7 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 		m_allocator,
 		graphicsQueueIndex,
 		computeQueueIndex,
-		desc.rayTracing,
+		rayTracing,
 		smoothLinesSupported,
 		hostQueryResetSupported);
 	if (!m_context->create())
@@ -731,7 +745,7 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 	m_pipelineLayoutCache = new PipelineLayoutCache(m_context);
 	m_maxAnisotropy = desc.maxAnisotropy;
 	m_mipBias = desc.mipBias;
-	m_rayTracing = desc.rayTracing;
+	m_rayTracing = rayTracing;
 
 	log::info << L"Vulkan render system created successfully." << Endl;
 	return true;
