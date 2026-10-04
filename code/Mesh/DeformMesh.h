@@ -185,8 +185,8 @@ private:
 	AlignedVector< DeformPart > m_deformParts;
 	resource::Proxy< render::Shader > m_shaderDeformCopy;
 	Ref< const render::IVertexLayout > m_deformVertexLayout;
-	Ref< render::Mesh > m_deformRenderMesh;
-	Ref< render::IRenderSystem > m_deformRenderSystem;
+	Ref< render::Mesh > m_renderMesh;
+	Ref< render::IRenderSystem > m_renderSystem;
 	uint32_t m_deformVertexCount = 0;
 
 	Ref< render::Buffer > m_deformBuffer;						//!< Pooled; holding every slot.

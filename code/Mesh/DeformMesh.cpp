@@ -166,7 +166,7 @@ const render::IAccelerationStructure* DeformMesh::buildDeformSlotAccelerationStr
 
 	// The slot's positions sit at an offset into the buffer; address them through the
 	// primitives' first vertex rather than a buffer view.
-	AlignedVector< render::RaytracingPrimitives > primitives = m_deformRenderMesh->getRaytracingPrimitives();
+	AlignedVector< render::RaytracingPrimitives > primitives = m_renderMesh->getRaytracingPrimitives();
 	for (auto& rtp : primitives)
 		rtp.firstVertex = (uint32_t)slot * m_deformVertexCount;
 
@@ -181,8 +181,8 @@ const render::IAccelerationStructure* DeformMesh::buildDeformSlotAccelerationStr
 			accelerationStructure,
 			deformBuffer,
 			m_deformVertexLayout,
-			m_deformRenderMesh->getIndexBuffer()->getBufferView(),
-			m_deformRenderMesh->getIndexType(),
+			m_renderMesh->getIndexBuffer()->getBufferView(),
+			m_renderMesh->getIndexType(),
 			primitives,
 			rebuild,
 			asynchronous);
@@ -222,7 +222,7 @@ void DeformMesh::setDeformParameters(render::ProgramParameters* programParams, i
 	else
 	{
 		if (m_deformPlaceholder == nullptr)
-			m_deformPlaceholder = m_deformRenderSystem->createBuffer(render::BuStructured, sizeof(DeformPosition), false, T_FILE_LINE_W);
+			m_deformPlaceholder = m_renderSystem->createBuffer(render::BuStructured, sizeof(DeformPosition), false, T_FILE_LINE_W);
 		deformBuffer = lastDeformBuffer = m_deformPlaceholder->getBufferView();
 	}
 
@@ -305,8 +305,8 @@ bool DeformMesh::createDeform(
 		return false;
 	}
 
-	m_deformRenderMesh = renderMesh;
-	m_deformRenderSystem = renderSystem;
+	m_renderMesh = renderMesh;
+	m_renderSystem = renderSystem;
 	m_deformVertexCount = deformVertices->getBufferSize() / sizeof(DeformVertex);
 
 	log::info << L"Mesh deform; " << m_deformVertexCount << L" vertices, " << (m_deformVertexCount * sizeof(DeformPosition)) / 1024 << L" KiB per deform slot and pooled allocation." << Endl;
@@ -321,7 +321,7 @@ void DeformMesh::ensureDeformCapacity(uint32_t slotCount)
 	// Recreate the pool, losing every slot's history and structure geometry; grown geometrically
 	// but a slot is a lot of memory for a detailed mesh, thus not far beyond what is in use.
 	const uint32_t capacity = std::max< uint32_t >(slotCount, std::min< uint32_t >(m_deformCapacity * 2, slotCount + 8));
-	m_deformBuffer = m_deformRenderSystem->createBuffer(render::BuStructured | render::BuPooled, capacity * m_deformVertexCount * sizeof(DeformPosition), false, T_FILE_LINE_W);
+	m_deformBuffer = m_renderSystem->createBuffer(render::BuStructured | render::BuPooled, capacity * m_deformVertexCount * sizeof(DeformPosition), false, T_FILE_LINE_W);
 	m_lastDeformBufferView = m_deformBuffer->getBufferView();
 	for (auto& ds : m_deformSlots)
 		ds.rtRebuild = true;
@@ -341,8 +341,8 @@ void DeformMesh::buildDeform(
 	const IMeshParameterCallback* parameterCallback) const
 {
 	const bool asynchronous = renderContext->isAsyncCompute();
-	const render::Buffer* deformVertices = m_deformRenderMesh->getAuxBuffer(c_fccDeformVertices);
-	const render::Buffer* deformIndices = m_deformRenderMesh->getAuxBuffer(c_fccDeformIndices);
+	const render::Buffer* deformVertices = m_renderMesh->getAuxBuffer(c_fccDeformVertices);
+	const render::Buffer* deformIndices = m_renderMesh->getAuxBuffer(c_fccDeformIndices);
 
 	// Parameters shared by all parts; the surface graph evaluating the offsets may read anything
 	// a vertex shader can, thus the frame and object parameters of a render pass are set here.
@@ -404,12 +404,12 @@ Ref< render::IAccelerationStructure > DeformMesh::createDeformAccelerationStruct
 {
 	// No acceleration structure when ray tracing is unsupported, or when the mesh was built
 	// with ray tracing disabled (in which case it carries no ray tracing primitives).
-	if (!m_deformRenderSystem->supportRayTracing() || m_deformRenderMesh->getRaytracingPrimitives().empty())
+	if (!m_renderSystem->supportRayTracing() || m_renderMesh->getRaytracingPrimitives().empty())
 		return nullptr;
 
 	// Initially built from the undeformed source positions; refit from the deform buffers
 	// afterwards. The layout carry every element of the source vertex so the pitch is correct.
-	Ref< const render::IVertexLayout > sourceLayout = m_deformRenderSystem->createVertexLayout({
+	Ref< const render::IVertexLayout > sourceLayout = m_renderSystem->createVertexLayout({
 		render::VertexElement(render::DataUsage::Position, render::DtFloat4, offsetof(DeformVertex, Position)),
 		render::VertexElement(render::DataUsage::Normal, render::DtHalf4, offsetof(DeformVertex, Normal)),
 		render::VertexElement(render::DataUsage::Tangent, render::DtHalf4, offsetof(DeformVertex, Tangent)),
@@ -420,12 +420,12 @@ Ref< render::IAccelerationStructure > DeformMesh::createDeformAccelerationStruct
 	if (!sourceLayout)
 		return nullptr;
 
-	return m_deformRenderSystem->createAccelerationStructure(
-		m_deformRenderMesh->getAuxBuffer(c_fccDeformVertices),
+	return m_renderSystem->createAccelerationStructure(
+		m_renderMesh->getAuxBuffer(c_fccDeformVertices),
 		sourceLayout,
-		m_deformRenderMesh->getIndexBuffer(),
-		m_deformRenderMesh->getIndexType(),
-		m_deformRenderMesh->getRaytracingPrimitives(),
+		m_renderMesh->getIndexBuffer(),
+		m_renderMesh->getIndexType(),
+		m_renderMesh->getRaytracingPrimitives(),
 		true,
 		true);
 }
