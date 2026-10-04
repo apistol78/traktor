@@ -227,6 +227,7 @@ void RenderClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	auto classIRenderSystem = new AutoRuntimeClass< IRenderSystem >();
 	classIRenderSystem->addStaticMethod("getParameterHandle", &IRenderSystem_getHandle);
 	classIRenderSystem->addProperty("displayCount", &IRenderSystem::getDisplayCount);
+	classIRenderSystem->addProperty("supportRayTracing", &IRenderSystem::supportRayTracing);
 	classIRenderSystem->addMethod("getDisplayModeCount", &IRenderSystem::getDisplayModeCount);
 	classIRenderSystem->addMethod("getDisplayMode", &IRenderSystem_getDisplayMode);
 	classIRenderSystem->addMethod("getCurrentDisplayMode", &IRenderSystem_getCurrentDisplayMode);

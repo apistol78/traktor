@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -267,7 +267,7 @@ void PropertyGroup_setProperty(PropertyGroup* self, const std::wstring& property
 		self->setProperty< PropertyInteger >(propertyName, value.getInt32());
 	else if (value.isInt64())
 		self->setProperty< PropertyInteger >(propertyName, (int32_t)value.getInt64());
-	else if (value.isFloat())
+	else if (value.isFloat() || value.isDouble())
 		self->setProperty< PropertyFloat >(propertyName, value.getFloat());
 	else if (value.isString())
 		self->setProperty< PropertyString >(propertyName, value.getWideString());
