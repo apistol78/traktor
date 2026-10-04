@@ -20,6 +20,7 @@
 #include "Runtime/Events/HotReloadEvent.h"
 #include "Runtime/Events/ReconfigureEvent.h"
 #include "Runtime/Target/CommandEvent.h"
+#include "Runtime/Types.h"
 
 namespace traktor::runtime
 {
@@ -152,11 +153,13 @@ bool StageState::take(const Object* event)
 			// render resource is destroyed.
 			for (auto& frame : m_frames)
 				frame.renderContext->flush();
-
-			m_stage->preReconfigured();
 		}
-		else
+		else if (reconfigureEvent->getResult() != CrUnaffected)
+		{
+			// Only reconfigure layers if any server has been affected.
+			m_stage->preReconfigured();
 			m_stage->postReconfigured();
+		}
 	}
 	else if (auto activeEvent = dynamic_type_cast< const ActiveEvent* >(event))
 	{

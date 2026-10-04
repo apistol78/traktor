@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -207,13 +207,18 @@ int32_t AudioServer::reconfigure(const PropertyGroup* settings)
 	if (!m_audioSystem)
 		return CrUnaffected;
 
+	int32_t result = CrUnaffected;
+
 	// Replace audio driver.
 	const std::wstring audioType = settings->getProperty< std::wstring >(L"Audio.Type");
 	if (audioType != m_audioType)
 	{
 		Ref< sound::IAudioDriver > soundDriver = dynamic_type_cast< sound::IAudioDriver* >(TypeInfo::createInstance(audioType.c_str()));
 		if (soundDriver && m_audioSystem->reset(soundDriver))
+		{
 			m_audioType = audioType;
+			result = CrAccepted;
+		}
 		else
 			log::warning << L"Unable to replace sound driver" << Endl;
 	}
@@ -247,7 +252,7 @@ int32_t AudioServer::reconfigure(const PropertyGroup* settings)
 		m_surroundEnvironment->setVerticalScale(settings->getProperty< float >(L"Audio.Surround/VerticalScale", c_surroundVerticalScale));
 	}
 
-	return CrAccepted;
+	return result;
 }
 
 sound::AudioSystem* AudioServer::getAudioSystem()
