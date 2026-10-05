@@ -131,6 +131,8 @@ protected:
 
 	GatherView m_gatheredView;
 	Ref< Packer > m_shadowAtlasPacker;
+	AlignedVector< int32_t > m_lightSpotIndices;
+	AlignedVector< int32_t > m_lightPointIndices;
 	AlignedVector< render::RGDependency > m_visualAttachments;
 	State m_state[4];
 

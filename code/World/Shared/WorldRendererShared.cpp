@@ -76,8 +76,9 @@ const Scalar c_shadowSliceMarginMin(1.0f);
 // view since it was taken; the margin is what covers that.
 const float c_sliceFarMargin = 1.25f;
 
-// Maximum number of shadow casting point lights; each appends six cube face entries to the light buffer.
-const int32_t c_maxShadowPointLights = 16;
+// Maximum number of shadow casting spot and point lights.
+const int32_t c_maxShadowSpotLights = 4;
+const int32_t c_maxShadowPointLights = 4;
 
 // Border, in texels, around each cube face so the shadow filter kernel stays inside the face.
 const int32_t c_pointShadowFaceBorder = 2;
@@ -450,8 +451,8 @@ render::RGTargetSet WorldRendererShared::setupLightPass(
 	T_PROFILER_SCOPE(L"WorldRendererShared setupLightPass");
 
 	const auto& shadowSettings = m_settings.shadowSettings[(int32_t)m_shadowsQuality];
-	const bool shadowMapDirectionalEnable = (bool)(m_shadowsQuality != Quality::Disabled);
-	const bool shadowMapAtlasEnable = (bool)(m_shadowsQuality != Quality::Disabled && m_gatheredView.rtWorldTopLevel == nullptr);
+	const bool shadowMapEnable = (bool)(m_shadowsQuality != Quality::Disabled);
+	const bool shadowMapAtlasEnable = (bool)(shadowMapEnable && m_gatheredView.rtWorldTopLevel == nullptr);
 	const UniformShadowProjection shadowProjection(shadowSettings.resolution);
 
 	T_FATAL_ASSERT(worldRenderView.getIndex() < sizeof_array(m_state));
@@ -478,9 +479,9 @@ render::RGTargetSet WorldRendererShared::setupLightPass(
 	Matrix44* sliceViews = state.sliceViews;
 	Matrix44* shadowLightViews = state.shadowLightViews;
 
-	// Find atlas shadow lights.
-	StaticVector< int32_t, 32 > lightAtlasIndices;
-	AlignedVector< int32_t > lightPointIndices;
+	// Find spot and point lights which cast shadows.
+	m_lightSpotIndices.resize(0);
+	m_lightPointIndices.resize(0);
 	if (shadowMapAtlasEnable)
 	{
 		for (int32_t i = 0; i < (int32_t)m_gatheredView.lights.size(); ++i)
@@ -488,21 +489,30 @@ render::RGTargetSet WorldRendererShared::setupLightPass(
 			const auto& light = m_gatheredView.lights[i];
 			if (!light->getCastShadow())
 				continue;
-			if (light->getLightType() == LightType::Spot && !lightAtlasIndices.full())
-				lightAtlasIndices.push_back(i);
+			if (light->getLightType() == LightType::Spot)
+				m_lightSpotIndices.push_back(i);
 			else if (light->getLightType() == LightType::Point)
-				lightPointIndices.push_back(i);
+				m_lightPointIndices.push_back(i);
 		}
 
-		// Nearest point lights first so they get largest atlas regions.
-		const Vector4 eyePosition = worldRenderView.getEyePosition();
-		std::sort(lightPointIndices.begin(), lightPointIndices.end(), [&](int32_t lh, int32_t rh) {
+		// Sort lights by distance so we can prioritize shadow map usage.
+		const Vector4& eyePosition = worldRenderView.getEyePosition();
+
+		std::sort(m_lightSpotIndices.begin(), m_lightSpotIndices.end(), [&](int32_t lh, int32_t rh) {
 			const Scalar dl = (m_gatheredView.lights[lh]->getTransform().translation() - eyePosition).xyz0().length2();
 			const Scalar dr = (m_gatheredView.lights[rh]->getTransform().translation() - eyePosition).xyz0().length2();
 			return dl < dr;
 		});
-		if (lightPointIndices.size() > c_maxShadowPointLights)
-			lightPointIndices.resize(c_maxShadowPointLights);
+		if (m_lightSpotIndices.size() > c_maxShadowSpotLights)
+			m_lightSpotIndices.resize(c_maxShadowSpotLights);
+
+		std::sort(m_lightPointIndices.begin(), m_lightPointIndices.end(), [&](int32_t lh, int32_t rh) {
+			const Scalar dl = (m_gatheredView.lights[lh]->getTransform().translation() - eyePosition).xyz0().length2();
+			const Scalar dr = (m_gatheredView.lights[rh]->getTransform().translation() - eyePosition).xyz0().length2();
+			return dl < dr;
+		});
+		if (m_lightPointIndices.size() > c_maxShadowPointLights)
+			m_lightPointIndices.resize(c_maxShadowPointLights);
 	}
 
 	// Write all lights to sbuffer; without shadow map information.
@@ -517,7 +527,6 @@ render::RGTargetSet WorldRendererShared::setupLightPass(
 		lsd->shadowTexelScale = 0.0f;
 		lsd->rangeRadius[0] = light->getNearRange();
 		lsd->rangeRadius[1] = light->getFarRange();
-		// Cosine of the half angle of the inner, fully lit, and the outer cone of a spot light.
 		lsd->rangeRadius[2] = std::cos((light->getRadius() - deg2rad(c_spotLightPenumbraAngle)) / 2.0f);
 		lsd->rangeRadius[3] = std::cos(light->getRadius() / 2.0f);
 
@@ -532,7 +541,6 @@ render::RGTargetSet WorldRendererShared::setupLightPass(
 		c_unshadowedTranslation.storeUnaligned(lsd->viewToLight3);
 		Vector4::zero().storeUnaligned(lsd->atlasTransform);
 	}
-
 	for (int32_t i = (int32_t)m_gatheredView.lights.size(); i < (int32_t)m_gatheredView.lights.size() + 3; ++i)
 	{
 		auto* lsd = &lightShaderData[i];
@@ -549,9 +557,7 @@ render::RGTargetSet WorldRendererShared::setupLightPass(
 		Vector4::zero().storeUnaligned(lsd->atlasTransform);
 	}
 
-	// If shadow casting directional light found add cascade shadow map pass
-	// and update light sbuffer.
-	if (shadowMapDirectionalEnable)
+	if (shadowMapEnable)
 	{
 		const int32_t cascadingSlices = (m_gatheredView.cascadingDirectionalLight != nullptr) ? shadowSettings.cascadingSlices : 0;
 		const int32_t shmw = shadowSettings.resolution * (cascadingSlices + 1);
@@ -664,11 +670,7 @@ render::RGTargetSet WorldRendererShared::setupLightPass(
 				Scalar zf(min(state.slicePositions[slice + 1], shadowSettings.farZ));
 				const bool staticOnly = bool(slice >= shadowSettings.cascadingSlices - 2);
 
-				// The first slice contains dynamic entities and is always rendered as
-				// configured. Further slices are culled against the furthest measured
-				// depth - a slice entirely beyond it has no receivers - and the far
-				// distance of the last visible slice is clamped to it so its projection
-				// fits the geometry actually in view.
+				// The first slice contains dynamic entities and is always rendered.
 				if (slice != 0)
 				{
 					const Scalar cullFarZ(state.sliceCullFarZ);
@@ -682,22 +684,13 @@ render::RGTargetSet WorldRendererShared::setupLightPass(
 				sliceViewFrustum.setNearZ(zn);
 				sliceViewFrustum.setFarZ(zf);
 
-#if 1
-				// Check if this slice is still inside the expanded slice frustum that
-				// was rendered into the atlas. shadowSlices[i] is expressed in the view
-				// space of the frame it was last rendered (sliceViews[i]); transform the
-				// current slice frustum from the current view space into that space so
-				// the containment test measures the full accumulated camera motion, not
-				// just the delta since the previous frame.
+				// Check if this slice is still inside the expanded slice frustum that was rendered into the atlas.
 				if (slice != 0)
 				{
 					const Matrix44 toStored = sliceViews[i] * viewInverse;
 					if (!staticOnly)
 					{
-						// Force one dynamic slice to refresh each frame (round-robin) so
-						// moving entities are picked up even when the camera is still. The
-						// last slice is static-only (handled below), so rotate only over
-						// the dynamic slices 1 .. cascadingSlices-2.
+						// Force one dynamic slice to refresh each frame.
 						const int32_t dynamicSlices = std::max< int32_t >(shadowSettings.cascadingSlices - 2, 1);
 						const int32_t force = (state.count % dynamicSlices) + 1;
 						if (slice != force && shadowSlices[i].inside(toStored, sliceViewFrustum) == Frustum::Result::Inside)
@@ -711,7 +704,6 @@ render::RGTargetSet WorldRendererShared::setupLightPass(
 					}
 					sliceViewFrustum.scale(max(c_shadowSliceMarginMin, zf * c_shadowSliceMarginFactor));
 				}
-#endif
 
 				shadowSlices[i] = sliceViewFrustum;
 				sliceViews[i] = view;
@@ -825,7 +817,7 @@ render::RGTargetSet WorldRendererShared::setupLightPass(
 			}
 		}
 
-		for (int32_t lightAtlasIndex : lightAtlasIndices)
+		for (int32_t lightAtlasIndex : m_lightSpotIndices)
 		{
 			const auto& light = m_gatheredView.lights[lightAtlasIndex];
 			const Transform lightTransform = light->getTransform();
@@ -895,9 +887,9 @@ render::RGTargetSet WorldRendererShared::setupLightPass(
 				shadowFrustum);
 		}
 
-		for (int32_t i = 0; i < (int32_t)lightPointIndices.size(); ++i)
+		for (int32_t i = 0; i < (int32_t)m_lightPointIndices.size(); ++i)
 		{
-			const int32_t lightPointIndex = lightPointIndices[i];
+			const int32_t lightPointIndex = m_lightPointIndices[i];
 			const auto& light = m_gatheredView.lights[lightPointIndex];
 			const Matrix44 lightTransform = light->getTransform().toMatrix44();
 			const Vector4 lightPosition = lightTransform.translation().xyz1();
