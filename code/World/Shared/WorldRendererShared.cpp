@@ -77,8 +77,8 @@ const Scalar c_shadowSliceMarginMin(1.0f);
 const float c_sliceFarMargin = 1.25f;
 
 // Maximum number of shadow casting spot and point lights.
-const int32_t c_maxShadowSpotLights = 4;
-const int32_t c_maxShadowPointLights = 4;
+const int32_t c_maxShadowSpotLights = 8;
+const int32_t c_maxShadowPointLights = 8;
 
 // Border, in texels, around each cube face so the shadow filter kernel stays inside the face.
 const int32_t c_pointShadowFaceBorder = 2;

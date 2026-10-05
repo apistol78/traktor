@@ -295,7 +295,7 @@ public:
 	explicit StaticVector(const IteratorType& from, const IteratorType& to)
 	:	m_size(0)
 	{
-		for (IteratorType i = from; i != to; ++i)
+		for (IteratorType i = from; !full() && i != to; ++i)
 			push_back(*i);
 	}
 
