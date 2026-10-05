@@ -10,6 +10,7 @@
 
 #include "Core/Containers/AlignedVector.h"
 #include "Core/Math/Frustum.h"
+#include "Core/Math/Transform.h"
 #include "Resource/Proxy.h"
 #include "World/IWorldRenderer.h"
 #include "World/WorldRenderSettings.h"
@@ -89,6 +90,17 @@ protected:
 
 #pragma pack()
 
+	struct PointShadow
+	{
+		Transform transform;
+		float farRange;
+		int32_t x;			//!< Atlas position, including cascade offset.
+		int32_t y;
+		int32_t faceSize;
+
+		bool operator==(const PointShadow& other) const = default;
+	};
+
 	struct State
 	{
 		Ref< render::Buffer > lightSBuffer;
@@ -97,6 +109,7 @@ protected:
 		Matrix44 shadowLightViews[4];
 		float slicePositions[MaxSliceCount + 1];	//!< Cascade splits, always as configured.
 		float sliceCullFarZ = 0.0f;		//!< Furthest measured depth (with margin); slice updates entirely beyond it are culled and the last visible slice's far is clamped to it.
+		AlignedVector< PointShadow > pointShadows;	//!< Point light shadows in atlas from last frame; reused while unchanged.
 		uint32_t count = 0;
 	};
 

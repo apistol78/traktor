@@ -458,6 +458,10 @@ render::RGTargetSet WorldRendererShared::setupLightPass(
 	T_FATAL_ASSERT(worldRenderView.getIndex() < sizeof_array(m_state));
 	State& state = m_state[worldRenderView.getIndex()];
 
+	// Only shadows rendered or reused last frame are intact in atlas; any frame without atlas update invalidates them.
+	const StaticVector< PointShadow, c_maxShadowPointLights > lastPointShadows(state.pointShadows.begin(), state.pointShadows.end());
+	state.pointShadows.resize(0);
+
 	// Determine how far the cascades need to reach from the measured depth range.
 	setupSliceCullDistance(worldRenderView, state);
 
@@ -587,7 +591,7 @@ render::RGTargetSet WorldRendererShared::setupLightPass(
 		rp->setOutput(shadowMapAtlasTargetSetId, render::TfDepth, render::TfDepth);
 
 		// Add render of a single shadow map tile in the atlas.
-		const auto addShadowTile = [&](const Packer::Rectangle& tile, const Matrix44& shadowLightProjection, const Matrix44& shadowLightView, const Frustum& shadowFrustum) {
+		const auto addShadowTile = [&](const Packer::Rectangle& tile, const Matrix44& shadowLightProjection, const Matrix44& shadowLightView, const Frustum& shadowFrustum, bool staticOnly) {
 			const int32_t passShadowMapIndex = shadowMapIndex++;
 
 			rp->addBuild(
@@ -600,6 +604,7 @@ render::RGTargetSet WorldRendererShared::setupLightPass(
 				WorldRenderView shadowRenderView;
 				shadowRenderView.setIndex(worldRenderView.getIndex());
 				shadowRenderView.setShadowMapIndex(passShadowMapIndex);
+				shadowRenderView.setStaticOnly(staticOnly);
 				shadowRenderView.setProjection(shadowLightProjection);
 				shadowRenderView.setView(shadowLightView, shadowLightView);
 				shadowRenderView.setViewFrustum(shadowFrustum);
@@ -650,7 +655,9 @@ render::RGTargetSet WorldRendererShared::setupLightPass(
 				{
 					IEntityRenderer* entityRenderer = it.first;
 					const GatherView::Renderable& r = it.second;
-					entityRenderer->build(wc, shadowRenderView, shadowPass, r.objects);
+
+					const AlignedVector< Object* >& objects = staticOnly ? r.staticOnlyObjects : r.objects;
+					entityRenderer->build(wc, shadowRenderView, shadowPass, objects);
 				}
 			});
 		};
@@ -884,7 +891,8 @@ render::RGTargetSet WorldRendererShared::setupLightPass(
 				{ atlasOffset + atlasRect.x, atlasRect.y, atlasRect.width, atlasRect.height },
 				shadowLightProjection,
 				shadowLightView,
-				shadowFrustum);
+				shadowFrustum,
+				false);
 		}
 
 		for (int32_t i = 0; i < (int32_t)m_lightPointIndices.size(); ++i)
@@ -909,6 +917,11 @@ render::RGTargetSet WorldRendererShared::setupLightPass(
 			}
 			if (!inserted)
 				continue;
+
+			// Shadows contain only static entities so they only need to be rendered when light or atlas region change.
+			const PointShadow pointShadow = { light->getTransform(), light->getFarRange(), atlasOffset + atlasRect.x, atlasRect.y, faceSize };
+			const bool cached = std::find(lastPointShadows.begin(), lastPointShadows.end(), pointShadow) != lastPointShadows.end();
+			state.pointShadows.push_back(pointShadow);
 
 			const int32_t faceIndex = (int32_t)m_gatheredView.lights.size() + 3 + i * 6;
 
@@ -969,7 +982,8 @@ render::RGTargetSet WorldRendererShared::setupLightPass(
 					(float)tile.height / shmh)
 					.storeUnaligned(fsd->atlasTransform);
 
-				addShadowTile(tile, shadowLightProjection, shadowLightView, shadowFrustum);
+				if (!cached)
+					addShadowTile(tile, shadowLightProjection, shadowLightView, shadowFrustum, true);
 			}
 		}
 
