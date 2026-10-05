@@ -83,10 +83,22 @@ Aabb3 StaticMeshComponent::getBoundingBox() const
 
 void StaticMeshComponent::setup(const world::WorldSetupContext& context, const world::WorldRenderView& worldRenderView)
 {
-	// Release deform slot if mesh has been reloaded.
+	// Recreate RT and release deform slot if mesh has been reloaded.
 	if (m_mesh.changed())
 	{
 		releaseDeformSlot();
+
+		if (m_rtwInstance)
+		{
+			safeDestroy(m_rtwInstance);
+
+			world::RTWorldComponent* rtw = m_world->getComponent< world::RTWorldComponent >();
+			if (rtw != nullptr && m_mesh->getAccelerationStructure() != nullptr)
+			{
+				m_rtwInstance = rtw->createInstance(m_mesh->getAccelerationStructure(), m_mesh->getRTVertexAttributes());
+				m_rtwInstance->setTransform(m_transform->currentRender);
+			}
+		}
 		m_mesh.consume();
 	}
 
