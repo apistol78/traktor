@@ -179,7 +179,6 @@ private:
 		const Object* owner = nullptr;
 		Ref< render::IAccelerationStructure > blas;
 		int32_t rtUpdates = 0;
-		bool rtRebuild = false; //!< Geometry has changed, thus next update is a full build.
 	};
 
 	AlignedVector< DeformPart > m_deformParts;
@@ -190,13 +189,10 @@ private:
 	uint32_t m_deformVertexCount = 0;
 
 	Ref< render::Buffer > m_deformBuffer;						//!< Pooled; holding every slot.
-	const render::IBufferView* m_lastDeformBufferView = nullptr; //!< Deform of the previous frame, read for velocities.
+	const render::IBufferView* m_lastDeformBufferView = nullptr; //!< Deform of the previous frame, read for velocities; null until a new pool is deformed.
 	Ref< render::Buffer > m_deformPlaceholder;					//!< Bound instead of the pool while none exists.
 	AlignedVector< DeformSlot > m_deformSlots;
 	uint32_t m_deformCapacity = 0;
-	uint32_t m_deformWrites = 0;
-	bool m_deformWriteLastAll = false;		//!< The pool was recreated; every slot must rewrite its history.
-	bool m_deformWriteLastAllFrame = false; //!< Rewrite histories while building this frame's slots.
 
 	/*! Ensure the deform pool holds at least the given number of slots. */
 	void ensureDeformCapacity(uint32_t slotCount);

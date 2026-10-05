@@ -85,7 +85,6 @@ int32_t DeformMesh::allocateDeformSlot(const Object* owner)
 
 	DeformSlot& ds = m_deformSlots[slot];
 	ds.owner = owner;
-	ds.rtRebuild = true; // Geometry of a new owner.
 	ds.rtUpdates = std::rand() % c_maxRtUpdatesBeforeBuild;
 	return slot;
 }
@@ -101,18 +100,14 @@ void DeformMesh::releaseDeformSlot(int32_t slot)
 
 void DeformMesh::beginDeform()
 {
-	T_ASSERT(haveDeform());
-	ensureDeformCapacity(1);
+	T_ASSERT(m_deformBuffer != nullptr);
 
-	// Pending frames might still read the current deform, thus deform into another allocation.
+	// Pending frames might still read the current deform, thus deform into another allocation;
+	// no frame reads a new pool, thus it is deformed in place and is its own history.
+	const bool history = (m_lastDeformBufferView != nullptr);
 	m_lastDeformBufferView = m_deformBuffer->getBufferView();
-	m_deformBuffer->nextFrame();
-
-	m_deformWrites++;
-
-	// A recreated pool has no history; every slot built this frame rewrites its own.
-	m_deformWriteLastAllFrame = m_deformWriteLastAll;
-	m_deformWriteLastAll = false;
+	if (history)
+		m_deformBuffer->nextFrame();
 }
 
 void DeformMesh::buildDeformSlot(
@@ -126,11 +121,12 @@ void DeformMesh::buildDeformSlot(
 {
 	T_ASSERT(slot >= 0 && slot < (int32_t)m_deformSlots.size());
 
-	buildDeform(renderContext, worldRenderView, worldTransform, shader, m_deformBuffer->getBufferView(), (uint32_t)slot, parameterCallback);
+	const render::IBufferView* deformBuffer = m_deformBuffer->getBufferView();
+	buildDeform(renderContext, worldRenderView, worldTransform, shader, deformBuffer, (uint32_t)slot, parameterCallback);
 
 	// A slot without a valid history gets last frame's positions written as well so
 	// velocities start out at zero rather than from whatever the buffer held.
-	if (writeLast || m_deformWriteLastAllFrame)
+	if (writeLast && m_lastDeformBufferView != deformBuffer)
 		buildDeform(renderContext, worldRenderView, worldTransform, shader, m_lastDeformBufferView, (uint32_t)slot, parameterCallback);
 }
 
@@ -140,19 +136,16 @@ const render::IAccelerationStructure* DeformMesh::buildDeformSlotAccelerationStr
 {
 	T_ASSERT(slot >= 0 && slot < (int32_t)m_deformSlots.size());
 
+	// Created from the undeformed source positions; a full build first so refits start from the deformed geometry.
 	DeformSlot& ds = m_deformSlots[slot];
+	bool rebuild = false;
 	if (ds.blas == nullptr)
 	{
 		ds.blas = createDeformAccelerationStructure();
 		if (ds.blas == nullptr)
 			return nullptr;
-		ds.rtRebuild = true;
+		rebuild = true;
 	}
-
-	// Created from the undeformed source positions, or holding another instance's geometry;
-	// a full build first so refits start from the deformed geometry.
-	bool rebuild = ds.rtRebuild;
-	ds.rtRebuild = false;
 	if (++ds.rtUpdates > c_maxRtUpdatesBeforeBuild)
 	{
 		rebuild = true;
@@ -217,7 +210,7 @@ void DeformMesh::setDeformParameters(render::ProgramParameters* programParams, i
 	if (m_deformBuffer != nullptr)
 	{
 		deformBuffer = m_deformBuffer->getBufferView();
-		lastDeformBuffer = (m_deformWrites >= 2) ? m_lastDeformBufferView : deformBuffer;
+		lastDeformBuffer = (m_lastDeformBufferView != nullptr) ? m_lastDeformBufferView : deformBuffer;
 	}
 	else
 	{
@@ -315,20 +308,15 @@ bool DeformMesh::createDeform(
 
 void DeformMesh::ensureDeformCapacity(uint32_t slotCount)
 {
-	if (slotCount <= m_deformCapacity && m_deformBuffer != nullptr)
+	if (slotCount <= m_deformCapacity)
 		return;
 
-	// Recreate the pool, losing every slot's history and structure geometry; grown geometrically
-	// but a slot is a lot of memory for a detailed mesh, thus not far beyond what is in use.
+	// Recreate the pool, losing every slot's history; grown geometrically but a slot
+	// is a lot of memory for a detailed mesh, thus not far beyond what is in use.
 	const uint32_t capacity = std::max< uint32_t >(slotCount, std::min< uint32_t >(m_deformCapacity * 2, slotCount + 8));
 	m_deformBuffer = m_renderSystem->createBuffer(render::BuStructured | render::BuPooled, capacity * m_deformVertexCount * sizeof(DeformPosition), false, T_FILE_LINE_W);
-	m_lastDeformBufferView = m_deformBuffer->getBufferView();
-	for (auto& ds : m_deformSlots)
-		ds.rtRebuild = true;
-
+	m_lastDeformBufferView = nullptr;
 	m_deformCapacity = capacity;
-	m_deformWrites = 0;
-	m_deformWriteLastAll = true;
 }
 
 void DeformMesh::buildDeform(

@@ -86,8 +86,7 @@ private:
 	resource::Proxy< StaticMesh > m_mesh;
 	world::RTWorldComponent::Instance* m_rtwInstance = nullptr;
 	int32_t m_deformSlot = -1;
-	StaticMesh* m_deformSlotMesh = nullptr; //!< Mesh the slot was allocated from; a reloaded mesh knows nothing of it.
-	bool m_deformSlotNew = false;			//!< Slot acquired this frame; its history must be written too.
+	bool m_deformSlotNew = false; //!< Slot acquired this frame; its history must be written too.
 
 	void releaseDeformSlot();
 };

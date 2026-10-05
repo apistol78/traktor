@@ -147,7 +147,6 @@ bool InstanceMeshComponent::setupDeform(const world::WorldRenderView& worldRende
 	if (inRange && m_deformSlot < 0)
 	{
 		m_deformSlot = m_mesh->allocateDeformSlot(this);
-		m_deformSlotMesh = m_mesh.getResource();
 		m_deformSlotNew = true;
 	}
 	else if (!inRange && m_deformSlot >= 0)
@@ -209,11 +208,10 @@ void InstanceMeshComponent::releaseDeformSlot()
 
 	// The slot belongs to the mesh it was allocated from; after a reload the proxy
 	// refers to a new mesh with its own, empty, pool which knows nothing of the slot.
-	if (m_deformSlotMesh != nullptr && m_deformSlotMesh == m_mesh.getResource())
-		m_deformSlotMesh->releaseDeformSlot(m_deformSlot);
+	if (!m_mesh.changed())
+		m_mesh->releaseDeformSlot(m_deformSlot);
 
 	m_deformSlot = -1;
-	m_deformSlotMesh = nullptr;
 	m_deformSlotNew = false;
 
 	// Back to the shared, undeformed, structure.

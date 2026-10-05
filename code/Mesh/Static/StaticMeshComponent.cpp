@@ -31,6 +31,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.StaticMeshComponent", StaticMeshComponent,
 StaticMeshComponent::StaticMeshComponent(const resource::Proxy< StaticMesh >& mesh, render::IRenderSystem* renderSystem)
 	: m_mesh(mesh)
 {
+	m_mesh.consume();
 }
 
 void StaticMeshComponent::destroy()
@@ -82,6 +83,13 @@ Aabb3 StaticMeshComponent::getBoundingBox() const
 
 void StaticMeshComponent::setup(const world::WorldSetupContext& context, const world::WorldRenderView& worldRenderView)
 {
+	// Release deform slot if mesh has been reloaded.
+	if (m_mesh.changed())
+	{
+		releaseDeformSlot();
+		m_mesh.consume();
+	}
+
 	if (m_rtwInstance && m_transform->currentRender != m_transform->lastRender)
 		m_rtwInstance->setTransform(m_transform->currentRender);
 }
@@ -96,7 +104,6 @@ bool StaticMeshComponent::setupDeform(const world::WorldRenderView& worldRenderV
 	if (inRange && m_deformSlot < 0)
 	{
 		m_deformSlot = m_mesh->allocateDeformSlot(this);
-		m_deformSlotMesh = m_mesh.getResource();
 		m_deformSlotNew = true;
 	}
 	else if (!inRange && m_deformSlot >= 0)
@@ -178,11 +185,10 @@ void StaticMeshComponent::releaseDeformSlot()
 
 	// The slot belongs to the mesh it was allocated from; after a reload the proxy
 	// refers to a new mesh with its own, empty, pool which knows nothing of the slot.
-	if (m_deformSlotMesh != nullptr && m_deformSlotMesh == m_mesh.getResource())
-		m_deformSlotMesh->releaseDeformSlot(m_deformSlot);
+	if (!m_mesh.changed())
+		m_mesh->releaseDeformSlot(m_deformSlot);
 
 	m_deformSlot = -1;
-	m_deformSlotMesh = nullptr;
 	m_deformSlotNew = false;
 
 	// Back to the shared, undeformed, structure.
