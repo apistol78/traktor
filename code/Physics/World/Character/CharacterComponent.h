@@ -89,13 +89,15 @@ public:
 	 *
 	 * Character is only considered grounded when standing on a surface
 	 * which isn't steeper than the max slope angle specified in the
-	 * character data.
+	 * character data, or when held up by surfaces which are steeper
+	 * but together support character, such as when wedged in a gap.
 	 */
 	bool grounded() const;
 
 	/*! Normal of surface character is standing on.
 	 *
-	 * Zero if character isn't in contact with any surface.
+	 * Zero if character isn't in contact with any surface. When held up
+	 * by several surfaces this is the direction in which they support character.
 	 */
 	const Vector4& getGroundNormal() const { return m_groundNormal; }
 
@@ -164,6 +166,14 @@ private:
 
 	/*! Return true if there is a surface flat enough to stand on below a given position. */
 	bool probeGround(Vector4 position, float distance) const;
+
+	/*! Return true if character is held up at a given position, even though it's
+	 * in contact with surfaces which are too steep to stand on, e.g. when wedged in a gap.
+	 *
+	 * \param position Position of character.
+	 * \param outNormal Direction in which character is supported.
+	 */
+	bool probeSupport(Vector4 position, Vector4& outNormal) const;
 
 	bool stepVertical(float motion, Vector4& inoutPosition, Vector4& outNormal) const;
 

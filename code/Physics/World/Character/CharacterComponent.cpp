@@ -29,6 +29,16 @@ const Vector4 c_010(0.0f, 1.0f, 0.0f);
  */
 const float c_stepForwardTest = 0.5f;
 
+/*! Distance, in fractions of character radius, character is moved when probing
+ * if it's able to slide off surfaces which are too steep to stand on.
+ */
+const float c_supportTest = 0.25f;
+
+/*! Fraction of support test distance character must descend to be considered
+ * sliding off rather than being held up.
+ */
+const float c_supportSlideFraction = 0.1f;
+
 }
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.physics.CharacterComponent", CharacterComponent, world::IEntityComponent)
@@ -203,6 +213,19 @@ void CharacterComponent::update(const world::UpdateParams& update)
 		}
 	}
 
+	// Surfaces which are too steep to stand on might still hold character up together,
+	// such as when wedged in a gap. Character is then standing rather than falling, so
+	// it should neither keep accumulating fall velocity nor be prevented from jumping.
+	if (moveResult.footContact && !grounded)
+	{
+		Vector4 supportNormal;
+		if (probeSupport(movedPosition, supportNormal))
+		{
+			moveResult.groundNormal = supportNormal;
+			grounded = true;
+		}
+	}
+
 	position = movedPosition;
 
 	// Head hit; cancel out up motion.
@@ -338,6 +361,64 @@ bool CharacterComponent::probeGround(Vector4 position, float distance) const
 	return walkable(normal);
 }
 
+bool CharacterComponent::probeSupport(Vector4 position, Vector4& outNormal) const
+{
+	const Scalar distance(c_supportTest * m_data->getRadius());
+	const Scalar maxDescent = distance * Scalar(c_supportSlideFraction);
+	const Scalar startY = position.y();
+
+	Vector4 direction = -c_010;
+	Vector4 normalSum = Vector4::zero();
+	Scalar motionLength = distance;
+	QueryResult result;
+
+	// Try to slide off, same as when falling, along the surfaces which are too steep.
+	for (int32_t i = 0; i < 4 && motionLength > FUZZY_EPSILON; ++i)
+	{
+		// Nothing below; free to fall.
+		if (!m_physicsManager->querySweep(
+				m_bodySlim,
+				Quaternion::identity(),
+				position,
+				direction,
+				motionLength,
+				physics::QueryFilter(m_traceInclude, m_traceIgnore),
+				result))
+			return false;
+
+		const Scalar move = motionLength * Scalar(result.fraction);
+		position += direction * move;
+
+		// Character is sliding off if it's able to descend.
+		if (startY - position.y() > maxDescent)
+			return false;
+
+		// Resting on a surface which is flat enough to stand on.
+		if (walkable(result.normal))
+		{
+			outNormal = result.normal;
+			return true;
+		}
+
+		normalSum += result.normal;
+
+		const Scalar k = abs(dot3(-direction, result.normal)) * 1.01_simd;
+		direction += result.normal * k;
+		if (direction.normalize() <= FUZZY_EPSILON)
+			break;
+
+		motionLength -= move;
+	}
+
+	// Character is held up by the surfaces; together they support character
+	// along the sum of their normals.
+	if (normalSum.length() <= FUZZY_EPSILON)
+		return false;
+
+	outNormal = normalSum.normalized();
+	return walkable(outNormal);
+}
+
 bool CharacterComponent::stepVertical(float motion, Vector4& inoutPosition, Vector4& outNormal) const
 {
 	if (std::abs(motion) <= FUZZY_EPSILON)
@@ -444,9 +525,12 @@ bool CharacterComponent::step(Vector4 motion, Vector4& inoutPosition) const
 			inoutPosition += motion * move;
 
 			// Surfaces which are too steep to walk on are treated as vertical walls,
-			// i.e. character slide along them instead of being pushed up.
+			// i.e. character slide along them instead of being pushed up. Downward
+			// facing surfaces, such as ceilings and overhangs, can never push the
+			// character up so they are slid along as is; flattening those would turn
+			// a sloped ceiling, which the step assist lift character into, into a wall.
 			Vector4 normal = result.normal;
-			if (!walkable(normal))
+			if (normal.y() > 0.0_simd && !walkable(normal))
 			{
 				normal *= c_101;
 				if (normal.length() <= FUZZY_EPSILON)
