@@ -651,7 +651,7 @@ render::RGTargetSet WorldRendererShared::setupLightPass(
 					renderContext->draw(crb);
 				}
 
-				for (auto it : m_gatheredView.renderables)
+				for (const auto& it : m_gatheredView.renderables)
 				{
 					IEntityRenderer* entityRenderer = it.first;
 					const GatherView::Renderable& r = it.second;
@@ -792,7 +792,7 @@ render::RGTargetSet WorldRendererShared::setupLightPass(
 						renderContext->draw(crb);
 					}
 
-					for (auto it : m_gatheredView.renderables)
+					for (const auto& it : m_gatheredView.renderables)
 					{
 						IEntityRenderer* entityRenderer = it.first;
 						const GatherView::Renderable& r = it.second;

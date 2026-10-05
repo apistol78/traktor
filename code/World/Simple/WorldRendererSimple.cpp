@@ -142,7 +142,7 @@ void WorldRendererSimple::setup(
 		const WorldSetupContext context(world, m_entityRenderers, renderGraph, m_visualAttachments, m_setupAttachments);
 		rtWorldDependency = context.getRTWorldDependency();
 
-		for (auto it : m_gathered)
+		for (const auto& it : m_gathered)
 		{
 			IEntityRenderer* entityRenderer = it.first;
 			const Renderable& r = it.second;
@@ -172,7 +172,7 @@ void WorldRendererSimple::setup(
 			globalProgramParams,
 			worldRenderView.getView());
 
-		for (auto gathered : m_gathered)
+		for (const auto& gathered : m_gathered)
 			gathered.first->build(wc, worldRenderView, defaultPass, gathered.second.objects);
 	};
 

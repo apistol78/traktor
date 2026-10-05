@@ -117,7 +117,7 @@ render::RGTargetSet PostDepthPass::setup(
 				sharedParams,
 				worldRenderView);
 
-			for (auto it : gatheredView.renderables)
+			for (const auto& it : gatheredView.renderables)
 			{
 				IEntityRenderer* entityRenderer = it.first;
 				const GatherView::Renderable& r = it.second;

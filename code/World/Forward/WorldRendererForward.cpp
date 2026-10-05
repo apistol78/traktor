@@ -141,7 +141,7 @@ void WorldRendererForward::setup(
 		WorldSetupContext context(world, m_entityRenderers, renderGraph, m_visualAttachments, m_gatheredView.setupAttachments);
 		m_gatheredView.rtWorldDependency = context.getRTWorldDependency();
 
-		for (auto it : m_gatheredView.renderables)
+		for (const auto& it : m_gatheredView.renderables)
 		{
 			IEntityRenderer* entityRenderer = it.first;
 			const GatherView::Renderable& r = it.second;
@@ -372,7 +372,7 @@ void WorldRendererForward::setupVisualPass(
 
 		T_ASSERT(!wc.getRenderContext()->havePendingDraws());
 
-		for (auto it : m_gatheredView.renderables)
+		for (const auto& it : m_gatheredView.renderables)
 		{
 			IEntityRenderer* entityRenderer = it.first;
 			const GatherView::Renderable& r = it.second;

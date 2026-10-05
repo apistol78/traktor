@@ -95,7 +95,7 @@ render::RGTargetSet ZPrePass::setup(
 
 		T_ASSERT(!renderContext->havePendingDraws());
 
-		for (auto it : gatheredView.renderables)
+		for (const auto& it : gatheredView.renderables)
 		{
 			IEntityRenderer* entityRenderer = it.first;
 			const GatherView::Renderable& r = it.second;
