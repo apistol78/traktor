@@ -5,16 +5,16 @@
 			<id>{F3E3A20D-9A33-5647-ACB8-48585F5D2823}</id>
 			<comment/>
 			<position>
-				<first>849</first>
-				<second>301</second>
+				<first>882</first>
+				<second>569</second>
 			</position>
 		</item>
 		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
 			<id>{3F41DE16-ED47-0847-9516-A10AA8A41698}</id>
 			<comment/>
 			<position>
-				<first>1312</first>
-				<second>359</second>
+				<first>1116</first>
+				<second>586</second>
 			</position>
 			<name>Output</name>
 		</item>
@@ -22,8 +22,8 @@
 			<id>{54700EBC-66E8-4F42-B4BA-78B0F05E64D3}</id>
 			<comment/>
 			<position>
-				<first>651</first>
-				<second>382</second>
+				<first>650</first>
+				<second>609</second>
 			</position>
 			<value>25</value>
 		</item>
@@ -31,8 +31,8 @@
 			<id>{D5809F58-3DAB-0D4E-8EDE-DA4AD2EE4796}</id>
 			<comment/>
 			<position>
-				<first>40</first>
-				<second>508</second>
+				<first>175</first>
+				<second>493</second>
 			</position>
 			<fragmentGuid>{3964A615-B081-5B42-AC2E-E569C1BAE4EA}</fragmentGuid>
 			<inputPins>
@@ -53,8 +53,8 @@
 			<id>{B44A33F6-E87D-B448-A5BF-0D2B6E835C85}</id>
 			<comment/>
 			<position>
-				<first>-723</first>
-				<second>660</second>
+				<first>-507</first>
+				<second>524</second>
 			</position>
 			<name>Offset</name>
 			<optional>true</optional>
@@ -63,8 +63,8 @@
 			<id>{38613974-6332-8442-8DC0-5094BDF910B8}</id>
 			<comment/>
 			<position>
-				<first>346</first>
-				<second>185</second>
+				<first>611</first>
+				<second>380</second>
 			</position>
 			<from>0</from>
 			<to>24</to>
@@ -73,24 +73,24 @@
 			<id>{C2FD5869-F870-834E-8CBA-547FC992760B}</id>
 			<comment/>
 			<position>
-				<first>349</first>
-				<second>447</second>
+				<first>393</first>
+				<second>478</second>
 			</position>
 		</item>
 		<item type="traktor.render.Add" version="traktor.render.Node:1">
 			<id>{8CFE193F-E12F-7848-AF80-612E898B643E}</id>
 			<comment/>
 			<position>
-				<first>-235</first>
-				<second>526</second>
+				<first>-59</first>
+				<second>493</second>
 			</position>
 		</item>
 		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
 			<id>{B6452895-22EC-E744-B663-47EDCAC36099}</id>
 			<comment/>
 			<position>
-				<first>-491</first>
-				<second>470</second>
+				<first>885</first>
+				<second>392</second>
 			</position>
 			<name>LatticeOffset</name>
 			<technique/>
@@ -124,18 +124,36 @@ $Output = vec4(($N + 0.5) / 25.0 - 0.5, fract(($N * 7.0 + 0.5) / 25.0) - 0.5, 0.
 			<id>{C71B1761-D019-8E44-AE78-7966E4C0CD09}</id>
 			<comment/>
 			<position>
-				<first>-465</first>
-				<second>665</second>
+				<first>-277</first>
+				<second>541</second>
 			</position>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
 			<id>{22148654-18A6-C240-9F07-1748A11EC110}</id>
 			<comment/>
 			<position>
-				<first>-701</first>
-				<second>763</second>
+				<first>-491</first>
+				<second>588</second>
 			</position>
 			<value>0</value>
+		</item>
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
+			<id>{623ECF1F-C5B9-432A-AEEF-0C0E2FB1F1BA}</id>
+			<comment/>
+			<position>
+				<first>1139</first>
+				<second>409</second>
+			</position>
+			<name>L_LatticeOffset</name>
+		</item>
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
+			<id>{DBD29B52-67F9-43F3-8E92-D440B0B70509}</id>
+			<comment/>
+			<position>
+				<first>-272</first>
+				<second>477</second>
+			</position>
+			<name>L_LatticeOffset</name>
 		</item>
 	</nodes>
 	<edges>
@@ -201,16 +219,6 @@ $Output = vec4(($N + 0.5) / 25.0 - 0.5, fract(($N * 7.0 + 0.5) / 25.0) - 0.5, 0.
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[8]"/>
-				<id>{890DEA68-29BC-A04F-9E28-788116BB4A5B}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[7]"/>
-				<id>{3DE04294-4DEA-4A13-A460-2274647357EA}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
 				<node ref="/object/nodes/item[9]"/>
 				<id>{DBDA59DC-83A0-4619-BB51-792A017346DF}</id>
 			</source>
@@ -267,6 +275,26 @@ $Output = vec4(($N + 0.5) / 25.0 - 0.5, fract(($N * 7.0 + 0.5) / 25.0) - 0.5, 0.
 			<destination>
 				<node ref="/object/nodes/item[9]"/>
 				<id>{5539AA7E-F780-482E-82B8-1E817340D7C0}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[8]"/>
+				<id>{890DEA68-29BC-A04F-9E28-788116BB4A5B}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[11]"/>
+				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[12]"/>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[7]"/>
+				<id>{3DE04294-4DEA-4A13-A460-2274647357EA}</id>
 			</destination>
 		</item>
 	</edges>

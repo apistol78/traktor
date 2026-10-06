@@ -190,7 +190,6 @@ uint16_t convertFont(const traktor::Path& assetPath, const MovieAsset::Font& fon
 		boundsTable.push_back(Aabb2(Vector2::zero(), Vector2::zero())); //  mn* scale, mx* scale));
 
 		const Aabb2 bounds = ud.path.getBounds();
-		log::info << bounds.mn.x << L", " << bounds.mn.y << Endl;
 
 		// Glyph code.
 		codeTable.push_back(ch);

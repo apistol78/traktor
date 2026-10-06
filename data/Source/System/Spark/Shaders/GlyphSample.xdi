@@ -5,8 +5,8 @@
 			<id>{38FC9165-68D5-5547-A24A-37298C3DD7E3}</id>
 			<comment/>
 			<position>
-				<first>-774</first>
-				<second>300</second>
+				<first>-430</first>
+				<second>218</second>
 			</position>
 			<name>TexCoord</name>
 			<usage>Custom</usage>
@@ -17,8 +17,8 @@
 			<id>{DC86CD51-DFE1-3349-9134-3EE083055CB1}</id>
 			<comment/>
 			<position>
-				<first>-774</first>
-				<second>120</second>
+				<first>-406</first>
+				<second>391</second>
 			</position>
 			<name>Offset</name>
 			<optional>false</optional>
@@ -27,8 +27,8 @@
 			<id>{188A17E2-1BEE-CB4A-BB86-08463153BA97}</id>
 			<comment/>
 			<position>
-				<first>410</first>
-				<second>434</second>
+				<first>66</first>
+				<second>416</second>
 			</position>
 			<name>TexOffsetAndScale</name>
 			<usage>Custom</usage>
@@ -39,8 +39,8 @@
 			<id>{5B277E37-520A-174E-8ECB-D808476640D5}</id>
 			<comment/>
 			<position>
-				<first>749</first>
-				<second>434</second>
+				<first>405</first>
+				<second>416</second>
 			</position>
 			<swizzle>xy</swizzle>
 		</item>
@@ -48,24 +48,24 @@
 			<id>{E38A016C-7674-2F4D-BDFB-55C55930C79D}</id>
 			<comment/>
 			<position>
-				<first>970</first>
-				<second>337</second>
+				<first>626</first>
+				<second>316</second>
 			</position>
 		</item>
 		<item type="traktor.render.Mul" version="traktor.render.Node:1">
 			<id>{32735715-77AA-8040-9D90-D9FDA71B8BE5}</id>
 			<comment/>
 			<position>
-				<first>1688</first>
-				<second>248</second>
+				<first>1344</first>
+				<second>229</second>
 			</position>
 		</item>
 		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
 			<id>{7B68F1DC-74C5-A24D-B4AD-B6998229ABAB}</id>
 			<comment/>
 			<position>
-				<first>1922</first>
-				<second>266</second>
+				<first>1578</first>
+				<second>246</second>
 			</position>
 			<name>Output</name>
 		</item>
@@ -73,8 +73,8 @@
 			<id>{73101B79-29DC-6849-88F2-0D00653EA3DB}</id>
 			<comment/>
 			<position>
-				<first>1475</first>
-				<second>315</second>
+				<first>1131</first>
+				<second>294</second>
 			</position>
 			<swizzle>x</swizzle>
 		</item>
@@ -82,8 +82,8 @@
 			<id>{CED70A5A-9736-5A41-92A5-AA53ADC3456A}</id>
 			<comment/>
 			<position>
-				<first>749</first>
-				<second>370</second>
+				<first>405</first>
+				<second>352</second>
 			</position>
 			<swizzle>zw</swizzle>
 		</item>
@@ -91,8 +91,8 @@
 			<id>{EDACF496-A84C-FD40-A582-DC0C709D6E43}</id>
 			<comment/>
 			<position>
-				<first>-288</first>
-				<second>198</second>
+				<first>-152</first>
+				<second>196</second>
 			</position>
 			<axis>X</axis>
 		</item>
@@ -100,8 +100,8 @@
 			<id>{384B0FD7-65E0-F042-829D-E86CC7446D9C}</id>
 			<comment/>
 			<position>
-				<first>-288</first>
-				<second>300</second>
+				<first>120</first>
+				<second>139</second>
 			</position>
 			<axis>Y</axis>
 		</item>
@@ -109,8 +109,8 @@
 			<id>{4EDA3F64-34B5-214A-9153-AC4116F778AC}</id>
 			<comment/>
 			<position>
-				<first>1204</first>
-				<second>297</second>
+				<first>860</first>
+				<second>277</second>
 			</position>
 			<minFilter>Linear</minFilter>
 			<mipFilter>Linear</mipFilter>
@@ -127,8 +127,8 @@
 			<id>{441FB1E2-3D57-8940-A790-0827F2837AED}</id>
 			<comment/>
 			<position>
-				<first>1470</first>
-				<second>215</second>
+				<first>1126</first>
+				<second>196</second>
 			</position>
 			<name>InRange</name>
 			<technique/>
@@ -168,8 +168,8 @@ $Output = tm.x * tm.y;
 			<id>{4C72252C-F327-C24E-8B9B-64DA13754038}</id>
 			<comment/>
 			<position>
-				<first>1233</first>
-				<second>233</second>
+				<first>889</first>
+				<second>213</second>
 			</position>
 			<swizzle>xy</swizzle>
 		</item>
@@ -177,8 +177,8 @@ $Output = tm.x * tm.y;
 			<id>{6FD99D7E-AF04-4DAE-B7EF-C15503D0C9B8}</id>
 			<comment/>
 			<position>
-				<first>-496</first>
-				<second>120</second>
+				<first>-147</first>
+				<second>359</second>
 			</position>
 			<swizzle>x</swizzle>
 		</item>
@@ -186,8 +186,8 @@ $Output = tm.x * tm.y;
 			<id>{75BD9C22-CF8B-4B67-8D74-4F5738F589A6}</id>
 			<comment/>
 			<position>
-				<first>-496</first>
-				<second>400</second>
+				<first>125</first>
+				<second>352</second>
 			</position>
 			<swizzle>y</swizzle>
 		</item>
@@ -195,8 +195,8 @@ $Output = tm.x * tm.y;
 			<id>{6403D735-E72F-3741-AE44-D95CE0CE9F4B}</id>
 			<comment/>
 			<position>
-				<first>983</first>
-				<second>273</second>
+				<first>639</first>
+				<second>252</second>
 			</position>
 			<parameterDeclaration>{3F2BDE4E-2180-BA42-93D0-06B27627573F}</parameterDeclaration>
 		</item>
@@ -204,16 +204,16 @@ $Output = tm.x * tm.y;
 			<id>{1B7C6D2E-4F0A-4C3B-9E51-2A8D7F6C3B10}</id>
 			<comment/>
 			<position>
-				<first>0</first>
-				<second>200</second>
+				<first>112</first>
+				<second>238</second>
 			</position>
 		</item>
 		<item type="traktor.render.MulAdd" version="traktor.render.Node:1">
 			<id>{8E2A5C41-7D3B-4A96-B0F2-5C1E9D8A4F27}</id>
 			<comment/>
 			<position>
-				<first>300</first>
-				<second>300</second>
+				<first>392</first>
+				<second>227</second>
 			</position>
 		</item>
 	</nodes>
