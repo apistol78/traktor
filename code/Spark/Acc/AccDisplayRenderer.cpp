@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -901,14 +901,27 @@ void AccDisplayRenderer::renderGlyph(
 	const int32_t column = it1->second.index & (c_cacheGlyphCountX - 1);
 	const int32_t row = it1->second.index / c_cacheGlyphCountX;
 
+	// Quad margin, in pixels, must cover the filter footprint.
+	const Matrix33 targetTransform = m_captureTransformInv * glyphTransform;
+	const float targetWidth = m_captureSprite != nullptr ? (float)c_spriteAtlasDim : m_viewSize.x();
+	const float targetHeight = m_captureSprite != nullptr ? (float)c_spriteAtlasDim : m_viewSize.y();
+	const float px = m_frameTransform.z() * targetWidth / (m_frameBounds.z() - m_frameBounds.x());
+	const float py = m_frameTransform.w() * targetHeight / (m_frameBounds.w() - m_frameBounds.y());
+	const float glyphWidth = Vector2(targetTransform.e11 * px, targetTransform.e21 * py).length() * (bounds.mx.x - bounds.mn.x);
+	const float glyphHeight = Vector2(targetTransform.e12 * px, targetTransform.e22 * py).length() * (bounds.mx.y - bounds.mn.y);
+	const float marginPixels = filter != 0 ? 3.5f : 1.0f;
+
 	m_glyph->add(
 		bounds,
-		m_captureTransformInv * glyphTransform,
+		targetTransform,
 		Vector4(
-			float(column) / c_cacheGlyphCountX,
-			float(row) / c_cacheGlyphCountY,
-			1.0f / c_cacheGlyphCountX,
-			1.0f / c_cacheGlyphCountY));
+			float(column) / c_cacheGlyphCountX + cachePixelDx * c_cacheGlyphMargin,
+			float(row) / c_cacheGlyphCountY + cachePixelDy * c_cacheGlyphMargin,
+			1.0f / c_cacheGlyphCountX - cachePixelDx * c_cacheGlyphMargin * 2.0f,
+			1.0f / c_cacheGlyphCountY - cachePixelDy * c_cacheGlyphMargin * 2.0f),
+		Vector2(
+			marginPixels / std::max(glyphWidth, FUZZY_EPSILON),
+			marginPixels / std::max(glyphHeight, FUZZY_EPSILON)));
 }
 
 void AccDisplayRenderer::renderQuad(const Matrix33& transform, const Aabb2& bounds, const ColorTransform& cxform)

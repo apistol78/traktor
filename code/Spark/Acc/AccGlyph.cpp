@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2025 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -40,15 +40,11 @@ struct Vertex
 const resource::Id< render::Shader > c_idShaderGlyphMask(Guid(L"{C8FEF24B-D775-A14D-9FF3-E34A17495FB4}"));
 const uint32_t c_glyphCount = 1000;
 
-const struct TemplateVertex
-{
-	Vector4 pos;
-	Vector2 texCoord;
-} c_glyphTemplate[4] = {
-	{ Vector4(-0.1f, -0.1f, 1.0f, 0.0f), Vector2(-0.1f, -0.1f) },
-	{ Vector4(1.1f, -0.1f, 1.0f, 0.0f), Vector2(1.1f, -0.1f) },
-	{ Vector4(1.1f, 1.1f, 1.0f, 0.0f), Vector2(1.1f, 1.1f) },
-	{ Vector4(-0.1f, 1.1f, 1.0f, 0.0f), Vector2(-0.1f, 1.1f) }
+const Vector2 c_glyphTemplate[4] = {
+	Vector2(0.0f, 0.0f),
+	Vector2(1.0f, 0.0f),
+	Vector2(1.0f, 1.0f),
+	Vector2(0.0f, 1.0f)
 };
 
 const render::Handle s_handleTechniqueDefault(L"Default");
@@ -131,7 +127,8 @@ void AccGlyph::endFrame()
 void AccGlyph::add(
 	const Aabb2& bounds,
 	const Matrix33& transform,
-	const Vector4& textureOffset)
+	const Vector4& textureOffset,
+	const Vector2& margin)
 {
 	T_FATAL_ASSERT(m_vertex != nullptr);
 
@@ -185,18 +182,18 @@ void AccGlyph::add(
 	Vertex* vertex = reinterpret_cast< Vertex* >(m_vertex);
 	for (uint32_t i = 0; i < sizeof_array(c_glyphTemplate); ++i)
 	{
-		Vector4 pos = m * c_glyphTemplate[i].pos;
+		const Vector2 tc = c_glyphTemplate[i] * (Vector2::one() + margin * 2.0f) - margin;
+		const Vector4 pos = m * Vector4(tc.x, tc.y, 1.0f, 0.0f);
 
 		vertex->pos[0] = pos.x();
 		vertex->pos[1] = pos.y();
-		vertex->texCoord[0] = c_glyphTemplate[i].texCoord.x;
-		vertex->texCoord[1] = c_glyphTemplate[i].texCoord.y;
+		vertex->texCoord[0] = tc.x;
+		vertex->texCoord[1] = tc.y;
 
 		vertex->texOffsetAndScale[0] = textureOffset.x();
 		vertex->texOffsetAndScale[1] = textureOffset.y();
-
-		vertex->texOffsetAndScale[2] = dbx;
-		vertex->texOffsetAndScale[3] = dby;
+		vertex->texOffsetAndScale[2] = textureOffset.z();
+		vertex->texOffsetAndScale[3] = textureOffset.w();
 
 		vertex++;
 	}
@@ -221,10 +218,12 @@ void AccGlyph::render(
 	const render::handle_t techniques[] = { s_handleTechniqueDefault, s_handleTechniqueDropShadow, 0, s_handleTechniqueGlow };
 	T_ASSERT(glyphFilter < sizeof_array(techniques));
 
-	const render::Shader::Permutation perm(techniques[glyphFilter]);
-
-	const auto sp = m_shaderGlyph->getProgram(perm);
-	if (!sp)
+	// Filter of all glyphs first so it never covers a neighbouring glyph.
+	render::IProgram* programs[2] = { nullptr, nullptr };
+	if (glyphFilter != 0)
+		programs[0] = m_shaderGlyph->getProgram(render::Shader::Permutation(techniques[glyphFilter])).program;
+	programs[1] = m_shaderGlyph->getProgram(render::Shader::Permutation(s_handleTechniqueDefault)).program;
+	if (!programs[1])
 		return;
 
 	uint32_t offset = m_offset;
@@ -233,30 +232,33 @@ void AccGlyph::render(
 	renderPass->addBuild([=, this](const render::RenderGraph& renderGraph, render::RenderContext* renderContext) {
 		auto glyphCacheTargetSet = renderGraph.getTargetSet(glyphCacheTargetSetId);
 
-		render::IndexedRenderBlock* renderBlock = renderContext->allocNamed< render::IndexedRenderBlock >(L"Flash AccGlyph");
-		renderBlock->program = sp.program;
-		renderBlock->indexBuffer = m_indexBuffer->getBufferView();
-		renderBlock->indexType = render::IndexType::UInt16;
-		renderBlock->vertexBuffer = m_vertexBuffer->getBufferView();
-		renderBlock->vertexLayout = m_vertexLayout;
-		renderBlock->primitive = render::PrimitiveType::Triangles;
-		renderBlock->offset = offset * 6;
-		renderBlock->count = count * 2;
+		auto programParams = renderContext->alloc< render::ProgramParameters >();
+		programParams->beginParameters(renderContext);
+		programParams->setVectorParameter(s_handleFrameBounds, frameBounds);
+		programParams->setVectorParameter(s_handleFrameTransform, frameTransform);
+		programParams->setStencilReference(maskReference);
+		programParams->setTextureParameter(s_handleTexture, glyphCacheTargetSet->getColorTexture(0));
+		programParams->setVectorParameter(s_handleColor, glyphColor);
+		programParams->setVectorParameter(s_handleFilterColor, glyphFilterColor);
+		programParams->endParameters(renderContext);
 
-		renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
-		renderBlock->programParams->beginParameters(renderContext);
-		renderBlock->programParams->setVectorParameter(s_handleFrameBounds, frameBounds);
-		renderBlock->programParams->setVectorParameter(s_handleFrameTransform, frameTransform);
-		renderBlock->programParams->setStencilReference(maskReference);
-		renderBlock->programParams->setTextureParameter(s_handleTexture, glyphCacheTargetSet->getColorTexture(0)); // texture);
-		renderBlock->programParams->setVectorParameter(s_handleColor, glyphColor);
+		for (auto program : programs)
+		{
+			if (!program)
+				continue;
 
-		if (glyphFilter != 0)
-			renderBlock->programParams->setVectorParameter(s_handleFilterColor, glyphFilterColor);
-
-		renderBlock->programParams->endParameters(renderContext);
-
-		renderContext->draw(renderBlock);
+			render::IndexedRenderBlock* renderBlock = renderContext->allocNamed< render::IndexedRenderBlock >(L"Flash AccGlyph");
+			renderBlock->program = program;
+			renderBlock->programParams = programParams;
+			renderBlock->indexBuffer = m_indexBuffer->getBufferView();
+			renderBlock->indexType = render::IndexType::UInt16;
+			renderBlock->vertexBuffer = m_vertexBuffer->getBufferView();
+			renderBlock->vertexLayout = m_vertexLayout;
+			renderBlock->primitive = render::PrimitiveType::Triangles;
+			renderBlock->offset = offset * 6;
+			renderBlock->count = count * 2;
+			renderContext->draw(renderBlock);
+		}
 	});
 
 	m_offset += m_count;
