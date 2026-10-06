@@ -12,6 +12,7 @@
 #include "Core/Log/Log.h"
 #include "Core/Math/Bezier2nd.h"
 #include "Core/Math/Bezier3rd.h"
+#include "Core/Misc/Split.h"
 #include "Core/Misc/String.h"
 #include "Core/Misc/TString.h"
 #include "Database/Instance.h"
@@ -221,6 +222,25 @@ Ref< Movie > convertSvg(const traktor::Path& assetPath, const MovieAsset* movieA
 
 			Ref< Sprite > sprite = new Sprite();
 			Ref< Shape > shape = new Shape();
+
+			// Optional 9-grid, "x y width height" of the center cell in the group's own
+			// coordinates; the corners keep their size when the sprite is scaled.
+			const std::wstring scalingGrid = svg->getAttribute(L"traktor:scalingGrid").getWideString();
+			if (!scalingGrid.empty())
+			{
+				AlignedVector< float > xywh;
+				Split< std::wstring, float >::any(scalingGrid, L" ,", xywh);
+				if (xywh.size() == 4)
+				{
+					const Matrix33 transform = svg->getGlobalTransform();
+					Aabb2 grid;
+					grid.contain(toMovie(transform, Vector2(xywh[0], xywh[1])));
+					grid.contain(toMovie(transform, Vector2(xywh[0] + xywh[2], xywh[1] + xywh[3])));
+					sprite->setScalingGrid(grid);
+				}
+				else
+					log::warning << L"Invalid scaling grid \"" << scalingGrid << L"\" of sprite \"" << id << L"\"; expected \"x y width height\"." << Endl;
+			}
 
 			movie->defineCharacter(characterId, sprite);
 
