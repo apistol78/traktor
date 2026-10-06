@@ -67,6 +67,7 @@ protected:
 	uint32_t m_index = 0;
 	uint32_t m_scratchAlignment = 0;
 	uint32_t m_instanceCapacity = 0;	//!< Top level only; number of instances each slot holds.
+	uint32_t m_maxVertex = 0;	//!< Bottom level only; max vertex of the structure written last.
 	VkDeviceSize m_topLevelSize = 0;	//!< Top level only; size of each slot's structure.
 	VkDeviceSize m_topLevelScratchSize = 0;	//!< Top level only; size of each slot's build scratch.
 	std::atomic< uint32_t > m_pendingFrames = 0;	//!< Frames begun by nextFrame whose write has not been rendered.

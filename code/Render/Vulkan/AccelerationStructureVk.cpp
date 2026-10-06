@@ -486,6 +486,8 @@ bool AccelerationStructureVk::prepareGeometry(const IBufferView* vertexBuffer, c
 	const BufferViewVk* vb = mandatory_non_null_type_cast< const BufferViewVk* >(vertexBuffer);
 	const BufferViewVk* ib = mandatory_non_null_type_cast< const BufferViewVk* >(indexBuffer);
 
+	const uint32_t maxVertex = vb->getVkBufferSize() / vertexLayoutVk->getVkVertexInputBindingDescription().stride;
+
 	const VkAccelerationStructureGeometryDataKHR bottomLevelAccelerationStructureGeometryData = {
 		.triangles = {
 			.sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_GEOMETRY_TRIANGLES_DATA_KHR,
@@ -494,7 +496,7 @@ bool AccelerationStructureVk::prepareGeometry(const IBufferView* vertexBuffer, c
 			.vertexData = {
 				.deviceAddress = vb->getDeviceAddress(m_context) },
 			.vertexStride = vertexLayoutVk->getVkVertexInputBindingDescription().stride,
-			.maxVertex = vb->getVkBufferSize() / vertexLayoutVk->getVkVertexInputBindingDescription().stride,
+			.maxVertex = maxVertex,
 			.indexType = (indexType == IndexType::UInt32) ? VK_INDEX_TYPE_UINT32 : VK_INDEX_TYPE_UINT16,
 			.indexData = { .deviceAddress = ib->getDeviceAddress(m_context) },
 			.transformData = { .deviceAddress = 0 } }
@@ -630,8 +632,8 @@ bool AccelerationStructureVk::prepareGeometry(const IBufferView* vertexBuffer, c
 	}
 
 	// Refit from the structure written last, rather than rebuild, when dynamic and still valid;
-	// requires the ALLOW_UPDATE build flag and unchanged topology.
-	if (m_dynamic && !rebuild && source != VK_NULL_HANDLE)
+	// requires the ALLOW_UPDATE build flag, unchanged topology and max vertex.
+	if (m_dynamic && !rebuild && source != VK_NULL_HANDLE && maxVertex == m_maxVertex)
 	{
 		bottomLevelAccelerationStructureBuildGeometryInfo.mode = VK_BUILD_ACCELERATION_STRUCTURE_MODE_UPDATE_KHR;
 		bottomLevelAccelerationStructureBuildGeometryInfo.srcAccelerationStructure = source;
@@ -653,6 +655,7 @@ bool AccelerationStructureVk::prepareGeometry(const IBufferView* vertexBuffer, c
 	bottomLevelAccelerationStructureBuildGeometryInfo.dstAccelerationStructure = m_as[slot];
 	bottomLevelAccelerationStructureBuildGeometryInfo.scratchData.deviceAddress = alignUp(m_scratchBuffers[slot]->getDeviceAddress(), m_scratchAlignment);
 	outBuild.info = bottomLevelAccelerationStructureBuildGeometryInfo;
+	m_maxVertex = maxVertex;
 	return true;
 }
 
