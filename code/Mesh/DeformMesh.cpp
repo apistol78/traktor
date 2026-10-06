@@ -40,7 +40,6 @@ const float c_deformFadeDistance = 4.0f;
 // Deformed instances within this distance also refit their ray tracing geometry.
 const float c_deformRayTracingDistance = 20.0f;
 
-
 // Refit the slot acceleration structures this many updates before a full rebuild.
 const int32_t c_maxRtUpdatesBeforeBuild = 400;
 
@@ -55,6 +54,13 @@ const render::Handle s_handleDeformIndexCount(L"Mesh_DeformIndexCount");
 const render::Handle s_handleDeformDistance(L"Mesh_DeformDistance");
 const render::Handle s_handleDeformVertexCount(L"Mesh_DeformVertexCount");
 const render::Handle s_handleDeformSlot(L"Mesh_DeformSlot");
+
+Scalar distanceToBox(const Transform& worldTransform, const Aabb3& boundingBox, const Vector4& eyePosition)
+{
+	const Vector4 localEyePosition = worldTransform.inverse() * eyePosition.xyz1();
+	const Vector4 closest = max(boundingBox.mn, min(boundingBox.mx, localEyePosition));
+	return (closest - localEyePosition).xyz0().length();
+}
 
 }
 
@@ -240,18 +246,6 @@ float DeformMesh::getDeformRayTracingDistance()
 	return c_deformRayTracingDistance;
 }
 
-namespace
-{
-
-Scalar distanceToBox(const Transform& worldTransform, const Aabb3& boundingBox, const Vector4& eyePosition)
-{
-	const Aabb3 worldBoundingBox = boundingBox.transform(worldTransform);
-	const Vector4 closest = max(worldBoundingBox.mn, min(worldBoundingBox.mx, eyePosition));
-	return (closest - eyePosition).xyz0().length();
-}
-
-}
-
 bool DeformMesh::isWithinDeformDistance(const Transform& worldTransform, const Aabb3& boundingBox, const Vector4& eyePosition)
 {
 	return distanceToBox(worldTransform, boundingBox, eyePosition) < Scalar(c_deformDistance);
@@ -290,8 +284,7 @@ bool DeformMesh::createDeform(
 		part.indexCount = resourcePart.indexCount;
 	}
 
-	m_deformVertexLayout = renderSystem->createVertexLayout({
-		render::VertexElement(render::DataUsage::Position, render::DtFloat4, offsetof(DeformPosition, Position)) });
+	m_deformVertexLayout = renderSystem->createVertexLayout({ render::VertexElement(render::DataUsage::Position, render::DtFloat4, offsetof(DeformPosition, Position)) });
 	if (!m_deformVertexLayout)
 	{
 		log::error << L"Mesh deform create failed; unable to create deform vertex layout." << Endl;
@@ -397,8 +390,7 @@ Ref< render::IAccelerationStructure > DeformMesh::createDeformAccelerationStruct
 
 	// Initially built from the undeformed source positions; refit from the deform buffers
 	// afterwards. The layout carry every element of the source vertex so the pitch is correct.
-	Ref< const render::IVertexLayout > sourceLayout = m_renderSystem->createVertexLayout({
-		render::VertexElement(render::DataUsage::Position, render::DtFloat4, offsetof(DeformVertex, Position)),
+	Ref< const render::IVertexLayout > sourceLayout = m_renderSystem->createVertexLayout({ render::VertexElement(render::DataUsage::Position, render::DtFloat4, offsetof(DeformVertex, Position)),
 		render::VertexElement(render::DataUsage::Normal, render::DtHalf4, offsetof(DeformVertex, Normal)),
 		render::VertexElement(render::DataUsage::Tangent, render::DtHalf4, offsetof(DeformVertex, Tangent)),
 		render::VertexElement(render::DataUsage::Binormal, render::DtHalf4, offsetof(DeformVertex, Binormal)),
