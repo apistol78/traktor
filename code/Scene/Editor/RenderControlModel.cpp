@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -267,7 +267,9 @@ void RenderControlModel::eventButtonUp(ISceneRenderControl* renderControl, ui::W
 				context->raiseSelect(true);
 			}
 		}
-		else if (renderControl->requestEntity(m_mousePosition))
+		else if (renderControl->requestEntity(Vector2(
+					 (m_mousePosition.x + 0.5f) / renderWidget->getInnerRect().getWidth(),
+					 (m_mousePosition.y + 0.5f) / renderWidget->getInnerRect().getHeight())))
 		{
 			// Single clicked; entity rendered at position is read back from the GPU
 			// thus selection is updated in update when resolved.
@@ -540,7 +542,8 @@ void RenderControlModel::eventKeyUp(ISceneRenderControl* renderControl, ui::Widg
 void RenderControlModel::updatePick(ISceneRenderControl* renderControl, SceneEditorContext* context)
 {
 	Ref< world::Entity > entity;
-	if (!renderControl->pollEntity(entity))
+	Vector4 position;
+	if (!renderControl->pollEntity(entity, position))
 	{
 		// Keep rendering until entity has been read back.
 		if (m_timer.getElapsedTime() - m_pickTime < c_pickTimeout)

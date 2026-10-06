@@ -31,12 +31,17 @@
 					<id>{FDA34113-4152-4611-95C7-609B485846DA}</id>
 					<name>Params</name>
 				</item>
+				<item>
+					<id>{FD979DCF-73C5-4F4D-96E6-12D897F86C02}</id>
+					<name>DepthInput</name>
+				</item>
 			</inputPins>
 			<outputPins/>
 			<script><![CDATA[
-// Copy entity id of a single texel into a read back slot.
+// Copy entity id, and view depth if available, of a single texel into read back slots.
 const ivec2 pt = ivec2($Params.xy);
 $Buffer[0].id = imageLoad($Input, pt).x;
+$Buffer[1].id = ($Params.z > 0.0) ? imageLoad($DepthInput, pt).x : 0.0;
 ]]></script>
 		</item>
 		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
@@ -65,6 +70,15 @@ $Buffer[0].id = imageLoad($Input, pt).x;
 				<second>616</second>
 			</position>
 			<parameterDeclaration>{681A42F3-53B6-4C56-8D06-346EAD1B665F}</parameterDeclaration>
+		</item>
+		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
+			<id>{6B3DF082-8A69-4846-8BDB-BBF00BDCC91D}</id>
+			<comment/>
+			<position>
+				<first>-21</first>
+				<second>686</second>
+			</position>
+			<parameterDeclaration>{280AD043-10DC-4186-A993-5680667EC455}</parameterDeclaration>
 		</item>
 	</nodes>
 	<edges>
@@ -96,6 +110,16 @@ $Buffer[0].id = imageLoad($Input, pt).x;
 			<destination>
 				<node ref="/object/nodes/item"/>
 				<id>{FDA34113-4152-4611-95C7-609B485846DA}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[4]"/>
+				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item"/>
+				<id>{FD979DCF-73C5-4F4D-96E6-12D897F86C02}</id>
 			</destination>
 		</item>
 	</edges>

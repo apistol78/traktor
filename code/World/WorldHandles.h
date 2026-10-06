@@ -143,6 +143,7 @@ struct T_DLLCLASS ShaderParameter
 	// EntityId
 	static const render::Handle EntityId;
 	static const render::Handle EntityIdInput;
+	static const render::Handle EntityIdDepthInput;
 	static const render::Handle EntityIdBuffer;
 	static const render::Handle EntityIdParams;
 

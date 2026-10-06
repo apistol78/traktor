@@ -12,6 +12,7 @@
 #include "Core/Containers/CircularVector.h"
 #include "Core/Containers/SmallMap.h"
 #include "Core/Containers/SmallSet.h"
+#include "Core/Math/Vector4.h"
 #include "Core/RefArray.h"
 #include "Editor/IEditorPage.h"
 #include "Ui/Events/AllEvents.h"
@@ -171,6 +172,11 @@ private:
 	SmallMap< int32_t, ViewportMeasurements > m_measurements;	//!< Measurements, by viewport.
 	uint32_t m_postFrameCount = 0;
 	bool m_measurementsDirty = false;
+	RefArray< world::EntityData > m_placeEntityData;	//!< Entities waiting for surface in view before being placed.
+	Ref< EntityAdapter > m_placeParent;
+	uint32_t m_placeViewIndex = 0;
+	uint32_t m_placeFrame = 0;
+	bool m_placeSelect = false;
 
 	bool createSceneAsset();
 
@@ -209,6 +215,10 @@ private:
 	bool moveDown();
 
 	void placeOnGround();
+
+	void requestPlaceEntities(uint32_t viewIndex, const RefArray< world::EntityData >& entityData, EntityAdapter* parent, bool select);
+
+	void placeEntities(const Vector4& surfacePosition);
 
 	void eventEntityToolClick(ui::ToolBarButtonClickEvent* event);
 

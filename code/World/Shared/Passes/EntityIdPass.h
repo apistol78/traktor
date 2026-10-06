@@ -47,8 +47,8 @@ class WorldRenderView;
  *
  * Renders the id of every entity, through the "World_EntityIdWrite" technique, into a
  * target sharing depth with the world renderer's depth of visible surfaces, such as the
- * g-buffer, then copies the id at the position requested by an entity id query into a
- * read back buffer. Only created for world renderers given a query, which only the editor
+ * g-buffer, then copies the id, and the g-buffer view depth if any, at the position requested
+ * by an entity id query into a read back buffer. Only created for world renderers given a query, which only the editor
  * does, and only rendered the frame after a request.
  */
 class EntityIdPass : public Object
@@ -69,6 +69,7 @@ public:
 		const AlignedVector< render::RGDependency >& setupAttachments,
 		render::RenderGraph& renderGraph,
 		render::RGTargetSet depthTargetSetId,
+		render::RGTargetSet gbufferTargetSetId,
 		render::RGTargetSet visualTargetSetId,
 		const std::function< bool(const EntityState& state) >& filter) const;
 

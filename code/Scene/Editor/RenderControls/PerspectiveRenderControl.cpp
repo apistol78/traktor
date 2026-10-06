@@ -394,25 +394,18 @@ void PerspectiveRenderControl::showSelectionRectangle(const ui::Rect& rect)
 	m_selectionRectangle = rect;
 }
 
-bool PerspectiveRenderControl::requestEntity(const ui::Point& position)
+bool PerspectiveRenderControl::requestEntity(const Vector2& position)
 {
 	if (!m_entityIdQuery || !m_entityIdQuery->isSupported())
 		return false;
 
-	const ui::Rect innerRect = m_renderWidget->getInnerRect();
-	if (innerRect.getWidth() <= 0 || innerRect.getHeight() <= 0)
-		return false;
-
-	m_entityIdQuery->request(Vector2(
-		(position.x + 0.5f) / innerRect.getWidth(),
-		(position.y + 0.5f) / innerRect.getHeight()
-	));
+	m_entityIdQuery->request(position);
 	return true;
 }
 
-bool PerspectiveRenderControl::pollEntity(Ref< world::Entity >& outEntity)
+bool PerspectiveRenderControl::pollEntity(Ref< world::Entity >& outEntity, Vector4& outPosition)
 {
-	return m_entityIdQuery != nullptr && m_entityIdQuery->poll(outEntity);
+	return m_entityIdQuery != nullptr && m_entityIdQuery->poll(outEntity, outPosition);
 }
 
 void PerspectiveRenderControl::updateWorldRenderer()

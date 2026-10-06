@@ -310,12 +310,12 @@ void FinalRenderControl::showSelectionRectangle(const ui::Rect& rect)
 {
 }
 
-bool FinalRenderControl::requestEntity(const ui::Point& position)
+bool FinalRenderControl::requestEntity(const Vector2& position)
 {
 	return false;
 }
 
-bool FinalRenderControl::pollEntity(Ref< world::Entity >& outEntity)
+bool FinalRenderControl::pollEntity(Ref< world::Entity >& outEntity, Vector4& outPosition)
 {
 	return false;
 }

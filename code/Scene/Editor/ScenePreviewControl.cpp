@@ -341,6 +341,11 @@ bool ScenePreviewControl::getViewIndex(const ui::Point& position, uint32_t& outI
 	return false;
 }
 
+ISceneRenderControl* ScenePreviewControl::getRenderControl(uint32_t index) const
+{
+	return index < m_renderControls.size() ? m_renderControls[index] : nullptr;
+}
+
 ui::Size ScenePreviewControl::getPreferredSize(const ui::Size& hint) const
 {
 	return ui::Size(256, 256);

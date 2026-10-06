@@ -9,6 +9,7 @@
 #pragma once
 
 #include "Core/Math/Frustum.h"
+#include "Core/Math/Vector2.h"
 #include "Core/Object.h"
 #include "Core/Ref.h"
 #include "Render/Types.h"
@@ -79,14 +80,15 @@ public:
 	 * \param position Position in render control.
 	 * \return True if requested; result is polled with pollEntity.
 	 */
-	virtual bool requestEntity(const ui::Point& position) = 0;
+	virtual bool requestEntity(const Vector2& position) = 0;
 
 	/*! Poll entity requested by requestEntity.
 	 *
 	 * \param outEntity Entity rendered at requested position, null if none.
+	 * \param outPosition World position of surface rendered at requested position, w is zero if none.
 	 * \return True when request has been resolved.
 	 */
-	virtual bool pollEntity(Ref< world::Entity >& outEntity) = 0;
+	virtual bool pollEntity(Ref< world::Entity >& outEntity, Vector4& outPosition) = 0;
 };
 
 }

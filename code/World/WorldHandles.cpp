@@ -125,6 +125,7 @@ const render::Handle ShaderParameter::ContactLightDirection(L"World_ContactLight
 // EntityId
 const render::Handle ShaderParameter::EntityId(L"World_EntityId");
 const render::Handle ShaderParameter::EntityIdInput(L"World_EntityIdInput");
+const render::Handle ShaderParameter::EntityIdDepthInput(L"World_EntityIdDepthInput");
 const render::Handle ShaderParameter::EntityIdBuffer(L"World_EntityIdBuffer");
 const render::Handle ShaderParameter::EntityIdParams(L"World_EntityIdParams");
 

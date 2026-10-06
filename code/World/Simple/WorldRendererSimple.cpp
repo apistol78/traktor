@@ -217,7 +217,7 @@ void WorldRendererSimple::setup(
 		rpd->addBuild(buildVisual);
 		renderGraph.addPass(rpd);
 
-		m_entityIdPass->setup(world, worldRenderView, m_setupAttachments, renderGraph, depthTargetSetId, render::RGTargetSet::Invalid, filter);
+		m_entityIdPass->setup(world, worldRenderView, m_setupAttachments, renderGraph, depthTargetSetId, render::RGTargetSet::Invalid, render::RGTargetSet::Invalid, filter);
 	}
 }
 

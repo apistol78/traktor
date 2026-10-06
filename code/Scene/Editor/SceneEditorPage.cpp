@@ -54,6 +54,7 @@
 #include "Scene/Editor/IComponentPanelEditorFactory.h"
 #include "Scene/Editor/ISceneEditorPlugin.h"
 #include "Scene/Editor/ISceneOperationData.h"
+#include "Scene/Editor/ISceneRenderControl.h"
 #include "Scene/Editor/SceneAsset.h"
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Scene/Editor/SceneOperatorPreviewExtension.h"
@@ -115,6 +116,9 @@ constexpr int32_t c_instanceGridLocked = 3;
 
 /*! Distance, in front of camera, where new entities are placed. */
 constexpr float c_placementDistance = 4.0f;
+
+/*! Number of frames to wait for surface in view before placing new entities. */
+constexpr uint32_t c_placementFrames = 60;
 
 /*! Number of frames a pass isn't measured before its history is discarded. */
 constexpr uint32_t c_measurementHistoryFrames = 256;
@@ -611,28 +615,8 @@ bool SceneEditorPage::dropInstance(db::Instance* instance, const ui::Point& posi
 		if (m_editor->getSettings()->getProperty< bool >(L"SceneEditor.BuildWhenDrop", true))
 			m_editor->buildAsset(instance->getGuid(), false);
 
-		m_context->getDocument()->push();
-
-		// Create instance and adapter.
-		Ref< EntityAdapter > entityAdapter = new EntityAdapter(m_context);
-		entityAdapter->prepare(entityData, nullptr);
-
-		// Place instance in front of perspective camera.
-		const Camera* camera = m_context->getCamera(viewIndex);
-		T_ASSERT(camera);
-
-		entityAdapter->setTransform(Transform(getPlacementPosition(camera)));
-
-		// Finally add adapter to parent group.
-		parentGroupAdapter->addChild(nullptr, entityAdapter);
-
-		updateScene();
-		createInstanceGrid();
-
-		// Select entity.
-		m_context->selectAllEntities(false);
-		m_context->selectEntity(entityAdapter);
-		m_context->raiseSelect(true);
+		entityData->setTransform(Transform::identity());
+		requestPlaceEntities(viewIndex, { entityData }, parentGroupAdapter, true);
 	}
 	else
 		return false;
@@ -727,40 +711,10 @@ bool SceneEditorPage::handleCommand(const ui::Command& command)
 		if (entityDatas.empty())
 			return false;
 
-		// Calculate center of all entities in clipboard.
-		Vector4 center = Vector4::zero();
 		for (auto entityData : entityDatas)
-			center += entityData->getTransform().translation();
-		center /= Scalar((float)entityDatas.size());
-
-		// Offset which move center of pasted entities in front of perspective
-		// camera, thus preserving relative offsets between entities.
-		const Camera* camera = m_context->getCamera(0);
-		T_ASSERT(camera);
-
-		const Vector4 offset = (getPlacementPosition(camera) - center).xyz0();
-
-		m_context->getDocument()->push();
-
-		// Create new instances and adapters for each entity found in clipboard.
-		for (auto entityData : entityDatas)
-		{
 			generateEntityIds(entityData);
 
-			const Transform transform = entityData->getTransform();
-			entityData->setTransform(Transform(
-				transform.translation() + offset,
-				transform.rotation()));
-
-			Ref< EntityAdapter > entityAdapter = new EntityAdapter(m_context);
-			entityAdapter->prepare(entityData, nullptr);
-			parentEntity->addChild(nullptr, entityAdapter);
-		}
-
-		updateScene();
-		createInstanceGrid();
-
-		m_context->raiseSelect(false);
+		requestPlaceEntities(0, entityDatas, parentEntity, false);
 	}
 	else if (command == L"Editor.Delete")
 	{
@@ -1636,6 +1590,74 @@ void SceneEditorPage::placeOnGround()
 	}
 }
 
+void SceneEditorPage::requestPlaceEntities(uint32_t viewIndex, const RefArray< world::EntityData >& entityData, EntityAdapter* parent, bool select)
+{
+	if (!m_placeEntityData.empty())
+		placeEntities(Vector4::zero());
+
+	m_placeEntityData = entityData;
+	m_placeParent = parent;
+	m_placeViewIndex = viewIndex;
+	m_placeFrame = m_postFrameCount;
+	m_placeSelect = select;
+
+	// Surface at center of view is read back from the GPU, entities are placed in post frame when resolved.
+	ISceneRenderControl* renderControl = m_editControl->getRenderControl(viewIndex);
+	if (renderControl && renderControl->requestEntity(Vector2(0.5f, 0.5f)))
+		m_context->enqueueRedraw(renderControl);
+	else
+		placeEntities(Vector4::zero());
+}
+
+void SceneEditorPage::placeEntities(const Vector4& surfacePosition)
+{
+	const Camera* camera = m_context->getCamera(m_placeViewIndex);
+	T_ASSERT(camera);
+
+	// Place in front of camera, or on surface if closer so entities aren't hidden behind geometry.
+	Vector4 position = getPlacementPosition(camera);
+	if (surfacePosition.w() > 0.0_simd && (surfacePosition - camera->getPosition()).xyz0().length() < Scalar(c_placementDistance))
+		position = surfacePosition.xyz1();
+
+	// Move center of entities to position, preserving relative offsets between entities.
+	Vector4 center = Vector4::zero();
+	for (auto entityData : m_placeEntityData)
+		center += entityData->getTransform().translation().xyz0();
+	center /= Scalar((float)m_placeEntityData.size());
+
+	const Vector4 offset = (position - center).xyz0();
+
+	m_context->getDocument()->push();
+
+	RefArray< EntityAdapter > entityAdapters;
+	for (auto entityData : m_placeEntityData)
+	{
+		const Transform transform = entityData->getTransform();
+		entityData->setTransform(Transform(
+			transform.translation() + offset,
+			transform.rotation()));
+
+		Ref< EntityAdapter > entityAdapter = new EntityAdapter(m_context);
+		entityAdapter->prepare(entityData, nullptr);
+		m_placeParent->addChild(nullptr, entityAdapter);
+		entityAdapters.push_back(entityAdapter);
+	}
+
+	m_placeEntityData.clear();
+	m_placeParent = nullptr;
+
+	updateScene();
+	createInstanceGrid();
+
+	if (m_placeSelect)
+	{
+		m_context->selectAllEntities(false);
+		for (auto entityAdapter : entityAdapters)
+			m_context->selectEntity(entityAdapter);
+	}
+	m_context->raiseSelect(m_placeSelect);
+}
+
 void SceneEditorPage::eventEntityToolClick(ui::ToolBarButtonClickEvent* event)
 {
 	handleCommand(event->getCommand());
@@ -1839,6 +1861,19 @@ void SceneEditorPage::eventContextCameraMoved(CameraMovedEvent* event)
 void SceneEditorPage::eventContextPostFrame(PostFrameEvent* event)
 {
 	m_postFrameCount++;
+
+	if (!m_placeEntityData.empty())
+	{
+		ISceneRenderControl* renderControl = m_editControl->getRenderControl(m_placeViewIndex);
+		Ref< world::Entity > entity;
+		Vector4 surfacePosition;
+		if (renderControl && renderControl->pollEntity(entity, surfacePosition))
+			placeEntities(surfacePosition);
+		else if (renderControl && m_postFrameCount - m_placeFrame < c_placementFrames)
+			m_context->enqueueRedraw(renderControl);
+		else
+			placeEntities(Vector4::zero());
+	}
 
 	// Only measure render passes while measurements are visible since measuring isn't free.
 	const bool measurementsVisible = m_gridMeasurements->isVisible(true);

@@ -87,9 +87,9 @@ public:
 
 	virtual void showSelectionRectangle(const ui::Rect& rect) override final;
 
-	virtual bool requestEntity(const ui::Point& position) override final;
+	virtual bool requestEntity(const Vector2& position) override final;
 
-	virtual bool pollEntity(Ref< world::Entity >& outEntity) override final;
+	virtual bool pollEntity(Ref< world::Entity >& outEntity, Vector4& outPosition) override final;
 
 private:
 	Ref< SceneEditorContext > m_context;

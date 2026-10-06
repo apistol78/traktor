@@ -93,7 +93,7 @@ bool EntityIdPass::create(resource::IResourceManager* resourceManager, render::I
 
 	Ref< render::Buffer > readBackBuffer = renderSystem->createBuffer(
 		render::BufferUsage::BuStructured | render::BufferUsage::BuReadBack,
-		sizeof(float),
+		2 * sizeof(float),
 		false,
 		T_FILE_LINE_W);
 	if (!readBackBuffer)
@@ -142,6 +142,7 @@ void EntityIdPass::setup(
 	const AlignedVector< render::RGDependency >& setupAttachments,
 	render::RenderGraph& renderGraph,
 	render::RGTargetSet depthTargetSetId,
+	render::RGTargetSet gbufferTargetSetId,
 	render::RGTargetSet visualTargetSetId,
 	const std::function< bool(const EntityState& state) >& filter) const
 {
@@ -156,6 +157,10 @@ void EntityIdPass::setup(
 		return;
 	slots[0] = c_readBackPending;
 	m_query->m_readBackBuffer->unlock();
+
+	m_query->m_projection = worldRenderView.getProjection();
+	m_query->m_viewInverse = worldRenderView.getView().inverse();
+	m_query->m_viewFarZ = worldRenderView.getViewFrustum().getFarZ();
 
 	// Assign ids to entities gathered by the world renderer, all components of an entity are drawn with its id.
 	AlignedVector< Renderable > renderables;
@@ -256,19 +261,24 @@ void EntityIdPass::setup(
 
 	renderGraph.addPass(rp);
 
-	// Copy id at requested position into read back slot; compute built into a pass runs
-	// ahead of that pass' draws thus it must be a pass of its own after the id pass.
+	// Copy id and view depth at requested position into read back slots; compute built into a pass
+	// runs ahead of that pass' draws thus it must be a pass of its own after the id pass.
 	const Vector2 position = m_query->m_position;
 	Ref< render::Buffer > readBackBuffer = m_query->m_readBackBuffer;
 
 	Ref< render::RenderPass > rrp = new render::RenderPass(L"Entity id read back");
 	rrp->addInput(entityIdTargetSetId);
+	rrp->addInput(gbufferTargetSetId);
 	rrp->addBuild([=, this](const render::RenderGraph& renderGraph, render::RenderContext* renderContext) {
 		const auto entityIdTargetSet = renderGraph.getTargetSet(entityIdTargetSetId);
 		const int32_t width = entityIdTargetSet->getWidth();
 		const int32_t height = entityIdTargetSet->getHeight();
 		const int32_t x = std::clamp((int32_t)(position.x * width), 0, width - 1);
 		const int32_t y = std::clamp((int32_t)(position.y * height), 0, height - 1);
+
+		// Without a g-buffer the id target is bound as a placeholder and depth is not read.
+		const auto gbufferTargetSet = (gbufferTargetSetId != render::RGTargetSet::Invalid) ? renderGraph.getTargetSet(gbufferTargetSetId) : nullptr;
+		render::ITexture* depthTexture = gbufferTargetSet ? gbufferTargetSet->getColorTexture(0) : entityIdTargetSet->getColorTexture(0);
 
 		auto renderBlock = renderContext->allocNamed< render::ComputeRenderBlock >(L"Entity id read back");
 		renderBlock->program = m_readBackShader->getProgram().program;
@@ -279,8 +289,9 @@ void EntityIdPass::setup(
 		renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
 		renderBlock->programParams->beginParameters(renderContext);
 		renderBlock->programParams->setImageViewParameter(ShaderParameter::EntityIdInput, entityIdTargetSet->getColorTexture(0), 0);
+		renderBlock->programParams->setImageViewParameter(ShaderParameter::EntityIdDepthInput, depthTexture, 0);
 		renderBlock->programParams->setBufferViewParameter(ShaderParameter::EntityIdBuffer, readBackBuffer->getBufferView());
-		renderBlock->programParams->setVectorParameter(ShaderParameter::EntityIdParams, Vector4((float)x, (float)y, 0.0f, 0.0f));
+		renderBlock->programParams->setVectorParameter(ShaderParameter::EntityIdParams, Vector4((float)x, (float)y, gbufferTargetSet ? 1.0f : 0.0f, 0.0f));
 		renderBlock->programParams->endParameters(renderContext);
 
 		renderContext->compute(renderBlock);

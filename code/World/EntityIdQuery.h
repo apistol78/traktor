@@ -11,6 +11,7 @@
 #include "Core/Object.h"
 #include "Core/Ref.h"
 #include "Core/RefArray.h"
+#include "Core/Math/Matrix44.h"
 #include "Core/Math/Vector2.h"
 
 // import/export mechanism.
@@ -33,7 +34,7 @@ namespace traktor::world
 
 class Entity;
 
-/*! Query which entity is rendered at a position in view.
+/*! Query which entity, and surface, is rendered at a position in view.
  * \ingroup World
  *
  * Given to a world renderer through WorldCreateDesc; the world renderer then renders
@@ -60,9 +61,10 @@ public:
 	 * The id is read back from the GPU thus the result is available a few frames after the request.
 	 *
 	 * \param outEntity Entity rendered at requested position, null if none.
+	 * \param outPosition World position of surface rendered at requested position, w is zero if none.
 	 * \return True when request has been resolved.
 	 */
-	bool poll(Ref< Entity >& outEntity);
+	bool poll(Ref< Entity >& outEntity, Vector4& outPosition);
 
 private:
 	friend class EntityIdPass;
@@ -76,6 +78,9 @@ private:
 
 	State m_state = State::Idle;
 	Vector2 m_position = Vector2(0.0f, 0.0f);
+	Matrix44 m_projection = Matrix44::identity();
+	Matrix44 m_viewInverse = Matrix44::identity();
+	float m_viewFarZ = 0.0f;
 	bool m_supported = false;
 	Ref< render::Buffer > m_readBackBuffer;
 	RefArray< Entity > m_entities;			//!< Entity of each id, first id is 1.

@@ -235,12 +235,12 @@ void CameraRenderControl::showSelectionRectangle(const ui::Rect& rect)
 	m_selectionRectangle = rect;
 }
 
-bool CameraRenderControl::requestEntity(const ui::Point& position)
+bool CameraRenderControl::requestEntity(const Vector2& position)
 {
 	return false;
 }
 
-bool CameraRenderControl::pollEntity(Ref< world::Entity >& outEntity)
+bool CameraRenderControl::pollEntity(Ref< world::Entity >& outEntity, Vector4& outPosition)
 {
 	return false;
 }
