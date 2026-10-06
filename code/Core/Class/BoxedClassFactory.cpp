@@ -292,8 +292,8 @@ void BoxedClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classBoxedQuaternion->addConstant("identity", CastAny< Quaternion >::set(Quaternion::identity()));
 	classBoxedQuaternion->addProperty< float >("x", &BoxedQuaternion::set_x, &BoxedQuaternion::get_x);
 	classBoxedQuaternion->addProperty< float >("y", &BoxedQuaternion::set_y, &BoxedQuaternion::get_y);
-	classBoxedQuaternion->addProperty< float >("x", &BoxedQuaternion::set_z, &BoxedQuaternion::get_z);
-	classBoxedQuaternion->addProperty< float >("y", &BoxedQuaternion::set_w, &BoxedQuaternion::get_w);
+	classBoxedQuaternion->addProperty< float >("z", &BoxedQuaternion::set_z, &BoxedQuaternion::get_z);
+	classBoxedQuaternion->addProperty< float >("w", &BoxedQuaternion::set_w, &BoxedQuaternion::get_w);
 	classBoxedQuaternion->addProperty("eulerAngles", &BoxedQuaternion::getEulerAngles);
 	classBoxedQuaternion->addProperty("axisAngle", &BoxedQuaternion::getAxisAngle);
 	classBoxedQuaternion->addMethod("normalized", &BoxedQuaternion::normalized);
