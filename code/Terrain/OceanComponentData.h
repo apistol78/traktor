@@ -71,13 +71,12 @@ public:
 
 	const resource::Id< Terrain >& getTerrain() const { return m_terrain; }
 
-	/*! Tessellation quality; number of grid cells along a tile edge is 32 << quality. */
 	int32_t getQuality() const { return m_quality; }
 
-	/*! Size of the finest, camera centered, tile in world units. */
+	float getElevation() const { return m_elevation; }
+
 	float getTileSize() const { return m_tileSize; }
 
-	/*! Number of level of details; each level doubles the tile size. */
 	int32_t getLodCount() const { return m_lodCount; }
 
 private:
