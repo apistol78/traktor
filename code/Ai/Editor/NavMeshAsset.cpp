@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -15,7 +15,7 @@
 namespace traktor::ai
 {
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.ai.NavMeshAsset", 0, NavMeshAsset, ISerializable)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.ai.NavMeshAsset", 1, NavMeshAsset, ISerializable)
 
 void NavMeshAsset::serialize(ISerializer& s)
 {
@@ -32,6 +32,8 @@ void NavMeshAsset::serialize(ISerializer& s)
 	s >> Member< float >(L"mergeRegionSize", m_mergeRegionSize, AttributeRange(0.0f) | AttributeUnit(UnitType::Metres));
 	s >> Member< float >(L"detailSampleDistance", m_detailSampleDistance, AttributeRange(0.0f));
 	s >> Member< float >(L"detailSampleMaxError", m_detailSampleMaxError, AttributeRange(0.0f));
+	if (s.getVersion< NavMeshAsset >() >= 1)
+		s >> Member< int32_t >(L"tileSize", m_tileSize, AttributeRange(0));
 }
 
 }

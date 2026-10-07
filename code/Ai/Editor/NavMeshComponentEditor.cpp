@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2025 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -13,6 +13,8 @@
 #include "Resource/IResourceManager.h"
 #include "Scene/Editor/SceneAsset.h"
 #include "Scene/Editor/SceneEditorContext.h"
+
+#include <DetourNavMesh.h>
 
 namespace traktor::ai
 {
@@ -63,53 +65,52 @@ void NavMeshComponentEditor::draw(render::PrimitiveRenderer* primitiveRenderer)
 		if (!m_context->getResourceManager()->bind(componentData->get(), navMesh))
 			return;
 
-		if (navMesh->m_navMeshPolygons.empty())
+		const dtNavMesh* nm = navMesh->m_navMesh;
+		if (!nm)
 			return;
 
 		primitiveRenderer->pushWorld(Matrix44::identity());
-		primitiveRenderer->pushDepthState(true, false, false);
 
-		const uint16_t* nmp = navMesh->m_navMeshPolygons.c_ptr();
-		T_ASSERT(nmp);
-
-		for (uint32_t i = 0; i < navMesh->m_navMeshPolygons.size(); )
+		// First pass draw depth tested polygons, second pass draw outlines on top.
+		for (int32_t pass = 0; pass < 2; ++pass)
 		{
-			const uint16_t npv = nmp[i++];
-			for (uint16_t j = 0; j < npv - 2; ++j)
+			primitiveRenderer->pushDepthState(pass == 0, false, false);
+
+			for (int32_t i = 0; i < nm->getMaxTiles(); ++i)
 			{
-				const uint16_t i0 = nmp[i];
-				const uint16_t i1 = nmp[i + j + 1];
-				const uint16_t i2 = nmp[i + j + 2];
-				primitiveRenderer->drawSolidTriangle(
-					navMesh->m_navMeshVertices[i0],
-					navMesh->m_navMeshVertices[i1],
-					navMesh->m_navMeshVertices[i2],
-					Color4ub(0, 255, 255, 64)
-				);
+				const dtMeshTile* tile = nm->getTile(i);
+				if (!tile->header)
+					continue;
+
+				for (int32_t j = 0; j < tile->header->polyCount; ++j)
+				{
+					const dtPoly& poly = tile->polys[j];
+					if (poly.getType() == DT_POLYTYPE_OFFMESH_CONNECTION)
+						continue;
+
+					Vector4 v[DT_VERTS_PER_POLYGON];
+					for (int32_t k = 0; k < poly.vertCount; ++k)
+					{
+						const float* p = &tile->verts[poly.verts[k] * 3];
+						v[k] = Vector4(p[0], p[1], p[2], 1.0f);
+					}
+
+					if (pass == 0)
+					{
+						for (int32_t k = 1; k < poly.vertCount - 1; ++k)
+							primitiveRenderer->drawSolidTriangle(v[0], v[k], v[k + 1], Color4ub(0, 255, 255, 64));
+					}
+					else
+					{
+						for (int32_t k = 0; k < poly.vertCount; ++k)
+							primitiveRenderer->drawLine(v[k], v[(k + 1) % poly.vertCount], Color4ub(0, 255, 255, 255));
+					}
+				}
 			}
-			i += npv;
+
+			primitiveRenderer->popDepthState();
 		}
 
-		primitiveRenderer->popDepthState();
-		primitiveRenderer->pushDepthState(false, false, false);
-
-		for (uint32_t i = 0; i < navMesh->m_navMeshPolygons.size(); )
-		{
-			const uint16_t npv = nmp[i++];
-			for (uint16_t j = 0; j < npv; ++j)
-			{
-				const uint16_t i0 = nmp[i + j];
-				const uint16_t i1 = nmp[i + (j + 1) % npv];
-				primitiveRenderer->drawLine(
-					navMesh->m_navMeshVertices[i0],
-					navMesh->m_navMeshVertices[i1],
-					Color4ub(0, 255, 255, 255)
-				);
-			}
-			i += npv;
-		}
-
-		primitiveRenderer->popDepthState();
 		primitiveRenderer->popWorld();
 	}
 }

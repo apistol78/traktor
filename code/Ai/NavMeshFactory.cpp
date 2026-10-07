@@ -56,69 +56,51 @@ Ref< Object > NavMeshFactory::create(resource::IResourceManager* resourceManager
 
 	uint8_t version;
 	r >> version;
-	if (version != 2)
+	if (version != 3)
 		return nullptr;
 
-	int32_t navDataSize;
-	r >> navDataSize;
-	if (navDataSize <= 0)
+	dtNavMeshParams params;
+	r >> params.orig[0];
+	r >> params.orig[1];
+	r >> params.orig[2];
+	r >> params.tileWidth;
+	r >> params.tileHeight;
+	r >> params.maxTiles;
+	r >> params.maxPolys;
+
+	outputNavMesh->m_navMesh = dtAllocNavMesh();
+	if (!outputNavMesh->m_navMesh)
 		return nullptr;
 
-	uint8_t* navData = (uint8_t*)dtAlloc(navDataSize, DT_ALLOC_PERM);
-	if (stream->read(navData, navDataSize) != navDataSize)
+	if (dtStatusFailed(outputNavMesh->m_navMesh->init(&params)))
 		return nullptr;
 
-	bool haveGeometry;
-	r >> haveGeometry;
+	int32_t tileCount;
+	r >> tileCount;
 
-	if (haveGeometry)
+	for (int32_t i = 0; i < tileCount; ++i)
 	{
-		uint32_t numVertices;
-		r >> numVertices;
+		int32_t tileDataSize;
+		r >> tileDataSize;
+		if (tileDataSize <= 0)
+			return nullptr;
 
-		outputNavMesh->m_navMeshVertices.resize(numVertices);
-		for (uint32_t i = 0; i < numVertices; ++i)
+		uint8_t* tileData = (uint8_t*)dtAlloc(tileDataSize, DT_ALLOC_PERM);
+		if (!tileData)
+			return nullptr;
+
+		if (
+			stream->read(tileData, tileDataSize) != tileDataSize ||
+			dtStatusFailed(outputNavMesh->m_navMesh->addTile(tileData, tileDataSize, DT_TILE_FREE_DATA, 0, nullptr))
+		)
 		{
-			float x, y, z;
-			r >> x;
-			r >> y;
-			r >> z;
-			outputNavMesh->m_navMeshVertices[i].set(x, y, z, 1.0f);
-		}
-
-		uint32_t numPolygons;
-		r >> numPolygons;
-
-		outputNavMesh->m_navMeshPolygons.reserve(numPolygons * 4);
-		for (uint32_t i = 0; i < numPolygons; ++i)
-		{
-			uint8_t numPolygonVertices;
-			r >> numPolygonVertices;
-
-			outputNavMesh->m_navMeshPolygons.push_back(numPolygonVertices);
-
-			for (uint32_t j = 0; j < numPolygonVertices; ++j)
-			{
-				uint16_t polygonIndex;
-				r >> polygonIndex;
-
-				outputNavMesh->m_navMeshPolygons.push_back(polygonIndex);
-			}
+			dtFree(tileData);
+			return nullptr;
 		}
 	}
 
 	stream->close();
 	stream = nullptr;
-
-	dtNavMesh* navMesh = dtAllocNavMesh();
-	if (!navMesh)
-		return nullptr;
-
-	dtStatus status = navMesh->init(navData, navDataSize, DT_TILE_FREE_DATA);
-	if (dtStatusFailed(status))
-		return nullptr;
-
-	outputNavMesh->m_navMesh = navMesh;
 
 	return outputNavMesh;
 }

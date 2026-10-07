@@ -13,7 +13,6 @@
 #include "Core/Io/IStream.h"
 #include "Core/Io/Writer.h"
 #include "Core/Log/Log.h"
-#include "Core/Misc/AutoPtr.h"
 #include "Core/Misc/String.h"
 #include "Core/Misc/TString.h"
 #include "Core/Settings/PropertyBoolean.h"
@@ -36,10 +35,13 @@
 #include "World/Entity/VolumeComponentData.h"
 #include "World/EntityData.h"
 
+#include <atomic>
 #include <cstring>
+#include <DetourCommon.h>
 #include <DetourNavMesh.h>
 #include <DetourNavMeshBuilder.h>
 #include <limits>
+#include <memory>
 #include <Recast.h>
 
 namespace traktor::ai
@@ -79,9 +81,177 @@ void copyUnaligned3(float out[3], const Vector4& source)
 	out[2] = source.z();
 }
 
+bool buildTile(
+	const rcConfig& cfg,
+	int32_t tileX,
+	int32_t tileY,
+	float agentHeight,
+	float agentRadius,
+	float agentClimb,
+	const AlignedVector< float >& vertices,
+	const AlignedVector< int32_t >& indices,
+	const AlignedVector< uint8_t >& areas,
+	const AlignedVector< int32_t >& triangles,
+	model::Model* debugModel,
+	Semaphore& debugModelLock,
+	AlignedVector< uint8_t >& outTileData,
+	int32_t& outPolyCount)
+{
+	BuildContext ctx;
+
+	outTileData.resize(0);
+	outPolyCount = 0;
+
+	if (triangles.empty())
+		return true;
+
+	AlignedVector< int32_t > tileIndices;
+	AlignedVector< uint8_t > tileAreas;
+	tileIndices.reserve(triangles.size() * 3);
+	tileAreas.reserve(triangles.size());
+	for (const int32_t triangle : triangles)
+	{
+		tileIndices.push_back(indices[triangle * 3 + 0]);
+		tileIndices.push_back(indices[triangle * 3 + 1]);
+		tileIndices.push_back(indices[triangle * 3 + 2]);
+		tileAreas.push_back(areas[triangle]);
+	}
+
+	std::unique_ptr< rcHeightfield, decltype(&rcFreeHeightField) > solid(rcAllocHeightfield(), &rcFreeHeightField);
+	if (!solid || !rcCreateHeightfield(&ctx, *solid, cfg.width, cfg.height, cfg.bmin, cfg.bmax, cfg.cs, cfg.ch))
+		return false;
+
+	if (!rcRasterizeTriangles(&ctx, vertices.c_ptr(), (int)(vertices.size() / 3), tileIndices.c_ptr(), tileAreas.c_ptr(), (int)tileAreas.size(), *solid, cfg.walkableClimb))
+		return false;
+
+	// Remove unwanted overhangs and spans where the character cannot stand.
+	rcFilterLowHangingWalkableObstacles(&ctx, cfg.walkableClimb, *solid);
+	rcFilterLedgeSpans(&ctx, cfg.walkableHeight, cfg.walkableClimb, *solid);
+	rcFilterWalkableLowHeightSpans(&ctx, cfg.walkableHeight, *solid);
+
+	std::unique_ptr< rcCompactHeightfield, decltype(&rcFreeCompactHeightfield) > chf(rcAllocCompactHeightfield(), &rcFreeCompactHeightfield);
+	if (!chf || !rcBuildCompactHeightfield(&ctx, cfg.walkableHeight, cfg.walkableClimb, *solid, *chf))
+		return false;
+
+	solid.reset();
+
+	if (!rcErodeWalkableArea(&ctx, cfg.walkableRadius, *chf))
+		return false;
+
+	const bool c_monotonePartitioning = false;
+	if (c_monotonePartitioning)
+	{
+		if (!rcBuildRegionsMonotone(&ctx, *chf, cfg.borderSize, cfg.minRegionArea, cfg.mergeRegionArea))
+			return false;
+	}
+	else
+	{
+		if (!rcBuildDistanceField(&ctx, *chf))
+			return false;
+		if (!rcBuildRegions(&ctx, *chf, cfg.borderSize, cfg.minRegionArea, cfg.mergeRegionArea))
+			return false;
+	}
+
+	std::unique_ptr< rcContourSet, decltype(&rcFreeContourSet) > cset(rcAllocContourSet(), &rcFreeContourSet);
+	if (!cset || !rcBuildContours(&ctx, *chf, cfg.maxSimplificationError, cfg.maxEdgeLen, *cset))
+		return false;
+
+	if (cset->nconts == 0)
+		return true;
+
+	std::unique_ptr< rcPolyMesh, decltype(&rcFreePolyMesh) > pmesh(rcAllocPolyMesh(), &rcFreePolyMesh);
+	if (!pmesh || !rcBuildPolyMesh(&ctx, *cset, cfg.maxVertsPerPoly, *pmesh))
+		return false;
+
+	std::unique_ptr< rcPolyMeshDetail, decltype(&rcFreePolyMeshDetail) > dmesh(rcAllocPolyMeshDetail(), &rcFreePolyMeshDetail);
+	if (!dmesh || !rcBuildPolyMeshDetail(&ctx, *pmesh, *chf, cfg.detailSampleDist, cfg.detailSampleMaxError, *dmesh))
+		return false;
+
+	chf.reset();
+	cset.reset();
+
+	if (pmesh->npolys == 0)
+		return true;
+
+	for (int i = 0; i < pmesh->npolys; ++i)
+		if (pmesh->areas[i] == RC_WALKABLE_AREA)
+			pmesh->flags[i] = 0xffff;
+
+	dtNavMeshCreateParams params;
+	std::memset(&params, 0, sizeof(params));
+
+	params.verts = pmesh->verts;
+	params.vertCount = pmesh->nverts;
+	params.polys = pmesh->polys;
+	params.polyAreas = pmesh->areas;
+	params.polyFlags = pmesh->flags;
+	params.polyCount = pmesh->npolys;
+	params.nvp = pmesh->nvp;
+	params.detailMeshes = dmesh->meshes;
+	params.detailVerts = dmesh->verts;
+	params.detailVertsCount = dmesh->nverts;
+	params.detailTris = dmesh->tris;
+	params.detailTriCount = dmesh->ntris;
+	params.walkableHeight = agentHeight;
+	params.walkableRadius = agentRadius;
+	params.walkableClimb = agentClimb;
+	params.tileX = tileX;
+	params.tileY = tileY;
+	rcVcopy(params.bmin, pmesh->bmin);
+	rcVcopy(params.bmax, pmesh->bmax);
+	params.cs = cfg.cs;
+	params.ch = cfg.ch;
+	params.buildBvTree = true;
+
+	uint8_t* navData = nullptr;
+	int32_t navDataSize = 0;
+	if (!dtCreateNavMeshData(&params, &navData, &navDataSize))
+		return false;
+
+	outTileData.resize(navDataSize);
+	std::memcpy(outTileData.ptr(), navData, navDataSize);
+	outPolyCount = pmesh->npolys;
+
+	dtFree(navData);
+
+	if (debugModel)
+	{
+		T_ANONYMOUS_VAR(Acquire< Semaphore >)(debugModelLock);
+
+		AlignedVector< uint32_t > vertexIds(pmesh->nverts);
+		for (int32_t i = 0; i < pmesh->nverts; ++i)
+		{
+			const uint32_t positionId = debugModel->addPosition(Vector4(
+				pmesh->bmin[0] + pmesh->verts[i * 3 + 0] * pmesh->cs,
+				pmesh->bmin[1] + pmesh->verts[i * 3 + 1] * pmesh->ch,
+				pmesh->bmin[2] + pmesh->verts[i * 3 + 2] * pmesh->cs,
+				1.0f));
+			vertexIds[i] = debugModel->addVertex(model::Vertex(positionId));
+		}
+
+		for (int32_t i = 0; i < pmesh->npolys; ++i)
+		{
+			model::Polygon polygon;
+
+			const uint16_t* p = &pmesh->polys[i * pmesh->nvp * 2];
+			for (int32_t j = 0; j < pmesh->nvp; ++j)
+			{
+				if (p[j] == RC_MESH_NULL_IDX)
+					break;
+				polygon.addVertex(vertexIds[p[j]]);
+			}
+
+			polygon.flipWinding();
+			debugModel->addPolygon(polygon);
+		}
+	}
+
+	return true;
 }
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.ai.NavMeshPipeline", 13, NavMeshPipeline, editor::DefaultPipeline)
+}
+
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.ai.NavMeshPipeline", 14, NavMeshPipeline, editor::DefaultPipeline)
 
 bool NavMeshPipeline::create(const editor::IPipelineSettings* settings, db::Database* database)
 {
@@ -220,7 +390,7 @@ bool NavMeshPipeline::buildOutput(
 			// Explicitly check for ocean component, need to discard everything below ocean level.
 			if (auto oceanComponentData = entityData->getComponent< terrain::OceanComponentData >())
 			{
-				oceanHeight = max< float >(oceanHeight, entityData->getTransform().translation().y());
+				oceanHeight = max< float >(oceanHeight, oceanComponentData->getElevation());
 				oceanClip = true;
 			}
 
@@ -292,9 +462,52 @@ bool NavMeshPipeline::buildOutput(
 	log::info << L"\t" << navModelsTriangleCount << L" triangle(s) loaded." << Endl;
 	log::info << L"Generating navigation mesh..." << Endl;
 
-	BuildContext ctx;
-	rcConfig cfg;
+	// Merge all models into a single world space triangle soup.
+	AlignedVector< float > vertices;
+	AlignedVector< int32_t > indices;
+	indices.reserve(navModelsTriangleCount * 3);
 
+	for (auto& navModel : navModels)
+	{
+		const int32_t vertexBase = (int32_t)(vertices.size() / 3);
+		const uint32_t vertexCount = navModel.model->getVertexCount();
+		const uint32_t triangleCount = navModel.model->getPolygonCount();
+
+		for (uint32_t j = 0; j < vertexCount; ++j)
+		{
+			const Vector4 position = navModel.transform * navModel.model->getVertexPosition(j).xyz1();
+			vertices.push_back(position.x());
+			vertices.push_back(position.y());
+			vertices.push_back(position.z());
+		}
+
+		for (uint32_t j = 0; j < triangleCount; ++j)
+		{
+			const model::Polygon& triangle = navModel.model->getPolygon(j);
+			T_ASSERT(triangle.getVertexCount() == 3);
+
+			if (oceanClip)
+			{
+				if (vertices[(vertexBase + triangle.getVertex(0)) * 3 + 1] < oceanHeight - c_oceanThreshold)
+					continue;
+				if (vertices[(vertexBase + triangle.getVertex(1)) * 3 + 1] < oceanHeight - c_oceanThreshold)
+					continue;
+				if (vertices[(vertexBase + triangle.getVertex(2)) * 3 + 1] < oceanHeight - c_oceanThreshold)
+					continue;
+			}
+
+			indices.push_back(vertexBase + triangle.getVertex(2));
+			indices.push_back(vertexBase + triangle.getVertex(1));
+			indices.push_back(vertexBase + triangle.getVertex(0));
+		}
+
+		navModel.model = nullptr;
+	}
+
+	const int32_t vertexCount = (int32_t)(vertices.size() / 3);
+	const int32_t triangleCount = (int32_t)(indices.size() / 3);
+
+	rcConfig cfg;
 	std::memset(&cfg, 0, sizeof(cfg));
 	cfg.cs = asset->m_cellSize;
 	cfg.ch = asset->m_cellHeight;
@@ -313,258 +526,137 @@ bool NavMeshPipeline::buildOutput(
 	copyUnaligned3(cfg.bmin, navModelsAabb.mn);
 	copyUnaligned3(cfg.bmax, navModelsAabb.mx);
 
-	rcCalcGridSize(cfg.bmin, cfg.bmax, cfg.cs, &cfg.width, &cfg.height);
+	int32_t gridWidth = 0, gridHeight = 0;
+	rcCalcGridSize(cfg.bmin, cfg.bmax, cfg.cs, &gridWidth, &gridHeight);
 
-	log::info << L"NavMesh heightfield size " << cfg.width << L" * " << cfg.height << L"." << Endl;
+	// Without tiling the whole grid is built as a single tile.
+	const bool tiled = (asset->m_tileSize > 0);
+	const int32_t tileCellsX = tiled ? asset->m_tileSize : gridWidth;
+	const int32_t tileCellsZ = tiled ? asset->m_tileSize : gridHeight;
+	const int32_t tilesX = (gridWidth + tileCellsX - 1) / tileCellsX;
+	const int32_t tilesZ = (gridHeight + tileCellsZ - 1) / tileCellsZ;
+	const float tileWidth = tileCellsX * cfg.cs;
+	const float tileDepth = tileCellsZ * cfg.cs;
 
-	rcHeightfield* solid = rcAllocHeightfield();
-	if (!solid)
+	cfg.tileSize = tiled ? asset->m_tileSize : 0;
+	cfg.borderSize = tiled ? cfg.walkableRadius + 3 : 0;
+	cfg.width = tileCellsX + cfg.borderSize * 2;
+	cfg.height = tileCellsZ + cfg.borderSize * 2;
+
+	const float border = cfg.borderSize * cfg.cs;
+
+	log::info << L"NavMesh heightfield size " << gridWidth << L" * " << gridHeight << L", " << tilesX << L" * " << tilesZ << L" tile(s)." << Endl;
+
+	// Mark walkable triangles.
+	AlignedVector< uint8_t > areas((size_t)triangleCount, 0);
+	if (triangleCount > 0)
 	{
-		log::error << L"NavMesh pipeline failed; unable to allocate Recast heightfield." << Endl;
-		return false;
+		BuildContext ctx;
+		rcMarkWalkableTriangles(&ctx, cfg.walkableSlopeAngle, vertices.c_ptr(), vertexCount, indices.c_ptr(), triangleCount, areas.ptr());
 	}
 
-	if (!rcCreateHeightfield(&ctx, *solid, cfg.width, cfg.height, cfg.bmin, cfg.bmax, cfg.cs, cfg.ch))
+	// Bin triangles into each tile they overlap, including border.
+	AlignedVector< AlignedVector< int32_t > > tileTriangles(tilesX * tilesZ);
+	for (int32_t i = 0; i < triangleCount; ++i)
 	{
-		log::error << L"NavMesh pipeline failed; unable to create Recast heightfield." << Endl;
-		return false;
-	}
-
-	// Allocate array that can hold triangle area types.
-	// If you have multiple meshes you need to process, allocate
-	// and array which can hold the max number of triangles you need to process.
-	AutoArrayPtr< uint8_t > triAreas(new uint8_t[navModelsTriangleCount]);
-	if (!triAreas.c_ptr())
-	{
-		log::error << L"NavMesh pipeline failed; unable to allocate memory." << Endl;
-		return false;
-	}
-
-	std::memset(triAreas.ptr(), 0, navModelsTriangleCount * sizeof(uint8_t));
-
-	{
-		AlignedVector< int32_t > indices;
-
-		uint8_t* triAreaPtr = triAreas.ptr();
-		for (auto& navModel : navModels)
+		float mnx = std::numeric_limits< float >::max(), mxx = -std::numeric_limits< float >::max();
+		float mnz = std::numeric_limits< float >::max(), mxz = -std::numeric_limits< float >::max();
+		for (int32_t j = 0; j < 3; ++j)
 		{
-			int32_t vertexCount = navModel.model->getVertexCount();
-			int32_t triangleCount = navModel.model->getPolygonCount();
+			const float* v = &vertices[indices[i * 3 + j] * 3];
+			mnx = std::min(mnx, v[0]);
+			mxx = std::max(mxx, v[0]);
+			mnz = std::min(mnz, v[2]);
+			mxz = std::max(mxz, v[2]);
+		}
 
-			AutoArrayPtr< float > vertices(new float[3 * vertexCount]);
-			for (int32_t j = 0; j < vertexCount; ++j)
-			{
-				const Vector4& position = navModel.model->getVertexPosition(j);
-				copyUnaligned3(&vertices[j * 3], navModel.transform * position.xyz1());
-			}
+		const int32_t tx0 = std::max((int32_t)std::floor((mnx - border - cfg.bmin[0]) / tileWidth), 0);
+		const int32_t tx1 = std::min((int32_t)std::floor((mxx + border - cfg.bmin[0]) / tileWidth), tilesX - 1);
+		const int32_t tz0 = std::max((int32_t)std::floor((mnz - border - cfg.bmin[2]) / tileDepth), 0);
+		const int32_t tz1 = std::min((int32_t)std::floor((mxz + border - cfg.bmin[2]) / tileDepth), tilesZ - 1);
 
-			indices.resize(0);
-			indices.reserve(3 * triangleCount);
+		for (int32_t tz = tz0; tz <= tz1; ++tz)
+			for (int32_t tx = tx0; tx <= tx1; ++tx)
+				tileTriangles[tx + tz * tilesX].push_back(i);
+	}
 
-			for (int32_t j = 0; j < triangleCount; ++j)
-			{
-				const model::Polygon& triangle = navModel.model->getPolygon(j);
-				T_ASSERT(triangle.getVertexCount() == 3);
+	// Build tiles in parallel.
+	Ref< model::Model > navDebugModel = m_editor ? new model::Model() : nullptr;
+	Semaphore navDebugModelLock;
+	AlignedVector< AlignedVector< uint8_t > > tileData(tilesX * tilesZ);
+	AlignedVector< int32_t > tilePolyCounts((size_t)(tilesX * tilesZ), 0);
+	std::atomic< bool > failed = false;
 
-				if (oceanClip)
+	for (int32_t tz = 0; tz < tilesZ; ++tz)
+	{
+		for (int32_t tx = 0; tx < tilesX; ++tx)
+		{
+			Ref< Job > job = JobManager::getInstance().add([&, tx, tz]() {
+				const int32_t tile = tx + tz * tilesX;
+
+				rcConfig tileCfg = cfg;
+				tileCfg.bmin[0] = cfg.bmin[0] + tx * tileWidth - border;
+				tileCfg.bmin[2] = cfg.bmin[2] + tz * tileDepth - border;
+				tileCfg.bmax[0] = cfg.bmin[0] + (tx + 1) * tileWidth + border;
+				tileCfg.bmax[2] = cfg.bmin[2] + (tz + 1) * tileDepth + border;
+
+				if (!buildTile(
+					tileCfg,
+					tx,
+					tz,
+					asset->m_agentHeight,
+					asset->m_agentRadius,
+					asset->m_agentClimb,
+					vertices,
+					indices,
+					areas,
+					tileTriangles[tile],
+					navDebugModel,
+					navDebugModelLock,
+					tileData[tile],
+					tilePolyCounts[tile]))
 				{
-					if (vertices[triangle.getVertex(0) * 3 + 1] < oceanHeight - c_oceanThreshold)
-						continue;
-					if (vertices[triangle.getVertex(1) * 3 + 1] < oceanHeight - c_oceanThreshold)
-						continue;
-					if (vertices[triangle.getVertex(2) * 3 + 1] < oceanHeight - c_oceanThreshold)
-						continue;
+					log::error << L"NavMesh pipeline failed; unable to build tile " << tx << L", " << tz << L"." << Endl;
+					failed = true;
 				}
+			});
+			if (!job)
+				return false;
 
-				indices.push_back(triangle.getVertex(2));
-				indices.push_back(triangle.getVertex(1));
-				indices.push_back(triangle.getVertex(0));
-			}
-
-			T_ASSERT(indices.size() / 3 <= triangleCount);
-
-			if (!indices.empty())
-			{
-				rcMarkWalkableTriangles(&ctx, cfg.walkableSlopeAngle, vertices.c_ptr(), vertexCount, &indices[0], (int)(indices.size() / 3), triAreaPtr);
-				rcRasterizeTriangles(&ctx, vertices.c_ptr(), vertexCount, &indices[0], triAreaPtr, (int)(indices.size() / 3), *solid, cfg.walkableClimb);
-			}
-
-			navModel.model = nullptr;
-
-			triAreaPtr += triangleCount;
+			jobs.push_back(job);
 		}
 	}
 
-	//
-	// Step 3. Filter walkables surfaces.
-	//
-
-	// Once all geometry is rasterized, we do initial pass of filtering to
-	// remove unwanted overhangs caused by the conservative rasterization
-	// as well as filter spans where the character cannot possibly stand.
-	rcFilterLowHangingWalkableObstacles(&ctx, cfg.walkableClimb, *solid);
-	rcFilterLedgeSpans(&ctx, cfg.walkableHeight, cfg.walkableClimb, *solid);
-	rcFilterWalkableLowHeightSpans(&ctx, cfg.walkableHeight, *solid);
-
-	//
-	// Step 4. Partition walkable surface to simple regions.
-	//
-
-	// Compact the heightfield so that it is faster to handle from now on.
-	// This will result more cache coherent data as well as the neighbors
-	// between walkable cells will be calculated.
-	rcCompactHeightfield* chf = rcAllocCompactHeightfield();
-	if (!chf)
+	while (!jobs.empty())
 	{
-		log::error << L"NavMesh pipeline failed; unable to allocate Recast compact heightfield." << Endl;
+		jobs.back()->wait();
+		jobs.pop_back();
+	}
+
+	if (failed)
+		return false;
+
+	int32_t tileCount = 0;
+	int32_t maxTilePolyCount = 0;
+	for (int32_t i = 0; i < tilesX * tilesZ; ++i)
+	{
+		if (!tileData[i].empty())
+			++tileCount;
+		maxTilePolyCount = std::max(maxTilePolyCount, tilePolyCounts[i]);
+	}
+
+	if (tileCount == 0)
+	{
+		log::error << L"NavMesh pipeline failed; no walkable area found." << Endl;
 		return false;
 	}
 
-	if (!rcBuildCompactHeightfield(&ctx, cfg.walkableHeight, cfg.walkableClimb, *solid, *chf))
+	// Detour packs tile and polygon index into 22 bits of a 32-bit poly reference.
+	const int32_t tileBits = (int32_t)dtIlog2(dtNextPow2((unsigned int)(tilesX * tilesZ)));
+	const int32_t polyBits = (int32_t)dtIlog2(dtNextPow2((unsigned int)maxTilePolyCount));
+	if (tileBits + polyBits > 22)
 	{
-		log::error << L"NavMesh pipeline failed; unable to build Recast compact heightfield." << Endl;
-		return false;
-	}
-
-	rcFreeHeightField(solid);
-	solid = 0;
-
-	// Erode the walkable area by agent radius.
-	if (!rcErodeWalkableArea(&ctx, cfg.walkableRadius, *chf))
-	{
-		log::error << L"NavMesh pipeline failed; unable to erode Recast walkable area." << Endl;
-		return false;
-	}
-
-	//// (Optional) Mark areas.
-	// const ConvexVolume* vols = m_geom->getConvexVolumes();
-	// for (int i  = 0; i < m_geom->getConvexVolumeCount(); ++i)
-	//	rcMarkConvexPolyArea(ctx, vols[i].verts, vols[i].nverts, vols[i].hmin, vols[i].hmax, (unsigned char)vols[i].area, *chf);
-
-	const bool c_monotonePartitioning = false;
-	if (c_monotonePartitioning)
-	{
-		// Partition the walkable surface into simple regions without holes.
-		// Monotone partitioning does not need distance field.
-		if (!rcBuildRegionsMonotone(&ctx, *chf, 0, cfg.minRegionArea, cfg.mergeRegionArea))
-		{
-			log::error << L"NavMesh pipeline failed; unable to build region monotones." << Endl;
-			return false;
-		}
-	}
-	else
-	{
-		// Prepare for region partitioning, by calculating distance field along the walkable surface.
-		if (!rcBuildDistanceField(&ctx, *chf))
-		{
-			log::error << L"NavMesh pipeline failed; unable to build distance field." << Endl;
-			return false;
-		}
-
-		// Partition the walkable surface into simple regions without holes.
-		if (!rcBuildRegions(&ctx, *chf, 0, cfg.minRegionArea, cfg.mergeRegionArea))
-		{
-			log::error << L"NavMesh pipeline failed; unable to build regions." << Endl;
-			return false;
-		}
-	}
-
-	//
-	// Step 5. Trace and simplify region contours.
-	//
-
-	// Create contours.
-	rcContourSet* cset = rcAllocContourSet();
-	if (!cset)
-	{
-		log::error << L"NavMesh pipeline failed; unable to allocate Recast contour set." << Endl;
-		return false;
-	}
-
-	if (!rcBuildContours(&ctx, *chf, cfg.maxSimplificationError, cfg.maxEdgeLen, *cset))
-	{
-		log::error << L"NavMesh pipeline failed; unable to build Recast contours." << Endl;
-		return false;
-	}
-
-	//
-	// Step 6. Build polygons mesh from contours.
-	//
-
-	// Build polygon navmesh from the contours.
-	rcPolyMesh* pmesh = rcAllocPolyMesh();
-	if (!pmesh)
-	{
-		log::error << L"NavMesh pipeline failed; unable to allocate Recast polygon mesh." << Endl;
-		return false;
-	}
-
-	if (!rcBuildPolyMesh(&ctx, *cset, cfg.maxVertsPerPoly, *pmesh))
-	{
-		log::error << L"NavMesh pipeline failed; unable to build Recast polygon mesh." << Endl;
-		return false;
-	}
-
-	//
-	// Step 7. Create detail mesh which allows to access approximate height on each polygon.
-	//
-
-	rcPolyMeshDetail* dmesh = rcAllocPolyMeshDetail();
-	if (!dmesh)
-	{
-		log::error << L"NavMesh pipeline failed; unable to allocate Recast polygon detail mesh." << Endl;
-		return false;
-	}
-
-	if (!rcBuildPolyMeshDetail(&ctx, *pmesh, *chf, cfg.detailSampleDist, cfg.detailSampleMaxError, *dmesh))
-	{
-		log::error << L"NavMesh pipeline failed; unable to build Recast polygon detail mesh." << Endl;
-		return false;
-	}
-
-	rcFreeCompactHeightfield(chf);
-	chf = 0;
-
-	rcFreeContourSet(cset);
-	cset = 0;
-
-	//
-	// Step 8. Create Detour navigation mesh.
-	//
-
-	for (int i = 0; i < pmesh->npolys; ++i)
-		if (pmesh->areas[i] == RC_WALKABLE_AREA)
-			pmesh->flags[i] = 0xffff;
-
-	dtNavMeshCreateParams params;
-	std::memset(&params, 0, sizeof(params));
-
-	params.verts = pmesh->verts;
-	params.vertCount = pmesh->nverts;
-	params.polys = pmesh->polys;
-	params.polyAreas = pmesh->areas;
-	params.polyFlags = pmesh->flags;
-	params.polyCount = pmesh->npolys;
-	params.nvp = pmesh->nvp;
-	params.detailMeshes = dmesh->meshes;
-	params.detailVerts = dmesh->verts;
-	params.detailVertsCount = dmesh->nverts;
-	params.detailTris = dmesh->tris;
-	params.detailTriCount = dmesh->ntris;
-	params.walkableHeight = asset->m_agentHeight;
-	params.walkableRadius = asset->m_agentRadius;
-	params.walkableClimb = asset->m_agentClimb;
-	rcVcopy(params.bmin, pmesh->bmin);
-	rcVcopy(params.bmax, pmesh->bmax);
-	params.cs = cfg.cs;
-	params.ch = cfg.ch;
-	params.buildBvTree = false;
-
-	uint8_t* navData = nullptr;
-	int32_t navDataSize = 0;
-	if (!dtCreateNavMeshData(&params, &navData, &navDataSize))
-	{
-		log::error << L"NavMesh pipeline failed; unable to create Detour navigation mesh data." << Endl;
+		log::error << L"NavMesh pipeline failed; " << tilesX * tilesZ << L" tile(s) with up to " << maxTilePolyCount << L" polygon(s) each exceed Detour poly reference bits." << Endl;
 		return false;
 	}
 
@@ -592,42 +684,27 @@ bool NavMeshPipeline::buildOutput(
 
 	Writer w(stream);
 
-	w << uint8_t(2);
-	w << navDataSize;
+	w << uint8_t(3);
+	w << cfg.bmin[0];
+	w << cfg.bmin[1];
+	w << cfg.bmin[2];
+	w << tileWidth;
+	w << tileDepth;
+	w << int32_t(tilesX * tilesZ);
+	w << maxTilePolyCount;
+	w << tileCount;
 
-	if (stream->write(navData, navDataSize) != navDataSize)
+	for (const auto& data : tileData)
 	{
-		log::error << L"NavMesh pipeline failed; unable to write to data stream." << Endl;
-		outputInstance->revert();
-		return false;
-	}
+		if (data.empty())
+			continue;
 
-	// Append geometry last in NavMesh resource; currently useful for editor
-	// but might come in handy later.
-	w << m_editor;
-	if (m_editor)
-	{
-		w << uint32_t(pmesh->nverts);
-		for (int32_t i = 0; i < pmesh->nverts; ++i)
+		w << int32_t(data.size());
+		if (stream->write(data.c_ptr(), (int64_t)data.size()) != (int64_t)data.size())
 		{
-			w << pmesh->bmin[0] + pmesh->verts[i * 3 + 0] * pmesh->cs;
-			w << pmesh->bmin[1] + pmesh->verts[i * 3 + 1] * pmesh->ch;
-			w << pmesh->bmin[2] + pmesh->verts[i * 3 + 2] * pmesh->cs;
-		}
-
-		w << uint32_t(pmesh->npolys);
-		for (int32_t i = 0; i < pmesh->npolys; ++i)
-		{
-			const uint16_t* p = &pmesh->polys[i * pmesh->nvp * 2];
-
-			int32_t nvp = 0;
-			for (; nvp < pmesh->nvp; ++nvp)
-				if (p[nvp] == RC_MESH_NULL_IDX)
-					break;
-
-			w << uint8_t(nvp);
-			for (uint32_t j = 0; j < (uint32_t)nvp; ++j)
-				w << uint16_t(p[j]);
+			log::error << L"NavMesh pipeline failed; unable to write to data stream." << Endl;
+			outputInstance->revert();
+			return false;
 		}
 	}
 
@@ -640,52 +717,12 @@ bool NavMeshPipeline::buildOutput(
 		return false;
 	}
 
-	dtFree(navData);
-	navData = nullptr;
-
-	// Save pmesh for debugging; only in editor.
-	if (m_editor)
+	// Save navigation mesh for debugging; only in editor.
+	if (navDebugModel)
 	{
-		Ref< model::Model > pmeshModel = new model::Model();
-
-		for (int32_t i = 0; i < pmesh->nverts; ++i)
-		{
-			pmeshModel->addPosition(Vector4(
-				pmesh->bmin[0] + pmesh->verts[i * 3 + 0] * pmesh->cs,
-				pmesh->bmin[1] + pmesh->verts[i * 3 + 1] * pmesh->ch,
-				pmesh->bmin[2] + pmesh->verts[i * 3 + 2] * pmesh->cs,
-				1.0f));
-			pmeshModel->addVertex(model::Vertex(i));
-		}
-
-		for (int32_t i = 0; i < pmesh->npolys; ++i)
-		{
-			model::Polygon polygon;
-
-			const uint16_t* p = &pmesh->polys[i * pmesh->nvp * 2];
-			for (int32_t j = 0; j < pmesh->nvp; ++j)
-			{
-				if (p[j] == RC_MESH_NULL_IDX)
-					break;
-
-				polygon.addVertex(p[j]);
-			}
-
-			polygon.flipWinding();
-
-			pmeshModel->addPolygon(polygon);
-		}
-
-		pmeshModel->apply(model::Triangulate());
-
-		model::ModelFormat::writeAny(L"data/Temp/NavMesh_nav.obj", pmeshModel);
+		navDebugModel->apply(model::Triangulate());
+		model::ModelFormat::writeAny(L"data/Temp/NavMesh_nav.obj", navDebugModel);
 	}
-
-	rcFreePolyMeshDetail(dmesh);
-	dmesh = nullptr;
-
-	rcFreePolyMesh(pmesh);
-	pmesh = nullptr;
 
 	return true;
 }

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -10,7 +10,6 @@
 
 #include "Core/Object.h"
 #include "Core/Ref.h"
-#include "Core/Containers/AlignedVector.h"
 #include "Core/Math/Vector4.h"
 
 // import/export mechanism.
@@ -102,9 +101,7 @@ private:
 	friend class NavMeshFactory;
 	friend class NavMeshComponentEditor;
 
-	dtNavMesh* m_navMesh;
-	AlignedVector< Vector4 > m_navMeshVertices;
-	AlignedVector< uint16_t > m_navMeshPolygons;
+	dtNavMesh* m_navMesh = nullptr;
 };
 
 }
