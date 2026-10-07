@@ -49,6 +49,7 @@ private:
 	resource::Proxy< render::ITexture > m_texture;
 	float m_offset;
 	float m_size;
+	float m_alpha;
 };
 
 }

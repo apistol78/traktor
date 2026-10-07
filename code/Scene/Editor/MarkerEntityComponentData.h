@@ -51,10 +51,13 @@ public:
 
 	float getSize() const { return m_size; }
 
+	float getAlpha() const { return m_alpha; }
+
 private:
 	resource::Id< render::ITexture > m_texture;
 	float m_offset = 0.0f;
 	float m_size = 0.5f;
+	float m_alpha = 1.0f;
 };
 
 }

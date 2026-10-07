@@ -18,7 +18,7 @@
 namespace traktor::scene
 {
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.scene.MarkerEntityComponentData", 1, MarkerEntityComponentData, world::IEntityComponentData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.scene.MarkerEntityComponentData", 2, MarkerEntityComponentData, world::IEntityComponentData)
 
 int32_t MarkerEntityComponentData::getOrdinal() const
 {
@@ -38,6 +38,9 @@ void MarkerEntityComponentData::serialize(ISerializer& s)
 		s >> Member< float >(L"offset", m_offset, AttributeUnit(UnitType::Metres));
 		s >> Member< float >(L"size", m_size, AttributeRange(0.0f) | AttributeUnit(UnitType::Metres));
 	}
+
+	if (s.getVersion< MarkerEntityComponentData >() >= 2)
+		s >> Member< float >(L"alpha", m_alpha, AttributeRange(0.0f, 1.0f) | AttributeUnit(UnitType::Percent));
 }
 
 }

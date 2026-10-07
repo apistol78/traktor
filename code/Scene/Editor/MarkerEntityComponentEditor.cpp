@@ -24,6 +24,7 @@ MarkerEntityComponentEditor::MarkerEntityComponentEditor(SceneEditorContext* con
 :	m_entityAdapter(entityAdapter)
 ,	m_offset(markerComponentData->getOffset())
 ,	m_size(markerComponentData->getSize())
+,	m_alpha(markerComponentData->getAlpha())
 {
 	context->getResourceManager()->bind(markerComponentData->getTexture(), m_texture);
 }
@@ -40,7 +41,7 @@ void MarkerEntityComponentEditor::drawGuide(render::PrimitiveRenderer* primitive
 	const Vector4 right = viewInverse.axisX() * s;
 	const Vector4 up = viewInverse.axisY() * s;
 
-	primitiveRenderer->pushDepthState(false, false, false);
+	primitiveRenderer->pushDepthState(true, false, false);
 	primitiveRenderer->drawTextureQuad(
 		position - right + up,
 		Vector2(0.0f, 0.0f),
@@ -50,7 +51,7 @@ void MarkerEntityComponentEditor::drawGuide(render::PrimitiveRenderer* primitive
 		Vector2(1.0f, 1.0f),
 		position - right - up,
 		Vector2(0.0f, 1.0f),
-		Color4ub(255, 255, 255, 255),
+		Color4ub(255, 255, 255, (int32_t)(255 * m_alpha)),
 		m_texture
 	);
 	primitiveRenderer->popDepthState();
