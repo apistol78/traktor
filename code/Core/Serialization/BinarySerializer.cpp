@@ -246,12 +246,23 @@ bool read_string(const Ref< IStream >& stream, std::wstring& outString)
 
 bool write_string(const Ref< IStream >& stream, const std::wstring& str)
 {
-	T_ASSERT(str.length() <= std::numeric_limits< uint16_t >::max());
-
 	const uint32_t length = (uint32_t)str.length();
 	if (length > 0)
 	{
-		uint8_t* buf = (uint8_t*)alloca(length * 6);
+		uint8_t* buf = nullptr;
+		bool bufOnStack = false;
+
+		if (length <= 1024)
+		{
+			buf = (uint8_t*)alloca(length * 6);
+			bufOnStack = true;
+		}
+		else
+		{
+			buf = (uint8_t*)getAllocator()->alloc(length * 6, 4, T_FILE_LINE);
+			bufOnStack = false;
+		}
+
 		if (!buf)
 			return false;
 
@@ -264,10 +275,15 @@ bool write_string(const Ref< IStream >& stream, const std::wstring& str)
 		u8len = utf8enc.translate(str.c_str(), length, u8str);
 		T_FATAL_ASSERT(u8len <= length * 6);
 
-		if (!write_primitive< uint32_t >(stream, u8len))
-			return false;
+		bool result = true;
+		result &= write_primitive< uint32_t >(stream, u8len);
+		if (result)
+			result &= write_block(stream, u8str, u8len, sizeof(uint8_t));
 
-		return write_block(stream, u8str, u8len, sizeof(uint8_t));
+		if (!bufOnStack)
+			getAllocator()->free(buf);
+
+		return result;
 	}
 	else
 	{
