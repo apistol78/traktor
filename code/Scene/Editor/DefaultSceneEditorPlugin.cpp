@@ -27,6 +27,7 @@
 #include "World/WorldResourceFactory.h"
 
 // Entity factories
+#include "Scene/Editor/MarkerEntityComponentEntityFactory.h"
 #include "Weather/WeatherFactory.h"
 #include "World/Entity/WorldEntityFactory.h"
 
@@ -43,6 +44,7 @@
 // Entity editor factories
 #include "Scene/Editor/DefaultComponentEditorFactory.h"
 #include "Scene/Editor/DefaultEntityEditorFactory.h"
+#include "Scene/Editor/MarkerEntityComponentEditorFactory.h"
 
 namespace traktor::scene
 {
@@ -89,6 +91,7 @@ void DefaultSceneEditorPlugin::createEntityFactories(
 {
 	outEntityFactories.push_back(new world::WorldEntityFactory(true));
 	outEntityFactories.push_back(new weather::WeatherFactory());
+	outEntityFactories.push_back(new MarkerEntityComponentEntityFactory());
 }
 
 void DefaultSceneEditorPlugin::createEntityRenderers(
@@ -126,6 +129,7 @@ void DefaultSceneEditorPlugin::createComponentEditorFactories(
 	RefArray< const IComponentEditorFactory >& outComponentEditorFactories) const
 {
 	outComponentEditorFactories.push_back(new DefaultComponentEditorFactory());
+	outComponentEditorFactories.push_back(new MarkerEntityComponentEditorFactory());
 }
 
 Ref< world::EntityData > DefaultSceneEditorPlugin::createEntityData(
