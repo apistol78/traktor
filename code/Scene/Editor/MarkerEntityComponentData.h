@@ -29,6 +29,13 @@ class ITexture;
 namespace traktor::scene
 {
 
+enum class MarkerMode
+{
+	Single,
+	Children,
+	ChildrenConnected
+};
+
 /*! Editor-only marker component.
  * \ingroup Scene
  *
@@ -47,6 +54,8 @@ public:
 
 	const resource::Id< render::ITexture >& getTexture() const { return m_texture; }
 
+	MarkerMode getMode() const { return m_mode; }
+
 	float getOffset() const { return m_offset; }
 
 	float getSize() const { return m_size; }
@@ -55,6 +64,7 @@ public:
 
 private:
 	resource::Id< render::ITexture > m_texture;
+	MarkerMode m_mode = MarkerMode::Single;
 	float m_offset = 0.0f;
 	float m_size = 0.5f;
 	float m_alpha = 1.0f;

@@ -12,13 +12,14 @@
 #include "Core/Serialization/AttributeUnit.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
+#include "Core/Serialization/MemberEnum.h"
 #include "Render/ITexture.h"
 #include "Resource/Member.h"
 
 namespace traktor::scene
 {
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.scene.MarkerEntityComponentData", 2, MarkerEntityComponentData, world::IEntityComponentData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.scene.MarkerEntityComponentData", 3, MarkerEntityComponentData, world::IEntityComponentData)
 
 int32_t MarkerEntityComponentData::getOrdinal() const
 {
@@ -32,6 +33,17 @@ void MarkerEntityComponentData::setTransform(const world::EntityData* owner, con
 void MarkerEntityComponentData::serialize(ISerializer& s)
 {
 	s >> resource::Member< render::ITexture >(L"texture", m_texture);
+
+	if (s.getVersion< MarkerEntityComponentData >() >= 3)
+	{
+		const static MemberEnum< MarkerMode >::Key c_MarkerMode_Keys[] = {
+			{ L"Single", MarkerMode::Single },
+			{ L"Children", MarkerMode::Children },
+			{ L"ChildrenConnected", MarkerMode::ChildrenConnected },
+			{ 0 }
+		};
+		s >> MemberEnum< MarkerMode >(L"mode", m_mode, c_MarkerMode_Keys);
+	}
 
 	if (s.getVersion< MarkerEntityComponentData >() >= 1)
 	{

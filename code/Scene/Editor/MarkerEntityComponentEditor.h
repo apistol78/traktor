@@ -10,6 +10,7 @@
 
 #include "Resource/Proxy.h"
 #include "Scene/Editor/IComponentEditor.h"
+#include "Scene/Editor/MarkerEntityComponentData.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -29,7 +30,6 @@ class ITexture;
 namespace traktor::scene
 {
 
-class MarkerEntityComponentData;
 class SceneEditorContext;
 
 /*! Draws marker icon as a camera facing quad.
@@ -47,6 +47,7 @@ public:
 private:
 	EntityAdapter* m_entityAdapter;
 	resource::Proxy< render::ITexture > m_texture;
+	MarkerMode m_mode;
 	float m_offset;
 	float m_size;
 	float m_alpha;
