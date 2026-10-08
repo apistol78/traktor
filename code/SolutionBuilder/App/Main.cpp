@@ -1,11 +1,12 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2025 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Core/Containers/SmallSet.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/Path.h"
 #include "Core/Log/Log.h"
@@ -45,9 +46,13 @@ using namespace traktor::sb;
 void flattenIncludePaths(
 	const Path& solutionPath,
 	Project* project,
+	SmallSet< const Project* >& visited,
 	SmallMap< std::wstring, std::set< std::wstring > >& outConfigurationIncludePaths,
 	SmallMap< std::wstring, std::set< std::wstring > >& outConfigurationLibraryPaths)
 {
+	if (!visited.insert(project))
+		return;
+
 	const Path solutionPathAbs = FileSystem::getInstance().getAbsolutePath(solutionPath);
 
 	for (auto configuration : project->getConfigurations())
@@ -79,11 +84,11 @@ void flattenIncludePaths(
 			continue;
 
 		if (auto projectDependency = dynamic_type_cast< const ProjectDependency* >(dependency))
-			flattenIncludePaths(solutionPath, projectDependency->getProject(), outConfigurationIncludePaths, outConfigurationLibraryPaths);
+			flattenIncludePaths(solutionPath, projectDependency->getProject(), visited, outConfigurationIncludePaths, outConfigurationLibraryPaths);
 		else if (auto externalDependency = dynamic_type_cast< const ExternalDependency* >(dependency))
 		{
 			const Path externalSolutionPath = FileSystem::getInstance().getAbsolutePath(Path(externalDependency->getSolutionFileName()));
-			flattenIncludePaths(externalSolutionPath, externalDependency->getProject(), outConfigurationIncludePaths, outConfigurationLibraryPaths);
+			flattenIncludePaths(externalSolutionPath, externalDependency->getProject(), visited, outConfigurationIncludePaths, outConfigurationLibraryPaths);
 		}
 	}
 }
@@ -219,7 +224,8 @@ int main(int argc, const char** argv)
 		{
 			SmallMap< std::wstring, std::set< std::wstring > > configurationIncludePaths;
 			SmallMap< std::wstring, std::set< std::wstring > > configurationLibraryPaths;
-			flattenIncludePaths(solutionPathName, project, configurationIncludePaths, configurationLibraryPaths);
+			SmallSet< const Project* > visited;
+			flattenIncludePaths(solutionPathName, project, visited, configurationIncludePaths, configurationLibraryPaths);
 
 			for (auto configuration : project->getConfigurations())
 			{

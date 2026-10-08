@@ -2,8 +2,12 @@
 
 <?--
 
--- Dependency scanner cache global.
-local headerScanner = traktor.sb.HeaderScanner()
+-- Dependency scanner cache, shared by all projects.
+local headerScanner = rawget(_G, "headerScanner")
+if headerScanner == nil then
+	headerScanner = traktor.sb.HeaderScanner()
+	rawset(_G, "headerScanner", headerScanner)
+end
 
 import(traktor)
 import(traktor.sb)
@@ -26,6 +30,12 @@ local function insertLast(t, iv)
 		end
 	end
 	table.insert(t, iv)
+end
+
+local function insertAllLast(t, values)
+	for _, v in ipairs(values) do
+		insertLast(t, v)
+	end
 end
 
 -- Read configuration from environment.
@@ -58,7 +68,9 @@ local function printWithColor(c, s)
 	end
 end
 
-local function collectDependencies(
+local collectDependencies
+
+local function collectProjectDependencies(
 	solution,
 	project,
 	configuration,
@@ -210,6 +222,32 @@ local function collectDependencies(
 			end
 		end
 	end
+end
+
+-- Collect each project configuration once; replaying keeps order since insertLast keeps the last occurrence.
+local dependencyCache = {}
+collectDependencies = function(
+	solution,
+	project,
+	configuration,
+	outIncludePaths,
+	outLibraries,
+	outLibrariesExternal,
+	outLibraryPaths,
+	outExtLibraryProducts
+)
+	local key = solution.name .. "/" .. project.name .. "/" .. configuration.name
+	local cached = dependencyCache[key]
+	if cached == nil then
+		cached = { {}, {}, {}, {}, {} }
+		collectProjectDependencies(solution, project, configuration, cached[1], cached[2], cached[3], cached[4], cached[5])
+		dependencyCache[key] = cached
+	end
+	insertAllLast(outIncludePaths, cached[1])
+	insertAllLast(outLibraries, cached[2])
+	insertAllLast(outLibrariesExternal, cached[3])
+	insertAllLast(outLibraryPaths, cached[4])
+	insertAllLast(outExtLibraryProducts, cached[5])
 end
 
 local function collectFiles(project, projectOrFilter, pred)
@@ -674,6 +712,7 @@ end
 ------------------------------------------------
 
 -- Unit targets.
+local sourceHeaders = {}
 for i, configuration in pairs(configurations) do
 
 	headerScanner:removeAllIncludePaths()
@@ -682,7 +721,12 @@ for i, configuration in pairs(configurations) do
 	end
 
 	for index, file in ipairs(sourceFiles) do
-		local headers = headerScanner:get(file.pathName, projectPath.pathName)
+		-- Scanner cache is not per configuration, so headers are the same for all configurations.
+		local headers = sourceHeaders[index]
+		if headers == nil then
+			headers = headerScanner:get(file.pathName, projectPath.pathName)
+			sourceHeaders[index] = headers
+		end
 
 		local f = fileSystem:getRelativePath(file, sourcePath)
 		assert (f ~= nil)
