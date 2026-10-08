@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -32,6 +32,7 @@ bool SearchControl::create(ui::Widget* parent)
 	m_editSearch = new ui::Edit();
 	m_editSearch->create(this, L"", ui::WsWantAllInput);
 	m_editSearch->addEventHandler< ui::KeyDownEvent >(this, &SearchControl::eventEditSearchKeyDown);
+	m_editSearch->addEventHandler< ui::KeyEvent >(this, &SearchControl::eventEditSearchKey);
 	m_editSearch->addEventHandler< ui::ContentChangeEvent >(this, &SearchControl::eventEditChange);
 
 	m_toolBarMode = new ui::ToolBar();
@@ -120,18 +121,24 @@ void SearchControl::eventEditSearchKeyDown(ui::KeyDownEvent* event)
 		getParent()->setFocus();
 		event->consume();
 	}
-	else if (event->getVirtualKey() == ui::VkReturn)
-	{
-		if (!m_editSearch->getText().empty())
-		{
-			// Save last search query in user settings.
-			//m_editor->checkoutGlobalSettings()->setProperty< PropertyString >(L"Editor.LastSearch", m_editSearch->getText());
-			//m_editor->commitGlobalSettings();
+}
 
-			SearchEvent searchEvent(this, false);
-			raiseEvent(&searchEvent);
-		}
+void SearchControl::eventEditSearchKey(ui::KeyEvent* event)
+{
+	// Search on character, not key down, so no character is left to reach the widget focused by the search.
+	if (event->getCharacter() != L'\r')
+		return;
+
+	if (!m_editSearch->getText().empty())
+	{
+		// Save last search query in user settings.
+		//m_editor->checkoutGlobalSettings()->setProperty< PropertyString >(L"Editor.LastSearch", m_editSearch->getText());
+		//m_editor->commitGlobalSettings();
+
+		SearchEvent searchEvent(this, false);
+		raiseEvent(&searchEvent);
 	}
+	event->consume();
 }
 
 void SearchControl::eventEditChange(ui::ContentChangeEvent* event)
