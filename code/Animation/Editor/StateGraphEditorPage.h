@@ -97,7 +97,6 @@ private:
 	Ref< ui::Menu > m_menuPopup;
 	Ref< editor::PropertiesView > m_propertiesView;
 	Ref< ui::Container > m_containerPreview;
-	Ref< ui::ToolBar > m_toolBarPreview;
 	Ref< AnimationPreviewControl > m_previewControl;
 	Ref< ui::Container > m_previewConditions;
 
@@ -114,8 +113,6 @@ private:
 	void updatePreviewConditions();
 
 	void eventToolBarGraphClick(ui::ToolBarButtonClickEvent* event);
-
-	void eventToolBarPreviewClick(ui::ToolBarButtonClickEvent* event);
 
 	void eventButtonDown(ui::MouseButtonDownEvent* event);
 

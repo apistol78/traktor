@@ -124,10 +124,12 @@ Ref< RtStateGraphData > StateGraphCompiler::compile(const StateGraph* stateGraph
 			from = getIndices(stateToIndices, transition->from());
 		else
 		{
-			// Since from is "any" node we need to create a transition from every other state.
+			// Since from is "any" node we need to create a transition from every other state;
+			// except the target itself, else the transition would keep re-entering its own target
+			// for as long as the condition holds (e.g. restarting a rag doll every frame).
 			for (auto state : stateGraph->getStates())
 			{
-				if (!is_a< StateNodeAny >(state))
+				if (!is_a< StateNodeAny >(state) && state != transition->to())
 				{
 					const AlignedVector< int32_t >& indices = getIndices(stateToIndices, state);
 					from.insert(from.end(), indices.begin(), indices.end());

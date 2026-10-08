@@ -122,14 +122,8 @@ bool StateGraphEditorPage::create(ui::Container* parent)
 
 	// Create preview panel.
 	m_containerPreview = new ui::Container();
-	m_containerPreview->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%,*", 0_ut, 0_ut));
+	m_containerPreview->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"100%,*", 0_ut, 0_ut));
 	m_containerPreview->setText(L"Animation Preview");
-
-	m_toolBarPreview = new ui::ToolBar();
-	m_toolBarPreview->create(m_containerPreview);
-	m_toolBarPreview->addItem(new ui::ToolBarButton(L"Mesh...", ui::Command(L"StateGraph.Editor.BrowseMesh")));
-	m_toolBarPreview->addItem(new ui::ToolBarButton(L"Skeleton...", ui::Command(L"StateGraph.Editor.BrowseSkeleton")));
-	m_toolBarPreview->addEventHandler< ui::ToolBarButtonClickEvent >(this, &StateGraphEditorPage::eventToolBarPreviewClick);
 
 	m_previewControl = new AnimationPreviewControl(m_editor);
 	m_previewControl->create(m_containerPreview);
@@ -616,12 +610,6 @@ void StateGraphEditorPage::updatePreviewConditions()
 }
 
 void StateGraphEditorPage::eventToolBarGraphClick(ui::ToolBarButtonClickEvent* event)
-{
-	const ui::Command& command = event->getCommand();
-	handleCommand(command);
-}
-
-void StateGraphEditorPage::eventToolBarPreviewClick(ui::ToolBarButtonClickEvent* event)
 {
 	const ui::Command& command = event->getCommand();
 	handleCommand(command);
