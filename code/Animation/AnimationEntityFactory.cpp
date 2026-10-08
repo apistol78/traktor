@@ -21,6 +21,8 @@
 #include "Animation/IK/FootPlacementComponentData.h"
 #include "Animation/IK/IKComponent.h"
 #include "Animation/IK/IKComponentData.h"
+#include "Animation/IK/LookAtComponent.h"
+#include "Animation/IK/LookAtComponentData.h"
 #include "Animation/PathEntity/PathComponentData.h"
 #include "Animation/Rotator/OrientateComponent.h"
 #include "Animation/Rotator/OrientateComponentData.h"
@@ -53,6 +55,7 @@ const TypeInfoSet AnimationEntityFactory::getEntityComponentTypes() const
 	typeSet.insert< FootPlacementComponentData >();
 	typeSet.insert< IKComponentData >();
 	typeSet.insert< JointBindingComponentData >();
+	typeSet.insert< LookAtComponentData >();
 	typeSet.insert< OrientateComponentData >();
 	typeSet.insert< PathComponentData >();
 	typeSet.insert< PendulumComponentData >();
@@ -76,6 +79,8 @@ Ref< world::IEntityComponent > AnimationEntityFactory::createEntityComponent(con
 		return ikComponentData->createComponent();
 	else if (auto jointBindingComponentData = dynamic_type_cast< const JointBindingComponentData* >(&entityComponentData))
 		return jointBindingComponentData->createComponent(builder);
+	else if (auto lookAtComponentData = dynamic_type_cast< const LookAtComponentData* >(&entityComponentData))
+		return lookAtComponentData->createComponent();
 	else if (auto orientateComponentData = dynamic_type_cast< const OrientateComponentData* >(&entityComponentData))
 		return orientateComponentData->createComponent();
 	else if (auto pathComponentData = dynamic_type_cast< const PathComponentData* >(&entityComponentData))

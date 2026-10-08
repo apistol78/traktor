@@ -14,6 +14,7 @@
 #include "Animation/Boids/BoidsComponent.h"
 #include "Animation/Cloth/ClothComponent.h"
 #include "Animation/IK/IKComponent.h"
+#include "Animation/IK/LookAtComponent.h"
 #include "Animation/JointBindingComponent.h"
 #include "Animation/PathEntity/PathComponent.h"
 #include "Animation/PathEntity/PathComponentData.h"
@@ -121,6 +122,11 @@ void AnimationClassFactory::createClasses(IRuntimeClassRegistrar* registrar) con
 	classJointBindingComponent->addMethod("getEntity", &JointBindingComponent::getEntity);
 	classJointBindingComponent->addMethod("getEntities", &JointBindingComponent::getEntities);
 	registrar->registerClass(classJointBindingComponent);
+
+	auto classLookAtComponent = new AutoRuntimeClass< LookAtComponent >();
+	classLookAtComponent->addProperty("target", &LookAtComponent::setTarget, &LookAtComponent::getTarget);
+	classLookAtComponent->addProperty("enable", &LookAtComponent::setEnable, &LookAtComponent::getEnable);
+	registrar->registerClass(classLookAtComponent);
 
 	auto classPoseController = new AutoRuntimeClass< IPoseController >();
 	registrar->registerClass(classPoseController);
