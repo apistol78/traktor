@@ -63,6 +63,8 @@ public:
 		const AlignedVector< Transform >& jointTransforms,
 		AlignedVector< Transform >& outPoseTransforms) override final;
 
+	virtual Vector4 consumeRootMotion() override final;
+
 	virtual IPoseController* getActivePoseController() override final;
 
 	virtual void getPoseControllersOf(const TypeInfo& type, RefArray< IPoseController >& outControllers) override final;

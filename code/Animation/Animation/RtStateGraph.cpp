@@ -113,13 +113,15 @@ bool RtStateGraph::evaluate(
 		return false;
 
 	// Evaluate current state.
+	Vector4 currentRootMotion = Vector4::zero();
 	m_currentState->evaluate(
 		m_currentStateContext,
 		deltaTime * m_timeFactor,
 		worldTransform,
 		skeleton,
 		jointTransforms,
-		m_evaluatePose);
+		m_evaluatePose,
+		&currentRootMotion);
 	m_currentStateContext.setTime(m_currentStateContext.getTime() + deltaTime * m_timeFactor);
 
 	// Build final pose transforms.
@@ -130,16 +132,22 @@ bool RtStateGraph::evaluate(
 		{
 			Pose nextPose, blendPose;
 
+			Vector4 nextRootMotion = Vector4::zero();
 			m_nextState->evaluate(
 				m_nextStateContext,
 				deltaTime * m_timeFactor,
 				worldTransform,
 				skeleton,
 				jointTransforms,
-				nextPose);
+				nextPose,
+				&nextRootMotion);
 			m_nextStateContext.setTime(m_nextStateContext.getTime() + deltaTime * m_timeFactor);
 
 			const Scalar blend = Scalar(easeInOutCubic(m_blendState / m_blendDuration));
+
+			// Blend root motion with the same weight as the poses.
+			m_rootMotion += currentRootMotion * (1.0_simd - blend) + nextRootMotion * blend;
+			currentRootMotion = Vector4::zero();
 
 			blendPoses(
 				&m_evaluatePose,
@@ -160,6 +168,8 @@ bool RtStateGraph::evaluate(
 				outPoseTransforms);
 		}
 
+		m_rootMotion += currentRootMotion;
+
 		// Swap in next state when we've completely blended into it.
 		m_blendState += wallDeltaTime;
 		if (m_blendState >= m_blendDuration)
@@ -178,6 +188,8 @@ bool RtStateGraph::evaluate(
 			skeleton,
 			&m_evaluatePose,
 			outPoseTransforms);
+
+		m_rootMotion += currentRootMotion;
 	}
 
 	// Execute transition to another state.
@@ -242,6 +254,13 @@ bool RtStateGraph::evaluate(
 	}
 
 	return continous;
+}
+
+Vector4 RtStateGraph::consumeRootMotion()
+{
+	const Vector4 rootMotion = m_rootMotion;
+	m_rootMotion = Vector4::zero();
+	return rootMotion;
 }
 
 IPoseController* RtStateGraph::getActivePoseController() const

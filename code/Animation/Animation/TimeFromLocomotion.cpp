@@ -18,29 +18,49 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.TimeFromLocomotion", TimeFromLocomoti
 
 void TimeFromLocomotion::calculateTime(const Animation* animation, const Transform& worldTransform, float& inoutTime, float& outDeltaTime)
 {
-	Vector4 locomotionDirection = worldTransform * animation->getTotalLocomotion().xyz0();
-	Scalar locomotionDistance = locomotionDirection.length();
-	if (locomotionDistance < FUZZY_EPSILON)
+	const uint32_t poseCount = animation->getKeyPoseCount();
+	if (poseCount < 2 || !animation->haveRootMotion())
 		return;
-	locomotionDirection /= locomotionDistance;
-	
-	const Vector4 c_locomotionMask(1.0f, 1.0f, 1.0f);
-	const float distance = dot3(locomotionDirection, (worldTransform.translation() - m_transform.translation()) * c_locomotionMask);
 
-	outDeltaTime = std::abs(animation->getTimePerDistance() * distance);
-    inoutTime = m_time;
+	const float start = animation->getKeyPose(0).at;
+	const float end = animation->getLastKeyPose().at;
+	const Vector4 travel = animation->getRootMotion(end).xyz0();
+	const float travelLength = travel.length();
+	if (end <= start || travelLength < FUZZY_EPSILON)
+		return;
 
+	// Distance owner has moved along clip's direction of travel.
+	const Vector4 axis = travel / Scalar(travelLength);
+	const float distance = std::abs(dot3(worldTransform.rotation() * axis, worldTransform.translation() - m_transform.translation()));
 	m_transform = worldTransform;
-	m_time += outDeltaTime;
 
-	// Ensure time is always positive.
-	const float duration = animation->getLastKeyPose().at - animation->getKeyPose(0).at;
-	if (duration > 0.0f)
+	// Advance time until clip has travelled as far, wrapping at end of clip.
+	float time = clamp(m_time, start, end);
+	float remaining = std::fmod(distance, travelLength);
+	uint32_t next = 1;
+	while (next < poseCount - 1 && animation->getKeyPose(next).at <= time)
+		++next;
+	for (uint32_t steps = 0; steps < 2 * poseCount && remaining > 0.0f; ++steps)
 	{
-		while (m_time < 0.0f)
-			m_time += duration;
-		m_time = std::fmod(m_time, duration);
+		const float nextTime = animation->getKeyPose(next).at;
+		const float step = dot3(animation->getRootMotion(nextTime) - animation->getRootMotion(time), axis);
+		if (step > remaining)
+		{
+			time += (nextTime - time) * remaining / step;
+			break;
+		}
+		remaining -= std::max(step, 0.0f);
+		time = nextTime;
+		if (++next >= poseCount)
+		{
+			time = start;
+			next = 1;
+		}
 	}
+
+	outDeltaTime = (time >= m_time) ? time - m_time : time - m_time + (end - start);
+	inoutTime = m_time;
+	m_time = time;
 }
 
 }

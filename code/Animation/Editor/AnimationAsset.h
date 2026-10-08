@@ -51,25 +51,30 @@ public:
 
 	const Vector4& getTranslate() const { return m_translate; }
 
-	void setRemoveLocomotion(bool removeLocomotion) { m_removeLocomotion = removeLocomotion; }
+	void setRemoveMotionJoint(const std::wstring& removeMotionJoint) { m_removeMotionJoint = removeMotionJoint; }
 
-	bool getRemoveLocomotion() const { return m_removeLocomotion; }
+	const std::wstring& getRemoveMotionJoint() const { return m_removeMotionJoint; }
 
-	void setRemoveLocomotionJoint(const std::wstring& removeLocomotionJoint) { m_removeLocomotionJoint = removeLocomotionJoint; }
+	void setRemoveTranslation(bool removeTranslation) { m_removeTranslation = removeTranslation; }
 
-	const std::wstring& getRemoveLocomotionJoint() const { return m_removeLocomotionJoint; }
+	bool getRemoveTranslation() const { return m_removeTranslation; }
+
+	void setRemoveRotation(bool removeRotation) { m_removeRotation = removeRotation; }
+
+	bool getRemoveRotation() const { return m_removeRotation; }
 
 	float getMaxDuration() const { return m_maxDuration; }
 
 private:
-	Guid m_targetSkeleton;					//!< Target skeleton onto animation are retargeted; if no skeleton provided then assuming to be same as animation skeleton.
-	Guid m_rigNameTranslation;				//!< Optional joint name translation applied to the animation's rig before retargeting; allows importing clips authored on differently named rigs.
+	Guid m_targetSkeleton;	   //!< Target skeleton onto animation are retargeted; if no skeleton provided then assuming to be same as animation skeleton.
+	Guid m_rigNameTranslation; //!< Optional joint name translation applied to the animation's rig before retargeting; allows importing clips authored on differently named rigs.
 	std::wstring m_take = L"";
 	Vector4 m_scale = Vector4::one();
 	Vector4 m_translate = Vector4::zero();
-	bool m_removeLocomotion = true;
-	std::wstring m_removeLocomotionJoint = L"";
-	float m_maxDuration = 0.0f;				//!< Cut animation at this many seconds from its first key frame; 0 keeps the entire take.
+	std::wstring m_removeMotionJoint = L"";
+	bool m_removeTranslation = true;
+	bool m_removeRotation = false; //!< Remove reference joint's turn and travel from poses; kept as root motion.
+	float m_maxDuration = 0.0f;	   //!< Cut animation at this many seconds from its first key frame; 0 keeps the entire take.
 };
 
 }

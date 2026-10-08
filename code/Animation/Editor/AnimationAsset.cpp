@@ -7,6 +7,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include "Animation/Editor/AnimationAsset.h"
+
 #include "Animation/Editor/RigNameTranslation.h"
 #include "Animation/Editor/SkeletonAsset.h"
 #include "Core/Serialization/AttributePoint.h"
@@ -19,7 +20,7 @@
 namespace traktor::animation
 {
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.animation.AnimationAsset", 11, AnimationAsset, editor::Asset)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.animation.AnimationAsset", 13, AnimationAsset, editor::Asset)
 
 void AnimationAsset::serialize(ISerializer& s)
 {
@@ -49,11 +50,23 @@ void AnimationAsset::serialize(ISerializer& s)
 	if (s.getVersion() >= 5)
 		s >> Member< Vector4 >(L"translate", m_translate);
 
-	if (s.getVersion() >= 6)
-		s >> Member< bool >(L"removeLocomotion", m_removeLocomotion);
+	if (s.getVersion() >= 13)
+	{
+		s >> Member< std::wstring >(L"removeMotionJoint", m_removeMotionJoint);
+		s >> Member< bool >(L"removeTranslation", m_removeTranslation);
+		s >> Member< bool >(L"removeRotation", m_removeRotation);
+	}
+	else
+	{
+		if (s.getVersion() >= 6)
+			s >> Member< bool >(L"removeLocomotion", m_removeTranslation);
 
-	if (s.getVersion() >= 10)
-		s >> Member< std::wstring >(L"removeLocomotionJoint", m_removeLocomotionJoint);
+		if (s.getVersion() >= 10)
+			s >> Member< std::wstring >(L"removeLocomotionJoint", m_removeMotionJoint);
+
+		if (s.getVersion() >= 12)
+			s >> Member< bool >(L"removeRotation", m_removeRotation);
+	}
 
 	if (s.getVersion() >= 9)
 		s >> Member< float >(L"maxDuration", m_maxDuration, AttributeRange(0.0f) | AttributeUnit(UnitType::Seconds));

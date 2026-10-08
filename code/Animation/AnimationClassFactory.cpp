@@ -106,6 +106,7 @@ void AnimationClassFactory::createClasses(IRuntimeClassRegistrar* registrar) con
 	classSkeletonComponent->addMethod("setPoseTransform", &SkeletonComponent_setPoseTransform);
 	classSkeletonComponent->addMethod("concatenatePoseTransform", &SkeletonComponent_concatenatePoseTransform);
 	classSkeletonComponent->addMethod("getPoseControllersOf", &SkeletonComponent_getPoseControllersOf);
+	classSkeletonComponent->addMethod("consumeRootMotion", &SkeletonComponent::consumeRootMotion);
 	registrar->registerClass(classSkeletonComponent);
 
 	auto classAnimatedMeshComponent = new AutoRuntimeClass< AnimatedMeshComponent >();

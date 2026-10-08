@@ -1,14 +1,17 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2025 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include "Animation/Animation/Animation.h"
+
 #include "Animation/SkeletonUtils.h"
+#include "Core/Math/Const.h"
 #include "Core/Math/Hermite.h"
+#include "Core/Math/MathUtils.h"
 #include "Core/Serialization/AttributeRange.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberAlignedVector.h"
@@ -17,12 +20,12 @@
 namespace traktor::animation
 {
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.Animation", 0, Animation, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.Animation", 3, Animation, ISerializable)
 
 uint32_t Animation::addKeyPose(const KeyPose& pose)
 {
 	uint32_t poseIndex = 0;
-	for (AlignedVector< KeyPose >::iterator i = m_poses.begin(); i != m_poses.end(); ++i)
+	for (auto i = m_poses.begin(); i != m_poses.end(); ++i)
 	{
 		if (pose.at < i->at)
 		{
@@ -98,8 +101,7 @@ bool Animation::getPose(float at, Pose& outPose) const
 			&m_poses[index].pose,
 			&m_poses[index + 1].pose,
 			clamp(k, 0.0_simd, 1.0_simd),
-			&outPose
-		);
+			&outPose);
 
 		return true;
 	}
@@ -121,8 +123,7 @@ bool Animation::getPose(float at, Pose& outPose) const
 				&m_poses[0].pose,
 				&m_poses[1].pose,
 				Scalar((at - m_poses[0].at) / (m_poses[1].at - m_poses[0].at)),
-				&outPose
-			);
+				&outPose);
 			return true;
 		}
 	}
@@ -135,11 +136,34 @@ bool Animation::getPose(float at, Pose& outPose) const
 		return false;
 }
 
+Vector4 Animation::getRootMotion(float at) const
+{
+	if (!haveRootMotion())
+		return Vector4::zero();
+
+	const size_t nposes = m_poses.size();
+	if (nposes == 1 || at <= m_poses[0].at)
+		return m_rootMotion[0];
+	if (at >= m_poses[nposes - 1].at)
+		return m_rootMotion[nposes - 1];
+
+	// Key poses are sorted by time; find the pair bracketing the time.
+	size_t index1 = 1;
+	while (index1 < nposes - 1 && m_poses[index1].at < at)
+		++index1;
+	const size_t index0 = index1 - 1;
+
+	const float span = m_poses[index1].at - m_poses[index0].at;
+	const float k = span > FUZZY_EPSILON ? (at - m_poses[index0].at) / span : 0.0f;
+	return lerp(m_rootMotion[index0], m_rootMotion[index1], Scalar(clamp(k, 0.0f, 1.0f)));
+}
+
 void Animation::serialize(ISerializer& s)
 {
+	T_FATAL_ASSERT(s.getVersion< Animation >() >= 3);
+
 	s >> MemberAlignedVector< KeyPose, MemberComposite< KeyPose > >(L"poses", m_poses);
-	s >> Member< float >(L"timePerDistance", m_timePerDistance);
-	s >> Member< Vector4 >(L"totalLocomotion", m_totalLocomotion);
+	s >> MemberAlignedVector< Vector4 >(L"rootMotion", m_rootMotion);
 }
 
 void Animation::KeyPose::serialize(ISerializer& s)

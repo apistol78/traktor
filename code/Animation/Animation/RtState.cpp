@@ -42,6 +42,7 @@ bool RtState::prepare(StateContext& outContext) const
 
 		outContext.setTime(0.0f);
 		outContext.setDuration(duration);
+		outContext.setRootMotionTime(-1.0f);
 	}
 	else if (m_poseController)
 	{
@@ -66,12 +67,13 @@ void RtState::reset(
 }
 
 void RtState::evaluate(
-	const StateContext& context,
+	StateContext& context,
 	float deltaTime,
 	const Transform& worldTransform,
 	const Skeleton* skeleton,
 	const AlignedVector< Transform >& jointTransforms,
-	Pose& outPose) const
+	Pose& outPose,
+	Vector4* outRootMotion) const
 {
 	float time = context.getTime();
 
@@ -85,6 +87,23 @@ void RtState::evaluate(
 
 	if (m_animation)
 		m_animation->getPose(time, outPose);
+
+	if (outRootMotion)
+	{
+		*outRootMotion = Vector4::zero();
+		if (m_animation && m_animation->haveRootMotion() && !m_transformTime)
+		{
+			const float lastTime = context.getRootMotionTime() >= 0.0f ? context.getRootMotionTime() : 0.0f;
+			if (time > lastTime)
+			{
+				const Vector4 rm0 = m_animation->getRootMotion(lastTime);
+				const Vector4 rm1 = m_animation->getRootMotion(time);
+				const Vector4 travel = Quaternion::fromAxisAngle(Vector4(0.0f, 1.0f, 0.0f, 0.0f), -rm0.w()) * (rm1 - rm0).xyz0();
+				*outRootMotion = Vector4(travel.x(), 0.0f, travel.z(), rm1.w() - rm0.w());
+			}
+		}
+		context.setRootMotionTime(time);
+	}
 
 	if (m_poseController)
 	{

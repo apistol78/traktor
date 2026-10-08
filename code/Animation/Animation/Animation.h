@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -92,29 +92,27 @@ public:
 	 */
 	bool getPose(float at, Pose& outPose) const;
 
-	/*!
+	/*! Set root motion track.
+	 *
+	 * \param rootMotion Per key pose travel (x, z) and turn (w, radians) relative to first key pose.
 	 */
-	void setTimePerDistance(float timePerDistance) { m_timePerDistance = timePerDistance; }
+	void setRootMotion(const AlignedVector< Vector4 >& rootMotion) { m_rootMotion = rootMotion; }
 
-	/*! Get time over distance, used to calculate animation time from
-	 *  distance traveled.
-	 */
-	float getTimePerDistance() const { return m_timePerDistance; }
+	/*! Return true if animation carries a root motion track. */
+	bool haveRootMotion() const { return !m_rootMotion.empty() && m_rootMotion.size() == m_poses.size(); }
 
-	/*!
+	/*! Sample root motion at time.
+	 *
+	 * \param at Time.
+	 * \return Travel (x, z) and turn (w) relative to first key pose; zero if no track.
 	 */
-	void setTotalLocomotion(const Vector4& totalLocomotion) { m_totalLocomotion = totalLocomotion; }
-
-	/*!
-	 */
-	const Vector4& getTotalLocomotion() const { return m_totalLocomotion; }
+	Vector4 getRootMotion(float at) const;
 
 	virtual void serialize(ISerializer& s) override final;
 
 private:
 	AlignedVector< KeyPose > m_poses;
-	float m_timePerDistance = 0.0f;
-	Vector4 m_totalLocomotion = Vector4::zero();
+	AlignedVector< Vector4 > m_rootMotion;
 };
 
 }

@@ -54,6 +54,8 @@ public:
 		const AlignedVector< Transform >& jointTransforms,
 		AlignedVector< Transform >& outPoseTransforms);
 
+	Vector4 consumeRootMotion();
+
 	IPoseController* getActivePoseController() const;
 
 	void getPoseControllersOf(const TypeInfo& type, RefArray< IPoseController >& outControllers) const;
@@ -77,6 +79,7 @@ private:
 	float m_blendState = 0.0f;
 	float m_blendDuration = 0.0;
 	float m_timeFactor = 1.0f;
+	Vector4 m_rootMotion = Vector4::zero();
 };
 
 }

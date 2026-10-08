@@ -1,20 +1,20 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2025 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include <limits>
+#include "Animation/Editor/AnimationPipeline.h"
+
+#include "Animation/Animation/Animation.h"
+#include "Animation/Editor/AnimationAsset.h"
+#include "Animation/Editor/RigNameTranslation.h"
+#include "Animation/Editor/SkeletonAsset.h"
 #include "Animation/Joint.h"
 #include "Animation/Skeleton.h"
 #include "Animation/SkeletonUtils.h"
-#include "Animation/Animation/Animation.h"
-#include "Animation/Editor/AnimationAsset.h"
-#include "Animation/Editor/AnimationPipeline.h"
-#include "Animation/Editor/RigNameTranslation.h"
-#include "Animation/Editor/SkeletonAsset.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
@@ -30,13 +30,15 @@
 #include "Model/Joint.h"
 #include "Model/Model.h"
 #include "Model/ModelCache.h"
-#include "Model/Pose.h"
 #include "Model/Operations/Transform.h"
+#include "Model/Pose.h"
+
+#include <limits>
 
 namespace traktor::animation
 {
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.AnimationPipeline", 23, AnimationPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.AnimationPipeline", 28, AnimationPipeline, editor::IPipeline)
 
 bool AnimationPipeline::create(const editor::IPipelineSettings* settings, db::Database* database)
 {
@@ -69,8 +71,7 @@ bool AnimationPipeline::buildDependencies(
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,
 	const std::wstring& outputPath,
-	const Guid& outputGuid
-) const
+	const Guid& outputGuid) const
 {
 	Ref< const AnimationAsset > animationAsset = checked_type_cast< const AnimationAsset* >(sourceAsset);
 
@@ -97,8 +98,7 @@ bool AnimationPipeline::buildOutput(
 	const std::wstring& outputPath,
 	const Guid& outputGuid,
 	const Object* buildParams,
-	uint32_t reason
-) const
+	uint32_t reason) const
 {
 	Ref< const AnimationAsset > animationAsset = checked_type_cast< const AnimationAsset* >(sourceAsset);
 
@@ -154,8 +154,7 @@ bool AnimationPipeline::buildOutput(
 	// Scale and/or translate animation data.
 	modelAnimation->apply(model::Transform(
 		translate(animationAsset->getTranslate()) *
-		scale(animationAsset->getScale())
-	));
+		scale(animationAsset->getScale())));
 
 	// Match joint rest orientations between the animation's rig and the skeleton.
 	// Orientations are matched in global space; the animation's rig might not have
@@ -312,85 +311,101 @@ bool AnimationPipeline::buildOutput(
 	}
 
 	if (maxDuration > 0.0f && anim->getKeyPoseCount() < ma->getKeyFrameCount())
-	{
-		log::info << L"Animation cut at " << maxDuration << L" second(s); kept " << anim->getKeyPoseCount() <<
-			L" of " << ma->getKeyFrameCount() << L" key frame(s)." << Endl;
-	}
+		log::info << L"Animation cut at " << maxDuration << L" second(s); kept " << anim->getKeyPoseCount() << L" of " << ma->getKeyFrameCount() << L" key frame(s)." << Endl;
 
-	// Remove locomotion from animation.
-	if (animationAsset->getRemoveLocomotion())
+	// Remove reference joint's travel and/or turn from poses, kept as root motion track.
+	const uint32_t keyPoseCount = anim->getKeyPoseCount();
+	if ((animationAsset->getRemoveTranslation() || animationAsset->getRemoveRotation()) && keyPoseCount >= 2)
 	{
-		const uint32_t keyPoseCount = anim->getKeyPoseCount();
-		if (keyPoseCount >= 2)
+		// Create skeleton from model.
+		Ref< Skeleton > skeleton = new Skeleton();
+		for (const auto& modelJoint : modelSkeleton->getJoints())
 		{
-			// Create skeleton from model.
-			Ref< Skeleton > skeleton = new Skeleton();
-			for (const auto& modelJoint : modelSkeleton->getJoints())
-			{
-				Ref< Joint > joint = new Joint();
+			Ref< Joint > joint = new Joint();
 
-				if (modelJoint.getParent() != model::c_InvalidIndex)
-					joint->setParent(modelJoint.getParent());
+			if (modelJoint.getParent() != model::c_InvalidIndex)
+				joint->setParent(modelJoint.getParent());
 
-				joint->setName(modelJoint.getName());
-				joint->setTransform(modelJoint.getTransform());
+			joint->setName(modelJoint.getName());
+			joint->setTransform(modelJoint.getTransform());
 
-				skeleton->addJoint(joint);
-			}
-
-			// Get joint handle for reference joint; if none named
-			// then assume first joint for reference.
-			uint32_t jointIndex = 0;
-			if (!animationAsset->getRemoveLocomotionJoint().empty())
-			{
-				if (!skeleton->findJoint(render::getParameterHandle(animationAsset->getRemoveLocomotionJoint()), jointIndex))
-				{
-					log::error << L"AnimationPipeline failed; unable to remove locomotion, no such joint \"" << animationAsset->getRemoveLocomotionJoint() << L"\"." << Endl;
-					return false;
-				}
-			}
-
-			AlignedVector< Transform > poseTransforms;
-			calculatePoseTransforms(skeleton, &anim->getKeyPose(0).pose, poseTransforms);
-
-			Vector4 totalLocomotion = Vector4::zero();
-			float locomotionDistance = 0.0f;
-
-			const Transform origin = poseTransforms[0];
-			Vector4 previousTarget = origin.translation();
-			for (uint32_t i = 1; i < keyPoseCount; ++i)
-			{
-				const Vector4 c_locomotionAxies(0.0f, 0.0f, 1.0f);
-				auto& keyPose = anim->getKeyPose(i);
-
-				AlignedVector< Transform > targetPoseTransforms;
-				calculatePoseTransforms(skeleton, &keyPose.pose, targetPoseTransforms);
-
-				const Transform target = targetPoseTransforms[jointIndex];
-				const Vector4 locomotion = (target.translation() - origin.translation()) * c_locomotionAxies;
-
-				for (uint32_t i = 0; i < skeletonMeshJoints.size(); ++i)
-					targetPoseTransforms[i] = Transform(-locomotion) * targetPoseTransforms[i];
-
-				// Convert back from absolute to relative pose transforms.
-				for (uint32_t i = 0; i < skeletonMeshJoints.size(); ++i)
-				{
-					const int32_t parentIdx = skeleton->getJoint(i)->getParent();
-					const Transform parentTransform = (parentIdx >= 0) ? targetPoseTransforms[parentIdx] : Transform::identity();
-					keyPose.pose.setJointTransform(i, parentTransform.inverse() * targetPoseTransforms[i]);
-				}
-
-				// Accumulate locomotion distance.
-				const Vector4 deltaLocomotion = (target.translation() - previousTarget) * c_locomotionAxies;
-				locomotionDistance += deltaLocomotion.length();
-				totalLocomotion += deltaLocomotion;
-				previousTarget = target.translation();
-			}
-
-			const float duration = anim->getLastKeyPose().at - anim->getKeyPose(0).at;
-			anim->setTimePerDistance(std::abs(locomotionDistance) > FUZZY_EPSILON ? duration / locomotionDistance : 0.0f);
-			anim->setTotalLocomotion(totalLocomotion);
+			skeleton->addJoint(joint);
 		}
+
+		// Get joint handle for reference joint; if none named
+		// then assume first joint for reference.
+		uint32_t jointIndex = 0;
+		if (!animationAsset->getRemoveMotionJoint().empty())
+		{
+			if (!skeleton->findJoint(render::getParameterHandle(animationAsset->getRemoveMotionJoint()), jointIndex))
+			{
+				log::error << L"AnimationPipeline failed; unable to remove motion, no such joint \"" << animationAsset->getRemoveMotionJoint() << L"\"." << Endl;
+				return false;
+			}
+		}
+
+		AlignedVector< Transform > poseTransforms;
+		calculatePoseTransforms(skeleton, &anim->getKeyPose(0).pose, poseTransforms);
+
+		const Quaternion originRotation = poseTransforms[jointIndex].rotation();
+		const Vector4 originPosition = poseTransforms[jointIndex].translation().xyz0();
+		const Vector4 originGround = originPosition * Vector4(1.0f, 0.0f, 1.0f, 0.0f);
+
+		float totalTurn = 0.0f;
+		AlignedVector< Vector4 > rootMotion(keyPoseCount, Vector4::zero());
+		for (uint32_t i = 1; i < keyPoseCount; ++i)
+		{
+			auto& keyPose = anim->getKeyPose(i);
+
+			AlignedVector< Transform > targetPoseTransforms;
+			calculatePoseTransforms(skeleton, &keyPose.pose, targetPoseTransforms);
+			const Transform target = targetPoseTransforms[jointIndex];
+
+			// Turn since first key pose, independent of which way the joint's own axes point.
+			float turn = 0.0f;
+			if (animationAsset->getRemoveRotation())
+			{
+				const Vector4 forward = (target.rotation() * originRotation.inverse()) * Vector4(0.0f, 0.0f, 1.0f, 0.0f);
+				turn = std::atan2(forward.x(), forward.z());
+
+				// Unwrap against previous key pose so turns past half way keep counting.
+				while (turn - totalTurn > PI)
+					turn -= TWO_PI;
+				while (turn - totalTurn < -PI)
+					turn += TWO_PI;
+				totalTurn = turn;
+			}
+
+			// Travel along clip's forward axis only, unless turn is removed as well.
+			Vector4 ground = originGround;
+			if (animationAsset->getRemoveTranslation())
+			{
+				const Vector4 axes = animationAsset->getRemoveRotation() ? Vector4(1.0f, 0.0f, 1.0f, 0.0f) : Vector4(0.0f, 0.0f, 1.0f, 0.0f);
+				ground += (target.translation().xyz0() - originPosition) * axes;
+			}
+
+			// Root motion is the rigid motion T(ground) * R(turn) * T(-originGround); poses get its inverse.
+			const Vector4 swungOrigin = Quaternion::fromAxisAngle(Vector4(0.0f, 1.0f, 0.0f, 0.0f), turn) * originGround;
+			rootMotion[i] = Vector4(ground.x() - swungOrigin.x(), 0.0f, ground.z() - swungOrigin.z(), turn);
+
+			const Transform undo =
+				Transform(originGround) *
+				Transform(Quaternion::fromAxisAngle(Vector4(0.0f, 1.0f, 0.0f, 0.0f), -turn)) *
+				Transform(-ground);
+			for (uint32_t j = 0; j < skeletonMeshJoints.size(); ++j)
+				targetPoseTransforms[j] = undo * targetPoseTransforms[j];
+
+			// Convert back from absolute to relative pose transforms.
+			for (uint32_t j = 0; j < skeletonMeshJoints.size(); ++j)
+			{
+				const int32_t parentIdx = skeleton->getJoint(j)->getParent();
+				const Transform parentTransform = (parentIdx >= 0) ? targetPoseTransforms[parentIdx] : Transform::identity();
+				keyPose.pose.setJointTransform(j, parentTransform.inverse() * targetPoseTransforms[j]);
+			}
+		}
+
+		anim->setRootMotion(rootMotion);
+		log::info << L"Removed " << float(rootMotion.back().xyz0().length()) << L" unit(s) of travel and " << rad2deg(totalTurn) << L" degree(s) of rotation as root motion." << Endl;
 	}
 
 	/*
@@ -499,8 +514,7 @@ Ref< ISerializable > AnimationPipeline::buildProduct(
 	editor::IPipelineBuilder* pipelineBuilder,
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,
-	const Object* buildParams
-) const
+	const Object* buildParams) const
 {
 	T_FATAL_ERROR;
 	return nullptr;

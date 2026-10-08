@@ -50,12 +50,13 @@ public:
 		const AlignedVector< Transform >& poseTransforms) const;
 
 	void evaluate(
-		const StateContext& context,
+		StateContext& context,
 		float deltaTime,
 		const Transform& worldTransform,
 		const Skeleton* skeleton,
 		const AlignedVector< Transform >& jointTransforms,
-		Pose& outPose) const;
+		Pose& outPose,
+		Vector4* outRootMotion = nullptr) const;
 
 	IPoseController* getActivePoseController() const;
 

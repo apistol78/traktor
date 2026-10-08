@@ -48,13 +48,7 @@ public:
 
 	virtual void setTransform(const Transform& transform) = 0;
 
-	/*! Get world transform of the owner entity as driven by this controller.
-	 *
-	 * Pose controllers normally only produce an object space pose and leave the owner
-	 * entity where it is. A controller which moves the entity itself (e.g. a rag doll
-	 * tracking its root limb) reports the new entity world transform through this
-	 * method; the skeleton component applies it to the owner entity after the pose
-	 * has been evaluated.
+	/*! Get driven world transform of owner entity.
 	 *
 	 * \param outEntityTransform World transform of owner entity.
 	 * \return True if this controller drives the owner entity's transform.
@@ -62,10 +56,6 @@ public:
 	virtual bool getEntityTransform(Transform& outEntityTransform) const { return false; }
 
 	/*! Reset controller to match a given pose.
-	 *
-	 * Called when a controller becomes active so it can initialize itself from the
-	 * currently evaluated pose. Default implementation does nothing; physics-based
-	 * controllers (e.g. rag doll) override this to snap their state to \a poseTransforms.
 	 *
 	 * \param worldTransform World transform of owner entity.
 	 * \param skeleton Skeleton being posed.
@@ -95,13 +85,10 @@ public:
 		AlignedVector< Transform >& outPoseTransforms
 	) = 0;
 
-	/*! Return the pose controller actually driving the pose right now.
-	 *
-	 * Most controllers are themselves the active one and return \c this. A controller
-	 * that delegates (e.g. the animation state graph) returns the sub-controller of its
-	 * current state, so callers can reach a physics controller (e.g. rag doll) that is
-	 * only active in some states. May be null when the current state has no controller.
-	 */
+	/*! Consume accumulated root motion played since last call. */
+	virtual Vector4 consumeRootMotion() { return Vector4::zero(); }
+
+	/*! Return the pose controller actually driving the pose right now. */
 	virtual IPoseController* getActivePoseController() = 0;
 
 	/*! */

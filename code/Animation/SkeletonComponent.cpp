@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2025 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -167,6 +167,17 @@ void SkeletonComponent::synchronize() const
 		m_updatePoseControllerJob = nullptr;
 	}
 #endif
+}
+
+Transform SkeletonComponent::consumeRootMotion()
+{
+	synchronize();
+
+	const Vector4 rootMotion = m_poseController->consumeRootMotion();
+	return Transform(
+		Vector4(rootMotion.x(), 0.0f, rootMotion.z(), 0.0f),
+		Quaternion::fromAxisAngle(Vector4(0.0f, 1.0f, 0.0f, 0.0f), rootMotion.w())
+	);
 }
 
 bool SkeletonComponent::getJointTransform(render::handle_t jointName, Transform& outTransform) const

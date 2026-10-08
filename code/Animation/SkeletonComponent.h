@@ -63,6 +63,9 @@ public:
 
 	void synchronize() const;
 
+	/*! Consume accumulated root motion played since last call. */
+	Transform consumeRootMotion();
+
 	/*! Get base transform of joint. */
 	bool getJointTransform(render::handle_t jointName, Transform& outTransform) const;
 

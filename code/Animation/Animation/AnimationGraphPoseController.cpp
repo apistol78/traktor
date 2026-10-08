@@ -84,6 +84,11 @@ bool AnimationGraphPoseController::evaluate(
 	return m_stateGraph ? m_stateGraph->evaluate(time, deltaTime, worldTransform, skeleton, jointTransforms, outPoseTransforms) : false;
 }
 
+Vector4 AnimationGraphPoseController::consumeRootMotion()
+{
+	return m_stateGraph ? m_stateGraph->consumeRootMotion() : Vector4::zero();
+}
+
 IPoseController* AnimationGraphPoseController::getActivePoseController()
 {
 	return m_stateGraph ? m_stateGraph->getActivePoseController() : this;

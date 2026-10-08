@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -37,9 +37,14 @@ public:
 
 	float getDuration() const { return m_duration; }
 
+	void setRootMotionTime(float rootMotionTime) { m_rootMotionTime = rootMotionTime; }
+
+	float getRootMotionTime() const { return m_rootMotionTime; }
+
 private:
 	float m_time = 0.0f;
 	float m_duration = 0.0f;
+	float m_rootMotionTime = -1.0f;
 };
 
 }
