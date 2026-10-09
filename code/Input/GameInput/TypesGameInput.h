@@ -1,0 +1,207 @@
+/*
+ * TRAKTOR
+ * Copyright (c) 2026 Anders Pistol.
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ */
+#pragma once
+
+#include "Core/Config.h"
+
+namespace traktor::input
+{
+
+/*! DefaultControl to scan code mapping, extended (0xE0 prefixed) keys have bit 0x80 set. */
+const uint8_t c_scanCodeControlKeys[] = {
+	0x00,
+	0x00,
+	0x00,
+	0x00,
+	0x00,
+	0x00,
+	0x00,
+	0x00,
+	0x00,
+	0x00,
+	0x00,
+	0x00,
+	0x00,
+	0x00,
+	0x00,
+	0x00,
+	0x00,
+	0x00,
+	0x00,
+	0x00,
+	0x00,
+	0x00,
+	0x00,
+	0x00,
+	0x00,
+	0x00,
+	0x00,
+	0x00,
+	0x00,
+	0x00,
+	0x00,
+	0x00,
+	0x00,
+	0x00,
+	0x00,
+	0x00,
+	0x00,
+	0x00,
+	0x00,
+	0x00,
+	0x01, // KeyEscape
+	0x02, // Key1
+	0x03, // Key2
+	0x04, // Key3
+	0x05, // Key4
+	0x06, // Key5
+	0x07, // Key6
+	0x08, // Key7
+	0x09, // Key8
+	0x0a, // Key9
+	0x0b, // Key0
+	0x0c, // KeyMinus
+	0x0d, // KeyEquals
+	0x0e, // KeyBack
+	0x0f, // KeyTab
+	0x10, // KeyQ
+	0x11, // KeyW
+	0x12, // KeyE
+	0x13, // KeyR
+	0x14, // KeyT
+	0x15, // KeyY
+	0x16, // KeyU
+	0x17, // KeyI
+	0x18, // KeyO
+	0x19, // KeyP
+	0x1a, // KeyLeftBracket
+	0x1b, // KeyRightBracket
+	0x1c, // KeyReturn
+	0x1d, // KeyLeftControl
+	0x1e, // KeyA
+	0x1f, // KeyS
+	0x20, // KeyD
+	0x21, // KeyF
+	0x22, // KeyG
+	0x23, // KeyH
+	0x24, // KeyJ
+	0x25, // KeyK
+	0x26, // KeyL
+	0x27, // KeySemicolon
+	0x28, // KeyApostrophe
+	0x29, // KeyGrave
+	0x2a, // KeyLeftShift
+	0x2b, // KeyBackSlash
+	0x2c, // KeyZ
+	0x2d, // KeyX
+	0x2e, // KeyC
+	0x2f, // KeyV
+	0x30, // KeyB
+	0x31, // KeyN
+	0x32, // KeyM
+	0x33, // KeyComma
+	0x34, // KeyPeriod
+	0x35, // KeySlash
+	0x36, // KeyRightShift
+	0x37, // KeyMultiply
+	0x38, // KeyLeftMenu
+	0x39, // KeySpace
+	0x3a, // KeyCaptial
+	0x3b, // KeyF1
+	0x3c, // KeyF2
+	0x3d, // KeyF3
+	0x3e, // KeyF4
+	0x3f, // KeyF5
+	0x40, // KeyF6
+	0x41, // KeyF7
+	0x42, // KeyF8
+	0x43, // KeyF9
+	0x44, // KeyF10
+	0x45, // KeyNumLock
+	0x46, // KeyScroll
+	0x47, // KeyNumPad7
+	0x48, // KeyNumPad8
+	0x49, // KeyNumPad9
+	0x4a, // KeySubtract
+	0x4b, // KeyNumPad4
+	0x4c, // KeyNumPad5
+	0x4d, // KeyNumPad6
+	0x4e, // KeyAdd
+	0x4f, // KeyNumPad1
+	0x50, // KeyNumPad2
+	0x51, // KeyNumPad3
+	0x52, // KeyNumPad0
+	0x53, // KeyDecimal
+	0x56, // KeyOem102
+	0x57, // KeyF11
+	0x58, // KeyF12
+	0x64, // KeyF13
+	0x65, // KeyF14
+	0x66, // KeyF15
+	0x70, // KeyKana
+	0x73, // KeyAbntC1
+	0x79, // KeyConvert
+	0x7b, // KeyNoConvert
+	0x7d, // KeyYen
+	0x7e, // KeyAbntC2
+	0x8d, // KeyNumPadEquals
+	0x90, // KeyPreviousTrack
+	0x91, // KeyAt
+	0x92, // KeyColon
+	0x93, // KeyUnderline
+	0x94, // KeyKanji
+	0x95, // KeyStop
+	0x96, // KeyAx
+	0x97, // KeyUnlabeled
+	0x99, // KeyNextTrack
+	0x9c, // KeyNumPadEnter
+	0x9d, // KeyRightControl
+	0xa0, // KeyMute
+	0xa1, // KeyCalculator
+	0xa2, // KeyPlayPause
+	0xa4, // KeyMediaStop
+	0xae, // KeyVolumeDown
+	0xb0, // KeyVolumeUp
+	0xb2, // KeyWebHome
+	0xb3, // KeyNumPadComma
+	0xb5, // KeyDivide
+	0xb7, // KeySysRq
+	0xb8, // KeyRightMenu
+	0xc5, // KeyPause
+	0xc7, // KeyHome
+	0xc8, // KeyUp
+	0xc9, // KeyPrior
+	0xcb, // KeyLeft
+	0xcd, // KeyRight
+	0xcf, // KeyEnd
+	0xd0, // KeyDown
+	0xd1, // KeyNext
+	0xd2, // KeyInsert
+	0xd3, // KeyDelete
+	0xdb, // KeyLeftWin
+	0xdc, // KeyRightWin
+	0xdd, // KeyApplications
+	0xde, // KeyPower
+	0xdf, // KeySleep
+	0xe3, // KeyWake
+	0xe5, // KeyWebSearch
+	0xe6, // KeyWebFavorites
+	0xe7, // KeyWebRefresh
+	0xe8, // KeyWebStop
+	0xe9, // KeyWebForward
+	0xea, // KeyWebBack
+	0xeb, // KeyMyComputer
+	0xec, // KeyMail
+	0xed, // KeyMediaSelect
+};
+
+/*! Translate scan code into DefaultControl index, 0 if key isn't mapped. */
+uint32_t translateFromScanCode(uint32_t scanCode, bool extended, uint32_t vk);
+
+}

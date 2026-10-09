@@ -16243,8 +16243,8 @@
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
 					<debugExecutable>$(TargetPath)</debugExecutable>
-					<debugArguments>-s</debugArguments>
-					<debugEnvironment>PATH=$(AGGREGATE_OUTPUT_PATH)\debugshared;$(PATH)</debugEnvironment>
+					<debugArguments>-s -use-last-working-directory</debugArguments>
+					<debugEnvironment>PATH=$(TRAKTOR_HOME)\bin\latest\win64\debugshared;$(PATH)</debugEnvironment>
 					<debugWorkingDirectory>$(TRAKTOR_HOME)</debugWorkingDirectory>
 					<aggregationItems>
 						<item type="traktor.sb.AggregationItem">
@@ -16269,8 +16269,8 @@
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
 					<debugExecutable>$(TargetPath)</debugExecutable>
-					<debugArguments>-s</debugArguments>
-					<debugEnvironment>PATH=$(AGGREGATE_OUTPUT_PATH)\releaseshared;$(PATH)</debugEnvironment>
+					<debugArguments>-s -use-last-working-directory</debugArguments>
+					<debugEnvironment>PATH=$(TRAKTOR_HOME)\bin\latest\win64\releaseshared;$(PATH)</debugEnvironment>
 					<debugWorkingDirectory>$(TRAKTOR_HOME)</debugWorkingDirectory>
 					<aggregationItems>
 						<item type="traktor.sb.AggregationItem">
@@ -16296,10 +16296,10 @@
 					<warningLevel>WlCompilerDefault</warningLevel>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
+					<debugExecutable>$(TargetPath)</debugExecutable>
+					<debugArguments>-s -use-last-working-directory</debugArguments>
 					<debugEnvironment/>
-					<debugWorkingDirectory/>
+					<debugWorkingDirectory>$(TRAKTOR_HOME)</debugWorkingDirectory>
 					<aggregationItems>
 						<item type="traktor.sb.AggregationItem">
 							<sourceFile>Traktor.Runtime.App.pdb</sourceFile>
@@ -16328,10 +16328,10 @@
 					<warningLevel>WlCompilerDefault</warningLevel>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
+					<debugExecutable>$(TargetPath)</debugExecutable>
+					<debugArguments>-s -use-last-working-directory</debugArguments>
 					<debugEnvironment/>
-					<debugWorkingDirectory/>
+					<debugWorkingDirectory>$(TRAKTOR_HOME)</debugWorkingDirectory>
 					<aggregationItems>
 						<item type="traktor.sb.AggregationItem">
 							<sourceFile>Traktor.Runtime.App.pdb</sourceFile>
@@ -22330,6 +22330,177 @@
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
 					<project ref="/object/projects/item[1]/dependencies/item[16]/project/dependencies/item[13]/project"/>
+				</item>
+			</dependencies>
+		</item>
+		<item type="traktor.sb.Project" version="1">
+			<enable>true</enable>
+			<name>Traktor.Input.GameInput</name>
+			<sourcePath>$(TRAKTOR_HOME)/code/Input/GameInput</sourcePath>
+			<configurations>
+				<item type="traktor.sb.Configuration" version="5">
+					<name>DebugShared</name>
+					<targetFormat>TfSharedLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader/>
+					<includePaths/>
+					<definitions>
+						<item>T_INPUT_GAMEINPUT_EXPORT</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries>
+						<item>gameinput.lib</item>
+						<item>comctl32.lib</item>
+					</libraries>
+					<warningLevel>WlCompilerDefault</warningLevel>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
+					<aggregationItems>
+						<item type="traktor.sb.AggregationItem">
+							<sourceFile>Traktor.Input.GameInput.pdb</sourceFile>
+							<targetPath>debugshared</targetPath>
+						</item>
+						<item type="traktor.sb.AggregationItem">
+							<sourceFile>Traktor.Input.GameInput.lib</sourceFile>
+							<targetPath>debugshared</targetPath>
+						</item>
+						<item type="traktor.sb.AggregationItem">
+							<sourceFile>Traktor.Input.GameInput.dll</sourceFile>
+							<targetPath>debugshared</targetPath>
+						</item>
+					</aggregationItems>
+					<consumerLibraryPath>debugshared</consumerLibraryPath>
+				</item>
+				<item type="traktor.sb.Configuration" version="5">
+					<name>ReleaseShared</name>
+					<targetFormat>TfSharedLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader/>
+					<includePaths/>
+					<definitions>
+						<item>T_INPUT_GAMEINPUT_EXPORT</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries>
+						<item>gameinput.lib</item>
+						<item>comctl32.lib</item>
+					</libraries>
+					<warningLevel>WlCompilerDefault</warningLevel>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
+					<aggregationItems>
+						<item type="traktor.sb.AggregationItem">
+							<sourceFile>Traktor.Input.GameInput.pdb</sourceFile>
+							<targetPath>releaseshared</targetPath>
+						</item>
+						<item type="traktor.sb.AggregationItem">
+							<sourceFile>Traktor.Input.GameInput.lib</sourceFile>
+							<targetPath>releaseshared</targetPath>
+						</item>
+						<item type="traktor.sb.AggregationItem">
+							<sourceFile>Traktor.Input.GameInput.dll</sourceFile>
+							<targetPath>releaseshared</targetPath>
+						</item>
+					</aggregationItems>
+					<consumerLibraryPath>releaseshared</consumerLibraryPath>
+				</item>
+				<item type="traktor.sb.Configuration" version="5">
+					<name>DebugStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader/>
+					<includePaths/>
+					<definitions>
+						<item>T_STATIC</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries>
+						<item>gameinput.lib</item>
+						<item>comctl32.lib</item>
+					</libraries>
+					<warningLevel>WlCompilerDefault</warningLevel>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
+					<aggregationItems>
+						<item type="traktor.sb.AggregationItem">
+							<sourceFile>Traktor.Input.GameInput.pdb</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
+						<item type="traktor.sb.AggregationItem">
+							<sourceFile>Traktor.Input.GameInput.lib</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
+					</aggregationItems>
+					<consumerLibraryPath>debugstatic</consumerLibraryPath>
+				</item>
+				<item type="traktor.sb.Configuration" version="5">
+					<name>ReleaseStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader/>
+					<includePaths/>
+					<definitions>
+						<item>T_STATIC</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries>
+						<item>gameinput.lib</item>
+						<item>comctl32.lib</item>
+					</libraries>
+					<warningLevel>WlCompilerDefault</warningLevel>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
+					<aggregationItems>
+						<item type="traktor.sb.AggregationItem">
+							<sourceFile>Traktor.Input.GameInput.pdb</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
+						<item type="traktor.sb.AggregationItem">
+							<sourceFile>Traktor.Input.GameInput.lib</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
+					</aggregationItems>
+					<consumerLibraryPath>releasestatic</consumerLibraryPath>
+				</item>
+			</configurations>
+			<items>
+				<item type="traktor.sb.File" version="1">
+					<fileName>*.*</fileName>
+					<excludeFilter/>
+					<items/>
+				</item>
+				<item type="traktor.sb.File" version="1">
+					<fileName>$(TRAKTOR_HOME)/code/.clang-format</fileName>
+					<excludeFilter/>
+					<items/>
+				</item>
+			</items>
+			<dependencies>
+				<item type="traktor.sb.ProjectDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
+					<link>LnkYes</link>
+					<project ref="/object/projects/item/dependencies/item/project"/>
+				</item>
+				<item type="traktor.sb.ProjectDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
+					<link>LnkYes</link>
+					<project ref="/object/projects/item[14]"/>
 				</item>
 			</dependencies>
 		</item>
