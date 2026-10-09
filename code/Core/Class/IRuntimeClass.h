@@ -39,7 +39,10 @@ public:
 		Subtract = 1,
 		Multiply = 2,
 		Divide = 3,
-		Count = 4
+		Equal = 4,
+		Less = 5,
+		LessEqual = 6,
+		Count = 7
 	};
 
 	/*! Get exported native type. */

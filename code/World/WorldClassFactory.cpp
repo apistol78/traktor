@@ -242,6 +242,7 @@ void WorldClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classEntityData);
 
 	auto classEntity = new AutoRuntimeClass< Entity >();
+	classEntity->addProperty("id", &Entity::getId);
 	classEntity->addProperty("world", &Entity::getWorld);
 	classEntity->addProperty("name", &Entity::getName);
 	classEntity->addProperty("visible", &Entity::setVisible, &Entity::isVisible);

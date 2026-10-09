@@ -147,12 +147,12 @@ void BoxedClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classBoxedColor4f->addMethod("get", &BoxedColor4f::get);
 	classBoxedColor4f->addMethod("set", &BoxedColor4f::set);
 	classBoxedColor4f->addStaticMethod("lerp", &BoxedColor4f::lerp);
-	classBoxedColor4f->addOperator< Color4f, const BoxedColor4f* >('+', &BoxedColor4f::add);
-	classBoxedColor4f->addOperator< Color4f, const BoxedColor4f* >('-', &BoxedColor4f::sub);
-	classBoxedColor4f->addOperator< Color4f, const BoxedColor4f* >('*', &BoxedColor4f::mul);
-	classBoxedColor4f->addOperator< Color4f, float >('*', &BoxedColor4f::mul);
-	classBoxedColor4f->addOperator< Color4f, const BoxedColor4f* >('/', &BoxedColor4f::div);
-	classBoxedColor4f->addOperator< Color4f, float >('/', &BoxedColor4f::div);
+	classBoxedColor4f->addOperator< Color4f, const BoxedColor4f* >(IRuntimeClass::Operator::Add, &BoxedColor4f::add);
+	classBoxedColor4f->addOperator< Color4f, const BoxedColor4f* >(IRuntimeClass::Operator::Subtract, &BoxedColor4f::sub);
+	classBoxedColor4f->addOperator< Color4f, const BoxedColor4f* >(IRuntimeClass::Operator::Multiply, &BoxedColor4f::mul);
+	classBoxedColor4f->addOperator< Color4f, float >(IRuntimeClass::Operator::Multiply, &BoxedColor4f::mul);
+	classBoxedColor4f->addOperator< Color4f, const BoxedColor4f* >(IRuntimeClass::Operator::Divide, &BoxedColor4f::div);
+	classBoxedColor4f->addOperator< Color4f, float >(IRuntimeClass::Operator::Divide, &BoxedColor4f::div);
 	registrar->registerClass(classBoxedColor4f);
 
 	auto classBoxedColor4ub = new AutoRuntimeClass< BoxedColor4ub >();
@@ -194,6 +194,9 @@ void BoxedClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classBoxedGuid->addMethod("isValid", &BoxedGuid::isValid);
 	classBoxedGuid->addMethod("isNull", &BoxedGuid::isNull);
 	classBoxedGuid->addMethod("isNotNull", &BoxedGuid::isNotNull);
+	classBoxedGuid->addOperator(IRuntimeClass::Operator::Equal, &BoxedGuid::operatorEqual);
+	classBoxedGuid->addOperator(IRuntimeClass::Operator::Less, &BoxedGuid::operatorLess);
+	classBoxedGuid->addOperator(IRuntimeClass::Operator::LessEqual, &BoxedGuid::operatorLessEqual);
 	registrar->registerClass(classBoxedGuid);
 
 	auto classBoxedIntervalTransform = new AutoRuntimeClass< BoxedIntervalTransform >();
@@ -218,8 +221,8 @@ void BoxedClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classBoxedMatrix33->addStaticMethod("translate", &BoxedMatrix33::translate);
 	classBoxedMatrix33->addStaticMethod("scale", &BoxedMatrix33::scale);
 	classBoxedMatrix33->addStaticMethod("rotate", &BoxedMatrix33::rotate);
-	classBoxedMatrix33->addOperator< Vector2, const BoxedVector2* >('*', &BoxedMatrix33::transform);
-	classBoxedMatrix33->addOperator< Matrix33, const BoxedMatrix33* >('*', &BoxedMatrix33::concat);
+	classBoxedMatrix33->addOperator< Vector2, const BoxedVector2* >(IRuntimeClass::Operator::Multiply, &BoxedMatrix33::transform);
+	classBoxedMatrix33->addOperator< Matrix33, const BoxedMatrix33* >(IRuntimeClass::Operator::Multiply, &BoxedMatrix33::concat);
 	registrar->registerClass(classBoxedMatrix33);
 
 	auto classBoxedMatrix44 = new AutoRuntimeClass< BoxedMatrix44 >();
@@ -255,8 +258,8 @@ void BoxedClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classBoxedMatrix44->addStaticMethod("rotateZ", &rotateZ);
 	classBoxedMatrix44->addStaticMethod< Matrix44, const Vector4& >("scale", &scale);
 	classBoxedMatrix44->addStaticMethod< Matrix44, float, float, float >("scale", &scale);
-	classBoxedMatrix44->addOperator< Vector4, const BoxedVector4* >('*', &BoxedMatrix44::transform);
-	classBoxedMatrix44->addOperator< Matrix44, const BoxedMatrix44* >('*', &BoxedMatrix44::concat);
+	classBoxedMatrix44->addOperator< Vector4, const BoxedVector4* >(IRuntimeClass::Operator::Multiply, &BoxedMatrix44::transform);
+	classBoxedMatrix44->addOperator< Matrix44, const BoxedMatrix44* >(IRuntimeClass::Operator::Multiply, &BoxedMatrix44::concat);
 	registrar->registerClass(classBoxedMatrix44);
 
 	auto classBoxedPlane = new AutoRuntimeClass< BoxedPlane >();
@@ -304,8 +307,8 @@ void BoxedClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classBoxedQuaternion->addStaticMethod("fromAxisAngle", &BoxedQuaternion::fromAxisAngle);
 	classBoxedQuaternion->addStaticMethod("lerp", &BoxedQuaternion::lerp);
 	classBoxedQuaternion->addStaticMethod("slerp", &BoxedQuaternion::slerp);
-	classBoxedQuaternion->addOperator< Vector4, const BoxedVector4* >('*', &BoxedQuaternion::transform);
-	classBoxedQuaternion->addOperator< Quaternion, const BoxedQuaternion* >('*', &BoxedQuaternion::concat);
+	classBoxedQuaternion->addOperator< Vector4, const BoxedVector4* >(IRuntimeClass::Operator::Multiply, &BoxedQuaternion::transform);
+	classBoxedQuaternion->addOperator< Quaternion, const BoxedQuaternion* >(IRuntimeClass::Operator::Multiply, &BoxedQuaternion::concat);
 	registrar->registerClass(classBoxedQuaternion);
 
 	auto classBoxedRandom = new AutoRuntimeClass< BoxedRandom >();
@@ -338,7 +341,7 @@ void BoxedClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classBoxedRay3->addProperty("origin", &BoxedRay3::origin);
 	classBoxedRay3->addProperty("direction", &BoxedRay3::direction);
 	classBoxedRay3->addMethod("distance", &BoxedRay3::distance);
-	classBoxedRay3->addOperator< Vector4, float >('*', &BoxedRay3::mul);
+	classBoxedRay3->addOperator< Vector4, float >(IRuntimeClass::Operator::Multiply, &BoxedRay3::mul);
 	registrar->registerClass(classBoxedRay3);
 
 	auto classBoxedRefArray = new AutoRuntimeClass< BoxedRefArray >();
@@ -402,8 +405,8 @@ void BoxedClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classBoxedTransform->addStaticMethod("lerp", &BoxedTransform::lerp);
 	classBoxedTransform->addStaticMethod("lookAt", &BoxedTransform::lookAt);
 	classBoxedTransform->addStaticMethod("fromEulerAngles", &BoxedTransform::fromEulerAngles);
-	classBoxedTransform->addOperator< Vector4, const BoxedVector4* >('*', &BoxedTransform::transform);
-	classBoxedTransform->addOperator< Transform, const BoxedTransform* >('*', &BoxedTransform::concat);
+	classBoxedTransform->addOperator< Vector4, const BoxedVector4* >(IRuntimeClass::Operator::Multiply, &BoxedTransform::transform);
+	classBoxedTransform->addOperator< Transform, const BoxedTransform* >(IRuntimeClass::Operator::Multiply, &BoxedTransform::concat);
 	registrar->registerClass(classBoxedTransform);
 
 	auto classBoxedTypeInfo = new AutoRuntimeClass< BoxedTypeInfo >();
@@ -430,14 +433,14 @@ void BoxedClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classBoxedVector2->addMethod("perpendicular", &BoxedVector2::perpendicular);
 	classBoxedVector2->addStaticMethod("lerp", &BoxedVector2::lerp);
 	classBoxedVector2->addStaticMethod("distance", &BoxedVector2::distance);
-	classBoxedVector2->addOperator< Vector2, const BoxedVector2* >('+', &BoxedVector2::add);
-	classBoxedVector2->addOperator< Vector2, float >('+', &BoxedVector2::add);
-	classBoxedVector2->addOperator< Vector2, const BoxedVector2* >('-', &BoxedVector2::sub);
-	classBoxedVector2->addOperator< Vector2, float >('-', &BoxedVector2::sub);
-	classBoxedVector2->addOperator< Vector2, const BoxedVector2* >('*', &BoxedVector2::mul);
-	classBoxedVector2->addOperator< Vector2, float >('*', &BoxedVector2::mul);
-	classBoxedVector2->addOperator< Vector2, const BoxedVector2* >('/', &BoxedVector2::div);
-	classBoxedVector2->addOperator< Vector2, float >('/', &BoxedVector2::div);
+	classBoxedVector2->addOperator< Vector2, const BoxedVector2* >(IRuntimeClass::Operator::Add, &BoxedVector2::add);
+	classBoxedVector2->addOperator< Vector2, float >(IRuntimeClass::Operator::Add, &BoxedVector2::add);
+	classBoxedVector2->addOperator< Vector2, const BoxedVector2* >(IRuntimeClass::Operator::Subtract, &BoxedVector2::sub);
+	classBoxedVector2->addOperator< Vector2, float >(IRuntimeClass::Operator::Subtract, &BoxedVector2::sub);
+	classBoxedVector2->addOperator< Vector2, const BoxedVector2* >(IRuntimeClass::Operator::Multiply, &BoxedVector2::mul);
+	classBoxedVector2->addOperator< Vector2, float >(IRuntimeClass::Operator::Multiply, &BoxedVector2::mul);
+	classBoxedVector2->addOperator< Vector2, const BoxedVector2* >(IRuntimeClass::Operator::Divide, &BoxedVector2::div);
+	classBoxedVector2->addOperator< Vector2, float >(IRuntimeClass::Operator::Divide, &BoxedVector2::div);
 	registrar->registerClass(classBoxedVector2);
 
 	auto classBoxedVector4 = new AutoRuntimeClass< BoxedVector4 >();
@@ -465,14 +468,14 @@ void BoxedClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classBoxedVector4->addStaticMethod("distance4", &BoxedVector4::distance4);
 	classBoxedVector4->addStaticMethod("minorAxis3", &BoxedVector4::minorAxis3);
 	classBoxedVector4->addStaticMethod("majorAxis3", &BoxedVector4::majorAxis3);
-	classBoxedVector4->addOperator< Vector4, const BoxedVector4* >('+', &BoxedVector4::add);
-	classBoxedVector4->addOperator< Vector4, float >('+', &BoxedVector4::add);
-	classBoxedVector4->addOperator< Vector4, const BoxedVector4* >('-', &BoxedVector4::sub);
-	classBoxedVector4->addOperator< Vector4, float >('-', &BoxedVector4::sub);
-	classBoxedVector4->addOperator< Vector4, const BoxedVector4* >('*', &BoxedVector4::mul);
-	classBoxedVector4->addOperator< Vector4, float >('*', &BoxedVector4::mul);
-	classBoxedVector4->addOperator< Vector4, const BoxedVector4* >('/', &BoxedVector4::div);
-	classBoxedVector4->addOperator< Vector4, float >('/', &BoxedVector4::div);
+	classBoxedVector4->addOperator< Vector4, const BoxedVector4* >(IRuntimeClass::Operator::Add, &BoxedVector4::add);
+	classBoxedVector4->addOperator< Vector4, float >(IRuntimeClass::Operator::Add, &BoxedVector4::add);
+	classBoxedVector4->addOperator< Vector4, const BoxedVector4* >(IRuntimeClass::Operator::Subtract, &BoxedVector4::sub);
+	classBoxedVector4->addOperator< Vector4, float >(IRuntimeClass::Operator::Subtract, &BoxedVector4::sub);
+	classBoxedVector4->addOperator< Vector4, const BoxedVector4* >(IRuntimeClass::Operator::Multiply, &BoxedVector4::mul);
+	classBoxedVector4->addOperator< Vector4, float >(IRuntimeClass::Operator::Multiply, &BoxedVector4::mul);
+	classBoxedVector4->addOperator< Vector4, const BoxedVector4* >(IRuntimeClass::Operator::Divide, &BoxedVector4::div);
+	classBoxedVector4->addOperator< Vector4, float >(IRuntimeClass::Operator::Divide, &BoxedVector4::div);
 	registrar->registerClass(classBoxedVector4);
 
 	auto classBoxedVector4Array = new AutoRuntimeClass< BoxedVector4Array >();

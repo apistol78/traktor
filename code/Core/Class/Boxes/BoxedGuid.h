@@ -49,6 +49,12 @@ public:
 
 	bool isNotNull() const { return m_value.isNotNull(); }
 
+	bool operatorEqual(const BoxedGuid* value) const { return m_value == value->m_value; }
+
+	bool operatorLess(const BoxedGuid* value) const { return m_value < value->m_value; }
+
+	bool operatorLessEqual(const BoxedGuid* value) const { return m_value <= value->m_value; }
+
 	const Guid& unbox() const { return m_value; }
 
 	virtual std::wstring toString() const override final;

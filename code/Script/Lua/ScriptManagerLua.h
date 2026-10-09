@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -153,7 +153,13 @@ private:
 
 	static int classGetProperty(lua_State* luaState);
 
-	static int classEqual(lua_State* luaState);
+	static int classEqualByValue(lua_State* luaState);
+
+	static int classEqualByObject(lua_State* luaState);
+
+	static int classLess(lua_State* luaState);
+
+	static int classLessEqual(lua_State* luaState);
 
 	static int classAdd(lua_State* luaState);
 
@@ -170,8 +176,6 @@ private:
 	static void* luaAlloc(void* ud, void* ptr, size_t osize, size_t nsize);
 
 	static int luaAllocatedMemory(lua_State* luaState);
-
-	static int luaStrictEnvironment(lua_State* luaState);
 
 	static void hookCallback(lua_State* L, lua_Debug* ar);
 

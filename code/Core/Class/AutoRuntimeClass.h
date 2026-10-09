@@ -186,33 +186,9 @@ public:
 		typename ReturnType,
 		typename Argument1Type
 	>
-	void addOperator(char operation, ReturnType (ClassType::*method)(Argument1Type) const)
+	void addOperator(Operator operation, ReturnType (ClassType::*method)(Argument1Type) const)
 	{
-		int32_t opindex = -1;
-
-		switch (operation)
-		{
-		case '+':
-			opindex = (int32_t)Operator::Add;
-			break;
-
-		case '-':
-			opindex = (int32_t)Operator::Subtract;
-			break;
-
-		case '*':
-			opindex = (int32_t)Operator::Multiply;
-			break;
-
-		case '/':
-			opindex = (int32_t)Operator::Divide;
-			break;
-
-		default: [[unlikely]]
-			T_FATAL_ERROR;
-			break;
-		}
-
+		const int32_t opindex = (int32_t)operation;
 		Ref< IRuntimeDispatch >& op = m_operators[opindex];
 		if (op)
 		{

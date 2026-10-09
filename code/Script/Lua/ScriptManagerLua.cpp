@@ -1,12 +1,13 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include <cstring>
+#include "Script/Lua/ScriptManagerLua.h"
+
 #include "Core/Class/AutoVerify.h"
 #include "Core/Class/Boxes/BoxedTypeInfo.h"
 #include "Core/Class/IRuntimeClass.h"
@@ -22,10 +23,11 @@
 #include "Script/Lua/ScriptContextLua.h"
 #include "Script/Lua/ScriptDebuggerLua.h"
 #include "Script/Lua/ScriptDelegateLua.h"
-#include "Script/Lua/ScriptManagerLua.h"
 #include "Script/Lua/ScriptObjectLua.h"
 #include "Script/Lua/ScriptProfilerLua.h"
 #include "Script/Lua/ScriptUtilitiesLua.h"
+
+#include <cstring>
 
 // Resources
 #include "Resources/Initialization.h"
@@ -36,8 +38,8 @@
 
 namespace traktor::script
 {
-	namespace
-	{
+namespace
+{
 
 Timer s_timer;
 
@@ -112,22 +114,22 @@ inline void putObjectRef(lua_State* L, int32_t objectTableRef, ITypedObject* obj
 	lua_pop(L, 1);
 }
 
-	}
+}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.script.ScriptManagerLua", 0, ScriptManagerLua, IScriptManager)
 
 ScriptManagerLua* ScriptManagerLua::ms_instance = nullptr;
 
 ScriptManagerLua::ScriptManagerLua()
-:	m_luaState(nullptr)
-,	m_defaultAllocFn(nullptr)
-,	m_defaultAllocOpaque(nullptr)
-,	m_lockContext(nullptr)
-,	m_collectStepFrequency(10.0)
-,	m_collectSteps(-1)
-,	m_collectTargetSteps(0.0f)
-,	m_totalMemoryUse(0)
-,	m_lastMemoryUse(0)
+	: m_luaState(nullptr)
+	, m_defaultAllocFn(nullptr)
+	, m_defaultAllocOpaque(nullptr)
+	, m_lockContext(nullptr)
+	, m_collectStepFrequency(10.0)
+	, m_collectSteps(-1)
+	, m_collectTargetSteps(0.0f)
+	, m_totalMemoryUse(0)
+	, m_lastMemoryUse(0)
 {
 	T_FATAL_ASSERT(ms_instance == nullptr);
 	ms_instance = this;
@@ -139,7 +141,7 @@ ScriptManagerLua::ScriptManagerLua()
 
 	// Hook default allocator to intercept allocation stats.
 	m_defaultAllocFn = (void*)lua_getallocf(m_luaState, &m_defaultAllocOpaque);
-	T_FATAL_ASSERT (m_defaultAllocFn);
+	T_FATAL_ASSERT(m_defaultAllocFn);
 	lua_setallocf(m_luaState, &luaAlloc, this);
 #endif
 
@@ -174,8 +176,7 @@ ScriptManagerLua::ScriptManagerLua()
 		m_luaState,
 		reinterpret_cast< const char* >(c_ResourceInitialization),
 		sizeof(c_ResourceInitialization),
-		"init"
-	);
+		"init");
 	lua_pcall(m_luaState, 0, 0, 0);
 
 	// Create table containing weak references to C++ object wrappers.
@@ -227,10 +228,8 @@ void ScriptManagerLua::destroy()
 
 	// Discard all tags from C++ rtti types.
 	for (auto& rc : m_classRegistry)
-	{
 		for (auto& derivedType : rc.runtimeClass->getExportType().findAllOf())
 			derivedType->setTag(0);
-	}
 
 	m_debugger = nullptr;
 	m_profiler = nullptr;
@@ -254,7 +253,7 @@ void ScriptManagerLua::registerClass(IRuntimeClass* runtimeClass)
 
 	// Create new class.
 	lua_getglobal(m_luaState, "class");
-	T_FATAL_ASSERT (lua_isfunction(m_luaState, -1));
+	T_FATAL_ASSERT(lua_isfunction(m_luaState, -1));
 	lua_pushstring(m_luaState, wstombs(exportType.getName()).c_str());
 	if (exportType.getSuper())
 	{
@@ -270,7 +269,7 @@ void ScriptManagerLua::registerClass(IRuntimeClass* runtimeClass)
 	else
 		lua_pushnil(m_luaState);
 	lua_call(m_luaState, 2, 1);
-	T_FATAL_ASSERT (lua_istable(m_luaState, -1));
+	T_FATAL_ASSERT(lua_istable(m_luaState, -1));
 
 	// Attach C++ runtime class to script table.
 	lua_pushlightuserdata(m_luaState, (void*)runtimeClass);
@@ -345,40 +344,36 @@ void ScriptManagerLua::registerClass(IRuntimeClass* runtimeClass)
 	}
 
 	// Add properties.
-	T_FATAL_ASSERT (lua_istable(m_luaState, - 1));
+	T_FATAL_ASSERT(lua_istable(m_luaState, -1));
 	const uint32_t propertyCount = runtimeClass->getPropertiesCount();
 	for (uint32_t i = 0; i < propertyCount; ++i)
 	{
 		const std::string propertyName = runtimeClass->getPropertyName(i);
 
 		lua_getfield(m_luaState, -1, "__setters");
-		T_FATAL_ASSERT(lua_istable(m_luaState, - 1));
+		T_FATAL_ASSERT(lua_istable(m_luaState, -1));
 
 		lua_pushlightuserdata(m_luaState, (void*)runtimeClass->getPropertySetDispatch(i));
 		lua_pushlightuserdata(m_luaState, (void*)runtimeClass);
 		lua_pushcclosure(m_luaState, classSetProperty, 2);
-		T_FATAL_ASSERT(lua_isfunction(m_luaState, - 1));
+		T_FATAL_ASSERT(lua_isfunction(m_luaState, -1));
 
 		lua_setfield(m_luaState, -2, propertyName.c_str());
 		lua_pop(m_luaState, 1);
 
 		lua_getfield(m_luaState, -1, "__getters");
-		T_FATAL_ASSERT(lua_istable(m_luaState, - 1));
+		T_FATAL_ASSERT(lua_istable(m_luaState, -1));
 
 		lua_pushlightuserdata(m_luaState, (void*)runtimeClass->getPropertyGetDispatch(i));
 		lua_pushlightuserdata(m_luaState, (void*)runtimeClass);
 		lua_pushcclosure(m_luaState, classGetProperty, 2);
-		T_FATAL_ASSERT(lua_isfunction(m_luaState, - 1));
+		T_FATAL_ASSERT(lua_isfunction(m_luaState, -1));
 
 		lua_setfield(m_luaState, -2, propertyName.c_str());
 		lua_pop(m_luaState, 1);
 	}
 
 	// Add operators.
-	lua_pushlightuserdata(m_luaState, (void*)runtimeClass);
-	lua_pushcclosure(m_luaState, classEqual, 1);
-	lua_setfield(m_luaState, -2, "__eq");
-
 	{
 		const IRuntimeDispatch* addDispatch = runtimeClass->getOperatorDispatch(IRuntimeClass::Operator::Add);
 		if (addDispatch)
@@ -423,24 +418,63 @@ void ScriptManagerLua::registerClass(IRuntimeClass* runtimeClass)
 		}
 	}
 
+	{
+		const IRuntimeDispatch* equalDispatch = runtimeClass->getOperatorDispatch(IRuntimeClass::Operator::Equal);
+		if (equalDispatch)
+		{
+			lua_pushlightuserdata(m_luaState, (void*)runtimeClass);
+			lua_pushlightuserdata(m_luaState, (void*)equalDispatch);
+			lua_pushcclosure(m_luaState, classEqualByValue, 2);
+			lua_setfield(m_luaState, -2, "__eq");
+		}
+		else
+		{
+			lua_pushlightuserdata(m_luaState, (void*)runtimeClass);
+			lua_pushcclosure(m_luaState, classEqualByObject, 1);
+			lua_setfield(m_luaState, -2, "__eq");
+		}
+	}
+
+	{
+		const IRuntimeDispatch* lessDispatch = runtimeClass->getOperatorDispatch(IRuntimeClass::Operator::Less);
+		if (lessDispatch)
+		{
+			lua_pushlightuserdata(m_luaState, (void*)runtimeClass);
+			lua_pushlightuserdata(m_luaState, (void*)lessDispatch);
+			lua_pushcclosure(m_luaState, classLess, 2);
+			lua_setfield(m_luaState, -2, "__lt");
+		}
+	}
+
+	{
+		const IRuntimeDispatch* lessEqualDispatch = runtimeClass->getOperatorDispatch(IRuntimeClass::Operator::LessEqual);
+		if (lessEqualDispatch)
+		{
+			lua_pushlightuserdata(m_luaState, (void*)runtimeClass);
+			lua_pushlightuserdata(m_luaState, (void*)lessEqualDispatch);
+			lua_pushcclosure(m_luaState, classLessEqual, 2);
+			lua_setfield(m_luaState, -2, "__le");
+		}
+	}
+
 	rc.classTableRef = luaL_ref(m_luaState, LUA_REGISTRYINDEX);
 
 	// __newindex
 	{
-		DO_0(m_luaState, lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, rc.classTableRef)	);
-		DO_1(m_luaState, lua_getfield(m_luaState, -1, "__setters")						);
-		DO_1(m_luaState, lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, rc.classTableRef)	);
-		DO_1(m_luaState, lua_pushcclosure(m_luaState, classNewIndex, 2)					);
-		DO_1(m_luaState, lua_setfield(m_luaState, -2, "__newindex")						);
+		DO_0(m_luaState, lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, rc.classTableRef));
+		DO_1(m_luaState, lua_getfield(m_luaState, -1, "__setters"));
+		DO_1(m_luaState, lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, rc.classTableRef));
+		DO_1(m_luaState, lua_pushcclosure(m_luaState, classNewIndex, 2));
+		DO_1(m_luaState, lua_setfield(m_luaState, -2, "__newindex"));
 	}
 
 	// __index
 	{
-		DO_0(m_luaState, lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, rc.classTableRef)	);
-		DO_1(m_luaState, lua_getfield(m_luaState, -1, "__getters")						);
-		DO_1(m_luaState, lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, rc.classTableRef)	);
-		DO_1(m_luaState, lua_pushcclosure(m_luaState, classIndex, 2)					);
-		DO_1(m_luaState, lua_setfield(m_luaState, -2, "__index")						);
+		DO_0(m_luaState, lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, rc.classTableRef));
+		DO_1(m_luaState, lua_getfield(m_luaState, -1, "__getters"));
+		DO_1(m_luaState, lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, rc.classTableRef));
+		DO_1(m_luaState, lua_pushcclosure(m_luaState, classIndex, 2));
+		DO_1(m_luaState, lua_setfield(m_luaState, -2, "__index"));
 	}
 
 	// Export class in global scope.
@@ -800,7 +834,7 @@ Any ScriptManagerLua::toAny(int32_t index)
 			lua_rawgeti(m_luaState, index, c_tableKey_instance);
 			if (lua_islightuserdata(m_luaState, -1))
 			{
-				Object* object = reinterpret_cast<Object*>(lua_touserdata(m_luaState, -1));
+				Object* object = reinterpret_cast< Object* >(lua_touserdata(m_luaState, -1));
 				lua_pop(m_luaState, 1);
 				return Any::fromObject(object);
 			}
@@ -810,7 +844,7 @@ Any ScriptManagerLua::toAny(int32_t index)
 			lua_rawgeti(m_luaState, index, c_tableKey_class);
 			if (lua_islightuserdata(m_luaState, -1))
 			{
-				IRuntimeClass* runtimeClass = reinterpret_cast<IRuntimeClass*>(lua_touserdata(m_luaState, -1));
+				IRuntimeClass* runtimeClass = reinterpret_cast< IRuntimeClass* >(lua_touserdata(m_luaState, -1));
 				lua_pop(m_luaState, 1);
 				if (runtimeClass)
 					return Any::fromObject(new BoxedTypeInfo(runtimeClass->getExportType()));
@@ -888,7 +922,7 @@ void ScriptManagerLua::toAny(int32_t base, int32_t count, Any* outAnys)
 				lua_rawgeti(m_luaState, index, c_tableKey_instance);
 				if (lua_islightuserdata(m_luaState, -1))
 				{
-					Object* object = reinterpret_cast<Object*>(lua_touserdata(m_luaState, -1));
+					Object* object = reinterpret_cast< Object* >(lua_touserdata(m_luaState, -1));
 					lua_pop(m_luaState, 1);
 					outAnys[i] = Any::fromObject(object);
 					continue;
@@ -899,7 +933,7 @@ void ScriptManagerLua::toAny(int32_t base, int32_t count, Any* outAnys)
 				lua_rawgeti(m_luaState, index, c_tableKey_class);
 				if (lua_islightuserdata(m_luaState, -1))
 				{
-					IRuntimeClass* runtimeClass = reinterpret_cast<IRuntimeClass*>(lua_touserdata(m_luaState, -1));
+					IRuntimeClass* runtimeClass = reinterpret_cast< IRuntimeClass* >(lua_touserdata(m_luaState, -1));
 					lua_pop(m_luaState, 1);
 					if (runtimeClass)
 					{
@@ -995,9 +1029,9 @@ void ScriptManagerLua::collectGarbagePartial()
 	const int32_t targetSteps = int32_t(m_collectTargetSteps);
 	if (m_collectSteps < targetSteps)
 	{
-#if defined(T_SCRIPT_LUA_USE_MT_LOCK)
+#	if defined(T_SCRIPT_LUA_USE_MT_LOCK)
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-#endif
+#	endif
 		if (m_collectSteps < 0)
 		{
 			lua_gc(m_luaState, LUA_GCSTOP, 0);
@@ -1028,9 +1062,8 @@ void ScriptManagerLua::collectGarbagePartial()
 
 		// Determine collector frequency from amount of garbage per second.
 		m_collectStepFrequency = std::max< float >(
-			clamp(garbageProduced / (64*1024), 1.0f, 60.0f),
-			m_collectStepFrequency
-		);
+			clamp(garbageProduced / (64 * 1024), 1.0f, 60.0f),
+			m_collectStepFrequency);
 	}
 	else if (m_totalMemoryUse < m_lastMemoryUse)
 	{
@@ -1080,7 +1113,7 @@ int ScriptManagerLua::classGc(lua_State* luaState)
 int ScriptManagerLua::classNew(lua_State* luaState)
 {
 	const int32_t classId = (int32_t)lua_tointeger(luaState, lua_upvalueindex(2));
-	const RegisteredClass& rc =	ms_instance->m_classRegistry[classId];
+	const RegisteredClass& rc = ms_instance->m_classRegistry[classId];
 
 	const IRuntimeDispatch* runtimeDispatch = reinterpret_cast< const IRuntimeDispatch* >(lua_touserdata(luaState, lua_upvalueindex(1)));
 	T_ASSERT(runtimeDispatch);
@@ -1120,7 +1153,7 @@ int ScriptManagerLua::classNew(lua_State* luaState)
 		return 1;
 	}
 #if T_VERIFY_USING_EXCEPTIONS
-	catch(const RuntimeException& x)
+	catch (const RuntimeException& x)
 	{
 		log::error << L"Unhandled RuntimeException occurred when calling constructor, class " << rc.runtimeClass->getExportType().getName() << L"; \"" << x.what() << L"\"." << Endl;
 		ms_instance->breakDebugger(luaState);
@@ -1158,7 +1191,7 @@ int ScriptManagerLua::classNewValue(lua_State* luaState)
 		return 1;
 	}
 #if T_VERIFY_USING_EXCEPTIONS
-	catch(const RuntimeException& x)
+	catch (const RuntimeException& x)
 	{
 		log::error << L"Unhandled RuntimeException occurred when calling constructor, class " << rc.runtimeClass->getExportType().getName() << L"; \"" << x.what() << L"\"." << Endl;
 		ms_instance->breakDebugger(luaState);
@@ -1204,7 +1237,7 @@ int ScriptManagerLua::classCallUnknownMethod(lua_State* luaState)
 		return 1;
 	}
 #if T_VERIFY_USING_EXCEPTIONS
-	catch(const RuntimeException& x)
+	catch (const RuntimeException& x)
 	{
 		log::error << L"Unhandled RuntimeException occurred when calling unknown method \"" << mbstows(methodName) << L"\", class " << runtimeClass->getExportType().getName() << L"; \"" << x.what() << L"\"." << Endl;
 		ms_instance->breakDebugger(luaState);
@@ -1243,7 +1276,7 @@ int ScriptManagerLua::classCallMethod(lua_State* luaState)
 		return 1;
 	}
 #if T_VERIFY_USING_EXCEPTIONS
-	catch(const RuntimeException& x)
+	catch (const RuntimeException& x)
 	{
 		const IRuntimeClass* runtimeClass = reinterpret_cast< const IRuntimeClass* >(lua_touserdata(luaState, lua_upvalueindex(2)));
 		log::error << L"Unhandled RuntimeException occurred when calling method \"" << mbstows(findRuntimeClassMethodName(runtimeClass, runtimeDispatch)) << L"\", class " << runtimeClass->getExportType().getName() << L"; \"" << x.what() << L"\"." << Endl;
@@ -1275,7 +1308,7 @@ int ScriptManagerLua::classCallStaticMethod(lua_State* luaState)
 		return 1;
 	}
 #if T_VERIFY_USING_EXCEPTIONS
-	catch(const RuntimeException& x)
+	catch (const RuntimeException& x)
 	{
 		const IRuntimeClass* runtimeClass = reinterpret_cast< const IRuntimeClass* >(lua_touserdata(luaState, lua_upvalueindex(2)));
 		log::error << L"Unhandled RuntimeException occurred when calling static method \"" << mbstows(findRuntimeClassMethodName(runtimeClass, runtimeDispatch)) << L"\", class " << runtimeClass->getExportType().getName() << L"; \"" << x.what() << L"\"." << Endl;
@@ -1307,7 +1340,7 @@ int ScriptManagerLua::classSetProperty(lua_State* luaState)
 		runtimeDispatch->invoke(object, 1, &value);
 	}
 #if T_VERIFY_USING_EXCEPTIONS
-	catch(const RuntimeException& x)
+	catch (const RuntimeException& x)
 	{
 		const IRuntimeClass* runtimeClass = reinterpret_cast< IRuntimeClass* >(lua_touserdata(luaState, lua_upvalueindex(2)));
 		log::error << L"Unhandled RuntimeException occurred when setting property \"" << mbstows(findRuntimeClassPropertyName(runtimeClass, runtimeDispatch)) << L"\", class " << runtimeClass->getExportType().getName() << L"; \"" << x.what() << L"\"." << Endl;
@@ -1336,7 +1369,58 @@ int ScriptManagerLua::classGetProperty(lua_State* luaState)
 	return 1;
 }
 
-int ScriptManagerLua::classEqual(lua_State* luaState)
+int ScriptManagerLua::classEqualByValue(lua_State* luaState)
+{
+	const IRuntimeClass* runtimeClass = reinterpret_cast< const IRuntimeClass* >(lua_touserdata(luaState, lua_upvalueindex(1)));
+	T_ASSERT(runtimeClass);
+
+	const IRuntimeDispatch* runtimeDispatch = reinterpret_cast< const IRuntimeDispatch* >(lua_touserdata(luaState, lua_upvalueindex(2)));
+	T_ASSERT(runtimeDispatch);
+
+	const int32_t top = lua_gettop(luaState);
+	if (top < 1) [[unlikely]]
+		return 0;
+
+	ITypedObject* object = nullptr;
+	Any arg;
+
+	if (isNativeInstance(luaState, 1))
+	{
+		object = toTypedObject(luaState, 1);
+		arg = ms_instance->toAny(2);
+	}
+	else if (isNativeInstance(luaState, 2))
+	{
+		object = toTypedObject(luaState, 2);
+		arg = ms_instance->toAny(1);
+	}
+
+	if (!object) [[unlikely]]
+	{
+		log::error << L"Unable to call equal-by-value operator, class " << runtimeClass->getExportType().getName() << L"; null object" << Endl;
+		return 0;
+	}
+
+#if T_VERIFY_USING_EXCEPTIONS
+	try
+#endif
+	{
+		const Any returnValue = runtimeDispatch->invoke(object, 1, &arg);
+		ms_instance->pushAny(returnValue);
+		return 1;
+	}
+#if T_VERIFY_USING_EXCEPTIONS
+	catch (const RuntimeException& x)
+	{
+		log::error << L"Unhandled RuntimeException occurred when calling equal-by-value operator, class " << runtimeClass->getExportType().getName() << L"; \"" << x.what() << L"\"." << Endl;
+		ms_instance->breakDebugger(luaState);
+	}
+#endif
+
+	return 0;
+}
+
+int ScriptManagerLua::classEqualByObject(lua_State* luaState)
 {
 	const Any object0 = ms_instance->toAny(1);
 	const Any object1 = ms_instance->toAny(2);
@@ -1346,6 +1430,86 @@ int ScriptManagerLua::classEqual(lua_State* luaState)
 		if (object0.getObject() == object1.getObject())
 			return 1;
 	}
+
+	return 0;
+}
+
+int ScriptManagerLua::classLess(lua_State* luaState)
+{
+	const IRuntimeClass* runtimeClass = reinterpret_cast< const IRuntimeClass* >(lua_touserdata(luaState, lua_upvalueindex(1)));
+	T_ASSERT(runtimeClass);
+
+	const IRuntimeDispatch* runtimeDispatch = reinterpret_cast< const IRuntimeDispatch* >(lua_touserdata(luaState, lua_upvalueindex(2)));
+	T_ASSERT(runtimeDispatch);
+
+	const int32_t top = lua_gettop(luaState);
+	if (top < 1) [[unlikely]]
+		return 0;
+
+	ITypedObject* object = isNativeInstance(luaState, 1) ? toTypedObject(luaState, 1) : nullptr;
+	if (!object) [[unlikely]]
+	{
+		log::error << L"Unable to call less operator, class " << runtimeClass->getExportType().getName() << L"; null object" << Endl;
+		return 0;
+	}
+
+	const Any arg = ms_instance->toAny(2);
+
+#if T_VERIFY_USING_EXCEPTIONS
+	try
+#endif
+	{
+		const Any returnValue = runtimeDispatch->invoke(object, 1, &arg);
+		ms_instance->pushAny(returnValue);
+		return 1;
+	}
+#if T_VERIFY_USING_EXCEPTIONS
+	catch (const RuntimeException& x)
+	{
+		log::error << L"Unhandled RuntimeException occurred when calling less operator, class " << runtimeClass->getExportType().getName() << L"; \"" << x.what() << L"\"." << Endl;
+		ms_instance->breakDebugger(luaState);
+	}
+#endif
+
+	return 0;
+}
+
+int ScriptManagerLua::classLessEqual(lua_State* luaState)
+{
+	const IRuntimeClass* runtimeClass = reinterpret_cast< const IRuntimeClass* >(lua_touserdata(luaState, lua_upvalueindex(1)));
+	T_ASSERT(runtimeClass);
+
+	const IRuntimeDispatch* runtimeDispatch = reinterpret_cast< const IRuntimeDispatch* >(lua_touserdata(luaState, lua_upvalueindex(2)));
+	T_ASSERT(runtimeDispatch);
+
+	const int32_t top = lua_gettop(luaState);
+	if (top < 1) [[unlikely]]
+		return 0;
+
+	ITypedObject* object = isNativeInstance(luaState, 1) ? toTypedObject(luaState, 1) : nullptr;
+	if (!object) [[unlikely]]
+	{
+		log::error << L"Unable to call less-equal operator, class " << runtimeClass->getExportType().getName() << L"; null object" << Endl;
+		return 0;
+	}
+
+	const Any arg = ms_instance->toAny(2);
+
+#if T_VERIFY_USING_EXCEPTIONS
+	try
+#endif
+	{
+		const Any returnValue = runtimeDispatch->invoke(object, 1, &arg);
+		ms_instance->pushAny(returnValue);
+		return 1;
+	}
+#if T_VERIFY_USING_EXCEPTIONS
+	catch (const RuntimeException& x)
+	{
+		log::error << L"Unhandled RuntimeException occurred when calling less-equal operator, class " << runtimeClass->getExportType().getName() << L"; \"" << x.what() << L"\"." << Endl;
+		ms_instance->breakDebugger(luaState);
+	}
+#endif
 
 	return 0;
 }
@@ -1391,7 +1555,7 @@ int ScriptManagerLua::classAdd(lua_State* luaState)
 		return 1;
 	}
 #if T_VERIFY_USING_EXCEPTIONS
-	catch(const RuntimeException& x)
+	catch (const RuntimeException& x)
 	{
 		log::error << L"Unhandled RuntimeException occurred when calling add operator, class " << runtimeClass->getExportType().getName() << L"; \"" << x.what() << L"\"." << Endl;
 		ms_instance->breakDebugger(luaState);
@@ -1431,7 +1595,7 @@ int ScriptManagerLua::classSubtract(lua_State* luaState)
 		return 1;
 	}
 #if T_VERIFY_USING_EXCEPTIONS
-	catch(const RuntimeException& x)
+	catch (const RuntimeException& x)
 	{
 		log::error << L"Unhandled RuntimeException occurred when calling subtract operator, class " << runtimeClass->getExportType().getName() << L"; \"" << x.what() << L"\"." << Endl;
 		ms_instance->breakDebugger(luaState);
@@ -1482,7 +1646,7 @@ int ScriptManagerLua::classMultiply(lua_State* luaState)
 		return 1;
 	}
 #if T_VERIFY_USING_EXCEPTIONS
-	catch(const RuntimeException& x)
+	catch (const RuntimeException& x)
 	{
 		log::error << L"Unhandled RuntimeException occurred when calling multiply operator, class " << runtimeClass->getExportType().getName() << L"; \"" << x.what() << L"\"." << Endl;
 		ms_instance->breakDebugger(luaState);
@@ -1522,7 +1686,7 @@ int ScriptManagerLua::classDivide(lua_State* luaState)
 		return 1;
 	}
 #if T_VERIFY_USING_EXCEPTIONS
-	catch(const RuntimeException& x)
+	catch (const RuntimeException& x)
 	{
 		log::error << L"Unhandled RuntimeException occurred when calling divide operator, class " << runtimeClass->getExportType().getName() << L"; \"" << x.what() << L"\"." << Endl;
 		ms_instance->breakDebugger(luaState);
@@ -1542,25 +1706,25 @@ int ScriptManagerLua::classNewIndex(lua_State* luaState)
 	// 3 [-1] .	string: "traktor.Color4f"
 
 	// Check if a property setter.
-	DO_0(luaState, lua_pushvalue(luaState, lua_upvalueindex(1))	);
-	DO_1(luaState, lua_pushvalue(luaState, -3)					);
-	DO_1(luaState, lua_rawget(luaState, -2)						);
+	DO_0(luaState, lua_pushvalue(luaState, lua_upvalueindex(1)));
+	DO_1(luaState, lua_pushvalue(luaState, -3));
+	DO_1(luaState, lua_rawget(luaState, -2));
 	if (lua_isfunction(luaState, -1))
 	{
 		// Invoke property setter.
-		DO_1(luaState, lua_pushvalue(luaState, -5)				);
-		DO_1(luaState, lua_pushvalue(luaState, -4)				);
-		DO_1(luaState, lua_call(luaState, 2, 1)					);
+		DO_1(luaState, lua_pushvalue(luaState, -5));
+		DO_1(luaState, lua_pushvalue(luaState, -4));
+		DO_1(luaState, lua_call(luaState, 2, 1));
 		return 1;
 	}
-	DO_1(luaState, lua_pop(luaState, 2)							);
+	DO_1(luaState, lua_pop(luaState, 2));
 
 	// Value-type instances are userdata and cannot carry arbitrary fields.
 	if (lua_isuserdata(luaState, 1))
 		return luaL_error(luaState, "Cannot assign field to value type instance");
 
 	// Associate value on instance table.
-	DO_1(luaState, lua_rawset(luaState, -3)						);
+	DO_1(luaState, lua_rawset(luaState, -3));
 	return 0;
 }
 
@@ -1570,22 +1734,22 @@ int ScriptManagerLua::classIndex(lua_State* luaState)
 	// lua_upvalueindex(2) == class
 
 	// Check if a property getter.
-	DO_0(luaState, lua_pushvalue(luaState, lua_upvalueindex(1))	);
-	DO_1(luaState, lua_pushvalue(luaState, -2)					);
-	DO_1(luaState, lua_rawget(luaState, -2)						);
+	DO_0(luaState, lua_pushvalue(luaState, lua_upvalueindex(1)));
+	DO_1(luaState, lua_pushvalue(luaState, -2));
+	DO_1(luaState, lua_rawget(luaState, -2));
 	if (lua_isfunction(luaState, -1))
 	{
 		// Invoke property getter.
-		DO_1(luaState, lua_pushvalue(luaState, -4)				);
-		DO_1(luaState, lua_call(luaState, 1, 1)					);
+		DO_1(luaState, lua_pushvalue(luaState, -4));
+		DO_1(luaState, lua_call(luaState, 1, 1));
 		return 1;
 	}
-	DO_1(luaState, lua_pop(luaState, 2)							);
+	DO_1(luaState, lua_pop(luaState, 2));
 
 	// Check if a method.
-	DO_1(luaState, lua_pushvalue(luaState, lua_upvalueindex(2))	);
-	DO_1(luaState, lua_pushvalue(luaState, -2)					);
-	DO_1(luaState, lua_rawget(luaState, -2)						);
+	DO_1(luaState, lua_pushvalue(luaState, lua_upvalueindex(2)));
+	DO_1(luaState, lua_pushvalue(luaState, -2));
+	DO_1(luaState, lua_rawget(luaState, -2));
 
 	return 1;
 }
