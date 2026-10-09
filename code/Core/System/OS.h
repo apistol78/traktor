@@ -176,9 +176,21 @@ public:
 	bool setOwnProcessPriorityBias(int32_t priorityBias);
 
 #if defined(_WIN32)
+	/*! Set registry value.
+	 *
+	 * \param key Registry key.
+	 * \param subKey Registry sub-key.
+	 * \param valueName Value name.
+	 * \param value New value of key.
+	 * \return True if value written.
+	 */
+	bool setRegistry(const std::wstring& key, const std::wstring& subKey, const std::wstring& valueName, const std::wstring& value) const;
+
 	/*! Get registry value.
 	 *
 	 * \param key Registry key.
+	 * \param subKey Registry sub-key.
+	 * \param valueName Value name.
 	 * \param outValue Value of key if found.
 	 * \return True if key found.
 	 */

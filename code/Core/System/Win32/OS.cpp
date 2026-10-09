@@ -42,6 +42,22 @@ HINSTANCE s_hIeFrameLib = 0;
 IEISPROTECTEDMODEPROCESSPROC* s_IEIsProtectedModeProcess = 0;
 IEGETWRITEABLEFOLDERPATHPROC* s_IEGetWriteableFolderPath = 0;
 
+HKEY getRootKey(const std::wstring& key)
+{
+	if (key == L"HKEY_CLASSES_ROOT")
+		return HKEY_CLASSES_ROOT;
+	else if (key == L"HKEY_CURRENT_USER")
+		return HKEY_CURRENT_USER;
+	else if (key == L"HKEY_LOCAL_MACHINE")
+		return HKEY_LOCAL_MACHINE;
+	else if (key == L"HKEY_USERS")
+		return HKEY_USERS;
+	else if (key == L"HKEY_CURRENT_CONFIG")
+		return HKEY_CURRENT_CONFIG;
+	else
+		return NULL;
+}
+
 }
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.OS", OS, Object)
@@ -521,27 +537,51 @@ bool OS::setOwnProcessPriorityBias(int32_t priorityBias)
 	return result;
 }
 
-bool OS::getRegistry(const std::wstring& key, const std::wstring& subKey, const std::wstring& valueName, std::wstring& outValue) const
+bool OS::setRegistry(const std::wstring& key, const std::wstring& subKey, const std::wstring& valueName, const std::wstring& value) const
 {
-	HKEY hOpenedKey = NULL;
-	HKEY hKey = NULL;
-
-	if (key == L"HKEY_CLASSES_ROOT")
-		hKey = HKEY_CLASSES_ROOT;
-	else if (key == L"HKEY_CURRENT_USER")
-		hKey = HKEY_CURRENT_USER;
-	else if (key == L"HKEY_LOCAL_MACHINE")
-		hKey = HKEY_LOCAL_MACHINE;
-	else if (key == L"HKEY_USERS")
-		hKey = HKEY_USERS;
-	else if (key == L"HKEY_CURRENT_CONFIG")
-		hKey = HKEY_CURRENT_CONFIG;
-	else
+	HKEY hKey = getRootKey(key);
+	if (!hKey)
 	{
 		log::error << L"Unknown key \"" << key << L"\"" << Endl;
 		return false;
 	}
 
+	HKEY hOpenedKey = NULL;
+	if (RegCreateKeyExW(hKey, subKey.c_str(), 0, NULL, REG_OPTION_NON_VOLATILE, KEY_WRITE, NULL, &hOpenedKey, NULL) != ERROR_SUCCESS)
+	{
+		log::error << L"RegCreateKeyExW failed" << Endl;
+		return false;
+	}
+
+	const LSTATUS result = RegSetValueExW(
+		hOpenedKey,
+		!valueName.empty() ? valueName.c_str() : NULL,
+		0,
+		REG_SZ,
+		(const BYTE*)value.c_str(),
+		(DWORD)((value.length() + 1) * sizeof(wchar_t)));
+
+	RegCloseKey(hOpenedKey);
+
+	if (result != ERROR_SUCCESS)
+	{
+		log::error << L"RegSetValueExW failed" << Endl;
+		return false;
+	}
+
+	return true;
+}
+
+bool OS::getRegistry(const std::wstring& key, const std::wstring& subKey, const std::wstring& valueName, std::wstring& outValue) const
+{
+	HKEY hKey = getRootKey(key);
+	if (!hKey)
+	{
+		log::error << L"Unknown key \"" << key << L"\"" << Endl;
+		return false;
+	}
+
+	HKEY hOpenedKey = NULL;
 	if (RegOpenKeyExW(hKey, !subKey.empty() ? subKey.c_str() : NULL, 0, KEY_READ, &hOpenedKey) != ERROR_SUCCESS)
 	{
 		log::error << L"RegOpenKeyExW failed" << Endl;

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -328,6 +328,18 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 
 	std::wstring writablePath = OS::getInstance().getWritableFolderPath() + L"/Traktor";
 	FileSystem::getInstance().makeAllDirectories(writablePath);
+
+	if (cmdLine.hasOption(L"use-last-working-directory"))
+	{
+		std::wstring cwd;
+		if (!OS::getInstance().getRegistry(L"HKEY_CURRENT_USER", L"SOFTWARE\\Traktor\\Runtime", L"LastWorkingDirectory", cwd))
+			return 1;
+
+		FileSystem::getInstance().setCurrentVolumeAndDirectory(cwd);
+	}
+
+	Path cwd = FileSystem::getInstance().getCurrentVolumeAndDirectory();
+	OS::getInstance().setRegistry(L"HKEY_CURRENT_USER", L"SOFTWARE\\Traktor\\Runtime", L"LastWorkingDirectory", cwd.getPathName());
 
 #if !defined(_DEBUG)
 	if (!IsDebuggerPresent())
