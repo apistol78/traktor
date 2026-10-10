@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -193,9 +193,9 @@ bool ScriptPipeline::buildDependencies(
 		}
 	}
 
-	// Add dependencies to included scripts.
+	// Add dependencies to included scripts; used as output embeds their flattened dependencies.
 	for (std::set< Guid >::const_iterator i = usingIds.begin(); i != usingIds.end(); ++i)
-		pipelineDepends->addDependency(*i, editor::PdfBuild);
+		pipelineDepends->addDependency(*i, editor::PdfBuild | editor::PdfUse);
 
 	// Scan for implicit dependencies from script.
 	for (size_t i = text.find_first_of(L"{"); i != text.npos; i = text.find(L"{", i + 1))
