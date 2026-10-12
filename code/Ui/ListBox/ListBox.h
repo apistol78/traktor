@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -19,10 +19,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 class ListBoxItem;
 
@@ -101,13 +99,15 @@ private:
 	int32_t m_lastHitIndex;
 	RefArray< ListBoxItem > m_items;
 
+	virtual void layoutCells(const Rect& rc) override;
+
+	void selectAt(const Point& position, int32_t keyState);
+
 	void eventButtonDown(MouseButtonDownEvent* event);
 
-	void eventKeyDown(KeyDownEvent* event);
+	void eventDoubleClick(MouseDoubleClickEvent* event);
 
-	virtual void layoutCells(const Rect& rc) override;
+	void eventKeyDown(KeyDownEvent* event);
 };
 
-	}
 }
-

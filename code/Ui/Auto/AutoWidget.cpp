@@ -112,6 +112,16 @@ AutoWidgetCell* AutoWidget::getFooterCell() const
 	return m_footerCell;
 }
 
+void AutoWidget::update(const Rect* rc, bool immediate)
+{
+	if (m_deferredUpdate)
+	{
+		m_deferredUpdate = false;
+		updateLayout();
+	}
+	Widget::update(rc, immediate);
+}
+
 void AutoWidget::requestUpdate()
 {
 	m_deferredUpdate = true;

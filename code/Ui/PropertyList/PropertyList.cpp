@@ -11,6 +11,7 @@
 #include "Core/Misc/String.h"
 #include "Ui/Application.h"
 #include "Ui/HierarchicalState.h"
+#include "Ui/PropertyList/ArrayPropertyItem.h"
 #include "Ui/PropertyList/PropertyItem.h"
 #include "Ui/PropertyList/PropertySelectionChangeEvent.h"
 #include "Ui/ScrollBar.h"
@@ -19,6 +20,7 @@
 #include "Ui/StyleSheet.h"
 
 #include <algorithm>
+#include <cstdlib>
 #include <stack>
 
 namespace traktor::ui
@@ -29,7 +31,8 @@ namespace
 enum Modes
 {
 	MdNone,
-	MdMoveSeparator
+	MdMoveSeparator,
+	MdDragItem
 };
 
 const int c_wheelRotationFactor = 2;
@@ -113,6 +116,8 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.PropertyList", PropertyList, Widget)
 
 PropertyList::PropertyList()
 	: m_guidResolver(0)
+	, m_dropIndex(-1)
+	, m_dropRow(-1)
 	, m_separator(0)
 	, m_mode(MdNone)
 	, m_columnHeader(true)
@@ -445,6 +450,77 @@ void PropertyList::placeItems()
 		setChildRects(&childRects[0], (uint32_t)childRects.size(), true);
 }
 
+void PropertyList::updateDropTarget(const Point& position)
+{
+	m_dropIndex = -1;
+	m_dropRow = -1;
+
+	const int32_t itemHeight = pixel(m_propertyItemHeight);
+	const int32_t scrollBarOffset = m_scrollBar->getPosition() * itemHeight;
+	const int32_t top = m_columnHeader ? pixel(c_listHeaderHeight) : 0;
+	if (position.y < top)
+		return;
+
+	RefArray< PropertyItem > propertyItems;
+	getPropertyItems(propertyItems, GfDescendants | GfExpandedOnly | GfVisibleOnly);
+
+	const int32_t row = (position.y - top + scrollBarOffset) / itemHeight;
+	if (row >= (int32_t)propertyItems.size())
+		return;
+
+	PropertyItem* arrayItem = m_dragItem->getParentItem();
+	const RefArray< PropertyItem >& elements = arrayItem->getChildItems();
+	const int32_t dragIndex = (int32_t)std::distance(elements.begin(), std::find(elements.begin(), elements.end(), m_dragItem));
+
+	// Dropping on the array row itself inserts first.
+	if (propertyItems[row] == arrayItem)
+	{
+		if (dragIndex != 0)
+		{
+			m_dropIndex = 0;
+			m_dropRow = row + 1;
+		}
+		return;
+	}
+
+	// Find which element's rows the mouse is over.
+	PropertyItem* element = propertyItems[row];
+	while (element != nullptr && element->getParentItem() != arrayItem)
+		element = element->getParentItem();
+	if (element == nullptr)
+		return;
+
+	// Element row span includes its expanded descendants.
+	int32_t first = row;
+	while (propertyItems[first] != element)
+		--first;
+	int32_t last = row;
+	const int32_t depth = element->getDepth();
+	while (last + 1 < (int32_t)propertyItems.size() && propertyItems[last + 1]->getDepth() > depth)
+		++last;
+
+	const int32_t index = (int32_t)std::distance(elements.begin(), std::find(elements.begin(), elements.end(), element));
+	const int32_t spanTop = top - scrollBarOffset + first * itemHeight;
+	const int32_t spanBottom = top - scrollBarOffset + (last + 1) * itemHeight;
+	if (position.y < (spanTop + spanBottom) / 2)
+	{
+		m_dropIndex = index;
+		m_dropRow = first;
+	}
+	else
+	{
+		m_dropIndex = index + 1;
+		m_dropRow = last + 1;
+	}
+
+	// Dropping next to the dragged element is a no-op.
+	if (m_dropIndex == dragIndex || m_dropIndex == dragIndex + 1)
+	{
+		m_dropIndex = -1;
+		m_dropRow = -1;
+	}
+}
+
 void PropertyList::eventScroll(ScrollEvent* event)
 {
 	placeItems();
@@ -527,6 +603,7 @@ void PropertyList::eventButtonDown(MouseButtonDownEvent* event)
 	setFocus();
 
 	m_mousePropertyItem = 0;
+	m_dragItem = nullptr;
 	if (p.x >= pixel(m_separator - 2_ut) && p.x <= pixel(m_separator + 2_ut))
 	{
 		m_mode = MdMoveSeparator;
@@ -568,6 +645,11 @@ void PropertyList::eventButtonDown(MouseButtonDownEvent* event)
 					updateScrollBar();
 					placeItems();
 				}
+				else if (event->getButton() == MbtLeft && is_a< ArrayPropertyItem >((*i)->getParentItem()) && (*i)->getParentItem()->needRemoveChildButton())
+				{
+					m_dragItem = *i;
+					m_dragPosition = p;
+				}
 
 				if (!(*i)->isSelected())
 				{
@@ -586,7 +668,7 @@ void PropertyList::eventButtonDown(MouseButtonDownEvent* event)
 			}
 		}
 
-		if (m_mousePropertyItem)
+		if (m_mousePropertyItem || m_dragItem)
 		{
 			setCapture();
 			event->consume();
@@ -598,10 +680,38 @@ void PropertyList::eventButtonDown(MouseButtonDownEvent* event)
 
 void PropertyList::eventButtonUp(MouseButtonUpEvent* event)
 {
-	m_mode = MdNone;
-
 	if (hasCapture())
 		releaseCapture();
+
+	if (m_mode == MdDragItem)
+	{
+		Ref< PropertyItem > item = m_dragItem;
+		const bool dropped = (m_dropIndex >= 0);
+
+		if (dropped)
+		{
+			RefArray< PropertyItem >& elements = item->getParentItem()->getChildItems();
+			const int32_t from = (int32_t)std::distance(elements.begin(), std::find(elements.begin(), elements.end(), item));
+			const int32_t to = m_dropIndex > from ? m_dropIndex - 1 : m_dropIndex;
+			elements.erase(elements.begin() + from);
+			elements.insert(elements.begin() + to, item);
+		}
+
+		m_mode = MdNone;
+		m_dragItem = nullptr;
+		m_dropIndex = -1;
+		m_dropRow = -1;
+
+		update();
+		if (dropped)
+			item->notifyChange();
+
+		event->consume();
+		return;
+	}
+
+	m_mode = MdNone;
+	m_dragItem = nullptr;
 
 	if (m_mousePropertyItem)
 	{
@@ -647,6 +757,25 @@ void PropertyList::eventMouseMove(MouseMoveEvent* event)
 		placeItems();
 		update();
 
+		event->consume();
+	}
+	else if (m_mode == MdDragItem)
+	{
+		setCursor(Cursor::Hand);
+		updateDropTarget(p);
+		update();
+		event->consume();
+	}
+	else if (m_dragItem)
+	{
+		const Size d = p - m_dragPosition;
+		if (std::abs(d.cx) > pixel(2_ut) || std::abs(d.cy) > pixel(2_ut))
+		{
+			m_mode = MdDragItem;
+			setCursor(Cursor::Hand);
+			updateDropTarget(p);
+			update();
+		}
 		event->consume();
 	}
 	else if (p.x >= pixel(m_separator - 2_ut) && p.x <= pixel(m_separator + 2_ut))
@@ -781,6 +910,14 @@ void PropertyList::eventPaint(PaintEvent* event)
 
 		rcItem = rcItem.offset(0, pixel(m_propertyItemHeight));
 		++i;
+	}
+
+	// Draw insertion marker while dragging an array element.
+	if (m_mode == MdDragItem && m_dropRow >= 0)
+	{
+		const int32_t y = top - scrollBarOffset + m_dropRow * pixel(m_propertyItemHeight);
+		canvas.setBackground(ss->getColor(m_dragItem, L"background-color-selected"));
+		canvas.fillRect(Rect(rcInner.left, y - pixel(1_ut), rcInner.right - scrollBarWidth, y + pixel(1_ut)));
 	}
 
 	event->consume();

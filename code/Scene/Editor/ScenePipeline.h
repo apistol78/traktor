@@ -76,6 +76,10 @@ private:
 	int32_t m_shadowMapMaxSlices = 0;
 	RefArray< ISceneOperator > m_operators;
 
+	/*! Check that every PropertyEntityReference in the scene refers to an entity of the scene. */
+	bool validateEntityReferences(const ISerializable* sceneAsset, const std::wstring& name) const;
+
+	/*! */
 	const ISceneOperator* findOperator(const TypeInfo& operationType) const;
 
 	/*! Apply geometric scene transforms to a scene asset.

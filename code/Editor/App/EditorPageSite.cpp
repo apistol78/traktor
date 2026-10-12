@@ -51,10 +51,10 @@ void EditorPageSite::hide()
 	m_siteVisible = false;
 }
 
-Ref< PropertiesView > EditorPageSite::createPropertiesView(ui::Widget* parent)
+Ref< PropertiesView > EditorPageSite::createPropertiesView(ui::Widget* parent, const RefArray< IReferenceResolver >& referenceResolvers)
 {
 	Ref< DefaultPropertiesView > propertiesView = new DefaultPropertiesView(m_editor);
-	if (propertiesView->create(parent))
+	if (propertiesView->create(parent, referenceResolvers))
 		return propertiesView;
 	else
 		return nullptr;

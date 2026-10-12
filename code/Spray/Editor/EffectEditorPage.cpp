@@ -228,7 +228,7 @@ bool EffectEditorPage::create(ui::Container* parent)
 	m_site->createAdditionalPanel(m_containerSequencer, 140_ut, true);
 
 	// Create properties view.
-	m_propertiesView = m_site->createPropertiesView(parent);
+	m_propertiesView = m_site->createPropertiesView(parent, {});
 	m_propertiesView->addEventHandler< ui::ContentChangingEvent >(this, &EffectEditorPage::eventPropertiesChanging);
 	m_propertiesView->addEventHandler< ui::ContentChangeEvent >(this, &EffectEditorPage::eventPropertiesChanged);
 	m_propertiesView->setPropertyObject(m_effectData);

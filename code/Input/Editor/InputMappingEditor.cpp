@@ -215,7 +215,7 @@ bool InputMappingEditor::create(ui::Container* parent)
 	m_graph->addEventHandler< ui::EdgeDisconnectEvent >(this, &InputMappingEditor::eventEdgeDisconnected);
 
 	// Create properties view.
-	m_propertiesView = m_site->createPropertiesView(parent);
+	m_propertiesView = m_site->createPropertiesView(parent, {});
 	m_propertiesView->addEventHandler< ui::ContentChangingEvent >(this, &InputMappingEditor::eventPropertiesChanging);
 	m_propertiesView->addEventHandler< ui::ContentChangeEvent >(this, &InputMappingEditor::eventPropertiesChanged);
 	m_site->createAdditionalPanel(m_propertiesView, 400_ut, false);

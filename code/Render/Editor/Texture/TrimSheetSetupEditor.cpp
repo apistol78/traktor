@@ -236,7 +236,7 @@ bool TrimSheetSetupEditor::create(ui::Container* parent)
 	m_statusBar->addColumn(m_statusBar->pixel(360_ut));
 	m_statusBar->addColumn(-1);
 
-	m_propertiesView = m_site->createPropertiesView(parent);
+	m_propertiesView = m_site->createPropertiesView(parent, {});
 	m_propertiesView->addEventHandler< ui::ContentChangingEvent >(this, &TrimSheetSetupEditor::eventPropertiesChanging);
 	m_propertiesView->addEventHandler< ui::ContentChangeEvent >(this, &TrimSheetSetupEditor::eventPropertiesChanged);
 	m_site->createAdditionalPanel(m_propertiesView, 400_ut, false);

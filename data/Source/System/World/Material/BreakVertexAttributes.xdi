@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
-		<item type="traktor.render.BundleSplit" version="traktor.render.Node:1">
+		<item type="traktor.render.BundleSplit" version="1,traktor.render.Node:1">
 			<id>{07643EEE-8D61-4EC3-A22B-53926BC26A06}</id>
 			<comment/>
 			<position>
-				<first>466</first>
-				<second>109</second>
+				<first>477</first>
+				<second>137</second>
 			</position>
 			<names>
+				<item>Origin</item>
 				<item>Object</item>
 				<item>World</item>
 				<item>View</item>
@@ -17,13 +18,23 @@
 				<item>VertexColor</item>
 				<item>InstanceId</item>
 			</names>
+			<ids>
+				<item>{494A6E31-0CFF-4941-B609-02261FDAD2E7}</item>
+				<item>{D596E4E4-1A78-4D80-BD6B-6DEEF934EDEC}</item>
+				<item>{D596E4E4-1A78-4D80-BE6B-6DEEF934EDEC}</item>
+				<item>{D596E4E4-1A78-4D80-BF6B-6DEEF934EDEC}</item>
+				<item>{D596E4E4-1A78-4D80-C06B-6DEEF934EDEC}</item>
+				<item>{D596E4E4-1A78-4D80-C16B-6DEEF934EDEC}</item>
+				<item>{D596E4E4-1A78-4D80-C26B-6DEEF934EDEC}</item>
+				<item>{D596E4E4-1A78-4D80-C36B-6DEEF934EDEC}</item>
+			</ids>
 		</item>
 		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{D538902D-07DE-47CB-BBDD-F16DB56C37FC}</id>
 			<comment/>
 			<position>
-				<first>180</first>
-				<second>100</second>
+				<first>183</first>
+				<second>155</second>
 			</position>
 			<name>VertexAttributes</name>
 			<optional>false</optional>
@@ -32,8 +43,8 @@
 			<id>{C899C6EC-2017-4A43-96B1-266ED92593EE}</id>
 			<comment/>
 			<position>
-				<first>715</first>
-				<second>76</second>
+				<first>719</first>
+				<second>51</second>
 			</position>
 			<name>Object</name>
 		</item>
@@ -41,8 +52,8 @@
 			<id>{040896B1-C2AE-4281-A4F9-D9BBAE3503A1}</id>
 			<comment/>
 			<position>
-				<first>715</first>
-				<second>110</second>
+				<first>727</first>
+				<second>115</second>
 			</position>
 			<name>World</name>
 		</item>
@@ -50,8 +61,8 @@
 			<id>{23E4C381-7527-4219-95EE-BD60C3128699}</id>
 			<comment/>
 			<position>
-				<first>715</first>
-				<second>144</second>
+				<first>727</first>
+				<second>179</second>
 			</position>
 			<name>View</name>
 		</item>
@@ -59,8 +70,8 @@
 			<id>{918845C1-3EAF-456F-B944-5E38BA6DC731}</id>
 			<comment/>
 			<position>
-				<first>715</first>
-				<second>178</second>
+				<first>711</first>
+				<second>243</second>
 			</position>
 			<name>TexCoord0</name>
 		</item>
@@ -68,8 +79,8 @@
 			<id>{C29C2F98-FBBE-4AE4-8629-1D3654EC8DF2}</id>
 			<comment/>
 			<position>
-				<first>715</first>
-				<second>212</second>
+				<first>711</first>
+				<second>307</second>
 			</position>
 			<name>TexCoord1</name>
 		</item>
@@ -77,8 +88,8 @@
 			<id>{E51FD224-7929-40B8-9DEF-F0E2442FC542}</id>
 			<comment/>
 			<position>
-				<first>715</first>
-				<second>246</second>
+				<first>711</first>
+				<second>371</second>
 			</position>
 			<name>VertexColor</name>
 		</item>
@@ -86,10 +97,19 @@
 			<id>{F579A74D-1E2E-4EF2-9CF1-0B73DD6DB0CC}</id>
 			<comment/>
 			<position>
-				<first>715</first>
-				<second>280</second>
+				<first>711</first>
+				<second>435</second>
 			</position>
 			<name>InstanceId</name>
+		</item>
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{CF7C57B7-DE32-F648-914D-9262944FB160}</id>
+			<comment/>
+			<position>
+				<first>727</first>
+				<second>-13</second>
+			</position>
+			<name>Origin</name>
 		</item>
 	</nodes>
 	<edges>
@@ -170,6 +190,16 @@
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[8]"/>
+				<id>{731844D4-AFDC-4EAA-8B41-C4BA2455898F}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item"/>
+				<id>{494A6E31-0CFF-4941-B609-02261FDAD2E7}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[9]"/>
 				<id>{731844D4-AFDC-4EAA-8B41-C4BA2455898F}</id>
 			</destination>
 		</item>

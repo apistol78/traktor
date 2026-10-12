@@ -44,20 +44,20 @@ bool McpServer::create(int32_t port)
 		return false;
 
 #if !defined(_WIN32)
-	// Writing to a socket whose peer has already closed the connection raises
-	// SIGPIPE, whose default action terminates the host process. Ignore it so a
-	// failed send simply returns an error (handled in McpConnection::sendAll).
+	// Ignore SIGPIPE so writing to a closed peer returns an error instead of terminating the process.
 	signal(SIGPIPE, SIG_IGN);
 #endif
 
-	// Bind to the loopback interface only; the MCP endpoint should never be
-	// reachable from outside the local machine. TcpSocket::bind is exclusive (no
-	// SO_REUSEPORT), so if another instance (e.g. another editor, or a leftover
-	// runtime) already holds the port this fails and is reported here, rather than
-	// silently sharing the port and having the kernel load-balance half the client
-	// connections into a process that never answers them.
+	// Bind to the loopback interface only; the endpoint should never be reachable from outside the local machine.
+#if defined(_WIN32)
+	// On Windows SO_REUSEADDR lets a second listener bind the same port; fail to bind instead.
+	const bool reuseAddr = false;
+#else
+	// On POSIX SO_REUSEADDR only allows rebinding over sockets lingering in TIME_WAIT.
+	const bool reuseAddr = true;
+#endif
 	Ref< net::TcpSocket > serverSocket = new net::TcpSocket();
-	if (!serverSocket->bind(net::SocketAddressIPv4(L"127.0.0.1", (uint16_t)port), true))
+	if (!serverSocket->bind(net::SocketAddressIPv4(L"127.0.0.1", (uint16_t)port), reuseAddr))
 	{
 		log::error << L"MCP server; unable to bind to 127.0.0.1:" << port << L" (port already in use?)." << Endl;
 		return false;
@@ -79,7 +79,7 @@ void McpServer::destroy()
 		m_serverSocket->close();
 		m_serverSocket = nullptr;
 	}
-	// Tear down any in-flight connections; each destructor stops its worker.
+	// Tear down any in-flight connections.
 	m_connections.clear();
 	m_tools.clear();
 	m_promptProviders.clear();
@@ -90,9 +90,7 @@ bool McpServer::update()
 	if (!m_serverSocket)
 		return false;
 
-	// Accept a pending connection (if any) and hand it off to a worker thread,
-	// so request processing never blocks this accept loop. The timeout is kept
-	// short so the driving thread can observe a stop request promptly.
+	// Wait briefly for a pending connection and hand it to a worker thread so requests never block this loop.
 	if (m_serverSocket->select(true, false, false, 100) > 0)
 	{
 		Ref< net::TcpSocket > clientSocket = m_serverSocket->accept();
@@ -210,8 +208,7 @@ Ref< Json > McpServer::handleMessage(const Json* message, bool& outResponse)
 
 	if (notification)
 	{
-		// Known notifications (e.g. "notifications/initialized") are accepted
-		// silently; unknown notifications are ignored per JSON-RPC.
+		// Notifications, known (e.g. "notifications/initialized") or not, are accepted silently.
 		return nullptr;
 	}
 
@@ -323,7 +320,7 @@ Ref< Json > McpServer::handlePromptsGet(const Json* params, std::wstring& outErr
 
 	const Json* arguments = params->getMember(L"arguments");
 
-	// Serialized for the same reason as tool invocation (see handleToolsCall).
+	// Providers access shared editor and database state; serialize invocation.
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_invokeLock);
 	for (auto provider : m_promptProviders)
 	{
@@ -366,10 +363,7 @@ Ref< Json > McpServer::handleToolsCall(const Json* params, std::wstring& outErro
 
 	const Json* arguments = params->getMember(L"arguments");
 
-	// Connections are serviced on separate threads, but tools are not written to
-	// run concurrently (they read/mutate shared editor and database state), so
-	// serialize the actual invocation. Protocol methods and request/response I/O
-	// remain fully concurrent.
+	// Connections are serviced on separate threads but tools access shared editor and database state; serialize invocation.
 	std::wstring toolError;
 	Ref< Json > value;
 	{
@@ -377,8 +371,7 @@ Ref< Json > McpServer::handleToolsCall(const Json* params, std::wstring& outErro
 		value = tool->invoke(arguments, toolError);
 	}
 
-	// Build a tool result. Execution failures are reported as a result with
-	// "isError" set (so the model can read them), not as a protocol error.
+	// Execution failures are reported as a result with "isError" set, so the model can read them, not as a protocol error.
 	Ref< Json > content = Json::createArray();
 	Ref< Json > result = Json::createObject();
 
@@ -393,9 +386,7 @@ Ref< Json > McpServer::handleToolsCall(const Json* params, std::wstring& outErro
 		return result;
 	}
 
-	// A tool may return a pre-built MCP content array (e.g. a mix of text and
-	// image blocks); pass it through verbatim. Object and string results take
-	// the default text wrapping below.
+	// Pass a pre-built content array, e.g. a mix of text and image blocks, through verbatim.
 	if (value && value->isArray())
 	{
 		result->set(L"content", value);

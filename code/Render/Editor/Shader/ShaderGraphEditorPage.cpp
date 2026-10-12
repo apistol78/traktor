@@ -350,7 +350,7 @@ bool ShaderGraphEditorPage::create(ui::Container* parent)
 	m_scriptEditor->setFont(ui::Font(font, ui::Unit(fontSize)));
 
 	// Create properties view.
-	m_propertiesView = m_site->createPropertiesView(parent);
+	m_propertiesView = m_site->createPropertiesView(parent, {});
 	m_propertiesView->addEventHandler< ui::ContentChangingEvent >(this, &ShaderGraphEditorPage::eventPropertiesChanging);
 	m_propertiesView->addEventHandler< ui::ContentChangeEvent >(this, &ShaderGraphEditorPage::eventPropertiesChanged);
 	m_site->createAdditionalPanel(m_propertiesView, 400_ut, false);
@@ -1310,6 +1310,48 @@ void ShaderGraphEditorPage::refreshGraph()
 	{
 		Group* shaderGroup = editorGroup->getData< Group >(L"SHADERGROUP");
 		editorGroup->setTitle(shaderGroup->getTitle());
+	}
+
+	// Re-attach edges by pin id since refreshed nodes may have rebuilt their pins.
+	RefArray< ui::Edge > rewireEdges;
+	for (auto editorEdge : RefArray< ui::Edge >(m_editorGraph->getEdges()))
+	{
+		ui::Node* editorSourceNode = editorEdge->getSourcePin()->getNode();
+		ui::Node* editorDestinationNode = editorEdge->getDestinationPin()->getNode();
+
+		const Guid sourceId = editorEdge->getSourcePin()->getId();
+		const Guid destinationId = editorEdge->getDestinationPin()->getId();
+
+		ui::Pin* editorSourcePin = editorSourceNode->findOutputPin(sourceId);
+		ui::Pin* editorDestinationPin = editorDestinationNode->findInputPin(destinationId);
+
+		const OutputPin* shaderSourcePin = editorSourceNode->getData< Node >(L"SHADERNODE")->findOutputPin(sourceId);
+		const InputPin* shaderDestinationPin = editorDestinationNode->getData< Node >(L"SHADERNODE")->findInputPin(destinationId);
+
+		Ref< Edge > shaderEdge = editorEdge->getData< Edge >(L"SHADEREDGE");
+		if (!editorSourcePin || !editorDestinationPin || !shaderSourcePin || !shaderDestinationPin)
+		{
+			m_shaderGraph->removeEdge(shaderEdge);
+			m_editorGraph->removeEdge(editorEdge);
+			continue;
+		}
+
+		editorEdge->setSourcePin(editorSourcePin);
+		editorEdge->setDestinationPin(editorDestinationPin);
+
+		if (shaderEdge->getSource() != shaderSourcePin || shaderEdge->getDestination() != shaderDestinationPin)
+		{
+			m_shaderGraph->removeEdge(shaderEdge);
+			rewireEdges.push_back(editorEdge);
+		}
+	}
+	for (auto editorEdge : rewireEdges)
+	{
+		Ref< Edge > shaderEdge = new Edge(
+			editorEdge->getSourcePin()->getNode()->getData< Node >(L"SHADERNODE")->findOutputPin(editorEdge->getSourcePin()->getId()),
+			editorEdge->getDestinationPin()->getNode()->getData< Node >(L"SHADERNODE")->findInputPin(editorEdge->getDestinationPin()->getId()));
+		m_shaderGraph->addEdge(shaderEdge);
+		editorEdge->setData(L"SHADEREDGE", shaderEdge);
 	}
 }
 

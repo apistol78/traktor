@@ -29,6 +29,7 @@
 #include "Core/Serialization/ISerializable.h"
 #include "Database/Database.h"
 #include "Database/Instance.h"
+#include "Editor/IReferenceResolver.h"
 #include "MCP/Editor/Json.h"
 
 #include <cwchar>
@@ -37,6 +38,33 @@ namespace traktor::mcp
 {
 namespace
 {
+
+// A reference to a part of an instance, such as a step in a quest, is no instance; a reference
+// resolver claims its type (editor::IReferenceResolver), and the asset's pipeline checks it.
+bool isPartReference(const TypeInfo& referenceType)
+{
+	static TypeInfoSet partTypes;
+	static bool collected = false;
+	if (!collected)
+	{
+		for (auto type : type_of< editor::IReferenceResolver >().findAllOf(false))
+		{
+			Ref< editor::IReferenceResolver > resolver = dynamic_type_cast< editor::IReferenceResolver* >(type->createInstance());
+			if (resolver)
+			{
+				const TypeInfoSet types = resolver->getReferenceTypes();
+				partTypes.insert(types.begin(), types.end());
+			}
+		}
+		collected = true;
+	}
+	for (auto partType : partTypes)
+	{
+		if (is_type_of(*partType, referenceType))
+			return true;
+	}
+	return false;
+}
 
 /*! ASCII-simplified narrow/wide conversion for the rare std::string member. */
 std::wstring widen(const std::string& s)
@@ -201,7 +229,7 @@ bool setLeafFromJson(db::Database* database, ReflectionMember* member, const Jso
 		{
 			const Attribute* attributes = m->getAttributes();
 			const AttributeType* resourceType = (attributes != nullptr) ? attributes->find< AttributeType >() : nullptr;
-			if (resourceType != nullptr && !database->getInstance(g))
+			if (resourceType != nullptr && !isPartReference(resourceType->getMemberType()) && !database->getInstance(g))
 			{
 				outError = L"Resource reference not found in database: " + s + L" (member \"" + std::wstring(m->getName()) + L"\" expects a " + std::wstring(resourceType->getMemberType().getName()) + L" resource).";
 				return false;

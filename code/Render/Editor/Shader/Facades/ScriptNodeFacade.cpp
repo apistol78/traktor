@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2025 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -59,26 +59,7 @@ Ref< ui::Node > ScriptNodeFacade::createEditorNode(
 			ui::Unit(scriptNode->getPosition().second)),
 		m_nodeShape);
 
-	for (int j = 0; j < scriptNode->getInputPinCount(); ++j)
-	{
-		const InputPin* inputPin = scriptNode->getInputPin(j);
-		editorNode->createInputPin(
-			inputPin->getName(),
-			inputPin->getId(),
-			!inputPin->isOptional(),
-			false);
-	}
-
-	for (int j = 0; j < scriptNode->getOutputPinCount(); ++j)
-	{
-		const OutputPin* outputPin = scriptNode->getOutputPin(j);
-		editorNode->createOutputPin(
-			outputPin->getName(),
-			outputPin->getId());
-	}
-
-	editorNode->setComment(scriptNode->getComment());
-	editorNode->setInfo(scriptNode->getInformation());
+	refreshEditorNode(editor, graphControl, editorNode, shaderGraph, shaderNode);
 	return editorNode;
 }
 
@@ -106,63 +87,22 @@ void ScriptNodeFacade::refreshEditorNode(
 	editorNode->setComment(scriptNode->getComment());
 	editorNode->setInfo(scriptNode->getInformation());
 
-	// Add or rename editor pins.
+	// Rebuild pins so they follow the script node's pin order.
+	for (auto editorInputPin : RefArray< ui::Pin >(editorNode->getInputPins()))
+		editorNode->removeInputPin(editorInputPin);
+	for (auto editorOutputPin : RefArray< ui::Pin >(editorNode->getOutputPins()))
+		editorNode->removeOutputPin(editorOutputPin);
+
 	for (int j = 0; j < scriptNode->getInputPinCount(); ++j)
 	{
 		const InputPin* inputPin = scriptNode->getInputPin(j);
-		ui::Pin* editorInputPin = editorNode->findInputPin(inputPin->getId());
-		if (editorInputPin)
-			editorInputPin->setName(inputPin->getName());
-		else
-			editorNode->createInputPin(inputPin->getName(), inputPin->getId(), !inputPin->isOptional(), false);
+		editorNode->createInputPin(inputPin->getName(), inputPin->getId(), !inputPin->isOptional(), false);
 	}
-
 	for (int j = 0; j < scriptNode->getOutputPinCount(); ++j)
 	{
 		const OutputPin* outputPin = scriptNode->getOutputPin(j);
-		ui::Pin* editorOutputPin = editorNode->findOutputPin(outputPin->getId());
-		if (editorOutputPin)
-			editorOutputPin->setName(outputPin->getName());
-		else
-			editorNode->createOutputPin(outputPin->getName(), outputPin->getId());
+		editorNode->createOutputPin(outputPin->getName(), outputPin->getId());
 	}
-
-	// Remove editors pins.
-	RefArray< ui::Pin > removeEditorInputPins;
-	for (auto editorInputPin : editorNode->getInputPins())
-	{
-		bool valid = false;
-		for (int j = 0; j < scriptNode->getInputPinCount(); ++j)
-		{
-			if (scriptNode->getInputPin(j)->getId() == editorInputPin->getId())
-			{
-				valid = true;
-				break;
-			}
-		}
-		if (!valid)
-			removeEditorInputPins.push_back(editorInputPin);
-	}
-	for (auto editorInputPin : removeEditorInputPins)
-		editorNode->removeInputPin(editorInputPin);
-
-	RefArray< ui::Pin > removeEditorOutputPins;
-	for (auto editorOutputPin : editorNode->getOutputPins())
-	{
-		bool valid = false;
-		for (int j = 0; j < scriptNode->getOutputPinCount(); ++j)
-		{
-			if (scriptNode->getOutputPin(j)->getId() == editorOutputPin->getId())
-			{
-				valid = true;
-				break;
-			}
-		}
-		if (!valid)
-			removeEditorOutputPins.push_back(editorOutputPin);
-	}
-	for (auto editorOutputPin : removeEditorOutputPins)
-		editorNode->removeOutputPin(editorOutputPin);
 }
 
 void ScriptNodeFacade::setValidationIndicator(

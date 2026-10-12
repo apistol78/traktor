@@ -1,11 +1,13 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Editor/App/DefaultPropertiesView.h"
+
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/String.h"
@@ -15,25 +17,25 @@
 #include "Core/Settings/PropertyStringSet.h"
 #include "Database/Database.h"
 #include "Database/Instance.h"
+#include "Editor/App/TextEditorDialog.h"
 #include "Editor/IEditor.h"
 #include "Editor/IEditorPage.h"
-#include "Editor/App/DefaultPropertiesView.h"
-#include "Editor/App/TextEditorDialog.h"
+#include "Editor/IReferenceResolver.h"
 #include "I18N/I18N.h"
 #include "I18N/Text.h"
 #include "Ui/Application.h"
-#include "Ui/TableLayout.h"
+#include "Ui/ColorPicker/ColorDialog.h"
 #include "Ui/FileDialog.h"
 #include "Ui/PathDialog.h"
-#include "Ui/ColorPicker/ColorDialog.h"
-#include "Ui/PropertyList/FilePropertyItem.h"
+#include "Ui/PropertyList/ArrayPropertyItem.h"
 #include "Ui/PropertyList/BrowsePropertyItem.h"
+#include "Ui/PropertyList/ColorPropertyItem.h"
+#include "Ui/PropertyList/FilePropertyItem.h"
 #include "Ui/PropertyList/ObjectPropertyItem.h"
 #include "Ui/PropertyList/PropertyCommandEvent.h"
 #include "Ui/PropertyList/PropertyContentChangeEvent.h"
-#include "Ui/PropertyList/ArrayPropertyItem.h"
 #include "Ui/PropertyList/TextPropertyItem.h"
-#include "Ui/PropertyList/ColorPropertyItem.h"
+#include "Ui/TableLayout.h"
 
 namespace traktor::editor
 {
@@ -41,11 +43,11 @@ namespace traktor::editor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.DefaultPropertiesView", DefaultPropertiesView, PropertiesView)
 
 DefaultPropertiesView::DefaultPropertiesView(IEditor* editor)
-:	m_editor(editor)
+	: m_editor(editor)
 {
 }
 
-bool DefaultPropertiesView::create(ui::Widget* parent)
+bool DefaultPropertiesView::create(ui::Widget* parent, const RefArray< IReferenceResolver >& referenceResolvers)
 {
 	if (!ui::Widget::create(parent, ui::WsNone))
 		return false;
@@ -60,6 +62,16 @@ bool DefaultPropertiesView::create(ui::Widget* parent)
 	m_propertyList->setSeparator(ui::Unit(separator));
 	m_propertyList->addEventHandler< ui::PropertyCommandEvent >(this, &DefaultPropertiesView::eventPropertyCommand);
 	m_propertyList->addEventHandler< ui::PropertyContentChangeEvent >(this, &DefaultPropertiesView::eventPropertyChange);
+
+	m_referenceResolvers = referenceResolvers;
+
+	for (auto typeInfo : type_of< IReferenceResolver >().findAllOf(false))
+	{
+		Ref< IReferenceResolver > referenceResolver = dynamic_type_cast< IReferenceResolver* >(typeInfo->createInstance());
+		if (referenceResolver)
+			m_referenceResolvers.push_back(referenceResolver);
+	}
+
 	return true;
 }
 
@@ -90,6 +102,10 @@ void DefaultPropertiesView::update(const ui::Rect* rc, bool immediate)
 
 void DefaultPropertiesView::setPropertyObject(ISerializable* object)
 {
+	// Re-initialize the reference resolvers.
+	for (auto referenceResolver : m_referenceResolvers)
+		referenceResolver->initialize(m_editor);
+
 	// Capture state of current property object.
 	if (m_propertyObject)
 		m_states[&type_of(m_propertyObject)] = m_propertyList->captureState();
@@ -131,14 +147,31 @@ bool DefaultPropertiesView::handleCommand(const ui::Command& command)
 	return false;
 }
 
-bool DefaultPropertiesView::resolvePropertyGuid(const Guid& guid, std::wstring& resolved) const
+bool DefaultPropertiesView::resolvePropertyGuid(const Guid& guid, std::wstring& outResolved) const
 {
 	Ref< db::Instance > instance = m_editor->getSourceDatabase()->getInstance(guid);
-	if (!instance)
-		return false;
+	if (instance)
+	{
+		outResolved = instance->getName();
+		return true;
+	}
 
-	resolved = instance->getName();
-	return true;
+	for (auto referenceResolver : m_referenceResolvers)
+		if (referenceResolver->resolve(guid, outResolved))
+			return true;
+
+	return false;
+}
+
+IReferenceResolver* DefaultPropertiesView::findReferenceResolver(const TypeInfo& referenceType) const
+{
+	for (auto referenceResolver : m_referenceResolvers)
+	{
+		for (auto type : referenceResolver->getReferenceTypes())
+			if (is_type_of(*type, referenceType))
+				return referenceResolver;
+	}
+	return nullptr;
 }
 
 void DefaultPropertiesView::eventSize(ui::SizeEvent* event)
@@ -173,7 +206,7 @@ void DefaultPropertiesView::eventPropertyCommand(ui::PropertyCommandEvent* event
 					raiseEvent(&event);
 				}
 			}
-			else	// Non-complex array; just apply and refresh.
+			else // Non-complex array; just apply and refresh.
 			{
 				m_propertyList->apply();
 				m_propertyList->refresh();
@@ -211,7 +244,20 @@ void DefaultPropertiesView::eventPropertyCommand(ui::PropertyCommandEvent* event
 	else if (cmd == L"Property.Browse")
 	{
 		ui::BrowsePropertyItem* browseItem = dynamic_type_cast< ui::BrowsePropertyItem* >(event->getItem());
-		if (browseItem)
+		IReferenceResolver* referenceResolver = (browseItem != nullptr && browseItem->getFilterType() != nullptr) ? findReferenceResolver(*browseItem->getFilterType()) : nullptr;
+		if (referenceResolver)
+		{
+			Guid id;
+			if (referenceResolver->browse(this, *browseItem->getFilterType(), browseItem->getValue(), id))
+			{
+				browseItem->setValue(id);
+				m_propertyList->apply();
+
+				ui::ContentChangeEvent event(this);
+				raiseEvent(&event);
+			}
+		}
+		else if (browseItem)
 		{
 			Ref< db::Instance > currentInstance = m_editor->getSourceDatabase()->getInstance(browseItem->getValue());
 			Ref< db::Group > currentGroup = currentInstance ? currentInstance->getParent() : nullptr;
@@ -334,6 +380,11 @@ void DefaultPropertiesView::eventPropertyCommand(ui::PropertyCommandEvent* event
 				return;
 
 			Ref< db::Instance > instance = m_editor->getSourceDatabase()->getInstance(instanceGuid);
+			if (instance == nullptr && browseItem->getFilterType() != nullptr)
+			{
+				if (IReferenceResolver* referenceResolver = findReferenceResolver(*browseItem->getFilterType()))
+					instance = referenceResolver->getOwnerInstance(instanceGuid);
+			}
 			if (!instance)
 				return;
 
@@ -364,8 +415,7 @@ void DefaultPropertiesView::eventPropertyCommand(ui::PropertyCommandEvent* event
 				this,
 				i18n::Text(L"COLOR_DIALOG_TEXT"),
 				ui::ColorDialog::WsDefaultFixed | ui::ColorDialog::WsAlpha | (colorItem->getHighDynamicRange() ? ui::ColorDialog::WsHDR : 0),
-				colorItem->getValue()
-			);
+				colorItem->getValue());
 			if (colorDialog.showModal() == ui::DialogResult::Ok)
 			{
 				colorItem->setValue(colorDialog.getColor());
@@ -388,7 +438,7 @@ void DefaultPropertiesView::eventPropertyChange(ui::PropertyContentChangeEvent* 
 	m_propertyList->apply();
 
 	ui::PropertyContentChangeEvent changeEvent(this, event->getItem());
-	raiseEvent(&changeEvent);	
+	raiseEvent(&changeEvent);
 }
 
 }

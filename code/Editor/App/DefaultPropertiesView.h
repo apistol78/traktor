@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,37 +8,38 @@
  */
 #pragma once
 
-#include <map>
 #include "Core/Ref.h"
+#include "Core/RefArray.h"
 #include "Editor/PropertiesView.h"
 #include "Ui/PropertyList/AutoPropertyList.h"
 
-namespace traktor
+#include <map>
+
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 class HierarchicalState;
 class PropertyCommandEvent;
 class PropertyContentChangeEvent;
 
-	}
+}
 
-	namespace editor
-	{
+namespace traktor::editor
+{
 
 class IEditor;
+class IReferenceResolver;
 
 class DefaultPropertiesView
-:	public PropertiesView
-,	public ui::PropertyList::IPropertyGuidResolver
+	: public PropertiesView
+	, public ui::PropertyList::IPropertyGuidResolver
 {
 	T_RTTI_CLASS;
 
 public:
 	explicit DefaultPropertiesView(IEditor* editor);
 
-	bool create(ui::Widget* parent);
+	bool create(ui::Widget* parent, const RefArray< IReferenceResolver >& referenceResolvers);
 
 	virtual void destroy() override final;
 
@@ -50,13 +51,16 @@ public:
 
 	// ui::PropertyList::IPropertyGuidResolver
 
-	virtual bool resolvePropertyGuid(const Guid& guid, std::wstring& resolved) const override final;
+	virtual bool resolvePropertyGuid(const Guid& guid, std::wstring& outResolved) const override final;
 
 private:
 	IEditor* m_editor;
 	Ref< ui::AutoPropertyList > m_propertyList;
 	Ref< ISerializable > m_propertyObject;
 	std::map< const TypeInfo*, Ref< ui::HierarchicalState > > m_states;
+	RefArray< IReferenceResolver > m_referenceResolvers;
+
+	IReferenceResolver* findReferenceResolver(const TypeInfo& referenceType) const;
 
 	void eventSize(ui::SizeEvent* event);
 
@@ -65,6 +69,4 @@ private:
 	void eventPropertyChange(ui::PropertyContentChangeEvent* event);
 };
 
-	}
 }
-

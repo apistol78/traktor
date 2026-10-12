@@ -1,38 +1,37 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Ui/ListBox/ListBox.h"
+
 #include "Core/Misc/String.h"
 #include "Ui/Application.h"
-#include "Ui/ListBox/ListBox.h"
 #include "Ui/ListBox/ListBoxItem.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
-		namespace
-		{
+namespace
+{
 
 struct ListBoxItemPred
 {
-	bool operator () (const ListBoxItem* lh, const ListBoxItem* rh) const
+	bool operator()(const ListBoxItem* lh, const ListBoxItem* rh) const
 	{
 		return compareIgnoreCase(lh->getText(), rh->getText()) < 0;
 	}
 };
 
-		}
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.ListBox", ListBox, AutoWidget)
 
 ListBox::ListBox()
-:	m_style(0)
-,	m_lastHitIndex(-1)
+	: m_style(0)
+	, m_lastHitIndex(-1)
 {
 }
 
@@ -42,6 +41,7 @@ bool ListBox::create(Widget* parent, uint32_t style)
 		return false;
 
 	addEventHandler< MouseButtonDownEvent >(this, &ListBox::eventButtonDown);
+	addEventHandler< MouseDoubleClickEvent >(this, &ListBox::eventDoubleClick);
 	addEventHandler< KeyDownEvent >(this, &ListBox::eventKeyDown);
 
 	m_style = style;
@@ -157,20 +157,16 @@ int32_t ListBox::getSelected(std::vector< int32_t >& selected) const
 {
 	selected.resize(0);
 	for (int32_t i = 0; i < (int32_t)m_items.size(); ++i)
-	{
 		if (m_items[i]->isSelected())
 			selected.push_back(i);
-	}
 	return int32_t(selected.size());
 }
 
 int32_t ListBox::getSelected() const
 {
 	for (int32_t i = 0; i < (int32_t)m_items.size(); ++i)
-	{
 		if (m_items[i]->isSelected())
 			return i;
-	}
 	return -1;
 }
 
@@ -205,12 +201,34 @@ Rect ListBox::getItemRect(int32_t index) const
 		return Rect();
 }
 
-void ListBox::eventButtonDown(MouseButtonDownEvent* event)
+void ListBox::layoutCells(const Rect& rc)
 {
-	if (event->getButton() != MbtLeft)
-		return;
+	int32_t height = getItemHeight();
 
-	Ref< ListBoxItem > hitItem = dynamic_type_cast< ListBoxItem* >(hitTest(event->getPosition()));
+	Rect rcItem(rc.left, rc.top, rc.right, rc.top + height);
+	if ((m_style & WsSort) == WsSort)
+	{
+		RefArray< ListBoxItem > items = m_items;
+		items.sort(ListBoxItemPred());
+		for (uint32_t i = 0; i < items.size(); ++i)
+		{
+			placeCell(items[i], rcItem);
+			rcItem = rcItem.offset(0, height);
+		}
+	}
+	else
+	{
+		for (uint32_t i = 0; i < m_items.size(); ++i)
+		{
+			placeCell(m_items[i], rcItem);
+			rcItem = rcItem.offset(0, height);
+		}
+	}
+}
+
+void ListBox::selectAt(const Point& position, int32_t keyState)
+{
+	Ref< ListBoxItem > hitItem = dynamic_type_cast< ListBoxItem* >(hitTest(position));
 
 	int32_t hitIndex = -1;
 	for (int32_t i = 0; i < (int32_t)m_items.size(); ++i)
@@ -233,15 +251,13 @@ void ListBox::eventButtonDown(MouseButtonDownEvent* event)
 	}
 	else if ((m_style & WsExtended) == WsExtended)
 	{
-		if ((event->getKeyState() & KsControl) == KsControl)
+		if ((keyState & KsControl) == KsControl)
 			modified |= hitItem->setSelected(!hitItem->isSelected());
-		else if ((event->getKeyState() & KsShift) == KsShift)
+		else if ((keyState & KsShift) == KsShift)
 		{
 			if (m_lastHitIndex >= 0)
-			{
 				for (int32_t i = std::min(m_lastHitIndex, hitIndex); i <= std::max(m_lastHitIndex, hitIndex); ++i)
 					modified |= m_items[i]->setSelected(true);
-			}
 		}
 		else
 		{
@@ -262,6 +278,18 @@ void ListBox::eventButtonDown(MouseButtonDownEvent* event)
 	}
 
 	m_lastHitIndex = hitIndex;
+}
+
+void ListBox::eventButtonDown(MouseButtonDownEvent* event)
+{
+	if (event->getButton() == MbtLeft)
+		selectAt(event->getPosition(), event->getKeyState());
+}
+
+void ListBox::eventDoubleClick(MouseDoubleClickEvent* event)
+{
+	if (event->getButton() == MbtLeft)
+		selectAt(event->getPosition(), event->getKeyState());
 }
 
 void ListBox::eventKeyDown(KeyDownEvent* event)
@@ -292,30 +320,4 @@ void ListBox::eventKeyDown(KeyDownEvent* event)
 	}
 }
 
-void ListBox::layoutCells(const Rect& rc)
-{
-	int32_t height = getItemHeight();
-
-	Rect rcItem(rc.left, rc.top, rc.right, rc.top + height);
-	if ((m_style & WsSort) == WsSort)
-	{
-		RefArray< ListBoxItem > items = m_items;
-		items.sort(ListBoxItemPred());
-		for (uint32_t i = 0; i < items.size(); ++i)
-		{
-			placeCell(items[i], rcItem);
-			rcItem = rcItem.offset(0, height);
-		}
-	}
-	else
-	{
-		for (uint32_t i = 0; i < m_items.size(); ++i)
-		{
-			placeCell(m_items[i], rcItem);
-			rcItem = rcItem.offset(0, height);
-		}
-	}
-}
-
-	}
 }

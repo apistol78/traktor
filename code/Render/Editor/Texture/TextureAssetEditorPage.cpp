@@ -84,7 +84,7 @@ bool TextureAssetEditorPage::create(ui::Container* parent)
 	m_statusBar->addColumn(-300);
 
 	// Create properties view.
-	m_propertiesView = m_site->createPropertiesView(parent);
+	m_propertiesView = m_site->createPropertiesView(parent, {});
 	m_propertiesView->setPropertyObject(m_asset);
 	m_propertiesView->addEventHandler< ui::ContentChangeEvent >(this, &TextureAssetEditorPage::eventPropertiesChanged);
 	m_site->createAdditionalPanel(m_propertiesView, 400_ut, false);

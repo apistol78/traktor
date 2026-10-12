@@ -62,7 +62,7 @@ void EditorPluginSite::handleEditorClosed()
 	m_editorPlugin->handleEditorClosed();
 }
 
-Ref< PropertiesView > EditorPluginSite::createPropertiesView(ui::Widget* parent)
+Ref< PropertiesView > EditorPluginSite::createPropertiesView(ui::Widget* parent, const RefArray< IReferenceResolver >& referenceResolvers)
 {
 	return nullptr;
 }

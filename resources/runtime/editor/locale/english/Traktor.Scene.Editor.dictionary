@@ -26,6 +26,10 @@
 			<second>Aspect</second>
 		</item>
 		<item>
+			<first>SCENE_EDITOR_BROWSE_ENTITY</first>
+			<second>Entity</second>
+		</item>
+		<item>
 			<first>SCENE_EDITOR_CREATE_EXTERNAL</first>
 			<second>Create external...</second>
 		</item>

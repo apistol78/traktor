@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -10,6 +10,7 @@
 
 #include "Core/Object.h"
 #include "Core/Ref.h"
+#include "Core/RefArray.h"
 #include "Ui/Unit.h"
 
 // import/export mechanism.
@@ -30,6 +31,7 @@ class Widget;
 namespace traktor::editor
 {
 
+class IReferenceResolver;
 class PropertiesView;
 
 /*!
@@ -41,7 +43,7 @@ class T_DLLCLASS IEditorPageSite : public Object
 
 public:
 	/*! Create properties view widget. */
-	virtual Ref< PropertiesView > createPropertiesView(ui::Widget* parent) = 0;
+	virtual Ref< PropertiesView > createPropertiesView(ui::Widget* parent, const RefArray< IReferenceResolver >& referenceResolvers) = 0;
 
 	/*! Create additional docking panel. */
 	virtual void createAdditionalPanel(ui::Widget* widget, ui::Unit size, bool south) = 0;

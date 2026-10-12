@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -267,6 +267,53 @@ private:
 	SamplerState& m_ref;
 };
 
+void remapChannelIds(
+	const AlignedVector< std::wstring >& previousNames,
+	const AlignedVector< Guid >& previousIds,
+	const AlignedVector< std::wstring >& names,
+	AlignedVector< Guid >& ids)
+{
+	if (previousNames.empty())
+	{
+		while (ids.size() < names.size())
+			ids.push_back(Guid::create());
+		ids.resize(names.size());
+		return;
+	}
+
+	AlignedVector< bool > used(previousNames.size(), false);
+	ids.resize(names.size());
+	for (size_t i = 0; i < names.size(); ++i)
+	{
+		ids[i] = Guid();
+		for (size_t j = 0; j < previousNames.size(); ++j)
+		{
+			if (!used[j] && previousNames[j] == names[i])
+			{
+				ids[i] = previousIds[j];
+				used[j] = true;
+				break;
+			}
+		}
+	}
+	for (size_t i = 0; i < names.size(); ++i)
+	{
+		if (ids[i].isNotNull())
+			continue;
+		for (size_t j = 0; j < previousNames.size(); ++j)
+		{
+			if (!used[j])
+			{
+				ids[i] = previousIds[j];
+				used[j] = true;
+				break;
+			}
+		}
+		if (ids[i].isNull())
+			ids[i] = Guid::create();
+	}
+}
+
 }
 
 /*---------------------------------------------------------------------------*/
@@ -385,16 +432,20 @@ void Branch::serialize(ISerializer& s)
 
 /*---------------------------------------------------------------------------*/
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.BundleUnite", 0, BundleUnite, Node)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.BundleUnite", 1, BundleUnite, Node)
 
 BundleUnite::BundleUnite()
+	: m_outputId(L"{A2C0D6E8-5B4F-4C3D-9E1A-7F6B8D0C2E41}")
 {
 	updatePins();
 }
 
 void BundleUnite::setNames(const AlignedVector< std::wstring >& names)
 {
+	AlignedVector< Guid > ids = m_ids;
+	remapChannelIds(m_names, m_ids, names, ids);
 	m_names = names;
+	m_ids = ids;
 	updatePins();
 }
 
@@ -422,10 +473,33 @@ void BundleUnite::serialize(ISerializer& s)
 {
 	Node::serialize(s);
 
+	const AlignedVector< std::wstring > previousNames = m_names;
+	const AlignedVector< Guid > previousIds = m_ids;
+
 	s >> MemberAlignedVector< std::wstring >(L"names", m_names);
+	if (s.getVersion< BundleUnite >() >= 1)
+	{
+		s >> MemberAlignedVector< Guid >(L"ids", m_ids, AttributePrivate());
+		s >> Member< Guid >(L"outputId", m_outputId, AttributePrivate());
+	}
 
 	if (s.getDirection() == ISerializer::Direction::Read)
+	{
+		if (s.getVersion< BundleUnite >() >= 1)
+			remapChannelIds(previousNames, previousIds, m_names, m_ids);
+		else
+		{
+			Guid id(L"{EEB495BD-DE7F-4DE8-943A-7E9B220B927F}");
+			m_ids.resize(m_names.size());
+			for (size_t i = 0; i < m_ids.size(); ++i)
+			{
+				m_ids[i] = id;
+				id.permutate();
+			}
+			m_outputId = id;
+		}
 		updatePins();
+	}
 }
 
 void BundleUnite::updatePins()
@@ -434,21 +508,15 @@ void BundleUnite::updatePins()
 
 	m_inputPins.resize(1 + m_names.size());
 	m_inputPins[0] = InputPin(this, Guid(L"{FFD72AB8-3ECF-4EBE-AF54-041F18540D4D}"), L"Input", true);
-
-	Guid id(L"{EEB495BD-DE7F-4DE8-943A-7E9B220B927F}");
 	for (int32_t i = 0; i < (int32_t)m_names.size(); ++i)
-	{
-		m_inputPins[1 + i] = InputPin(this, id, m_names[i], true);
-		id.permutate();
-	}
+		m_inputPins[1 + i] = InputPin(this, m_ids[i], m_names[i], true);
 
-	m_outputPin = OutputPin(this, id, L"Output");
-	id.permutate();
+	m_outputPin = OutputPin(this, m_outputId, L"Output");
 }
 
 /*---------------------------------------------------------------------------*/
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.BundleSplit", 0, BundleSplit, Node)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.BundleSplit", 1, BundleSplit, Node)
 
 BundleSplit::BundleSplit()
 {
@@ -457,7 +525,10 @@ BundleSplit::BundleSplit()
 
 void BundleSplit::setNames(const AlignedVector< std::wstring >& names)
 {
+	AlignedVector< Guid > ids = m_ids;
+	remapChannelIds(m_names, m_ids, names, ids);
 	m_names = names;
+	m_ids = ids;
 	updatePins();
 }
 
@@ -485,27 +556,41 @@ void BundleSplit::serialize(ISerializer& s)
 {
 	Node::serialize(s);
 
+	const AlignedVector< std::wstring > previousNames = m_names;
+	const AlignedVector< Guid > previousIds = m_ids;
+
 	s >> MemberAlignedVector< std::wstring >(L"names", m_names);
+	if (s.getVersion< BundleSplit >() >= 1)
+		s >> MemberAlignedVector< Guid >(L"ids", m_ids, AttributePrivate());
 
 	if (s.getDirection() == ISerializer::Direction::Read)
+	{
+		if (s.getVersion< BundleSplit >() >= 1)
+			remapChannelIds(previousNames, previousIds, m_names, m_ids);
+		else
+		{
+			Guid id(L"{D596E4E4-1A78-4D80-BC6B-6DEEF934EDEC}");
+			id.permutate();
+			m_ids.resize(m_names.size());
+			for (size_t i = 0; i < m_ids.size(); ++i)
+			{
+				m_ids[i] = id;
+				id.permutate();
+			}
+		}
 		updatePins();
+	}
 }
 
 void BundleSplit::updatePins()
 {
 	T_FATAL_ASSERT(m_names.size() < m_outputPins.capacity());
 
-	Guid id(L"{D596E4E4-1A78-4D80-BC6B-6DEEF934EDEC}");
-
-	m_inputPin = InputPin(this, id, L"Input", false);
-	id.permutate();
+	m_inputPin = InputPin(this, Guid(L"{D596E4E4-1A78-4D80-BC6B-6DEEF934EDEC}"), L"Input", false);
 
 	m_outputPins.resize(m_names.size());
 	for (int32_t i = 0; i < (int32_t)m_names.size(); ++i)
-	{
-		m_outputPins[i] = OutputPin(this, id, m_names[i]);
-		id.permutate();
-	}
+		m_outputPins[i] = OutputPin(this, m_ids[i], m_names[i]);
 }
 
 /*---------------------------------------------------------------------------*/

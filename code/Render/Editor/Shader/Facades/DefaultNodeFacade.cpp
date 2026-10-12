@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2025 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -67,25 +67,7 @@ Ref< ui::Node > DefaultNodeFacade::createEditorNode(
 			ui::Unit(shaderNode->getPosition().second)),
 		shape);
 
-	for (int j = 0; j < shaderNode->getInputPinCount(); ++j)
-	{
-		const InputPin* inputPin = shaderNode->getInputPin(j);
-		editorNode->createInputPin(
-			inputPin->getName(),
-			inputPin->getId(),
-			!inputPin->isOptional(),
-			false);
-	}
-
-	for (int j = 0; j < shaderNode->getOutputPinCount(); ++j)
-	{
-		const OutputPin* outputPin = shaderNode->getOutputPin(j);
-		editorNode->createOutputPin(
-			outputPin->getName(),
-			outputPin->getId());
-	}
-
-	editorNode->setComment(shaderNode->getComment());
+	refreshEditorNode(editor, graphControl, editorNode, shaderGraph, shaderNode);
 	return editorNode;
 }
 
@@ -108,63 +90,39 @@ void DefaultNodeFacade::refreshEditorNode(
 	editorNode->setComment(shaderNode->getComment());
 	editorNode->setInfo(shaderNode->getInformation());
 
-	// Add or rename editor pins.
+	// Rename pins in place while they match the shader node's pins in order.
+	bool sync =
+		(int)editorNode->getInputPins().size() == shaderNode->getInputPinCount() &&
+		(int)editorNode->getOutputPins().size() == shaderNode->getOutputPinCount();
+	for (int j = 0; sync && j < shaderNode->getInputPinCount(); ++j)
+		sync = (editorNode->getInputPin(j)->getId() == shaderNode->getInputPin(j)->getId());
+	for (int j = 0; sync && j < shaderNode->getOutputPinCount(); ++j)
+		sync = (editorNode->getOutputPin(j)->getId() == shaderNode->getOutputPin(j)->getId());
+	if (sync)
+	{
+		for (int j = 0; j < shaderNode->getInputPinCount(); ++j)
+			editorNode->getInputPin(j)->setName(shaderNode->getInputPin(j)->getName());
+		for (int j = 0; j < shaderNode->getOutputPinCount(); ++j)
+			editorNode->getOutputPin(j)->setName(shaderNode->getOutputPin(j)->getName());
+		return;
+	}
+
+	// Otherwise rebuild them in the shader node's order.
+	for (auto editorInputPin : RefArray< ui::Pin >(editorNode->getInputPins()))
+		editorNode->removeInputPin(editorInputPin);
+	for (auto editorOutputPin : RefArray< ui::Pin >(editorNode->getOutputPins()))
+		editorNode->removeOutputPin(editorOutputPin);
+
 	for (int j = 0; j < shaderNode->getInputPinCount(); ++j)
 	{
 		const InputPin* inputPin = shaderNode->getInputPin(j);
-		ui::Pin* editorInputPin = editorNode->findInputPin(inputPin->getId());
-		if (editorInputPin)
-			editorInputPin->setName(inputPin->getName());
-		else
-			editorNode->createInputPin(inputPin->getName(), inputPin->getId(), !inputPin->isOptional(), false);
+		editorNode->createInputPin(inputPin->getName(), inputPin->getId(), !inputPin->isOptional(), false);
 	}
-
 	for (int j = 0; j < shaderNode->getOutputPinCount(); ++j)
 	{
 		const OutputPin* outputPin = shaderNode->getOutputPin(j);
-		ui::Pin* editorOutputPin = editorNode->findOutputPin(outputPin->getId());
-		if (editorOutputPin)
-			editorOutputPin->setName(outputPin->getName());
-		else
-			editorNode->createOutputPin(outputPin->getName(), outputPin->getId());
+		editorNode->createOutputPin(outputPin->getName(), outputPin->getId());
 	}
-
-	// Remove editors pins.
-	RefArray< ui::Pin > removeEditorInputPins;
-	for (auto editorInputPin : editorNode->getInputPins())
-	{
-		bool valid = false;
-		for (int j = 0; j < shaderNode->getInputPinCount(); ++j)
-		{
-			if (shaderNode->getInputPin(j)->getId() == editorInputPin->getId())
-			{
-				valid = true;
-				break;
-			}
-		}
-		if (!valid)
-			removeEditorInputPins.push_back(editorInputPin);
-	}
-	for (auto editorInputPin : removeEditorInputPins)
-		editorNode->removeInputPin(editorInputPin);
-
-	RefArray< ui::Pin > removeEditorOutputPins;
-	for (auto editorOutputPin : editorNode->getOutputPins())
-	{
-		bool valid = false;
-		for (int j = 0; j < shaderNode->getOutputPinCount(); ++j)
-		{
-			if (shaderNode->getOutputPin(j)->getId() == editorOutputPin->getId())
-			{
-				valid = true;
-				break;
-			}
-		}
-		if (!valid)
-			removeEditorOutputPins.push_back(editorOutputPin);
-	}
-	for (auto editorOutputPin : removeEditorOutputPins)
-		editorNode->removeOutputPin(editorOutputPin);
 }
 
 void DefaultNodeFacade::setValidationIndicator(

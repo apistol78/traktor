@@ -43,6 +43,7 @@
 #include "Scene/Editor/EntityAdapter.h"
 #include "Scene/Editor/EntityClipboardData.h"
 #include "Scene/Editor/EntityDependencyInvestigator.h"
+#include "Scene/Editor/EntityReferenceResolver.h"
 #include "Scene/Editor/Events/CameraMovedEvent.h"
 #include "Scene/Editor/Events/MeasurementEvent.h"
 #include "Scene/Editor/Events/PostBuildEvent.h"
@@ -406,7 +407,7 @@ bool SceneEditorPage::create(ui::Container* parent)
 	Ref< ui::TabPage > tabPageProperties = new ui::TabPage();
 	tabPageProperties->create(m_tabMisc, i18n::Text(L"TITLE_PROPERTIES"), new ui::FloodLayout());
 
-	m_propertiesView = m_site->createPropertiesView(tabPageProperties);
+	m_propertiesView = m_site->createPropertiesView(tabPageProperties, { new EntityReferenceResolver(m_context) });
 	m_propertiesView->addEventHandler< ui::ContentChangingEvent >(this, &SceneEditorPage::eventPropertiesChanging);
 	m_propertiesView->addEventHandler< ui::ContentChangeEvent >(this, &SceneEditorPage::eventPropertiesChanged);
 
@@ -1882,7 +1883,6 @@ void SceneEditorPage::eventContextPostFrame(PostFrameEvent* event)
 	{
 		// Discard viewports which are no longer measured, such as when view or layout has changed.
 		for (auto it = m_measurements.begin(); it != m_measurements.end();)
-		{
 			if (m_postFrameCount - it->second.updated > c_measurementViewportFrames)
 			{
 				it = m_measurements.erase(it);
@@ -1890,7 +1890,6 @@ void SceneEditorPage::eventContextPostFrame(PostFrameEvent* event)
 			}
 			else
 				++it;
-		}
 
 		if (m_measurementsDirty)
 		{
@@ -2027,12 +2026,10 @@ void SceneEditorPage::eventContextMeasurement(MeasurementEvent* event)
 
 		// Discard history of passes which are no longer measured.
 		for (auto it = vm.history.begin(); it != vm.history.end();)
-		{
 			if (vm.frame - it->second.frame > c_measurementHistoryFrames)
 				it = vm.history.erase(it);
 			else
 				++it;
-		}
 	}
 	vm.lastPass = event->getPass();
 

@@ -30,6 +30,7 @@
 #include "World/Entity/LightComponentData.h"
 #include "World/Entity/PathComponent.h"
 #include "World/Entity/PersistentIdComponent.h"
+#include "World/Entity/PropertyEntityReference.h"
 #include "World/Entity/ScriptComponent.h"
 #include "World/Entity/ScriptComponentData.h"
 #include "World/Entity/VolumeComponent.h"
@@ -64,6 +65,11 @@ Entity* World_getEntity_1(World* self, const std::wstring& name)
 Entity* World_getEntity_2(World* self, const std::wstring& name, int32_t index)
 {
 	return self->getEntity(name, index);
+}
+
+Entity* World_getEntityById(World* self, const Guid& id)
+{
+	return self->getEntity(id);
 }
 
 RefArray< Entity > World_getEntities_1(World* self)
@@ -193,6 +199,7 @@ void WorldClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classWorld->addMethod("haveEntity", &World::haveEntity);
 	classWorld->addMethod("getEntity", &World_getEntity_1);
 	classWorld->addMethod("getEntity", &World_getEntity_2);
+	classWorld->addMethod("getEntityById", &World_getEntityById);
 	classWorld->addMethod("getEntities", &World_getEntities_1);
 	classWorld->addMethod("getEntities", &World_getEntities_2);
 	classWorld->addMethod("getEntitiesWithinRange", &World_getEntitiesWithinRange_1);
@@ -318,6 +325,10 @@ void WorldClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classPathComponent->addMethod("estimateLength", &PathComponent::estimateLength);
 	classPathComponent->addMethod("findClosest", &PathComponent::findClosest);
 	registrar->registerClass(classPathComponent);
+
+	auto classPropertyEntityReference = new AutoRuntimeClass< PropertyEntityReference >();
+	classPropertyEntityReference->addProperty("id", &PropertyEntityReference::getEntityId);
+	registrar->registerClass(classPropertyEntityReference);
 
 	auto classPersistentIdComponent = new AutoRuntimeClass< PersistentIdComponent >();
 	classPersistentIdComponent->addProperty("id", &PersistentIdComponent::getId);

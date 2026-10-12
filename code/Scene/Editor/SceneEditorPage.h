@@ -108,23 +108,21 @@ public:
 	virtual void handleDatabaseEvent(db::Database* database, const Guid& eventId) override final;
 
 private:
-	//! Measured durations of a render pass.
 	struct MeasurementHistory
 	{
 		CircularVector< double, 256 > durations;
-		uint32_t frame = 0;	//!< Frame when pass was last measured.
+		uint32_t frame = 0;
 	};
 
 	struct Measurement
 	{
 		int32_t pass;
 		int32_t level;
-		bool asynchronous;	//!< Pass was executed on the asynchronous compute queue.
+		bool asynchronous;
 		std::wstring name;
-		double duration;	//!< Average duration of pass.
+		double duration;
 	};
 
-	//! Measurements of a viewport's render passes.
 	struct ViewportMeasurements
 	{
 		uint32_t frame = 0;

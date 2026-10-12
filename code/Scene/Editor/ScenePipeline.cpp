@@ -8,7 +8,11 @@
  */
 #include "Scene/Editor/ScenePipeline.h"
 
+#include "Core/Containers/SmallSet.h"
 #include "Core/Log/Log.h"
+#include "Core/Reflection/Reflection.h"
+#include "Core/Reflection/RfmObject.h"
+#include "Core/Reflection/RfpMemberType.h"
 #include "Core/Serialization/DeepClone.h"
 #include "Core/Serialization/DeepHash.h"
 #include "Core/Settings/PropertyBoolean.h"
@@ -25,6 +29,7 @@
 #include "Scene/SceneResource.h"
 #include "World/Entity/ExternalEntityData.h"
 #include "World/Entity/GroupComponentData.h"
+#include "World/Entity/PropertyEntityReference.h"
 #include "World/IWorldComponentData.h"
 #include "World/WorldRenderSettings.h"
 
@@ -73,6 +78,40 @@ Ref< const ISceneOperationData > resolveOperationData(const ISceneOperator::Tran
 		log::error << L"Unable to read operation data " << externalOperationData->getExternalDataId().format() << L"." << Endl;
 
 	return resolvedOperationData;
+}
+
+/*! Every entity's guid in object, and every entity reference with the name of the entity holding it. */
+void collectEntities(
+	const ISerializable* object,
+	const std::wstring& holder,
+	SmallSet< Guid >& outIds,
+	AlignedVector< std::pair< std::wstring, Guid > >& outReferences,
+	SmallSet< const ISerializable* >& visited
+)
+{
+	if (object == nullptr || !visited.insert(object))
+		return;
+
+	std::wstring name = holder;
+	if (auto entityData = dynamic_type_cast< const world::EntityData* >(object))
+	{
+		outIds.insert(entityData->getId());
+		name = entityData->getName();
+	}
+	else if (auto reference = dynamic_type_cast< const world::PropertyEntityReference* >(object))
+	{
+		if (reference->getEntityId().isNotNull())
+			outReferences.push_back({ name, reference->getEntityId() });
+	}
+
+	Ref< Reflection > reflection = Reflection::create(object);
+	if (!reflection)
+		return;
+
+	RefArray< ReflectionMember > objectMembers;
+	reflection->findMembers(RfpMemberType(type_of< RfmObject >()), objectMembers);
+	for (const ReflectionMember* member : objectMembers)
+		collectEntities(static_cast< const RfmObject* >(member)->get(), name, outIds, outReferences, visited);
 }
 
 }
@@ -192,6 +231,10 @@ bool ScenePipeline::buildOutput(
 	const Object* buildParams,
 	uint32_t reason) const
 {
+	// Every entity reference must be to an entity of the scene.
+	if (!validateEntityReferences(sourceAsset, sourceInstance ? sourceInstance->getName() : outputPath))
+		return false;
+
 	// Create clone of asset which operators can modify.
 	Ref< SceneAsset > sceneAsset = DeepClone(sourceAsset).create< SceneAsset >();
 	T_FATAL_ASSERT(sceneAsset != nullptr);
@@ -319,6 +362,25 @@ Ref< ISerializable > ScenePipeline::buildProduct(
 		return nullptr;
 
 	return sceneAsset;
+}
+
+bool ScenePipeline::validateEntityReferences(const ISerializable* sceneAsset, const std::wstring& name) const
+{
+	SmallSet< Guid > ids;
+	AlignedVector< std::pair< std::wstring, Guid > > references;
+	SmallSet< const ISerializable* > visited;
+	collectEntities(sceneAsset, L"", ids, references, visited);
+
+	bool ok = true;
+	for (const auto& reference : references)
+	{
+		if (ids.find(reference.second) == ids.end())
+		{
+			log::error << L"Scene \"" << name << L"\"; entity \"" << reference.first << L"\" refers to entity " << reference.second.format() << L", which the scene does not have." << Endl;
+			ok = false;
+		}
+	}
+	return ok;
 }
 
 const ISceneOperator* ScenePipeline::findOperator(const TypeInfo& operationType) const

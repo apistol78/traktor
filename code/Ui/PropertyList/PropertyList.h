@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -53,7 +53,7 @@ public:
 
 	struct IPropertyGuidResolver
 	{
-		virtual bool resolvePropertyGuid(const Guid& guid, std::wstring& resolved) const = 0;
+		virtual bool resolvePropertyGuid(const Guid& guid, std::wstring& outResolved) const = 0;
 	};
 
 	PropertyList();
@@ -111,6 +111,10 @@ private:
 	Ref< ScrollBar > m_scrollBar;
 	RefArray< PropertyItem > m_propertyItems;
 	Ref< PropertyItem > m_mousePropertyItem;
+	Ref< PropertyItem > m_dragItem;
+	Point m_dragPosition;
+	int32_t m_dropIndex;
+	int32_t m_dropRow;
 	Unit m_propertyItemHeight;
 	Unit m_separator;
 	int32_t m_mode;
@@ -121,6 +125,8 @@ private:
 	void updateScrollBar();
 
 	void placeItems();
+
+	void updateDropTarget(const Point& position);
 
 	void eventScroll(ScrollEvent* event);
 

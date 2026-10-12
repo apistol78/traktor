@@ -121,6 +121,8 @@ public:
 
 private:
 	AlignedVector< std::wstring > m_names;
+	AlignedVector< Guid > m_ids;
+	Guid m_outputId;
 	StaticVector< InputPin, 64 > m_inputPins;
 	OutputPin m_outputPin;
 
@@ -153,6 +155,7 @@ public:
 
 private:
 	AlignedVector< std::wstring > m_names;
+	AlignedVector< Guid > m_ids;
 	InputPin m_inputPin;
 	StaticVector< OutputPin, 64 > m_outputPins;
 

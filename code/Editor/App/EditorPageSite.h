@@ -37,7 +37,7 @@ public:
 
 	void hide();
 
-	virtual Ref< PropertiesView > createPropertiesView(ui::Widget* parent) override final;
+	virtual Ref< PropertiesView > createPropertiesView(ui::Widget* parent, const RefArray< IReferenceResolver >& referenceResolvers) override final;
 
 	virtual void createAdditionalPanel(ui::Widget* widget, ui::Unit size, bool south) override final;
 

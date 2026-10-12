@@ -153,7 +153,7 @@ bool GraphEditor::create(ui::Container* parent)
 	m_graph->addEventHandler< ui::EdgeDisconnectEvent >(this, &GraphEditor::eventEdgeDisconnected);
 
 	// Create properties view.
-	m_propertiesView = m_site->createPropertiesView(parent);
+	m_propertiesView = m_site->createPropertiesView(parent, {});
 	m_propertiesView->addEventHandler< ui::ContentChangingEvent >(this, &GraphEditor::eventPropertiesChanging);
 	m_propertiesView->addEventHandler< ui::ContentChangeEvent >(this, &GraphEditor::eventPropertiesChanged);
 	m_site->createAdditionalPanel(m_propertiesView, 400_ut, false);
