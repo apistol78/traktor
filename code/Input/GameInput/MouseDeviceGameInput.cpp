@@ -207,7 +207,14 @@ void MouseDeviceGameInput::readState()
 	m_clipped = clip;
 
 	if (!m_connected)
+	{
+		m_cursorValid = false;
+		m_warpPending = false;
 		return;
+	}
+
+	// Remote desktop sends absolute positions which GameInput doesn't report as movement, use cursor instead.
+	const bool remote = (GetSystemMetrics(SM_REMOTESESSION) != 0);
 
 	// Positions are accumulated deltas, so movement is the difference from the previous reading.
 	for (auto& mouse : m_mice)
@@ -222,8 +229,11 @@ void MouseDeviceGameInput::readState()
 
 		if (mouse.valid)
 		{
-			m_deltaX += state.positionX - mouse.positionX;
-			m_deltaY += state.positionY - mouse.positionY;
+			if (!remote)
+			{
+				m_deltaX += state.positionX - mouse.positionX;
+				m_deltaY += state.positionY - mouse.positionY;
+			}
 			m_deltaWheel += state.wheelY - mouse.wheelY;
 		}
 
@@ -236,7 +246,56 @@ void MouseDeviceGameInput::readState()
 			m_buttons |= state.buttons;
 	}
 
-	GetCursorPos(&m_position);
+	POINT cursor;
+	GetCursorPos(&cursor);
+
+	if (remote)
+	{
+		if (!m_cursorValid)
+		{
+			m_lastCursor = cursor;
+			m_cursorValid = true;
+		}
+
+		// Client keeps reporting positions from before a recenter until it has received it, use closest origin.
+		const LONG dx = cursor.x - m_lastCursor.x;
+		const LONG dy = cursor.y - m_lastCursor.y;
+		if (!m_warpPending)
+		{
+			m_deltaX = dx;
+			m_deltaY = dy;
+			m_lastCursor = cursor;
+		}
+		else if (cursor.x != m_warpCenter.x || cursor.y != m_warpCenter.y)
+		{
+			const LONG wx = cursor.x - m_warpCenter.x;
+			const LONG wy = cursor.y - m_warpCenter.y;
+			if (wx * wx + wy * wy <= dx * dx + dy * dy)
+			{
+				m_deltaX = wx;
+				m_deltaY = wy;
+				m_warpPending = false;
+			}
+			else
+			{
+				m_deltaX = dx;
+				m_deltaY = dy;
+			}
+			m_lastCursor = cursor;
+		}
+
+		// Recenter while exclusive when cursor leaves inner half of window.
+		POINT center = { (m_rect.left + m_rect.right) / 2, (m_rect.top + m_rect.bottom) / 2 };
+		ClientToScreen(m_hWnd, &center);
+		if (clip && !m_warpPending && (std::abs(cursor.x - center.x) > m_rect.right / 4 || std::abs(cursor.y - center.y) > m_rect.bottom / 4))
+		{
+			SetCursorPos(center.x, center.y);
+			m_warpCenter = center;
+			m_warpPending = true;
+		}
+	}
+
+	m_position = cursor;
 	ScreenToClient(m_hWnd, &m_position);
 	m_position.x = clamp< LONG >(m_position.x, 0, std::max< LONG >(m_rect.right - 1, 0));
 	m_position.y = clamp< LONG >(m_position.y, 0, std::max< LONG >(m_rect.bottom - 1, 0));

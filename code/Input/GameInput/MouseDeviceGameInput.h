@@ -88,6 +88,10 @@ private:
 	bool m_connected = false;
 	bool m_exclusive = false;
 	bool m_clipped = false;
+	bool m_cursorValid = false;
+	bool m_warpPending = false;
+	POINT m_lastCursor = { 0, 0 };
+	POINT m_warpCenter = { 0, 0 };
 	uint64_t m_connectedTimestamp = 0;
 	GameInputMouseButtons m_buttons = GameInputMouseNone;
 	int64_t m_deltaX = 0;
