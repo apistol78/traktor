@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,6 +8,7 @@
  */
 #include "Editor/App/EditorForm.h"
 
+#include "Core/Containers/AlignedVector.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/IStream.h"
 #include "Core/Io/StringOutputStream.h"
@@ -1575,6 +1576,9 @@ bool EditorForm::openWorkspace(const Path& workspacePath)
 		return false;
 	}
 
+	// The workspace may add dictionaries of its own modules.
+	loadLanguageDictionaries();
+
 	// Notify plugins about opened workspace.
 	for (auto editorPluginSite : m_editorPluginSites)
 		editorPluginSite->handleWorkspaceOpened();
@@ -2544,25 +2548,31 @@ void EditorForm::loadModules()
 
 void EditorForm::loadLanguageDictionaries()
 {
-	const std::wstring dictionaryPath = m_mergedSettings->getProperty< std::wstring >(L"Editor.Dictionary", L"$(TRAKTOR_HOME)/resources/runtime/editor/locale/english");
+	AlignedVector< std::wstring > dictionaryPaths;
+	dictionaryPaths.push_back(m_mergedSettings->getProperty< std::wstring >(L"Editor.Dictionary", L"$(TRAKTOR_HOME)/resources/runtime/editor/locale/english"));
+	for (const auto& dictionaryPath : m_mergedSettings->getProperty< SmallSet< std::wstring > >(L"Editor.Dictionaries"))
+		dictionaryPaths.push_back(dictionaryPath);
 
-	RefArray< File > files = FileSystem::getInstance().find(dictionaryPath + L"/*.dictionary");
-	for (auto file : files)
+	for (const auto& dictionaryPath : dictionaryPaths)
 	{
-		Ref< IStream > s = FileSystem::getInstance().open(file->getPath(), File::FmRead);
-		if (!s)
+		RefArray< File > files = FileSystem::getInstance().find(dictionaryPath + L"/*.dictionary");
+		for (auto file : files)
 		{
-			log::warning << L"Unable to open dictionary \"" << file->getPath().getPathName() << L"\"; file missing." << Endl;
-			return;
+			Ref< IStream > s = FileSystem::getInstance().open(file->getPath(), File::FmRead);
+			if (!s)
+			{
+				log::warning << L"Unable to open dictionary \"" << file->getPath().getPathName() << L"\"; file missing." << Endl;
+				return;
+			}
+
+			Ref< i18n::Dictionary > dictionary = dynamic_type_cast< i18n::Dictionary* >(xml::XmlDeserializer(s, file->getPath().getPathName()).readObject());
+			s->close();
+
+			if (dictionary)
+				i18n::I18N::getInstance().appendDictionary(dictionary);
+			else
+				log::warning << L"Unable to load dictionary \"" << file->getPath().getPathName() << L"\"; possibly corrupted." << Endl;
 		}
-
-		Ref< i18n::Dictionary > dictionary = dynamic_type_cast< i18n::Dictionary* >(xml::XmlDeserializer(s, file->getPath().getPathName()).readObject());
-		s->close();
-
-		if (dictionary)
-			i18n::I18N::getInstance().appendDictionary(dictionary);
-		else
-			log::warning << L"Unable to load dictionary \"" << file->getPath().getPathName() << L"\"; possibly corrupted." << Endl;
 	}
 }
 
