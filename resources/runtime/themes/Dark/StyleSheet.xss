@@ -233,6 +233,43 @@
 			</colors>
 		</item>
 		<item>
+			<typeName>traktor.ui.ChatView</typeName>
+			<colors>
+				<item>
+					<first>background-color</first>
+					<second>12</second>
+				</item>
+				<item>
+					<first>background-color-assistant</first>
+					<second>52</second>
+				</item>
+				<item>
+					<first>background-color-notice</first>
+					<second>48</second>
+				</item>
+				<item>
+					<first>background-color-user</first>
+					<second>42</second>
+				</item>
+				<item>
+					<first>color</first>
+					<second>4</second>
+				</item>
+				<item>
+					<first>color-assistant</first>
+					<second>4</second>
+				</item>
+				<item>
+					<first>color-notice</first>
+					<second>4</second>
+				</item>
+				<item>
+					<first>color-user</first>
+					<second>4</second>
+				</item>
+			</colors>
+		</item>
+		<item>
 			<typeName>traktor.ui.CommentNodeShape</typeName>
 			<colors>
 				<item>
