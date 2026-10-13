@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -331,7 +331,14 @@ bool SolutionBuilderMsvc::generate(const Solution* solution, const Path& solutio
 					continue;
 
 				Path externalProjectPath;
-				FileSystem::getInstance().getRelativePath(projectFileName, solution->getRootPath(), externalProjectPath);
+				if (!FileSystem::getInstance().getRelativePath(
+						FileSystem::getInstance().getAbsolutePath(projectFileName),
+						FileSystem::getInstance().getAbsolutePath(solution->getRootPath()),
+						externalProjectPath))
+				{
+					log::error << L"Unable to get path of external project \"" << externalProject->getName() << L"\" relative to solution." << Endl;
+					return false;
+				}
 
 				std::wstring projectExtension = Path(projectFileName).getExtension();
 				os << L"Project(\"" << solutionGuid << L"\") = \"" << externalProject->getName() << L"\", \"" << replaceAll(externalProjectPath.getPathName(), L'/', L'\\') << L"\", \"" << projectGuid << L"\"" << Endl;

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2025 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -393,7 +393,7 @@ bool SolutionBuilderMsvcVCXProj::generateProject(
 
 			const Path aggregateOutputPath = FileSystem::getInstance().getAbsolutePath(solution->getAggregateOutputPath());
 
-			os << L"@pushd \"$(SolutionDir)" << name << L"\"" << Endl;
+			os << L"@pushd \"$(OutDir)\"" << Endl;
 			for (auto aggregationItem : aggregationItems)
 			{
 				const Path sourceFile = Path(aggregationItem->getSourceFile());
