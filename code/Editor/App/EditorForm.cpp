@@ -633,6 +633,28 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	// Create object store.
 	m_objectStore = new ObjectStore();
 
+	// Instantiate new editor plugins.
+	RefArray< IEditorPlugin > editorPlugins;
+	for (const auto& editorPluginType : type_of< IEditorPlugin >().findAllOf(false))
+	{
+		Ref< IEditorPlugin > editorPlugin = dynamic_type_cast< IEditorPlugin* >(editorPluginType->createInstance());
+		if (editorPlugin)
+			editorPlugins.push_back(editorPlugin);
+	}
+
+	// Sort plugins by ordinal; this will ensure creation order of plugins.
+	editorPlugins.sort([](IEditorPlugin* lh, IEditorPlugin* rh) {
+		return lh->getOrdinal() < rh->getOrdinal();
+	});
+
+	// Create editor plugins.
+	for (auto editorPlugin : editorPlugins)
+	{
+		Ref< EditorPluginSite > site = new EditorPluginSite(this, editorPlugin);
+		if (site->create(this))
+			m_editorPluginSites.push_back(site);
+	}
+
 	createFactories();
 
 	// Collect all shortcut commands from all editors.
@@ -2510,13 +2532,11 @@ void EditorForm::createFactories()
 	// Cleanup previous factories.
 	m_editorPageFactories.clear();
 	m_objectEditorFactories.clear();
-
-	for (auto pluginSite : m_editorPluginSites)
-		pluginSite->destroy();
-	m_editorPluginSites.clear();
-
 	m_editorTools.clear();
 
+	for (auto toolButton : m_toolBarTools)
+		m_toolBar->removeItem(toolButton);
+	m_toolBarTools.clear();
 	m_menuBar->removeItem(m_menuTools);
 	m_menuTools = nullptr;
 
@@ -2534,28 +2554,6 @@ void EditorForm::createFactories()
 		Ref< IObjectEditorFactory > objectEditorFactory = dynamic_type_cast< IObjectEditorFactory* >(objectEditorFactoryType->createInstance());
 		if (objectEditorFactory)
 			m_objectEditorFactories.push_back(objectEditorFactory);
-	}
-
-	// Instantiate editor plugins.
-	RefArray< IEditorPlugin > editorPlugins;
-	for (const auto& editorPluginType : type_of< IEditorPlugin >().findAllOf(false))
-	{
-		Ref< IEditorPlugin > editorPlugin = dynamic_type_cast< IEditorPlugin* >(editorPluginType->createInstance());
-		if (editorPlugin)
-			editorPlugins.push_back(editorPlugin);
-	}
-
-	// Sort plugins by ordinal; this will ensure creation order of plugins.
-	editorPlugins.sort([](IEditorPlugin* lh, IEditorPlugin* rh) {
-		return lh->getOrdinal() < rh->getOrdinal();
-	});
-
-	// Create editor plugins.
-	for (auto editorPlugin : editorPlugins)
-	{
-		Ref< EditorPluginSite > site = new EditorPluginSite(this, editorPlugin);
-		if (site->create(this))
-			m_editorPluginSites.push_back(site);
 	}
 
 	// Load tools and populate tool menu.
@@ -2586,7 +2584,9 @@ void EditorForm::createFactories()
 			if (toolIcon)
 			{
 				const int32_t iconIndex = m_toolBar->addImage(toolIcon);
-				m_toolBar->addItem(new ui::ToolBarButton(desc, iconIndex, ui::Command(i)));
+				Ref< ui::ToolBarButton > toolButton = new ui::ToolBarButton(desc, iconIndex, ui::Command(i));
+				m_toolBar->addItem(toolButton);
+				m_toolBarTools.push_back(toolButton);
 			}
 		}
 

@@ -50,6 +50,7 @@ class ShortcutTable;
 class StatusBar;
 class Tab;
 class ToolBar;
+class ToolBarButton;
 class ToolBarButtonClickEvent;
 class ToolBarMenu;
 
@@ -211,6 +212,7 @@ private:
 	Ref< ui::Tab > m_tabGroupLastFocus; //!< Tab group which last received focus; only use for determine which group to add new pages.
 	Ref< ui::Menu > m_menuTab;
 	Ref< ui::ToolBarMenu > m_menuTools;
+	RefArray< ui::ToolBarButton > m_toolBarTools;
 	Ref< DatabaseView > m_dataBaseView;
 	Ref< LogView > m_logView;
 	Ref< db::Database > m_sourceDatabase;
