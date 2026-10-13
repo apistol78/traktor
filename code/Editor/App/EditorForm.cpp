@@ -633,81 +633,7 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	// Create object store.
 	m_objectStore = new ObjectStore();
 
-	// Create editor page factories.
-	for (const auto& editorPageFactoryType : type_of< IEditorPageFactory >().findAllOf(false))
-	{
-		Ref< IEditorPageFactory > editorPageFactory = dynamic_type_cast< IEditorPageFactory* >(editorPageFactoryType->createInstance());
-		if (editorPageFactory)
-			m_editorPageFactories.push_back(editorPageFactory);
-	}
-
-	// Create object editor factories.
-	for (const auto& objectEditorFactoryType : type_of< IObjectEditorFactory >().findAllOf(false))
-	{
-		Ref< IObjectEditorFactory > objectEditorFactory = dynamic_type_cast< IObjectEditorFactory* >(objectEditorFactoryType->createInstance());
-		if (objectEditorFactory)
-			m_objectEditorFactories.push_back(objectEditorFactory);
-	}
-
-	// Instantiate editor plugins.
-	RefArray< IEditorPlugin > editorPlugins;
-	for (const auto& editorPluginType : type_of< IEditorPlugin >().findAllOf(false))
-	{
-		Ref< IEditorPlugin > editorPlugin = dynamic_type_cast< IEditorPlugin* >(editorPluginType->createInstance());
-		if (editorPlugin)
-			editorPlugins.push_back(editorPlugin);
-	}
-
-	// Sort plugins by ordinal; this will ensure creation order of plugins.
-	editorPlugins.sort([](IEditorPlugin* lh, IEditorPlugin* rh) {
-		return lh->getOrdinal() < rh->getOrdinal();
-	});
-
-	// Create editor plugins.
-	for (auto editorPlugin : editorPlugins)
-	{
-		Ref< EditorPluginSite > site = new EditorPluginSite(this, editorPlugin);
-		if (site->create(this))
-			m_editorPluginSites.push_back(site);
-	}
-
-	// Load tools and populate tool menu.
-	TypeInfoSet toolTypes = type_of< IEditorTool >().findAllOf(false);
-	if (!toolTypes.empty())
-	{
-		m_menuTools = new ui::ToolBarMenu(i18n::Text(L"MENU_TOOLS"), L"");
-
-		for (const auto& toolType : toolTypes)
-		{
-			Ref< IEditorTool > tool = dynamic_type_cast< IEditorTool* >(toolType->createInstance());
-			if (tool)
-				m_editorTools.push_back(tool);
-		}
-
-		m_editorTools.sort([](const IEditorTool* lh, const IEditorTool* rh) {
-			return compareIgnoreCase(lh->getDescription(), rh->getDescription()) < 0;
-		});
-
-		for (uint32_t i = 0; i < m_editorTools.size(); ++i)
-		{
-			const std::wstring desc = m_editorTools[i]->getDescription();
-			T_ASSERT(!desc.empty());
-
-			m_menuTools->add(new ui::MenuItem(ui::Command(i), desc));
-
-			Ref< ui::IBitmap > toolIcon = m_editorTools[i]->getIcon();
-			if (toolIcon)
-			{
-				const int32_t iconIndex = m_toolBar->addImage(toolIcon);
-				m_toolBar->addItem(new ui::ToolBarButton(desc, iconIndex, ui::Command(i)));
-			}
-		}
-
-		if (!m_editorTools.empty())
-			m_menuBar->addItem(m_menuTools);
-		else
-			m_menuTools = nullptr;
-	}
+	createFactories();
 
 	// Collect all shortcut commands from all editors.
 	m_shortcutCommands.push_back(ui::Command(L"Editor.Save"));
@@ -1499,6 +1425,9 @@ bool EditorForm::openWorkspace(const Path& workspacePath)
 
 		// Reload modules, more modules might be added in workspace.
 		loadModules();
+
+		// Re-create factories.
+		createFactories();
 
 		// Update UI views.
 		m_dataBaseView->setDatabase(m_sourceDatabase);
@@ -2573,6 +2502,98 @@ void EditorForm::loadLanguageDictionaries()
 			else
 				log::warning << L"Unable to load dictionary \"" << file->getPath().getPathName() << L"\"; possibly corrupted." << Endl;
 		}
+	}
+}
+
+void EditorForm::createFactories()
+{
+	// Cleanup previous factories.
+	m_editorPageFactories.clear();
+	m_objectEditorFactories.clear();
+
+	for (auto pluginSite : m_editorPluginSites)
+		pluginSite->destroy();
+	m_editorPluginSites.clear();
+
+	m_editorTools.clear();
+
+	m_menuBar->removeItem(m_menuTools);
+	m_menuTools = nullptr;
+
+	// Create editor page factories.
+	for (const auto& editorPageFactoryType : type_of< IEditorPageFactory >().findAllOf(false))
+	{
+		Ref< IEditorPageFactory > editorPageFactory = dynamic_type_cast< IEditorPageFactory* >(editorPageFactoryType->createInstance());
+		if (editorPageFactory)
+			m_editorPageFactories.push_back(editorPageFactory);
+	}
+
+	// Create object editor factories.
+	for (const auto& objectEditorFactoryType : type_of< IObjectEditorFactory >().findAllOf(false))
+	{
+		Ref< IObjectEditorFactory > objectEditorFactory = dynamic_type_cast< IObjectEditorFactory* >(objectEditorFactoryType->createInstance());
+		if (objectEditorFactory)
+			m_objectEditorFactories.push_back(objectEditorFactory);
+	}
+
+	// Instantiate editor plugins.
+	RefArray< IEditorPlugin > editorPlugins;
+	for (const auto& editorPluginType : type_of< IEditorPlugin >().findAllOf(false))
+	{
+		Ref< IEditorPlugin > editorPlugin = dynamic_type_cast< IEditorPlugin* >(editorPluginType->createInstance());
+		if (editorPlugin)
+			editorPlugins.push_back(editorPlugin);
+	}
+
+	// Sort plugins by ordinal; this will ensure creation order of plugins.
+	editorPlugins.sort([](IEditorPlugin* lh, IEditorPlugin* rh) {
+		return lh->getOrdinal() < rh->getOrdinal();
+	});
+
+	// Create editor plugins.
+	for (auto editorPlugin : editorPlugins)
+	{
+		Ref< EditorPluginSite > site = new EditorPluginSite(this, editorPlugin);
+		if (site->create(this))
+			m_editorPluginSites.push_back(site);
+	}
+
+	// Load tools and populate tool menu.
+	TypeInfoSet toolTypes = type_of< IEditorTool >().findAllOf(false);
+	if (!toolTypes.empty())
+	{
+		m_menuTools = new ui::ToolBarMenu(i18n::Text(L"MENU_TOOLS"), L"");
+
+		for (const auto& toolType : toolTypes)
+		{
+			Ref< IEditorTool > tool = dynamic_type_cast< IEditorTool* >(toolType->createInstance());
+			if (tool)
+				m_editorTools.push_back(tool);
+		}
+
+		m_editorTools.sort([](const IEditorTool* lh, const IEditorTool* rh) {
+			return compareIgnoreCase(lh->getDescription(), rh->getDescription()) < 0;
+		});
+
+		for (uint32_t i = 0; i < m_editorTools.size(); ++i)
+		{
+			const std::wstring desc = m_editorTools[i]->getDescription();
+			T_ASSERT(!desc.empty());
+
+			m_menuTools->add(new ui::MenuItem(ui::Command(i), desc));
+
+			Ref< ui::IBitmap > toolIcon = m_editorTools[i]->getIcon();
+			if (toolIcon)
+			{
+				const int32_t iconIndex = m_toolBar->addImage(toolIcon);
+				m_toolBar->addItem(new ui::ToolBarButton(desc, iconIndex, ui::Command(i)));
+			}
+		}
+
+		if (!m_editorTools.empty())
+			m_menuBar->addItem(m_menuTools);
+		else
+			m_menuTools = nullptr;
 	}
 }
 

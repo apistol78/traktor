@@ -302,6 +302,8 @@ private:
 
 	void loadLanguageDictionaries();
 
+	void createFactories();
+
 	void checkModified();
 
 	bool isModified(ui::TabPage* tabPage);

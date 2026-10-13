@@ -51,6 +51,8 @@ public:
 
 	uint32_t addItem(ToolBarItem* item);
 
+	bool removeItem(ToolBarItem* item);
+
 	void setItem(uint32_t id, ToolBarItem* item);
 
 	Ref< ToolBarItem > getItem(uint32_t id);

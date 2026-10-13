@@ -100,6 +100,11 @@ uint32_t ToolBar::addItem(ToolBarItem* item)
 	return uint32_t(m_items.size() - 1);
 }
 
+bool ToolBar::removeItem(ToolBarItem* item)
+{
+	return m_items.remove(item);
+}
+
 void ToolBar::setItem(uint32_t id, ToolBarItem* item)
 {
 	T_ASSERT(id < m_items.size());
