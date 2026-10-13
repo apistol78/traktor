@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -137,10 +137,8 @@ bool migrateGroup(db::Group* targetGroup, db::Group* sourceGroup, const DateTime
 	sourceGroup->getChildInstances(childInstances);
 
 	for (auto childInstance : childInstances)
-	{
 		if (!migrateInstance(childInstance, targetGroup, modifiedSince))
 			return false;
-	}
 
 	++groupIndex;
 
@@ -213,7 +211,30 @@ int main(int argc, const char** argv)
 		return 0;
 	}
 
-	bool verbose = cmdLine.hasOption('v', L"verbose");
+	// Check if environment is already set, else set to current working directory.
+	std::wstring home;
+	if (!OS::getInstance().getEnvironment(L"TRAKTOR_HOME", home))
+	{
+		const Path executablePath = OS::getInstance().getExecutable().getPathOnly();
+		FileSystem::getInstance().setCurrentVolumeAndDirectory(executablePath);
+
+		while (!FileSystem::getInstance().exist(L"LICENSE.txt"))
+		{
+			const Path cwd = FileSystem::getInstance().getCurrentVolumeAndDirectory();
+			const Path pwd = cwd.getPathOnly();
+			if (cwd == pwd)
+			{
+				log::error << L"No LICENSE.txt file found." << Endl;
+				return 1;
+			}
+			FileSystem::getInstance().setCurrentVolumeAndDirectory(pwd);
+		}
+
+		const Path cwd = FileSystem::getInstance().getCurrentVolumeAndDirectory();
+		OS::getInstance().setEnvironment(L"TRAKTOR_HOME", cwd.getPathNameOS());
+	}
+
+	const bool verbose = cmdLine.hasOption('v', L"verbose");
 
 	if (verbose)
 		traktor::log::info << L"Database Migration Tool; Built '" << mbstows(__TIME__) << L" - " << mbstows(__DATE__) << L"'" << Endl;
@@ -224,15 +245,15 @@ int main(int argc, const char** argv)
 	// Save log file.
 	if (cmdLine.hasOption('l', L"log"))
 	{
-		std::wstring logPath = cmdLine.getOption('l', L"log").getString();
+		const std::wstring logPath = cmdLine.getOption('l', L"log").getString();
 		if ((logFile = FileSystem::getInstance().open(logPath, File::FmWrite)) != 0)
 		{
 			Ref< FileOutputStream > logStream = new FileOutputStream(logFile, new Utf8Encoding());
 			Ref< LogStreamTarget > logStreamTarget = new LogStreamTarget(logStream);
 
-			traktor::log::info   .setGlobalTarget(new LogRedirectTarget(logStreamTarget, traktor::log::info   .getGlobalTarget()));
+			traktor::log::info.setGlobalTarget(new LogRedirectTarget(logStreamTarget, traktor::log::info.getGlobalTarget()));
 			traktor::log::warning.setGlobalTarget(new LogRedirectTarget(logStreamTarget, traktor::log::warning.getGlobalTarget()));
-			traktor::log::error  .setGlobalTarget(new LogRedirectTarget(logStreamTarget, traktor::log::error  .getGlobalTarget()));
+			traktor::log::error.setGlobalTarget(new LogRedirectTarget(logStreamTarget, traktor::log::error.getGlobalTarget()));
 
 			if (verbose)
 				traktor::log::info << L"Log file \"" << logPath << L"\" created." << Endl;
@@ -244,7 +265,7 @@ int main(int argc, const char** argv)
 	// Either read configuration from settings file or from command line.
 	if (cmdLine.hasOption('s', L"settings"))
 	{
-		std::wstring settingsFile = cmdLine.getOption('s', L"settings").getString();
+		const std::wstring settingsFile = cmdLine.getOption('s', L"settings").getString();
 
 		Ref< PropertyGroup > settings = loadSettings(settingsFile);
 		if (!settings)
@@ -253,8 +274,8 @@ int main(int argc, const char** argv)
 			return 1;
 		}
 
-		auto modulePaths = settings->getProperty< SmallSet< std::wstring > >(L"Migrate.ModulePaths");
-		auto modules = settings->getProperty< SmallSet< std::wstring > >(L"Migrate.Modules");
+		const auto modulePaths = settings->getProperty< SmallSet< std::wstring > >(L"Migrate.ModulePaths");
+		const auto modules = settings->getProperty< SmallSet< std::wstring > >(L"Migrate.Modules");
 
 		std::vector< Path > modulePathsFlatten(modulePaths.begin(), modulePaths.end());
 		for (const auto& module : modules)
@@ -306,7 +327,7 @@ int main(int argc, const char** argv)
 	DateTime modifiedSince;
 	if (!cmdLine.hasOption('f', L"full"))
 	{
-		std::wstring destinationFileName = db::ConnectionString(destinationCs).get(L"fileName");
+		const std::wstring destinationFileName = db::ConnectionString(destinationCs).get(L"fileName");
 		if (!destinationFileName.empty())
 		{
 			Ref< File > destinationFile = FileSystem::getInstance().get(destinationFileName);
