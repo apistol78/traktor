@@ -38,10 +38,10 @@ IntervalTransformComponent::Entry* IntervalTransformComponent::alloc()
 
 void IntervalTransformComponent::free(Entry*& entry)
 {
-	if (entry == nullptr)
+	if (entry == nullptr || entry->index >= m_entries.size())
 		return;
 
-	T_FATAL_ASSERT(entry->index < m_entries.size() && m_entries[entry->index] == entry);
+	T_FATAL_ASSERT(m_entries[entry->index] == entry);
 
 	m_entries[entry->index] = m_entries.back();
 	m_entries[entry->index]->index = entry->index;

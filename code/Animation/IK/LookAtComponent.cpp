@@ -48,7 +48,7 @@ Aabb3 LookAtComponent::getBoundingBox() const
 
 void LookAtComponent::update(const world::UpdateParams& update)
 {
-	if (m_settings.joint == 0)
+	if (!m_enable || m_settings.joint == 0)
 		return;
 
 	auto skeletonComponent = m_owner->getComponent< SkeletonComponent >();
@@ -61,10 +61,7 @@ void LookAtComponent::update(const world::UpdateParams& update)
 
 	auto animatedMeshComponent = m_owner->getComponent< AnimatedMeshComponent >();
 	if (animatedMeshComponent && animatedMeshComponent->getLastDistance() >= m_settings.cullDistance)
-	{
-		m_weight = 0.0f;
 		return;
-	}
 
 	skeletonComponent->synchronize();
 
