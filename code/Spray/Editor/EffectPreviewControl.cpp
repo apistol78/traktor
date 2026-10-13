@@ -112,7 +112,7 @@ bool EffectPreviewControl::create(
 	resource::IResourceManager* resourceManager,
 	sound::AudioSystem* audioSystem)
 {
-	if (!render::RenderControl::create(parent, m_editor, resourceManager))
+	if (!render::RenderControl::create(parent, m_editor, resourceManager, false))
 		return false;
 
 	setView({ .position = Vector4(0.0f, -2.0f, 7.0f, 1.0f) });
