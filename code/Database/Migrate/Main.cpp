@@ -21,6 +21,7 @@
 #include "Core/Settings/PropertyString.h"
 #include "Core/Settings/PropertyStringSet.h"
 #include "Core/System/OS.h"
+#include "Core/System/ResolveEnv.h"
 #include "Database/Database.h"
 #include "Database/Group.h"
 #include "Database/Instance.h"
@@ -30,6 +31,16 @@ using namespace traktor;
 
 namespace
 {
+
+#if defined(_WIN32)
+const wchar_t* c_platform = L"win32";
+#elif defined(__APPLE__)
+const wchar_t* c_platform = L"osx";
+#elif defined(__LINUX__)
+const wchar_t* c_platform = L"linux";
+#elif defined(__RPI__)
+const wchar_t* c_platform = L"rpi";
+#endif
 
 /*! Count number of groups in database.
  *
@@ -173,6 +184,7 @@ Ref< PropertyGroup > loadSettings(const std::wstring& settingsFile)
 	Ref< traktor::IStream > file;
 
 	std::wstring globalConfig = settingsFile + L".config";
+	std::wstring systemConfig = settingsFile + L"." + c_platform + L".config";
 	std::wstring userConfig = settingsFile + L"." + OS::getInstance().getCurrentUser() + L".config";
 
 	if ((file = FileSystem::getInstance().open(userConfig, File::FmRead)) != 0)
@@ -188,6 +200,15 @@ Ref< PropertyGroup > loadSettings(const std::wstring& settingsFile)
 	{
 		settings = xml::XmlDeserializer(file, settingsFile).readObject< PropertyGroup >();
 		file->close();
+	}
+
+	if (settings && (file = FileSystem::getInstance().open(systemConfig, File::FmRead)) != 0)
+	{
+		Ref< PropertyGroup > systemSettings = xml::XmlDeserializer(file, systemConfig).readObject< PropertyGroup >();
+		file->close();
+
+		if (systemSettings)
+			settings = settings->merge(systemSettings, PropertyGroup::MmJoin);
 	}
 
 	return settings;
@@ -273,6 +294,8 @@ int main(int argc, const char** argv)
 			traktor::log::error << L"Unable to load migrate settings \"" << settingsFile << L"\"." << Endl;
 			return 1;
 		}
+
+		applyEnvironment(settings->getProperty< PropertyGroup >(L"Editor.Environment"));
 
 		const auto modulePaths = settings->getProperty< SmallSet< std::wstring > >(L"Migrate.ModulePaths");
 		const auto modules = settings->getProperty< SmallSet< std::wstring > >(L"Migrate.Modules");

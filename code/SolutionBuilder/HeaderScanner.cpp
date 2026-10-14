@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -66,6 +66,11 @@ bool HeaderScanner::get(const std::wstring& fileName, const std::wstring& projec
 	return true;
 }
 
+const SmallSet< std::wstring >& HeaderScanner::getIncludes(const std::wstring& fileName)
+{
+	return scan(fileName)->files;
+}
+
 const HeaderScanner::Includes* HeaderScanner::scan(const std::wstring& fileName)
 {
 	auto it = m_cache.find(fileName);
@@ -104,8 +109,8 @@ const HeaderScanner::Includes* HeaderScanner::scan(const std::wstring& fileName)
 
 		if (!filePath.empty())
 		{
-			const std::wstring dependencyName = Path(filePath + L"/" + dep).normalized().getPathNameOS();
-			if (FileSystem::getInstance().exist(dependencyName))
+			const std::wstring dependencyName = resolve(filePath + L"/" + dep);
+			if (!dependencyName.empty())
 			{
 				includes->files.insert(dependencyName);
 				continue;
@@ -114,8 +119,8 @@ const HeaderScanner::Includes* HeaderScanner::scan(const std::wstring& fileName)
 
         for (auto includePath : m_includePaths)
 		{
-			const std::wstring dependencyName = Path(includePath + L"/" + dep).normalized().getPathNameOS();
-			if (FileSystem::getInstance().exist(dependencyName))
+			const std::wstring dependencyName = resolve(includePath + L"/" + dep);
+			if (!dependencyName.empty())
 			{
 				includes->files.insert(dependencyName);
 				break;
@@ -125,6 +130,16 @@ const HeaderScanner::Includes* HeaderScanner::scan(const std::wstring& fileName)
 
 	file->close();
 	return includes;
+}
+
+std::wstring HeaderScanner::resolve(const std::wstring& fileName)
+{
+	auto it = m_resolved.find(fileName);
+	if (it != m_resolved.end())
+		return it->second;
+
+	const std::wstring resolvedName = Path(fileName).normalized().getPathNameOS();
+	return m_resolved[fileName] = FileSystem::getInstance().exist(resolvedName) ? resolvedName : L"";
 }
 
 }

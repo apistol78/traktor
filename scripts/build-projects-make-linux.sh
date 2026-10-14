@@ -4,6 +4,19 @@ set -e
 # Source environment configuration.
 . "`dirname \"$BASH_SOURCE\"`/config.sh"
 
+# Determine platform from some simple heuristic.
+if [[ `uname -s` == Linux* ]]; then
+	if [[ `uname -m` == arm* ]]; then
+		export TRAKTOR_PLATFORM=rpi
+	else
+		export TRAKTOR_PLATFORM=linux
+	fi
+elif [[ `uname -s` == Darwin* ]]; then
+	export TRAKTOR_PLATFORM=macos
+fi
+
+export SOLUTIONBUILDER="$TRAKTOR_HOME/bin/${TRAKTOR_PLATFORM/macos/osx}/releasestatic/Traktor.SolutionBuilder.App"
+
 # Generator configuration.
 export MAKE_OS=linux
 export MAKE_DIALECT=make
@@ -17,13 +30,6 @@ export MAKE_STATIC_LIBRARY_FILE="lib%s.a"
 export MAKE_SHARED_LIBRARY_FILE="lib%s.so"
 export MAKE_EXECUTABLE_FILE="%s"
 export MAKE_VERBOSE=false
-
-# Steam redistributable aggregate.
-if [ "`uname -m`" == "x86_64" ]; then
-	export STEAMWORKS_SDK_BIN="$STEAMWORKS_SDK/redistributable_bin/linux64"
-else
-	export STEAMWORKS_SDK_BIN="$STEAMWORKS_SDK/redistributable_bin/linux32"
-fi
 
 # Build solution files.
 $SOLUTIONBUILDER \

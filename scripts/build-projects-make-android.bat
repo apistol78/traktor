@@ -1,12 +1,9 @@
 @echo off
 
 call %~dp0config.bat
+call %~dp0config-android.bat
 
-:: Check prequisite.
-if "%ANDROID_NDK_ROOT%" == "" (
-	echo ANDROID_NDK_ROOT must be set!
-	exit /b
-)
+set SOLUTIONBUILDER=%TRAKTOR_HOME%\bin\win64\releasestatic\Traktor.SolutionBuilder.App
 
 :: Mandatory parameters.
 set MAKE_OS=windows

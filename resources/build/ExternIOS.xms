@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.sb.Solution" version="6">
+<object type="traktor.sb.Solution" version="7">
 	<name>Extern iOS</name>
 	<rootPath>$(TRAKTOR_HOME)/build/ios</rootPath>
 	<aggregateOutputPath>$(TRAKTOR_HOME)/bin/latest/ios</aggregateOutputPath>
@@ -4118,4 +4118,96 @@
 		</item>
 	</projects>
 	<startupProject/>
+	<environmentVariables>
+		<item>
+			<name>AGG_SDK</name>
+			<value>$(TRAKTOR_HOME)/3rdp/agg-2.6</value>
+			<overwrite>true</overwrite>
+		</item>
+		<item>
+			<name>BULLET_SDK</name>
+			<value>$(TRAKTOR_HOME)/3rdp/bullet3</value>
+			<overwrite>true</overwrite>
+		</item>
+		<item>
+			<name>EXPAT_SDK</name>
+			<value>$(TRAKTOR_HOME)/3rdp/libexpat/expat</value>
+			<overwrite>true</overwrite>
+		</item>
+		<item>
+			<name>FLAC_SDK</name>
+			<value>$(TRAKTOR_HOME)/3rdp/flac</value>
+			<overwrite>true</overwrite>
+		</item>
+		<item>
+			<name>FREETYPE_SDK</name>
+			<value>$(TRAKTOR_HOME)/3rdp/freetype</value>
+			<overwrite>true</overwrite>
+		</item>
+		<item>
+			<name>JPEG_SDK</name>
+			<value>$(TRAKTOR_HOME)/3rdp/jpeg/jpeg-9e</value>
+			<overwrite>true</overwrite>
+		</item>
+		<item>
+			<name>LUA_SDK</name>
+			<value>$(TRAKTOR_HOME)/3rdp/lua/lua-5.5.0</value>
+			<overwrite>true</overwrite>
+		</item>
+		<item>
+			<name>LZF_SDK</name>
+			<value>$(TRAKTOR_HOME)/3rdp/liblzf/liblzf-3.6</value>
+			<overwrite>true</overwrite>
+		</item>
+		<item>
+			<name>OGG_SDK</name>
+			<value>$(TRAKTOR_HOME)/3rdp/ogg</value>
+			<overwrite>true</overwrite>
+		</item>
+		<item>
+			<name>PNG_SDK</name>
+			<value>$(TRAKTOR_HOME)/3rdp/libpng</value>
+			<overwrite>true</overwrite>
+		</item>
+		<item>
+			<name>RECAST_SDK</name>
+			<value>$(TRAKTOR_HOME)/3rdp/recastnavigation</value>
+			<overwrite>true</overwrite>
+		</item>
+		<item>
+			<name>STB_SDK</name>
+			<value>$(TRAKTOR_HOME)/3rdp/stb</value>
+			<overwrite>true</overwrite>
+		</item>
+		<item>
+			<name>SQLITE_SDK</name>
+			<value>$(TRAKTOR_HOME)/3rdp/sqlite/sqlite-amalgamation-3390200</value>
+			<overwrite>true</overwrite>
+		</item>
+		<item>
+			<name>SQUISH_SDK</name>
+			<value>$(TRAKTOR_HOME)/3rdp/squish</value>
+			<overwrite>true</overwrite>
+		</item>
+		<item>
+			<name>THEORA_SDK</name>
+			<value>$(TRAKTOR_HOME)/3rdp/theora</value>
+			<overwrite>true</overwrite>
+		</item>
+		<item>
+			<name>VORBIS_SDK</name>
+			<value>$(TRAKTOR_HOME)/3rdp/vorbis</value>
+			<overwrite>true</overwrite>
+		</item>
+		<item>
+			<name>ZLIB_SDK</name>
+			<value>$(TRAKTOR_HOME)/3rdp/zlib</value>
+			<overwrite>true</overwrite>
+		</item>
+		<item>
+			<name>VMA_SDK</name>
+			<value>$(TRAKTOR_HOME)/3rdp/VulkanMemoryAllocator</value>
+			<overwrite>true</overwrite>
+		</item>
+	</environmentVariables>
 </object>

@@ -10,6 +10,8 @@
 
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
+#include "Core/Serialization/MemberAlignedVector.h"
+#include "Core/Serialization/MemberComposite.h"
 #include "Core/Serialization/MemberRef.h"
 #include "Core/Serialization/MemberRefArray.h"
 #include "Core/Serialization/MemberStl.h"
@@ -20,7 +22,7 @@
 namespace traktor::sb
 {
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sb.Solution", 6, Solution, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sb.Solution", 7, Solution, ISerializable)
 
 void Solution::setName(const std::wstring& name)
 {
@@ -105,6 +107,16 @@ Project* Solution::getStartupProject() const
 	return m_startupProject;
 }
 
+void Solution::setEnvironmentVariables(const AlignedVector< EnvironmentVariable >& environmentVariables)
+{
+	m_environmentVariables = environmentVariables;
+}
+
+const AlignedVector< Solution::EnvironmentVariable >& Solution::getEnvironmentVariables() const
+{
+	return m_environmentVariables;
+}
+
 void Solution::serialize(ISerializer& s)
 {
 	s >> Member< std::wstring >(L"name", m_name);
@@ -129,6 +141,16 @@ void Solution::serialize(ISerializer& s)
 
 	if (s.getVersion< Solution >() >= 6)
 		s >> MemberRef< Project >(L"startupProject", m_startupProject);
+
+	if (s.getVersion< Solution >() >= 7)
+		s >> MemberAlignedVector< EnvironmentVariable, MemberComposite< EnvironmentVariable > >(L"environmentVariables", m_environmentVariables);
+}
+
+void Solution::EnvironmentVariable::serialize(ISerializer& s)
+{
+	s >> Member< std::wstring >(L"name", name);
+	s >> Member< std::wstring >(L"value", value);
+	s >> Member< bool >(L"overwrite", overwrite);
 }
 
 }

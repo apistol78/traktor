@@ -1,0 +1,321 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.PropertyGroup">
+	<value>
+		<item>
+			<first>Direct.Compilers</first>
+			<second type="traktor.PropertyGroup">
+				<value>
+					<item>
+						<first>C</first>
+						<second type="traktor.PropertyGroup">
+							<value>
+								<item>
+									<first>Extensions</first>
+									<second type="traktor.PropertyString">
+										<value>c</value>
+									</second>
+								</item>
+								<item>
+									<first>Executable</first>
+									<second type="traktor.PropertyString">
+										<value>ccache gcc</value>
+									</second>
+								</item>
+								<item>
+									<first>Arguments</first>
+									<second type="traktor.PropertyString">
+										<value>-c -fno-common -march=corei7-avx -msse4.1 -D _UNICODE -D UNICODE -D __LINUX__ -fPIC -fvisibility=hidden %(Options) %(WarningLevel) %(IncludePaths) %(Definitions) %(AdditionalOptions) -o "%(Output)" "%(Input)"</value>
+									</second>
+								</item>
+								<item>
+									<first>ObjectExtension</first>
+									<second type="traktor.PropertyString">
+										<value>.o</value>
+									</second>
+								</item>
+								<item>
+									<first>IncludePath</first>
+									<second type="traktor.PropertyString">
+										<value>-I"%(Value)"</value>
+									</second>
+								</item>
+								<item>
+									<first>Definition</first>
+									<second type="traktor.PropertyString">
+										<value>-D%(Value)</value>
+									</second>
+								</item>
+								<item>
+									<first>Options</first>
+									<second type="traktor.PropertyGroup">
+										<value>
+											<item>
+												<first>DebugStaticLibrary</first>
+												<second type="traktor.PropertyString">
+													<value>-D _DEBUG -Og -g -fno-omit-frame-pointer -fsanitize=address</value>
+												</second>
+											</item>
+											<item>
+												<first>DebugSharedLibrary</first>
+												<second type="traktor.PropertyString">
+													<value>-D _DEBUG -Og -g -fno-omit-frame-pointer -fsanitize=address</value>
+												</second>
+											</item>
+											<item>
+												<first>DebugExecutable</first>
+												<second type="traktor.PropertyString">
+													<value>-D _DEBUG -Og -g -fno-omit-frame-pointer -fsanitize=address</value>
+												</second>
+											</item>
+											<item>
+												<first>DebugExecutableConsole</first>
+												<second type="traktor.PropertyString">
+													<value>-D _DEBUG -Og -g -fno-omit-frame-pointer -fsanitize=address</value>
+												</second>
+											</item>
+											<item>
+												<first>ReleaseStaticLibrary</first>
+												<second type="traktor.PropertyString">
+													<value>-D NDEBUG -O3 -g1</value>
+												</second>
+											</item>
+											<item>
+												<first>ReleaseSharedLibrary</first>
+												<second type="traktor.PropertyString">
+													<value>-D NDEBUG -O3 -g1</value>
+												</second>
+											</item>
+											<item>
+												<first>ReleaseExecutable</first>
+												<second type="traktor.PropertyString">
+													<value>-D NDEBUG -O3 -g1</value>
+												</second>
+											</item>
+											<item>
+												<first>ReleaseExecutableConsole</first>
+												<second type="traktor.PropertyString">
+													<value>-D NDEBUG -O3 -g1</value>
+												</second>
+											</item>
+										</value>
+									</second>
+								</item>
+								<item>
+									<first>WarningLevels</first>
+									<second type="traktor.PropertyGroup">
+										<value>
+											<item>
+												<first>NoWarnings</first>
+												<second type="traktor.PropertyString">
+													<value>-w</value>
+												</second>
+											</item>
+										</value>
+									</second>
+								</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>C++</first>
+						<second type="traktor.PropertyGroup">
+							<value>
+								<item>
+									<first>Extensions</first>
+									<second type="traktor.PropertyString">
+										<value>cc;cpp</value>
+									</second>
+								</item>
+								<item>
+									<first>Executable</first>
+									<second type="traktor.PropertyString">
+										<value>ccache gcc</value>
+									</second>
+								</item>
+								<item>
+									<first>Arguments</first>
+									<second type="traktor.PropertyString">
+										<value>-c -fno-common -march=corei7-avx -msse4.1 -D _UNICODE -D UNICODE -D __LINUX__ -fPIC -fvisibility=hidden -std=c++20 %(Options) %(WarningLevel) %(IncludePaths) %(Definitions) %(AdditionalOptions) -o "%(Output)" "%(Input)"</value>
+									</second>
+								</item>
+								<item>
+									<first>ObjectExtension</first>
+									<second type="traktor.PropertyString">
+										<value>.o</value>
+									</second>
+								</item>
+								<item>
+									<first>IncludePath</first>
+									<second type="traktor.PropertyString">
+										<value>-I"%(Value)"</value>
+									</second>
+								</item>
+								<item>
+									<first>Definition</first>
+									<second type="traktor.PropertyString">
+										<value>-D%(Value)</value>
+									</second>
+								</item>
+								<item>
+									<first>Options</first>
+									<second type="traktor.PropertyGroup">
+										<value>
+											<item>
+												<first>DebugStaticLibrary</first>
+												<second type="traktor.PropertyString">
+													<value>-D _DEBUG -Og -g -fno-omit-frame-pointer -fsanitize=address</value>
+												</second>
+											</item>
+											<item>
+												<first>DebugSharedLibrary</first>
+												<second type="traktor.PropertyString">
+													<value>-D _DEBUG -Og -g -fno-omit-frame-pointer -fsanitize=address</value>
+												</second>
+											</item>
+											<item>
+												<first>DebugExecutable</first>
+												<second type="traktor.PropertyString">
+													<value>-D _DEBUG -Og -g -fno-omit-frame-pointer -fsanitize=address</value>
+												</second>
+											</item>
+											<item>
+												<first>DebugExecutableConsole</first>
+												<second type="traktor.PropertyString">
+													<value>-D _DEBUG -Og -g -fno-omit-frame-pointer -fsanitize=address</value>
+												</second>
+											</item>
+											<item>
+												<first>ReleaseStaticLibrary</first>
+												<second type="traktor.PropertyString">
+													<value>-D NDEBUG -O3 -g1</value>
+												</second>
+											</item>
+											<item>
+												<first>ReleaseSharedLibrary</first>
+												<second type="traktor.PropertyString">
+													<value>-D NDEBUG -O3 -g1</value>
+												</second>
+											</item>
+											<item>
+												<first>ReleaseExecutable</first>
+												<second type="traktor.PropertyString">
+													<value>-D NDEBUG -O3 -g1</value>
+												</second>
+											</item>
+											<item>
+												<first>ReleaseExecutableConsole</first>
+												<second type="traktor.PropertyString">
+													<value>-D NDEBUG -O3 -g1</value>
+												</second>
+											</item>
+										</value>
+									</second>
+								</item>
+								<item>
+									<first>WarningLevels</first>
+									<second type="traktor.PropertyGroup">
+										<value>
+											<item>
+												<first>NoWarnings</first>
+												<second type="traktor.PropertyString">
+													<value>-w</value>
+												</second>
+											</item>
+										</value>
+									</second>
+								</item>
+							</value>
+						</second>
+					</item>
+				</value>
+			</second>
+		</item>
+		<item>
+			<first>Direct.Linker</first>
+			<second type="traktor.PropertyGroup">
+				<value>
+					<item>
+						<first>Executable</first>
+						<second type="traktor.PropertyString">
+							<value>c++</value>
+						</second>
+					</item>
+					<item>
+						<first>Arguments</first>
+						<second type="traktor.PropertyString">
+							<value>-Wl,-rpath=$ORIGIN -Wl,-gc-sections -Wl,-z,now -Wl,--no-undefined %(Options) -o "%(Output)" %(Inputs) %(LibraryPaths) -Wl,-rpath-link="%(OutDir)" %(Libraries) %(AdditionalOptions)</value>
+						</second>
+					</item>
+					<item>
+						<first>LibraryPath</first>
+						<second type="traktor.PropertyString">
+							<value>-L"%(Value)"</value>
+						</second>
+					</item>
+					<item>
+						<first>Library</first>
+						<second type="traktor.PropertyString">
+							<value>-l%(Value)</value>
+						</second>
+					</item>
+					<item>
+						<first>ExternalLibrary</first>
+						<second type="traktor.PropertyString">
+							<value>-l%(Value)</value>
+						</second>
+					</item>
+					<item>
+						<first>Options</first>
+						<second type="traktor.PropertyGroup">
+							<value>
+								<item>
+									<first>DebugSharedLibrary</first>
+									<second type="traktor.PropertyString">
+										<value>-g -shared -fsanitize=address</value>
+									</second>
+								</item>
+								<item>
+									<first>ReleaseSharedLibrary</first>
+									<second type="traktor.PropertyString">
+										<value>-g1 -shared</value>
+									</second>
+								</item>
+								<item>
+									<first>DebugExecutable</first>
+									<second type="traktor.PropertyString">
+										<value>-g -fsanitize=address</value>
+									</second>
+								</item>
+								<item>
+									<first>DebugExecutableConsole</first>
+									<second type="traktor.PropertyString">
+										<value>-g -fsanitize=address</value>
+									</second>
+								</item>
+							</value>
+						</second>
+					</item>
+				</value>
+			</second>
+		</item>
+		<item>
+			<first>Direct.Archiver</first>
+			<second type="traktor.PropertyGroup">
+				<value>
+					<item>
+						<first>Executable</first>
+						<second type="traktor.PropertyString">
+							<value>ar</value>
+						</second>
+					</item>
+					<item>
+						<first>Arguments</first>
+						<second type="traktor.PropertyString">
+							<value>-r -s "%(Output)" %(Inputs)</value>
+						</second>
+					</item>
+				</value>
+			</second>
+		</item>
+	</value>
+</object>

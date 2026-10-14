@@ -556,9 +556,22 @@ Ref< IProcess > OS::execute(
 		if (env)
 			free(env);
 
+	// Only child writes to pipes.
+	if ((flags & EfRedirectStdIO) != 0)
+	{
+		::close(childStdOut[1]);
+		::close(childStdErr[1]);
+	}
+
 	// Cleanup in case of failure.
 	if (err != 0)
 	{
+		if ((flags & EfRedirectStdIO) != 0)
+		{
+			::close(childStdOut[0]);
+			::close(childStdErr[0]);
+		}
+
 		posix_spawn_file_actions_destroy(fileActions);
 		delete fileActions;
 

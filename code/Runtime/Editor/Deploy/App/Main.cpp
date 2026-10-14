@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,6 +8,7 @@
  */
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/IStream.h"
+#include "Core/Io/Path.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/CommandLine.h"
 #include "Core/Misc/String.h"
@@ -17,6 +18,7 @@
 #include "Core/Settings/PropertyInteger.h"
 #include "Core/Settings/PropertyString.h"
 #include "Core/System/OS.h"
+#include "Core/System/ResolveEnv.h"
 #include "Database/Database.h"
 #include "Database/Instance.h"
 #include "Database/Local/LocalDatabase.h"
@@ -32,6 +34,16 @@ using namespace traktor;
 
 namespace
 {
+
+#if defined(_WIN32)
+const wchar_t* c_platform = L"win32";
+#elif defined(__APPLE__)
+const wchar_t* c_platform = L"osx";
+#elif defined(__LINUX__)
+const wchar_t* c_platform = L"linux";
+#elif defined(__RPI__)
+const wchar_t* c_platform = L"rpi";
+#endif
 
 std::wstring mangleName(std::wstring name)
 {
@@ -121,6 +133,12 @@ int main(int argc, const char** argv)
 		traktor::log::error << L"Unable to load settings \"" << settingsFile << L"\"." << Endl;
 		return 1;
 	}
+
+	const Path settingsPath(settingsFile);
+	if (Ref< PropertyGroup > platformSettings = loadSettings(settingsPath.getPathNameNoExtension() + L"." + c_platform + L"." + settingsPath.getExtension()))
+		settings = settings->merge(platformSettings, PropertyGroup::MmJoin);
+
+	applyEnvironment(settings->getProperty< PropertyGroup >(L"Editor.Environment"));
 
 	Ref< PropertyGroup > workspace;
 	if ((workspace = loadSettings(workspaceFile)) == 0)

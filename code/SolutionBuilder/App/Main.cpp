@@ -14,10 +14,12 @@
 #include "Core/Misc/String.h"
 #include "Core/Misc/TString.h"
 #include "Core/System/OS.h"
+#include "Core/System/ResolveEnv.h"
 #include "Core/Timer/Timer.h"
 #include "SolutionBuilder/CBlocks/SolutionBuilderCBlocks.h"
 #include "SolutionBuilder/Configuration.h"
 #include "SolutionBuilder/Dependencies/SolutionBuilderDependencies.h"
+#include "SolutionBuilder/Direct/SolutionBuilderDirect.h"
 #include "SolutionBuilder/Eclipse/SolutionBuilderEclipse.h"
 #include "SolutionBuilder/ExternalDependency.h"
 #include "SolutionBuilder/FBuild/SolutionBuilderFBuild.h"
@@ -29,10 +31,9 @@
 #include "SolutionBuilder/ProjectDependency.h"
 #include "SolutionBuilder/Solution.h"
 #include "SolutionBuilder/SolutionLoader.h"
+#include "SolutionBuilder/Utilities.h"
 #include "SolutionBuilder/Version.h"
 #include "SolutionBuilder/Xcode/SolutionBuilderXcode2.h"
-
-#include <set>
 
 using namespace traktor;
 using namespace traktor::sb;
@@ -43,53 +44,28 @@ using namespace traktor::sb;
 #define ERROR_UNABLE_TO_CREATE_BUILDER 4
 #define ERROR_UNABLE_TO_CREATE_SOLUTION 5
 
-void flattenIncludePaths(
-	const Path& solutionPath,
-	Project* project,
-	SmallSet< const Project* >& visited,
-	SmallMap< std::wstring, std::set< std::wstring > >& outConfigurationIncludePaths,
-	SmallMap< std::wstring, std::set< std::wstring > >& outConfigurationLibraryPaths)
+/*! Set environment variables of solution into process, external solutions first so solution's own take precedence. */
+void applyEnvironmentVariables(const Solution* solution, SmallSet< const Solution* >& visited, bool verbose)
 {
-	if (!visited.insert(project))
+	if (!visited.insert(solution))
 		return;
 
-	const Path solutionPathAbs = FileSystem::getInstance().getAbsolutePath(solutionPath);
+	for (auto project : solution->getProjects())
+		for (auto dependency : project->getDependencies())
+			if (auto externalDependency = dynamic_type_cast< const ExternalDependency* >(dependency))
+				applyEnvironmentVariables(externalDependency->getSolution(), visited, verbose);
 
-	for (auto configuration : project->getConfigurations())
+	for (const auto& variable : solution->getEnvironmentVariables())
 	{
-		const auto& includePaths = configuration->getIncludePaths();
-		for (const auto& includePath : includePaths)
-			if (!startsWith(includePath, L"`"))
-			{
-				const Path resolvedIncludePath = (Path(solutionPathAbs.getPathOnly()) + Path(includePath)).normalized();
-				outConfigurationIncludePaths[configuration->getName()].insert(resolvedIncludePath.getPathNameOS());
-			}
-			else
-				outConfigurationIncludePaths[configuration->getName()].insert(includePath);
-
-		const auto& libraryPaths = configuration->getLibraryPaths();
-		for (const auto& libraryPath : libraryPaths)
-			if (!startsWith(libraryPath, L"`"))
-			{
-				const Path resolvedLibraryPath = (Path(solutionPathAbs.getPathOnly()) + Path(libraryPath)).normalized();
-				outConfigurationLibraryPaths[configuration->getName()].insert(resolvedLibraryPath.getPathNameOS());
-			}
-			else
-				outConfigurationLibraryPaths[configuration->getName()].insert(libraryPath);
-	}
-
-	for (auto dependency : project->getDependencies())
-	{
-		if (!dependency->getInheritIncludePaths())
+		std::wstring value;
+		if (!variable.overwrite && OS::getInstance().getEnvironment(variable.name, value))
 			continue;
 
-		if (auto projectDependency = dynamic_type_cast< const ProjectDependency* >(dependency))
-			flattenIncludePaths(solutionPath, projectDependency->getProject(), visited, outConfigurationIncludePaths, outConfigurationLibraryPaths);
-		else if (auto externalDependency = dynamic_type_cast< const ExternalDependency* >(dependency))
-		{
-			const Path externalSolutionPath = FileSystem::getInstance().getAbsolutePath(Path(externalDependency->getSolutionFileName()));
-			flattenIncludePaths(externalSolutionPath, externalDependency->getProject(), visited, outConfigurationIncludePaths, outConfigurationLibraryPaths);
-		}
+		value = resolveEnv(variable.value, nullptr);
+		OS::getInstance().setEnvironment(variable.name, value);
+
+		if (verbose)
+			traktor::log::info << L"Environment " << variable.name << L" = \"" << value << L"\"" << Endl;
 	}
 }
 
@@ -106,6 +82,8 @@ int main(int argc, const char** argv)
 		std::wstring ide = cmdLine.getOption('f', L"format").getString();
 		if (ide == L"cblocks")
 			builder = new SolutionBuilderCBlocks();
+		else if (ide == L"direct")
+			builder = new SolutionBuilderDirect();
 		else if (ide == L"eclipse")
 			builder = new SolutionBuilderEclipse();
 		else if (ide == L"fbuild")
@@ -135,7 +113,7 @@ int main(int argc, const char** argv)
 	{
 		traktor::log::info << SB_TITLE << Endl;
 		traktor::log::info << L"Usage : " << Path(cmdLine.getFile()).getFileName() << L" -[options] [solution] (include project names)" << Endl;
-		traktor::log::info << L"\t-f,--format=[format]  [\"cblocks\", \"eclipse\", \"graphviz\", \"msvc\"*, \"make\", \"make2\", \"ninja\", \"xcode\", \"dependencies\"]" << Endl;
+		traktor::log::info << L"\t-f,--format=[format]  [\"cblocks\", \"direct\", \"eclipse\", \"graphviz\", \"msvc\"*, \"make\", \"make2\", \"ninja\", \"xcode\", \"dependencies\"]" << Endl;
 		traktor::log::info << L"\t--rootPath=Path       Override solution root path" << Endl;
 		traktor::log::info << L"\t--verbose             Verbose" << Endl;
 		traktor::log::info << L"\t--profile             Profile build scripts" << Endl;
@@ -192,6 +170,9 @@ int main(int argc, const char** argv)
 			return ERROR_UNABLE_TO_READ_SOLUTION;
 		}
 
+		SmallSet< const Solution* > visited;
+		applyEnvironmentVariables(solution, visited, cmdLine.hasOption('v', L"verbose"));
+
 		if (cmdLine.hasOption(L"rootPath"))
 		{
 			const Path rootPath(cmdLine.getOption(L"rootPath").getString());
@@ -204,7 +185,8 @@ int main(int argc, const char** argv)
 		if (cmdLine.hasOption('v', L"verbose"))
 			traktor::log::info << L"Flatten include paths..." << Endl;
 
-		if (cmdLine.getCount() > 1)
+		// Direct builder selects projects itself, dependencies of selected projects must stay enabled.
+		if (cmdLine.getCount() > 1 && !is_a< SolutionBuilderDirect >(builder))
 		{
 			for (auto project : solution->getProjects())
 			{
@@ -222,8 +204,8 @@ int main(int argc, const char** argv)
 
 		for (auto project : solution->getProjects())
 		{
-			SmallMap< std::wstring, std::set< std::wstring > > configurationIncludePaths;
-			SmallMap< std::wstring, std::set< std::wstring > > configurationLibraryPaths;
+			SmallMap< std::wstring, SmallSet< std::wstring > > configurationIncludePaths;
+			SmallMap< std::wstring, SmallSet< std::wstring > > configurationLibraryPaths;
 			SmallSet< const Project* > visited;
 			flattenIncludePaths(solutionPathName, project, visited, configurationIncludePaths, configurationLibraryPaths);
 

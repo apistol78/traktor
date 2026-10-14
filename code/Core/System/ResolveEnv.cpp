@@ -1,12 +1,14 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include "Core/Misc/String.h"
+#include "Core/Settings/PropertyGroup.h"
+#include "Core/Settings/PropertyString.h"
 #include "Core/System/Environment.h"
 #include "Core/System/ResolveEnv.h"
 
@@ -52,6 +54,28 @@ std::wstring resolveEnv(const std::wstring& s, const Environment* env)
 	}
 
 	return tmp;
+}
+
+void applyEnvironment(const PropertyGroup* variables)
+{
+	if (!variables)
+		return;
+
+	// Group isn't ordered so values are resolved against all variables of group.
+	Ref< Environment > environment = OS::getInstance().getEnvironment();
+	AlignedVector< std::wstring > names;
+	for (const auto& it : variables->getValues())
+	{
+		std::wstring value;
+		if (!is_a< PropertyString >(it.second) || PropertyString::get(it.second).empty() || OS::getInstance().getEnvironment(it.first, value))
+			continue;
+
+		environment->set(it.first, PropertyString::get(it.second));
+		names.push_back(it.first);
+	}
+
+	for (const auto& name : names)
+		OS::getInstance().setEnvironment(name, resolveEnv(environment->get(name), environment));
 }
 
 bool splitCommandLine(const std::wstring& commandLine, AlignedVector< std::wstring >& outArgv)

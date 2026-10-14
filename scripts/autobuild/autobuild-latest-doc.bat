@@ -3,6 +3,8 @@
 :: Setup our build environment.
 call %~dp0../config.bat
 
+set DOXYGEN_SDK=%TRAKTOR_HOME%\3rdp\doxygen
+
 pushd %TRAKTOR_HOME%\resources\documentation
 
 :: Remove old documentation.

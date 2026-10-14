@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -13,8 +13,12 @@
 namespace traktor::ui
 {
 
+class ButtonClickEvent;
 class Edit;
+class GridColumnClickEvent;
+class GridItemContentChangeEvent;
 class GridView;
+class IBitmap;
 
 }
 
@@ -35,12 +39,25 @@ public:
 private:
 	Ref< ui::Edit > m_rootPath;
 	Ref< ui::Edit > m_aggregateOutputPath;
+	Ref< ui::GridView > m_gridVariables;
 	Ref< ui::GridView > m_environmentPreview;
+	Ref< ui::IBitmap > m_imageUnchecked;
+	Ref< ui::IBitmap > m_imageChecked;
 	Ref< Solution > m_solution;
+
+	void updateVariables();
 
 	void updateReferencedEnvironment();
 
 	void eventEditFocus(ui::FocusEvent* event);
+
+	void eventVariableChange(ui::GridItemContentChangeEvent* event);
+
+	void eventVariableClick(ui::GridColumnClickEvent* event);
+
+	void eventClickAddVariable(ui::ButtonClickEvent* event);
+
+	void eventClickRemoveVariable(ui::ButtonClickEvent* event);
 };
 
 }

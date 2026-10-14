@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -30,6 +30,7 @@
 #include "Core/Settings/PropertyString.h"
 #include "Core/Settings/PropertyStringSet.h"
 #include "Core/System/OS.h"
+#include "Core/System/ResolveEnv.h"
 #include "Core/Thread/Mutex.h"
 #include "Core/Thread/Thread.h"
 #include "Core/Thread/ThreadManager.h"
@@ -318,6 +319,8 @@ bool perform(const PipelineParameters& params)
 		traktor::log::info << L"Using settings \"" << params.getSettings() << L"\"." << Endl;
 
 	Ref< PropertyGroup > settings = loadSettings(params.getSettings());
+	if (settings)
+		applyEnvironment(settings->getProperty< PropertyGroup >(L"Editor.Environment"));
 	if (!settings)
 	{
 		traktor::log::error << L"Unable to load pipeline settings \"" << params.getSettings() << L"\"." << Endl;

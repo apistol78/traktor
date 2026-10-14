@@ -510,12 +510,14 @@ void GridView::eventEditKey(KeyDownEvent* event)
 	if (event->getVirtualKey() == ui::VkReturn)
 	{
 		m_itemEditor->hide();
+		setFocus();
 	}
 	else if (event->getVirtualKey() == ui::VkEscape)
 	{
 		std::wstring originalText = m_editItem->getText();
 		m_itemEditor->setText(originalText);
 		m_itemEditor->hide();
+		setFocus();
 	}
 }
 

@@ -32,6 +32,7 @@
 #include "Core/Settings/PropertyStringSet.h"
 #include "Core/System/IProcess.h"
 #include "Core/System/OS.h"
+#include "Core/System/ResolveEnv.h"
 #include "Core/Thread/Acquire.h"
 #include "Core/Thread/Thread.h"
 #include "Core/Thread/ThreadManager.h"
@@ -430,6 +431,8 @@ bool EditorForm::create(const CommandLine& cmdLine)
 		log::error << L"Unable to load global settings." << Endl;
 		return false;
 	}
+
+	applyEnvironment(m_globalSettings->getProperty< PropertyGroup >(L"Editor.Environment"));
 
 	// Use only global settings as merged settings until workspace has been loaded.
 	m_mergedSettings = m_globalSettings;

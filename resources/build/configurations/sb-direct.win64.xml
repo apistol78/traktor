@@ -1,0 +1,320 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.PropertyGroup">
+	<value>
+		<item>
+			<first>Direct.Products</first>
+			<second type="traktor.PropertyGroup">
+				<value>
+					<item>
+						<first>StaticLibrary</first>
+						<second type="traktor.PropertyString">
+							<value>%(Name).lib</value>
+						</second>
+					</item>
+					<item>
+						<first>SharedLibrary</first>
+						<second type="traktor.PropertyString">
+							<value>%(Name).dll</value>
+						</second>
+					</item>
+					<item>
+						<first>Executable</first>
+						<second type="traktor.PropertyString">
+							<value>%(Name).exe</value>
+						</second>
+					</item>
+					<item>
+						<first>ExecutableConsole</first>
+						<second type="traktor.PropertyString">
+							<value>%(Name).exe</value>
+						</second>
+					</item>
+				</value>
+			</second>
+		</item>
+		<item>
+			<first>Direct.Compilers</first>
+			<second type="traktor.PropertyGroup">
+				<value>
+					<item>
+						<first>C++</first>
+						<second type="traktor.PropertyGroup">
+							<value>
+								<item>
+									<first>Extensions</first>
+									<second type="traktor.PropertyString">
+										<value>c;cc;cpp</value>
+									</second>
+								</item>
+								<item>
+									<first>Executable</first>
+									<second type="traktor.PropertyString">
+										<value>cl.exe</value>
+									</second>
+								</item>
+								<item>
+									<first>Arguments</first>
+									<second type="traktor.PropertyString">
+										<value>/nologo /c /Z7 /Gm- /EHsc /arch:AVX /Zc:wchar_t /Zc:forScope /Zc:inline /std:c++20 /diagnostics:column %(Options) %(WarningLevel) %(IncludePaths) %(Definitions) %(AdditionalOptions) /Fo"%(Output)" "%(Input)"</value>
+									</second>
+								</item>
+								<item>
+									<first>ObjectExtension</first>
+									<second type="traktor.PropertyString">
+										<value>.obj</value>
+									</second>
+								</item>
+								<item>
+									<first>IncludePath</first>
+									<second type="traktor.PropertyString">
+										<value>/I"%(Value)"</value>
+									</second>
+								</item>
+								<item>
+									<first>Definition</first>
+									<second type="traktor.PropertyString">
+										<value>/D%(Value)</value>
+									</second>
+								</item>
+								<item>
+									<first>Options</first>
+									<second type="traktor.PropertyGroup">
+										<value>
+											<item>
+												<first>DebugStaticLibrary</first>
+												<second type="traktor.PropertyString">
+													<value>/Od /RTC1 /MDd /GS /D_DEBUG /DWIN32 /D_WINDOWS /DUNICODE /D_UNICODE</value>
+												</second>
+											</item>
+											<item>
+												<first>DebugSharedLibrary</first>
+												<second type="traktor.PropertyString">
+													<value>/Od /RTC1 /MDd /GS /D_DEBUG /DWIN32 /D_WINDOWS /D_USRDLL /D_WINDLL /DUNICODE /D_UNICODE</value>
+												</second>
+											</item>
+											<item>
+												<first>DebugExecutable</first>
+												<second type="traktor.PropertyString">
+													<value>/Od /RTC1 /MDd /GS /D_DEBUG /DWIN32 /D_WINDOWS /DUNICODE /D_UNICODE</value>
+												</second>
+											</item>
+											<item>
+												<first>DebugExecutableConsole</first>
+												<second type="traktor.PropertyString">
+													<value>/Od /RTC1 /MDd /GS /D_DEBUG /DWIN32 /D_CONSOLE /DUNICODE /D_UNICODE</value>
+												</second>
+											</item>
+											<item>
+												<first>ReleaseStaticLibrary</first>
+												<second type="traktor.PropertyString">
+													<value>/Ox /Ob2 /Oi /Ot /Oy /MD /GS- /fp:fast /GR- /DNDEBUG /DWIN32 /D_WINDOWS /DUNICODE /D_UNICODE</value>
+												</second>
+											</item>
+											<item>
+												<first>ReleaseSharedLibrary</first>
+												<second type="traktor.PropertyString">
+													<value>/Ox /Ob2 /Oi /Ot /Oy /MD /GS- /fp:fast /GR- /DNDEBUG /DWIN32 /D_WINDOWS /D_USRDLL /D_WINDLL /DUNICODE /D_UNICODE</value>
+												</second>
+											</item>
+											<item>
+												<first>ReleaseExecutable</first>
+												<second type="traktor.PropertyString">
+													<value>/Ox /Ob2 /Oi /Ot /Oy /MD /GS- /fp:fast /GR- /DNDEBUG /DWIN32 /D_WINDOWS /DUNICODE /D_UNICODE</value>
+												</second>
+											</item>
+											<item>
+												<first>ReleaseExecutableConsole</first>
+												<second type="traktor.PropertyString">
+													<value>/Ox /Ob2 /Oi /Ot /Oy /MD /GS- /fp:fast /GR- /DNDEBUG /DWIN32 /D_CONSOLE /DUNICODE /D_UNICODE</value>
+												</second>
+											</item>
+										</value>
+									</second>
+								</item>
+								<item>
+									<first>WarningLevels</first>
+									<second type="traktor.PropertyGroup">
+										<value>
+											<item>
+												<first>NoWarnings</first>
+												<second type="traktor.PropertyString">
+													<value>/W0</value>
+												</second>
+											</item>
+											<item>
+												<first>CriticalOnly</first>
+												<second type="traktor.PropertyString">
+													<value>/W1</value>
+												</second>
+											</item>
+											<item>
+												<first>CompilerDefault</first>
+												<second type="traktor.PropertyString">
+													<value>/W3</value>
+												</second>
+											</item>
+											<item>
+												<first>AllWarnings</first>
+												<second type="traktor.PropertyString">
+													<value>/Wall</value>
+												</second>
+											</item>
+										</value>
+									</second>
+								</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>Resource</first>
+						<second type="traktor.PropertyGroup">
+							<value>
+								<item>
+									<first>Extensions</first>
+									<second type="traktor.PropertyString">
+										<value>rc</value>
+									</second>
+								</item>
+								<item>
+									<first>Executable</first>
+									<second type="traktor.PropertyString">
+										<value>rc.exe</value>
+									</second>
+								</item>
+								<item>
+									<first>Arguments</first>
+									<second type="traktor.PropertyString">
+										<value>/nologo %(IncludePaths) /fo"%(Output)" "%(Input)"</value>
+									</second>
+								</item>
+								<item>
+									<first>ObjectExtension</first>
+									<second type="traktor.PropertyString">
+										<value>.res</value>
+									</second>
+								</item>
+								<item>
+									<first>IncludePath</first>
+									<second type="traktor.PropertyString">
+										<value>/i"%(Value)"</value>
+									</second>
+								</item>
+								<item>
+									<first>Definition</first>
+									<second type="traktor.PropertyString">
+										<value>/d%(Value)</value>
+									</second>
+								</item>
+							</value>
+						</second>
+					</item>
+				</value>
+			</second>
+		</item>
+		<item>
+			<first>Direct.Linker</first>
+			<second type="traktor.PropertyGroup">
+				<value>
+					<item>
+						<first>Executable</first>
+						<second type="traktor.PropertyString">
+							<value>link.exe</value>
+						</second>
+					</item>
+					<item>
+						<first>Arguments</first>
+						<second type="traktor.PropertyString">
+							<value>/NOLOGO /MACHINE:X64 /DEBUG /DYNAMICBASE:NO /NXCOMPAT /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /MANIFEST:EMBED /MANIFESTINPUT:"$(TRAKTOR_HOME)/resources/build/windows/manifest-win64.xml" %(Options) /OUT:"%(Output)" %(Inputs) %(LibraryPaths) %(Libraries) %(DefinitionFile) %(AdditionalOptions) kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib</value>
+						</second>
+					</item>
+					<item>
+						<first>LibraryPath</first>
+						<second type="traktor.PropertyString">
+							<value>/LIBPATH:"%(Value)"</value>
+						</second>
+					</item>
+					<item>
+						<first>Library</first>
+						<second type="traktor.PropertyString">
+							<value>%(Value).lib</value>
+						</second>
+					</item>
+					<item>
+						<first>ExternalLibrary</first>
+						<second type="traktor.PropertyString">
+							<value>%(Value)</value>
+						</second>
+					</item>
+					<item>
+						<first>DefinitionFile</first>
+						<second type="traktor.PropertyString">
+							<value>/DEF:"%(Value)"</value>
+						</second>
+					</item>
+					<item>
+						<first>Options</first>
+						<second type="traktor.PropertyGroup">
+							<value>
+								<item>
+									<first>DebugSharedLibrary</first>
+									<second type="traktor.PropertyString">
+										<value>/DLL /SUBSYSTEM:WINDOWS /INCREMENTAL</value>
+									</second>
+								</item>
+								<item>
+									<first>DebugExecutable</first>
+									<second type="traktor.PropertyString">
+										<value>/SUBSYSTEM:WINDOWS /INCREMENTAL</value>
+									</second>
+								</item>
+								<item>
+									<first>DebugExecutableConsole</first>
+									<second type="traktor.PropertyString">
+										<value>/SUBSYSTEM:CONSOLE /INCREMENTAL</value>
+									</second>
+								</item>
+								<item>
+									<first>ReleaseSharedLibrary</first>
+									<second type="traktor.PropertyString">
+										<value>/DLL /SUBSYSTEM:WINDOWS /INCREMENTAL:NO /OPT:ICF</value>
+									</second>
+								</item>
+								<item>
+									<first>ReleaseExecutable</first>
+									<second type="traktor.PropertyString">
+										<value>/SUBSYSTEM:WINDOWS /INCREMENTAL:NO /OPT:ICF</value>
+									</second>
+								</item>
+								<item>
+									<first>ReleaseExecutableConsole</first>
+									<second type="traktor.PropertyString">
+										<value>/SUBSYSTEM:CONSOLE /INCREMENTAL:NO /OPT:ICF</value>
+									</second>
+								</item>
+							</value>
+						</second>
+					</item>
+				</value>
+			</second>
+		</item>
+		<item>
+			<first>Direct.Archiver</first>
+			<second type="traktor.PropertyGroup">
+				<value>
+					<item>
+						<first>Executable</first>
+						<second type="traktor.PropertyString">
+							<value>lib.exe</value>
+						</second>
+					</item>
+					<item>
+						<first>Arguments</first>
+						<second type="traktor.PropertyString">
+							<value>/NOLOGO /MACHINE:X64 /OUT:"%(Output)" %(Inputs)</value>
+						</second>
+					</item>
+				</value>
+			</second>
+		</item>
+	</value>
+</object>

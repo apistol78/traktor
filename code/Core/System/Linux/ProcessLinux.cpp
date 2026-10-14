@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -168,21 +168,31 @@ IProcess::WaitPipeResult ProcessLinux::waitPipeStream(int32_t timeout, Ref< IStr
 	if (rc <= 0)
 		return wait(0) ? Terminated : Timeout;
 
-	// Determine which pipe is ready.
-	if (FD_ISSET(m_childStdOut, &readSet))
+	// Determine which pipe is ready; a ready pipe without data has been closed by child.
+	int available = 0;
+	if (m_childStdOut != 0 && FD_ISSET(m_childStdOut, &readSet))
 	{
-		outPipe = m_streamStdOut;
-		return Ready;
+		if (ioctl(m_childStdOut, FIONREAD, &available) == 0 && available > 0)
+		{
+			outPipe = m_streamStdOut;
+			return Ready;
+		}
+		::close(m_childStdOut);
+		m_childStdOut = 0;
 	}
 
-	if (FD_ISSET(m_childStdErr, &readSet))
+	if (m_childStdErr != 0 && FD_ISSET(m_childStdErr, &readSet))
 	{
-		outPipe = m_streamStdErr;
-		return Ready;
+		if (ioctl(m_childStdErr, FIONREAD, &available) == 0 && available > 0)
+		{
+			outPipe = m_streamStdErr;
+			return Ready;
+		}
+		::close(m_childStdErr);
+		m_childStdErr = 0;
 	}
 
-	// We shouldn't reach this normally, but if we do
-	// check child process instead.
+	// No pipe with data; check child process if terminated.
 	return wait(0) ? Terminated : Timeout;
 }
 

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.sb.Solution" version="6">
+<object type="traktor.sb.Solution" version="7">
 	<name>Traktor Raspberry Pi</name>
 	<rootPath>$(TRAKTOR_HOME)/build/rpi</rootPath>
 	<aggregateOutputPath>$(TRAKTOR_HOME)/bin/latest/rpi</aggregateOutputPath>
@@ -15742,6 +15742,16 @@
 						</item>
 					</items>
 				</item>
+				<item type="traktor.sb.Filter">
+					<name>Direct</name>
+					<items>
+						<item type="traktor.sb.File" version="1">
+							<fileName>Direct/*.*</fileName>
+							<excludeFilter/>
+							<items/>
+						</item>
+					</items>
+				</item>
 			</items>
 			<dependencies>
 				<item type="traktor.sb.ProjectDependency" version="3">
@@ -17816,4 +17826,86 @@
 		</item>
 	</projects>
 	<startupProject ref="/object/projects/item[12]"/>
+	<environmentVariables>
+		<item>
+			<name>BULLET_SDK</name>
+			<value>$(TRAKTOR_HOME)/3rdp/bullet3</value>
+			<overwrite>true</overwrite>
+		</item>
+		<item>
+			<name>EXPAT_SDK</name>
+			<value>$(TRAKTOR_HOME)/3rdp/libexpat/expat</value>
+			<overwrite>true</overwrite>
+		</item>
+		<item>
+			<name>LUA_SDK</name>
+			<value>$(TRAKTOR_HOME)/3rdp/lua/lua-5.5.0</value>
+			<overwrite>true</overwrite>
+		</item>
+		<item>
+			<name>RAPIDJSON_SDK</name>
+			<value>$(TRAKTOR_HOME)/3rdp/rapidjson</value>
+			<overwrite>true</overwrite>
+		</item>
+		<item>
+			<name>RG_ETC1_SDK</name>
+			<value>$(TRAKTOR_HOME)/3rdp/rg-etc1</value>
+			<overwrite>true</overwrite>
+		</item>
+		<item>
+			<name>STB_SDK</name>
+			<value>$(TRAKTOR_HOME)/3rdp/stb</value>
+			<overwrite>true</overwrite>
+		</item>
+		<item>
+			<name>STEAMWORKS_SDK</name>
+			<value>$(TRAKTOR_HOME)/3rdp/steamworks/sdk</value>
+			<overwrite>true</overwrite>
+		</item>
+		<item>
+			<name>SQLITE_SDK</name>
+			<value>$(TRAKTOR_HOME)/3rdp/sqlite/sqlite-amalgamation-3390200</value>
+			<overwrite>true</overwrite>
+		</item>
+		<item>
+			<name>SQUISH_SDK</name>
+			<value>$(TRAKTOR_HOME)/3rdp/squish</value>
+			<overwrite>true</overwrite>
+		</item>
+		<item>
+			<name>THEORA_SDK</name>
+			<value>$(TRAKTOR_HOME)/3rdp/theora</value>
+			<overwrite>true</overwrite>
+		</item>
+		<item>
+			<name>MINIMP3_SDK</name>
+			<value>$(TRAKTOR_HOME)/3rdp/minimp3</value>
+			<overwrite>true</overwrite>
+		</item>
+		<item>
+			<name>VULKAN_BASE_SDK</name>
+			<value>$(TRAKTOR_HOME)/3rdp/vulkan-linux/latest/x86_64</value>
+			<overwrite>true</overwrite>
+		</item>
+		<item>
+			<name>VULKAN_SDK</name>
+			<value>$(VULKAN_BASE_SDK)</value>
+			<overwrite>true</overwrite>
+		</item>
+		<item>
+			<name>GLSLANG_SDK</name>
+			<value>$(VULKAN_BASE_SDK)/include/glslang</value>
+			<overwrite>true</overwrite>
+		</item>
+		<item>
+			<name>SPIRVTOOLS_SDK</name>
+			<value>$(VULKAN_BASE_SDK)</value>
+			<overwrite>true</overwrite>
+		</item>
+		<item>
+			<name>SPIRVCROSS_SDK</name>
+			<value>$(VULKAN_BASE_SDK)/include/spirv_cross</value>
+			<overwrite>true</overwrite>
+		</item>
+	</environmentVariables>
 </object>

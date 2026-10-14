@@ -5,6 +5,7 @@ if [ "$CONFIG" == "" ]; then CONFIG=all; fi
 
 # Source environment configuration.
 . "`dirname \"$BASH_SOURCE\"`/../config.sh"
+. "`dirname \"$BASH_SOURCE\"`/../config-android.sh"
 
 # Build Traktor
 pushd $TRAKTOR_HOME/build/android

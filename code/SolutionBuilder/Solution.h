@@ -9,6 +9,7 @@
 #pragma once
 
 #include <string>
+#include "Core/Containers/AlignedVector.h"
 #include "Core/Ref.h"
 #include "Core/RefArray.h"
 #include "Core/Serialization/ISerializable.h"
@@ -32,6 +33,16 @@ class T_DLLCLASS Solution : public ISerializable
 	T_RTTI_CLASS;
 
 public:
+	/*! Environment variable set into builder process before solution is generated. */
+	struct EnvironmentVariable
+	{
+		std::wstring name;
+		std::wstring value;
+		bool overwrite = true; //!< Replace variable if already set.
+
+		void serialize(ISerializer& s);
+	};
+
 	void setName(const std::wstring& name);
 
 	const std::wstring& getName() const;
@@ -56,6 +67,10 @@ public:
 
 	Project* getStartupProject() const;
 
+	void setEnvironmentVariables(const AlignedVector< EnvironmentVariable >& environmentVariables);
+
+	const AlignedVector< EnvironmentVariable >& getEnvironmentVariables() const;
+
 	virtual void serialize(ISerializer& s) override final;
 
 private:
@@ -65,6 +80,7 @@ private:
 	RefArray< Configuration > m_configurations;
 	RefArray< Project > m_projects;
 	Ref< Project > m_startupProject;
+	AlignedVector< EnvironmentVariable > m_environmentVariables;
 };
 
 }

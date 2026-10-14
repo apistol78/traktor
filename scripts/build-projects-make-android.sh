@@ -2,6 +2,20 @@
 
 # Source environment configuration.
 . "`dirname \"$BASH_SOURCE\"`/config.sh"
+. "`dirname \"$BASH_SOURCE\"`/config-android.sh"
+
+# Determine platform from some simple heuristic.
+if [[ `uname -s` == Linux* ]]; then
+	if [[ `uname -m` == arm* ]]; then
+		export TRAKTOR_PLATFORM=rpi
+	else
+		export TRAKTOR_PLATFORM=linux
+	fi
+elif [[ `uname -s` == Darwin* ]]; then
+	export TRAKTOR_PLATFORM=macos
+fi
+
+export SOLUTIONBUILDER="$TRAKTOR_HOME/bin/${TRAKTOR_PLATFORM/macos/osx}/releasestatic/Traktor.SolutionBuilder.App"
 
 # Mandatory parameters.
 export MAKE_DIALECT=make
