@@ -21,7 +21,11 @@
 			},
 
 			"windows": {
-				"command": "${workspaceRoot}/../scripts/build-vscode.bat Windows DebugShared",
+				"options": {
+					"cwd": "${workspaceRoot}/..",
+					"shell": { "executable": "cmd.exe", "args": [ "/d", "/c" ] }
+				},
+				"command": "call scripts\\config-vs-x64.bat && bin\\win64\\releasestatic\\Traktor.SolutionBuilder.App.exe -f=direct -target=DebugShared resources\\build\\TraktorWin64.xms",
 				"problemMatcher": [
 					"$msCompile"
 				]			
@@ -48,7 +52,11 @@
 			},
 
 			"windows": {
-				"command": "${workspaceRoot}/../scripts/build-vscode.bat Windows ReleaseShared",
+				"options": {
+					"cwd": "${workspaceRoot}/..",
+					"shell": { "executable": "cmd.exe", "args": [ "/d", "/c" ] }
+				},
+				"command": "call scripts\\config-vs-x64.bat && bin\\win64\\releasestatic\\Traktor.SolutionBuilder.App.exe -f=direct -target=ReleaseShared resources\\build\\TraktorWin64.xms",
 				"problemMatcher": [
 					"$msCompile"
 				]			
@@ -75,7 +83,11 @@
 			},
 
 			"windows": {
-				"command": "${workspaceRoot}/../scripts/build-vscode.bat Windows DebugStatic",
+				"options": {
+					"cwd": "${workspaceRoot}/..",
+					"shell": { "executable": "cmd.exe", "args": [ "/d", "/c" ] }
+				},
+				"command": "call scripts\\config-vs-x64.bat && bin\\win64\\releasestatic\\Traktor.SolutionBuilder.App.exe -f=direct -target=DebugStatic resources\\build\\TraktorWin64.xms",
 				"problemMatcher": [
 					"$msCompile"
 				]			
@@ -102,7 +114,11 @@
 			},
 
 			"windows": {
-				"command": "${workspaceRoot}/../scripts/build-vscode.bat Windows ReleaseStatic",
+				"options": {
+					"cwd": "${workspaceRoot}/..",
+					"shell": { "executable": "cmd.exe", "args": [ "/d", "/c" ] }
+				},
+				"command": "call scripts\\config-vs-x64.bat && bin\\win64\\releasestatic\\Traktor.SolutionBuilder.App.exe -f=direct -target=ReleaseStatic resources\\build\\TraktorWin64.xms",
 				"problemMatcher": [
 					"$msCompile"
 				]			
