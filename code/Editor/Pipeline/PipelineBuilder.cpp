@@ -75,11 +75,20 @@ private:
 void calculateGlobalHash(
 	const PipelineDependencySet* dependencySet,
 	const PipelineDependency* dependency,
+	SmallSet< const PipelineDependency* >& inoutVisited,
 	uint32_t& outPipelineHash,
 	uint32_t& outSourceAssetHash,
 	uint32_t& outSourceDataHash,
 	uint32_t& outFilesHash)
 {
+	if (!dependencySet || !dependency)
+		return;
+
+	if (inoutVisited.find(dependency) != inoutVisited.end())
+		return;
+
+	inoutVisited.insert(dependency);
+
 	outPipelineHash += dependency->pipelineHash;
 	outSourceAssetHash += dependency->sourceAssetHash;
 	outSourceDataHash += dependency->sourceDataHash;
@@ -97,6 +106,7 @@ void calculateGlobalHash(
 			calculateGlobalHash(
 				dependencySet,
 				childDependency,
+				inoutVisited,
 				outPipelineHash,
 				outSourceAssetHash,
 				outSourceDataHash,
@@ -187,9 +197,11 @@ bool PipelineBuilder::build(const PipelineDependencySet* dependencySet, bool reb
 			uint32_t sourceDataHash = 0;
 			uint32_t filesHash = 0;
 
+			SmallSet< const PipelineDependency* > visited;
 			calculateGlobalHash(
 				dependencySet,
 				dependency,
+				visited,
 				pipelineHash,
 				sourceAssetHash,
 				sourceDataHash,
@@ -498,9 +510,11 @@ bool PipelineBuilder::buildAdHocOutput(const ISerializable* sourceAsset, const s
 
 		// Calculate hash entry.
 		PipelineDependencyHash dependencyHash;
+		SmallSet< const PipelineDependency* > visited;
 		calculateGlobalHash(
 			&dependencySet,
 			dependency,
+			visited,
 			dependencyHash.pipelineHash,
 			dependencyHash.sourceAssetHash,
 			dependencyHash.sourceDataHash,
@@ -775,9 +789,11 @@ IPipelineBuilder::BuildResult PipelineBuilder::performBuild(
 
 	// Calculate recursive hash entry.
 	PipelineDependencyHash currentDependencyHash;
+	SmallSet< const PipelineDependency* > visited;
 	calculateGlobalHash(
 		dependencySet,
 		dependency,
+		visited,
 		currentDependencyHash.pipelineHash,
 		currentDependencyHash.sourceAssetHash,
 		currentDependencyHash.sourceDataHash,
