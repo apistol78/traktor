@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2025 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -108,8 +108,11 @@ bool Entity::needConcurrentUpdate() const
 void Entity::update(const UpdateParams& update, bool concurrent)
 {
 	T_FATAL_ASSERT(m_world != nullptr);
-	for (auto component : m_components)
+
+	// Indexed since a component might destroy its entity during update.
+	for (size_t i = 0; i < m_components.size(); ++i)
 	{
+		IEntityComponent* component = m_components[i];
 		if (component->allowConcurrentUpdate() == concurrent)
 		{
 			m_updating = component;
