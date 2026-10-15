@@ -7,7 +7,10 @@
 			"group": "build",
 
 			"linux": {
-				"command": "${workspaceRoot}/../scripts/build-vscode.sh Linux DebugShared",
+				"options": {
+					"cwd": "${workspaceRoot}/.."
+				},
+				"command": "./bin/linux/releasestatic/Traktor.SolutionBuilder.App -f=direct -target=DebugShared resources/build/TraktorLinux.xms",
 				"problemMatcher": [
 					"$gcc"
 				]
@@ -38,7 +41,10 @@
 			"group": "build",
 
 			"linux": {
-				"command": "${workspaceRoot}/../scripts/build-vscode.sh Linux ReleaseShared",
+				"options": {
+					"cwd": "${workspaceRoot}/.."
+				},
+				"command": "./bin/linux/releasestatic/Traktor.SolutionBuilder.App -f=direct -target=ReleaseShared resources/build/TraktorLinux.xms",
 				"problemMatcher": [
 					"$gcc"
 				]
@@ -69,7 +75,10 @@
 			"group": "build",
 
 			"linux": {
-				"command": "${workspaceRoot}/../scripts/build-vscode.sh Linux DebugStatic",
+				"options": {
+					"cwd": "${workspaceRoot}/.."
+				},
+				"command": "./bin/linux/releasestatic/Traktor.SolutionBuilder.App -f=direct -target=DebugStatic resources/build/TraktorLinux.xms",
 				"problemMatcher": [
 					"$gcc"
 				]
@@ -100,7 +109,10 @@
 			"group": "build",
 
 			"linux": {
-				"command": "${workspaceRoot}/../scripts/build-vscode.sh Linux ReleaseStatic",
+				"options": {
+					"cwd": "${workspaceRoot}/.."
+				},
+				"command": "./bin/linux/releasestatic/Traktor.SolutionBuilder.App -f=direct -target=ReleaseStatic resources/build/TraktorLinux.xms",
 				"problemMatcher": [
 					"$gcc"
 				]
