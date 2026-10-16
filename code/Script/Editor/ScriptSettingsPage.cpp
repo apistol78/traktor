@@ -34,6 +34,10 @@ bool ScriptSettingsPage::create(ui::Container* parent, const PropertyGroup* orig
 	m_checkAutoOpenScript->create(container, i18n::Text(L"EDITOR_SETTINGS_SCRIPT_AUTO_OPEN_SCRIPT"), false);
 	m_checkAutoOpenScript->setChecked(settings->getProperty< bool >(L"Editor.AutoOpenDebuggedScript", true));
 
+	m_checkAutocompleteEnabled = new ui::CheckBox();
+	m_checkAutocompleteEnabled->create(container, L"Enable autocomplete", false);
+	m_checkAutocompleteEnabled->setChecked(settings->getProperty< bool >(L"Editor.AutocompleteEnabled", true));
+
 	parent->setText(i18n::Text(L"EDITOR_SETTINGS_SCRIPT"));
 	return true;
 }
@@ -46,6 +50,7 @@ bool ScriptSettingsPage::apply(PropertyGroup* settings)
 {
 	settings->setProperty< PropertyBoolean >(L"Editor.AutoOpenDebugger", m_checkAutoOpenDebugger->isChecked());
 	settings->setProperty< PropertyBoolean >(L"Editor.AutoOpenDebuggedScript", m_checkAutoOpenScript->isChecked());
+	settings->setProperty< PropertyBoolean >(L"Editor.AutocompleteEnabled", m_checkAutocompleteEnabled->isChecked());
 	return true;
 }
 
