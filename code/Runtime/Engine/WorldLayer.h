@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -50,6 +50,7 @@ class World;
 namespace traktor::runtime
 {
 
+class EntityResult;
 class IEnvironment;
 
 /*! World stage layer.
@@ -102,6 +103,12 @@ public:
 
 	Ref< world::Entity > createEntity(const Guid& entityDataId) const;
 
+	Ref< EntityResult > createEntityAsync(const Guid& entityDataId);
+
+	void addEntity(world::Entity* entity);
+
+	void removeEntity(world::Entity* entity);
+
 	const Frustum& getViewFrustum() const;
 
 	bool worldToView(const Vector4& worldPosition, Vector4& outViewPosition) const;
@@ -134,6 +141,7 @@ private:
 	Ref< world::IWorldRenderer > m_worldRenderer;
 	world::WorldRenderView m_worldRenderView;
 	Ref< const world::Entity > m_cameraEntity;
+	RefArray< EntityResult > m_entityResults;
 	IntervalTransform m_cameraTransform;
 	Transform m_cameraOffset;
 	double m_alternateTime = 0.0;

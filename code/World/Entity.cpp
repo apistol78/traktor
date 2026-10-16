@@ -126,22 +126,25 @@ void Entity::setComponent(IEntityComponent* component)
 {
 	T_FATAL_ASSERT(component);
 
+	size_t index = 0;
+	while (index < m_components.size() && !is_type_of(type_of(m_components[index]), type_of(component)))
+		++index;
+
+	// Replace existing component of same type, or add last.
+	if (index < m_components.size())
+	{
+		if (m_world)
+			m_components[index]->setWorld(nullptr);
+		m_components[index] = component;
+	}
+	else
+		m_components.push_back(component);
+
 	component->setOwner(this);
+	if (m_world)
+		component->setWorld(m_world);
 	component->setState(m_state, EntityState::All, false);
 	component->setTransform(m_transform);
-
-	// Replace existing component of same type.
-	for (size_t i = 0; i < m_components.size(); ++i)
-	{
-		if (is_type_of(type_of(m_components[i]), type_of(component)))
-		{
-			m_components[i] = component;
-			return;
-		}
-	}
-
-	// No such component, add last.
-	m_components.push_back(component);
 }
 
 IEntityComponent* Entity::getComponent(const TypeInfo& componentType) const

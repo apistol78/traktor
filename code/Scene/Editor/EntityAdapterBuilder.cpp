@@ -21,7 +21,6 @@
 #include "World/IEntityComponent.h"
 #include "World/IEntityFactory.h"
 #include "World/World.h"
-#include "World/Entity/GroupComponent.h"
 #include "World/Entity/GroupComponentData.h"
 #include "World/Entity/ExternalEntityData.h"
 
@@ -44,19 +43,6 @@ void collectAllAdapters(EntityAdapter* entityAdapter, RefArray< EntityAdapter >&
 bool isComponentCacheable(const world::IEntityComponentData* componentData)
 {
 	return !is_a< world::GroupComponentData >(componentData);
-}
-
-void addToWorld(world::World* world, world::Entity* entity)
-{
-	// Entity might belong to a replaced world when world has been rebuilt.
-	if (entity->getWorld() != nullptr && entity->getWorld() != world)
-		entity->getWorld()->removeEntity(entity);
-
-	world->addEntity(entity);
-
-	if (auto group = entity->getComponent< world::GroupComponent >())
-		for (auto childEntity : group->getEntities())
-			addToWorld(world, childEntity);
 }
 
 void resetFromData(EntityAdapter* entityAdapter)
@@ -128,7 +114,7 @@ Ref< world::Entity > EntityAdapterBuilder::create(const world::EntityData* entit
 	// Do not create adapters when we're inside an external entity.
 	if (is_a< world::ExternalEntityData >(m_currentEntityData))
 	{
-		const world::EntityBuilder entityBuilder(m_entityFactory, m_world);
+		const world::EntityBuilder entityBuilder(m_entityFactory);
 		return m_entityFactory->createEntity(&entityBuilder, *entityData);
 	}
 
@@ -163,7 +149,11 @@ Ref< world::Entity > EntityAdapterBuilder::create(const world::EntityData* entit
 		if (entityAdapter->getEntityData() != entityData)
 			rebindEntityData(entityAdapter, const_cast< world::EntityData* >(entityData));
 
-		addToWorld(m_world, entityAdapter->getEntity());
+		// Entity might belong to a replaced world; it's added again through its root.
+		world::Entity* entity = entityAdapter->getEntity();
+		if (entity->getWorld() != nullptr)
+			entity->getWorld()->removeEntity(entity);
+
 		resetFromData(entityAdapter);
 
 		return entityAdapter->getEntity();
@@ -204,9 +194,6 @@ Ref< world::Entity > EntityAdapterBuilder::create(const world::EntityData* entit
 		// Do not cache placeholders; retry build every time.
 		entityProductHash = 0;
 	}
-
-	// Add entity to world container.
-	m_world->addEntity(entity);
 
 	entity->setTransform(entityData->getTransform());
 

@@ -22,7 +22,6 @@ namespace traktor::world
 {
 
 class IEntityFactory;
-class World;
 
 /*! Entity builder.
  * \ingroup World
@@ -32,7 +31,7 @@ class T_DLLCLASS EntityBuilder : public IEntityBuilder
 	T_RTTI_CLASS;
 
 public:
-	explicit EntityBuilder(const IEntityFactory* entityFactory, World* world);
+	explicit EntityBuilder(const IEntityFactory* entityFactory);
 
 	virtual Ref< Entity > create(const EntityData* entityData) const override final;
 
@@ -44,7 +43,6 @@ public:
 
 private:
 	Ref< const IEntityFactory > m_entityFactory;
-	Ref< world::World > m_world;
 };
 
 }

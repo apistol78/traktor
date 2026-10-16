@@ -528,6 +528,7 @@ void SceneEditorContext::buildEntities(bool rebuildWorld)
 			Ref< EntityAdapterBuilder > entityAdapterBuilder = new EntityAdapterBuilder(this, entityFactory, world, m_layerEntityAdapters[i]);
 			Ref< world::Entity > entity = entityAdapterBuilder->create(layerEntityData);
 			T_FATAL_ASSERT(entity != nullptr);
+			world->addEntity(entity);
 
 			m_layerEntityAdapters[i] = entityAdapterBuilder->getRootAdapter();
 			T_FATAL_ASSERT(m_layerEntityAdapters[i] != nullptr);

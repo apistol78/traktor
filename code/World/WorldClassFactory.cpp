@@ -231,7 +231,7 @@ void WorldClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classIEntityBuilder);
 
 	auto classEntityBuilder = new AutoRuntimeClass< EntityBuilder >();
-	classEntityBuilder->addConstructor< const IEntityFactory*, World* >();
+	classEntityBuilder->addConstructor< const IEntityFactory* >();
 	registrar->registerClass(classEntityBuilder);
 
 	auto classIEntityRenderer = new AutoRuntimeClass< IEntityRenderer >();

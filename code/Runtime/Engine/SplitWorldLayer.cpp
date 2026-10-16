@@ -399,10 +399,18 @@ Ref< world::Entity > SplitWorldLayer::createEntity(const Guid& entityDataId) con
 	if (!m_environment->getResource()->getResourceManager()->bind(resource::Id< world::EntityData >(entityDataId), entityData))
 		return nullptr;
 
-	const world::EntityBuilder entityBuilder(
-		m_environment->getWorld()->getEntityFactory(),
-		m_scene->getWorld());
+	const world::EntityBuilder entityBuilder(m_environment->getWorld()->getEntityFactory());
 	return entityBuilder.create(entityData);
+}
+
+void SplitWorldLayer::addEntity(world::Entity* entity)
+{
+	m_scene->getWorld()->addEntity(entity);
+}
+
+void SplitWorldLayer::removeEntity(world::Entity* entity)
+{
+	m_scene->getWorld()->removeEntity(entity);
 }
 
 const Frustum& SplitWorldLayer::getViewFrustum(int32_t split) const

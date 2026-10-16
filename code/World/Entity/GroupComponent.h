@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -38,6 +38,8 @@ public:
 
 	virtual void setOwner(Entity* owner) override final;
 
+	virtual void setWorld(World* world) override final;
+
 	virtual void setState(const EntityState& state, const EntityState& mask, bool includeChildren) override final;
 
 	virtual void setTransform(const Transform& transform) override final;
@@ -60,6 +62,7 @@ public:
 
 private:
 	Entity* m_owner = nullptr;
+	World* m_world = nullptr;
 	Transform m_transform;
 	RefArray< Entity > m_entities;
 };

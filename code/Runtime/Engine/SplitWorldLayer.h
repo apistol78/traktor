@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2023-2024 Anders Pistol.
+ * Copyright (c) 2023-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -101,6 +101,10 @@ public:
 	world::IWorldRenderer* getWorldRenderer() const;
 
 	Ref< world::Entity > createEntity(const Guid& entityDataId) const;
+
+	void addEntity(world::Entity* entity);
+
+	void removeEntity(world::Entity* entity);
 
 	const Frustum& getViewFrustum(int32_t split) const;
 

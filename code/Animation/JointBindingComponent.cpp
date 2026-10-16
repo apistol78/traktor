@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -10,6 +10,7 @@
 #include "Animation/SkeletonComponent.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "World/Entity.h"
+#include "World/World.h"
 
 namespace traktor::animation
 {
@@ -25,8 +26,14 @@ void JointBindingComponent::destroy()
 {
 	for (auto& binding : m_bindings)
 	{
-		if (binding.entity)
-			binding.entity->destroy();
+		if (!binding.entity)
+			continue;
+
+		world::World* world = binding.entity->getWorld();
+		if (world)
+			world->removeEntity(binding.entity);
+
+		binding.entity->destroy();
 	}
 	m_bindings.resize(0);
 }
@@ -48,6 +55,17 @@ void JointBindingComponent::setOwner(world::Entity* owner)
 			}
 		}
 	}
+}
+
+void JointBindingComponent::setWorld(world::World* world)
+{
+	if (m_world != nullptr)
+		for (auto& binding : m_bindings)
+			m_world->removeEntity(binding.entity);
+
+	if ((m_world = world) != nullptr)
+		for (auto& binding : m_bindings)
+			m_world->addEntity(binding.entity);
 }
 
 void JointBindingComponent::setTransform(const Transform& transform)

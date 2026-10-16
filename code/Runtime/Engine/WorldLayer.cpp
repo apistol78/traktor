@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -16,10 +16,12 @@
 #include "Core/Settings/PropertyFloat.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyInteger.h"
+#include "Core/Thread/JobManager.h"
 #include "Core/Timer/Profiler.h"
 #include "Render/IRenderTargetSet.h"
 #include "Render/IRenderView.h"
 #include "Resource/IResourceManager.h"
+#include "Runtime/Engine/EntityResult.h"
 #include "Runtime/Engine/Stage.h"
 #include "Runtime/IAudioServer.h"
 #include "Runtime/IEnvironment.h"
@@ -31,6 +33,7 @@
 #include "World/Entity/PersistentIdComponent.h"
 #include "World/EntityBuilder.h"
 #include "World/EntityData.h"
+#include "World/IEntityFactory.h"
 #include "World/IWorldRenderer.h"
 #include "World/World.h"
 #include "World/WorldRenderSettings.h"
@@ -63,6 +66,19 @@ WorldLayer::WorldLayer(
 
 void WorldLayer::destroy()
 {
+	// Cancel pending creations first; entities created while cancelling were never handed out.
+	for (auto entityResult : m_entityResults)
+	{
+		if (!entityResult->ready())
+			entityResult->cancel();
+	}
+	for (auto entityResult : m_entityResults)
+	{
+		if (entityResult->cancelled() && entityResult->succeeded())
+			entityResult->get()->destroy();
+	}
+	m_entityResults.clear();
+
 	m_environment = nullptr;
 	m_cameraEntity = nullptr;
 
@@ -304,10 +320,8 @@ void WorldLayer::hotReload()
 	if (m_scene)
 	{
 		for (auto entity : m_scene->getWorld()->getEntities())
-		{
 			if (entity->getState().dynamic || entity->getComponent< world::PersistentIdComponent >() != nullptr)
 				m_entityTransforms[entity->getId()] = entity->getTransform();
-		}
 	}
 
 	// Drop camera entity so we can recover new one after hot reload.
@@ -335,10 +349,57 @@ Ref< world::Entity > WorldLayer::createEntity(const Guid& entityDataId) const
 	if (!m_environment->getResource()->getResourceManager()->bind(resource::Id< world::EntityData >(entityDataId), entityData))
 		return nullptr;
 
-	const world::EntityBuilder entityBuilder(
-		m_environment->getWorld()->getEntityFactory(),
-		m_scene->getWorld());
+	const world::EntityBuilder entityBuilder(m_environment->getWorld()->getEntityFactory());
 	return entityBuilder.create(entityData);
+}
+
+Ref< EntityResult > WorldLayer::createEntityAsync(const Guid& entityDataId)
+{
+	for (auto it = m_entityResults.begin(); it != m_entityResults.end();)
+	{
+		if ((*it)->ready())
+			it = m_entityResults.erase(it);
+		else
+			++it;
+	}
+
+	Ref< EntityResult > result = new EntityResult();
+	Ref< resource::IResourceManager > resourceManager = m_environment->getResource()->getResourceManager();
+	Ref< const world::IEntityFactory > entityFactory = m_environment->getWorld()->getEntityFactory();
+	JobManager::getInstance().add([=]() {
+		if (result->cancelled())
+		{
+			result->fail();
+			return;
+		}
+
+		resource::Proxy< world::EntityData > entityData;
+		if (!resourceManager->bind(resource::Id< world::EntityData >(entityDataId), entityData))
+		{
+			result->fail();
+			return;
+		}
+
+		const world::EntityBuilder entityBuilder(entityFactory);
+		Ref< world::Entity > entity = entityBuilder.create(entityData);
+		if (entity)
+			result->succeed(entity);
+		else
+			result->fail();
+	});
+
+	m_entityResults.push_back(result);
+	return result;
+}
+
+void WorldLayer::addEntity(world::Entity* entity)
+{
+	m_scene->getWorld()->addEntity(entity);
+}
+
+void WorldLayer::removeEntity(world::Entity* entity)
+{
+	m_scene->getWorld()->removeEntity(entity);
 }
 
 const Frustum& WorldLayer::getViewFrustum() const

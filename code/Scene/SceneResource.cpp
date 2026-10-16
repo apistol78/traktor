@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -31,7 +31,7 @@ SceneResource::SceneResource()
 Ref< Scene > SceneResource::createScene(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem, const world::IEntityFactory* entityFactory) const
 {
 	Ref< world::World > world = new world::World(resourceManager, renderSystem);
-	Ref< world::EntityBuilder > entityBuilder = new world::EntityBuilder(entityFactory, world);
+	Ref< world::EntityBuilder > entityBuilder = new world::EntityBuilder(entityFactory);
 
 	// Create world components.
 	for (auto worldComponentData : m_worldComponents)
@@ -47,6 +47,8 @@ Ref< Scene > SceneResource::createScene(resource::IResourceManager* resourceMana
 	Ref< world::Entity > rootEntity = entityBuilder->create(m_entityData);
 	if (!rootEntity)
 		return nullptr;
+
+	world->addEntity(rootEntity);
 
 	return new Scene(
 		m_worldRenderSettings,

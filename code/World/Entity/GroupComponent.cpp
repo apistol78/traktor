@@ -35,6 +35,17 @@ void GroupComponent::setOwner(Entity* owner)
 		m_transform = m_owner->getTransform();
 }
 
+void GroupComponent::setWorld(World* world)
+{
+	if (m_world != nullptr)
+		for (auto entity : m_entities)
+			m_world->removeEntity(entity);
+
+	if ((m_world = world) != nullptr)
+		for (auto entity : m_entities)
+			m_world->addEntity(entity);
+}
+
 void GroupComponent::setState(const EntityState& state, const EntityState& mask, bool includeChildren)
 {
 	if (includeChildren)
@@ -82,16 +93,23 @@ void GroupComponent::addEntity(Entity* entity)
 {
 	T_ASSERT_M(entity, L"Null entity");
 	m_entities.push_back(entity);
+	if (m_world != nullptr)
+		m_world->addEntity(entity);
 }
 
 void GroupComponent::removeEntity(Entity* entity)
 {
 	T_ASSERT_M(entity, L"Null entity");
-	m_entities.remove(entity);
+	T_ANONYMOUS_VAR(Ref< Entity >)(entity);
+	if (m_entities.remove(entity) && m_world != nullptr)
+		m_world->removeEntity(entity);
 }
 
 void GroupComponent::removeAllEntities()
 {
+	if (m_world != nullptr)
+		for (auto entity : m_entities)
+			m_world->removeEntity(entity);
 	m_entities.resize(0);
 }
 

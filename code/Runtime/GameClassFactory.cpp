@@ -1,14 +1,14 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Runtime/GameClassFactory.h"
+
 #include "Core/Class/AutoRuntimeClass.h"
-#include "Core/Class/IRuntimeClassRegistrar.h"
-#include "Core/Class/IRuntimeDelegate.h"
 #include "Core/Class/Boxes/BoxedAabb2.h"
 #include "Core/Class/Boxes/BoxedColor4f.h"
 #include "Core/Class/Boxes/BoxedFrustum.h"
@@ -18,27 +18,23 @@
 #include "Core/Class/Boxes/BoxedRefArray.h"
 #include "Core/Class/Boxes/BoxedTypeInfo.h"
 #include "Core/Class/Boxes/BoxedVector2.h"
+#include "Core/Class/IRuntimeClassRegistrar.h"
+#include "Core/Class/IRuntimeDelegate.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Database/Database.h"
 #include "Drawing/Image.h"
+#include "Input/Binding/InputMapping.h"
 #include "Input/InputSystem.h"
 #include "Input/RumbleEffectPlayer.h"
-#include "Input/Binding/InputMapping.h"
 #include "Online/ISessionManager.h"
 #include "Physics/PhysicsManager.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderView.h"
 #include "Render/RenderClassFactory.h"
 #include "Resource/IResourceManager.h"
-#include "Runtime/GameClassFactory.h"
-#include "Runtime/IAudioServer.h"
-#include "Runtime/IEnvironment.h"
-#include "Runtime/IInputServer.h"
-#include "Runtime/IRenderServer.h"
-#include "Runtime/UpdateControl.h"
-#include "Runtime/UpdateInfo.h"
 #include "Runtime/Engine/AudioLayer.h"
 #include "Runtime/Engine/DebugLayer.h"
+#include "Runtime/Engine/EntityResult.h"
 #include "Runtime/Engine/ScreenLayer.h"
 #include "Runtime/Engine/SplitWorldLayer.h"
 #include "Runtime/Engine/Stage.h"
@@ -46,6 +42,12 @@
 #include "Runtime/Engine/StageLoader.h"
 #include "Runtime/Engine/VideoLayer.h"
 #include "Runtime/Engine/WorldLayer.h"
+#include "Runtime/IAudioServer.h"
+#include "Runtime/IEnvironment.h"
+#include "Runtime/IInputServer.h"
+#include "Runtime/IRenderServer.h"
+#include "Runtime/UpdateControl.h"
+#include "Runtime/UpdateInfo.h"
 #include "Scene/Scene.h"
 #include "Sound/AudioSystem.h"
 #include "Sound/Filters/SurroundEnvironment.h"
@@ -62,8 +64,8 @@
 
 namespace traktor::runtime
 {
-	namespace
-	{
+namespace
+{
 
 class BoxedTransition : public Object
 {
@@ -71,8 +73,8 @@ class BoxedTransition : public Object
 
 public:
 	explicit BoxedTransition(const std::wstring& id, const Guid& reference)
-	:	m_id(id)
-	,	m_reference(reference)
+		: m_id(id)
+		, m_reference(reference)
 	{
 	}
 
@@ -119,7 +121,7 @@ void ScreenLayer_setParameterCallback(ScreenLayer* self, IRuntimeDelegate* callb
 			Ref< render::BoxedProgramParameters > b = new render::BoxedProgramParameters(programParameters);
 			const Any argv[] = { CastAny< render::BoxedProgramParameters* >::set(b) };
 			rc->call(sizeof_array(argv), argv);
-		 });
+		});
 	}
 	else
 		self->setParameterCallback(nullptr);
@@ -179,7 +181,7 @@ Ref< BoxedRay3 > WorldLayer_screenToWorld(WorldLayer* self, const Vector2& scree
 		return nullptr;
 }
 
-	}
+}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.runtime.GameClassFactory", 0, GameClassFactory, IRuntimeClassFactory)
 
@@ -328,6 +330,8 @@ void GameClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classSplitWorldLayer->addProperty< double >("alternateTime", &SplitWorldLayer::setAlternateTime, &SplitWorldLayer::getAlternateTime);
 	// classSplitWorldLayer->addProperty< const world::Entity* >("camera", &SplitWorldLayer::setCamera, &SplitWorldLayer::getCamera);
 	classSplitWorldLayer->addMethod("createEntity", &SplitWorldLayer::createEntity);
+	classSplitWorldLayer->addMethod("addEntity", &SplitWorldLayer::addEntity);
+	classSplitWorldLayer->addMethod("removeEntity", &SplitWorldLayer::removeEntity);
 	// classSplitWorldLayer->addMethod("worldToView", &SplitWorldLayer_worldToView);
 	// classSplitWorldLayer->addMethod("viewToWorld", &SplitWorldLayer_viewToWorld);
 	// classSplitWorldLayer->addMethod("worldToScreen", &SplitWorldLayer_worldToScreen);
@@ -349,6 +353,10 @@ void GameClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classVideoLayer->addMethod("getScreenBounds", &VideoLayer::getScreenBounds);
 	registrar->registerClass(classVideoLayer);
 
+	auto classEntityResult = new AutoRuntimeClass< EntityResult >();
+	classEntityResult->addMethod("get", &EntityResult::get);
+	registrar->registerClass(classEntityResult);
+
 	auto classWorldLayer = new AutoRuntimeClass< WorldLayer >();
 	classWorldLayer->addProperty("scene", &WorldLayer::getScene);
 	classWorldLayer->addProperty("world", &WorldLayer::getWorld);
@@ -358,6 +366,9 @@ void GameClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classWorldLayer->addProperty< double >("alternateTime", &WorldLayer::setAlternateTime, &WorldLayer::getAlternateTime);
 	classWorldLayer->addProperty< const world::Entity* >("camera", &WorldLayer::setCamera, &WorldLayer::getCamera);
 	classWorldLayer->addMethod("createEntity", &WorldLayer::createEntity);
+	classWorldLayer->addMethod("createEntityAsync", &WorldLayer::createEntityAsync);
+	classWorldLayer->addMethod("addEntity", &WorldLayer::addEntity);
+	classWorldLayer->addMethod("removeEntity", &WorldLayer::removeEntity);
 	classWorldLayer->addMethod("worldToView", &WorldLayer_worldToView);
 	classWorldLayer->addMethod("viewToWorld", &WorldLayer_viewToWorld);
 	classWorldLayer->addMethod("worldToScreen", &WorldLayer_worldToScreen);

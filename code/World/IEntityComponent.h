@@ -43,7 +43,7 @@ public:
 	virtual void setOwner(Entity* owner) = 0;
 
 	/*! Called when entity's world is set.
-	 * \param world New world.
+	 * \param world New world, any component which holds other entities should add or remove them from world.
 	 */
 	virtual void setWorld(World* world) {}
 
