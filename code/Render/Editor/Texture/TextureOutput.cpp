@@ -6,23 +6,24 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Render/Editor/Texture/TextureOutput.h"
+
 #include "Core/Serialization/AttributeRange.h"
+#include "Core/Serialization/AttributeUnit.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberEnum.h"
-#include "Render/Editor/Texture/TextureOutput.h"
 
 namespace traktor::render
 {
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.TextureOutput", 22, TextureOutput, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.TextureOutput", 23, TextureOutput, ISerializable)
 
 void TextureOutput::serialize(ISerializer& s)
 {
 	if (s.getVersion() >= 6)
 	{
-		const MemberEnum< TextureFormat >::Key c_TextureFormat_Keys[] =
-		{
+		const MemberEnum< TextureFormat >::Key c_TextureFormat_Keys[] = {
 			{ L"TfInvalid", TfInvalid },
 			{ L"TfR8", TfR8 },
 			{ L"TfR8G8B8A8", TfR8G8B8A8 },
@@ -78,8 +79,7 @@ void TextureOutput::serialize(ISerializer& s)
 
 	if (s.getVersion() >= 8)
 	{
-		const MemberEnum< TextureType >::Key c_TextureType_Keys[] =
-		{
+		const MemberEnum< TextureType >::Key c_TextureType_Keys[] = {
 			{ L"Tt2D", Tt2D },
 			{ L"Tt3D", Tt3D },
 			{ L"TtCube", TtCube },
@@ -168,6 +168,9 @@ void TextureOutput::serialize(ISerializer& s)
 
 	if (s.getVersion() >= 21)
 		s >> Member< std::wstring >(L"swizzle", m_swizzle);
+
+	if (s.getVersion() >= 23)
+		s >> Member< float >(L"saturation", m_saturation, AttributeRange(0.0f) | AttributeUnit(UnitType::Percent));
 }
 
 }

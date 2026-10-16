@@ -38,6 +38,7 @@
 #include "Drawing/Filters/NoiseFilter.h"
 #include "Drawing/Filters/NormalizeFilter.h"
 #include "Drawing/Filters/PremultiplyAlphaFilter.h"
+#include "Drawing/Filters/SaturationFilter.h"
 #include "Drawing/Filters/ScaleFilter.h"
 #include "Drawing/Filters/SharpenFilter.h"
 #include "Drawing/Filters/SphereMapFilter.h"
@@ -136,7 +137,7 @@ struct ScaleTextureTask : public Object
 
 }
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.TextureOutputPipeline", 41, TextureOutputPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.TextureOutputPipeline", 42, TextureOutputPipeline, editor::IPipeline)
 
 bool TextureOutputPipeline::create(const editor::IPipelineSettings* settings, db::Database* database)
 {
@@ -166,7 +167,7 @@ bool TextureOutputPipeline::create(const editor::IPipelineSettings* settings, db
 		log::error << L"Unknown compression method \"" << compressionMethod << L"\"." << Endl;
 		return false;
 	}
-	
+
 	// Don't compress data on disk for editor; assuming loading faster than decompression.
 	if (editor)
 		m_compressedData = false;
@@ -540,6 +541,14 @@ bool TextureOutputPipeline::buildOutput(
 		image->apply(&noiseFilter);
 	}
 
+	// Apply saturation.
+	if (abs(textureOutput->m_saturation - 1.0f) > FUZZY_EPSILON)
+	{
+		log::info << L"Applying saturation..." << Endl;
+		const drawing::SaturationFilter saturationFiler(textureOutput->m_saturation);
+		image->apply(&saturationFiler);
+	}
+
 	// Multiply with alpha.
 	if (textureOutput->m_premultiplyAlpha)
 	{
@@ -731,22 +740,25 @@ bool TextureOutputPipeline::buildOutput(
 				adjustAlphaCoverage(mipImage, textureOutput->m_alphaCoverageReference, alphaCoverage);
 
 		// Ensure each pixel is renormalized after scaling.
-		if (textureOutput->m_normalMap/* && abs(textureOutput->m_scaleNormalMap) > FUZZY_EPSILON*/)
+		if (textureOutput->m_normalMap /* && abs(textureOutput->m_scaleNormalMap) > FUZZY_EPSILON*/)
 		{
 			const drawing::NormalizeFilter normalizeFilter(textureOutput->m_scaleNormalMap);
 			for (auto mipImage : mipImages)
 				mipImage->apply(&normalizeFilter);
 		}
 
-		// Apply sharpen filter.
-		if (!textureOutput->m_normalMap && textureOutput->m_sharpenRadius > 0)
+		// Apply color filters.
+		if (!textureOutput->m_normalMap)
 		{
-			for (int32_t i = 1; i < (int32_t)mipImages.size(); ++i)
+			if (textureOutput->m_sharpenRadius > 0)
 			{
-				const drawing::SharpenFilter sharpenFilter(
-					textureOutput->m_sharpenRadius,
-					textureOutput->m_sharpenStrength * (float(i) / (mipCount - 1)));
-				mipImages[i]->apply(&sharpenFilter);
+				for (int32_t i = 1; i < (int32_t)mipImages.size(); ++i)
+				{
+					const drawing::SharpenFilter sharpenFilter(
+						textureOutput->m_sharpenRadius,
+						textureOutput->m_sharpenStrength * (float(i) / (mipCount - 1)));
+					mipImages[i]->apply(&sharpenFilter);
+				}
 			}
 		}
 
@@ -963,5 +975,4 @@ Ref< ISerializable > TextureOutputPipeline::buildProduct(
 	T_FATAL_ERROR;
 	return nullptr;
 }
-
 }

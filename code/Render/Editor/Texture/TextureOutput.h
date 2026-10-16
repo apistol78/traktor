@@ -61,6 +61,7 @@ public:
 	float m_noiseStrength = 0.0f;
 	bool m_systemTexture = false;
 	std::wstring m_swizzle = L"rgba";
+	float m_saturation = 1.0f;
 
 	virtual void serialize(ISerializer& s) override;
 };
