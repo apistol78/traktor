@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.script.Script" version="2">
-	<text>
-	<![CDATA[
+	<text><![CDATA[
+	
 #using \{7F5ADE59-4125-3342-A3F1-AEA3F584834E}
 #using \{D35E3668-DEFB-924A-B4DB-2E317DD67308}
 #using \{E1AC8A37-C364-5E47-BB5F-41B22A0CDC5E}
@@ -25,15 +25,16 @@ Widget.ALIGN_RIGHT = "R"
 Widget.ALIGN_TOP = "T"
 Widget.ALIGN_BOTTOM = "B"
 
-function Widget.initialize(resourceManager, resourceKits)
+function Widget.initialize(resourceManager, soundPlayer, resourceKits)
 	Widget._resourceManager = resourceManager
+	Widget._soundPlayer = soundPlayer
 	Widget._resourceKits = {}
 	Widget._modal = {}
 	Widget._exclusive = {}
 	Widget._focus = nil
 	Widget._eventMaskDirty = false
 	for _, rkid in ipairs(resourceKits) do
-		local rk = resourceManager:bind(traktor.spark.Movie, rkid)
+		local rk < const > = resourceManager:bind(traktor.spark.Movie, rkid)
 		if rk == nil then return false end
 		table.insert(Widget._resourceKits, rk)
 	end
@@ -541,23 +542,19 @@ function Widget._createResource(parent, resource, topMost)
 end
 
 function Widget:_playSound(soundId)
-#if 0
-	local resourceManager = Widget._env.resource.resourceManager
-	assert (resourceManager ~= nil)
-
-	local soundPlayer = Widget._env:getAudio():getSoundPlayer()
-	assert (soundPlayer ~= nil)
+	if Widget._soundPlayer == nil then
+		return
+	end
 
 	if not isa(soundId, Guid) then
 		soundId = Guid(soundId)
 	end
 
-	local sound = self._resourceManager:bind(traktor.sound.Sound, soundId)
+	local sound < const > = Widget._resourceManager:bind(traktor.sound.Sound, soundId)
 	if sound == nil or sound:get() == nil then return end
 
-	soundPlayer:play(sound:get(), 0)
-#endif
+	Widget._soundPlayer:play(sound:get(), 0)
 end
-	]]>
-	</text>
+	
+	]]></text>
 </object>
