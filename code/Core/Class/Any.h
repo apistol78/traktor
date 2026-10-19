@@ -62,7 +62,7 @@ public:
 		src.m_type = Type::Void;
 	}
 
-	virtual ~Any();
+	~Any();
 
 	/*! Create Any from boolean. */
 	static Any fromBoolean(bool value);

@@ -28,6 +28,7 @@
 #include "Script/Lua/ScriptUtilitiesLua.h"
 
 #include <cstring>
+#include <new>
 
 // Resources
 #include "Resources/Initialization.h"
@@ -42,6 +43,71 @@ namespace
 {
 
 Timer s_timer;
+
+#if defined(T_USE_ALLOCATOR)
+class LuaBlockPool
+{
+public:
+	static constexpr size_t Granularity = 16;
+	static constexpr size_t MaxBlockSize = 256;
+	static constexpr size_t ChunkSize = 64 * 1024;
+
+	static size_t sizeClass(size_t size) { return (size - 1) / Granularity; }
+
+	void* alloc(size_t size)
+	{
+		const size_t sc = sizeClass(size);
+		void* p = m_free[sc];
+		if (p)
+		{
+			m_free[sc] = *(void**)p;
+			return p;
+		}
+		const size_t blockSize = (sc + 1) * Granularity;
+		if (m_bump + blockSize > m_bumpEnd && !grow())
+			return nullptr;
+		p = m_bump;
+		m_bump += blockSize;
+		return p;
+	}
+
+	void free(void* p, size_t size)
+	{
+		const size_t sc = sizeClass(size);
+		*(void**)p = m_free[sc];
+		m_free[sc] = p;
+	}
+
+	void clear()
+	{
+		for (auto chunk : m_chunks)
+			getAllocator()->free(chunk);
+		m_chunks.clear();
+		for (auto& f : m_free)
+			f = nullptr;
+		m_bump = m_bumpEnd = nullptr;
+	}
+
+private:
+	void* m_free[MaxBlockSize / Granularity] = {};
+	uint8_t* m_bump = nullptr;
+	uint8_t* m_bumpEnd = nullptr;
+	AlignedVector< uint8_t* > m_chunks;
+
+	bool grow()
+	{
+		uint8_t* chunk = (uint8_t*)getAllocator()->alloc(ChunkSize, 16, T_FILE_LINE);
+		if (!chunk)
+			return false;
+		m_chunks.push_back(chunk);
+		m_bump = chunk;
+		m_bumpEnd = chunk + ChunkSize;
+		return true;
+	}
+};
+
+LuaBlockPool s_blockPool;
+#endif
 
 const int32_t c_tableKey_class = -1;
 const int32_t c_tableKey_instance = -2;
@@ -67,6 +133,64 @@ inline ITypedObject* toTypedObject(lua_State* luaState, int32_t index)
 		return object;
 	}
 	return nullptr;
+}
+
+template < int32_t Capacity >
+class CallArguments
+{
+public:
+	explicit CallArguments(int32_t count)
+	:	m_count(count < 0 ? 0 : (count > Capacity ? Capacity : count))
+	{
+		for (int32_t i = 0; i < m_count; ++i)
+			new (&ptr()[i]) Any();
+	}
+
+	~CallArguments()
+	{
+		for (int32_t i = 0; i < m_count; ++i)
+			ptr()[i].~Any();
+	}
+
+	Any* ptr() { return reinterpret_cast< Any* >(m_storage); }
+
+	int32_t count() const { return m_count; }
+
+private:
+	alignas(Any) uint8_t m_storage[Capacity * sizeof(Any)];
+	int32_t m_count;
+};
+
+#if defined(_MSC_VER)
+#	define T_SCRIPT_NOINLINE __declspec(noinline)
+#else
+#	define T_SCRIPT_NOINLINE __attribute__((noinline))
+#endif
+
+// Name of the member being accessed, for error messages; the key need not be a string.
+inline std::wstring memberName(lua_State* luaState, int32_t index)
+{
+	return lua_type(luaState, index) == LUA_TSTRING ? mbstows(lua_tostring(luaState, index)) : std::wstring(L"?");
+}
+
+T_SCRIPT_NOINLINE int assignField(lua_State* luaState)
+{
+	// A property without a setter is read-only; stored as a field instead, it would hide the
+	// property from then on.
+	lua_getfield(luaState, lua_upvalueindex(2), "__getdispatch");
+	lua_pushvalue(luaState, 2);
+	const bool readOnlyProperty = (lua_rawget(luaState, -2) == LUA_TLIGHTUSERDATA);
+	lua_pop(luaState, 2);
+	if (readOnlyProperty)
+		return luaL_error(luaState, "Cannot assign read-only property \"%s\"", lua_type(luaState, 2) == LUA_TSTRING ? lua_tostring(luaState, 2) : "?");
+
+	// Value-type instances are userdata and cannot carry arbitrary fields.
+	if (lua_isuserdata(luaState, 1))
+		return luaL_error(luaState, "Cannot assign field to value type instance");
+
+	// Associate value on instance table.
+	lua_rawset(luaState, 1);
+	return 0;
 }
 
 // Determine whether the value at index is one of our native instances. Safe to
@@ -114,6 +238,48 @@ inline void putObjectRef(lua_State* L, int32_t objectTableRef, ITypedObject* obj
 	lua_pop(L, 1);
 }
 
+/*! Push a value type instance as full userdata.
+ *
+ * Two representations, chosen by the class:
+ *
+ *  - *embedded*: the instance is copy constructed into the userdata itself. Nothing is
+ *    allocated apart from the userdata and the class carries no "__gc", which is what
+ *    makes handing thousands of vectors a frame to script land affordable -- Lua's
+ *    collector runs finalizers at a bounded rate and cannot keep up with millions of
+ *    finalizable objects a minute.
+ *  - *referenced*: the userdata holds a pointer to a separately allocated instance and
+ *    owns a reference to it, released by "__gc". Used for value types that own something
+ *    (and so must be destructed) and for anything not copy constructible.
+ *
+ * Either way the *pointer* to the instance sits at offset zero of the payload, so every
+ * reader -- toTypedObject, isNativeInstance, toAny -- is identical for both.
+ */
+void pushValueInstance(lua_State* luaState, const IRuntimeClass* runtimeClass, int32_t classTableRef, ITypedObject* object)
+{
+	const uint32_t embeddedSize = runtimeClass->getEmbeddedSize();
+	if (embeddedSize > 0)
+	{
+		uint8_t* ud = (uint8_t*)lua_newuserdatauv(luaState, sizeof(ITypedObject*) + embeddedSize, 0);
+		ITypedObject* embedded = runtimeClass->embedCopy(ud + sizeof(ITypedObject*), object);
+		T_FATAL_ASSERT(embedded != nullptr);
+		*(ITypedObject**)ud = embedded;
+
+		// One reference that is never given back. The instance lives and dies with the
+		// userdata, so its counter must never reach zero: a stray release would otherwise
+		// hand storage owned by Lua to the allocator.
+		T_SAFE_ANONYMOUS_ADDREF(embedded);
+	}
+	else
+	{
+		ITypedObject** ud = (ITypedObject**)lua_newuserdatauv(luaState, sizeof(ITypedObject*), 0);
+		*ud = object;
+		T_SAFE_ANONYMOUS_ADDREF(object);
+	}
+
+	lua_rawgeti(luaState, LUA_REGISTRYINDEX, classTableRef);
+	lua_setmetatable(luaState, -2);
+}
+
 }
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.script.ScriptManagerLua", 0, ScriptManagerLua, IScriptManager)
@@ -148,20 +314,6 @@ ScriptManagerLua::ScriptManagerLua()
 	lua_atpanic(m_luaState, luaPanic);
 	luaL_openlibs(m_luaState);
 
-	// Collect generationally.
-	//
-	// Every wrapper we hand to script land carries a "__gc" (classGc, which releases the
-	// native object), so a game that passes vectors and transforms about produces millions
-	// of *finalizable* objects a minute. Lua's incremental collector cannot keep up with
-	// that: finalizers are run at a bounded rate per cycle, and once it falls behind it
-	// stays behind, so the heap climbs for as long as the session lasts. Measured over
-	// 4.7M wrapper allocations (30 entities x 25 boxes x 6000 frames): incremental leaves
-	// 116 MiB live having run 2.8M of 4.7M finalizers, generational leaves 0.03 MiB having
-	// run all but one of them.
-	//
-	// The mode is set here and left running -- the collector paces itself against
-	// allocation far better than the frame-rate-driven stepping this used to do, and a
-	// minor collection is cheap enough not to need a budget. See collectGarbagePartial.
 	lua_gc(m_luaState, LUA_GCGEN);
 
 	lua_register(m_luaState, "print", luaPrint);
@@ -238,6 +390,11 @@ void ScriptManagerLua::destroy()
 	m_objectTableRef = LUA_NOREF;
 
 	lua_close(luaState);
+
+#if defined(T_USE_ALLOCATOR)
+	// Everything the state allocated has been given back; the chunks themselves can go.
+	s_blockPool.clear();
+#endif
 }
 
 void ScriptManagerLua::registerClass(IRuntimeClass* runtimeClass)
@@ -344,11 +501,48 @@ void ScriptManagerLua::registerClass(IRuntimeClass* runtimeClass)
 	}
 
 	// Add properties.
+	//
+	// Each property is registered twice. "__getters" and "__setters" hold closures, which is
+	// what the Lua "class" helper's own __index and __newindex call for classes derived in
+	// script. "__getdispatch" and "__setdispatch" hold the dispatches themselves, which is
+	// what classIndex and classNewIndex invoke for native instances -- directly, rather than
+	// by a lua_call of the closure, which was a second full Lua to C call on every access.
+	// Copied from the super class by the "class" helper like any other table member, so a
+	// class inherits its super class' properties in both.
 	T_FATAL_ASSERT(lua_istable(m_luaState, -1));
+	for (const char* dispatchTableName : { "__getdispatch", "__setdispatch" })
+	{
+		lua_getfield(m_luaState, -1, dispatchTableName);
+		const bool inherited = lua_istable(m_luaState, -1);
+		lua_pop(m_luaState, 1);
+		if (!inherited)
+		{
+			lua_newtable(m_luaState);
+			lua_setfield(m_luaState, -2, dispatchTableName);
+		}
+	}
+
 	const uint32_t propertyCount = runtimeClass->getPropertiesCount();
 	for (uint32_t i = 0; i < propertyCount; ++i)
 	{
 		const std::string propertyName = runtimeClass->getPropertyName(i);
+
+		// A read-only property has no setter; a nil entry also hides one inherited by name.
+		lua_getfield(m_luaState, -1, "__setdispatch");
+		if (runtimeClass->getPropertySetDispatch(i))
+			lua_pushlightuserdata(m_luaState, (void*)runtimeClass->getPropertySetDispatch(i));
+		else
+			lua_pushnil(m_luaState);
+		lua_setfield(m_luaState, -2, propertyName.c_str());
+		lua_pop(m_luaState, 1);
+
+		lua_getfield(m_luaState, -1, "__getdispatch");
+		if (runtimeClass->getPropertyGetDispatch(i))
+			lua_pushlightuserdata(m_luaState, (void*)runtimeClass->getPropertyGetDispatch(i));
+		else
+			lua_pushnil(m_luaState);
+		lua_setfield(m_luaState, -2, propertyName.c_str());
+		lua_pop(m_luaState, 1);
 
 		lua_getfield(m_luaState, -1, "__setters");
 		T_FATAL_ASSERT(lua_istable(m_luaState, -1));
@@ -462,7 +656,7 @@ void ScriptManagerLua::registerClass(IRuntimeClass* runtimeClass)
 	// __newindex
 	{
 		DO_0(m_luaState, lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, rc.classTableRef));
-		DO_1(m_luaState, lua_getfield(m_luaState, -1, "__setters"));
+		DO_1(m_luaState, lua_getfield(m_luaState, -1, "__setdispatch"));
 		DO_1(m_luaState, lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, rc.classTableRef));
 		DO_1(m_luaState, lua_pushcclosure(m_luaState, classNewIndex, 2));
 		DO_1(m_luaState, lua_setfield(m_luaState, -2, "__newindex"));
@@ -471,7 +665,7 @@ void ScriptManagerLua::registerClass(IRuntimeClass* runtimeClass)
 	// __index
 	{
 		DO_0(m_luaState, lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, rc.classTableRef));
-		DO_1(m_luaState, lua_getfield(m_luaState, -1, "__getters"));
+		DO_1(m_luaState, lua_getfield(m_luaState, -1, "__getdispatch"));
 		DO_1(m_luaState, lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, rc.classTableRef));
 		DO_1(m_luaState, lua_pushcclosure(m_luaState, classIndex, 2));
 		DO_1(m_luaState, lua_setfield(m_luaState, -2, "__index"));
@@ -601,53 +795,6 @@ void ScriptManagerLua::collectGarbage(bool full)
 void ScriptManagerLua::getStatistics(ScriptStatistics& outStatistics) const
 {
 	outStatistics.memoryUsage = uint32_t(m_totalMemoryUse);
-}
-
-namespace
-{
-
-/*! Push a value type instance as full userdata.
- *
- * Two representations, chosen by the class:
- *
- *  - *embedded*: the instance is copy constructed into the userdata itself. Nothing is
- *    allocated apart from the userdata and the class carries no "__gc", which is what
- *    makes handing thousands of vectors a frame to script land affordable -- Lua's
- *    collector runs finalizers at a bounded rate and cannot keep up with millions of
- *    finalizable objects a minute.
- *  - *referenced*: the userdata holds a pointer to a separately allocated instance and
- *    owns a reference to it, released by "__gc". Used for value types that own something
- *    (and so must be destructed) and for anything not copy constructible.
- *
- * Either way the *pointer* to the instance sits at offset zero of the payload, so every
- * reader -- toTypedObject, isNativeInstance, toAny -- is identical for both.
- */
-void pushValueInstance(lua_State* luaState, const IRuntimeClass* runtimeClass, int32_t classTableRef, ITypedObject* object)
-{
-	const uint32_t embeddedSize = runtimeClass->getEmbeddedSize();
-	if (embeddedSize > 0)
-	{
-		uint8_t* ud = (uint8_t*)lua_newuserdatauv(luaState, sizeof(ITypedObject*) + embeddedSize, 0);
-		ITypedObject* embedded = runtimeClass->embedCopy(ud + sizeof(ITypedObject*), object);
-		T_FATAL_ASSERT(embedded != nullptr);
-		*(ITypedObject**)ud = embedded;
-
-		// One reference that is never given back. The instance lives and dies with the
-		// userdata, so its counter must never reach zero: a stray release would otherwise
-		// hand storage owned by Lua to the allocator.
-		T_SAFE_ANONYMOUS_ADDREF(embedded);
-	}
-	else
-	{
-		ITypedObject** ud = (ITypedObject**)lua_newuserdatauv(luaState, sizeof(ITypedObject*), 0);
-		*ud = object;
-		T_SAFE_ANONYMOUS_ADDREF(object);
-	}
-
-	lua_rawgeti(luaState, LUA_REGISTRYINDEX, classTableRef);
-	lua_setmetatable(luaState, -2);
-}
-
 }
 
 void ScriptManagerLua::pushObject(ITypedObject* object)
@@ -982,13 +1129,6 @@ void ScriptManagerLua::collectGarbageFullNoLock()
 		return;
 
 	// Repeat GC while it keeps freeing memory, then a few more times to be sure.
-	//
-	// Each pass is a full mark and sweep of the whole heap, so the patience is what this
-	// costs when it finds nothing: a hundred of them over a large heap is seconds of stall
-	// at a state transition, which is where this is called from. Three is enough to be
-	// thorough -- an object with a finalizer needs one cycle to run "__gc" and another
-	// before it can be freed, so two passes are required to settle a finalizer at all and
-	// the third confirms nothing new was resurrected.
 	const int32_t c_settlePasses = 3;
 	int32_t count = c_settlePasses;
 	while (count > 0)
@@ -1007,22 +1147,7 @@ void ScriptManagerLua::collectGarbageFullNoLock()
 
 void ScriptManagerLua::collectGarbagePartial()
 {
-#if defined(T_SCRIPT_LUA_USE_GENERATIONAL_COLLECTOR)
-
-	// Nothing to do, deliberately: the generational collector enabled in the constructor
-	// runs itself, paced against allocation by Lua rather than against our frame rate.
-	//
-	// This used to hand-pace the collector -- stop it, then issue a number of GCSTEP calls
-	// per second derived from the observed garbage rate. That scheme cannot be recommended
-	// and is kept below only for the non-generational build: it makes the collector's
-	// throughput a function of frame rate, it caps out (60 steps/s), and the step argument
-	// changed units in Lua 5.5 -- lua_gc(LUA_GCSTEP, n) now credits n *bytes* of allocation
-	// (lapi.c: "luaE_setdebt(g, g->GCdebt - n)") where 5.4 credited n Kbytes, so a step size
-	// of 128 that once meant 128 KiB silently became 128 bytes and collection all but
-	// stopped. Letting Lua schedule its own collection avoids the entire class of problem.
-
-#else
-
+#if !defined(T_SCRIPT_LUA_USE_GENERATIONAL_COLLECTOR)
 	const float dT = std::min< float >((float)s_timer.getDeltaTime(), 0.1f);
 	m_collectTargetSteps += dT * m_collectStepFrequency;
 
@@ -1073,7 +1198,6 @@ void ScriptManagerLua::collectGarbagePartial()
 	}
 
 	m_lastMemoryUse = m_totalMemoryUse;
-
 #endif
 }
 
@@ -1120,8 +1244,8 @@ int ScriptManagerLua::classNew(lua_State* luaState)
 
 	const int32_t top = lua_gettop(luaState);
 
-	Any argv[8];
-	ms_instance->toAny(2, top - 1, argv);
+	CallArguments< 8 > argv(top - 1);
+	ms_instance->toAny(2, argv.count(), argv.ptr());
 
 	// Discard all arguments, only instance table in stack.
 	lua_settop(luaState, 1);
@@ -1130,7 +1254,7 @@ int ScriptManagerLua::classNew(lua_State* luaState)
 	try
 #endif
 	{
-		Ref< ITypedObject > object = runtimeDispatch->invoke(0, top - 1, argv).getObject();
+		Ref< ITypedObject > object = runtimeDispatch->invoke(0, argv.count(), argv.ptr()).getObject();
 		if (!object) [[unlikely]]
 			return 0;
 
@@ -1175,14 +1299,14 @@ int ScriptManagerLua::classNewValue(lua_State* luaState)
 	// constructor arguments follow.
 	const int32_t top = lua_gettop(luaState);
 
-	Any argv[8];
-	ms_instance->toAny(2, top - 1, argv);
+	CallArguments< 8 > argv(top - 1);
+	ms_instance->toAny(2, argv.count(), argv.ptr());
 
 #if T_VERIFY_USING_EXCEPTIONS
 	try
 #endif
 	{
-		Ref< ITypedObject > object = runtimeDispatch->invoke(0, top - 1, argv).getObject();
+		Ref< ITypedObject > object = runtimeDispatch->invoke(0, argv.count(), argv.ptr()).getObject();
 		if (!object) [[unlikely]]
 			return 0;
 
@@ -1224,15 +1348,15 @@ int ScriptManagerLua::classCallUnknownMethod(lua_State* luaState)
 	}
 
 	// Convert arguments; first argument should always be method name.
-	Any argv[8];
-	argv[0] = Any::fromString(methodName);
-	ms_instance->toAny(3, top - 2, &argv[1]);
+	CallArguments< 8 > argv(top - 1);
+	argv.ptr()[0] = Any::fromString(methodName);
+	ms_instance->toAny(3, argv.count() - 1, argv.ptr() + 1);
 
 #if T_VERIFY_USING_EXCEPTIONS
 	try
 #endif
 	{
-		const Any returnValue = runtimeDispatch->invoke(object, top - 1, argv);
+		const Any returnValue = runtimeDispatch->invoke(object, argv.count(), argv.ptr());
 		ms_instance->pushAny(returnValue);
 		return 1;
 	}
@@ -1264,14 +1388,14 @@ int ScriptManagerLua::classCallMethod(lua_State* luaState)
 		return 0;
 	}
 
-	Any argv[10];
-	ms_instance->toAny(2, top - 1, argv);
+	CallArguments< 10 > argv(top - 1);
+	ms_instance->toAny(2, argv.count(), argv.ptr());
 
 #if T_VERIFY_USING_EXCEPTIONS
 	try
 #endif
 	{
-		const Any returnValue = runtimeDispatch->invoke(object, top - 1, argv);
+		const Any returnValue = runtimeDispatch->invoke(object, argv.count(), argv.ptr());
 		ms_instance->pushAny(returnValue);
 		return 1;
 	}
@@ -1296,14 +1420,14 @@ int ScriptManagerLua::classCallStaticMethod(lua_State* luaState)
 	if (top < 0) [[unlikely]]
 		return 0;
 
-	Any argv[10];
-	ms_instance->toAny(1, top, argv);
+	CallArguments< 10 > argv(top);
+	ms_instance->toAny(1, argv.count(), argv.ptr());
 
 #if T_VERIFY_USING_EXCEPTIONS
 	try
 #endif
 	{
-		const Any returnValue = runtimeDispatch->invoke(0, top, argv);
+		const Any returnValue = runtimeDispatch->invoke(0, argv.count(), argv.ptr());
 		ms_instance->pushAny(returnValue);
 		return 1;
 	}
@@ -1322,7 +1446,10 @@ int ScriptManagerLua::classCallStaticMethod(lua_State* luaState)
 int ScriptManagerLua::classSetProperty(lua_State* luaState)
 {
 	const IRuntimeDispatch* runtimeDispatch = reinterpret_cast< const IRuntimeDispatch* >(lua_touserdata(luaState, lua_upvalueindex(1)));
-	T_ASSERT(runtimeDispatch);
+
+	// A read-only property: registered with no setter, which used to be called regardless.
+	if (!runtimeDispatch) [[unlikely]]
+		return luaL_error(luaState, "Cannot assign read-only property");
 
 	ITypedObject* object = toTypedObject(luaState, 1);
 	if (!object) [[unlikely]]
@@ -1354,7 +1481,8 @@ int ScriptManagerLua::classSetProperty(lua_State* luaState)
 int ScriptManagerLua::classGetProperty(lua_State* luaState)
 {
 	const IRuntimeDispatch* runtimeDispatch = reinterpret_cast< const IRuntimeDispatch* >(lua_touserdata(luaState, lua_upvalueindex(1)));
-	T_ASSERT(runtimeDispatch);
+	if (!runtimeDispatch) [[unlikely]]
+		return 0;
 
 	ITypedObject* object = toTypedObject(luaState, 1);
 	if (!object) [[unlikely]]
@@ -1698,59 +1826,65 @@ int ScriptManagerLua::classDivide(lua_State* luaState)
 
 int ScriptManagerLua::classNewIndex(lua_State* luaState)
 {
-	// lua_upvalueindex(1) == __setters
-	// lua_upvalueindex(2) == class
-
-	// 1 [-3] .	table
-	// 2 [-2] .	string: "__typename"
-	// 3 [-1] .	string: "traktor.Color4f"
-
-	// Check if a property setter.
-	DO_0(luaState, lua_pushvalue(luaState, lua_upvalueindex(1)));
-	DO_1(luaState, lua_pushvalue(luaState, -3));
-	DO_1(luaState, lua_rawget(luaState, -2));
-	if (lua_isfunction(luaState, -1))
+	// Property setter; invoked directly (see registerClass).
+	lua_pushvalue(luaState, 2);
+	if (lua_rawget(luaState, lua_upvalueindex(1)) == LUA_TLIGHTUSERDATA)
 	{
-		// Invoke property setter.
-		DO_1(luaState, lua_pushvalue(luaState, -5));
-		DO_1(luaState, lua_pushvalue(luaState, -4));
-		DO_1(luaState, lua_call(luaState, 2, 1));
-		return 1;
+		const IRuntimeDispatch* runtimeDispatch = reinterpret_cast< const IRuntimeDispatch* >(lua_touserdata(luaState, -1));
+		lua_pop(luaState, 1);
+
+		ITypedObject* object = toTypedObject(luaState, 1);
+		if (!object) [[unlikely]]
+		{
+			log::error << L"Unable to set property \"" << memberName(luaState, 2) << L"\"; null object" << Endl;
+			return 0;
+		}
+
+#if T_VERIFY_USING_EXCEPTIONS
+		try
+#endif
+		{
+			const Any value = ms_instance->toAny(3);
+			runtimeDispatch->invoke(object, 1, &value);
+		}
+#if T_VERIFY_USING_EXCEPTIONS
+		catch (const RuntimeException& x)
+		{
+			log::error << L"Unhandled RuntimeException occurred when setting property \"" << memberName(luaState, 2) << L"\"; \"" << x.what() << L"\"." << Endl;
+			ms_instance->breakDebugger(luaState);
+		}
+#endif
+		return 0;
 	}
-	DO_1(luaState, lua_pop(luaState, 2));
-
-	// Value-type instances are userdata and cannot carry arbitrary fields.
-	if (lua_isuserdata(luaState, 1))
-		return luaL_error(luaState, "Cannot assign field to value type instance");
-
-	// Associate value on instance table.
-	DO_1(luaState, lua_rawset(luaState, -3));
-	return 0;
+	lua_pop(luaState, 1);
+	return assignField(luaState);
 }
 
 int ScriptManagerLua::classIndex(lua_State* luaState)
 {
-	// lua_upvalueindex(1) == __getters
-	// lua_upvalueindex(2) == class
-
-	// Check if a property getter.
-	DO_0(luaState, lua_pushvalue(luaState, lua_upvalueindex(1)));
-	DO_1(luaState, lua_pushvalue(luaState, -2));
-	DO_1(luaState, lua_rawget(luaState, -2));
-	if (lua_isfunction(luaState, -1))
+	// Property getter; invoked directly (see registerClass).
+	lua_pushvalue(luaState, 2);
+	if (lua_rawget(luaState, lua_upvalueindex(1)) == LUA_TLIGHTUSERDATA)
 	{
-		// Invoke property getter.
-		DO_1(luaState, lua_pushvalue(luaState, -4));
-		DO_1(luaState, lua_call(luaState, 1, 1));
+		const IRuntimeDispatch* runtimeDispatch = reinterpret_cast< const IRuntimeDispatch* >(lua_touserdata(luaState, -1));
+		lua_pop(luaState, 1);
+
+		ITypedObject* object = toTypedObject(luaState, 1);
+		if (!object) [[unlikely]]
+		{
+			log::error << L"Unable to get property \"" << memberName(luaState, 2) << L"\"; null object" << Endl;
+			return 0;
+		}
+
+		const Any value = runtimeDispatch->invoke(object, 0, nullptr);
+		ms_instance->pushAny(value);
 		return 1;
 	}
-	DO_1(luaState, lua_pop(luaState, 2));
+	lua_pop(luaState, 1);
 
-	// Check if a method.
-	DO_1(luaState, lua_pushvalue(luaState, lua_upvalueindex(2)));
-	DO_1(luaState, lua_pushvalue(luaState, -2));
-	DO_1(luaState, lua_rawget(luaState, -2));
-
+	// Method, or any other member of the class.
+	lua_pushvalue(luaState, 2);
+	lua_rawget(luaState, lua_upvalueindex(2));
 	return 1;
 }
 
@@ -1759,51 +1893,75 @@ void* ScriptManagerLua::luaAlloc(void* ud, void* ptr, size_t osize, size_t nsize
 	ScriptManagerLua* this_ = reinterpret_cast< ScriptManagerLua* >(ud);
 	T_ASSERT(this_);
 
-	IAllocator* allocator = getAllocator();
 	size_t& totalMemoryUse = this_->m_totalMemoryUse;
-	if (nsize > 0)
+
+#if defined(T_USE_ALLOCATOR)
+	// Without a block, osize is the type of object about to be created, not a size.
+	if (!ptr)
+		osize = 0;
+
+	// Small blocks come from the pool and the rest from the general allocator, decided by
+	// size alone (see LuaBlockPool).
+	constexpr size_t MaxPooled = LuaBlockPool::MaxBlockSize;
+
+	if (nsize == 0)
 	{
-		totalMemoryUse += nsize;
-
-#if defined(T_USE_ALLOCATOR)
-		if (osize >= nsize && osize - nsize < 512)
+		if (ptr)
 		{
-			T_ASSERT(ptr);
-			totalMemoryUse -= osize;
-			return ptr;
-		}
-
-		void* nptr = allocator->alloc(nsize, 16, T_FILE_LINE);
-		if (!nptr)
-			return nullptr;
-#endif
-
-		if (ptr && osize > 0)
-		{
-#if defined(T_USE_ALLOCATOR)
-			std::memcpy(nptr, ptr, std::min(osize, nsize));
-			allocator->free(ptr);
-#endif
+			if (osize <= MaxPooled)
+				s_blockPool.free(ptr, osize);
+			else
+				getAllocator()->free(ptr);
 			T_ASSERT(osize <= totalMemoryUse);
 			totalMemoryUse -= osize;
 		}
-
-#if defined(T_USE_ALLOCATOR)
-		return nptr;
-#endif
+		return nullptr;
 	}
-	else if (ptr)
+
+	// Resized within the block it already has: the same size class of the pool, or a large
+	// block shrunk by less than it would be worth moving for.
+	if (ptr)
 	{
-#if defined(T_USE_ALLOCATOR)
-		allocator->free(ptr);
-#endif
+		const bool samePoolClass = (osize <= MaxPooled && nsize <= MaxPooled && LuaBlockPool::sizeClass(osize) == LuaBlockPool::sizeClass(nsize));
+		const bool largeShrink = (osize > MaxPooled && nsize > MaxPooled && osize >= nsize && osize - nsize < 512);
+		if (samePoolClass || largeShrink)
+		{
+			totalMemoryUse = totalMemoryUse + nsize - osize;
+			return ptr;
+		}
+	}
+
+	void* nptr = (nsize <= MaxPooled) ? s_blockPool.alloc(nsize) : getAllocator()->alloc(nsize, 16, T_FILE_LINE);
+	if (!nptr)
+		return nullptr;	// Lua keeps the old block, which is still valid.
+	totalMemoryUse += nsize;
+
+	if (ptr)
+	{
+		std::memcpy(nptr, ptr, std::min(osize, nsize));
+		if (osize <= MaxPooled)
+			s_blockPool.free(ptr, osize);
+		else
+			getAllocator()->free(ptr);
 		T_ASSERT(osize <= totalMemoryUse);
 		totalMemoryUse -= osize;
 	}
-
-#if defined(T_USE_ALLOCATOR)
-	return nullptr;
+	return nptr;
 #else
+	if (nsize > 0)
+	{
+		totalMemoryUse += nsize;
+		if (ptr && osize > 0)
+		{
+			T_ASSERT(osize <= totalMemoryUse);
+			totalMemoryUse -= osize;
+		}
+	}
+	else if (ptr)
+	{
+		T_ASSERT(osize <= totalMemoryUse);
+		totalMemoryUse -= osize;
+	}
 	return ((lua_Alloc)(this_->m_defaultAllocFn))(this_->m_defaultAllocOpaque, ptr, osize, nsize);
 #endif
 }
