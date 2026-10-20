@@ -151,7 +151,7 @@ public:
 private:
 	float m_timeScale = 1.0f;
 	float m_simulationFrequency = 120.0f;
-	Semaphore m_lock;
+	mutable Semaphore m_lock;
 	btCollisionConfiguration* m_configuration;
 	btCollisionDispatcher* m_dispatcher;
 	btBroadphaseInterface* m_broadphase;

@@ -30,6 +30,8 @@
 #include "World/Entity/DisplacementEntityComponentData.h"
 #include "World/Entity/DisplacementWorldComponent.h"
 #include "World/Entity/DisplacementWorldComponentData.h"
+#include "World/Entity/EntityStreamingComponent.h"
+#include "World/Entity/EntityStreamingComponentData.h"
 #include "World/Entity/EventSetComponent.h"
 #include "World/Entity/EventSetComponentData.h"
 #include "World/Entity/ExternalEntityData.h"
@@ -110,13 +112,15 @@ const TypeInfoSet WorldEntityFactory::getEntityComponentTypes() const
 
 const TypeInfoSet WorldEntityFactory::getWorldComponentTypes() const
 {
-	return makeTypeInfoSet<
-		ColorCorrectionComponentData,
-		ComputeTextureComponentData,
-		DisplacementWorldComponentData,
-		FogComponentData,
-		IrradianceGridComponentData,
-		PostProcessComponentData >();
+	TypeInfoSet typeSet;
+	typeSet.insert< ColorCorrectionComponentData >();
+	typeSet.insert< ComputeTextureComponentData >();
+	typeSet.insert< DisplacementWorldComponentData >();
+	typeSet.insert< EntityStreamingComponentData >();
+	typeSet.insert< FogComponentData >();
+	typeSet.insert< IrradianceGridComponentData >();
+	typeSet.insert< PostProcessComponentData >();
+	return typeSet;
 }
 
 Ref< Entity > WorldEntityFactory::createEntity(const IEntityBuilder* builder, const EntityData& entityData) const
@@ -348,6 +352,9 @@ Ref< IWorldComponent > WorldEntityFactory::createWorldComponent(const IEntityBui
 
 	if (auto displacementWorldComponentData = dynamic_type_cast< const DisplacementWorldComponentData* >(&worldComponentData))
 		return displacementWorldComponentData->createComponent(m_resourceManager, m_renderSystem);
+
+	if (auto entityStreamingComponentData = dynamic_type_cast< const EntityStreamingComponentData* >(&worldComponentData))
+		return new EntityStreamingComponent(builder, m_resourceManager, entityStreamingComponentData);
 
 	if (auto fogComponentData = dynamic_type_cast< const FogComponentData* >(&worldComponentData))
 		return fogComponentData->createComponent(m_resourceManager);

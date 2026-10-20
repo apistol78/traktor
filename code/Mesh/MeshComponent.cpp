@@ -40,6 +40,14 @@ void MeshComponent::setWorld(world::World* world)
 	{
 		Ref< world::IntervalTransformComponent > intervalTransformComponent = m_world->getComponent< world::IntervalTransformComponent >();
 		m_transform = intervalTransformComponent->alloc();
+
+		// Seed from owner so a mesh added mid-frame doesn't interpolate from origin.
+		if (m_owner)
+		{
+			const Transform transform = m_owner->getTransform();
+			m_transform->currentUpdate = m_transform->lastUpdate = transform;
+			m_transform->currentRender = m_transform->lastRender = transform;
+		}
 	}
 }
 

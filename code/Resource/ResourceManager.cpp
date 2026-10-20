@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -21,6 +21,20 @@
 
 namespace traktor::resource
 {
+namespace
+{
+
+// Number of loads on current thread made while holding manager lock.
+thread_local int32_t t_lockedLoadDepth = 0;
+
+struct LockedLoadScope
+{
+	LockedLoadScope() { ++t_lockedLoadDepth; }
+
+	~LockedLoadScope() { --t_lockedLoadDepth; }
+};
+
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.resource.ResourceManager", ResourceManager, IResourceManager)
 
@@ -75,6 +89,7 @@ void ResourceManager::removeAllFactories()
 bool ResourceManager::load(const ResourceBundle* bundle)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+	const LockedLoadScope lockedLoadScope;
 	for (const auto& resource : bundle->get())
 	{
 		// Get resource instance from database.
@@ -198,7 +213,7 @@ Ref< ResourceHandle > ResourceManager::bind(const TypeInfo& productType, const G
 		// First try to reuse handles which are no longer in use.
 		for (auto h : handles)
 		{
-			if (!h->get())
+			if (!h->get() && m_loading.find(h) == m_loading.end())
 			{
 				handle = h;
 				break;
@@ -214,9 +229,34 @@ Ref< ResourceHandle > ResourceManager::bind(const TypeInfo& productType, const G
 	}
 	T_ASSERT(handle);
 
-	// If no resource loaded into handle then load resource through factory.
-	if (!handle->get())
-		load(instance, factory, productType, handle);
+	// Nested in a locked load; cannot wait since the claim owner might need the lock.
+	if (t_lockedLoadDepth > 0)
+	{
+		if (!handle->get())
+			load(instance, factory, productType, handle);
+		return handle;
+	}
+
+	// Claim loading of handle; wait while another thread is loading it.
+	for (;;)
+	{
+		{
+			T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+			if (handle->get())
+				return handle;
+			if (m_loading.insert(handle))
+				break;
+		}
+		m_loadedEvent.wait(10);
+	}
+
+	load(instance, factory, productType, handle);
+
+	{
+		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+		m_loading.erase(handle);
+	}
+	m_loadedEvent.broadcast();
 
 	return handle;
 }
@@ -224,6 +264,7 @@ Ref< ResourceHandle > ResourceManager::bind(const TypeInfo& productType, const G
 bool ResourceManager::reload(const Guid& guid, bool flushedOnly)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+	const LockedLoadScope lockedLoadScope;
 
 	if (guid.isNull() || !guid.isValid())
 		return false;
@@ -276,6 +317,7 @@ bool ResourceManager::reload(const Guid& guid, bool flushedOnly)
 void ResourceManager::reload(const TypeInfo& productType, bool flushedOnly)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+	const LockedLoadScope lockedLoadScope;
 
 	for (auto i = m_exclusiveHandles.begin(); i != m_exclusiveHandles.end(); ++i)
 	{

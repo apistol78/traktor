@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -1239,6 +1239,7 @@ void PhysicsManagerBullet::solveConstraints(const RefArray< Body >& bodies, cons
 
 RefArray< Body > PhysicsManagerBullet::getBodies() const
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	return (RefArray< Body >&)m_bodies;
 }
 
@@ -1806,7 +1807,10 @@ Ref< Body > PhysicsManagerBullet::createBody(resource::IResourceManager* resourc
 			shapeDesc->getMaterial(),
 			mesh
 		);
-		m_bodies.push_back(staticBody);
+		{
+			T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+			m_bodies.push_back(staticBody);
+		}
 
 		rigidBody->setUserPointer(staticBody);
 		body = staticBody;
@@ -1881,7 +1885,10 @@ Ref< Body > PhysicsManagerBullet::createBody(resource::IResourceManager* resourc
 			shapeDesc->getMaterial(),
 			mesh
 		);
-		m_bodies.push_back(dynamicBody);
+		{
+			T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+			m_bodies.push_back(dynamicBody);
+		}
 
 		rigidBody->setUserPointer(dynamicBody);
 		body = dynamicBody;

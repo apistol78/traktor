@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -11,6 +11,8 @@
 #include <utility>
 #include "Core/RefArray.h"
 #include "Core/Containers/SmallMap.h"
+#include "Core/Containers/SmallSet.h"
+#include "Core/Thread/Event.h"
 #include "Core/Thread/Semaphore.h"
 #include "Resource/IResourceManager.h"
 
@@ -76,7 +78,9 @@ private:
 	AlignedVector< std::pair< const TypeInfo*, Ref< const IResourceFactory > > > m_resourceFactories;
 	SmallMap< Guid, Ref< ResidentResourceHandle > > m_residentHandles;
 	SmallMap< Guid, RefArray< ExclusiveResourceHandle > > m_exclusiveHandles;
+	SmallSet< const ResourceHandle* > m_loading;
 	mutable Semaphore m_lock;
+	Event m_loadedEvent;
 	bool m_verbose;
 
 	const IResourceFactory* findFactory(const TypeInfo& resourceType) const;

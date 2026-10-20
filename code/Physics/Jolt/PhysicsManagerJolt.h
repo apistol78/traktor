@@ -10,6 +10,7 @@
 
 #include "Core/Misc/AutoPtr.h"
 #include "Core/Containers/SmallSet.h"
+#include "Core/Thread/Semaphore.h"
 #include "Physics/PhysicsManager.h"
 #include "Physics/Jolt/Types.h"
 #include "Resource/Proxy.h"
@@ -164,6 +165,7 @@ private:
 	mutable AutoPtr< JPH::PhysicsSystem > m_physicsSystem;
 	JPH::GroupFilter* m_groupFilter = nullptr;
 	RefArray< BodyJolt > m_bodies;
+	mutable Semaphore m_bodiesLock;
 	RefArray< Joint > m_joints;
 	SmallSet< JPH::Constraint* > m_activeConstraints;
 	float m_timeScale = 1.0f;

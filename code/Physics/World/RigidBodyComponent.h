@@ -50,6 +50,8 @@ public:
 
 	virtual void setOwner(world::Entity* owner) override final;
 
+	virtual void setWorld(world::World* world) override final;
+
 	virtual void setTransform(const Transform& transform) override final;
 
 	virtual Aabb3 getBoundingBox() const override final;

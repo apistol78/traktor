@@ -29,6 +29,7 @@
 #include "Scene/Scene.h"
 #include "World/Entity.h"
 #include "World/Entity/CameraComponent.h"
+#include "World/Entity/EntityStreamingComponent.h"
 #include "World/Entity/GroupComponent.h"
 #include "World/Entity/PersistentIdComponent.h"
 #include "World/EntityBuilder.h"
@@ -196,6 +197,13 @@ void WorldLayer::update(const UpdateInfo& info)
 	T_PROFILER_SCOPE(L"WorldLayer update");
 	if (!m_worldRenderer)
 		return;
+
+	// Stream entities around camera.
+	if (m_cameraEntity)
+	{
+		if (auto entityStreaming = m_scene->getWorld()->getComponent< world::EntityStreamingComponent >())
+			entityStreaming->setFocus(m_cameraEntity->getTransform().translation().xyz1());
+	}
 
 	{
 		world::UpdateParams up;

@@ -59,10 +59,16 @@ void RigidBodyComponent::setOwner(world::Entity* owner)
 		{
 			m_body->setOwner(owner);
 			m_body->setTransform(transform);
-			m_body->setEnable(true);
 		}
 		m_lastTransform = transform;
 	}
+}
+
+void RigidBodyComponent::setWorld(world::World* world)
+{
+	// Body only simulates while entity is in a world; entities can be created on any thread.
+	if (m_body)
+		m_body->setEnable(world != nullptr);
 }
 
 void RigidBodyComponent::setTransform(const Transform& transform)

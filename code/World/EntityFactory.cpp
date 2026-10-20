@@ -1,12 +1,13 @@
 /*
  * TRAKTOR
- * Copyright (c) 2024 Anders Pistol.
+ * Copyright (c) 2024-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include "Core/Log/Log.h"
+#include "Core/Thread/Acquire.h"
 #include "World/EntityData.h"
 #include "World/EntityFactory.h"
 #include "World/IEntityComponentData.h"
@@ -111,6 +112,8 @@ const IEntityFactory* EntityFactory::getFactory(const EntityData* entityData) co
 	const TypeInfo& entityDataType = type_of(entityData);
 	const IEntityFactory* entityFactory = nullptr;
 
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_resolvedFactoryCacheLock);
+
 	auto it = m_resolvedFactoryCache.find(&entityDataType);
 	if (it != m_resolvedFactoryCache.end())
 	{
@@ -159,6 +162,8 @@ const IEntityFactory* EntityFactory::getFactory(const IEntityEventData* entityEv
 
 	const TypeInfo& entityEventDataType = type_of(entityEventData);
 	const IEntityFactory* entityFactory = nullptr;
+
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_resolvedFactoryCacheLock);
 
 	auto it = m_resolvedFactoryCache.find(&entityEventDataType);
 	if (it != m_resolvedFactoryCache.end())
@@ -209,6 +214,8 @@ const IEntityFactory* EntityFactory::getFactory(const IEntityComponentData* enti
 	const TypeInfo& entityComponentDataType = type_of(entityComponentData);
 	const IEntityFactory* entityFactory = nullptr;
 
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_resolvedFactoryCacheLock);
+
 	auto it = m_resolvedFactoryCache.find(&entityComponentDataType);
 	if (it != m_resolvedFactoryCache.end())
 	{
@@ -257,6 +264,8 @@ const IEntityFactory* EntityFactory::getFactory(const IWorldComponentData* world
 
 	const TypeInfo& worldComponentDataType = type_of(worldComponentData);
 	const IEntityFactory* entityFactory = nullptr;
+
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_resolvedFactoryCacheLock);
 
 	auto it = m_resolvedFactoryCache.find(&worldComponentDataType);
 	if (it != m_resolvedFactoryCache.end())

@@ -11,6 +11,7 @@
 #include "Core/Log/Log.h"
 #include "Core/Math/Aabb3.h"
 #include "Core/Containers/AlignedVector.h"
+#include "Core/Thread/Acquire.h"
 #include "Core/Thread/JobManager.h"
 #include "Heightfield/Heightfield.h"
 #include "Physics/AxisJoint.h"
@@ -1213,6 +1214,7 @@ void PhysicsManagerJolt::solveConstraints(const RefArray< Body >& bodies, const 
 
 RefArray< Body > PhysicsManagerJolt::getBodies() const
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_bodiesLock);
 	return *(RefArray< Body >*)&m_bodies;
 }
 
@@ -1493,7 +1495,10 @@ void PhysicsManagerJolt::queryTriangles(const Vector4& center, float radius, Ali
 void PhysicsManagerJolt::getStatistics(PhysicsStatistics& outStatistics) const
 {
 	auto* listener = const_cast< ContactListenerImpl* >(static_cast< const ContactListenerImpl* >(m_contactListener.c_ptr()));
-	outStatistics.bodyCount = (uint32_t)m_bodies.size();
+	{
+		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_bodiesLock);
+		outStatistics.bodyCount = (uint32_t)m_bodies.size();
+	}
 	outStatistics.activeCount = (uint32_t)m_physicsSystem->GetNumActiveBodies(JPH::EBodyType::RigidBody);
 	outStatistics.manifoldCount = listener->getActivePairCount();
 	outStatistics.queryCount = m_queryCountLast;
@@ -1591,7 +1596,10 @@ Ref< Body > PhysicsManagerJolt::createBody(resource::IResourceManager* resourceM
 		const float inverseMass = mass > 0.0f ? 1.0f / mass : 0.0f;
 
 		Ref< BodyJolt > bj = new BodyJolt(tag, this, m_physicsSystem.ptr(), body, inverseMass, centerOfGravity, collisionGroup, collisionMask, shapeDesc->getMaterial(), meshProxy, dynamicDesc->getActive());
-		m_bodies.push_back(bj);
+		{
+			T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_bodiesLock);
+			m_bodies.push_back(bj);
+		}
 		return bj;
 	}
 
@@ -1625,7 +1633,10 @@ Ref< Body > PhysicsManagerJolt::createBodyFromShape(JPH::ShapeSettings& shapeSet
 	}
 
 	Ref< BodyJolt > bj = new BodyJolt(tag, this, m_physicsSystem.ptr(), body, inverseMass, centerOfGravity, collisionGroup, collisionMask, shapeDesc->getMaterial(), mesh, initiallyActive);
-	m_bodies.push_back(bj);
+	{
+		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_bodiesLock);
+		m_bodies.push_back(bj);
+	}
 	return bj;
 }
 
@@ -1640,6 +1651,7 @@ void PhysicsManagerJolt::destroyBody(BodyJolt* body)
 		if (joint->getBody1() == body || joint->getBody2() == body)
 			joint->destroy();
 
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_bodiesLock);
 	const bool removed = m_bodies.remove(body);
 	T_FATAL_ASSERT(removed);
 }

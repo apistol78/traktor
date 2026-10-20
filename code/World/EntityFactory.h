@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2024 Anders Pistol.
+ * Copyright (c) 2024-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -10,6 +10,7 @@
 
 #include "Core/RefArray.h"
 #include "Core/Containers/SmallMap.h"
+#include "Core/Thread/Semaphore.h"
 #include "World/IEntityFactory.h"
 
 // import/export mechanism.
@@ -56,6 +57,7 @@ public:
 private:
 	RefArray< const IEntityFactory > m_factories;
 	mutable SmallMap< const TypeInfo*, const IEntityFactory* > m_resolvedFactoryCache;
+	mutable Semaphore m_resolvedFactoryCacheLock;
 
 	const IEntityFactory* getFactory(const EntityData* entityData) const;
 
