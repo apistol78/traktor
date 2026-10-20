@@ -26,13 +26,16 @@ namespace traktor::ui
 namespace
 {
 
-const Unit c_tabPad = 20_ut;
+const Unit c_tabPad = 18_ut;
 
 /*! Space left above the tabs so they sit slightly inset in the strip. */
 const Unit c_tabOuterGap = 6_ut;
 
 /*! Thickness of the accent bar marking the selected tab. */
 const Unit c_tabAccent = 2_ut;
+
+/*! Space between the close cross and the right edge of the tab. */
+const Unit c_closeMargin = 7_ut;
 
 /*! Fill a tab, rounded on the outer edge and square where it meets the content. */
 void fillTabShape(Canvas& canvas, const Rect& rc, int32_t radius, bool bottom)
@@ -395,7 +398,8 @@ void Tab::eventButtonDown(MouseButtonDownEvent* event)
 		bool closed = false;
 		if (m_closeButton && selectedPageState)
 		{
-			if (pnt.x >= selectedPageState->right - pixel(16_ut) && pnt.x < selectedPageState->right)
+			const Size closeSize = m_bitmapClose->getSize(this);
+			if (pnt.x >= selectedPageState->right - closeSize.cx - pixel(c_closeMargin) && pnt.x < selectedPageState->right)
 			{
 				TabCloseEvent closeEvent(this, selectedPageState->page);
 				raiseEvent(&closeEvent);
@@ -551,7 +555,7 @@ void Tab::eventPaint(PaintEvent* event)
 				{
 					const Size bitmapSize = m_bitmapImages->getSize(this);
 					canvas.drawBitmap(
-						Point(left + pixel(c_tabPad) / 2, rcTab.getCenter().y - bitmapSize.cy / 2 + pixel(1_ut)),
+						Point(left + pixel(c_tabPad) / 2, rcTab.getCenter().y - bitmapSize.cy / 2),
 						Point(page->getImageIndex() * bitmapSize.cy, 0),
 						Size(bitmapSize.cy, bitmapSize.cy),
 						m_bitmapImages,
@@ -564,7 +568,7 @@ void Tab::eventPaint(PaintEvent* event)
 				{
 					const Size closeSize = m_bitmapClose->getSize(this);
 					canvas.drawBitmap(
-						Point(rcTab.right - closeSize.cx - pixel(c_tabPad) / 2, rcTab.getCenter().y - closeSize.cy / 2 + pixel(1_ut)),
+						Point(rcTab.right - closeSize.cx - pixel(c_closeMargin), rcTab.getCenter().y - closeSize.cy / 2 + pixel(1_ut)),
 						Point(0, 0),
 						closeSize,
 						m_bitmapClose,
