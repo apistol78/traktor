@@ -29,6 +29,7 @@
 #include "Core/Thread/ThreadManager.h"
 #include "Database/Instance.h"
 #include "Drawing/CubeMap.h"
+#include "Drawing/Filters/BrightnessContrastFilter.h"
 #include "Drawing/Filters/ChainFilter.h"
 #include "Drawing/Filters/DilateFilter.h"
 #include "Drawing/Filters/EncodeRGBM.h"
@@ -547,6 +548,14 @@ bool TextureOutputPipeline::buildOutput(
 		log::info << L"Applying saturation..." << Endl;
 		const drawing::SaturationFilter saturationFiler(textureOutput->m_saturation);
 		image->apply(&saturationFiler);
+	}
+
+	// Apply brightness & contrast.
+	if (abs(textureOutput->m_brightness) > FUZZY_EPSILON || abs(textureOutput->m_contrast - 1.0f) > FUZZY_EPSILON)
+	{
+		log::info << L"Applying brightness/contrast..." << Endl;
+		const drawing::BrightnessContrastFilter brightnessContrastFiler(textureOutput->m_brightness, textureOutput->m_contrast);
+		image->apply(&brightnessContrastFiler);
 	}
 
 	// Multiply with alpha.

@@ -17,7 +17,7 @@
 namespace traktor::render
 {
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.TextureOutput", 23, TextureOutput, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.TextureOutput", 24, TextureOutput, ISerializable)
 
 void TextureOutput::serialize(ISerializer& s)
 {
@@ -171,6 +171,12 @@ void TextureOutput::serialize(ISerializer& s)
 
 	if (s.getVersion() >= 23)
 		s >> Member< float >(L"saturation", m_saturation, AttributeRange(0.0f) | AttributeUnit(UnitType::Percent));
+
+	if (s.getVersion() >= 24)
+	{
+		s >> Member< float >(L"brightness", m_brightness, AttributeUnit(UnitType::Percent));
+		s >> Member< float >(L"contrast", m_contrast, AttributeRange(0.0f) | AttributeUnit(UnitType::Percent));
+	}
 }
 
 }

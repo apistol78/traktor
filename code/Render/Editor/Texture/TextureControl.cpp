@@ -10,6 +10,7 @@
 
 #include "Core/Math/Const.h"
 #include "Core/Misc/String.h"
+#include "Drawing/Filters/BrightnessContrastFilter.h"
 #include "Drawing/Filters/DilateFilter.h"
 #include "Drawing/Filters/EncodeRGBM.h"
 #include "Drawing/Filters/GammaFilter.h"
@@ -18,6 +19,7 @@
 #include "Drawing/Filters/NormalizeFilter.h"
 #include "Drawing/Filters/NormalMapFilter.h"
 #include "Drawing/Filters/PremultiplyAlphaFilter.h"
+#include "Drawing/Filters/SaturationFilter.h"
 #include "Drawing/Filters/SphereMapFilter.h"
 #include "Drawing/Filters/SwizzleFilter.h"
 #include "Drawing/Filters/TransformFilter.h"
@@ -167,7 +169,17 @@ bool TextureControl::setImage(drawing::Image* image, const TextureOutput& output
 			const drawing::SphereMapFilter sphereMapFilter;
 			m_imageOutput->apply(&sphereMapFilter);
 		}
-		if (output.m_noiseStrength > 0.0f)
+		if (!output.m_normalMap && std::abs(output.m_saturation - 1.0f) > FUZZY_EPSILON)
+		{
+			const drawing::SaturationFilter saturationFilter(output.m_saturation);
+			m_imageOutput->apply(&saturationFilter);
+		}
+		if (!output.m_normalMap && (abs(output.m_brightness) > FUZZY_EPSILON || abs(output.m_contrast - 1.0f) > FUZZY_EPSILON))
+		{
+			const drawing::BrightnessContrastFilter brightnessContrastFiler(output.m_brightness, output.m_contrast);
+			m_imageOutput->apply(&brightnessContrastFiler);
+		}
+		if (!output.m_normalMap && output.m_noiseStrength > 0.0f)
 		{
 			const drawing::NoiseFilter noiseFilter(output.m_noiseStrength);
 			m_imageOutput->apply(&noiseFilter);
