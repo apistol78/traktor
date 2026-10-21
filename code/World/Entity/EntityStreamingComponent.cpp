@@ -118,6 +118,12 @@ void EntityStreamingComponent::update(World* world, const UpdateParams& update)
 			{
 				for (auto entity : cell.entities)
 				{
+					// Entity no longer in world has been taken by others and is theirs.
+					if (entity->getWorld() != world)
+					{
+						cell.removed.insert(entity->getId());
+						continue;
+					}
 					world->removeEntity(entity);
 					entity->destroy();
 				}
@@ -160,6 +166,9 @@ void EntityStreamingComponent::createEntities(Cell& cell) const
 	{
 		if (m_cancel)
 			break;
+
+		if (cell.removed.find(entityData->getId()) != cell.removed.end())
+			continue;
 
 		Ref< Entity > entity = m_entityBuilder->create(entityData);
 		if (entity)

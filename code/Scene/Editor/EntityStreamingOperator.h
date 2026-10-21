@@ -78,6 +78,7 @@ public:
 
 private:
 	SmallMap< const TypeInfo*, Ref< const world::IEntityReplicator > > m_entityReplicators;
+	bool m_targetEditor = false;
 
 	/*! Move static entities out of group and its descendants, along with their bounding boxes. */
 	void harvestEntities(

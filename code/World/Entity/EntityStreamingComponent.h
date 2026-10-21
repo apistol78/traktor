@@ -11,6 +11,8 @@
 #include "Core/Ref.h"
 #include "Core/RefArray.h"
 #include "Core/Containers/AlignedVector.h"
+#include "Core/Containers/SmallSet.h"
+#include "Core/Guid.h"
 #include "Core/Math/Vector4.h"
 #include "Core/Thread/Job.h"
 #include "World/IWorldComponent.h"
@@ -61,6 +63,7 @@ private:
 	{
 		const EntityStreamingComponentData::Cell* data = nullptr;
 		RefArray< Entity > entities;
+		SmallSet< Guid > removed; //!< Entities removed from world by others; never created again.
 		bool loaded = false;
 	};
 

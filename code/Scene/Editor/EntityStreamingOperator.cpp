@@ -14,7 +14,9 @@
 #include "Core/Reflection/RfpMemberType.h"
 #include "Core/Serialization/DeepClone.h"
 #include "Core/Serialization/DeepHash.h"
+#include "Core/Settings/PropertyBoolean.h"
 #include "Editor/IPipelineBuilder.h"
+#include "Editor/IPipelineSettings.h"
 #include "Model/Model.h"
 #include "Scene/Editor/EntityStreamingOperationData.h"
 #include "Scene/Editor/SceneAsset.h"
@@ -87,10 +89,8 @@ bool isReferenced(editor::IPipelineCommon* pipelineCommon, const world::EntityDa
 	if (auto groupComponentData = resolvedEntityData->getComponent< world::GroupComponentData >())
 	{
 		for (auto child : groupComponentData->getEntityData())
-		{
 			if (child && isReferenced(pipelineCommon, child, referencedIds))
 				return true;
-		}
 	}
 
 	return false;
@@ -102,15 +102,21 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.scene.EntityStreamingOperator", 0, Enti
 
 bool EntityStreamingOperator::create(const editor::IPipelineSettings* settings)
 {
-	for (const auto entityReplicatorType : type_of< world::IEntityReplicator >().findAllOf(false))
-	{
-		Ref< world::IEntityReplicator > entityReplicator = mandatory_non_null_type_cast< world::IEntityReplicator* >(entityReplicatorType->createInstance());
-		if (!entityReplicator->create(settings))
-			return false;
+	m_targetEditor = settings->getPropertyIncludeHash< bool >(L"Pipeline.TargetEditor", false);
 
-		for (auto supportedType : entityReplicator->getSupportedTypes())
-			m_entityReplicators[supportedType] = entityReplicator;
+	if (!m_targetEditor)
+	{
+		for (const auto entityReplicatorType : type_of< world::IEntityReplicator >().findAllOf(false))
+		{
+			Ref< world::IEntityReplicator > entityReplicator = mandatory_non_null_type_cast< world::IEntityReplicator* >(entityReplicatorType->createInstance());
+			if (!entityReplicator->create(settings))
+				return false;
+
+			for (auto supportedType : entityReplicator->getSupportedTypes())
+				m_entityReplicators[supportedType] = entityReplicator;
+		}
 	}
+
 	return true;
 }
 
@@ -135,7 +141,6 @@ bool EntityStreamingOperator::transform(
 	const ISerializable* operatorData,
 	SceneAsset* inoutSceneAsset) const
 {
-	// Harvested entities stay in layers for dependencies; they're moved in build().
 	return true;
 }
 
@@ -148,10 +153,15 @@ bool EntityStreamingOperator::build(
 {
 	const auto data = mandatory_non_null_type_cast< const EntityStreamingOperationData* >(operatorData);
 
-	// Referenced entities must always be present in world.
+	// Do nothing in case editor is the target; streaming is not supported in editor.
+	if (m_targetEditor)
+		return true;
+
+	// Referenced entities, including those listed as resident, must always be present in world.
 	SmallSet< Guid > referencedIds;
 	SmallSet< const ISerializable* > visited;
 	collectReferencedEntities(inoutSceneAsset, referencedIds, visited);
+	collectReferencedEntities(data, referencedIds, visited);
 
 	SmallMap< uint32_t, Aabb3 > modelBoundingBoxes;
 	RefArray< world::EntityData > entityData;
@@ -264,10 +274,7 @@ Aabb3 EntityStreamingOperator::calculateBoundingBox(
 			if (!model)
 				model = entityReplicator->createModel(pipelineCommon, resolvedEntityData, componentData, world::IEntityReplicator::Usage::Collision, world::IEntityReplicator::Flags::SkipMaterials);
 			if (model)
-			{
-				for (const auto& position : model->getPositions())
-					modelBoundingBox.contain(position);
-			}
+				modelBoundingBox = model->getBoundingBox();
 			inoutModelBoundingBoxes.insert(hash, modelBoundingBox);
 		}
 
@@ -278,10 +285,8 @@ Aabb3 EntityStreamingOperator::calculateBoundingBox(
 	if (auto groupComponentData = resolvedEntityData->getComponent< world::GroupComponentData >())
 	{
 		for (auto child : groupComponentData->getEntityData())
-		{
 			if (child)
 				boundingBox.contain(calculateBoundingBox(pipelineCommon, child, inoutModelBoundingBoxes));
-		}
 	}
 
 	return boundingBox;

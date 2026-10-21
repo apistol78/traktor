@@ -8,6 +8,7 @@
  */
 #pragma once
 
+#include "Core/RefArray.h"
 #include "Scene/Editor/ISceneOperationData.h"
 
 // import/export mechanism.
@@ -17,6 +18,13 @@
 #else
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
+
+namespace traktor::world
+{
+
+class PropertyEntityReference;
+
+}
 
 namespace traktor::scene
 {
@@ -44,6 +52,7 @@ private:
 	float m_cellSize = 64.0f;
 	float m_loadDistance = 200.0f;
 	float m_unloadDistance = 250.0f;
+	RefArray< world::PropertyEntityReference > m_residentEntities; //!< Entities which are never streamed.
 };
 
 }
