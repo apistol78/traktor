@@ -12,6 +12,7 @@
 
 #include "Core/RefArray.h"
 #include "Core/Containers/AlignedVector.h"
+#include "Core/Thread/SpinLock.h"
 #include "Script/IScriptManager.h"
 
 #if defined(T_SCRIPT_LUA_USE_MT_LOCK)
@@ -81,12 +82,16 @@ public:
 
 	void toAny(int32_t base, int32_t count, Any* outAnys);
 
+	/*! Release registry reference from any thread; deferred until lock is held. */
+	void releaseRef(int32_t ref);
+
 	void lock(ScriptContextLua* context)
 	{
 #if defined(T_SCRIPT_LUA_USE_MT_LOCK)
 		m_lock.wait();
 #endif
 		m_lockContext = context;
+		unrefReleased();
 	}
 
 	void unlock()
@@ -117,6 +122,8 @@ private:
 #endif
 	static ScriptManagerLua* ms_instance;
 	ScriptContextLua* m_lockContext;
+	SpinLock m_releasedRefsLock;
+	AlignedVector< int32_t > m_releasedRefs;
 	AlignedVector< RegisteredClass > m_classRegistry;
 	RefArray< ScriptContextLua > m_contexts;
 	Ref< ScriptDebuggerLua > m_debugger;
@@ -126,6 +133,8 @@ private:
 	float m_collectTargetSteps;
 	size_t m_totalMemoryUse;
 	size_t m_lastMemoryUse;
+
+	void unrefReleased();
 
 	void destroyContext(ScriptContextLua* context);
 

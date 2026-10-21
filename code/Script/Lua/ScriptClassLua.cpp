@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -35,9 +35,9 @@ public:
 		if (m_luaState != nullptr)
 		{
 			if (m_constructorRef)
-				luaL_unref(m_luaState, LUA_REGISTRYINDEX, m_constructorRef);
+				m_scriptManager->releaseRef(m_constructorRef);
 			if (m_classRef)
-				luaL_unref(m_luaState, LUA_REGISTRYINDEX, m_classRef);
+				m_scriptManager->releaseRef(m_classRef);
 		}
 	}
 
@@ -92,8 +92,9 @@ private:
 class ScriptClassMethodDispatch : public IRuntimeDispatch
 {
 public:
-	explicit ScriptClassMethodDispatch(ScriptContextLua* scriptContext, lua_State*& luaState, int32_t ref)
-	:	m_scriptContext(scriptContext)
+	explicit ScriptClassMethodDispatch(ScriptManagerLua* scriptManager, ScriptContextLua* scriptContext, lua_State*& luaState, int32_t ref)
+	:	m_scriptManager(scriptManager)
+	,	m_scriptContext(scriptContext)
 	,	m_luaState(luaState)
 	,	m_ref(ref)
 	{
@@ -102,7 +103,7 @@ public:
 	virtual ~ScriptClassMethodDispatch()
 	{
 		if (m_luaState != nullptr)
-			luaL_unref(m_luaState, LUA_REGISTRYINDEX, m_ref);
+			m_scriptManager->releaseRef(m_ref);
 	}
 
 #if defined(T_NEED_RUNTIME_SIGNATURE)
@@ -120,6 +121,7 @@ public:
 	}
 
 private:
+	ScriptManagerLua* m_scriptManager;
 	ScriptContextLua* m_scriptContext;
 	lua_State*& m_luaState;
 	int32_t m_ref;
@@ -154,7 +156,7 @@ Ref< ScriptClassLua > ScriptClassLua::createFromStack(ScriptManagerLua* scriptMa
 			{
 				Method& m = sc->m_methods.push_back();
 				m.name = functionName;
-				m.dispatch = new ScriptClassMethodDispatch(scriptContext, luaState, functionRef);
+				m.dispatch = new ScriptClassMethodDispatch(scriptManager, scriptContext, luaState, functionRef);
 			}
 			else
 			{

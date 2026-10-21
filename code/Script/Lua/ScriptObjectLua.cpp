@@ -1,12 +1,13 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include "Script/Lua/ScriptClassLua.h"
+#include "Script/Lua/ScriptManagerLua.h"
 #include "Script/Lua/ScriptObjectLua.h"
 #include "Script/Lua/ScriptUtilitiesLua.h"
 
@@ -26,7 +27,7 @@ ScriptObjectLua::ScriptObjectLua(ScriptManagerLua* scriptManager, ScriptContextL
 ScriptObjectLua::~ScriptObjectLua()
 {
 	if (m_luaState)
-		luaL_unref(m_luaState, LUA_REGISTRYINDEX, m_tableRef);
+		m_scriptManager->releaseRef(m_tableRef);
 }
 
 Ref< const IRuntimeClass > ScriptObjectLua::getRuntimeClass() const

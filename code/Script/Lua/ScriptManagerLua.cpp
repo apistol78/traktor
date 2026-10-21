@@ -390,6 +390,7 @@ void ScriptManagerLua::destroy()
 	m_objectTableRef = LUA_NOREF;
 
 	lua_close(luaState);
+	m_releasedRefs.clear();
 
 #if defined(T_USE_ALLOCATOR)
 	// Everything the state allocated has been given back; the chunks themselves can go.
@@ -1008,7 +1009,7 @@ Any ScriptManagerLua::toAny(int32_t index)
 			// Box LUA function into C++ container.
 			lua_pushvalue(m_luaState, index);
 			const int32_t functionRef = luaL_ref(m_luaState, LUA_REGISTRYINDEX);
-			return Any::fromObject(new ScriptDelegateLua(m_lockContext, m_luaState, functionRef));
+			return Any::fromObject(new ScriptDelegateLua(this, m_lockContext, m_luaState, functionRef));
 		}
 	default:
 		break;
@@ -1101,13 +1102,34 @@ void ScriptManagerLua::toAny(int32_t base, int32_t count, Any* outAnys)
 				// Box LUA function into C++ container.
 				lua_pushvalue(m_luaState, index);
 				const int32_t functionRef = luaL_ref(m_luaState, LUA_REGISTRYINDEX);
-				outAnys[i] = Any::fromObject(new ScriptDelegateLua(m_lockContext, m_luaState, functionRef));
+				outAnys[i] = Any::fromObject(new ScriptDelegateLua(this, m_lockContext, m_luaState, functionRef));
 			}
 			break;
 		default:
 			break;
 		}
 	}
+}
+
+void ScriptManagerLua::releaseRef(int32_t ref)
+{
+	T_ANONYMOUS_VAR(Acquire< SpinLock >)(m_releasedRefsLock);
+	m_releasedRefs.push_back(ref);
+}
+
+void ScriptManagerLua::unrefReleased()
+{
+	// Spin lock is not held while unreferencing since collected objects might release more references.
+	m_releasedRefsLock.wait();
+	while (!m_releasedRefs.empty())
+	{
+		const int32_t ref = m_releasedRefs.back();
+		m_releasedRefs.pop_back();
+		m_releasedRefsLock.release();
+		luaL_unref(m_luaState, LUA_REGISTRYINDEX, ref);
+		m_releasedRefsLock.wait();
+	}
+	m_releasedRefsLock.release();
 }
 
 void ScriptManagerLua::destroyContext(ScriptContextLua* context)

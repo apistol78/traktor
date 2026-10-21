@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -15,6 +15,7 @@ namespace traktor::script
 {
 
 class ScriptContextLua;
+class ScriptManagerLua;
 
 /*! LUA script delegate runtime interface.
  * \ingroup Script
@@ -24,7 +25,7 @@ class ScriptDelegateLua : public IRuntimeDelegate
 	T_RTTI_CLASS;
 
 public:
-	explicit ScriptDelegateLua(ScriptContextLua* context, lua_State*& luaState, int32_t functionRef);
+	explicit ScriptDelegateLua(ScriptManagerLua* scriptManager, ScriptContextLua* context, lua_State*& luaState, int32_t functionRef);
 
 	virtual ~ScriptDelegateLua();
 
@@ -38,6 +39,7 @@ public:
 	virtual Any call(int32_t argc, const Any* argv) override final;
 
 private:
+	ScriptManagerLua* m_scriptManager;
 	ScriptContextLua* m_context;
 	lua_State*& m_luaState;
 	int32_t m_tableRef;
