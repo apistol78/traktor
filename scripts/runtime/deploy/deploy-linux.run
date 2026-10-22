@@ -1,6 +1,6 @@
 --[[
  TRAKTOR
- Copyright (c) 2022 Anders Pistol.
+ Copyright (c) 2022-2026 Anders Pistol.
 
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -124,6 +124,54 @@ function migrate(args)
 	end
 	if not icon:save("Default.png") then
 		stderr:printLn("Unable to create product icon; failed to save icon.")
+		return 1
+	end
+
+	-- Create AppImage, only when appimagetool has been fetched into 3rdp.
+	local appImageTool = "$(DEPLOY_SYSTEM_ROOT)/3rdp/appimagetool/appimagetool-x86_64.AppImage"
+	if not run:exist(appImageTool) then
+		stdout:printLn("appimagetool not found; skipping AppImage.")
+		return 0
+	end
+
+	local executable = os:getEnvironment("DEPLOY_EXECUTABLE")
+	local title = os:getEnvironment("DEPLOY_PROJECT_NAME")
+	local name = title:gsub("%s", "")
+	local appDir = name .. ".AppDir"
+
+	run:mkdir(appDir .. "/bin")
+	if not (
+		run:replace("bin/*", appDir .. "/bin") and
+		run:replace("Application.config", appDir .. "/Application.config") and
+		run:replace("Content.compact", appDir .. "/Content.compact") and
+		run:replace("Default.png", appDir .. "/" .. name .. ".png")
+	) then
+		stderr:printLn("Unable to copy files to AppDir")
+		return 1
+	end
+
+	local f = fileSystem:open(Path(appDir .. "/" .. name .. ".desktop"), 2)
+	local s = StreamOutput(f, Utf8Encoding(), "unix")
+	s:printLn("[Desktop Entry]")
+	s:printLn("Type=Application")
+	s:printLn("Name=" .. title)
+	s:printLn("Exec=" .. executable)
+	s:printLn("Icon=" .. name)
+	s:printLn("Categories=Game;")
+	f:close()
+
+	-- Runtime reads Application.config and Content.compact from working directory.
+	f = fileSystem:open(Path(appDir .. "/AppRun"), 2)
+	s = StreamOutput(f, Utf8Encoding(), "unix")
+	s:printLn("#!/bin/sh")
+	s:printLn("cd \"$APPDIR\"")
+	s:printLn("exec ./bin/" .. executable .. " \"$@\"")
+	f:close()
+
+	run:execute("chmod +x \"" .. appDir .. "/AppRun\" \"" .. appDir .. "/bin/" .. executable .. "\"")
+
+	if run:execute("\"" .. appImageTool .. "\" \"" .. appDir .. "\" \"" .. name .. ".AppImage\"") ~= 0 then
+		stderr:printLn("Unable to create AppImage; appimagetool failed.")
 		return 1
 	end
 

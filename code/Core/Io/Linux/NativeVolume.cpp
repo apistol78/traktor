@@ -50,7 +50,7 @@ Ref< File > NativeVolume::get(const Path& path)
 	DateTime adt(uint64_t(st.st_atime));
 	DateTime mdt(uint64_t(st.st_mtime));
 
-	uint32_t flags = File::FfNormal;
+	uint32_t flags = S_ISDIR(st.st_mode) ? File::FfDirectory : File::FfNormal;
 
 	if ((st.st_mode & S_IWUSR) == 0)
 		flags |= File::FfReadOnly;
@@ -189,15 +189,19 @@ Ref< IStream > NativeVolume::open(const Path& fileName, uint32_t mode)
 	else if (mrw == File::FmWrite)
 		m = "wb";
 	else if (mrw == (File::FmRead | File::FmWrite))
-		m = "w+b";
-	
+		m = "r+b";
+
 	if (!m)
 		return nullptr;
 
-	FILE* fp = fopen(
-		wstombs(getSystemPath(fileName)).c_str(),
-		m
-	);
+	const std::string systemPath = wstombs(getSystemPath(fileName));
+
+	FILE* fp = fopen(systemPath.c_str(), m);
+
+	// Read-write opens existing file without truncating, only create if missing.
+	if (!fp && errno == ENOENT && mrw == (File::FmRead | File::FmWrite))
+		fp = fopen(systemPath.c_str(), "w+b");
+
 	return bool(fp != nullptr) ? new NativeStream(fp, mode) : nullptr;
 }
 

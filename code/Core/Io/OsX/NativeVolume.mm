@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -178,15 +178,19 @@ Ref< IStream > NativeVolume::open(const Path& filename, uint32_t mode)
 	else if (mrw == File::FmWrite)
 		m = "wb";
 	else if (mrw == (File::FmRead | File::FmWrite))
-		m = "w+b";
-	
+		m = "r+b";
+
 	if (!m)
 		return nullptr;
 
-	FILE* fp = fopen(
-		wstombs(getSystemPath(filename)).c_str(),
-		m
-	);
+	const std::string systemPath = wstombs(getSystemPath(filename));
+
+	FILE* fp = fopen(systemPath.c_str(), m);
+
+	// Read-write opens existing file without truncating, only create if missing.
+	if (!fp && errno == ENOENT && mrw == (File::FmRead | File::FmWrite))
+		fp = fopen(systemPath.c_str(), "w+b");
+
 	return bool(fp != nullptr) ? new NativeStream(fp, mode) : nullptr;
 }
 

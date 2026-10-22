@@ -516,5 +516,16 @@ PACKAGES =
 		name = "XeSS",
 		os = "windows",
 		url = "https://github.com/intel/xess.git"
-	},	
+	},
+
+	-- AppImageTool
+	{
+		type = "GET",
+		name = "appimagetool",
+		os = "linux",
+		url = "https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-x86_64.AppImage",
+		patch = function()
+			run:execute("chmod +x appimagetool-x86_64.AppImage")
+		end
+	},
 }
