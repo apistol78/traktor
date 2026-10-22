@@ -149,11 +149,6 @@ Ref< world::Entity > EntityAdapterBuilder::create(const world::EntityData* entit
 		if (entityAdapter->getEntityData() != entityData)
 			rebindEntityData(entityAdapter, const_cast< world::EntityData* >(entityData));
 
-		// Entity might belong to a replaced world; it's added again through its root.
-		world::Entity* entity = entityAdapter->getEntity();
-		if (entity->getWorld() != nullptr)
-			entity->getWorld()->removeEntity(entity);
-
 		resetFromData(entityAdapter);
 
 		return entityAdapter->getEntity();

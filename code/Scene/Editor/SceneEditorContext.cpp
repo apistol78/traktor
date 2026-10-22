@@ -491,14 +491,15 @@ void SceneEditorContext::buildEntities(bool rebuildWorld)
 		}
 
 		Ref< world::World > world = m_scene ? m_scene->getWorld() : nullptr;
-		if (!rebuildWorld && world)
+		if (world)
 		{
 			// Remove all entities from world, will get re-added.
 			RefArray< world::Entity > entities = world->getEntities();
 			for (auto entity : entities)
 				world->removeEntity(entity);
 		}
-		else
+
+		if (rebuildWorld || !world)
 		{
 			// No world created yet (or need to be rebuilt); create new world.
 			world = new world::World(getResourceManager(), getRenderSystem());
@@ -589,14 +590,24 @@ void SceneEditorContext::buildController()
 				log::error << L"Failed to initialize entity factory \"" << type_name(factory) << L"\"." << Endl;
 	}
 
+	world::World* world = m_scene->getWorld();
+
+	// Detach entities so their components unregister from the world components being replaced.
+	const RefArray< world::Entity > entities = world->getEntities();
+	for (auto entity : entities)
+		world->removeEntity(entity);
+
 	// Create all world components.
 	for (auto worldComponentData : m_sceneAsset->getWorldComponents())
 	{
-		Ref< EntityAdapterBuilder > entityAdapterBuilder = new EntityAdapterBuilder(this, entityFactory, m_scene->getWorld(), nullptr);
+		Ref< EntityAdapterBuilder > entityAdapterBuilder = new EntityAdapterBuilder(this, entityFactory, world, nullptr);
 		Ref< world::IWorldComponent > worldComponent = entityAdapterBuilder->create(worldComponentData);
 		if (worldComponent)
-			m_scene->getWorld()->setComponent(worldComponent);
+			world->setComponent(worldComponent);
 	}
+
+	for (auto entity : entities)
+		world->addEntity(entity);
 }
 
 void SceneEditorContext::invalidateEntityProducts()
