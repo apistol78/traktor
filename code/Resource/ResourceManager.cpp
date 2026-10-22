@@ -89,7 +89,8 @@ void ResourceManager::removeAllFactories()
 bool ResourceManager::load(const ResourceBundle* bundle)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-	const LockedLoadScope lockedLoadScope;
+	T_ANONYMOUS_VAR(const LockedLoadScope);
+
 	for (const auto& resource : bundle->get())
 	{
 		// Get resource instance from database.
@@ -264,7 +265,7 @@ Ref< ResourceHandle > ResourceManager::bind(const TypeInfo& productType, const G
 bool ResourceManager::reload(const Guid& guid, bool flushedOnly)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-	const LockedLoadScope lockedLoadScope;
+	T_ANONYMOUS_VAR(const LockedLoadScope);
 
 	if (guid.isNull() || !guid.isValid())
 		return false;
@@ -317,7 +318,7 @@ bool ResourceManager::reload(const Guid& guid, bool flushedOnly)
 void ResourceManager::reload(const TypeInfo& productType, bool flushedOnly)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-	const LockedLoadScope lockedLoadScope;
+	T_ANONYMOUS_VAR(const LockedLoadScope);
 
 	for (auto i = m_exclusiveHandles.begin(); i != m_exclusiveHandles.end(); ++i)
 	{
