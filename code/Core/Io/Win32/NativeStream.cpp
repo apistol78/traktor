@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,16 +8,20 @@
  */
 #include "Core/System.h"
 #include "Core/Io/Win32/NativeStream.h"
+#include "Core/Log/Log.h"
+#include "Core/Misc/TString.h"
 
 namespace traktor
 {
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.NativeStream", NativeStream, IStream)
 
-NativeStream::NativeStream(void* hFile, uint32_t mode)
+NativeStream::NativeStream(void* hFile, uint32_t mode, const std::wstring& tempFileName, const std::wstring& replaceFileName)
 :	m_hFile(hFile)
 ,	m_mode(mode)
 ,	m_fileSize(0)
+,	m_tempFileName(tempFileName)
+,	m_replaceFileName(replaceFileName)
 {
 }
 
@@ -36,6 +40,16 @@ void NativeStream::close()
 	{
 		CloseHandle(m_hFile);
 		m_hFile = NULL;
+
+		if (!m_replaceFileName.empty())
+		{
+			if (!ReplaceFile(wstots(m_replaceFileName).c_str(), wstots(m_tempFileName).c_str(), NULL, REPLACEFILE_IGNORE_MERGE_ERRORS, NULL, NULL))
+			{
+				const DWORD errorCode = GetLastError();
+				log::error << L"Unable to replace file \"" << m_replaceFileName << L"\"; error code " << int32_t(errorCode) << Endl;
+				DeleteFile(wstots(m_tempFileName).c_str());
+			}
+		}
 	}
 }
 

@@ -197,16 +197,18 @@ bool NativeVolume::modify(const Path& fileName, const DateTime* creationTime, co
 
 Ref< IStream > NativeVolume::open(const Path& fileName, uint32_t mode)
 {
-	DWORD desiredAccess = 0, creationDisposition = 0;
+	DWORD desiredAccess = 0, shareMode = 0, creationDisposition = 0;
 
 	if (mode & File::FmRead)
 	{
 		desiredAccess |= GENERIC_READ;
+		shareMode = FILE_SHARE_READ | FILE_SHARE_DELETE;
 		creationDisposition = OPEN_EXISTING;
 	}
 	if (mode & (File::FmWrite | File::FmAppend))
 	{
 		desiredAccess |= GENERIC_WRITE;
+		shareMode = FILE_SHARE_READ;
 		creationDisposition = (mode & (File::FmRead | File::FmAppend)) ? OPEN_ALWAYS : CREATE_ALWAYS;
 	}
 
@@ -215,7 +217,7 @@ Ref< IStream > NativeVolume::open(const Path& fileName, uint32_t mode)
 	const HANDLE hFile = CreateFile(
 		wstots(systemPath).c_str(),
 		desiredAccess,
-		FILE_SHARE_READ,
+		shareMode,
 		NULL,
 		creationDisposition,
 		FILE_ATTRIBUTE_NORMAL,
@@ -223,8 +225,30 @@ Ref< IStream > NativeVolume::open(const Path& fileName, uint32_t mode)
 	);
 	if (hFile == INVALID_HANDLE_VALUE)
 	{
+		// Write to a temporary file which replaces the original when closed, if the original is only held by readers.
+		const DWORD errorCode = GetLastError();
+		if (errorCode == ERROR_SHARING_VIOLATION && creationDisposition == CREATE_ALWAYS)
+		{
+			const std::wstring systemDirectory = systemPath.substr(0, systemPath.find_last_of(L'\\'));
+			wchar_t tempFileName[MAX_PATH];
+			if (GetTempFileName(wstots(systemDirectory).c_str(), L"trk", 0, tempFileName))
+			{
+				const HANDLE hTempFile = CreateFile(
+					tempFileName,
+					GENERIC_WRITE,
+					FILE_SHARE_READ,
+					NULL,
+					CREATE_ALWAYS,
+					FILE_ATTRIBUTE_NORMAL,
+					NULL
+				);
+				if (hTempFile != INVALID_HANDLE_VALUE)
+					return new NativeStream(hTempFile, mode, tempFileName, systemPath);
+				DeleteFile(tempFileName);
+			}
+		}
+
 #if defined(_DEBUG)
-		DWORD errorCode = GetLastError();
 		if ((mode & File::FmRead) != File::FmRead || errorCode != ERROR_FILE_NOT_FOUND)
 			log::warning << L"Unable to open file \"" << systemPath << L"\"; error code " << int32_t(errorCode) << Endl;
 #endif
@@ -262,7 +286,7 @@ Ref< IMappedFile > NativeVolume::map(const Path& fileName)
 	const HANDLE hFile = CreateFile(
 		wstots(systemPath).c_str(),
 		GENERIC_READ,
-		FILE_SHARE_READ,
+		FILE_SHARE_READ | FILE_SHARE_DELETE,
 		NULL,
 		OPEN_EXISTING,
 		FILE_ATTRIBUTE_NORMAL,

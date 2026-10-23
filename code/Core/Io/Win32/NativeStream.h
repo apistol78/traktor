@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -28,7 +28,7 @@ class T_DLLCLASS NativeStream : public IStream
 	T_RTTI_CLASS;
 
 public:
-	NativeStream(void* hFile, uint32_t mode);
+	NativeStream(void* hFile, uint32_t mode, const std::wstring& tempFileName = L"", const std::wstring& replaceFileName = L"");
 
 	virtual ~NativeStream();
 
@@ -56,6 +56,8 @@ private:
 	void* m_hFile;
 	uint32_t m_mode;
 	mutable size_t m_fileSize;
+	std::wstring m_tempFileName;
+	std::wstring m_replaceFileName;
 };
 
 }
