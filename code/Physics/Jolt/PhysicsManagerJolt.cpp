@@ -644,8 +644,14 @@ protected:
 		if (dot3(direction, normal) >= 0.0_simd)
 			return false;
 
+		// Nor surfaces the shape is behind, such as the underside of a two sided sheet it stands on.
+		const Vector4 center = convertFromJolt(m_shapeCast.GetPointOnRay(result.mFraction), 1.0f);
+		const Vector4 contact = convertFromJolt(result.mContactPointOn2, 1.0f);
+		if (dot3(center - contact, normal) < 0.0_simd)
+			return false;
+
 		outResult.body = unwrappedBody;
-		outResult.position = convertFromJolt(m_shapeCast.GetPointOnRay(result.mFraction), 1.0f);
+		outResult.position = center;
 		outResult.normal = normal;
 		outResult.fraction = result.mFraction;
 		outResult.material = unwrappedBody->getMaterial();
