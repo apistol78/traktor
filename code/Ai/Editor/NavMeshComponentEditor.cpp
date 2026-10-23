@@ -7,6 +7,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include "Ai/Editor/NavMeshComponentEditor.h"
+
 #include "Ai/NavMesh.h"
 #include "Ai/NavMeshComponentData.h"
 #include "Render/PrimitiveRenderer.h"
@@ -70,12 +71,11 @@ void NavMeshComponentEditor::draw(render::PrimitiveRenderer* primitiveRenderer)
 			return;
 
 		primitiveRenderer->pushWorld(Matrix44::identity());
+		primitiveRenderer->pushDepthState(true, false, false);
 
 		// First pass draw depth tested polygons, second pass draw outlines on top.
 		for (int32_t pass = 0; pass < 2; ++pass)
 		{
-			primitiveRenderer->pushDepthState(pass == 0, false, false);
-
 			for (int32_t i = 0; i < nm->getMaxTiles(); ++i)
 			{
 				const dtMeshTile* tile = nm->getTile(i);
@@ -92,25 +92,21 @@ void NavMeshComponentEditor::draw(render::PrimitiveRenderer* primitiveRenderer)
 					for (int32_t k = 0; k < poly.vertCount; ++k)
 					{
 						const float* p = &tile->verts[poly.verts[k] * 3];
-						v[k] = Vector4(p[0], p[1], p[2], 1.0f);
+						const float c_offsetY = 0.25f;
+						v[k] = Vector4(p[0], p[1] + c_offsetY, p[2], 1.0f);
 					}
 
 					if (pass == 0)
-					{
 						for (int32_t k = 1; k < poly.vertCount - 1; ++k)
 							primitiveRenderer->drawSolidTriangle(v[0], v[k], v[k + 1], Color4ub(0, 255, 255, 64));
-					}
 					else
-					{
 						for (int32_t k = 0; k < poly.vertCount; ++k)
 							primitiveRenderer->drawLine(v[k], v[(k + 1) % poly.vertCount], Color4ub(0, 255, 255, 255));
-					}
 				}
 			}
-
-			primitiveRenderer->popDepthState();
 		}
 
+		primitiveRenderer->popDepthState();
 		primitiveRenderer->popWorld();
 	}
 }
