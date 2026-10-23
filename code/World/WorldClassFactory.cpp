@@ -20,6 +20,7 @@
 #include "World/Entity.h"
 #include "World/Entity/CameraComponent.h"
 #include "World/Entity/CameraComponentData.h"
+#include "World/Entity/EntityStreamingComponent.h"
 #include "World/Entity/EventManagerComponent.h"
 #include "World/Entity/EventSetComponent.h"
 #include "World/Entity/EventSetComponentData.h"
@@ -298,6 +299,10 @@ void WorldClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classCameraComponent->addProperty("width", &CameraComponent::setWidth, &CameraComponent::getWidth);
 	classCameraComponent->addProperty("height", &CameraComponent::setHeight, &CameraComponent::getHeight);
 	registrar->registerClass(classCameraComponent);
+
+	auto classEntityStreamingComponent = new AutoRuntimeClass< EntityStreamingComponent >();
+	classEntityStreamingComponent->addProperty("idle", &EntityStreamingComponent::idle);
+	registrar->registerClass(classEntityStreamingComponent);
 
 	auto classLightComponentData = new AutoRuntimeClass< LightComponentData >();
 	classLightComponentData->addProperty("color", &LightComponentData::setColor, &LightComponentData::getColor);

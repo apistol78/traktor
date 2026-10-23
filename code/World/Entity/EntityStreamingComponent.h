@@ -58,6 +58,9 @@ public:
 	/*! Set point around which cells are streamed; nothing is streamed until set. */
 	void setFocus(const Vector4& focus);
 
+	/*! No cell being loaded; after an update, every cell in range of focus is loaded. */
+	bool idle() const;
+
 private:
 	struct Cell
 	{

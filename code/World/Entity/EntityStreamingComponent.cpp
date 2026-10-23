@@ -160,6 +160,11 @@ void EntityStreamingComponent::setFocus(const Vector4& focus)
 	m_haveFocus = true;
 }
 
+bool EntityStreamingComponent::idle() const
+{
+	return m_primed && (m_job == nullptr);
+}
+
 void EntityStreamingComponent::createEntities(Cell& cell) const
 {
 	for (auto entityData : cell.data->entityData)
