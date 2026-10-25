@@ -70,7 +70,7 @@
 			</inputPins>
 			<outputPins/>
 			<script><![CDATA[
-const int N = 4;
+const int N = 1;
 const float Far = 20.0f;
 const float TemporalFilter = 0.95f;
 
