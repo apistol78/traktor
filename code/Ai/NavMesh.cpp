@@ -30,7 +30,7 @@ const float c_searchExtents[3] = { 32.0f, 1.0f, 32.0f };
 
 float random()
 {
-	static Random s_rnd;
+	static thread_local Random s_rnd;
 	return s_rnd.nextFloat();
 }
 
@@ -413,6 +413,43 @@ bool NavMesh::findDistanceToWall(const Vector4& center, float radius, float& out
 	outDistance = hitDist;
 
 	dtFreeNavMeshQuery(navQuery);
+	return true;
+}
+
+bool NavMesh::setModifierEnable(const Guid& id, bool enable)
+{
+	const auto it = m_modifiers.find(id);
+	if (it == m_modifiers.end())
+		return false;
+
+	const dtNavMesh* navMesh = m_navMesh;
+	for (int32_t i = 0; i < navMesh->getMaxTiles(); ++i)
+	{
+		const dtMeshTile* tile = navMesh->getTile(i);
+		if (!tile->header)
+			continue;
+
+		const dtPolyRef base = navMesh->getPolyRefBase(tile);
+		for (int32_t j = 0; j < tile->header->polyCount; ++j)
+		{
+			const dtPoly& poly = tile->polys[j];
+			if (poly.getArea() != it->second.area)
+				continue;
+
+			// Match bounds as well since area ids are not unique.
+			Vector4 center = Vector4::zero();
+			for (int32_t k = 0; k < poly.vertCount; ++k)
+			{
+				const float* p = &tile->verts[poly.verts[k] * 3];
+				center += Vector4(p[0], p[1], p[2], 0.0f);
+			}
+			center /= Scalar(poly.vertCount);
+
+			if (it->second.bounds.inside(center))
+				m_navMesh->setPolyFlags(base | (dtPolyRef)j, enable ? 0xffff : 0);
+		}
+	}
+
 	return true;
 }
 

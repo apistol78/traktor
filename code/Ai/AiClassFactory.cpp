@@ -11,6 +11,7 @@
 #include "Ai/MoveQueryResult.h"
 #include "Ai/NavMesh.h"
 #include "Ai/NavMeshComponent.h"
+#include "Ai/NavMeshModifierEntityComponent.h"
 #include "Core/Class/AutoRuntimeClass.h"
 #include "Core/Class/Boxes/BoxedVector4.h"
 #include "Core/Class/IRuntimeClassRegistrar.h"
@@ -118,6 +119,10 @@ void AiClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	auto classNavMeshComponent = new AutoRuntimeClass< NavMeshComponent >();
 	classNavMeshComponent->addMethod("get", &NavMeshComponent_get);
 	registrar->registerClass(classNavMeshComponent);
+
+	auto classNavMeshModifierEntityComponent = new AutoRuntimeClass< NavMeshModifierEntityComponent >();
+	classNavMeshModifierEntityComponent->addProperty("enable", &NavMeshModifierEntityComponent::setEnable, &NavMeshModifierEntityComponent::isEnable);
+	registrar->registerClass(classNavMeshModifierEntityComponent);
 }
 
 }

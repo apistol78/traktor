@@ -8,9 +8,12 @@
  */
 #pragma once
 
+#include "Core/Containers/SmallMap.h"
+#include "Core/Guid.h"
+#include "Core/Math/Aabb3.h"
+#include "Core/Math/Vector4.h"
 #include "Core/Object.h"
 #include "Core/Ref.h"
-#include "Core/Math/Vector4.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -97,11 +100,26 @@ public:
 	 */
 	bool findDistanceToWall(const Vector4& center, float radius, float& outDistance) const;
 
+	/*! Enable or disable navigation through a modifier's area.
+	 *
+	 * \param id Id of modifier's owner entity.
+	 * \param enable True if area should be navigable.
+	 * \return True if modifier found.
+	 */
+	bool setModifierEnable(const Guid& id, bool enable);
+
 private:
 	friend class NavMeshFactory;
 	friend class NavMeshComponentEditor;
 
+	struct Modifier
+	{
+		Aabb3 bounds;
+		uint8_t area = 0;
+	};
+
 	dtNavMesh* m_navMesh = nullptr;
+	SmallMap< Guid, Modifier > m_modifiers;
 };
 
 }

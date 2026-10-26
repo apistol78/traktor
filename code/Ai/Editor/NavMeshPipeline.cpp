@@ -9,7 +9,9 @@
 #include "Ai/Editor/NavMeshPipeline.h"
 
 #include "Ai/Editor/NavMeshAsset.h"
+#include "Ai/NavMeshModifierEntityComponentData.h"
 #include "Ai/NavMeshResource.h"
+#include "Core/Containers/SmallSet.h"
 #include "Core/Io/IStream.h"
 #include "Core/Io/Writer.h"
 #include "Core/Log/Log.h"
@@ -74,11 +76,33 @@ struct NavMeshSourceModel
 	}
 };
 
+struct NavMeshModifier
+{
+	Guid id;
+	Aabb3 bounds;
+	uint8_t area;
+};
+
 void copyUnaligned3(float out[3], const Vector4& source)
 {
 	out[0] = source.x();
 	out[1] = source.y();
 	out[2] = source.z();
+}
+
+void collectModifierEntities(const ISerializable* object, const Guid& parentId, AlignedVector< std::pair< Guid, Ref< const world::EntityData > > >& outEntities)
+{
+	world::Traverser::visit(object, [&](const world::EntityData* entityData) -> world::Traverser::Result {
+		if (!entityData->getState().visible)
+			return world::Traverser::Result::Skip;
+
+		// Undo id permutation by parent to recover entity's unresolved id.
+		if (entityData->getComponent< NavMeshModifierEntityComponentData >())
+			outEntities.push_back({ entityData->getId().permutation(parentId), entityData });
+
+		collectModifierEntities(entityData, entityData->getId(), outEntities);
+		return world::Traverser::Result::Skip;
+	});
 }
 
 bool buildTile(
@@ -92,6 +116,7 @@ bool buildTile(
 	const AlignedVector< int32_t >& indices,
 	const AlignedVector< uint8_t >& areas,
 	const AlignedVector< int32_t >& triangles,
+	const AlignedVector< NavMeshModifier >& modifiers,
 	model::Model* debugModel,
 	Semaphore& debugModelLock,
 	AlignedVector< uint8_t >& outTileData,
@@ -138,6 +163,14 @@ bool buildTile(
 	if (!rcErodeWalkableArea(&ctx, cfg.walkableRadius, *chf))
 		return false;
 
+	for (const auto& modifier : modifiers)
+	{
+		float bmin[3], bmax[3];
+		copyUnaligned3(bmin, modifier.bounds.mn);
+		copyUnaligned3(bmax, modifier.bounds.mx);
+		rcMarkBoxArea(&ctx, bmin, bmax, modifier.area, *chf);
+	}
+
 	const bool c_monotonePartitioning = false;
 	if (c_monotonePartitioning)
 	{
@@ -174,7 +207,7 @@ bool buildTile(
 		return true;
 
 	for (int i = 0; i < pmesh->npolys; ++i)
-		if (pmesh->areas[i] == RC_WALKABLE_AREA)
+		if (pmesh->areas[i] != RC_NULL_AREA)
 			pmesh->flags[i] = 0xffff;
 
 	dtNavMeshCreateParams params;
@@ -251,7 +284,7 @@ bool buildTile(
 
 }
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.ai.NavMeshPipeline", 14, NavMeshPipeline, editor::DefaultPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.ai.NavMeshPipeline", 17, NavMeshPipeline, editor::DefaultPipeline)
 
 bool NavMeshPipeline::create(const editor::IPipelineSettings* settings, db::Database* database)
 {
@@ -423,6 +456,64 @@ bool NavMeshPipeline::buildOutput(
 	{
 		jobs.back()->wait();
 		jobs.pop_back();
+	}
+
+	// Modifiers are gathered from dynamic layers as well since their owners are often dynamic.
+	AlignedVector< std::pair< Guid, Ref< const world::EntityData > > > modifierEntities;
+	collectModifierEntities(sourceData, Guid::null, modifierEntities);
+
+	AlignedVector< NavMeshModifier > modifiers;
+	SmallSet< Guid > modifierIds;
+	for (const auto& modifierEntity : modifierEntities)
+	{
+		const world::EntityData* entityData = modifierEntity.second;
+		if (!modifierIds.insert(modifierEntity.first))
+		{
+			log::warning << L"NavMesh modifier \"" << entityData->getName() << L"\" has same id as another modifier; ignored." << Endl;
+			continue;
+		}
+
+		// Geometry of owner and its visible children.
+		AlignedVector< const world::EntityData* > boundsEntities = { entityData };
+		world::Traverser::visit(entityData, [&](const world::EntityData* childEntityData) -> world::Traverser::Result {
+			if (!childEntityData->getState().visible)
+				return world::Traverser::Result::Skip;
+			boundsEntities.push_back(childEntityData);
+			return world::Traverser::Result::Continue;
+		});
+
+		Aabb3 bounds;
+		for (auto boundsEntity : boundsEntities)
+		{
+			for (auto componentData : boundsEntity->getComponents())
+			{
+				const world::IEntityReplicator* entityReplicator = m_entityReplicators[&type_of(componentData)];
+				if (!entityReplicator)
+					continue;
+
+				Ref< model::Model > model = entityReplicator->createModel(pipelineBuilder, boundsEntity, componentData, world::IEntityReplicator::Usage::Collision, world::IEntityReplicator::Flags::SkipMaterials);
+				if (!model)
+					model = entityReplicator->createModel(pipelineBuilder, boundsEntity, componentData, world::IEntityReplicator::Usage::Visual, world::IEntityReplicator::Flags::SkipMaterials);
+				if (model)
+					bounds.contain(model->getBoundingBox().transform(boundsEntity->getTransform()));
+			}
+		}
+
+		if (auto volumeComponentData = entityData->getComponent< world::VolumeComponentData >())
+			bounds.contain(volumeComponentData->getBoundingBox().transform(entityData->getTransform()));
+
+		if (bounds.empty())
+		{
+			log::warning << L"NavMesh modifier \"" << entityData->getName() << L"\" has no bounds; ignored." << Endl;
+			continue;
+		}
+
+		// Include walkable surface within climb height below modifier.
+		bounds.mn -= Vector4(0.0f, asset->m_agentClimb, 0.0f, 0.0f);
+
+		// Area ids only need to differ between neighbouring modifiers.
+		const uint8_t area = (uint8_t)(1 + modifiers.size() % (RC_WALKABLE_AREA - 1));
+		modifiers.push_back({ modifierEntity.first, bounds, area });
 	}
 
 #if 1
@@ -611,6 +702,7 @@ bool NavMeshPipeline::buildOutput(
 					indices,
 					areas,
 					tileTriangles[tile],
+					modifiers,
 					navDebugModel,
 					navDebugModelLock,
 					tileData[tile],
@@ -684,7 +776,7 @@ bool NavMeshPipeline::buildOutput(
 
 	Writer w(stream);
 
-	w << uint8_t(3);
+	w << uint8_t(4);
 	w << cfg.bmin[0];
 	w << cfg.bmin[1];
 	w << cfg.bmin[2];
@@ -706,6 +798,21 @@ bool NavMeshPipeline::buildOutput(
 			outputInstance->revert();
 			return false;
 		}
+	}
+
+	// Expand bounds by a cell since marked cells and polygon vertices snap outwards.
+	w << int32_t(modifiers.size());
+	for (const auto& modifier : modifiers)
+	{
+		const Aabb3 bounds = modifier.bounds.expand(Scalar(std::max(cfg.cs, cfg.ch)));
+		w.write((const uint8_t*)modifier.id, 16);
+		w << modifier.area;
+		w << bounds.mn.x();
+		w << bounds.mn.y();
+		w << bounds.mn.z();
+		w << bounds.mx.x();
+		w << bounds.mx.y();
+		w << bounds.mx.z();
 	}
 
 	stream->close();

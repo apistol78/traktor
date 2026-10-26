@@ -11,6 +11,8 @@
 #include "Ai/NavMesh.h"
 #include "Ai/NavMeshComponent.h"
 #include "Ai/NavMeshComponentData.h"
+#include "Ai/NavMeshModifierEntityComponent.h"
+#include "Ai/NavMeshModifierEntityComponentData.h"
 #include "Core/Misc/ObjectStore.h"
 #include "Resource/IResourceManager.h"
 
@@ -30,9 +32,19 @@ bool NavMeshEntityFactory::initialize(const ObjectStore& objectStore)
 	return true;
 }
 
+const TypeInfoSet NavMeshEntityFactory::getEntityComponentTypes() const
+{
+	return makeTypeInfoSet< NavMeshModifierEntityComponentData >();
+}
+
 const TypeInfoSet NavMeshEntityFactory::getWorldComponentTypes() const
 {
 	return makeTypeInfoSet< NavMeshComponentData >();
+}
+
+Ref< world::IEntityComponent > NavMeshEntityFactory::createEntityComponent(const world::IEntityBuilder* builder, const world::IEntityComponentData& entityComponentData) const
+{
+	return new NavMeshModifierEntityComponent();
 }
 
 Ref< world::IWorldComponent > NavMeshEntityFactory::createWorldComponent(const world::IEntityBuilder* builder, const world::IWorldComponentData& worldComponentData) const

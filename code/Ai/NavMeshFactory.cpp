@@ -56,7 +56,7 @@ Ref< Object > NavMeshFactory::create(resource::IResourceManager* resourceManager
 
 	uint8_t version;
 	r >> version;
-	if (version != 3)
+	if (version != 3 && version != 4)
 		return nullptr;
 
 	dtNavMeshParams params;
@@ -96,6 +96,30 @@ Ref< Object > NavMeshFactory::create(resource::IResourceManager* resourceManager
 		{
 			dtFree(tileData);
 			return nullptr;
+		}
+	}
+
+	if (version >= 4)
+	{
+		int32_t modifierCount;
+		r >> modifierCount;
+
+		for (int32_t i = 0; i < modifierCount; ++i)
+		{
+			uint8_t id[16];
+			if (r.read(id, sizeof(id)) != sizeof(id))
+				return nullptr;
+
+			NavMesh::Modifier& modifier = outputNavMesh->m_modifiers[Guid(id)];
+			r >> modifier.area;
+
+			float bounds[6];
+			for (int32_t j = 0; j < 6; ++j)
+				r >> bounds[j];
+
+			modifier.bounds = Aabb3(
+				Vector4(bounds[0], bounds[1], bounds[2], 1.0f),
+				Vector4(bounds[3], bounds[4], bounds[5], 1.0f));
 		}
 	}
 

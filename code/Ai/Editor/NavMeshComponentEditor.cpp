@@ -16,6 +16,7 @@
 #include "Scene/Editor/SceneEditorContext.h"
 
 #include <DetourNavMesh.h>
+#include <Recast.h>
 
 namespace traktor::ai
 {
@@ -96,12 +97,19 @@ void NavMeshComponentEditor::draw(render::PrimitiveRenderer* primitiveRenderer)
 						v[k] = Vector4(p[0], p[1] + c_offsetY, p[2], 1.0f);
 					}
 
+					// Modifier areas in orange, disabled areas in red.
+					Color4ub color(0, 255, 255, 255);
+					if (poly.flags == 0)
+						color = Color4ub(255, 0, 0, 255);
+					else if (poly.getArea() != RC_WALKABLE_AREA)
+						color = Color4ub(255, 160, 0, 255);
+
 					if (pass == 0)
 						for (int32_t k = 1; k < poly.vertCount - 1; ++k)
-							primitiveRenderer->drawSolidTriangle(v[0], v[k], v[k + 1], Color4ub(0, 255, 255, 64));
+							primitiveRenderer->drawSolidTriangle(v[0], v[k], v[k + 1], Color4ub(color.r, color.g, color.b, 64));
 					else
 						for (int32_t k = 0; k < poly.vertCount; ++k)
-							primitiveRenderer->drawLine(v[k], v[(k + 1) % poly.vertCount], Color4ub(0, 255, 255, 255));
+							primitiveRenderer->drawLine(v[k], v[(k + 1) % poly.vertCount], color);
 				}
 			}
 		}
