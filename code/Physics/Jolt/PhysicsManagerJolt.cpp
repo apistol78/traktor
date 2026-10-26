@@ -8,9 +8,9 @@
  */
 #include "Physics/Jolt/PhysicsManagerJolt.h"
 
+#include "Core/Containers/AlignedVector.h"
 #include "Core/Log/Log.h"
 #include "Core/Math/Aabb3.h"
-#include "Core/Containers/AlignedVector.h"
 #include "Core/Thread/Acquire.h"
 #include "Core/Thread/JobManager.h"
 #include "Heightfield/Heightfield.h"
@@ -48,9 +48,9 @@
 #include "Resource/IResourceManager.h"
 
 #include <algorithm>
+#include <chrono>
 #include <cstring>
 #include <mutex>
-#include <chrono>
 #include <thread>
 #include <unordered_map>
 
@@ -115,7 +115,7 @@ public:
 	using AvailableJobs = JPH::FixedSizeFreeList< Job >;
 
 	JobSystemTraktor(JPH::uint maxJobs, JPH::uint maxBarriers)
-	:	JPH::JobSystemWithBarrier(maxBarriers)
+		: JPH::JobSystemWithBarrier(maxBarriers)
 	{
 		m_freeJobs.Init(maxJobs, maxJobs);
 	}
@@ -127,17 +127,7 @@ public:
 
 	virtual JobHandle CreateJob(const char* name, JPH::ColorArg color, const JobFunction& jobFunction, JPH::uint32 numDependencies) override final
 	{
-		JPH::uint32 index;
-		for (;;)
-		{
-			index = m_freeJobs.ConstructObject(name, color, this, jobFunction, numDependencies);
-			if (index != AvailableJobs::cInvalidObjectIndex)
-				break;
-			JPH_ASSERT(false, "No jobs available!");
-			std::this_thread::sleep_for(std::chrono::microseconds(100));
-		}
-
-		Job* job = &m_freeJobs.Get(index);
+		Job* job = allocateJob(name, color, jobFunction, numDependencies);
 
 		// Take our reference before queuing; the job may finish immediately.
 		JobHandle handle(job);
@@ -146,6 +136,18 @@ public:
 			QueueJob(job);
 
 		return handle;
+	}
+
+	virtual void CreateJobs(const char* name, JPH::ColorArg color, const JobFunction& jobFunction, JobHandle* outJobs, JPH::uint32 numJobs, JPH::uint32 numDependencies) override final
+	{
+		// Take our references before queuing; the jobs may finish immediately.
+		for (JPH::uint32 i = 0; i < numJobs; ++i)
+			outJobs[i] = JobHandle(allocateJob(name, color, jobFunction, numDependencies));
+
+		// A handle is only a job pointer, so the handle array is queued as a job array.
+		static_assert(sizeof(JobHandle) == sizeof(Job*));
+		if (numDependencies == 0)
+			QueueJobs(reinterpret_cast< Job** >(outJobs), numJobs);
 	}
 
 	virtual void QueueJob(Job* job) override final
@@ -163,9 +165,7 @@ public:
 		if (numJobs == 0)
 			return;
 
-		// Hand Jolt's whole array over in one call so each worker is woken once
-		// instead of once per job. Physics submits jobs in bursts, so queuing them
-		// one at a time made every burst cost a wake syscall per job.
+		// Queue the whole array in one call so each worker is woken only once.
 		AlignedVector< traktor::Job::task_t > tasks;
 		tasks.reserve(numJobs);
 
@@ -190,6 +190,20 @@ public:
 	}
 
 private:
+	Job* allocateJob(const char* name, JPH::ColorArg color, const JobFunction& jobFunction, JPH::uint32 numDependencies)
+	{
+		JPH::uint32 index;
+		for (;;)
+		{
+			index = m_freeJobs.ConstructObject(name, color, this, jobFunction, numDependencies);
+			if (index != AvailableJobs::cInvalidObjectIndex)
+				break;
+			JPH_ASSERT(false, "No jobs available!");
+			std::this_thread::sleep_for(std::chrono::microseconds(100));
+		}
+		return &m_freeJobs.Get(index);
+	}
+
 	AvailableJobs m_freeJobs;
 };
 
@@ -288,9 +302,7 @@ public:
 		return JPH::ValidateResult::AcceptAllContactsForThisBodyPair;
 	}
 
-	// Apply per-triangle material friction/restitution. Jolt resets ioSettings to the
-	// body-level combine before every callback, so this must run on both Added and
-	// Persisted, else per-material restitution on meshes is lost on persisted contacts.
+	// Apply per-triangle material friction/restitution, for both added and persisted contacts.
 	static void applyMaterialSettings(const JPH::Body& body1, const JPH::Body& body2, const JPH::ContactManifold& manifold, JPH::ContactSettings& ioSettings)
 	{
 		BodyJolt* b1 = (BodyJolt*)body1.GetUserData();
@@ -480,9 +492,7 @@ bool buildBodyCreationSettings(const BodyDesc* desc, JPH::ShapeRefC shape, JPH::
 		outSettings.mRestitution = dynamicDesc->getRestitution();
 		outSettings.mAllowSleeping = dynamicDesc->getAutoDeactivate();
 		T_ASSERT_M(dynamicDesc->getActive() || dynamicDesc->getAutoDeactivate(), L"If body is initially disabled then auto deactivate must be set as well");
-		// Use the authored mass, deriving inertia from the shape (like Bullet's
-		// calculateLocalInertia). Otherwise Jolt defaults to volume * density
-		// (1000 kg/m^3) and ignores getMass(), producing far too heavy bodies.
+		// Use the authored mass, only inertia is derived from the shape.
 		outSettings.mOverrideMassProperties = JPH::EOverrideMassProperties::CalculateInertia;
 		outSettings.mMassPropertiesOverride.mMass = dynamicDesc->getMass();
 		return true;
@@ -560,11 +570,7 @@ private:
 	bool m_anyHit = false;
 };
 
-/*! Collects every filtered contact of a placed shape.
- *
- * Reports contacts as they come; near duplicates against a triangle mesh are the
- * caller's to reduce -- see CharacterComponent, which does exactly that.
- */
+/*! Collects every filtered contact of a placed shape, near duplicates included. */
 class ContactCollector final : public JPH::CollideShapeCollector
 {
 public:
@@ -578,8 +584,7 @@ public:
 
 	virtual void AddHit(const JPH::CollideShapeResult& result) override
 	{
-		// A zero penetration axis carries no direction to resolve along, so there is
-		// nothing a caller could do with the contact.
+		// Skip contacts without a penetration direction.
 		if (result.mPenetrationAxis.IsNearZero())
 			return;
 
@@ -595,8 +600,7 @@ public:
 		contact.body = unwrappedBody;
 		contact.position = convertFromJolt(result.mContactPointOn1, 1.0f);
 		contact.normal = convertFromJolt(-result.mPenetrationAxis.Normalized(), 0.0f);
-		// Jolt measures penetration as positive; separation is the negative of it and
-		// only appears at all when mMaxSeparationDistance is set.
+		// Distance is negative when penetrating.
 		contact.distance = -result.mPenetrationDepth;
 		contact.material = unwrappedBody->getMaterial();
 	}
@@ -636,10 +640,7 @@ protected:
 		// Surface normal, pointing from the hit surface back towards the swept shape.
 		const Vector4 normal = convertFromJolt(-result.mPenetrationAxis.Normalized(), 0.0f);
 
-		// Only report surfaces the sweep moves *into*. Jolt reports a fraction-0 hit
-		// whenever the shape starts in contact regardless of direction, which wedges
-		// the character controller against anything it touches (can't slide or pass
-		// through openings). Skip those, matching Bullet's btGjkConvexCast.
+		// Only report surfaces the sweep moves into, so a shape in contact can still slide away.
 		const Vector4 direction = convertFromJolt(m_shapeCast.mDirection, 0.0f);
 		if (dot3(direction, normal) >= 0.0_simd)
 			return false;
@@ -921,8 +922,7 @@ Ref< Body > PhysicsManagerJolt::createBody(resource::IResourceManager* resourceM
 		const float halfHeight = std::max(0.0f, capsuleShape->getLength() * 0.5f - radius);
 		JPH::CapsuleShapeSettings capsuleSettings(halfHeight, radius);
 		capsuleSettings.SetEmbedded();
-		// Traktor capsules are Z-axis (Bullet's btCapsuleShapeZ); Jolt's are Y-axis, so
-		// rotate onto Z so shape local transforms orient identically across backends.
+		// Rotate Jolt's Y-axis capsule onto Traktor's Z-axis.
 		JPH::RotatedTranslatedShapeSettings shapeSettings(
 			JPH::Vec3::sZero(),
 			JPH::Quat::sRotation(JPH::Vec3::sAxisX(), 0.5f * JPH::JPH_PI),
@@ -934,7 +934,7 @@ Ref< Body > PhysicsManagerJolt::createBody(resource::IResourceManager* resourceM
 	{
 		JPH::CylinderShapeSettings cylinderSettings(cylinderShape->getLength() * 0.5f, cylinderShape->getRadius());
 		cylinderSettings.SetEmbedded();
-		// As the capsule: Traktor cylinders are Z-axis (btCylinderShapeZ), Jolt's Y-axis.
+		// Rotate Jolt's Y-axis cylinder onto Traktor's Z-axis.
 		JPH::RotatedTranslatedShapeSettings shapeSettings(
 			JPH::Vec3::sZero(),
 			JPH::Quat::sRotation(JPH::Vec3::sAxisX(), 0.5f * JPH::JPH_PI),
@@ -966,8 +966,7 @@ Ref< Body > PhysicsManagerJolt::createBody(resource::IResourceManager* resourceM
 		for (int32_t y = 0; y < size; ++y)
 			for (int32_t x = 0; x < size; ++x)
 			{
-				// Cut samples are flagged as "no collision"; Jolt discards triangles
-				// sharing such samples, same as the Bullet heightfield shape.
+				// Cut samples have no collision.
 				samples[x + y * size] = heightfield->getGridCut(x, y)
 					? heightfield->getGridHeightNearest(x, y)
 					: JPH::HeightFieldShapeConstants::cNoCollisionValue;
@@ -976,8 +975,7 @@ Ref< Body > PhysicsManagerJolt::createBody(resource::IResourceManager* resourceM
 		const Vector4& worldExtent = heightfield->getWorldExtent();
 		const Vector4 scale(1.0f / size, 1.0f, 1.0f / size, 1.0f);
 
-		// Samples are located at texel centers, same as the terrain shader samples the height
-		// map, so the first sample is half a texel in from the heightfield corner.
+		// Samples are at texel centers, half a texel in from the heightfield corner.
 		float originX, originZ;
 		heightfield->gridToWorld(0, 0, originX, originZ);
 
@@ -1260,9 +1258,7 @@ bool PhysicsManagerJolt::queryRay(
 		settings.mBackFaceModeTriangles = JPH::EBackFaceMode::CollideWithBackFaces;
 		settings.mBackFaceModeConvex = JPH::EBackFaceMode::CollideWithBackFaces;
 	}
-	// Don't treat convex shapes as solid: a ray starting inside a body (e.g. an
-	// eye-height perception ray inside its own capsule) would otherwise hit at
-	// fraction 0. Matches Bullet.
+	// Convex shapes are hollow so a ray starting inside a body doesn't hit it.
 	settings.mTreatConvexAsSolid = false;
 
 	RayCollector collector(this, ray, queryFilter, QtAll, outResult);
@@ -1433,11 +1429,7 @@ void PhysicsManagerJolt::queryContacts(
 
 	ContactCollector collector(this, bj, queryFilter, outResult);
 
-	// The internal edge removing variant, deliberately: a capsule walking across a
-	// triangle mesh otherwise catches on the shared edge between two coplanar triangles,
-	// which is reported as a contact whose normal faces along the surface rather than out
-	// of it. Reducing near duplicate contacts does not help there -- the ghost normal is
-	// not a near duplicate of anything, it is simply wrong.
+	// Remove internal edges so shapes don't catch on edges between coplanar triangles.
 	m_physicsSystem->GetNarrowPhaseQuery().CollideShapeWithInternalEdgeRemoval(
 		shape,
 		JPH::Vec3::sReplicate(1.0f),
@@ -1543,9 +1535,7 @@ Ref< Body > PhysicsManagerJolt::createBody(resource::IResourceManager* resourceM
 				triangle.indices[0],
 				triangle.material < materialCount ? triangle.material : 0));
 
-		// Jolt needs mMaterials sized for the per-triangle indices; the real
-		// friction/restitution come from the contact callback (applyMaterialSettings),
-		// so these are placeholders.
+		// Placeholder materials, friction and restitution are applied per contact.
 		JPH::PhysicsMaterialList joltMaterials;
 		joltMaterials.reserve(materialCount);
 		for (uint32_t i = 0; i < materialCount; ++i)
@@ -1627,8 +1617,7 @@ Ref< Body > PhysicsManagerJolt::createBodyFromShape(JPH::ShapeSettings& shapeSet
 	if (!body)
 		return nullptr;
 
-	// Keep the wrapper's inverse mass in sync with Jolt; getInverseMass() is used by
-	// gameplay (e.g. VehicleComponent).
+	// Keep the wrapper's inverse mass in sync with Jolt.
 	float inverseMass = 0.0f;
 	bool initiallyActive = true;
 	if (auto dynamicDesc = dynamic_type_cast< const DynamicBodyDesc* >(desc))
@@ -1672,16 +1661,14 @@ void PhysicsManagerJolt::destroyConstraint(Joint* joint, JPH::Constraint* constr
 
 void PhysicsManagerJolt::insertConstraint(JPH::Constraint* constraint)
 {
-	// Add once: a joint's constraint is registered by both bodies, so inserts arrive
-	// once per enabled body.
+	// Add once, both bodies of a joint insert its constraint.
 	if (m_activeConstraints.insert(constraint))
 		m_physicsSystem->AddConstraint(constraint);
 }
 
 void PhysicsManagerJolt::removeConstraint(JPH::Constraint* constraint)
 {
-	// Remove once (mirrors insertConstraint); removing a constraint Jolt no longer
-	// holds would corrupt its ConstraintManager.
+	// Remove once, only constraints which are still added.
 	auto it = m_activeConstraints.find(constraint);
 	if (it == m_activeConstraints.end())
 		return;
