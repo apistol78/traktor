@@ -478,7 +478,7 @@ void SceneEditorContext::buildEntities(bool rebuildWorld)
 		objectStore.set(getResourceManager());
 
 		// Create the entity factory.
-		Ref< world::EntityFactory > entityFactory = new world::EntityFactory();
+		Ref< world::EntityFactory > entityFactory = new world::EntityFactory(false);
 		for (auto plugin : m_plugins)
 		{
 			RefArray< world::IEntityFactory > entityFactories;

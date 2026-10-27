@@ -32,6 +32,8 @@ class T_DLLCLASS EntityFactory : public IEntityFactory
 	T_RTTI_CLASS;
 
 public:
+	explicit EntityFactory(bool verbose = true);
+
 	void addFactory(const IEntityFactory* entityFactory);
 
 	void removeFactory(const IEntityFactory* entityFactory);
@@ -58,6 +60,7 @@ private:
 	RefArray< const IEntityFactory > m_factories;
 	mutable SmallMap< const TypeInfo*, const IEntityFactory* > m_resolvedFactoryCache;
 	mutable Semaphore m_resolvedFactoryCacheLock;
+	bool m_verbose = true;
 
 	const IEntityFactory* getFactory(const EntityData* entityData) const;
 

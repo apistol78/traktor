@@ -8,6 +8,7 @@
  */
 #include "Editor/App/DatabaseView.h"
 
+#include "Core/Io/DynamicMemoryStream.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/Path.h"
 #include "Core/Io/StreamCopy.h"
@@ -28,7 +29,9 @@
 #include "Database/Database.h"
 #include "Database/Group.h"
 #include "Database/Instance.h"
+#include "Database/Isolate.h"
 #include "Database/Traverse.h"
+#include "Editor/App/BrowseGroupDialog.h"
 #include "Editor/App/BrowseTypeDialog.h"
 #include "Editor/App/InstanceClipboardData.h"
 #include "Editor/App/NewInstanceDialog.h"
@@ -460,6 +463,7 @@ bool DatabaseView::create(ui::Widget* parent)
 	m_menuInstance->add(new ui::MenuItem(ui::Command(L"Editor.Rename"), i18n::Text(L"DATABASE_RENAME")));
 	m_menuInstance->add(new ui::MenuItem(ui::Command(L"Editor.Delete"), i18n::Text(L"DATABASE_DELETE")));
 	m_menuInstance->add(new ui::MenuItem(ui::Command(L"Editor.Database.Clone"), i18n::Text(L"DATABASE_CLONE")));
+	m_menuInstance->add(new ui::MenuItem(ui::Command(L"Editor.Database.Move"), i18n::Text(L"DATABASE_MOVE")));
 	m_menuInstance->add(new ui::MenuItem(ui::Command(L"Editor.Database.DefaultEditInstance"), i18n::Text(L"DATABASE_DEFAULT_EDIT_INSTANCE")));
 	m_menuInstance->add(new ui::MenuItem(L"-"));
 	m_menuInstance->add(new ui::MenuItem(ui::Command(L"Editor.Copy"), i18n::Text(L"DATABASE_COPY")));
@@ -487,6 +491,7 @@ bool DatabaseView::create(ui::Widget* parent)
 	m_menuInstanceAsset->add(new ui::MenuItem(ui::Command(L"Editor.Rename"), i18n::Text(L"DATABASE_RENAME")));
 	m_menuInstanceAsset->add(new ui::MenuItem(ui::Command(L"Editor.Delete"), i18n::Text(L"DATABASE_DELETE")));
 	m_menuInstanceAsset->add(new ui::MenuItem(ui::Command(L"Editor.Database.Clone"), i18n::Text(L"DATABASE_CLONE")));
+	m_menuInstanceAsset->add(new ui::MenuItem(ui::Command(L"Editor.Database.Move"), i18n::Text(L"DATABASE_MOVE")));
 	m_menuInstanceAsset->add(new ui::MenuItem(ui::Command(L"Editor.Database.DefaultEditInstance"), i18n::Text(L"DATABASE_DEFAULT_EDIT_INSTANCE")));
 	m_menuInstanceAsset->add(new ui::MenuItem(L"-"));
 	m_menuInstanceAsset->add(new ui::MenuItem(ui::Command(L"Editor.Copy"), i18n::Text(L"DATABASE_COPY")));
@@ -558,7 +563,7 @@ void DatabaseView::setDatabase(db::Database* db)
 
 			if (!wizard->create(m_editor->getSettings()))
 				continue;
-			
+
 			m_wizardTools.push_back(wizard);
 		}
 
@@ -782,6 +787,61 @@ bool DatabaseView::handleCommand(const ui::Command& command)
 
 			updateView();
 			highlight(instanceClone);
+		}
+		else if (command == L"Editor.Database.Move")
+		{
+			Ref< db::Group > intoGroup;
+
+			BrowseGroupDialog dlgBrowse(m_editor, nullptr);
+			if (dlgBrowse.create(this, m_editor->getSourceDatabase()))
+			{
+				if (dlgBrowse.showModal() == ui::DialogResult::Ok)
+					intoGroup = dlgBrowse.getGroup();
+				dlgBrowse.destroy();
+			}
+
+			if (instance->getParent() == intoGroup)
+				return true;
+
+			if (intoGroup->getInstance(instance->getName()) != nullptr)
+			{
+				log::error << L"Cannot move instance to selected group; group already contain an instance named \"" << instance->getName() << L"\"." << Endl;
+				return false;
+			}
+
+			AlignedVector< uint8_t > buffer;
+
+			{
+				DynamicMemoryStream ms(buffer, false, true);
+				if (!db::Isolate::createIsolatedInstance(instance, &ms))
+				{
+					log::error << L"Unable to isolate instance." << Endl;
+					return false;
+				}
+			}
+
+			bool result = true;
+			result &= instance->checkout();
+			result &= instance->remove();
+			result &= instance->commit();
+			if (!result)
+			{
+				log::error << L"Unable to remove original instance." << Endl;
+				instance->revert();
+				return false;
+			}
+			instance = nullptr;
+
+			{
+				DynamicMemoryStream ms(buffer, true, false);
+				if (!db::Isolate::createInstanceFromIsolation(intoGroup, &ms))
+				{
+					log::error << L"Unable to restore isolated instance." << Endl;
+					return false;
+				}
+			}
+
+			updateView();
 		}
 		else if (command == L"Editor.Database.DefaultEditInstance") // Default edit instance
 		{
@@ -1308,9 +1368,10 @@ void DatabaseView::updateGridInstances(const db::Instance* highlightInstance)
 				const int32_t thumbSize = m_listInstances->getThumbnailDimension();
 				m_previewJobs.push_back(JobManager::getInstance().add([=, this]() {
 					item->setImage(browsePreview->generate(
-						m_editor,
-						childInstanceRef,
-						thumbSize), alpha);
+									   m_editor,
+									   childInstanceRef,
+									   thumbSize),
+						alpha);
 					m_listInstances->requestUpdate();
 				}));
 				break;

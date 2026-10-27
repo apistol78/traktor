@@ -53,7 +53,7 @@ bool SettingsDialog::create(ui::Widget* parent, const PropertyGroup* originalSet
 	if (!ui::ConfigDialog::create(
 		parent,
 		i18n::Text(L"EDITOR_SETTINGS_TITLE"),
-		700_ut,
+		800_ut,
 		600_ut,
 		ui::ConfigDialog::WsCenterParent | ui::ConfigDialog::WsDefaultResizable,
 		new ui::FloodLayout(ui::Size(parent->pixel(4_ut), 0))

@@ -110,10 +110,6 @@
 			<second>Environment</second>
 		</item>
 		<item>
-			<first>EDITOR_SETTINGS_ENVIRONMENT_INFO</first>
-			<second>Variables are set when the editor starts, unless already defined. Use $(NAME) to reference other variables.</second>
-		</item>
-		<item>
 			<first>EDITOR_SETTINGS_ENVIRONMENT_NAME</first>
 			<second>Name</second>
 		</item>

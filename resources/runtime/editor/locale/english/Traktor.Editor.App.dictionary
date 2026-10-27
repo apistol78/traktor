@@ -142,6 +142,10 @@
 			<second>List dependents...</second>
 		</item>
 		<item>
+			<first>DATABASE_MOVE</first>
+			<second>Move...</second>
+		</item>
+		<item>
 			<first>DATABASE_NEW_GROUP</first>
 			<second>New group</second>
 		</item>

@@ -29,11 +29,8 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.editor.EnvironmentSettingsPage", 0, Env
 bool EnvironmentSettingsPage::create(ui::Container* parent, const PropertyGroup* originalSettings, PropertyGroup* settings, const std::list< ui::Command >& shortcutCommands)
 {
 	Ref< ui::Container > container = new ui::Container();
-	if (!container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%,*", 0_ut, 4_ut)))
+	if (!container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"100%,*", 0_ut, 4_ut)))
 		return false;
-
-	Ref< ui::Static > staticInfo = new ui::Static();
-	staticInfo->create(container, i18n::Text(L"EDITOR_SETTINGS_ENVIRONMENT_INFO"));
 
 	m_gridVariables = new ui::GridView();
 	m_gridVariables->create(container, ui::WsDoubleBuffer | ui::GridView::WsColumnHeader | ui::GridView::WsAutoEdit);

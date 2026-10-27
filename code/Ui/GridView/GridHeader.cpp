@@ -6,12 +6,13 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Ui/GridView/GridHeader.h"
+
 #include "Ui/Application.h"
 #include "Ui/Canvas.h"
-#include "Ui/StyleSheet.h"
-#include "Ui/GridView/GridHeader.h"
 #include "Ui/GridView/GridColumn.h"
 #include "Ui/GridView/GridView.h"
+#include "Ui/StyleSheet.h"
 
 namespace traktor::ui
 {
@@ -108,8 +109,11 @@ void GridHeader::paint(Canvas& canvas, const Rect& rect)
 
 		canvas.resetClipRect();
 
-		canvas.setForeground(ss->getColor(this, L"line-color"));
-		canvas.drawLine(left, rect.top + 4, left, rect.bottom - 4);
+		if (i > 0)
+		{
+			canvas.setForeground(ss->getColor(this, L"line-color"));
+			canvas.drawLine(left, rect.top + 4, left, rect.bottom - 4);
+		}
 
 		left += width;
 	}

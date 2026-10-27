@@ -6,10 +6,11 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "World/EntityFactory.h"
+
 #include "Core/Log/Log.h"
 #include "Core/Thread/Acquire.h"
 #include "World/EntityData.h"
-#include "World/EntityFactory.h"
 #include "World/IEntityComponentData.h"
 #include "World/IEntityEventData.h"
 #include "World/IWorldComponentData.h"
@@ -19,9 +20,9 @@ namespace traktor::world
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.EntityFactory", EntityFactory, IEntityFactory)
 
-bool EntityFactory::initialize(const ObjectStore& objectStore)
+EntityFactory::EntityFactory(bool verbose)
+	: m_verbose(verbose)
 {
-	return true;
 }
 
 void EntityFactory::addFactory(const IEntityFactory* entityFactory)
@@ -34,6 +35,11 @@ void EntityFactory::removeFactory(const IEntityFactory* entityFactory)
 {
 	if (m_factories.remove(entityFactory))
 		m_resolvedFactoryCache.clear();
+}
+
+bool EntityFactory::initialize(const ObjectStore& objectStore)
+{
+	return true;
 }
 
 const TypeInfoSet EntityFactory::getEntityTypes() const
@@ -142,8 +148,7 @@ const IEntityFactory* EntityFactory::getFactory(const EntityData* entityData) co
 		}
 		m_resolvedFactoryCache.insert(std::make_pair(
 			&entityDataType,
-			entityFactory
-		));
+			entityFactory));
 	}
 
 	if (!entityFactory)
@@ -193,8 +198,7 @@ const IEntityFactory* EntityFactory::getFactory(const IEntityEventData* entityEv
 		}
 		m_resolvedFactoryCache.insert(std::make_pair(
 			&entityEventDataType,
-			entityFactory
-		));
+			entityFactory));
 	}
 
 	if (!entityFactory)
@@ -244,11 +248,10 @@ const IEntityFactory* EntityFactory::getFactory(const IEntityComponentData* enti
 		}
 		m_resolvedFactoryCache.insert(std::make_pair(
 			&entityComponentDataType,
-			entityFactory
-		));
+			entityFactory));
 	}
 
-	if (!entityFactory)
+	if (m_verbose && !entityFactory)
 	{
 		log::error << L"Unable to find entity factory for component of \"" << type_name(entityComponentData) << L"\"." << Endl;
 		return nullptr;
@@ -295,11 +298,10 @@ const IEntityFactory* EntityFactory::getFactory(const IWorldComponentData* world
 		}
 		m_resolvedFactoryCache.insert(std::make_pair(
 			&worldComponentDataType,
-			entityFactory
-		));
+			entityFactory));
 	}
 
-	if (!entityFactory)
+	if (m_verbose && !entityFactory)
 	{
 		log::error << L"Unable to find entity factory for component of \"" << type_name(worldComponentData) << L"\"." << Endl;
 		return nullptr;
