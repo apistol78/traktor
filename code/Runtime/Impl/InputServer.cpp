@@ -9,6 +9,7 @@
 #include <cmath>
 #include "Runtime/IEnvironment.h"
 #include "Runtime/Impl/InputServer.h"
+#include "Core/Containers/AlignedVector.h"
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
 #include "Core/Misc/SafeDestroy.h"
@@ -334,12 +335,15 @@ void InputServer::update(float deltaTime, bool renderViewActive)
 			{
 				const uint32_t sourceHash = DeepHash(sourceData).get();
 
-				// Discard duplicated input sources.
-				for (auto it : m_inputMappingSourceData->getSourceData())
+				// Discard duplicated input sources; collected first as removing reorders the map.
+				AlignedVector< std::wstring > duplicateIds;
+				for (const auto& it : m_inputMappingSourceData->getSourceData())
 				{
 					if (DeepHash(it.second) == sourceHash)
-						m_inputMappingSourceData->setSourceData(it.first, nullptr);
+						duplicateIds.push_back(it.first);
 				}
+				for (const auto& duplicateId : duplicateIds)
+					m_inputMappingSourceData->setSourceData(duplicateId, nullptr);
 
 				m_inputMappingSourceData->setSourceData(m_inputSourceFabricatorId, sourceData);
 			}

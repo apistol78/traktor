@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -24,14 +24,15 @@
 namespace traktor::input
 {
 
-class KeyboardInputSourceData;
 class CombinedInputSourceData;
 class IInputDevice;
 class IInputSourceData;
 class InputSystem;
 
-/*!
+/*! Record an input source from the first control used.
  * \ingroup Input
+ *
+ * Category is a mask; any connected device of those categories is recorded from.
  */
 class T_DLLCLASS InputSourceFabricator : public Object
 {
@@ -46,12 +47,11 @@ private:
 	struct DeviceState
 	{
 		Ref< IInputDevice > device;
+		int32_t index;
 		std::map< DefaultControl, float > values;
 	};
 
-	InputCategory m_category;
 	bool m_analogue;
-	Ref< KeyboardInputSourceData > m_keyboardData;
 	Ref< CombinedInputSourceData > m_combinedData;
 	Ref< IInputSourceData > m_outputData;
 	std::list< DeviceState > m_deviceStates;

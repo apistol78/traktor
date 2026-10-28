@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -11,7 +11,6 @@
 #include "Input/Binding/CombinedInputSourceData.h"
 #include "Input/Binding/GenericInputSourceData.h"
 #include "Input/Binding/InputSourceFabricator.h"
-#include "Input/Binding/KeyboardInputSourceData.h"
 #include "Input/Binding/ValueDigital.h"
 
 namespace traktor::input
@@ -26,19 +25,31 @@ const float c_valueThreshold = 0.5f;
 T_IMPLEMENT_RTTI_CLASS(L"traktor.input.InputSourceFabricator", InputSourceFabricator, Object)
 
 InputSourceFabricator::InputSourceFabricator(InputSystem* inputSystem, InputCategory category, bool analogue)
-:	m_category(category)
-,	m_analogue(analogue)
+:	m_analogue(analogue)
 {
-	const int32_t deviceCount = inputSystem->getDeviceCount(m_category, true);
+	const int32_t deviceCount = inputSystem->getDeviceCount();
 	for (int32_t i = 0; i < deviceCount; ++i)
 	{
-		Ref< IInputDevice > device = inputSystem->getDevice(m_category, i, true);
-		if (device)
+		Ref< IInputDevice > device = inputSystem->getDevice(i);
+		if ((device->getCategory() & category) == InputCategory::Invalid || !device->isConnected())
+			continue;
+
+		DeviceState ds;
+		ds.device = device;
+		ds.index = -1;
+
+		// Name the device only when there is more than one of its category to choose from.
+		if (inputSystem->getDeviceCount(device->getCategory(), true) > 1)
 		{
-			DeviceState ds;
-			ds.device = device;
-			m_deviceStates.push_back(ds);
+			ds.index = 0;
+			for (const auto& other : m_deviceStates)
+			{
+				if (other.device->getCategory() == device->getCategory())
+					++ds.index;
+			}
 		}
+
+		m_deviceStates.push_back(ds);
 	}
 }
 
@@ -89,28 +100,14 @@ Ref< IInputSourceData > InputSourceFabricator::update()
 						// Analogue control cannot be combined, thus create generic
 						// source and finish.
 						m_outputData = new GenericInputSourceData(
-							m_category,
-							(int32_t)std::distance(m_deviceStates.begin(), i),
+							i->device->getCategory(),
+							i->index,
 							controlType,
 							m_analogue,
 							false		//<! \fixme
 						);
 
 						break;
-					}
-					else if (m_category == InputCategory::Keyboard)
-					{
-						if (asBoolean(value))
-						{
-							if (!m_keyboardData)
-								m_keyboardData = new KeyboardInputSourceData();
-
-							m_keyboardData->addControlType(controlType);
-						}
-						else
-						{
-							m_outputData = m_keyboardData;
-						}
 					}
 					else
 					{
@@ -122,8 +119,8 @@ Ref< IInputSourceData > InputSourceFabricator::update()
 								m_combinedData = new CombinedInputSourceData(CombinedInputSource::CmAll);
 
 							m_combinedData->addSource(new GenericInputSourceData(
-								m_category,
-								(int32_t)std::distance(m_deviceStates.begin(), i),
+								i->device->getCategory(),
+								i->index,
 								controlType,
 								m_analogue,
 								false		//<! \fixme
