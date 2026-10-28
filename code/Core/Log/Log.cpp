@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -36,21 +36,8 @@ public:
 	virtual void log(uint32_t threadId, int32_t level, const wchar_t* str) override final
 	{
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-		if (level == 0)
-		{
-			fwprintf(stdout, L"%ls\n", str);
-		}
-		else if (level == 1)
-		{
-			fwprintf(stdout, L"%ls\n", str);
-			fflush(stdout);
-		}
-		else
-		{
-			fflush(stdout);
-			fwprintf(stdout, L"%ls\n", str);
-			fflush(stderr);
-		}
+		fwprintf(stdout, L"%ls\n", str);
+		fflush(stdout);
 #if defined(__IOS__)
 		NSLogCpp(str);
 #elif defined(__ANDROID__)
