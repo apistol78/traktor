@@ -9,10 +9,11 @@ Build on-screen UI (HUD labels, buttons, modal menus) from a LUA `Stage` using U
 
 ## Setup
 - `#using \{FC4400A2-BDB6-BA45-9A22-12B9676E71FA}` (the UiKit umbrella) — one import exposes `Widget`, `Frame`, `Container`, `Static`, `PushButton`, `Dialog`, `TableLayout`, `StackLayout`, etc.
-- Once, in `Stage:new`: `Widget.initialize(environment.resource.resourceManager, { "<UiKit movie guid>" })` (the resource bundle that defines `MC_Static`, `MC_PushButton`, `MC_Dialog`, …). Create widgets only after this.
+- Once, in `Stage:new`: `Widget.initialize(environment.resource.resourceManager, environment.audio and environment.audio.soundPlayer, { "\{B45977D0-3D89-4FA7-BE4C-FAA9ED63A942}" })`. The kit list holds Spark movies; `{B45977D0-…}` is UiKit2 (`System/UiKit/Resources/UiKit2`), which defines `MC_Static`, `MC_PushButton`, `MC_Dialog`, `MC_Panel`, …. The sound player may be nil; `environment.audio` is nil when the game has no `Audio.Type` setting. Create widgets only after this. The old two-argument form throws.
+- `self.ui.root` exists only when the stage has a `traktor.spark.SparkLayerData` named `ui` and the script derives from the base `Stage` script; see *stage-transitions-and-menus*.
 
 ## Frame + HUD
-- `local root = self.ui.root`; `self._frame = Frame(root, vw, vh, layout)` — a virtual canvas that auto-scales to the screen. Call `self._frame:update()` after building.
+- `local root = self.ui.root`; `self._frame = Frame(root, 1280, 720, layout)` — a virtual canvas that auto-scales to the screen. Its size is always 1280×720; the width/height arguments are ignored. Call `self._frame:update()` after building.
 - Labels: `Static(self._frame, "text")`; update with `:setText(...)`. Also `:setTextSize`, `:setTextColor`, `:setTextOutlineColor`, `:setHorizontalAlign/:setVerticalAlign(Widget.ALIGN_CENTER)`.
 
 ## Layouts

@@ -15,6 +15,7 @@ function Main:new(params, environment)
 	-- Initialize UiKit.
 	Widget.initialize(
 		environment.resource.resourceManager,
+		environment.audio and environment.audio.soundPlayer,
 		{ "\{5ABEAE05-EB26-934F-932F-7F3C7C582383}" }
 	)
 

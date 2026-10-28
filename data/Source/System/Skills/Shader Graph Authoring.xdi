@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.mcp.SkillAsset">
+	<name>shader-graph-authoring</name>
+	<description>Read, create and edit traktor shader graphs through the MCP node/edge IR, validate and build them, and bind a custom surface shader to a mesh material.</description>
+	<whenToUse><![CDATA[Asked to write or change a shader or material look: a custom surface on a mesh (animated colour, world position offset, procedural pattern), a new shader fragment or GLSL Script node, or fixing/extending an existing shader graph. For particle colours see particle-effect; for generated texture images see create-procedural-texture.]]></whenToUse>
+	<body><![CDATA[# Author a shader graph
+
+Shaders are node graphs (`traktor.render.ShaderGraph`) compiled by the shader pipeline. The MCP tools expose them as a JSON node/edge IR. Create "{{name}}" by copying a working graph and editing it, not by building blank.
+
+## Tools
+- `list_shader_node_types {filter}` lists node types with pin names. `describe_node {type}` gives pins, commutative groups and the GLSL the node emits. Deprecated nodes (`Uniform`, `IndexedUniform`, `Struct`, `ReadStruct`, `ReadStruct2`) are hidden; use `Parameter` instead of `Uniform`.
+- `get_shader_graph {path, resolve?}` returns `{nodes, edges, graphType}`. `get_shader_dependencies` lists the fragments used through External nodes.
+- `create_shader_graph {path, graph}` fails if the path exists. `update_shader_graph {path, graph}` replaces the whole graph. Both validate and commit only when valid; never pass `force`.
+- `validate_shader_graph` checks structure only, not GLSL. `build_asset {path, rebuild:true}` compiles; it returns `built:false` on failure.
+
+## IR
+- Node: `{id, type, position:[x,y], comment, properties:{...}, inputs, outputs}`. `type` is the short name (`Add`, `Sampler`, `External`, ...). Ids are any strings; `get_shader_graph` returns `n0..nN` = index in the node array.
+- `properties` sets only scalar/string/guid/enum members, e.g. `Swizzle {swizzle:"xyz0"}`, `Scalar {value:2}`, `InputPort {name, optional}`, `OutputPort {name}`, `Parameter {parameterDeclaration:"{guid}"}`, `Texture {external:"{texture guid}"}`. Unknown names are returned as `warnings`, not errors: always read them.
+- `Vector` takes a top-level `value:[x,y,z,w]`; `Color` a top-level `color:[r,g,b,a]` (plus `properties.linear`).
+- `External` (a fragment call) needs `fragment:"{guid}"` plus `inputs:[{name, optional}]` and `outputs:[{name}]` matching the fragment's InputPort/OutputPort names. Pins are NOT derived from the fragment: leave them out and every edge to the node is skipped ("Unknown pin ... edge skipped"). Copy them from an existing External or from the fragment's own ports.
+- `Script` (inline GLSL): `properties.script`, top-level `domain` (`Undefined`/`Pixel`/`Compute`), `includes:["{ShaderModule guid}"]`, `inputs:["A", ...]`, `outputs:[{name, type}]`. In the GLSL, pins are `$A`, and outputs are assigned `$Output = ...`.
+- Edge: `{from:{node, pin}, to:{node, pin}}`, by node id and pin NAME.
+
+## Custom surface shader on a mesh material
+`MeshAsset.materialShaders` maps a model material name to a surface fragment that replaces the generated surface for that material. Copy `System/Examples/Deform/DeformSurface`:
+- `InputPort {name:"VertexAttributes"}` → External `MakeSurfaceAttributes` `{0524A94E-4377-42AC-8A13-26FFE3491CC3}` → `OutputPort {name:"SurfaceAttributes"}`. Wire VertexAttributes into its `VertexAttributes` pin.
+- `MakeSurfaceAttributes` optional inputs: Albedo, Alpha, Opaque, Emissive, Normal, Roughness, Metalness, Specular, Height, Decal response, World position offset, Inherit.
+- To override only some channels: add External `MaterialInterface` `{139CACBD-2A79-5644-B9BC-B113F66D50EA}` (in `VertexAttributes`, out `SurfaceAttributes`). It is replaced at build time by the material's generated surface. Wire it into `Inherit`; unconnected channels then come from the model material.
+- Vertex data: External `BreakVertexAttributes` `{BC8CF2ED-E005-4043-8E3E-0004A6392BF9}` (outputs Object, World, View, TexCoord0, TexCoord1, VertexColor), then `BreakVSpace` `{2E9AE5A7-2444-466C-8694-17BE1CF26CBD}` on World/View/Object (outputs Position, Normal, Tangent, Binormal, Velocity).
+- Bind it: `set_instance_member {path:<mesh asset>, member:"materialShaders", value:{"<material name>":"<graph guid>"}}`, then `build_asset` the mesh. A material with a custom shader loses its model textures, so sample them in the graph (`Texture` + `Sampler`). A null guid disables the material.
+
+## Parameters
+- A `Parameter` node reads a uniform declared by a `traktor.render.ParameterDeclaration` instance (`type` Scalar/Vector/Matrix/Texture2D/..., `frequency` Once/Frame/Draw). The uniform name is the declaration INSTANCE NAME.
+- Engine-set declarations live under `System/Shaders/Parameters` (e.g. `World/World_Time` `{C5FE5E84-7112-A047-8C1C-10A884ABCF5F}`). Reuse them; a new name is only set if code or script sets it, e.g. `MeshParameterComponent:setVectorParameter(IRenderSystem.getParameterHandle("<name>"), v)`.
+
+## Workflow
+1. Find a close graph (`list_instances {typeName:"ShaderGraph"}`) and `get_shader_graph` it.
+2. Look up pins with `list_shader_node_types` / `describe_node`.
+3. `create_shader_graph {path:"Shaders/{{name}}", graph}`. Read `validation` and `warnings`, fix, then `update_shader_graph`.
+4. `build_asset {path, rebuild:true}`. On `built:false`, grep the newest `%LOCALAPPDATA%/Traktor/Editor/Logs/Editor_*.log` for `ERROR:`; it has the GLSL errors and the full generated listing.
+5. After an update, `get_shader_graph` again and check that the untouched nodes are unchanged.
+
+## Surgical edits
+- For a text-only change (Script GLSL, a Scalar value, a Parameter's declaration): `set_instance_member {path, member:"nodes[7].script", value}`. The index is the IR id (`n7` → `nodes[7]`). Every other node stays byte-identical.
+- Edges hold node pointers and cannot be set surgically; use `update_shader_graph` with the whole IR plus your changes. Pin guids are regenerated, which is fine.
+
+## Gotchas
+- "Failed to checkout instance for writing" = the graph is open in an editor tab; `close_editor` it first.
+- Math is moved to the vertex stage automatically only where it is linear; `Sampler` and `Script` always stay per pixel. Put an `Interpolator` node to force a value to be computed per vertex.
+- `VertexInput` Position/Normal arrive promoted to vec4 (w = 1/0); swizzle `xyz` before `Length`/`Normalize`.
+- A ShaderModule function can take `texture2D` + `sampler` but not `sampler2D`; build `sampler2D(tex, state)` at the lookup.
+- World position offset runs as a compute deform pass; it needs the mesh asset's `enableDeform` left on.]]></body>
+	<engineVersion/>
+	<published>true</published>
+	<parameters>
+		<item type="traktor.mcp.SkillParameter">
+			<name>name</name>
+			<description>Shader graph name</description>
+			<defaultValue>MyShader</defaultValue>
+		</item>
+	</parameters>
+</object>

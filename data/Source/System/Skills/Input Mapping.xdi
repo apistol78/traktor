@@ -7,13 +7,17 @@
 
 Add or change controls on an `traktor.input.InputMappingAsset` (sources → states), then read the states from a LUA `Stage`/`ScriptComponent`.
 
-## Asset structure (four members)
+## Asset structure (`<object type="traktor.input.InputMappingAsset" version="2">`; older versions hit a fatal assert)
 - **`inputNodes`** — the editor node graph: `InReadValue { valueId }` (reads one source id) and `InCombine { entries:[{source, mul, add}], operator: CoAdd }` (e.g. an axis from two keys: A `mul 1`, D `mul -1`).
 - **`positions`** — editor x/y layout; each entry wraps either a `ref=` to an `inputNodes` item or an inline `InputStateData { source }`.
 - **`sourceData`** (`InputMappingSourceData`) — maps a string id → an `IInputSourceData` (the physical control).
 - **`stateData`** (`InputMappingStateData`) — maps a STATE name → the `InputStateData` read at runtime.
+- **`dependencies`** — guids of other input mappings; usually empty.
 
 **Author with `import_instance_from_xml`, not `set_instance_member`.** The editor graph relies on shared object identity (`ref="/object/inputNodes/item[n]"`); only the XML deserializer resolves those into shared references. `set_instance_member` leaves the graph unwired.
+- `import_instance_from_xml` only replaces an existing instance: `create_instance` the asset first, or `inspect_instance`/edit an existing one.
+- `ref=` indices are 0-based, and the first element is written bare: `item`, then `item[1]`, `item[2]` … (`/object/inputNodes/item`, `/object/positions/item[1]/object`). `item[0]` does not resolve and fails the import.
+- `InCombine` needs `version="1"` for its `operator` member.
 
 ## Source-data types
 - **Keyboard** — `traktor.input.KeyboardInputSourceData version=1 { controlTypes:[<DefaultControl key>] }`.
@@ -38,7 +42,7 @@ Add or change controls on an `traktor.input.InputMappingAsset` (sources → stat
 
 ## Gotchas (hard-won)
 - **Mouse `AxisX`/`AxisY` is a per-frame pixel delta** — apply it as `heading += delta * sensitivity`; do **not** multiply by `dt` (it is already per-frame, not a rate).
-- **Mouse capture**: continuous turning (cursor recentered every frame) only happens when the window is exclusive. Toggle it with `self.environment.input.inputSystem:setExclusive(true/false)` — release it to free the cursor for menus, re-enable for play.
+- **Mouse capture**: continuous turning (cursor recentered every frame) only happens when the window is exclusive. Toggle it with `self.environment.input.inputSystem:setExclusive(true/false)` — release it to free the cursor for menus, re-enable for play. It works with the GameInput and DirectInput drivers; the plain Win32 driver ignores it.
 - **State activation**: a digital state goes "active" only after both its previous and current values have been released once — a key held from the very first frame won't register until released.
 - **Strafe vs turn** (when consuming a movement axis in script): `forward = Quaternion.fromEulerAngles(heading,0,0) * Vector4(0,0,1,0)`, `right = … * Vector4(1,0,0,0)`; turn adds to `heading`, strafe adds `right * amount`.
 - For wiring the script side (namespace import, direct component types, Stage/ScriptComponent lifecycle) see the *traktor-lua-scripting* skill; for a full movement+camera example see *third-person-controller*.

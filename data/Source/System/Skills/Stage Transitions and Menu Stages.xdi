@@ -5,7 +5,78 @@
 	<whenToUse><![CDATA[Asked to add a start/menu/splash/loading/level-select screen, switch between stages (e.g. a "back to menu" or "exit" button), choose which stage the game boots into, or otherwise navigate between traktor.runtime.StageData stages from script.]]></whenToUse>
 	<body><![CDATA[# Stage transitions and menu stages
 
-How to add stages, switch between them from script, and build a worldless startup/menu stage in traktor. A *stage* (`traktor.runtime.StageData`) is one high-level app state — an ordered list of `layers`, a `class` script, and a `transitions` map. For widgets inside a stage see *uikit-hud-menus*; for script idioms see *traktor-lua-scripting*.]]></body>
+How to add stages, switch between them from script, and build a worldless startup/menu stage in traktor. A *stage* (`traktor.runtime.StageData`) is one high-level app state: an ordered list of `layers`, a `class` script, and a `transitions` map. For widgets inside a stage see *uikit-hud-menus*; for script idioms see *traktor-lua-scripting*.
+
+## StageData members
+- `name`: the instance name is used when empty.
+- `inherit`: a base StageData. At build time its layers are appended after this stage's own, and `class`/`shaderFade`/`resourceBundle` are taken from it when left null. Its transitions are merged in and **win on a duplicate name**.
+- `layers`: see below.
+- `class`: guid of the stage's `traktor.script.Script`.
+- `shaderFade`: optional fade shader, e.g. `System/Runtime/Shaders/Fades/Stage fades/Fade` `{DC104971-11AE-5743-9AB1-53B830F74391}` or `Circle` `{1781A8FD-4099-7E43-9CCD-6F4F1F2DBC96}`.
+- `fadeRate`: default 1 = 1 s fade.
+- `fadeOutUpdate`: keep calling script `update` while fading out.
+- `transitions`: map of transition NAME → target StageData guid. Targets are build dependencies, so every stage reachable from the boot stage gets built.
+- `resourceBundle`: preloaded when the stage is created.
+
+## Layers
+Each layer has a `name` and `permitTransition` (default true). The base `Stage` script exposes each named layer as `self.<name>`.
+- `traktor.runtime.WorldLayerData { name:"world", scene }` → `self.world.world` is the `World`.
+- `traktor.spark.SparkLayerData { name:"ui", movie, clearBackground, enableSound }` → `self.ui.root` is the UiKit root. **Name it `ui`**; the default name is `spark`. `movie` is required: a missing one fails the whole stage. For UI-only use the blank movie `System/UiKit/Resources/Blank` `{E7EB59C5-57F9-BE42-93A3-FE38268D507D}`.
+- `traktor.runtime.AudioLayerData { sound, autoPlay, repeat }`, `traktor.runtime.ScreenLayerData { shader }` (full-screen pass), `traktor.runtime.VideoLayerData`.
+- Never name a layer `debug`: an editor launch adds one with that name and the name-clash assert fires.
+
+## Worldless menu stage (recipe)
+1. Script: `create_instance { type:"traktor.script.Script", path:"Scripts/Menu" }`, then `set_instance_member text`. **The instance name must equal the class name**, because the class is looked up by script instance name.
+```lua
+#using \{720C0A68-B608-2F40-8EBA-F7E42EB27F61}
+#using \{FC4400A2-BDB6-BA45-9A22-12B9676E71FA}
+
+Menu = Menu or class("Menu", Stage)
+
+function Menu:new(params, environment)
+	Stage.new(self, params, environment)
+	Widget.initialize(environment.resource.resourceManager, environment.audio and environment.audio.soundPlayer, { "\{B45977D0-3D89-4FA7-BE4C-FAA9ED63A942}" })
+	-- build a Frame on self.ui.root, see uikit-hud-menus
+end
+```
+2. Stage: `create_instance { type:"traktor.runtime.StageData", path:"Stages/Menu" }`, then:
+   - `set_instance_member { member:"layers", value:[{ "$type":"traktor.spark.SparkLayerData", "set":{ "name":"ui", "movie":"{E7EB59C5-57F9-BE42-93A3-FE38268D507D}", "clearBackground":true } }] }`
+   - `member:"class"` = the script guid.
+   - `member:"transitions"`, `value:{ "PLAY":"<game stage guid>" }`.
+3. Add the reverse transition (e.g. `MENU`) on the game stage.
+4. `build_asset` the stage.
+
+## Boot stage
+The runtime starts the stage in the settings key `Runtime.Startup`, written at deploy from the Target asset (`traktor.runtime.Target`). Set it per platform with `set_instance_member { member:"configurations[0].startup", value:"<stage guid>" }`. `inspect_instance` the target first to find the right configuration index. The boot stage gets `params = nil`.
+
+## Switching from script
+All calls take a **transition name**, not a guid.
+- `self:haveTransition("PLAY")` checks that a transition exists.
+- `self:gotoStage(self:loadStage("PLAY", params))` loads synchronously and stalls the frame.
+- Async:
+```lua
+self._loader = self:loadStageAsync("PLAY", { level = 2 })
+-- in update(info):
+if self._loader ~= nil and self._loader.ready then
+	if self._loader.succeeded then self:gotoStage(self._loader:get()) end
+	self._loader = nil
+end
+```
+  `ready` never blocks; `succeeded`, `failed` and `get()` block until loaded. Only resources and layers load in the background; the script constructor runs later.
+- `params` is a plain Lua table. The next stage receives the same table in `new(params, environment)`, and the old stage gets it in `finalize(params)`.
+- Exit the application: `self:terminate()`.
+
+## Lifecycle
+- `new(params, environment)` runs on the stage's first update, after layers are created, so `self.ui.root` exists there. Other callbacks: `update(info)`, `postUpdate(info)`, `finalize(params)`, `suspend()`, `resume()`, `reconfigured()`.
+- Switch order: the new stage is fully loaded first, then the old stage's `finalize` runs, its layers are destroyed, Lua GC runs, and unreferenced resources are unloaded. Both stages are resident during the switch; route big levels through a light loading stage.
+
+## Gotchas (hard-won)
+- **Unknown transition name** logs `No transition "X" found.` and returns nil; a stage that fails to load also gives nil, and `gotoStage(nil)` silently does nothing. Check `haveTransition`, or nil.
+- **The fade always takes about 1/`fadeRate` s**, even without a `shaderFade`. During it, script `update` is skipped unless `fadeOutUpdate` is set, and `postUpdate` is always skipped.
+- **Layers with the same name and type are handed over to the next stage.** With the same Spark `movie` and both layers permitting, the old movie, with the old stage's UiKit widgets on it, carries over. In `finalize`, `:remove()` your Frame and Dialogs, or set `permitTransition=false` on the layer. Same-named audio layers keep playing the same sound.
+- **One Lua state serves every stage**, so globals survive a switch and keep the resources they reference loaded. Call `Widget.initialize` in every stage's `new` (it resets modal/focus state and rebinds the kits).
+- `Tween.update(dt)` / `Interval.update(dt)` are not driven by the runtime; call them from your stage `update` if you use tweens.
+- `inputSystem:setExclusive` persists across stages; set it explicitly in each stage's `new` (false on menus, true in gameplay).]]></body>
 	<engineVersion/>
 	<published>true</published>
 	<parameters/>

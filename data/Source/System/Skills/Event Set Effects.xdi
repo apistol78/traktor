@@ -5,10 +5,10 @@
 	<whenToUse><![CDATA[Asked to spawn a particle effect (blood, sparks, dust), sound, or decal at an entity on a gameplay trigger (hit, death, pickup) — fired on demand from a LUA script.]]></whenToUse>
 	<body><![CDATA[# Spawn effects via an EventSetComponent
 
-Attach a set of *named* entity events to an entity, then `raise` one by name from script to spawn a transient effect/sound/decal at that entity — on a gameplay trigger (being hit, dying, picking up). The spawned instance is managed and self-terminating; you do not remove it.
+Attach a set of *named* entity events to an entity, then `raise` one by name from script to spawn a transient effect/sound/decal at that entity on a gameplay trigger (being hit, dying, picking up). The spawned instance is managed by the world; a non-looping effect ends by itself.
 
 ## Author the component (on the entity asset, not the scene reference)
-Add an `traktor.world.EventSetComponentData` to the entity's `components`. Its `eventData` member is a **map** of `name -> IEntityEventData`:
+Add a `traktor.world.EventSetComponentData` to the entity's `components`. Its `eventData` member is a **map** of `name -> IEntityEventData`:
 
 ```
 set_instance_member { guid:<entity>, member:"components", append:true, value:[
@@ -19,12 +19,20 @@ set_instance_member { guid:<entity>, member:"components", append:true, value:[
       } } } ] }
 ```
 
-- **Put it on the shared entity asset** (e.g. `Entities/Humanoid/Humanoid`), not on an `ExternalEntityData` placement in the scene — the component then travels with every instance of that entity.
-- `SpawnEffectEventData` fields: `effect` (`Id<Effect>`), `transform` (offset, identity by default), `follow` (effect tracks the entity as it moves), `useRotation` (orient by the entity's rotation).
+- **Put it on the shared entity asset** (e.g. `Entities/Humanoid/Humanoid`), not on an `ExternalEntityData` placement in the scene. The component then travels with every instance of that entity.
+- `SpawnEffectEventData` fields:
+  - `effect` (`Id<Effect>`);
+  - `transform`: offset, identity by default;
+  - `follow`: the effect tracks the entity as it moves;
+  - `useRotation`: orient by the entity's rotation.
 - Build the entity asset after editing.
 
 ### Other event types (same map, different `$type`)
-`traktor.spray.SoundEventData` (play a sound), `traktor.world.DecalEventData` (project a decal), `traktor.spray.Feedback.*FeedbackEventData` (camera/rumble). Any number of named entries can share one `EventSetComponentData`.
+- `traktor.spray.SoundEventData`: play a sound.
+- `traktor.world.DecalEventData`: project a decal.
+- `traktor.spray.EnvelopeFeedbackEventData` / `traktor.spray.OscillateFeedbackEventData`: camera, image-process or UI feedback such as a shake. There is no rumble.
+
+Any number of named entries can share one `EventSetComponentData`.
 
 ## Raise from script
 ```lua
@@ -34,16 +42,22 @@ self._events = entity:getComponent(traktor.world.EventSetComponent)
 self._events:raise("{{event}}")            -- spawn at the entity
 self._events:raise("{{event}}", offset)    -- spawn at a Transform offset
 ```
-- `raise` is edge/one-shot: each call spawns **one** fresh instance. For a continuous effect (e.g. bleeding while attacked) call it on a timer (every ~0.3 s) for as long as the condition holds — let the effect's own duration overlap.
-- Returns an `IEntityEventInstance` (or `nil`); you can `:cancelImmediate()` / `:cancelEnd()` it, but usually just let it finish.
+- `raise` is edge/one-shot: each call spawns **one** fresh instance. For a continuous effect (e.g. bleeding while attacked) call it on a timer (every ~0.3 s) for as long as the condition holds, letting the effect's own duration overlap.
+- It returns an `IEntityEventInstance` (or `nil`). You can `:cancelImmediate()` / `:cancelEnd()` it, but usually just let it finish.
 
 ## Gotchas (hard-won)
-- **`raise` needs an `EventManagerComponent` in the world**, or it silently returns `nil` and nothing spawns. The engine's `World` adds one automatically (`EventManagerComponent(512)`), so it works out of the box — but that 512 cap is the max concurrent instances; don't raise every frame.
-- **Prefer this over a permanent `EffectComponentData`** when the effect is event-driven: an `EffectComponent` is enabled by default and auto-plays once on spawn (a stray puff at scene start), and script only exposes `reset()`. An event spawns strictly on `raise`, with no initial play.
-- The spawned effect inherits the entity's transform; bake any height offset into the effect's *source position* (or pass a `raise` offset) rather than moving the entity.
-- For a non-looping burst effect, set the `EffectData` `loopEnd = 0`; see the effect-authoring details and the *traktor-lua-scripting* skill for the script side (`import(traktor)`, direct component types, `getComponent`).
-]]></body>
+- **A spawned effect only ends when it finishes, and a looping effect never does.** The cloned Spray examples loop (`loopEnd` 1), so set `loopEnd = loopStart` (e.g. both 0) for event effects, or keep the returned instance and `cancelEnd()` it. Otherwise every raise leaks a live instance into the 512 cap.
+- **`raise` needs an `EventManagerComponent` in the world**, or it silently returns `nil` and nothing spawns. The engine's `World` adds one automatically (`EventManagerComponent(512)`), so it works out of the box. But 512 is the max number of concurrent instances: don't raise every frame.
+- **Prefer this over a permanent `EffectComponentData`** when the effect is event-driven. An `EffectComponent` is enabled by default and auto-plays once on spawn (a stray puff at scene start). An event spawns strictly on `raise`, with no initial play.
+- The spawned effect inherits the entity's transform. Bake any height offset into the effect's *source position* (or pass a `raise` offset) rather than moving the entity.
+- Effect authoring: *particle-effect*. Script side (`import(traktor)`, direct component types, `getComponent`): *traktor-lua-scripting*.]]></body>
 	<engineVersion/>
 	<published>true</published>
-	<parameters/>
+	<parameters>
+		<item type="traktor.mcp.SkillParameter">
+			<name>event</name>
+			<description>Event name raised from script</description>
+			<defaultValue>Hit</defaultValue>
+		</item>
+	</parameters>
 </object>

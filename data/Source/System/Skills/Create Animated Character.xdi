@@ -11,28 +11,48 @@ Build a skinned character ("{{name}}", colour "{{color}}", ~{{height}} m tall) w
 model `.tmd` (geometry + joints + weights + animations) → `SkeletonAsset` + one `AnimationAsset` per clip → runtime Skeleton/Animation. Entity = `SkeletonComponentData` + `AnimatedMeshComponentData` + `CharacterComponentData` (+ a state-graph pose controller).
 
 ## Steps
-1. **One model carries geometry, skeleton and animations** — call `create_mesh_from_geometry` with:
-   - `meshType: "skinned"`
-   - `joints`: `[{name, parent (index; -1 = root), translation (LOCAL = global − parent-global), rotation [0,0,0,1], length}]`
-   - `jointIndices`: per-position joint index (rigid single-bone bind, weight 1)
-   - `animations`: `[{name, keyframes:[{time, pose:[[tx,ty,tz,qx,qy,qz,qw] × jointCount]}]}]`
+1. **One model carries geometry, skeleton and animations**: call `create_mesh_from_geometry` with
+   - `meshType: "skinned"`;
+   - `joints`: `[{name, parent (index; -1 = root), translation (LOCAL = global − parent-global), rotation [0,0,0,1], length}]`, **listed parent before child**;
+   - `jointIndices`: per-position joint index (rigid single-bone bind, weight 1);
+   - `animations`: `[{name, keyframes:[{time, pose:[[tx,ty,tz,qx,qy,qz,qw] × jointCount]}]}]`;
    - `material`, `triangulate: true`. The returned guid is stable across re-runs.
-2. Give it colour: bind a simple/unlit material with `set_mesh_material_shader` and set its albedo, or pass `maps` for textures.
+2. **Colour**. There is no colour argument. The generated material shader uses the model material's colour, so set it after creating the mesh:
+   - `model_open {meshAsset}`
+   - `model_edit {handle, edits:[{op:"setMaterials", values:[{name:"<material>", color:[r,g,b,1]}]}]}`
+   - `model_save {handle, overwriteSource:true}`
+
+   Re-running `create_mesh_from_geometry` resets the colour. For textures use `maps:{diffuse:""}` + `texCoords` + `materialTextures` (see *create-mesh-from-geometry*). For a custom look use `materialShaders` (see *shader-graph-authoring*).
 3. `build_asset` the mesh.
-4. **Animation assets**: create one `traktor.animation.SkeletonAsset` (`fileName` → the `.tmd`) and one `traktor.animation.AnimationAsset` per clip (`fileName` → `.tmd`, `take` = clip name; empty `take` = clip 0). `build_asset` each.
+4. **Animation assets**:
+   - One `traktor.animation.SkeletonAsset` (`fileName` → the `.tmd`).
+   - One `traktor.animation.AnimationAsset` per clip (`fileName` → `.tmd`, `take` = clip name; empty `take` = clip 0).
+   - `build_asset` each.
 5. **Entity components**:
    - `traktor.animation.SkeletonComponentData { skeleton: <SkeletonAsset guid>, poseController }`
    - `traktor.animation.AnimatedMeshComponentData { mesh: <mesh guid> }`
-   - `traktor.physics.CharacterComponentData { radius, height, step, jumpImpulse, ... }`
-6. **Idle/Walk state graph** (optional): a `traktor.animation.StateGraph` with `StateNodeAnimation` states (`version="2"`, `animations` = list of AnimationAsset guids — the compiler emits one runtime state per animation so the graph picks one at random each time the state is entered, `loopDuration` = cross fade used by the generated looping transitions), `StateTransition`s (`condition` string, leading `!` inverts; `moment` = "Immediately"), and `rootState`. Author it with **`import_instance_from_xml`** (see Gotchas). `build_asset` → `RtStateGraph`. Point the pose controller at it: `traktor.animation.AnimationGraphPoseControllerData { stateGraph: <StateGraph guid> }`.
+   - `traktor.physics.CharacterComponentData`:
+     - `radius`, `height`, `step`;
+     - `jumpImpulse`: vertical velocity added on jump; the default 1 is a ~5 cm hop, ~5 gives ~1.4 m;
+     - `maxVelocity`: caps horizontal speed, default 2 m/s;
+     - **`traceInclude`: the collision group(s) of the ground**, e.g. Default `{F9805131-50C2-504C-9421-13C99E44616C}`.
+6. **Idle/Walk state graph** (optional), a `traktor.animation.StateGraph` with:
+   - `StateNodeAnimation` states (`version="2"`):
+     - `animations` = list of AnimationAsset guids; the compiler emits one runtime state per animation, so the graph picks one at random each time the state is entered;
+     - `loopDuration` = the cross fade used by the generated looping transitions.
+   - `StateTransition`s: `condition` string (leading `!` inverts), `moment` = "Immediately".
+   - `rootState`.
+
+   `create_instance` the StateGraph first, then author it with **`import_instance_from_xml`** (it only replaces an existing instance; see Gotchas). `build_asset` → `RtStateGraph`. Point the pose controller at it: `traktor.animation.AnimationGraphPoseControllerData { stateGraph: <StateGraph guid> }`.
 
 ## Gotchas (hard-won)
-- **Winding**: Traktor's front face is **clockwise** — the right-handed face normal points *opposite* the outward surface normal. Auto-orient every quad: if `dot(cross(p1−p0, p2−p0), outwardNormal) > 0`, reverse the vertex order.
+- **Winding**: a face is front-facing when `cross(p2−p0, p1−p0)` points outward (counter-clockwise seen from outside in Traktor's left-handed view). Auto-orient every quad: if `dot(cross(p1−p0, p2−p0), outwardNormal) > 0`, reverse the vertex order.
 - **Weights**: the skinned converter keeps the top-4 influences and normalizes them (a single-bone vertex is left unnormalized = 1). Use rigid single-bone binds unless you need blending.
-- **Every keyframe must set EVERY joint**: `model::Pose` returns identity for any joint absent from a keyframe, so a non-moving joint must still carry its **bind** local transform in each keyframe or it snaps to the origin.
-- **Drive the graph from script with `poseController:setParameterValue(name, bool)`** — `setState(...)` is a no-op stub. For script setup (`import(traktor)`, passing component types directly to `getComponent`), see the *traktor-lua-scripting* skill.
+- **Give every joint a value in every keyframe**: its bind local transform if it doesn't move. A joint left out of *every* keyframe keeps its bind offset. A joint keyed in only *some* keyframes collapses onto its parent in the frames where it is missing.
+- **`AnimationAsset.removeTranslation` defaults to true**: joint 0's forward (Z) travel is stripped into root motion, which only `SkeletonComponent:consumeRootMotion` applies. Author walk clips in place; the CharacterComponent does the moving.
+- **Drive the graph from script with `poseController:setParameterValue(name, bool)`**; `setState(...)` is a no-op stub. For script setup (`import(traktor)`, passing component types directly to `getComponent`), see the *traktor-lua-scripting* skill.
 - A `"moving"` transition and a `"!moving"` transition share one boolean parameter `moving`.
-- The editor state-graph view relies on shared object identity (`ref=` ids); only `import_instance_from_xml` produces those — `set_instance_member` leaves the graph unwired.]]></body>
+- The editor state-graph view relies on shared object identity (`ref=` ids). Only `import_instance_from_xml` produces those; `set_instance_member` leaves the graph unwired.]]></body>
 	<engineVersion/>
 	<published>true</published>
 	<parameters>

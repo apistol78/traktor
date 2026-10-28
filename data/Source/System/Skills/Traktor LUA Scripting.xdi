@@ -1,41 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.mcp.SkillAsset">
 	<name>traktor-lua-scripting</name>
-	<description>Idioms and gotchas for authoring traktor LUA Stage scripts (namespace import, direct type references, #using, Stage lifecycle).</description>
-	<whenToUse><![CDATA[Writing or editing a LUA Stage/script in traktor (e.g. Scripts/Main), or wiring entity/component logic from script.]]></whenToUse>
+	<description>Idioms and gotchas for authoring traktor LUA Stage scripts (namespace import, direct type references, #using, Stage lifecycle, spawning entities).</description>
+	<whenToUse><![CDATA[Writing or editing a LUA Stage/script in traktor (e.g. Scripts/Main), wiring entity/component logic from script, or spawning entities at runtime.]]></whenToUse>
 	<body><![CDATA[# Authoring traktor LUA scripts
 
-Conventions and gotchas for writing traktor LUA scripts — both `Stage` scripts (e.g. `Scripts/Main`) and `ScriptComponent` scripts attached to entities. These are style/idiom rules, not a task — apply them whenever you author or edit a script.
+Conventions and gotchas for writing traktor LUA scripts: both `Stage` scripts (e.g. `Scripts/Main`) and `ScriptComponent` scripts attached to entities. These are style/idiom rules, not a task. Apply them whenever you author or edit a script.
+
+## Script assets
+- A script is a `traktor.script.Script` instance (`text` member).
+- **A class is found by the script INSTANCE NAME**, so name the instance after the global class it defines (`Scripts/Main` defines `Main`). Use a plain identifier: no spaces or dashes.
+- Write guids in script text as `\{GUID}`; the pipeline turns it into the plain guid string.
+- `#using \{GUID}` (or a database path) at the very top pulls in another script's globals (e.g. the UiKit umbrella).
 
 ## Namespace & types
-
-- Put `import(traktor)` at the top of the script. It pulls the `traktor` namespace into local scope, so you can write `Vector4`, `Quaternion`, `Transform`, `Color4f` unqualified, and reach sub-namespaces as `traktor.physics.X`, `traktor.animation.X`, `traktor.ai.X`, `traktor.render.X`, etc.
-- Reference a component type **directly** when fetching it — `entity:getComponent(traktor.animation.SkeletonComponent)`. Do **not** use `TypeInfo.find("traktor.animation.SkeletonComponent")`; the direct type reference is the idiom.
-- `#using \{GUID\}` lines at the very top declare dependencies on other script resources (e.g. UiKit fragments) so their globals are available.
+- Put `import(traktor)` at the top. It copies the `traktor` namespace into globals, so you can write `Vector4`, `Quaternion`, `Transform`, `Color4f` unqualified. Reach sub-namespaces as `traktor.physics.X`, `traktor.animation.X`, `traktor.ai.X`, `traktor.render.X`, etc.
+- Reference a component type **directly** when fetching it: `entity:getComponent(traktor.animation.SkeletonComponent)`. Do **not** use `TypeInfo.find("traktor.animation.SkeletonComponent")`; the direct type reference is the idiom.
 
 ## Stage scripts
-
+- **`Stage` is a Lua class, not a native global**: `#using \{720C0A68-B608-2F40-8EBA-F7E42EB27F61}` (`System/Runtime/Scripts/Stage`). It caches every named layer as `self.<layerName>` and the environment as `self.environment`.
 - Subclass with `Main = Main or class("Main", Stage)` (the `X = X or` guard makes hot-reload idempotent).
 - `Main:new(params, environment)` **must** call `Stage.new(self, params, environment)` first.
-- Lifecycle methods: `Main:new`, `Main:finalize` (tear down UI/handles), `Main:update(info)` where `info.frameDeltaTime` and `info.simulationTime` are the per-frame deltas.
-- Reach the runtime environment via the `self.environment` property: `self.environment.input.inputMapping`, `self.environment.physics.physicsManager`, `self.environment.resource.resourceManager`. (`self:getEnvironment()` also works, but the property is cleaner.)
-- Reach the world via `self.world.world` (a `World`): `world:getEntity(name [, index])`, `world:removeEntity(entity)`, `world:getComponent(traktor.ai.NavMeshComponent)`.
+- Lifecycle:
+  - `Main:new`;
+  - `Main:finalize` (tear down UI/handles);
+  - `Main:update(info)`, which runs once per fixed simulation step: use `info.simulationDeltaTime` as the step delta. `info.simulationTime` is the accumulated time; `info.frameDeltaTime` is the render-frame delta.
+- Environment: `self.environment.input.inputMapping`, `self.environment.physics.physicsManager`, `self.environment.resource.resourceManager`, `self.environment.audio.soundPlayer` (`audio` is nil when the game has no `Audio.Type` setting). Without the base class, use `self:getEnvironment()`.
+- World: with a WorldLayer named `world`, `self.world.world` is the `World`: `world:getEntity(name [, index])`, `world:getComponent(traktor.ai.NavMeshComponent)`. The camera entity is `self.world.camera`. Stage setup and switching: *stage-transitions-and-menus*.
+
+## Spawning entities
+`createEntity` builds an entity but does **not** add it to the world. Add it yourself:
+```lua
+local e = self.world:createEntity("\{<entity asset guid>}")   -- WorldLayer; nil on failure
+if e ~= nil then
+	self.world:addEntity(e)
+	e.transform = Transform(Vector4(x, y, z, 1), Quaternion.fromEulerAngles(yaw, 0, 0))
+end
+```
+- Async: `local r = self.world:createEntityAsync(guid)` loads and builds in the background. Either poll `r.ready` in `update`, or `r:defer(function() local e = r:get() ... end)`, then `addEntity`.
+- Remove with `self.world:removeEntity(e)`.
+- The entity asset must be built into the output database; `build_asset` it if nothing else references it.
 
 ## ScriptComponent scripts (entity logic)
-
-- Subclass the native component: `Enemy = Enemy or class("Enemy", traktor.world.ScriptComponent)`. The instance exposes `self.owner` (the `Entity` it is attached to) and `self.world` (the `World` directly — not wrapped like the Stage's `self.world.world`).
-- Update signature is `function X:update(context, totalTime, deltaTime)`. **`context` is the runtime `Stage` instance** (`WorldTypes.h`: `UpdateParams.contextObject` is set to `getStage()`). So a component can reach the very same environment the Stage has — e.g. `context.environment.physics.physicsManager` for ray queries — with no need to stash anything in a global. Prefer this over publishing shared state from the Stage.
+- Subclass the native component: `Enemy = Enemy or class("Enemy", traktor.world.ScriptComponent)`. The instance exposes `self.owner` (the `Entity` it is attached to) and `self.world` (the `World` directly, not the WorldLayer wrapper the Stage has as `self.world`).
+- The update signature is `function X:update(context, totalTime, deltaTime)`. **At runtime `context` is the `Stage` instance**, so a component can reach the Stage's environment, e.g. `context.environment.physics.physicsManager` for ray queries, without stashing anything in a global.
+- **In the editor's scene preview `context` is nil**: guard with `if context == nil then return end`.
 - Optional `X:setTransform(transform)` is invoked when the owner moves.
 
 ## Per-instance shader parameters (tinting at runtime)
-
-- Add a `traktor.mesh.MeshParameterComponent` to the entity (alongside its mesh component — it auto-registers onto the sibling `MeshComponent`/`SkinnedMeshComponent`).
-- From script: `meshParam:setVectorParameter(traktor.render.IRenderSystem.getParameterHandle("World_MaterialDiffuseColor"), Vector4(r,g,b,1))`. This overrides the material's standard diffuse uniform for that instance only — a cheap way to recolor one entity without a per-variant material or mesh. Call it only on change, not every frame; the override persists.
+- The standard generated materials bake their colour into the shader and have **no** diffuse uniform. Per-instance tinting needs a custom material shader with a `Parameter` node; see *shader-graph-authoring*. Declare it as a `ParameterDeclaration` named e.g. `Tint` with `frequency: Draw`.
+- Add a `traktor.mesh.MeshParameterComponent` to the entity, next to its mesh component; it auto-registers onto the sibling mesh component.
+- From script: `meshParam:setVectorParameter(traktor.render.IRenderSystem.getParameterHandle("Tint"), Vector4(r,g,b,1))`. The override persists, so call it only on change.
 
 ## Deferred (async) results
-
-- Some engine calls return a `Result` subclass instead of blocking — e.g. `NavMesh:createMoveQuery(from, to)` returns a `MoveQueryResult`.
-- Poll the non-blocking `result.ready` **property** before calling `result:get()`. `get()` internally calls `wait()` and will **block the update thread** if the result is not ready yet. Keep using the previous result until `.ready` is true.]]></body>
+- Some engine calls return a `Result` subclass instead of blocking, e.g. `NavMesh:createMoveQuery(from, to)` returns a `MoveQueryResult`, and `createEntityAsync` an `EntityResult`.
+- Poll the non-blocking `result.ready` **property** before calling `result:get()`. `get()` (and `succeeded`) wait internally and will **block the update thread** if the result is not ready yet. Keep using the previous result until `.ready` is true.
+- `get()` returns nil on failure; check for nil.]]></body>
 	<engineVersion/>
 	<published>true</published>
 	<parameters/>

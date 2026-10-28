@@ -8,12 +8,13 @@
 Give static/level geometry "{{name}}" (built from the model "{{model}}") collision that a physics character controller respects.
 
 ## Steps
-1. Create `traktor.physics.MeshAsset { fileName: "{{model}}", calculateConvexHull: false, margin: 0 }`.
-   - `calculateConvexHull: false` → a **concave triangle mesh** (correct for static level geometry). `true` builds a convex hull (for dynamic/compact bodies only).
+1. `create_instance { type:"traktor.physics.MeshAsset", path }`, then `set_instance_member` `fileName: "{{model}}"`, `calculateConvexHull: false`, `margin: 0`.
+   - A `StaticBodyDesc` always collides against the **concave triangle mesh**; `calculateConvexHull: false` just skips building an unused hull. It must be `true` only for a `DynamicBodyDesc`, which fails without a hull.
+   - Copy `scaleFactor`, `center` and `grounded` from the visual `mesh.MeshAsset`, or the collider ends up offset or scaled differently from what you see.
    - `build_asset` → a `physics::Mesh` (its guid = the MeshAsset guid).
-2. On the entity, add:
-   `traktor.physics.RigidBodyComponentData { bodyDesc: traktor.physics.StaticBodyDesc { shape: traktor.physics.MeshShapeDesc { mesh: <physics mesh guid>, collisionGroup: [Default], collisionMask: [Default] } } }`
-   - **Default** collision group guid = `{F9805131-50C2-504C-9421-13C99E44616C}`.
+2. On the entity (`inspect_instance` the scene/entity asset to find its member path), add:
+   `set_instance_member { member:"<entity path>.components", append:true, value:[{ "$type":"traktor.physics.RigidBodyComponentData", "set":{ "bodyDesc":{ "$type":"traktor.physics.StaticBodyDesc", "set":{ "shape":{ "$type":"traktor.physics.MeshShapeDesc", "set":{ "mesh":"<physics mesh guid>", "collisionGroup":["{F9805131-50C2-504C-9421-13C99E44616C}"], "collisionMask":["{F9805131-50C2-504C-9421-13C99E44616C}"] } } } } } }] }`
+   - `{F9805131-50C2-504C-9421-13C99E44616C}` is the **Default** collision group (`System/Physics/Collision/Default`).
 3. Keep the visual `traktor.mesh.MeshComponentData` on the same entity (the collider is invisible). Build the scene.
 
 ## Gotchas

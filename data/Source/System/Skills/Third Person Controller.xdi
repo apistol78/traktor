@@ -8,24 +8,32 @@
 Wire WASD/Space input, drive a `CharacterComponent` on "{{character}}", follow it with a rubberband camera, and switch idle/walk. Move speed {{speed}} m/s, turn rate {{turnRate}}.
 
 ## Input mapping
-- `InputMappingAsset` holds: `sourceData` (id → `KeyboardInputSourceData { controlTypes:[DefaultControl keys, e.g. "KeyW" ] }`), `stateData` (name → `InputStateData { source }`), and the editor `inputNodes` graph (`InReadValue`, `InCombine { entries:[{source, mul, add}], operator }`).
-- The editor graph relies on **shared object identity** → author the whole instance with **`import_instance_from_xml`** (so `ref=` ids become shared references). `set_instance_member` alone leaves the graph unwired.
+Add states `STATE_MOVE_Z` (W/S axis), `STATE_MOVE_X` (A/D axis) and `STATE_JUMP` (Space) to the `InputMappingAsset`. Follow the *input-mapping* skill: it covers the asset structure, the required RTTI versions, and authoring with `import_instance_from_xml` (`set_instance_member` alone leaves the editor graph unwired).
+
+## Character data
+On the entity's `traktor.physics.CharacterComponentData`:
+- `maxVelocity = {{speed}}`: this IS the move speed (the default is 2).
+- `jumpImpulse` ≈ 5 for a ~1.4 m jump (the default 1 is a ~5 cm hop).
+- **`traceInclude`** must contain the ground's collision group, e.g. Default `{F9805131-50C2-504C-9421-13C99E44616C}`. If it is empty, every sweep is rejected and the character falls through the level.
 
 ## Script (LUA `Stage`)
-- **Setup**: put `import(traktor)` at the top so types resolve unqualified (`Vector4`, `Quaternion`, `Transform`), and pass component types directly — they auto-box into a `BoxedType`. See the *traktor-lua-scripting* skill.
-- **Read**: `self:getEnvironment().input.inputMapping:getStateValue("STATE_MOVE_Z" / "STATE_MOVE_X")`; `:isStatePressed("STATE_JUMP")`.
+- **Setup**: derive the stage from the base `Stage` script (`#using \{720C0A68-B608-2F40-8EBA-F7E42EB27F61}`). It exposes layers by name, so with a WorldLayer named `world`, `self.world.world` is the `World`. Put `import(traktor)` at the top, and pass component types directly to `getComponent`. See the *traktor-lua-scripting* skill.
+- **Read**: `self.environment.input.inputMapping:getStateValue("STATE_MOVE_Z" / "STATE_MOVE_X")`; `:isStatePressed("STATE_JUMP")`.
 - **Resolve**: `world = self.world.world`; `world:getEntity("{{character}}")`; `entity:getComponent(traktor.physics.CharacterComponent)`.
 - **Turn**: `heading += moveX * {{turnRate}} * dt`; `character.headAngle = heading`.
 - **Move**: `forward = Quaternion.fromEulerAngles(heading,0,0) * Vector4(0,0,1,0)`; `character:move(forward * (moveZ * {{speed}}), false)`.
-- **Jump**: `if pressed then character:jump() end` (grounded-only).
-- **Rubberband camera**: `desired = charPos + Quaternion.fromEulerAngles(heading,0,0) * Vector4(0,2.5,-4.5,0)`; `newPos = Vector4.lerp(curPos, desired, math.min(1, k*dt))`; `camera.transform = Transform.lookAt(newPos, charPos + up, Vector4(0,1,0,0))`.
+- **Jump**: `if pressed then character:jump() end` (grounded only).
+- **Rubberband camera**: the camera entity is `self.world.camera` (the WorldLayer falls back to the entity named `Camera0`).
+  - `desired = charPos + Quaternion.fromEulerAngles(heading,0,0) * Vector4(0,2.5,-4.5,0)`
+  - `newPos = Vector4.lerp(curPos, desired, math.min(1, k*dt))`
+  - `camera.transform = Transform.lookAt(newPos, charPos + up, Vector4(0,1,0,0))`
 - **Animation**: `skeletonComp.poseController:setParameterValue("moving", isMoving)` each frame.
 
 ## Gotchas
-- `character:move(velocity, vertical)` — second arg is "vertical"; pass `false` for horizontal locomotion. The controller applies gravity itself.
-- `headAngle` sets body yaw; the controller writes the entity rotation each update — don't also set it from script.
-- **Use `Transform.lookAt(pos, target, up)` with an explicit up axis.** Building the camera rotation from a direction delta (e.g. `Quaternion(from,to)`) rolls the camera around its view axis.
-]]></body>
+- `character:move(v, vertical)` **adds an impulse** to the velocity, and horizontal velocity is then clamped to `maxVelocity`. The magnitude you pass only sets the acceleration; the top speed is `maxVelocity` (also settable from script as `character.maxVelocity`). Velocity is damped only while no `move` is applied.
+- Pass `false` as the second argument for horizontal locomotion; the controller applies gravity itself.
+- `headAngle` sets body yaw; the controller writes the entity rotation each update, so don't also set it from script.
+- **Use `Transform.lookAt(pos, target, up)` with an explicit up axis.** Building the camera rotation from a direction delta (e.g. `Quaternion(from,to)`) rolls the camera around its view axis.]]></body>
 	<engineVersion/>
 	<published>true</published>
 	<parameters>

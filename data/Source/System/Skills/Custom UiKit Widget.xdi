@@ -9,12 +9,12 @@ Build a `Widget` subclass whose graphics are authored as an **SVG imported as a 
 
 ## 1. Author the SVG
 
-A `MovieAsset` whose `fileName` ends in `.svg` is imported by `ConvertSvg`, which turns every element carrying a **`traktor:sprite`** attribute (plus an `id`) into a sprite character:
+A `MovieAsset` whose `fileName` ends in `.svg` is imported by `ConvertSvg`. It turns every element carrying a **`traktor:sprite`** attribute into a sprite character, **named by its `inkscape:label`, falling back to its `id`**:
 
-- **top level** → exported under its id: this is what `Widget._createResource(parent, "{{resource}}")` instantiates;
-- **nested** → placed on its parent's frame under its id: this is what `mc:getMember("fill")` returns, i.e. the parts you animate.
+- **top level** → exported under that name: this is what `Widget._createResource(parent, "{{resource}}")` instantiates;
+- **nested** → placed on its parent's frame under that name: this is what `mc:getMember("fill")` returns, i.e. the parts you animate.
 
-An element with `traktor:sprite` but no `id` is silently skipped, along with its whole subtree.
+Inkscape gives layers and renamed groups an `inkscape:label`, and that label silently replaces the id as the name. Names may repeat between sprites (ids must be unique), so use labels for repeated part names.
 
 ```xml
 <svg width="460" height="56" viewBox="0 0 460 56"
@@ -25,7 +25,7 @@ An element with `traktor:sprite` but no `id` is silently skipped, along with its
       <polygon points="66,12 446,12 454,20" style="fill:#1e1e24"/>
     </g>
     <g id="fill" traktor:sprite="1">
-      <rect x="62" y="16" width="388" height="24" style="fill:#a8a8a8"/>
+      <rect x="62" y="16" width="388" height="24" style="fill:#ffffff"/>
     </g>
   </g>
 </svg>
@@ -33,17 +33,24 @@ An element with `traktor:sprite` but no `id` is silently skipped, along with its
 
 Rules the importer imposes on the authoring:
 
+- **Every `traktor:sprite` / `traktor:frame` group needs a name.** An unnamed one ABORTS the import at that point: it, everything after it in the document, and the pending shapes of enclosing sprites are dropped, yet the movie still builds with no error. A path with no segments, or a `<text>` with no name or an unknown font, does the same.
 - **Put every drawable inside a named child sprite.** Shapes owned directly by a sprite are placed on its frame *after* its child sprites, so they would cover them. With one sprite per layer, depth order is document order.
 - `viewBox="0 0 W H"` with matching `width`/`height` gives 1 SVG unit = 1 pixel of widget space.
 - **Author each exported widget at the origin.** Coordinates end up absolute in movie space, so a widget authored at x=470 would draw 470px off. Several widgets in one file therefore overlap; toggle `display:none` per layer to edit them, exactly as `data/Assets/System/UiKit/Resources/UiKit2.svg` does.
-- **Style is not inherited from `<g>`** — every drawable needs its own `style="fill:#rrggbb;fill-opacity:0.45"`. A `fill=` *attribute* makes the parser ignore `style` entirely, so use one or the other. Colours must be 6-digit hex.
-- Geometry: `rect` (with `rx`/`ry`), `circle`, `ellipse`, `polygon`, `polyline`, `path` (`M L H V C S Q T Z`; **`A` degenerates to a straight line**), `image`, `text`.
-- `<text id="caption_tb">` becomes an `Edit` field, but only if the font is listed in the MovieAsset's `fonts`. Parenting a UiKit `Static` to the widget is usually simpler and matches the rest of the UI.
+- **Style is not inherited from `<g>`**: every drawable needs its own `style="fill:#rrggbb;fill-opacity:0.45"`. A `fill=` *attribute* makes the parser ignore `style` entirely, so use one or the other. Colours must be 6-digit hex; gradients (`fill:url(#g)`) are not imported and come out black.
+- Geometry: `rect` (with `rx`/`ry`), `circle`, `ellipse`, `polygon`, `polyline`, `path` (`M L H V C S Q T Z`), `image`, `text`.
+  - `A` (arc) degenerates to a straight line, and `T` is approximate.
+  - `image` must be an embedded base64 PNG (`xlink:href`).
+  - Path winding doesn't matter, and holes work: a loop enclosed by an odd number of other loops is a hole.
+- Transforms: the arguments are split on commas only. Write `translate(10,20)` and `scale(s,s)`, or `matrix(...)`: `translate(10 20)` reads as (10, 0), and a one-argument `scale(s)` zeroes y.
+- Per-state art: a `<g traktor:frame="1">` inside a sprite becomes a keyframe named by its label, for `mc:gotoAndStop("on")`. Keep the shared art outside the frame groups.
+- Resizable art: `traktor:scalingGrid="x y width height"` on a sprite sets the centre cell of a 9-grid; the corners keep their size when the sprite is scaled.
+- `<text>` becomes an `Edit` field only if it has a name, a `font-family` in its `style` that is listed in the MovieAsset's `fonts`, a `shape-inside:url(#rect)` pointing at a `<rect>` in `<defs>` (its size is the text bounds), and its text inside a `<tspan>`. It is always placed at the sprite origin. Parenting a UiKit `Static` to the widget is usually simpler and matches the rest of the UI.
 
 ## 2. Import and register it
 
 - Create a `traktor.spark.MovieAsset`, `fileName` relative to `Pipeline.AssetPath` (e.g. `UI/Hud.svg`).
-- Add its guid to `Widget.initialize(resourceManager, { ... })` in **every stage that uses the widget**, keeping UiKit's own movie in the list (`Static`, `Dialog`, … come from there). `Widget._createResource` searches the kits in order.
+- Add its guid to `Widget.initialize(resourceManager, soundPlayer, { ... })` in **every stage that uses the widget**. Keep UiKit2 `\{B45977D0-3D89-4FA7-BE4C-FAA9ED63A942}` in the list (`Static`, `Dialog`, … come from there). `Widget._createResource` takes the first kit that has the name.
 
 ## 3. The widget class
 
@@ -77,17 +84,17 @@ function {{name}}:_initialize(parent, mc)
 end
 ```
 
-A plain `Widget` lays out **no** children, so a `Static` parented to it must be placed by hand in `place()` — and again whenever its text changes, or it keeps the position it was centred at.
+A plain `Widget` lays out **no** children, so a `Static` parented to it must be placed by hand in `place()`, and again whenever its text changes, or it keeps the position it was centred at.
 
 ## 4. Animate it
 
 Drive transforms and colour only; never rebuild geometry at runtime.
 
 - `mc.X` / `mc.Y` (pixels), `mc.xScale` / `mc.yScale` / `mc.scale` (**percent**, `Vector2`), `mc.visible`, `mc.alpha` (0..1), `mc.colorTransform = traktor.spark.ColorTransform(mul, add)`.
-- **Tint trick**: author the art greyscale and recolour it per frame with a colour transform — one call restyles a whole shaded bar (e.g. green → amber → red by health).
+- **Tint trick**: author the art **white** (or greyscale for shading) and recolour it per frame with a colour transform. The transform multiplies, so white gives the exact target colour; one call restyles a whole shaded bar (e.g. green → amber → red by health).
 - Expose an `:update(dt)` and call it from the `Stage` each frame. Calling it above the paused/game-over early-returns lets animations settle while the game is frozen.
 
-**PIVOT GOTCHA.** Because the importer bakes shapes at absolute movie coordinates, a child sprite's origin is the *movie's* origin, not its art's — scaling one pushes it away from that origin. Translate back to pin a pivot:
+**PIVOT GOTCHA.** Because the importer bakes shapes at absolute movie coordinates, a child sprite's origin is the *movie's* origin, not its art's, so scaling one pushes it away from that origin. Translate back to pin a pivot:
 
 ```lua
 -- Horizontal scale about the vertical line x = px (bar fills).
@@ -104,11 +111,11 @@ local function scaleAbout(mc, px, py, s)
 end
 ```
 
-Never scale to exactly 0 — that leaves a degenerate transform behind. Hide the clip instead.
+To make a part disappear, set `mc.visible = false` rather than scaling it to 0.
 
 ## 5. Preview it with a Scaffolding page
 
-`traktor.uikit.Scaffolding` gives a live editor preview that rebuilds whenever a script or the art is saved — the fastest loop for widget work, and it needs no game running.
+`traktor.uikit.Scaffolding` gives a live editor preview that rebuilds whenever a script or the art is saved. It is the fastest loop for widget work, and it needs no game running.
 
 - Create a `traktor.uikit.Scaffolding` instance whose `scaffoldingClass` is the guid of a script defining a `Scaffolding` subclass (`#using \{218D113A-66DC-9049-8424-701FF60F2BC4}`).
 
@@ -116,7 +123,7 @@ Never scale to exactly 0 — that leaves a degenerate transform behind. Hide the
 {{name}}Scaffolding = {{name}}Scaffolding or class("{{name}}Scaffolding", Scaffolding)
 
 function {{name}}Scaffolding:getResourceKits()
-	return { "\{<your movie guid>}", "\{<UiKit movie guid>}" }
+	return { "\{<your movie guid>}", "\{B45977D0-3D89-4FA7-BE4C-FAA9ED63A942}" }
 end
 
 function {{name}}Scaffolding:setup(frame)
@@ -134,13 +141,17 @@ end
 
 ## Gotchas (hard-won)
 
-- **`--` is illegal inside an XML comment.** A malformed SVG fails the import with `XML parse error at line N` — and has been seen to take the *editor* down, so validate the file before building it.
-- The importer's number scanner **skips a leading `.`**, so `.5` reads as `5`. Always emit a leading digit (`0.5`), and never scientific notation.
-- **Build the movie headlessly first** to keep a bad SVG away from the editor: `LD_LIBRARY_PATH=<bin> Traktor.Pipeline.App -n -v -f "{movie guid}"` from a sandbox whose settings point at a `binary=false` output database. The converted movie is then XML you can read directly — check `exports`, the character tree (nested sprite names) and the shapes' fill colours before trusting anything.
-- `Container:getPreferredSize` **memoizes** `_cachedEstimate`, cleared only when a child is added/removed or the container is placed at a different size. A widget whose preferred size follows its content therefore never triggers a re-layout. Prefer a fixed-size widget and re-place its own text, or clear the caches up the parent chain and call `getAncestor():update()` yourself.
-- The dynamic canvas API (`SpriteInstance:createCanvas`, `traktor.spark.Canvas`) is exposed to script and looks like an easy way to draw widget art, but it has not been exercised in a long time — prefer imported movie art.
-- Generating the SVG from a small script keeps chamfers, hexagons and curves exact and re-tunable; the result is still a normal SVG that can be edited in Inkscape afterwards.
-]]></body>
+- **`--` is illegal inside an XML comment.** A malformed SVG fails the import with `XML parse error at line N`, and has been seen to take the *editor* down, so validate the file before building it.
+- In path `d`, `points` and `viewBox` the number scanner **skips a leading `.`**, so `.5` reads as `5`. Always emit a leading digit (`0.5`).
+- **Check what was imported.** A silently truncated import (see the naming rule) is the usual cause of missing parts. The editor log (`%LOCALAPPDATA%\Traktor\Editor\Logs\Editor_*.log`) prints one `Enter sprite …` line per sprite.
+- `build_asset {rebuild:true}` skips conversion when the SVG content is unchanged and already built. Touch the file (even a comment) to force it through.
+- To keep a bad SVG away from the editor, build the movie headlessly: `Traktor.Pipeline.App -s=<cfg> -n -v -f "{movie guid}"`.
+  - Run it from a sandbox folder holding `<cfg>.config`. Its settings point at a `binary=false` output database and list `Traktor.Database.Local` and `Traktor.Spark.Editor` in `Editor.Modules`.
+  - On Linux prefix `LD_LIBRARY_PATH=<bin>`; on Windows run the exe from `bin\latest\win64\releaseshared`.
+  - The converted movie is then XML you can read: check `exports`, the character tree (nested sprite names) and the fill colours.
+- `Container:getPreferredSize` **memoizes** `_cachedEstimate`, which is cleared only when a child is added or removed. A widget whose preferred size follows its content therefore never triggers a re-layout. Prefer a fixed-size widget and re-place its own text, or clear the caches up the parent chain and call `getAncestor():update()` yourself.
+- The dynamic canvas API (`SpriteInstance:createCanvas`, `traktor.spark.Canvas`) is exposed to script and looks like an easy way to draw widget art, but it has not been exercised in a long time. Prefer imported movie art.
+- Generating the SVG from a small script keeps chamfers, hexagons and curves exact and re-tunable; the result is still a normal SVG that can be edited in Inkscape afterwards.]]></body>
 	<engineVersion/>
 	<published>false</published>
 	<parameters>
@@ -151,7 +162,7 @@ end
 		</item>
 		<item type="traktor.mcp.SkillParameter">
 			<name>resource</name>
-			<description>Exported sprite id in the SVG</description>
+			<description>Exported sprite name in the SVG</description>
 			<defaultValue>MC_HealthBar</defaultValue>
 		</item>
 	</parameters>
