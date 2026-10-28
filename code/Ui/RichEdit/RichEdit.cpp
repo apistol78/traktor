@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2025 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -88,14 +88,14 @@ bool RichEdit::create(Widget* parent, const std::wstring& text, uint32_t style)
 	m_searchControl->addEventHandler< SearchEvent >(this, &RichEdit::eventSearch);
 
 	TextAttribute txAttrib;
-	txAttrib.textColor = Color4ub(0, 0, 0);
+	txAttrib.textColor = ColorReference(this, L"color");
 	txAttrib.bold = false;
 	txAttrib.italic = false;
 	txAttrib.underline = false;
 	m_textAttributes.push_back(txAttrib);
 
 	BackgroundAttribute bgAttrib;
-	bgAttrib.backColor = Color4ub(255, 255, 255);
+	bgAttrib.backColor = Color4ub(0, 0, 0, 0);
 	m_backgroundAttributes.push_back(bgAttrib);
 
 	const ui::StyleSheet* ss = getStyleSheet();
@@ -347,7 +347,11 @@ void RichEdit::clear(bool attributes, bool images, bool content, bool specialCha
 	}
 
 	if (specialCharacters)
+	{
 		m_specialCharacters.clear();
+		for (auto& ch : m_text)
+			ch.width = 0;
+	}
 
 	contentModified();
 	updateCharacterWidths();
@@ -772,15 +776,19 @@ void RichEdit::updateCharacterWidths()
 			Character& c = m_text[j];
 			if (c.ch != L'\t')
 			{
-				auto k = m_specialCharacters.find(c.ch);
-				if (k == m_specialCharacters.end())
+				// Measured widths are kept until font or size changes, which reset them to zero.
+				if (c.width == 0)
 				{
-					const int32_t chw = getFontMetric().getAdvance(c.ch, 0);
-					c.width = chw;
-				}
-				else
-				{
-					c.width = k->second->measureWidth(this);
+					auto k = m_specialCharacters.find(c.ch);
+					if (k == m_specialCharacters.end())
+					{
+						const int32_t chw = getFontMetric().getAdvance(c.ch, 0);
+						c.width = chw;
+					}
+					else
+					{
+						c.width = k->second->measureWidth(this);
+					}
 				}
 			}
 			else
@@ -859,6 +867,7 @@ void RichEdit::deleteCharacters()
 	CaretEvent caretEvent(this);
 	raiseEvent(&caretEvent);
 
+	contentModified();
 	updateCharacterWidths();
 	santiyCheck();
 
@@ -898,7 +907,7 @@ void RichEdit::insertCharacter(wchar_t ch, bool issueEvents, int32_t keyState, b
 					for (int32_t i = indentFromLine; i <= indentToLine; ++i)
 					{
 						const int32_t offset = getLineOffset(i);
-						insertAt(offset, L'\t');
+						insertAt(offset, L'\t', true);
 					}
 					m_caret++;
 				}
@@ -913,6 +922,10 @@ void RichEdit::insertCharacter(wchar_t ch, bool issueEvents, int32_t keyState, b
 					}
 					m_caret--;
 				}
+
+				contentModified();
+				updateCharacterWidths();
+				santiyCheck();
 
 				m_selectionStart = getLineOffset(indentFromLine);
 				m_selectionStop = getLineOffset(indentToLine) + getLineLength(indentToLine);
@@ -1529,6 +1542,8 @@ void RichEdit::eventKeyDown(KeyDownEvent* event)
 
 	if (contentChanged)
 	{
+		contentModified();
+
 		ContentChangeEvent contentChangeEvent(this);
 		raiseEvent(&contentChangeEvent);
 	}

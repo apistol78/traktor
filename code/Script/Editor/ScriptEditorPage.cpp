@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -116,6 +116,7 @@ ScriptEditorPage::ScriptEditorPage(editor::IEditor* editor, editor::IEditorPageS
 	, m_compileCountDown(0)
 	, m_debugBreadcrumbAttribute(0)
 	, m_debugCurrentAttribute(0)
+	, m_breakpointLineCount(0)
 {
 	m_bitmapFunction = new ui::StyleBitmap(L"Script.DefineGlobalFunction");
 	m_bitmapFunctionLocal = new ui::StyleBitmap(L"Script.DefineLocalFunction");
@@ -527,6 +528,7 @@ void ScriptEditorPage::updateBreakpoints()
 {
 	const Guid instanceGuid = m_document->getInstance(0)->getGuid();
 	m_scriptDebuggerSessions->removeAllBreakpoints(instanceGuid.format());
+	m_breakpointLineCount = m_edit->getLineCount();
 	for (int32_t i = 0; i < m_edit->getLineCount(); ++i)
 	{
 		PropertyBoolean* p = dynamic_type_cast< PropertyBoolean* >(m_edit->getLineData(i));
@@ -599,7 +601,9 @@ void ScriptEditorPage::eventScriptChange(ui::ContentChangeEvent* event)
 	m_compileStatus->setText(0, i18n::Text(L"SCRIPT_EDITOR_STATUS_READY"));
 	m_compileStatus->setAlert(ui::StatusBar::AlertLevel::None);
 
-	updateBreakpoints();
+	// Breakpoints are bound to lines so they only move when lines are added or removed.
+	if (m_edit->getLineCount() != m_breakpointLineCount)
+		updateBreakpoints();
 }
 
 void ScriptEditorPage::eventScriptButtonDown(ui::MouseButtonDownEvent* event)

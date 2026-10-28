@@ -267,7 +267,7 @@ void DefaultObjectEditor::eventPropertyCommand(ui::PropertyCommandEvent* event)
 		ui::TextPropertyItem* textItem = dynamic_type_cast< ui::TextPropertyItem* >(event->getItem());
 		if (textItem)
 		{
-			TextEditorDialog textEditorDialog;
+			TextEditorDialog textEditorDialog(m_editor);
 			textEditorDialog.create(m_propertyList, textItem->getValue());
 			if (textEditorDialog.showModal() == ui::DialogResult::Ok)
 			{

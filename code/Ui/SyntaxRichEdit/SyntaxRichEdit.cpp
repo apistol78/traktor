@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -71,8 +71,6 @@ bool SyntaxRichEdit::create(Widget* parent, const std::wstring& text, uint32_t s
 
 	m_attributeError[0] = addTextAttribute(ColorReference(this, L"color-error"), false, false, false);
 	m_attributeError[1] = addBackgroundAttribute(ColorReference(this, L"background-color-error"));
-
-	addEventHandler< ContentChangeEvent >(this, &SyntaxRichEdit::eventChange);
 	return true;
 }
 
@@ -268,11 +266,6 @@ void SyntaxRichEdit::updateLanguage()
 }
 
 void SyntaxRichEdit::contentModified()
-{
-	updateLanguage();
-}
-
-void SyntaxRichEdit::eventChange(ContentChangeEvent* event)
 {
 	updateLanguage();
 }
