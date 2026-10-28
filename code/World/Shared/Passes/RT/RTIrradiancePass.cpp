@@ -57,7 +57,6 @@ const resource::Id< render::ImageGraph > c_irradianceDenoise(L"{14A0E977-7C13-9B
 const render::Handle s_handleTechniqueIrradiance_RT(L"World_ComputeIrradiance_RT");
 const render::Handle s_handleIrradianceOutput(L"World_IrradianceOutput");
 const render::Handle s_handleIrradianceFieldImage(L"World_IrradianceFieldImage");
-const render::Handle s_handleIrradianceFieldTexture(L"World_IrradianceFieldTexture");
 const render::Handle s_handleLightGridSBuffer(L"World_LightGridSBuffer");
 const render::Handle s_handleLightGridIndexSBuffer(L"World_LightGridIndexSBuffer");
 
@@ -142,7 +141,8 @@ render::RGTargetSet RTIrradiancePass::setup(
 	render::RGTargetSet gbufferTargetSetId,
 	render::RGTargetSet velocityTargetSetId,
 	render::RGTexture halfResDepthTextureId,
-	render::RGTargetSet outputTargetSetId) const
+	render::RGTargetSet outputTargetSetId,
+	render::RGTexture& outIrradianceFieldTextureId) const
 {
 	T_PROFILER_SCOPE(L"RTIrradiancePass::setup");
 
@@ -251,7 +251,7 @@ render::RGTargetSet RTIrradiancePass::setup(
 			renderBlock->workSize[1] = 128;
 			renderBlock->workSize[2] = 128;
 			renderBlock->programParams->beginParameters(renderContext);
-			renderBlock->programParams->setTextureParameter(s_handleIrradianceFieldTexture, irradianceFieldTexturePrevious);
+			renderBlock->programParams->setTextureParameter(ShaderParameter::IrradianceFieldTexture, irradianceFieldTexturePrevious);
 			renderBlock->programParams->setImageViewParameter(s_handleIrradianceFieldImage, irradianceFieldTextureCurrent, 0);
 			setParameters(renderGraph, renderBlock->programParams);
 			renderBlock->programParams->endParameters(renderContext);
@@ -296,7 +296,7 @@ render::RGTargetSet RTIrradiancePass::setup(
 			renderBlock->workSize[2] = 1;
 			renderBlock->programParams->beginParameters(renderContext);
 			renderBlock->programParams->setTextureParameter(ShaderParameter::VelocityMap, velocityTexture);
-			renderBlock->programParams->setTextureParameter(s_handleIrradianceFieldTexture, irradianceFieldTexture);
+			renderBlock->programParams->setTextureParameter(ShaderParameter::IrradianceFieldTexture, irradianceFieldTexture);
 			renderBlock->programParams->setBufferViewParameter(ShaderParameter::Reservoir, reservoirBuffer->getBufferView());
 			renderBlock->programParams->setBufferViewParameter(ShaderParameter::ReservoirOutput, reservoirOutputBuffer->getBufferView());
 			renderBlock->programParams->setImageViewParameter(s_handleIrradianceOutput, irradianceTexture, 0);
@@ -344,6 +344,7 @@ render::RGTargetSet RTIrradiancePass::setup(
 		renderGraph.addPass(rp);
 	}
 
+	outIrradianceFieldTextureId = irradianceFieldTextureCurrentId;
 	return irradianceFinalTargetSetId;
 }
 

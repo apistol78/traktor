@@ -8,12 +8,22 @@ const float VolumeSize = VolumeExtent * 2.0f;
 const float CellExtent = VolumeExtent / GridSize;
 const float CellSize = VolumeSize / GridSize;
 
-vec3 SampleIrradianceField(texture3D irradianceField, mat4 viewInverse, vec3 w)
+vec3 IrradianceFieldUV(mat4 viewInverse, vec3 w)
 {
 	const vec3 origin = viewInverse[3].xyz;
 	const vec3 nc = (w.xyz - origin) / vec3(VolumeExtent);
-	const vec3 uv = nc * 0.5f + 0.5f;
-	return texture(sampler3D(irradianceField, irradianceFieldSampler), uv).xyz;
+	return nc * 0.5f + 0.5f;
+}
+
+vec3 SampleIrradianceField(texture3D irradianceField, mat4 viewInverse, vec3 w)
+{
+	return texture(sampler3D(irradianceField, irradianceFieldSampler), IrradianceFieldUV(viewInverse, w)).xyz;
+}
+
+// Fraction of the sphere open to the sky; zero outside the field.
+float SampleSkyVisibility(texture3D irradianceField, mat4 viewInverse, vec3 w)
+{
+	return texture(sampler3D(irradianceField, irradianceFieldSampler), IrradianceFieldUV(viewInverse, w)).w;
 }
 
 vec3 CellToWorldSpace(mat4 viewInverse, ivec3 cell)

@@ -74,6 +74,7 @@ struct T_DLLCLASS ShaderParameter
 	static const render::Handle LightCount;
 	static const render::Handle MagicCoeffs;
 	static const render::Handle IrradianceMap;
+	static const render::Handle IrradianceFieldTexture;
 	static const render::Handle OcclusionMap;
 	static const render::Handle ContactShadowsMap;
 	static const render::Handle Projection;

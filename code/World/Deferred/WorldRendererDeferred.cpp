@@ -211,7 +211,8 @@ void WorldRendererDeferred::setup(
 	m_hiZPass->setup(worldRenderView, renderGraph, gbufferTargetSetId, hizTextureId);
 
 	// ... using RT TLAS.
-	const auto irradianceTargetSetId = m_irradiancePass->setup(worldRenderView, m_gatheredView, lightSBuffer, lightGridSBuffer, lightGridIndexSBuffer, needJitter, count, renderGraph, gbufferTargetSetId, velocityTargetSetId, halfResDepthTextureId, visualTargetSetId.current);
+	render::RGTexture irradianceFieldTextureId;
+	const auto irradianceTargetSetId = m_irradiancePass->setup(worldRenderView, m_gatheredView, lightSBuffer, lightGridSBuffer, lightGridIndexSBuffer, needJitter, count, renderGraph, gbufferTargetSetId, velocityTargetSetId, halfResDepthTextureId, visualTargetSetId.current, irradianceFieldTextureId);
 	const auto ambientOcclusionTargetSetId = m_ambientOcclusionPass->setup(worldRenderView, m_gatheredView, needJitter, count, renderGraph, gbufferTargetSetId, halfResDepthTextureId, visualTargetSetId.current);
 	const auto fogVolumeTextureId = m_volumetricFogPass->setup(worldRenderView, m_gatheredView, lightSBuffer, tileSBuffer, lightIndexSBuffer, m_whiteTexture, count, m_state[worldRenderView.getIndex()].slicePositions, renderGraph, shadowMapAtlasTargetSetId);
 	const auto contactShadowsTargetSetId = m_contactShadowsPass->setup(worldRenderView, m_gatheredView, renderGraph, gbufferTargetSetId, visualTargetSetId.current);
@@ -225,6 +226,7 @@ void WorldRendererDeferred::setup(
 		gbufferTargetSetId,
 		dbufferTargetSetId,
 		irradianceTargetSetId,
+		irradianceFieldTextureId,
 		ambientOcclusionTargetSetId,
 		contactShadowsTargetSetId,
 		reflectionsTargetSetId,
@@ -250,6 +252,7 @@ void WorldRendererDeferred::setupVisualPass(
 	render::RGTargetSet gbufferTargetSetId,
 	render::RGTargetSet dbufferTargetSetId,
 	render::RGTargetSet irradianceTargetSetId,
+	render::RGTexture irradianceFieldTextureId,
 	render::RGTargetSet ambientOcclusionTargetSetId,
 	render::RGTargetSet contactShadowsTargetSetId,
 	render::RGTargetSet reflectionsTargetSetId,
@@ -451,6 +454,7 @@ void WorldRendererDeferred::setupVisualPass(
 		rp->addInput(reflectionsTargetSetId);
 		rp->addInput(shadowMapAtlasTargetSetId);
 		rp->addInput(fogVolumeTextureId);
+		rp->addInput(irradianceFieldTextureId);
 		rp->addInput(outputHiZTextureId);
 		rp->addInput(visualCopyTargetSetId);
 		rp->addInput(m_gatheredView.rtWorldDependency);
@@ -477,6 +481,7 @@ void WorldRendererDeferred::setupVisualPass(
 			const auto shadowAtlasTargetSet = renderGraph.getTargetSet(shadowMapAtlasTargetSetId);
 			const auto visualCopyTargetSet = renderGraph.getTargetSet(visualCopyTargetSetId);
 			const auto fogVolumeTexture = renderGraph.getTexture(fogVolumeTextureId);
+			const auto irradianceFieldTexture = renderGraph.getTexture(irradianceFieldTextureId);
 
 			const auto& view = worldRenderView.getView();
 			const auto& projection = worldRenderView.getProjection();
@@ -519,6 +524,9 @@ void WorldRendererDeferred::setupVisualPass(
 
 			if (fogVolumeTexture != nullptr)
 				sharedParams->setTextureParameter(ShaderParameter::FogVolumeTexture, fogVolumeTexture);
+
+			if (irradianceFieldTexture != nullptr)
+				sharedParams->setTextureParameter(ShaderParameter::IrradianceFieldTexture, irradianceFieldTexture);
 
 			if (shadowAtlasTargetSet != nullptr)
 			{
@@ -576,6 +584,7 @@ void WorldRendererDeferred::setupVisualPass(
 				worldRenderView,
 				{ { ShaderPermutation::IrradianceEnable, irradianceEnable },
 					{ ShaderPermutation::IrradianceSingle, irradianceSingle },
+					{ ShaderPermutation::IrradianceFieldEnable, (bool)(irradianceFieldTexture != nullptr) },
 					{ ShaderPermutation::VolumetricFogEnable, (bool)(fogVolumeTexture != nullptr) },
 					{ ShaderPermutation::RayTracingEnable, (bool)(m_gatheredView.rtWorldTopLevel != nullptr) } });
 

@@ -66,7 +66,8 @@ public:
 		render::RGTargetSet gbufferTargetSetId,
 		render::RGTargetSet velocityTargetSetId,
 		render::RGTexture halfResDepthTextureId,
-		render::RGTargetSet outputTargetSetId) const;
+		render::RGTargetSet outputTargetSetId,
+		render::RGTexture& outIrradianceFieldTextureId) const;
 
 private:
 	Ref< SSIrradiancePass > m_ss;

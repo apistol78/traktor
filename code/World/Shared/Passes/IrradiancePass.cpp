@@ -60,10 +60,12 @@ render::RGTargetSet IrradiancePass::setup(
 	render::RGTargetSet gbufferTargetSetId,
 	render::RGTargetSet velocityTargetSetId,
 	render::RGTexture halfResDepthTextureId,
-	render::RGTargetSet outputTargetSetId) const
+	render::RGTargetSet outputTargetSetId,
+	render::RGTexture& outIrradianceFieldTextureId) const
 {
+	outIrradianceFieldTextureId = render::RGTexture::Invalid;
 	if (m_rt != nullptr)
-		return m_rt->setup(worldRenderView, gatheredView, lightSBuffer, lightGridSBuffer, lightGridIndexSBuffer, needJitter, frameCount, renderGraph, gbufferTargetSetId, velocityTargetSetId, halfResDepthTextureId, outputTargetSetId);
+		return m_rt->setup(worldRenderView, gatheredView, lightSBuffer, lightGridSBuffer, lightGridIndexSBuffer, needJitter, frameCount, renderGraph, gbufferTargetSetId, velocityTargetSetId, halfResDepthTextureId, outputTargetSetId, outIrradianceFieldTextureId);
 	else if (m_ss != nullptr)
 		return m_ss->setup(worldRenderView, gatheredView, lightSBuffer, needJitter, frameCount, renderGraph, gbufferTargetSetId, velocityTargetSetId, halfResDepthTextureId, outputTargetSetId);
 	else

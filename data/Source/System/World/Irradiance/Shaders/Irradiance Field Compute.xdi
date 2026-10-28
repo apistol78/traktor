@@ -86,9 +86,13 @@ float t;
 const ivec3 pt = ivec3(gl_GlobalInvocationID.xyz);
 const vec3 cellPosition = CellToWorldSpace($ViewInverse, pt);
 const vec3 Nacc0 = SampleIrradianceField($LastIrradianceField, $LastViewInverse, cellPosition);
+const float Vacc0 = SampleSkyVisibility($LastIrradianceField, $LastViewInverse, cellPosition);
 const float maxLum = max(dot(Nacc0, vec3(0.2126f, 0.7152f, 0.0722f)) * FireflyRelativeClamp, FireflyAbsoluteClamp);
 
 vec3 Nacc = vec3(0.0f, 0.0f, 0.0f);
+
+// Fraction of rays escaping to the sky; stored in alpha.
+float Vacc = 0.0f;
 
 // Random state must differ per cell; with a shared per-frame state every cell
 // traces identical directions so the estimation error is globally correlated
@@ -141,12 +145,17 @@ for (int i = 0; i < N; ++i)
 
 		Nacc += Sacc;
 	}
+	else
+		Vacc += 1.0f;
 }
 
 Nacc /= float(N);
 Nacc = Nacc * (1.0f - TemporalFilter) + Nacc0 * TemporalFilter;
 
-imageStore($Output, pt, vec4(Nacc, 0.0f));
+Vacc /= float(N);
+Vacc = Vacc * (1.0f - TemporalFilter) + Vacc0 * TemporalFilter;
+
+imageStore($Output, pt, vec4(Nacc, Vacc));
 
 ]]></script>
 		</item>

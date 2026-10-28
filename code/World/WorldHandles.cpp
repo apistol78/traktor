@@ -56,6 +56,7 @@ const render::Handle ShaderParameter::LightSBuffer(L"World_LightSBuffer");
 const render::Handle ShaderParameter::LightCount(L"World_LightCount");
 const render::Handle ShaderParameter::MagicCoeffs(L"World_MagicCoeffs");
 const render::Handle ShaderParameter::IrradianceMap(L"World_IrradianceMap");
+const render::Handle ShaderParameter::IrradianceFieldTexture(L"World_IrradianceFieldTexture");
 const render::Handle ShaderParameter::OcclusionMap(L"World_OcclusionMap");
 const render::Handle ShaderParameter::ContactShadowsMap(L"World_ContactShadowsMap");
 const render::Handle ShaderParameter::Projection(L"World_Projection");
