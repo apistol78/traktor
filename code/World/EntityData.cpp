@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -33,6 +33,9 @@ public:
 		s >> Member< bool >(L"visible", m_ref.visible);
 		s >> Member< bool >(L"dynamic", m_ref.dynamic);
 		s >> Member< bool >(L"locked", m_ref.locked);
+
+		if (s.getVersion< EntityData >() >= 3)
+			s >> Member< bool >(L"resident", m_ref.resident);
 	}
 
 private:
@@ -41,7 +44,7 @@ private:
 
 	}
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.world.EntityData", 2, EntityData, ISerializable)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.world.EntityData", 3, EntityData, ISerializable)
 
 void EntityData::setId(const Guid& id)
 {
@@ -73,6 +76,8 @@ EntityState EntityData::setState(const EntityState& state, const EntityState& ma
 		m_state.dynamic = state.dynamic;
 	if (mask.locked)
 		m_state.locked = state.locked;
+	if (mask.resident)
+		m_state.resident = state.resident;
 
 	return current;
 }

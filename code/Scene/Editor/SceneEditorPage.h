@@ -161,6 +161,8 @@ private:
 	Ref< ui::IBitmap > m_imageVisible;
 	Ref< ui::IBitmap > m_imageLocked;
 	Ref< ui::IBitmap > m_imageUnlocked;
+	Ref< ui::IBitmap > m_imageResident;
+	Ref< ui::IBitmap > m_imageStreamed;
 	Ref< ui::GridView > m_instanceGrid;
 	Ref< ui::Font > m_instanceGridFontBold;
 	Ref< ui::Font > m_instanceGridFontHuge;

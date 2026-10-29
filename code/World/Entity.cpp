@@ -66,6 +66,8 @@ EntityState Entity::setState(const EntityState& state, const EntityState& mask, 
 		m_state.dynamic = state.dynamic;
 	if (mask.locked)
 		m_state.locked = state.locked;
+	if (mask.resident)
+		m_state.resident = state.resident;
 
 	for (auto component : m_components)
 		if (component != m_updating)

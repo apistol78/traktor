@@ -221,6 +221,10 @@ public:
 
 	bool isDynamic(bool includingParents = true) const;
 
+	void setResident(bool resident);
+
+	bool isResident(bool includingParents = true) const;
+
 	bool isPrefab() const;
 
 	bool isGeometry() const;

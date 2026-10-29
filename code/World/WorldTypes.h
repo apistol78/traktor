@@ -90,11 +90,13 @@ struct T_DLLCLASS EntityState
 	bool visible = true;
 	bool dynamic = false;
 	bool locked = false;
+	bool resident = false; //!< Never streamed out of world.
 
 	const static EntityState None;
 	const static EntityState Visible;
 	const static EntityState Dynamic;
 	const static EntityState Locked;
+	const static EntityState Resident;
 	const static EntityState All;
 };
 

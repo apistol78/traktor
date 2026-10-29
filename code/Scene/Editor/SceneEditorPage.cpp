@@ -114,6 +114,7 @@ constexpr int32_t c_instanceGridName = 0;
 constexpr int32_t c_instanceGridDynamic = 1;
 constexpr int32_t c_instanceGridVisible = 2;
 constexpr int32_t c_instanceGridLocked = 3;
+constexpr int32_t c_instanceGridResident = 4;
 
 /*! Distance, in front of camera, where new entities are placed. */
 constexpr float c_placementDistance = 4.0f;
@@ -377,10 +378,13 @@ bool SceneEditorPage::create(ui::Container* parent)
 	m_imageVisible = new ui::StyleBitmap(L"Scene.LayerVisible");
 	m_imageLocked = new ui::StyleBitmap(L"Scene.LayerLocked");
 	m_imageUnlocked = new ui::StyleBitmap(L"Scene.LayerUnlocked");
+	m_imageResident = new ui::StyleBitmap(L"Scene.LayerResident");
+	m_imageStreamed = new ui::StyleBitmap(L"Scene.LayerStreamed");
 
 	m_instanceGrid = new ui::GridView();
 	m_instanceGrid->create(m_entityPanel, ui::GridView::WsMultiSelect | ui::GridView::WsAutoEdit | ui::WsDoubleBuffer);
 	m_instanceGrid->addColumn(new ui::GridColumn(L"", 200_ut, true));
+	m_instanceGrid->addColumn(new ui::GridColumn(L"", 30_ut));
 	m_instanceGrid->addColumn(new ui::GridColumn(L"", 30_ut));
 	m_instanceGrid->addColumn(new ui::GridColumn(L"", 30_ut));
 	m_instanceGrid->addColumn(new ui::GridColumn(L"", 30_ut));
@@ -1242,6 +1246,7 @@ Ref< ui::GridRow > SceneEditorPage::createInstanceGridRow(EntityAdapter* entityA
 	row->add(entityAdapter->isDynamic(false) ? m_imageDynamic : m_imageStatic); // c_instanceGridDynamic
 	row->add(entityAdapter->isVisible(false) ? m_imageVisible : m_imageHidden); // c_instanceGridVisible
 	row->add(entityAdapter->isLocked(false) ? m_imageLocked : m_imageUnlocked); // c_instanceGridLocked
+	row->add(entityAdapter->isResident(false) ? m_imageResident : m_imageStreamed); // c_instanceGridResident
 
 	// Recursively add children.
 	if (
@@ -1307,6 +1312,7 @@ void SceneEditorPage::updateInstanceGridRow(ui::GridRow* row)
 	row->set(c_instanceGridDynamic, entityAdapter->isDynamic(false) ? m_imageDynamic : m_imageStatic);
 	row->set(c_instanceGridVisible, entityAdapter->isVisible(false) ? m_imageVisible : m_imageHidden);
 	row->set(c_instanceGridLocked, entityAdapter->isLocked(false) ? m_imageLocked : m_imageUnlocked);
+	row->set(c_instanceGridResident, entityAdapter->isResident(false) ? m_imageResident : m_imageStreamed);
 
 	for (auto childRow : row->getChildren())
 		updateInstanceGridRow(childRow);
@@ -1748,7 +1754,7 @@ void SceneEditorPage::eventInstanceClick(ui::GridColumnClickEvent* event)
 	T_ASSERT(entityAdapter);
 
 	const int32_t column = event->getColumn();
-	if (column != c_instanceGridDynamic && column != c_instanceGridVisible && column != c_instanceGridLocked)
+	if (column != c_instanceGridDynamic && column != c_instanceGridVisible && column != c_instanceGridLocked && column != c_instanceGridResident)
 		return;
 
 	// Determine the new state from the clicked entity.
@@ -1759,6 +1765,8 @@ void SceneEditorPage::eventInstanceClick(ui::GridColumnClickEvent* event)
 		newState = !entityAdapter->isVisible(false);
 	else if (column == c_instanceGridLocked)
 		newState = !entityAdapter->isLocked(false);
+	else if (column == c_instanceGridResident)
+		newState = !entityAdapter->isResident(false);
 
 	// Apply the new state to all selected entities when the clicked entity is part of the
 	// selection; otherwise only to the clicked entity.
@@ -1775,6 +1783,8 @@ void SceneEditorPage::eventInstanceClick(ui::GridColumnClickEvent* event)
 			target->setVisible(newState);
 		else if (column == c_instanceGridLocked)
 			target->setLocked(newState);
+		else if (column == c_instanceGridResident)
+			target->setResident(newState);
 
 	updateInstanceGrid(false);
 	m_context->enqueueRedraw(nullptr);

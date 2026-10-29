@@ -466,6 +466,31 @@ bool EntityAdapter::isDynamic(bool includingParents) const
 	return false;
 }
 
+void EntityAdapter::setResident(bool resident)
+{
+	m_entityData->setState(resident ? world::EntityState::All : world::EntityState::None, world::EntityState::Resident);
+
+	if (m_entity)
+		m_entity->setState(resident ? world::EntityState::All : world::EntityState::None, world::EntityState::Resident, false);
+
+	for (auto child : m_children)
+		child->setResident(resident);
+}
+
+bool EntityAdapter::isResident(bool includingParents) const
+{
+	if (m_entityData->getState().resident)
+		return true;
+
+	if (includingParents)
+	{
+		if (m_parent != nullptr && m_parent->isResident(true))
+			return true;
+	}
+
+	return false;
+}
+
 bool EntityAdapter::isPrefab() const
 {
 	for (auto component : m_entityData->getComponents())

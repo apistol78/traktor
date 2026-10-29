@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg width="16" height="16" viewBox="0 0 32 32" id="svg2" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg">
+	<style>
+	.theme_fill {
+		fill: green;
+	}
+	.theme_stroke {
+		stroke: green;
+	}
+	</style>
+	<g id="Dark" style="display:inline;opacity:1">
+		<path d="M 10 4 L 22 4 L 22 6.5 L 20 6.5 L 20 13 L 24 17.5 L 24 19 L 16.75 19 L 16.75 26 L 16 28.5 L 15.25 26 L 15.25 19 L 8 19 L 8 17.5 L 12 13 L 12 6.5 L 10 6.5 Z" id="pin" style="fill-opacity:1;stroke:none" class="theme_fill"/>
+	</g>
+</svg>

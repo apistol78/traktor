@@ -237,6 +237,14 @@
 			<second>$(Images.Path)/Scene/LayerUnlocked.svg</second>
 		</item>
 		<item>
+			<first>Scene.LayerResident</first>
+			<second>$(Images.Path)/Scene/LayerResident.svg</second>
+		</item>
+		<item>
+			<first>Scene.LayerStreamed</first>
+			<second>$(Images.Path)/Scene/LayerStreamed.svg</second>
+		</item>
+		<item>
 			<first>Scene.LayerVisible</first>
 			<second>$(Images.Path)/Scene/LayerVisible.svg</second>
 		</item>

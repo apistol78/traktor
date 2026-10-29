@@ -418,6 +418,9 @@ void Edit::eventKeyDown(KeyDownEvent* event)
 			setText(text);
 			deselect();
 			update();
+
+			ContentChangeEvent contentChangeEvent(this);
+			raiseEvent(&contentChangeEvent);
 		}
 		break;
 

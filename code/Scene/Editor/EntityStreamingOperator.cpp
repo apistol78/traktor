@@ -157,18 +157,17 @@ bool EntityStreamingOperator::build(
 	if (m_targetEditor)
 		return true;
 
-	// Referenced entities, including those listed as resident, must always be present in world.
+	// Referenced entities must always be present in world.
 	SmallSet< Guid > referencedIds;
 	SmallSet< const ISerializable* > visited;
 	collectReferencedEntities(inoutSceneAsset, referencedIds, visited);
-	collectReferencedEntities(data, referencedIds, visited);
 
 	SmallMap< uint32_t, Aabb3 > modelBoundingBoxes;
 	RefArray< world::EntityData > entityData;
 	AlignedVector< Aabb3 > boundingBoxes;
 	for (auto layer : inoutSceneAsset->getLayers())
 	{
-		if (!layer || !layer->getState().visible || layer->getState().dynamic)
+		if (!layer || !layer->getState().visible || layer->getState().dynamic || layer->getState().resident)
 			continue;
 		if (auto groupComponentData = layer->getComponent< world::GroupComponentData >())
 			harvestEntities(pipelineBuilder, groupComponentData, referencedIds, modelBoundingBoxes, entityData, boundingBoxes);
@@ -215,7 +214,7 @@ void EntityStreamingOperator::harvestEntities(
 	const RefArray< world::EntityData > children = groupComponentData->getEntityData();
 	for (auto child : children)
 	{
-		if (!child || !child->getState().visible || child->getState().dynamic)
+		if (!child || !child->getState().visible || child->getState().dynamic || child->getState().resident)
 			continue;
 
 		// Groups without components of their own are split so children stream individually.
