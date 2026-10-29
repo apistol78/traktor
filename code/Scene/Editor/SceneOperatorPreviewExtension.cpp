@@ -24,6 +24,7 @@
 #include "Scene/Editor/SceneAsset.h"
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Scene/Editor/SceneOperatorChain.h"
+#include "Scene/Scene.h"
 #include "World/Editor/Traverser.h"
 #include "World/Entity.h"
 #include "World/EntityData.h"
@@ -36,12 +37,13 @@ namespace
 const Scalar c_positionEpsilon(1e-4f);
 const uint32_t c_maxCachedStates = 8;
 
-/*! Editor-side transform context; reads source objects from the source database. */
+/*! Editor-side transform context; reads source objects from the source database and exposes the editor's world. */
 class EditorTransformContext : public ISceneOperator::TransformContext
 {
 public:
-	explicit EditorTransformContext(db::Database* database)
+	explicit EditorTransformContext(db::Database* database, world::World* world)
 		: m_database(database)
+		, m_world(world)
 	{
 	}
 
@@ -55,8 +57,14 @@ public:
 		return m_database;
 	}
 
+	virtual world::World* getWorld() const override final
+	{
+		return m_world;
+	}
+
 private:
 	db::Database* m_database;
+	world::World* m_world;
 };
 
 }
@@ -117,7 +125,8 @@ void SceneOperatorPreviewExtension::apply()
 	const uint32_t hash = DeepHash(authored).get();
 	if (!useCachedTransforms(hash))
 	{
-		EditorTransformContext context(m_context->getSourceDatabase());
+		Scene* scene = m_context->getScene();
+		EditorTransformContext context(m_context->getSourceDatabase(), scene ? scene->getWorld() : nullptr);
 
 		// Run geometric operators on a throwaway clone so they start from canonical transforms.
 		Ref< SceneAsset > working = DeepClone(authored).create< SceneAsset >();

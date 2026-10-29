@@ -44,6 +44,13 @@ class IPipelineSettings;
 
 }
 
+namespace traktor::world
+{
+
+class World;
+
+}
+
 namespace traktor::scene
 {
 
@@ -73,6 +80,9 @@ public:
 		}
 
 		virtual db::Database* getSourceDatabase() const = 0;
+
+		/*! Instantiated world of the scene; null unless transforming within the scene editor. */
+		virtual world::World* getWorld() const = 0;
 	};
 
 	virtual bool create(const editor::IPipelineSettings* settings) = 0;

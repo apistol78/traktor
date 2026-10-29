@@ -27,12 +27,16 @@
 #include "Scene/Editor/SceneAsset.h"
 #include "Terrain/Editor/AlignToTerrainOperationData.h"
 #include "Terrain/Editor/TerrainAsset.h"
+#include "Terrain/Terrain.h"
+#include "Terrain/TerrainComponent.h"
 #include "Terrain/TerrainComponentData.h"
 #include "World/Editor/IEntityReplicator.h"
 #include "World/Editor/Traverser.h"
+#include "World/Entity.h"
 #include "World/Entity/ExternalEntityData.h"
 #include "World/Entity/GroupComponentData.h"
 #include "World/EntityData.h"
+#include "World/World.h"
 
 namespace traktor::terrain
 {
@@ -238,27 +242,24 @@ float resolveHeight(
 	}
 }
 
-Guid findTerrainInScene(scene::SceneAsset* sceneAsset)
+const world::EntityData* findTerrainInScene(scene::SceneAsset* sceneAsset)
 {
-	Guid terrainId;
+	const world::EntityData* terrainEntityData = nullptr;
 	for (auto layer : sceneAsset->getLayers())
 	{
 		if (!layer)
 			continue;
 
 		world::Traverser::visit(layer, [&](const world::EntityData* entityData) -> world::Traverser::Result {
-			if (const auto terrainComponentData = entityData->getComponent< TerrainComponentData >())
-			{
-				if (terrainId.isNull())
-					terrainId = terrainComponentData->getTerrain();
-			}
+			if (!terrainEntityData && entityData->getComponent< TerrainComponentData >() != nullptr)
+				terrainEntityData = entityData;
 			return world::Traverser::Result::Continue;
 		});
 
-		if (terrainId.isNotNull())
+		if (terrainEntityData)
 			break;
 	}
-	return terrainId;
+	return terrainEntityData;
 }
 
 }
@@ -427,40 +428,51 @@ bool AlignToTerrainOperator::transform(
 {
 	const AlignToTerrainOperationData* data = mandatory_non_null_type_cast< const AlignToTerrainOperationData* >(operatorData);
 
-	const Guid terrainId = findTerrainInScene(inoutSceneAsset);
-	if (terrainId.isNull())
+	const world::EntityData* terrainEntityData = findTerrainInScene(inoutSceneAsset);
+	if (!terrainEntityData)
 	{
 		log::warning << L"AlignToTerrain; no terrain found in scene, nothing aligned." << Endl;
 		return true;
 	}
 
-	// #fixme
-	// Should probably give access to Scene instance from scene editor to
-	// allow querying terrain component without going through the database.
-	//
-	Ref< const TerrainAsset > terrainAsset = context.getObjectReadOnly< TerrainAsset >(terrainId);
-	if (!terrainAsset)
-		return true;
+	Ref< const hf::Heightfield > heightfield;
 
-	Ref< db::Instance > heightfieldInstance = context.getSourceDatabase()->getInstance(terrainAsset->getHeightfield());
-	if (!heightfieldInstance)
-		return true;
+	// Use heightfield of instantiated terrain if available, avoid reading it from the database.
+	if (world::World* world = context.getWorld())
+	{
+		world::Entity* terrainEntity = world->getEntity(terrainEntityData->getId());
+		TerrainComponent* terrainComponent = terrainEntity ? terrainEntity->getComponent< TerrainComponent >() : nullptr;
+		if (terrainComponent && terrainComponent->getTerrain())
+			heightfield = terrainComponent->getTerrain()->getHeightfield();
+	}
 
-	Ref< const hf::HeightfieldAsset > heightfieldAsset = heightfieldInstance->getObject< const hf::HeightfieldAsset >();
-	if (!heightfieldAsset)
-		return true;
-
-	Ref< IStream > sourceData = heightfieldInstance->readData(L"Data");
-	if (!sourceData)
-		return true;
-
-	Ref< hf::Heightfield > heightfield = hf::HeightfieldFormat().read(
-		sourceData,
-		heightfieldAsset->getWorldExtent());
-	safeClose(sourceData);
 	if (!heightfield)
-		return true;
-	// #fixme
+	{
+		const Guid terrainId = terrainEntityData->getComponent< TerrainComponentData >()->getTerrain();
+
+		Ref< const TerrainAsset > terrainAsset = context.getObjectReadOnly< TerrainAsset >(terrainId);
+		if (!terrainAsset)
+			return true;
+
+		Ref< db::Instance > heightfieldInstance = context.getSourceDatabase()->getInstance(terrainAsset->getHeightfield());
+		if (!heightfieldInstance)
+			return true;
+
+		Ref< const hf::HeightfieldAsset > heightfieldAsset = heightfieldInstance->getObject< const hf::HeightfieldAsset >();
+		if (!heightfieldAsset)
+			return true;
+
+		Ref< IStream > sourceData = heightfieldInstance->readData(L"Data");
+		if (!sourceData)
+			return true;
+
+		heightfield = hf::HeightfieldFormat().read(
+			sourceData,
+			heightfieldAsset->getWorldExtent());
+		safeClose(sourceData);
+		if (!heightfield)
+			return true;
+	}
 
 	const AlignedVector< std::wstring >& layerFilters = data->getLayers();
 	const AlignToTerrainOperationData::GroundFit groundFit = data->getGroundFit();

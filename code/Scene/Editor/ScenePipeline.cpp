@@ -41,8 +41,8 @@ namespace
 /*! Scene transform context backed by a pipeline common interface.
  *
  * Provides read only object/database access to operators running at pipeline
- * time. No live ground sampler is supplied; terrain aware operators construct
- * their own sampler from the source data (getSourceDatabase/getObjectReadOnly).
+ * time. No instantiated world is supplied; operators must read everything
+ * from the source data (getSourceDatabase/getObjectReadOnly).
  */
 class PipelineTransformContext : public ISceneOperator::TransformContext
 {
@@ -60,6 +60,11 @@ public:
 	virtual db::Database* getSourceDatabase() const override final
 	{
 		return m_pipelineCommon->getSourceDatabase();
+	}
+
+	virtual world::World* getWorld() const override final
+	{
+		return nullptr;
 	}
 
 private:
