@@ -336,6 +336,7 @@ bool SceneEditorPage::create(ui::Container* parent)
 	m_entityMenuGroup->add(new ui::MenuItem(ui::Command(L"Editor.Delete"), i18n::Text(L"SCENE_EDITOR_REMOVE_ENTITY")));
 	m_entityMenuGroup->add(new ui::MenuItem(L"-"));
 	m_entityMenuGroup->add(new ui::MenuItem(ui::Command(L"Scene.Editor.CreateExternal"), i18n::Text(L"SCENE_EDITOR_CREATE_EXTERNAL")));
+	m_entityMenuGroup->add(new ui::MenuItem(ui::Command(L"Scene.Editor.CopyEntityID"), i18n::Text(L"SCENE_EDITOR_COPY_ENTITY_ID")));
 	m_entityMenuGroup->add(new ui::MenuItem(L"-"));
 	m_entityMenuGroup->add(new ui::MenuItem(ui::Command(L"Scene.Editor.MoveToEntity"), i18n::Text(L"SCENE_EDITOR_MOVE_TO_ENTITY")));
 
@@ -344,6 +345,7 @@ bool SceneEditorPage::create(ui::Container* parent)
 	m_entityMenuExternal->add(new ui::MenuItem(ui::Command(L"Editor.Delete"), i18n::Text(L"SCENE_EDITOR_REMOVE_ENTITY")));
 	m_entityMenuExternal->add(new ui::MenuItem(L"-"));
 	m_entityMenuExternal->add(new ui::MenuItem(ui::Command(L"Scene.Editor.ResolveExternal"), i18n::Text(L"SCENE_EDITOR_RESOLVE_EXTERNAL")));
+	m_entityMenuExternal->add(new ui::MenuItem(ui::Command(L"Scene.Editor.CopyEntityID"), i18n::Text(L"SCENE_EDITOR_COPY_ENTITY_ID")));
 	m_entityMenuExternal->add(new ui::MenuItem(L"-"));
 	m_entityMenuExternal->add(new ui::MenuItem(ui::Command(L"Scene.Editor.MoveToEntity"), i18n::Text(L"SCENE_EDITOR_MOVE_TO_ENTITY")));
 
@@ -696,7 +698,7 @@ bool SceneEditorPage::handleCommand(const ui::Command& command)
 			m_context->raiseSelect(false);
 		}
 	}
-	else if (command == L"Editor.Paste")
+	else if (command == L"Editor.Paste" || command == L"Scene.Editor.PasteInPlace")
 	{
 		// Get parent group under which we will place the new entity.
 		RefArray< EntityAdapter > selectedEntities = m_context->getEntities(SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants);
@@ -719,7 +721,24 @@ bool SceneEditorPage::handleCommand(const ui::Command& command)
 		for (auto entityData : entityDatas)
 			generateEntityIds(entityData);
 
-		requestPlaceEntities(0, entityDatas, parentEntity, false);
+		if (command == L"Editor.Paste")
+			requestPlaceEntities(0, entityDatas, parentEntity, false);
+		else
+		{
+			m_context->getDocument()->push();
+
+			RefArray< EntityAdapter > entityAdapters;
+			for (auto entityData : entityDatas)
+			{
+				Ref< EntityAdapter > entityAdapter = new EntityAdapter(m_context);
+				entityAdapter->prepare(entityData, nullptr);
+				parentEntity->addChild(nullptr, entityAdapter);
+				entityAdapters.push_back(entityAdapter);
+			}
+
+			updateScene();
+			createInstanceGrid();
+		}
 	}
 	else if (command == L"Editor.Delete")
 	{
@@ -791,6 +810,15 @@ bool SceneEditorPage::handleCommand(const ui::Command& command)
 		result = addEntity(nullptr);
 	else if (command == L"Scene.Editor.MoveToEntity")
 		result = moveToEntity();
+	else if (command == L"Scene.Editor.CopyEntityID")
+	{
+		RefArray< EntityAdapter > selectedEntities = m_context->getEntities(SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants);
+		if (selectedEntities.size() != 1)
+			return false;
+
+		const Guid entityId = selectedEntities[0]->getEntityData()->getId();
+		ui::Application::getInstance()->getClipboard()->setText(entityId.format());
+	}
 	else if (command == L"Scene.Editor.MoveUp")
 	{
 		if ((result = moveUp()) == true)

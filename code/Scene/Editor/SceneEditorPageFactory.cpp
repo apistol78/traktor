@@ -58,6 +58,7 @@ Ref< editor::IEditorPage > SceneEditorPageFactory::createEditorPage(editor::IEdi
 void SceneEditorPageFactory::getCommands(std::list< ui::Command >& outCommands) const
 {
 	// Add editor commands.
+	outCommands.push_back(ui::Command(L"Scene.Editor.PasteInPlace"));
 	outCommands.push_back(ui::Command(L"Scene.Editor.AddEntity"));
 	outCommands.push_back(ui::Command(L"Scene.Editor.Translate"));
 	outCommands.push_back(ui::Command(L"Scene.Editor.Rotate"));

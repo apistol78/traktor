@@ -30,6 +30,10 @@
 			<second>Entity</second>
 		</item>
 		<item>
+			<first>SCENE_EDITOR_COPY_ENTITY_ID</first>
+			<second>Copy entity ID</second>
+		</item>
+		<item>
 			<first>SCENE_EDITOR_CREATE_EXTERNAL</first>
 			<second>Create external...</second>
 		</item>
