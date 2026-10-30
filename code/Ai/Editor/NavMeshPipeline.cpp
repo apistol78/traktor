@@ -327,17 +327,6 @@ bool NavMeshPipeline::buildDependencies(
 	const NavMeshAsset* asset = mandatory_non_null_type_cast< const NavMeshAsset* >(sourceAsset);
 	pipelineDepends->addDependency(asset->m_source, editor::PdfUse);
 
-	// The navigation mesh is generated from the geometry of the source scene, so every
-	// external entity the scene reference is an input to this build and not merely
-	// something the scene happen to point at. The scene itself declare them PdfBuild
-	// only, which is right for the scene -- it keeps the reference and lets the external
-	// build into an instance of its own -- but the global hash deciding whether to
-	// rebuild only recurse through PdfUse edges, so without adding them here again the
-	// nav mesh is never rebuilt when an external entity is modified.
-	//
-	// Resolved the same way buildOutput does, so the two agree on what was consumed.
-	// Note this walks the scene as authored; entities introduced by scene operators are
-	// covered through the scene's own hash rather than from here.
 	Ref< const ISerializable > sourceData = pipelineDepends->getObjectReadOnly(asset->m_source);
 	if (!sourceData)
 		return true;
@@ -556,13 +545,16 @@ bool NavMeshPipeline::buildOutput(
 	// Merge all models into a single world space triangle soup.
 	AlignedVector< float > vertices;
 	AlignedVector< int32_t > indices;
+	AlignedVector< bool > walkables;
 	indices.reserve(navModelsTriangleCount * 3);
+	walkables.reserve(navModelsTriangleCount);
 
 	for (auto& navModel : navModels)
 	{
 		const int32_t vertexBase = (int32_t)(vertices.size() / 3);
 		const uint32_t vertexCount = navModel.model->getVertexCount();
 		const uint32_t triangleCount = navModel.model->getPolygonCount();
+		const bool walkable = navModel.model->getProperty< bool >(L"Navigation.Walkable", true);
 
 		for (uint32_t j = 0; j < vertexCount; ++j)
 		{
@@ -590,6 +582,7 @@ bool NavMeshPipeline::buildOutput(
 			indices.push_back(vertexBase + triangle.getVertex(2));
 			indices.push_back(vertexBase + triangle.getVertex(1));
 			indices.push_back(vertexBase + triangle.getVertex(0));
+			walkables.push_back(walkable);
 		}
 
 		navModel.model = nullptr;
@@ -644,6 +637,13 @@ bool NavMeshPipeline::buildOutput(
 	{
 		BuildContext ctx;
 		rcMarkWalkableTriangles(&ctx, cfg.walkableSlopeAngle, vertices.c_ptr(), vertexCount, indices.c_ptr(), triangleCount, areas.ptr());
+
+		// Non-walkable models are kept as obstacles.
+		for (int32_t i = 0; i < triangleCount; ++i)
+		{
+			if (!walkables[i])
+				areas[i] = RC_NULL_AREA;
+		}
 	}
 
 	// Bin triangles into each tile they overlap, including border.

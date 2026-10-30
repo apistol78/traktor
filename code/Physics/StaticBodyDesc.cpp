@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -14,7 +14,7 @@
 namespace traktor::physics
 {
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.StaticBodyDesc", 5, StaticBodyDesc, BodyDesc)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.StaticBodyDesc", 6, StaticBodyDesc, BodyDesc)
 
 StaticBodyDesc::StaticBodyDesc(ShapeDesc* shape)
 :	BodyDesc(shape)
@@ -51,6 +51,16 @@ bool StaticBodyDesc::isKinematic() const
 	return m_kinematic;
 }
 
+void StaticBodyDesc::setWalkable(bool walkable)
+{
+	m_walkable = walkable;
+}
+
+bool StaticBodyDesc::isWalkable() const
+{
+	return m_walkable;
+}
+
 void StaticBodyDesc::serialize(ISerializer& s)
 {
 	T_ASSERT(s.getVersion() >= 4);
@@ -63,6 +73,9 @@ void StaticBodyDesc::serialize(ISerializer& s)
 		s >> Member< float >(L"restitution", m_restitution, AttributeRange(0.0f, 1.0f));
 
 	s >> Member< bool >(L"kinematic", m_kinematic);
+
+	if (s.getVersion() >= 6)
+		s >> Member< bool >(L"walkable", m_walkable);
 }
 
 }

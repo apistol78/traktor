@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -45,12 +45,17 @@ public:
 
 	bool isKinematic() const;
 
+	void setWalkable(bool walkable);
+
+	bool isWalkable() const;
+
 	virtual void serialize(ISerializer& s) override final;
 
 private:
 	float m_friction = 0.75f;
 	float m_restitution = 0.0f;
 	bool m_kinematic = false;
+	bool m_walkable = true;
 };
 
 }

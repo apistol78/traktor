@@ -12,6 +12,7 @@
 #include "Core/Io/IStream.h"
 #include "Core/Math/Const.h"
 #include "Core/Misc/SafeDestroy.h"
+#include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyObject.h"
 #include "Core/Settings/PropertyString.h"
 #include "Database/Database.h"
@@ -98,6 +99,7 @@ Ref< model::Model > PhysicsEntityReplicator::createModel(
 		Aabb3(-boxShape->getExtent(), boxShape->getExtent()).getExtents(vertices);
 
 		Ref< model::Model > m = new model::Model();
+		m->setProperty< PropertyBoolean >(L"Navigation.Walkable", bodyDesc->isWalkable());
 
 		for (uint32_t i = 0; i < 6; ++i)
 		{
@@ -141,6 +143,7 @@ Ref< model::Model > PhysicsEntityReplicator::createModel(
 		const int32_t segments = 32;
 
 		Ref< model::Model > m = new model::Model();
+		m->setProperty< PropertyBoolean >(L"Navigation.Walkable", bodyDesc->isWalkable());
 
 		for (int32_t i = 0; i < segments; ++i)
 		{
@@ -217,6 +220,8 @@ Ref< model::Model > PhysicsEntityReplicator::createModel(
 		if (!shapeModel)
 			return nullptr;
 
+		shapeModel->setProperty< PropertyBoolean >(L"Navigation.Walkable", bodyDesc->isWalkable());
+
 		// Attach information about the collision shape into the model.
 		Ref< physics::MeshAsset > outputShapeMeshAsset = new physics::MeshAsset();
 		outputShapeMeshAsset->setCalculateConvexHull(false);
@@ -269,7 +274,12 @@ Ref< model::Model > PhysicsEntityReplicator::createModel(
 
 		safeClose(sourceData);
 
-		return hf::ConvertHeightfield().convert(heightfield, 1, c_heightfieldMaxError);
+		Ref< model::Model > m = hf::ConvertHeightfield().convert(heightfield, 1, c_heightfieldMaxError);
+		if (!m)
+			return nullptr;
+
+		m->setProperty< PropertyBoolean >(L"Navigation.Walkable", bodyDesc->isWalkable());
+		return m;
 	}
 
 	return nullptr;
