@@ -58,6 +58,13 @@ public:
 
 	IPoseController* getActivePoseController() const;
 
+	const RtState* getRootState() const { return m_rootState; }
+
+	const RtState* getCurrentState() const { return m_currentState; }
+
+	/*! State being blended into, null if none. */
+	const RtState* getNextState() const { return m_nextState; }
+
 	void getPoseControllersOf(const TypeInfo& type, RefArray< IPoseController >& outControllers) const;
 
 	const RefArray< RtState >& getStates() const { return m_states; }
@@ -80,6 +87,9 @@ private:
 	float m_blendDuration = 0.0;
 	float m_timeFactor = 1.0f;
 	Vector4 m_rootMotion = Vector4::zero();
+
+	/*! Switch to state at once, from the pose shown. */
+	void cut(RtState* state, const Transform& worldTransform, const Skeleton* skeleton, const AlignedVector< Transform >& poseTransforms);
 };
 
 }

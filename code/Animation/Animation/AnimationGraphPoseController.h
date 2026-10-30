@@ -25,6 +25,7 @@
 namespace traktor::animation
 {
 
+class RtState;
 class RtStateGraph;
 
 /*! Animation pose evaluation controller.
@@ -48,6 +49,13 @@ public:
 	void setTimeFactor(float timeFactor);
 
 	float getTimeFactor() const;
+
+	const RtState* getRootState() const;
+
+	const RtState* getCurrentState() const;
+
+	/*! State being blended into, null if none. */
+	const RtState* getNextState() const;
 
 	virtual void destroy() override final;
 

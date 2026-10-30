@@ -53,6 +53,21 @@ float AnimationGraphPoseController::getTimeFactor() const
 	return 1.0f;
 }
 
+const RtState* AnimationGraphPoseController::getRootState() const
+{
+	return m_stateGraph ? m_stateGraph->getRootState() : nullptr;
+}
+
+const RtState* AnimationGraphPoseController::getCurrentState() const
+{
+	return m_stateGraph ? m_stateGraph->getCurrentState() : nullptr;
+}
+
+const RtState* AnimationGraphPoseController::getNextState() const
+{
+	return m_stateGraph ? m_stateGraph->getNextState() : nullptr;
+}
+
 void AnimationGraphPoseController::destroy()
 {
 	safeDestroy(m_stateGraph);

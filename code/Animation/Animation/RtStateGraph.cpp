@@ -242,18 +242,54 @@ bool RtStateGraph::evaluate(
 		if (selectedTransition == nullptr && timeLeft <= FUZZY_EPSILON)
 			selectedTransition = new RtStateTransition(m_currentState, m_currentState);
 
-		// Begin transition to found state.
+		// Begin transition to found state; without a transition time it is a cut, taken at once.
 		if (selectedTransition != nullptr)
 		{
-			m_nextState = selectedTransition->getTo();
-			m_nextState->reset(worldTransform, skeleton, outPoseTransforms);
-			m_nextState->prepare(m_nextStateContext);
-			m_blendState = 0.0f;
-			m_blendDuration = selectedTransition->getDuration();
+			if (selectedTransition->getDuration() > FUZZY_EPSILON)
+			{
+				m_nextState = selectedTransition->getTo();
+				m_nextState->reset(worldTransform, skeleton, outPoseTransforms);
+				m_nextState->prepare(m_nextStateContext);
+				m_blendState = 0.0f;
+				m_blendDuration = selectedTransition->getDuration();
+			}
+			else
+			{
+				cut(selectedTransition->getTo(), worldTransform, skeleton, outPoseTransforms);
+				continous = false;
+			}
+		}
+	}
+	else
+	{
+		// A cut needs no pose to blend from, so one is taken even while blending, abandoning the
+		// blend; e.g. into a rag doll, which starts from the pose shown, rather than freezing on it
+		// until the blend is over.
+		const float timeLeft = max(m_nextStateContext.getDuration() - m_nextStateContext.getTime(), 0.0f);
+		for (auto transition : m_transitions)
+		{
+			if (transition->getFrom() != m_nextState || !transition->haveConditions() || transition->getDuration() > FUZZY_EPSILON)
+				continue;
+			if (!transitionPermitted(transition, timeLeft) || !transition->conditionSatisfied(m_values.c_ptr()))
+				continue;
+
+			cut(transition->getTo(), worldTransform, skeleton, outPoseTransforms);
+			continous = false;
+			break;
 		}
 	}
 
 	return continous;
+}
+
+void RtStateGraph::cut(RtState* state, const Transform& worldTransform, const Skeleton* skeleton, const AlignedVector< Transform >& poseTransforms)
+{
+	m_currentState = state;
+	m_currentState->reset(worldTransform, skeleton, poseTransforms);
+	m_currentState->prepare(m_currentStateContext);
+	m_nextState = nullptr;
+	m_blendState = 0.0f;
+	m_blendDuration = 0.0f;
 }
 
 Vector4 RtStateGraph::consumeRootMotion()
