@@ -33,7 +33,8 @@ enum class MarkerMode
 {
 	Single,
 	Children,
-	ChildrenConnected
+	ChildrenConnected,
+	ChildrenFilled
 };
 
 /*! Editor-only marker component.

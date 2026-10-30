@@ -40,6 +40,7 @@ void MarkerEntityComponentData::serialize(ISerializer& s)
 			{ L"Single", MarkerMode::Single },
 			{ L"Children", MarkerMode::Children },
 			{ L"ChildrenConnected", MarkerMode::ChildrenConnected },
+			{ L"ChildrenFilled", MarkerMode::ChildrenFilled },
 			{ 0 }
 		};
 		s >> MemberEnum< MarkerMode >(L"mode", m_mode, c_MarkerMode_Keys);

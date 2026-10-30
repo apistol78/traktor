@@ -8,6 +8,7 @@
  */
 #include "Scene/Editor/MarkerEntityComponentEditor.h"
 
+#include "Core/Math/Triangulator.h"
 #include "Render/ITexture.h"
 #include "Render/PrimitiveRenderer.h"
 #include "Resource/IResourceManager.h"
@@ -66,7 +67,16 @@ void MarkerEntityComponentEditor::drawGuide(render::PrimitiveRenderer* primitive
 		for (const auto& child : m_entityAdapter->getChildren())
 			positions.push_back(child->getTransform().translation().xyz1() + Vector4(0.0f, m_offset, 0.0f, 0.0f));
 
-		if (m_mode == MarkerMode::ChildrenConnected)
+		// Triangulated in the ground plane, so the region follows the children's heights over uneven ground.
+		if (m_mode == MarkerMode::ChildrenFilled && positions.size() >= 3)
+		{
+			const Color4ub fillColor(255, 255, 255, (int32_t)(64 * m_alpha));
+			Triangulator().freeze(positions, Vector4(0.0f, 1.0f, 0.0f, 0.0f), Triangulator::Mode::Sequential, [&](size_t i0, size_t i1, size_t i2) {
+				primitiveRenderer->drawSolidTriangle(positions[i0], positions[i1], positions[i2], fillColor);
+			});
+		}
+
+		if (m_mode == MarkerMode::ChildrenConnected || m_mode == MarkerMode::ChildrenFilled)
 		{
 			for (int32_t i = 0; i < (int32_t)positions.size(); ++i)
 			{
