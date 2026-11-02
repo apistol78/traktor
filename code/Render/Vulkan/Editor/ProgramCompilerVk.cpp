@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2025 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -729,9 +729,37 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 	}
 
 	{
+		const RenderState& rs = cx.getRenderState();
+
 		Murmur3 checksum;
 		checksum.begin();
-		checksum.feed(cx.getRenderState());
+
+		// Feed members individually; the struct contains padding.
+		checksum.feed(rs.cullMode);
+		checksum.feed(rs.blendEnable);
+		checksum.feed(rs.blendColorOperation);
+		checksum.feed(rs.blendColorSource);
+		checksum.feed(rs.blendColorDestination);
+		checksum.feed(rs.blendAlphaOperation);
+		checksum.feed(rs.blendAlphaSource);
+		checksum.feed(rs.blendAlphaDestination);
+		checksum.feed(rs.colorWriteMask);
+		checksum.feed(rs.depthEnable);
+		checksum.feed(rs.depthWriteEnable);
+		checksum.feed(rs.depthFunction);
+		checksum.feed(rs.alphaTestEnable);
+		checksum.feed(rs.alphaTestFunction);
+		checksum.feed(rs.alphaTestReference);
+		checksum.feed(rs.alphaToCoverageEnable);
+		checksum.feed(rs.wireframe);
+		checksum.feed(rs.stencilEnable);
+		checksum.feed(rs.stencilFail);
+		checksum.feed(rs.stencilZFail);
+		checksum.feed(rs.stencilPass);
+		checksum.feed(rs.stencilFunction);
+		checksum.feed(rs.stencilReference);
+		checksum.feed(rs.stencilMask);
+
 		checksum.feedBuffer(programResource->m_vertexShader.c_ptr(), programResource->m_vertexShader.size() * sizeof(uint32_t));
 		checksum.feedBuffer(programResource->m_fragmentShader.c_ptr(), programResource->m_fragmentShader.size() * sizeof(uint32_t));
 		checksum.feedBuffer(programResource->m_computeShader.c_ptr(), programResource->m_computeShader.size() * sizeof(uint32_t));

@@ -134,7 +134,7 @@ void writeErrorShaderGraph(db::Database* database, const ShaderGraph* shaderGrap
 
 }
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ShaderPipeline", 123, ShaderPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ShaderPipeline", 124, ShaderPipeline, editor::IPipeline)
 
 bool ShaderPipeline::create(const editor::IPipelineSettings* settings, db::Database* database)
 {
