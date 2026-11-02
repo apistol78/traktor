@@ -34,6 +34,7 @@ void TheaterSceneEditorPlugin::getGuideDrawIds(
 	std::set< std::wstring >& outIds
 ) const
 {
+	outIds.insert(L"Theater.Tracks");
 }
 
 void TheaterSceneEditorPlugin::createUIExtensions(

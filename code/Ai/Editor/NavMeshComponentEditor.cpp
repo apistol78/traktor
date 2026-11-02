@@ -10,6 +10,9 @@
 
 #include "Ai/NavMesh.h"
 #include "Ai/NavMeshComponentData.h"
+#include "Core/Settings/PropertyBoolean.h"
+#include "Core/Settings/PropertyGroup.h"
+#include "Editor/IEditor.h"
 #include "Render/PrimitiveRenderer.h"
 #include "Resource/IResourceManager.h"
 #include "Scene/Editor/SceneAsset.h"
@@ -59,6 +62,10 @@ void NavMeshComponentEditor::draw(render::PrimitiveRenderer* primitiveRenderer)
 {
 	NavMeshComponentData* componentData = m_context->getSceneAsset()->getWorldComponent< NavMeshComponentData >();
 	if (!componentData)
+		return;
+
+	const bool buildNavMeshEditor = m_context->getEditor()->getSettings()->getProperty< bool >(L"NavMeshPipeline.Build", true);
+	if (!buildNavMeshEditor)
 		return;
 
 	if (m_context->shouldDrawGuide(L"Ai.NavMesh"))

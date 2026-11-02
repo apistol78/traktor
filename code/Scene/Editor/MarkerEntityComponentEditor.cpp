@@ -21,7 +21,8 @@ namespace traktor::scene
 T_IMPLEMENT_RTTI_CLASS(L"traktor.scene.MarkerEntityComponentEditor", MarkerEntityComponentEditor, IComponentEditor)
 
 MarkerEntityComponentEditor::MarkerEntityComponentEditor(SceneEditorContext* context, EntityAdapter* entityAdapter, MarkerEntityComponentData* markerComponentData)
-	: m_entityAdapter(entityAdapter)
+	: m_context(context)
+	, m_entityAdapter(entityAdapter)
 	, m_mode(markerComponentData->getMode())
 	, m_offset(markerComponentData->getOffset())
 	, m_size(markerComponentData->getSize())
@@ -33,6 +34,9 @@ MarkerEntityComponentEditor::MarkerEntityComponentEditor(SceneEditorContext* con
 void MarkerEntityComponentEditor::drawGuide(render::PrimitiveRenderer* primitiveRenderer) const
 {
 	if (!m_texture)
+		return;
+
+	if (!m_context->shouldDrawGuide(L"Scene.Markers"))
 		return;
 
 	const Matrix44 viewInverse = primitiveRenderer->getView().inverse();

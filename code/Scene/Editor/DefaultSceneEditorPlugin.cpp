@@ -62,6 +62,7 @@ void DefaultSceneEditorPlugin::getGuideDrawIds(
 	outIds.insert(L"Entity.Light");
 	outIds.insert(L"Entity.BoundingBox");
 	outIds.insert(L"Entity.Volumes");
+	outIds.insert(L"Scene.Markers");
 }
 
 void DefaultSceneEditorPlugin::createUIExtensions(

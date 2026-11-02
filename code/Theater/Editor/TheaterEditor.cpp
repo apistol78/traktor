@@ -651,6 +651,9 @@ void TheaterEditor::draw(render::PrimitiveRenderer* primitiveRenderer)
 	if (!target || !act)
 		return;
 
+	if (!m_context->shouldDrawGuide(L"Theater.Tracks"))
+		return;
+
 	// All tracks of the target are relative this transform.
 	const Transform base = target->getBaseTransform();
 

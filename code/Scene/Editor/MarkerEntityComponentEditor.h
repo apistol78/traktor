@@ -45,6 +45,7 @@ public:
 	virtual void drawGuide(render::PrimitiveRenderer* primitiveRenderer) const override final;
 
 private:
+	SceneEditorContext* m_context;
 	EntityAdapter* m_entityAdapter;
 	resource::Proxy< render::ITexture > m_texture;
 	MarkerMode m_mode;

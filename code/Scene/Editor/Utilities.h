@@ -18,12 +18,11 @@ class EntityData;
 namespace traktor::scene
 {
 
+class SceneEditorContext;
+
 /*! Recursively generate entity IDs.
  * \ingroup Scene
- *
- * Using traversal to ensure all referenced entities
- * get ID properly generated.
  */
-void generateEntityIds(world::EntityData* entityData);
+void generateEntityIds(SceneEditorContext* context, world::EntityData* entityData);
 
 }

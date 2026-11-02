@@ -762,6 +762,16 @@ EntityAdapter* SceneEditorContext::findAdapterFromEntity(const world::Entity* en
 	return it != m_entityAdapterMap.end() ? it->second : nullptr;
 }
 
+EntityAdapter* SceneEditorContext::findAdapterById(const Guid& entityId) const
+{
+	for (auto entityAdapter : getEntities())
+	{
+		if (entityAdapter->getId() == entityId)
+			return entityAdapter;
+	}
+	return nullptr;
+}
+
 EntityAdapter* SceneEditorContext::queryRay(const Vector4& worldRayOrigin, const Vector4& worldRayDirection, bool onlyPickable, bool throughSelected) const
 {
 	EntityAdapter* minEntityAdapter = nullptr;
@@ -847,7 +857,7 @@ void SceneEditorContext::cloneSelected()
 		Ref< world::EntityData > clonedEntityData = DeepClone(selectedEntityAdapter->getEntityData()).create< world::EntityData >();
 		T_ASSERT(clonedEntityData);
 
-		generateEntityIds(clonedEntityData);
+		generateEntityIds(this, clonedEntityData);
 
 		// Place the clone where the source entity is actually rendered; previews,
 		// such as scene operators, are applied to entities only, thus the source

@@ -719,7 +719,7 @@ bool SceneEditorPage::handleCommand(const ui::Command& command)
 			return false;
 
 		for (auto entityData : entityDatas)
-			generateEntityIds(entityData);
+			generateEntityIds(m_context, entityData);
 
 		if (command == L"Editor.Paste")
 			requestPlaceEntities(0, entityDatas, parentEntity, false);
