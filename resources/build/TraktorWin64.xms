@@ -155,10 +155,30 @@
 					</items>
 				</item>
 				<item type="traktor.sb.Filter">
-					<name>Animation</name>
+					<name>StateGraph</name>
 					<items>
 						<item type="traktor.sb.File" version="1">
-							<fileName>Animation/*.*</fileName>
+							<fileName>StateGraph/*.*</fileName>
+							<excludeFilter/>
+							<items/>
+						</item>
+					</items>
+				</item>
+				<item type="traktor.sb.Filter">
+					<name>Retarget</name>
+					<items>
+						<item type="traktor.sb.File" version="1">
+							<fileName>Retarget/*.*</fileName>
+							<excludeFilter/>
+							<items/>
+						</item>
+					</items>
+				</item>
+				<item type="traktor.sb.Filter">
+					<name>Simple</name>
+					<items>
+						<item type="traktor.sb.File" version="1">
+							<fileName>Simple/*.*</fileName>
 							<excludeFilter/>
 							<items/>
 						</item>
@@ -218,6 +238,16 @@
 					<fileName>$(TRAKTOR_HOME)/code/.clang-format</fileName>
 					<excludeFilter/>
 					<items/>
+				</item>
+				<item type="traktor.sb.Filter">
+					<name>Stack</name>
+					<items>
+						<item type="traktor.sb.File" version="1">
+							<fileName>Stack/*.*</fileName>
+							<excludeFilter/>
+							<items/>
+						</item>
+					</items>
 				</item>
 			</items>
 			<dependencies>
@@ -2694,6 +2724,26 @@
 					<items>
 						<item type="traktor.sb.File" version="1">
 							<fileName>RagDoll/*.*</fileName>
+							<excludeFilter/>
+							<items/>
+						</item>
+					</items>
+				</item>
+				<item type="traktor.sb.Filter">
+					<name>StateGraph</name>
+					<items>
+						<item type="traktor.sb.File" version="1">
+							<fileName>StateGraph/*.*</fileName>
+							<excludeFilter/>
+							<items/>
+						</item>
+					</items>
+				</item>
+				<item type="traktor.sb.Filter">
+					<name>Stack</name>
+					<items>
+						<item type="traktor.sb.File" version="1">
+							<fileName>Stack/*.*</fileName>
 							<excludeFilter/>
 							<items/>
 						</item>

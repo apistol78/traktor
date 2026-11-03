@@ -1,0 +1,103 @@
+/*
+ * TRAKTOR
+ * Copyright (c) 2025-2026 Anders Pistol.
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ */
+#include "Animation/StateGraph/RtStateNodePoseController.h"
+
+#include "Animation/IPoseController.h"
+#include "Animation/ITransformTime.h"
+#include "Animation/Joint.h"
+#include "Animation/Pose.h"
+#include "Animation/Skeleton.h"
+#include "Animation/StateGraph/StateContext.h"
+#include "Core/Misc/SafeDestroy.h"
+
+#include <limits>
+
+namespace traktor::animation
+{
+
+T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.RtStateNodePoseController", RtStateNodePoseController, RtStateNode)
+
+void RtStateNodePoseController::destroy()
+{
+	safeDestroy(m_poseController);
+	m_transformTime = nullptr;
+}
+
+bool RtStateNodePoseController::prepare(StateContext& outContext) const
+{
+	if (!m_poseController)
+		return false;
+
+	outContext.setTime(0.0f);
+	outContext.setDuration(std::numeric_limits< float >::max());
+	return true;
+}
+
+void RtStateNodePoseController::reset(
+	const Transform& worldTransform,
+	const Skeleton* skeleton,
+	const AlignedVector< Transform >& poseTransforms) const
+{
+	// Let the pose controller (e.g. rag doll) initialize itself from the pose the graph
+	// is transitioning away from, so it starts matching the current pose.
+	if (m_poseController)
+		m_poseController->reset(worldTransform, skeleton, poseTransforms);
+}
+
+void RtStateNodePoseController::evaluate(
+	StateContext& context,
+	float deltaTime,
+	const Transform& worldTransform,
+	const Skeleton* skeleton,
+	const AlignedVector< Transform >& jointTransforms,
+	Pose& outPose,
+	Vector4* outRootMotion) const
+{
+	float time = context.getTime();
+
+	if (outRootMotion)
+		*outRootMotion = Vector4::zero();
+
+	if (m_poseController)
+	{
+		AlignedVector< Transform > poseTransforms;
+		m_poseController->evaluate(
+			time,
+			deltaTime,
+			worldTransform,
+			skeleton,
+			jointTransforms,
+			poseTransforms);
+
+		// Convert absolute transforms into a Pose instance.
+		for (int32_t i = 0; i < skeleton->getJointCount(); ++i)
+		{
+			const Joint* joint = skeleton->getJoint(i);
+
+			Transform deltaTransform = poseTransforms[i];
+			if (joint->getParent() >= 0)
+				deltaTransform = poseTransforms[joint->getParent()].inverse() * poseTransforms[i];
+
+			outPose.setJointTransform(i, deltaTransform);
+		}
+	}
+}
+
+IPoseController* RtStateNodePoseController::getActivePoseController() const
+{
+	return m_poseController ? m_poseController->getActivePoseController() : nullptr;
+}
+
+void RtStateNodePoseController::getPoseControllersOf(const TypeInfo& type, RefArray< IPoseController >& outControllers) const
+{
+	if (m_poseController != nullptr)
+		m_poseController->getPoseControllersOf(type, outControllers);
+}
+
+}

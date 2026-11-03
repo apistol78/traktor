@@ -9,8 +9,6 @@
 #include "Animation/AnimationClassFactory.h"
 
 #include "Animation/AnimatedMeshComponent.h"
-#include "Animation/Animation/AnimationGraphPoseController.h"
-#include "Animation/Animation/RetargetPoseController.h"
 #include "Animation/Boids/BoidsComponent.h"
 #include "Animation/Cloth/ClothComponent.h"
 #include "Animation/IK/IKComponent.h"
@@ -19,9 +17,12 @@
 #include "Animation/PathEntity/PathComponent.h"
 #include "Animation/PathEntity/PathComponentData.h"
 #include "Animation/RagDoll/RagDollPoseController.h"
+#include "Animation/Retarget/RetargetPoseController.h"
 #include "Animation/Rotator/RotatorComponent.h"
 #include "Animation/Rotator/WobbleComponent.h"
 #include "Animation/SkeletonComponent.h"
+#include "Animation/Stack/StackAnimationController.h"
+#include "Animation/StateGraph/AnimationGraphPoseController.h"
 #include "Core/Class/AutoRuntimeClass.h"
 #include "Core/Class/Boxes/BoxedRefArray.h"
 #include "Core/Class/Boxes/BoxedTransform.h"
@@ -93,6 +94,21 @@ bool AnimationGraphPoseController_setParameterValue(AnimationGraphPoseController
 	return self->setParameterValue(render::Handle(name.c_str()), value);
 }
 
+void StackAnimationController_setActive(StackAnimationController* self, const std::wstring& name, bool active)
+{
+	self->setActive(render::Handle(name.c_str()), active);
+}
+
+bool StackAnimationController_isActive(StackAnimationController* self, const std::wstring& name)
+{
+	return self->isActive(render::Handle(name.c_str()));
+}
+
+void StackAnimationController_activateOnly(StackAnimationController* self, const std::wstring& name)
+{
+	self->activateOnly(render::Handle(name.c_str()));
+}
+
 }
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.AnimationClassFactory", 0, AnimationClassFactory, IRuntimeClassFactory)
@@ -136,12 +152,14 @@ void AnimationClassFactory::createClasses(IRuntimeClassRegistrar* registrar) con
 	classRagDollPoseController->addMethod("addImpulseAt", &RagDollPoseController::addImpulseAt);
 	registrar->registerClass(classRagDollPoseController);
 
+	auto classStackAnimationController = new AutoRuntimeClass< StackAnimationController >();
+	classStackAnimationController->addMethod("setActive", &StackAnimationController_setActive);
+	classStackAnimationController->addMethod("isActive", &StackAnimationController_isActive);
+	classStackAnimationController->addMethod("activateOnly", &StackAnimationController_activateOnly);
+	registrar->registerClass(classStackAnimationController);
+
 	auto classStatePoseController = new AutoRuntimeClass< AnimationGraphPoseController >();
-	classStatePoseController->addProperty("time", &AnimationGraphPoseController::setTime, &AnimationGraphPoseController::getTime);
-	classStatePoseController->addProperty("timeFactor", &AnimationGraphPoseController::setTimeFactor, &AnimationGraphPoseController::getTimeFactor);
-	classStatePoseController->addMethod("setState", &AnimationGraphPoseController::setState);
 	classStatePoseController->addMethod("setParameterValue", &AnimationGraphPoseController_setParameterValue);
-	// classStatePoseController->addMethod("setCondition", &AnimationGraphPoseController::setCondition);
 	registrar->registerClass(classStatePoseController);
 
 	auto classRetargetPoseController = new AutoRuntimeClass< RetargetPoseController >();

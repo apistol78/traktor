@@ -8,7 +8,7 @@
  */
 #include "Animation/AnimationResourceFactory.h"
 
-#include "Animation/Animation/Animation.h"
+#include "Animation/Animation.h"
 #include "Animation/Pose.h"
 #include "Animation/Skeleton.h"
 #include "Database/Instance.h"

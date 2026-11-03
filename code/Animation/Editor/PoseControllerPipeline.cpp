@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2025 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,10 +8,11 @@
  */
 #include "Animation/Editor/PoseControllerPipeline.h"
 
-#include "Animation/Animation/AnimationGraphPoseControllerData.h"
-#include "Animation/Animation/RetargetPoseControllerData.h"
-#include "Animation/Animation/SimpleAnimationControllerData.h"
 #include "Animation/RagDoll/RagDollPoseControllerData.h"
+#include "Animation/Retarget/RetargetPoseControllerData.h"
+#include "Animation/Simple/SimpleAnimationControllerData.h"
+#include "Animation/Stack/StackAnimationControllerData.h"
+#include "Animation/StateGraph/AnimationGraphPoseControllerData.h"
 #include "Editor/IPipelineDepends.h"
 
 namespace traktor::animation
@@ -25,7 +26,8 @@ TypeInfoSet PoseControllerPipeline::getAssetTypes() const
 		AnimationGraphPoseControllerData,
 		RetargetPoseControllerData,
 		RagDollPoseControllerData,
-		SimpleAnimationControllerData >();
+		SimpleAnimationControllerData,
+		StackAnimationControllerData >();
 }
 
 bool PoseControllerPipeline::buildDependencies(
@@ -46,6 +48,8 @@ bool PoseControllerPipeline::buildDependencies(
 		pipelineDepends->addDependency(ragDollPoseContollerData->getSkeleton(), editor::PdfBuild | editor::PdfResource);
 	else if (auto simpleControllerData = dynamic_type_cast< const SimpleAnimationControllerData* >(sourceAsset))
 		pipelineDepends->addDependency(simpleControllerData->getAnimation(), editor::PdfBuild | editor::PdfResource);
+	else if (auto stackControllerData = dynamic_type_cast< const StackAnimationControllerData* >(sourceAsset))
+		pipelineDepends->addDependency(stackControllerData->getStack(), editor::PdfBuild | editor::PdfResource);
 	else
 		return false;
 

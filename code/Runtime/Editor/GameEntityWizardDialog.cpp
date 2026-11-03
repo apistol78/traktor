@@ -9,10 +9,10 @@
 #include "Runtime/Editor/GameEntityWizardDialog.h"
 
 #include "Animation/AnimatedMeshComponentData.h"
-#include "Animation/Animation/SimpleAnimationControllerData.h"
 #include "Animation/Editor/AnimationAsset.h"
 #include "Animation/Editor/SkeletonAsset.h"
 #include "Animation/RagDoll/RagDollPoseControllerData.h"
+#include "Animation/Simple/SimpleAnimationControllerData.h"
 #include "Animation/SkeletonComponentData.h"
 #include "Core/Class/IRuntimeClass.h"
 #include "Core/Io/FileSystem.h"

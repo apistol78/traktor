@@ -9,8 +9,6 @@
 #include "Animation/Editor/AnimationPreviewControl.h"
 
 #include "Animation/AnimatedMeshComponent.h"
-#include "Animation/Animation/AnimationGraphPoseController.h"
-#include "Animation/Animation/RtStateGraphResourceFactory.h"
 #include "Animation/AnimationResourceFactory.h"
 #include "Animation/Editor/SkeletonRenderer.h"
 #include "Animation/Joint.h"
@@ -18,6 +16,9 @@
 #include "Animation/Skeleton.h"
 #include "Animation/SkeletonComponent.h"
 #include "Animation/SkeletonUtils.h"
+#include "Animation/Stack/RtStackGraphResourceFactory.h"
+#include "Animation/StateGraph/AnimationGraphPoseController.h"
+#include "Animation/StateGraph/RtStateGraphResourceFactory.h"
 #include "Core/Containers/SmallSet.h"
 #include "Core/Guid.h"
 #include "Core/Math/Plane.h"
@@ -80,7 +81,6 @@ namespace
 
 const resource::Id< scene::Scene > c_previewScene(L"{02ABDE03-E9F2-45A8-8FAA-3772EC7568ED}");
 
-
 world::IEntityFactory* initializeFactory(world::IEntityFactory* entityFactory, const ObjectStore& objectStore)
 {
 	return entityFactory->initialize(objectStore) ? entityFactory : nullptr;
@@ -137,6 +137,7 @@ bool AnimationPreviewControl::create(ui::Widget* parent)
 	// Texture and shader factories are already added by the base control.
 	getResourceManager()->addFactory(new AnimationResourceFactory());
 	getResourceManager()->addFactory(new RagDollResourceFactory());
+	getResourceManager()->addFactory(new RtStackGraphResourceFactory());
 	getResourceManager()->addFactory(new RtStateGraphResourceFactory());
 	getResourceManager()->addFactory(new mesh::MeshResourceFactory(renderSystem));
 	getResourceManager()->addFactory(new physics::PhysicsFactory());
@@ -370,6 +371,21 @@ void AnimationPreviewControl::eventRender(render::RenderControlEvent* event)
 	update.deltaTime = deltaTime;
 	m_sceneInstance->update(update);
 
+	// Get root motion.
+	if (m_entity)
+	{
+		const Transform rootMotion = m_entity->getComponent< SkeletonComponent >()->consumeRootMotion();
+
+		Vector4 rootTranslation = rootMotion.translation();
+		if (!m_rootMotion.empty())
+			rootTranslation = m_rootMotion.back() + rootTranslation;
+
+		m_rootMotion.push_back(rootTranslation.xyz1());
+
+		while (m_rootMotion.size() > 64)
+			m_rootMotion.erase(m_rootMotion.begin());
+	}
+
 	// Setup world render passes.
 	const world::WorldRenderSettings* worldRenderSettings = m_sceneInstance->getWorldRenderSettings();
 	m_worldRenderView.setPerspective(
@@ -402,6 +418,13 @@ void AnimationPreviewControl::eventRender(render::RenderControlEvent* event)
 				drawSkeleton(getPrimitiveRenderer(), skeletonComponent, Matrix44::identity(), false, true);
 		}
 
+		if (!m_rootMotion.empty())
+		{
+			const Vector4 first = m_rootMotion.front();
+			for (const auto& pnt : m_rootMotion)
+				getPrimitiveRenderer()->drawSolidPoint(pnt - first + Vector4(0.0f, 0.5f, 0.0f), 2.0f, Color4ub(255, 120, 0, 255));
+		}
+
 		getPrimitiveRenderer()->end(0);
 
 		auto rb = renderContext->allocNamed< render::LambdaRenderBlock >(L"Debug wire");
@@ -428,14 +451,14 @@ void AnimationPreviewControl::eventRender(render::RenderControlEvent* event)
 
 	//// Render frame.
 	render::IRenderView* renderView = getRenderView();
-	//if (!renderView->beginFrame())
+	// if (!renderView->beginFrame())
 	//	return;
 
 	m_renderContext->render(renderView);
 	m_renderContext->flush();
 
-	//renderView->endFrame();
-	//renderView->present();
+	// renderView->endFrame();
+	// renderView->present();
 }
 
 void AnimationPreviewControl::eventIdle(ui::IdleEvent* event)

@@ -8,7 +8,6 @@
  */
 #include "Animation/Editor/AnimationSceneEditorPlugin.h"
 
-#include "Animation/Animation/RtStateGraphResourceFactory.h"
 #include "Animation/AnimationEntityFactory.h"
 #include "Animation/AnimationResourceFactory.h"
 #include "Animation/Cloth/ClothRenderer.h"
@@ -16,6 +15,8 @@
 #include "Animation/Editor/AnimationComponentEditorFactory.h"
 #include "Animation/Editor/Cloth/ClothEntityEditorFactory.h"
 #include "Animation/RagDoll/RagDollResourceFactory.h"
+#include "Animation/Stack/RtStackGraphResourceFactory.h"
+#include "Animation/StateGraph/RtStateGraphResourceFactory.h"
 #include "Core/Serialization/ISerializable.h"
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Ui/Command.h"
@@ -53,6 +54,7 @@ void AnimationSceneEditorPlugin::createResourceFactories(
 	outResourceFactories.push_back(new AnimationResourceFactory());
 	outResourceFactories.push_back(new ClothResourceFactory());
 	outResourceFactories.push_back(new RagDollResourceFactory());
+	outResourceFactories.push_back(new RtStackGraphResourceFactory());
 	outResourceFactories.push_back(new RtStateGraphResourceFactory());
 }
 

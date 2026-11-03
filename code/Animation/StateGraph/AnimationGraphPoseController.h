@@ -1,0 +1,74 @@
+/*
+ * TRAKTOR
+ * Copyright (c) 2022-2026 Anders Pistol.
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ */
+#pragma once
+
+#include "Animation/IPoseController.h"
+#include "Core/Ref.h"
+#include "Render/Types.h"
+
+#include <string>
+
+// import/export mechanism.
+#undef T_DLLCLASS
+#if defined(T_ANIMATION_EXPORT)
+#	define T_DLLCLASS T_DLLEXPORT
+#else
+#	define T_DLLCLASS T_DLLIMPORT
+#endif
+
+namespace traktor::animation
+{
+
+class RtStateGraph;
+class RtStateNode;
+
+/*! Animation pose evaluation controller.
+ * \ingroup Animation
+ */
+class T_DLLCLASS AnimationGraphPoseController : public IPoseController
+{
+	T_RTTI_CLASS;
+
+public:
+	explicit AnimationGraphPoseController(RtStateGraph* stateGraph);
+
+	bool setParameterValue(const render::Handle& parameter, bool value);
+
+	const RtStateNode* getRootState() const;
+
+	const RtStateNode* getCurrentState() const;
+
+	/*! State being blended into, null if none. */
+	const RtStateNode* getNextState() const;
+
+	virtual void destroy() override final;
+
+	virtual void setOwner(world::Entity* owner) override final;
+
+	virtual void setTransform(const Transform& transform) override final;
+
+	virtual bool evaluate(
+		float time,
+		float deltaTime,
+		const Transform& worldTransform,
+		const Skeleton* skeleton,
+		const AlignedVector< Transform >& jointTransforms,
+		AlignedVector< Transform >& outPoseTransforms) override final;
+
+	virtual Vector4 consumeRootMotion() override final;
+
+	virtual IPoseController* getActivePoseController() override final;
+
+	virtual void getPoseControllersOf(const TypeInfo& type, RefArray< IPoseController >& outControllers) override final;
+
+private:
+	Ref< RtStateGraph > m_stateGraph;
+};
+
+}

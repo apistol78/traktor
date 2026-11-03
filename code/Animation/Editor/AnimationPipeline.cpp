@@ -8,7 +8,7 @@
  */
 #include "Animation/Editor/AnimationPipeline.h"
 
-#include "Animation/Animation/Animation.h"
+#include "Animation/Animation.h"
 #include "Animation/Editor/AnimationAsset.h"
 #include "Animation/Editor/RigNameTranslation.h"
 #include "Animation/Editor/SkeletonAsset.h"

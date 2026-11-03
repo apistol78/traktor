@@ -1,0 +1,55 @@
+/*
+ * TRAKTOR
+ * Copyright (c) 2025-2026 Anders Pistol.
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ */
+#include "Animation/StateGraph/RtStateTransitionData.h"
+
+#include "Animation/StateGraph/RtStateGraph.h"
+#include "Animation/StateGraph/RtStateTransition.h"
+#include "Core/Serialization/ISerializer.h"
+#include "Core/Serialization/Member.h"
+#include "Core/Serialization/MemberAlignedVector.h"
+#include "Core/Serialization/MemberComposite.h"
+#include "Core/Serialization/MemberEnum.h"
+#include "Core/Serialization/MemberRef.h"
+
+namespace traktor::animation
+{
+
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.RtStateTransitionData", 0, RtStateTransitionData, ISerializable)
+
+Ref< RtStateTransition > RtStateTransitionData::createInstance(RtStateGraph* stateGraph) const
+{
+	Ref< RtStateTransition > instance = new RtStateTransition();
+
+	instance->m_from = stateGraph->m_states[m_from];
+	instance->m_to = stateGraph->m_states[m_to];
+	instance->m_moment = m_moment;
+	instance->m_duration = m_duration;
+
+	for (const auto& condition : m_conditions)
+		instance->m_conditions.push_back({ condition.parameter, condition.inverted });
+
+	return instance;
+}
+
+void RtStateTransitionData::serialize(ISerializer& s)
+{
+	s >> Member< int32_t >(L"from", m_from);
+	s >> Member< int32_t >(L"to", m_to);
+	s >> MemberEnumByValue< Moment >(L"moment", m_moment);
+	s >> Member< float >(L"duration", m_duration);
+	s >> MemberAlignedVector< Condition, MemberComposite< Condition > >(L"conditions", m_conditions);
+}
+
+void RtStateTransitionData::Condition::serialize(ISerializer& s)
+{
+	s >> Member< int32_t >(L"parameter", parameter);
+	s >> Member< bool >(L"inverted", inverted);
+}
+
+}

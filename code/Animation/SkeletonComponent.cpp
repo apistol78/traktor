@@ -173,7 +173,7 @@ Transform SkeletonComponent::consumeRootMotion()
 {
 	synchronize();
 
-	const Vector4 rootMotion = m_poseController->consumeRootMotion();
+	const Vector4 rootMotion = m_poseController ? m_poseController->consumeRootMotion() : Vector4::zero();
 	return Transform(
 		Vector4(rootMotion.x(), 0.0f, rootMotion.z(), 0.0f),
 		Quaternion::fromAxisAngle(Vector4(0.0f, 1.0f, 0.0f, 0.0f), rootMotion.w())

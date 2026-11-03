@@ -118,6 +118,8 @@ private:
 	Color4ub m_colorClear;
 	Timer m_timer;
 
+	AlignedVector< Vector4 > m_rootMotion;
+
 	void updatePreview();
 
 	void updateWorldRenderer();
