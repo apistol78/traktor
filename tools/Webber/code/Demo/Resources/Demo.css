@@ -1,0 +1,272 @@
+/*
+ * TRAKTOR
+ * Copyright (c) 2026 Anders Pistol.
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ */
+
+/* Site */
+
+body
+{
+	font-family: system-ui, "Segoe UI", sans-serif;
+	font-size: 14px;
+	line-height: 1.5;
+	color: #222;
+	background-color: #f2f3f5;
+}
+
+.demo_page
+{
+	max-width: 960px;
+	margin: 0 auto;
+	padding: 0 16px 32px 16px;
+}
+
+.demo_topbar
+{
+	display: flex;
+	align-items: center;
+	gap: 32px;
+	padding: 16px 0;
+	border-bottom: 1px solid #d0d4da;
+}
+
+.demo_logo
+{
+	display: block;
+	height: 40px;
+}
+
+.demo_links .wtk_link
+{
+	margin-right: 20px;
+	padding: 4px 0;
+	font-size: 16px;
+	color: #444;
+}
+
+.demo_links .demo_active
+{
+	color: #1a5fb4;
+	border-bottom: 2px solid #1a5fb4;
+}
+
+.demo_links .wtk_link:hover
+{
+	text-decoration: none;
+	color: #1a5fb4;
+}
+
+.demo_user
+{
+	margin-left: auto;
+	color: #667;
+}
+
+.wtk_link
+{
+	color: #1a5fb4;
+	text-decoration: none;
+}
+
+.wtk_link:hover
+{
+	text-decoration: underline;
+}
+
+.wtk_button
+{
+	font: inherit;
+	padding: 6px 14px;
+	margin-right: 8px;
+	border: 1px solid #1a5fb4;
+	border-radius: 4px;
+	background-color: #1a5fb4;
+	color: #fff;
+	cursor: pointer;
+}
+
+/* Blog */
+
+.blog_heading
+{
+	font-size: 18px;
+	font-weight: bold;
+	margin: 18px 0 12px 0;
+}
+
+.blog_summary
+{
+	background-color: #fff;
+	border: 1px solid #d0d4da;
+	border-radius: 4px;
+	padding: 14px 18px;
+	margin-bottom: 12px;
+}
+
+.blog_summary_title
+{
+	font-size: 18px;
+	font-weight: bold;
+}
+
+.blog_byline
+{
+	color: #667;
+	font-size: 12px;
+	margin-bottom: 8px;
+}
+
+.blog_back
+{
+	display: inline-block;
+	margin: 16px 0 12px 0;
+}
+
+.blog_article
+{
+	background-color: #fff;
+	border: 1px solid #d0d4da;
+	border-radius: 4px;
+	padding: 24px 32px;
+}
+
+.blog_title
+{
+	font-size: 26px;
+	font-weight: bold;
+	line-height: 1.25;
+	margin-bottom: 4px;
+}
+
+.blog_article .blog_byline
+{
+	margin-bottom: 18px;
+}
+
+.blog_paragraph
+{
+	max-width: 680px;
+	margin-bottom: 14px;
+	font-size: 15px;
+	line-height: 1.65;
+}
+
+/* Forum */
+
+.forum_navigation
+{
+	padding: 10px 0;
+}
+
+.forum_navigation .wtk_static
+{
+	display: inline;
+}
+
+.forum_separator
+{
+	margin: 0 6px;
+	color: #99a;
+}
+
+.forum_heading
+{
+	font-size: 18px;
+	font-weight: bold;
+	margin: 8px 0 12px 0;
+}
+
+.forum_description, .forum_last, .forum_time
+{
+	color: #667;
+	font-size: 12px;
+}
+
+.wtk_layout_table
+{
+	width: 100%;
+	border-collapse: collapse;
+	font-size: inherit;
+	background-color: #fff;
+	margin-top: 12px;
+}
+
+.wtk_layout_table th
+{
+	text-align: left;
+	font-size: 12px;
+	color: #667;
+	background-color: #e6e8ec;
+	padding: 6px 10px;
+}
+
+.wtk_layout_table td
+{
+	padding: 8px 10px;
+	border-top: 1px solid #e6e8ec;
+	vertical-align: top;
+}
+
+.forum_post
+{
+	background-color: #fff;
+	border: 1px solid #d0d4da;
+	border-radius: 4px;
+	margin-bottom: 12px;
+}
+
+.forum_post_header
+{
+	display: flex;
+	justify-content: space-between;
+	padding: 6px 12px;
+	background-color: #e6e8ec;
+}
+
+.forum_author, .forum_label
+{
+	font-weight: bold;
+}
+
+.forum_post_text
+{
+	padding: 12px;
+	white-space: pre-wrap;
+}
+
+.forum_form
+{
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	margin-top: 16px;
+}
+
+.forum_form .wtk_edit, .forum_form .wtk_textarea
+{
+	font: inherit;
+	padding: 6px;
+	border: 1px solid #c0c4ca;
+	border-radius: 4px;
+}
+
+.forum_form .wtk_textarea
+{
+	width: auto;
+	height: 120px;
+	resize: vertical;
+}
+
+.forum_form > .wtk_button
+{
+	align-self: flex-start;
+}
+
+.forum_error
+{
+	color: #c01c28;
+}

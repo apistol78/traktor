@@ -1,0 +1,78 @@
+/*
+ * TRAKTOR
+ * Copyright (c) 2026 Anders Pistol.
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ */
+
+body
+{
+	font-family: Consolas, monospace;
+	font-size: 8pt;
+	background-color: #aaa;
+	padding: 0;
+	margin: 0;
+}
+
+.wtk_textarea
+{
+	width: 100%;
+	height: 100%;
+}
+
+.wtk_layout_splitter_top
+{
+	background-color: #ff8;
+}
+
+.wtk_layout_splitter_bottom
+{
+	background-color: #f8f;
+}
+
+.wtk_layout_splitter_left
+{
+	background-color: #ff8;
+	width: 30%;
+	height: 100%;
+	float: left;
+	overflow: auto;
+}
+
+.wtk_layout_splitter_right
+{
+	background-color: #f8f;
+	width: 70%;
+	height: 100%;
+	float: left;
+	overflow: auto;
+}
+
+.wtk_button
+{
+	background-color: #fff;
+}
+
+.wtk_treeview
+{
+	background-color: #333;
+}
+
+.wtk_treeviewitem
+{
+	background-color: #333;
+	color: #ddd;
+	cursor: pointer;
+}
+
+.wtk_treeviewitemchildren
+{
+	background-color: #333;
+}
+
+.wtk_canvas_container
+{
+	background-color: #fff;
+}
