@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -76,21 +76,17 @@ void executeRequestJob(std::wstring method, net::Url url, Ref< const IHttpReques
 	if (content)
 	{
 		ss << L"Content-Type: " << content->getContentType() << L"\r\n";
-	 	ss << L"Content-Length: " << content->getContentLength() << L"\r\n";
-	 	ss << L"\r\n";
+		ss << L"Content-Length: " << content->getContentLength() << L"\r\n";
 		ss << L"\r\n";
 
 		if (!content->encodeIntoStream(&ms))
 		{
 			result->fail();
 			return;
-		}		 
+		}
 	}
 	else
-	{
 		ss << L"\r\n";
-		ss << L"\r\n";
-	}
 
 	// Send request and payload.
 	Ref< IStream > stream = new SocketStream(socket);

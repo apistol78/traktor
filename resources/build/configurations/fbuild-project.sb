@@ -256,7 +256,7 @@ collectFiles(
 				winresFiles[fileKey] = sf
 			end
 			table.insert(sf, file)
-		elseif ext == "xdi" or ext == "image" or ext == "png" or ext == "lua" or ext == "js" or ext == "css" then
+		elseif ext == "xdi" or ext == "image" or ext == "png" or ext == "webp" or ext == "lua" or ext == "js" or ext == "css" then
 			table.insert(resourceFiles, file)
 		elseif ext == "def" then
 			definitionFile = file

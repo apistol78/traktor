@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -13,6 +13,25 @@
 
 namespace traktor::html
 {
+	namespace
+	{
+
+std::wstring encodeAttributeValue(const std::wstring& value)
+{
+	StringOutputStream ss;
+	for (auto c : value)
+	{
+		if (c == L'&')
+			ss << L"&amp;";
+		else if (c == L'\"')
+			ss << L"&quot;";
+		else
+			ss << c;
+	}
+	return ss.str();
+}
+
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.html.Element", Element, Node)
 
@@ -135,7 +154,7 @@ void Element::toString(OutputStream& os) const
 {
 	os << L"<" << m_name;
 	for (Ref< Attribute > attribute = m_firstAttribute; attribute; attribute = attribute->getNext())
-		os << L" " << attribute->getName() << L"=\"" << attribute->getValue() << L"\"";
+		os << L" " << attribute->getName() << L"=\"" << encodeAttributeValue(attribute->getValue()) << L"\"";
 
 	if (getFirstChild())
 	{
@@ -157,10 +176,11 @@ void Element::toString(OutputStream& os) const
 	}
 	else
 	{
-		const bool permitClosed = !bool(
-			compareIgnoreCase(L"script", m_name) == 0 ||
-			compareIgnoreCase(L"link", m_name) == 0
-		);
+		// Only void elements may be self-closed in HTML.
+		const wchar_t* c_voidElements[] = { L"area", L"base", L"br", L"col", L"embed", L"hr", L"img", L"input", L"link", L"meta", L"source", L"track", L"wbr" };
+		bool permitClosed = false;
+		for (auto voidElement : c_voidElements)
+			permitClosed |= (compareIgnoreCase(voidElement, m_name) == 0);
 		if (permitClosed)
 			os << L"/>";
 		else

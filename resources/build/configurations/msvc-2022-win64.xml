@@ -1142,6 +1142,13 @@
 			</item>
 			<item type="traktor.sb.SolutionBuilderMsvcVCXCustomBuildTool">
 				<name>CustomBuild</name>
+				<fileType>webp</fileType>
+				<command>$(TRAKTOR_HOME)/bin/win64/releasestatic/Traktor.Run.App $(TRAKTOR_HOME)/scripts/binaryinclude/BinaryInclude.run %(FullPath) .\\Resources\\%(FileName).h c_Resource%(FileName)</command>
+				<message>Building embedded resource file %(FileName).h</message>
+				<outputs>.\\Resources\\%(FileName).h;%(Outputs)</outputs>
+			</item>
+			<item type="traktor.sb.SolutionBuilderMsvcVCXCustomBuildTool">
+				<name>CustomBuild</name>
 				<fileType>image</fileType>
 				<command>$(TRAKTOR_HOME)/bin/win64/releasestatic/Traktor.Run.App $(TRAKTOR_HOME)/scripts/binaryinclude/BinaryInclude.run %(FullPath) .\\Resources\\%(FileName).h c_Resource%(FileName)</command>
 				<message>Building embedded resource file %(FileName).h</message>

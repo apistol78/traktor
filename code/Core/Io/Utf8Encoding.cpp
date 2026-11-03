@@ -45,7 +45,7 @@ int Utf8Encoding::translate(const wchar_t* chars, int32_t count, uint8_t* out) c
 		{
 			// 1110xxxx 10xxxxxx 10xxxxxx
 			out[j++] = 0xe0 | uint8_t(ch >> 12);
-			out[j++] = 0x80 | uint8_t(ch >> 6);
+			out[j++] = 0x80 | uint8_t((ch >> 6) & 0x3f);
 			out[j++] = 0x80 | uint8_t(ch & 0x3f);
 			continue;
 		}
@@ -56,8 +56,8 @@ int Utf8Encoding::translate(const wchar_t* chars, int32_t count, uint8_t* out) c
 		{
 			// 11110xxx 10xxxxxx 10xxxxxx 10xxxxxx
 			out[j++] = 0xf0 | uint8_t(ch >> 18);
-			out[j++] = 0x80 | uint8_t(ch >> 12);
-			out[j++] = 0x80 | uint8_t(ch >> 6);
+			out[j++] = 0x80 | uint8_t((ch >> 12) & 0x3f);
+			out[j++] = 0x80 | uint8_t((ch >> 6) & 0x3f);
 			out[j++] = 0x80 | uint8_t(ch & 0x3f);
 			continue;
 		}
@@ -66,9 +66,9 @@ int Utf8Encoding::translate(const wchar_t* chars, int32_t count, uint8_t* out) c
 		{
 			// 111110xx 10xxxxxx 10xxxxxx 10xxxxxx 10xxxxxx
 			out[j++] = 0xf8 | uint8_t(ch >> 24);
-			out[j++] = 0x80 | uint8_t(ch >> 18);
-			out[j++] = 0x80 | uint8_t(ch >> 12);
-			out[j++] = 0x80 | uint8_t(ch >> 6);
+			out[j++] = 0x80 | uint8_t((ch >> 18) & 0x3f);
+			out[j++] = 0x80 | uint8_t((ch >> 12) & 0x3f);
+			out[j++] = 0x80 | uint8_t((ch >> 6) & 0x3f);
 			out[j++] = 0x80 | uint8_t(ch & 0x3f);
 			continue;
 		}
@@ -77,10 +77,10 @@ int Utf8Encoding::translate(const wchar_t* chars, int32_t count, uint8_t* out) c
 		{
 			// 1111110x 10xxxxxx 10xxxxxx 10xxxxxx 10xxxxxx 10xxxxxx
 			out[j++] = 0xfc | uint8_t(ch >> 30);
-			out[j++] = 0x80 | uint8_t(ch >> 24);
-			out[j++] = 0x80 | uint8_t(ch >> 18);
-			out[j++] = 0x80 | uint8_t(ch >> 12);
-			out[j++] = 0x80 | uint8_t(ch >> 6);
+			out[j++] = 0x80 | uint8_t((ch >> 24) & 0x3f);
+			out[j++] = 0x80 | uint8_t((ch >> 18) & 0x3f);
+			out[j++] = 0x80 | uint8_t((ch >> 12) & 0x3f);
+			out[j++] = 0x80 | uint8_t((ch >> 6) & 0x3f);
 			out[j++] = 0x80 | uint8_t(ch & 0x3f);
 			continue;
 		}

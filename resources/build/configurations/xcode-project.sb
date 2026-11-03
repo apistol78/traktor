@@ -339,7 +339,7 @@ collectFiles(
 			buildFile.fileRef = fileReference
 			table.insert(buildFiles, buildFile)
 
-		elseif ext == "xdi" or ext == "image" or ext == "png" or ext == "lua" then
+		elseif ext == "xdi" or ext == "image" or ext == "png" or ext == "webp" or ext == "lua" then
 
 			local run < const > = Path("$(TRAKTOR_HOME)/bin/osx/releasestatic/Traktor.Run.App").pathNameNoVolume
 			local binaryInclude < const > = Path("$(TRAKTOR_HOME)/scripts/binaryinclude/BinaryInclude.run").pathNameNoVolume

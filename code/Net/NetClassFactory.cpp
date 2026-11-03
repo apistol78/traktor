@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -89,7 +89,7 @@ public:
 		IStream* clientStream,
 		OutputStream& os,
 		Ref< traktor::IStream >& outStream,
-		bool& outCache,
+		std::map< std::wstring, std::wstring >& outHeaders,
 		std::wstring& inoutSession
 	)
 	{

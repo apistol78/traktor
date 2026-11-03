@@ -49,7 +49,7 @@
 								<item>
 									<first>Extensions</first>
 									<second type="traktor.PropertyString">
-										<value>cgf;cgv;css;exe;image;js;lua;png;xdi</value>
+										<value>cgf;cgv;css;exe;image;js;lua;png;webp;xdi</value>
 									</second>
 								</item>
 								<item>
