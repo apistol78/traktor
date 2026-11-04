@@ -24,20 +24,35 @@ class ForumPage : public wbr::Container
 	T_RTTI_CLASS;
 
 public:
-	/*! \param user Author of posts made through this page. */
-	explicit ForumPage(Forum& forum, const std::wstring& user);
+	explicit ForumPage(Forum& forum);
+
+	/*! Set user and redraw current view.
+	 * \param user Author of posts made through this page, empty for guest.
+	 * \param admin Admins can delete any post.
+	 */
+	void setUser(const std::wstring& user, bool admin);
+
+	/*! Location of current view; "", "<board>", "<board>/<thread>" or "<board>/new". */
+	std::wstring getLocation() const;
+
+	/*! Show view at location; invalid locations show the closest valid view. */
+	void navigate(const std::wstring& location);
 
 	void showBoards();
-
-private:
-	Forum& m_forum;
-	std::wstring m_user;
-	Ref< wbr::Container > m_navigation;
-	Ref< wbr::Container > m_content;
 
 	void showBoard(int32_t board);
 
 	void showThread(int32_t board, int32_t thread);
+
+private:
+	Forum& m_forum;
+	std::wstring m_user;
+	bool m_admin = false;
+	int32_t m_board = -1;	//!< Board being shown, -1 when listing boards.
+	int32_t m_thread = -1;	//!< Thread being shown, -1 when not showing a thread.
+	bool m_creating = false;	//!< New thread form is shown for m_board.
+	Ref< wbr::Container > m_navigation;
+	Ref< wbr::Container > m_content;
 
 	void showNewThread(int32_t board);
 

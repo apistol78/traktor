@@ -30,7 +30,8 @@ class IApplication;
  * \ingroup Webber
  *
  * Client events carry the values of all inputs; the document is rebuilt and
- * changed subtrees are sent back as JSON keyed by element id.
+ * changed subtrees are sent back as JSON keyed by element id. The application's
+ * location is sent along so browser back and forward can navigate to it.
  */
 class HttpRequestListener : public net::HttpServer::IRequestListener
 {

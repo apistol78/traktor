@@ -274,6 +274,8 @@ int32_t HttpRequestListener::httpClientRequest(
 		// Input values are keyed by element id.
 		int32_t wid = -1;
 		int32_t waction = -1;
+		bool navigate = false;
+		std::wstring location;
 		std::map< int32_t, std::wstring > values;
 		for (const auto& kv : StringSplit< std::wstring >(body, L"&"))
 		{
@@ -288,6 +290,11 @@ int32_t HttpRequestListener::httpClientRequest(
 				wid = parseString< int32_t >(value, -1);
 			else if (key == L"wa")
 				waction = parseString< int32_t >(value, -1);
+			else if (key == L"nav")
+			{
+				navigate = true;
+				location = value;
+			}
 			else if (startsWith(key, L"_"))
 				values[parseString< int32_t >(key.substr(1), -1)] = value;
 		}
@@ -296,7 +303,9 @@ int32_t HttpRequestListener::httpClientRequest(
 		app->getRootWidget()->consumeValues(values);
 		Ref< html::Document > baseline = buildDocument(app);
 
-		if (wid >= 0 && waction >= 0)
+		if (navigate)
+			app->navigate(location);
+		else if (wid >= 0 && waction >= 0)
 			app->getRootWidget()->consume(wid, waction);
 
 		Ref< html::Document > doc = buildDocument(app);
@@ -319,6 +328,8 @@ int32_t HttpRequestListener::httpClientRequest(
 				log::info << L"Updated element \"" << id << L"\"." << Endl;
 		}
 
+		// Client records location changes in the browser's history.
+		os << L"\"_location\": \"" << escapeJson(app->getLocation()) << L"\"," << Endl;
 		os << L"\"_eod_\": 0" << Endl;
 
 		os << DecreaseIndent;
@@ -413,6 +424,12 @@ Ref< html::Document > HttpRequestListener::buildDocument(const IApplication* app
 	Ref< html::Element > emeta = new html::Element(L"meta");
 	emeta->setAttribute(L"charset", L"UTF-8");
 	ehead->addChild(emeta);
+
+	// Client navigates when the loaded URL names another location.
+	Ref< html::Element > emetaLocation = new html::Element(L"meta");
+	emetaLocation->setAttribute(L"name", L"webber-location");
+	emetaLocation->setAttribute(L"content", app->getLocation());
+	ehead->addChild(emetaLocation);
 
 	Ref< html::Element > escript = new html::Element(L"script");
 	escript->setAttribute(L"type", L"text/javascript");

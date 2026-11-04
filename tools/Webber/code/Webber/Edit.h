@@ -26,12 +26,16 @@ public:
 
 	const std::wstring& getText() const;
 
+	/*! Hide typed text; text is never written back to the client. */
+	void setPassword(bool password);
+
 	virtual void build(html::Element* parent) const override final;
 
 	virtual void consumeValues(const std::map< int32_t, std::wstring >& values) override final;
 
 private:
 	std::wstring m_text;
+	bool m_password = false;
 };
 
 }

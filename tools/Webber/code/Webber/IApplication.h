@@ -42,6 +42,12 @@ public:
 	virtual std::wstring getStyleSheet() const = 0;
 
 	virtual Ref< IStream > resolve(const std::wstring& uri) const = 0;
+
+	/*! Location of current view, kept in the browser's history; empty for the start view. */
+	virtual std::wstring getLocation() const;
+
+	/*! Show view at location; from browser back/forward or a loaded URL, so location is untrusted. */
+	virtual void navigate(const std::wstring& location);
 };
 
 }

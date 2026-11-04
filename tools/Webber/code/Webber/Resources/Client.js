@@ -7,10 +7,27 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
-function post_event(widgetId, action)
+// Application location is kept in the URL fragment; start view has none.
+function current_location()
+{
+	try
+	{
+		return decodeURIComponent(location.hash.substring(1));
+	}
+	catch (e)
+	{
+		return "";
+	}
+}
+
+function location_url(loc)
+{
+	return loc == "" ? location.pathname + location.search : "#" + encodeURI(loc);
+}
+
+function send_event(body, navigating)
 {
 	// Send values of all inputs with every event.
-	var body = "wid=" + widgetId + "&wa=" + action;
 	var inputs = document.querySelectorAll("input[id], textarea[id]");
 	for (var i = 0; i < inputs.length; ++i)
 		body += "&" + inputs[i].id + "=" + encodeURIComponent(inputs[i].value);
@@ -41,6 +58,16 @@ function post_event(widgetId, action)
 						elm.value = elm.defaultValue;
 				}
 			}
+
+			// New locations become history entries; navigation only corrects the current one.
+			var loc = j["_location"];
+			if (loc != null && loc != current_location())
+			{
+				if (navigating)
+					history.replaceState(null, "", location_url(loc));
+				else
+					history.pushState(null, "", location_url(loc));
+			}
 		}
 	}
 
@@ -49,3 +76,25 @@ function post_event(widgetId, action)
 	xhttp.setRequestHeader("X-Webber", "1");
 	xhttp.send(body);
 }
+
+function post_event(widgetId, action)
+{
+	send_event("wid=" + widgetId + "&wa=" + action, false);
+}
+
+function post_navigate(loc)
+{
+	send_event("nav=" + encodeURIComponent(loc), true);
+}
+
+window.addEventListener("popstate", function()
+{
+	post_navigate(current_location());
+});
+
+window.addEventListener("DOMContentLoaded", function()
+{
+	var meta = document.querySelector("meta[name='webber-location']");
+	if (meta != null && meta.content != current_location())
+		post_navigate(current_location());
+});

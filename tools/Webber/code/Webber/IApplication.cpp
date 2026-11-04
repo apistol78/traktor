@@ -13,4 +13,13 @@ namespace traktor::wbr
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.wbr.IApplication", IApplication, Object)
 
+std::wstring IApplication::getLocation() const
+{
+	return L"";
+}
+
+void IApplication::navigate(const std::wstring& location)
+{
+}
+
 }

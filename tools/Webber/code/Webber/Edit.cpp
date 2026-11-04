@@ -24,11 +24,21 @@ const std::wstring& Edit::getText() const
 	return m_text;
 }
 
+void Edit::setPassword(bool password)
+{
+	m_password = password;
+}
+
 void Edit::build(html::Element* parent) const
 {
 	auto einput = createElement(L"input", L"wtk_edit", parent);
-	einput->setAttribute(L"type", L"text");
-	einput->setAttribute(L"value", m_text);
+	if (m_password)
+		einput->setAttribute(L"type", L"password");
+	else
+	{
+		einput->setAttribute(L"type", L"text");
+		einput->setAttribute(L"value", m_text);
+	}
 }
 
 void Edit::consumeValues(const std::map< int32_t, std::wstring >& values)

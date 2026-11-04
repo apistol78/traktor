@@ -10,6 +10,7 @@
 #include "Core/Misc/String.h"
 #include "Html/Attribute.h"
 #include "Html/Element.h"
+#include "Html/Text.h"
 
 namespace traktor::html
 {
@@ -29,6 +30,19 @@ std::wstring encodeAttributeValue(const std::wstring& value)
 			ss << c;
 	}
 	return ss.str();
+}
+
+bool isInlineContent(const Node* node)
+{
+	for (; node != nullptr; node = node->getParent())
+	{
+		for (Ref< Node > child = node->getFirstChild(); child; child = child->getNextSibling())
+		{
+			if (is_a< Text >(child))
+				return true;
+		}
+	}
+	return false;
 }
 
 	}
@@ -156,11 +170,15 @@ void Element::toString(OutputStream& os) const
 	for (Ref< Attribute > attribute = m_firstAttribute; attribute; attribute = attribute->getNext())
 		os << L" " << attribute->getName() << L"=\"" << encodeAttributeValue(attribute->getValue()) << L"\"";
 
+	// Mixed content is written without added whitespace since browsers would render it.
+	const bool inlineContent = isInlineContent(this);
+	const bool inlineParent = isInlineContent(getParent());
+
 	if (getFirstChild())
 	{
 		os << L">";
 
-		if (is_a< Element >(getFirstChild()))
+		if (!inlineContent)
 		{
 			os << IncreaseIndent;
 			os << Endl;
@@ -169,10 +187,10 @@ void Element::toString(OutputStream& os) const
 		for (Ref< Node > child = getFirstChild(); child; child = child->getNextSibling())
 			child->toString(os);
 
-		if (is_a< Element >(getFirstChild()))
+		if (!inlineContent)
 			os << DecreaseIndent;
 
-		os << L"</" << m_name << L">" << Endl;
+		os << L"</" << m_name << L">";
 	}
 	else
 	{
@@ -185,9 +203,10 @@ void Element::toString(OutputStream& os) const
 			os << L"/>";
 		else
 			os << L"></" << m_name << L">";
-
-		os << Endl;
 	}
+
+	if (!inlineParent)
+		os << Endl;
 }
 
 }

@@ -10,6 +10,7 @@
 #include "Core/Log/Log.h"
 #include "Core/Misc/CommandLine.h"
 #include "Demo/DemoApplication.h"
+#include "Demo/UserData.h"
 #include "Forum/ForumData.h"
 #include "Net/Network.h"
 #include "Net/SocketAddressIPv4.h"
@@ -37,11 +38,12 @@ int main(int argc, const char** argv)
 		return 1;
 	}
 
-	const blog::Blog blogData = blog::createSampleBlog();
+	const AlignedVector< demo::User > users = demo::createSampleUsers();
+	blog::Blog blogData = blog::createSampleBlog();
 	forum::Forum forumData = forum::createSampleForum();
 
 	server->setRequestListener(new wbr::HttpRequestListener(
-		[&blogData, &forumData]() -> Ref< wbr::IApplication > { return new demo::DemoApplication(blogData, forumData); },
+		[&users, &blogData, &forumData]() -> Ref< wbr::IApplication > { return new demo::DemoApplication(users, blogData, forumData); },
 		verbose
 	));
 

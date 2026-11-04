@@ -27,6 +27,14 @@ namespace traktor::forum
 
 const wchar_t* c_separator = L"›";
 
+/*! Index from location segment, -1 unless only digits. */
+int32_t parseIndex(const std::wstring& text)
+{
+	if (text.empty() || text.size() > 9 || text.find_first_not_of(L"0123456789") != text.npos)
+		return -1;
+	return parseString< int32_t >(text);
+}
+
 std::wstring formatTime(uint64_t time)
 {
 	return DateTime(time).format(L"%Y-%m-%d %H:%M");
@@ -35,6 +43,17 @@ std::wstring formatTime(uint64_t time)
 std::wstring formatLastPost(const Post& post)
 {
 	return formatTime(post.time) + L" by " + post.author;
+}
+
+AlignedVector< const Post* > visiblePosts(const Thread& thread)
+{
+	AlignedVector< const Post* > posts;
+	for (const auto& post : thread.posts)
+	{
+		if (!post.deleted)
+			posts.push_back(&post);
+	}
+	return posts;
 }
 
 wbr::Container* addContainer(wbr::Container* parent, const std::wstring& styleClass)
@@ -55,9 +74,8 @@ wbr::Static* addStatic(wbr::Container* parent, const std::wstring& text, const s
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.forum.ForumPage", ForumPage, wbr::Container)
 
-ForumPage::ForumPage(Forum& forum, const std::wstring& user)
+ForumPage::ForumPage(Forum& forum)
 :	m_forum(forum)
-,	m_user(user)
 {
 	setStyleClass(L"forum");
 	m_navigation = addContainer(this, L"forum_navigation");
@@ -65,8 +83,51 @@ ForumPage::ForumPage(Forum& forum, const std::wstring& user)
 	showBoards();
 }
 
+void ForumPage::setUser(const std::wstring& user, bool admin)
+{
+	m_user = user;
+	m_admin = admin;
+	if (m_thread >= 0)
+		showThread(m_board, m_thread);
+	else if (m_board >= 0)
+		showBoard(m_board);
+	else
+		showBoards();
+}
+
+std::wstring ForumPage::getLocation() const
+{
+	if (m_board < 0)
+		return L"";
+	else if (m_creating)
+		return toString(m_board) + L"/new";
+	else if (m_thread >= 0)
+		return toString(m_board) + L"/" + toString(m_thread);
+	else
+		return toString(m_board);
+}
+
+void ForumPage::navigate(const std::wstring& location)
+{
+	const size_t p = location.find(L'/');
+	const int32_t board = parseIndex(location.substr(0, p));
+	const std::wstring rest = (p != location.npos) ? location.substr(p + 1) : L"";
+	const int32_t thread = parseIndex(rest);
+
+	if (board < 0 || board >= (int32_t)m_forum.boards.size())
+		showBoards();
+	else if (rest == L"new" && !m_user.empty())
+		showNewThread(board);
+	else if (thread < 0 || thread >= (int32_t)m_forum.boards[board].threads.size())
+		showBoard(board);
+	else
+		showThread(board, thread);
+}
+
 void ForumPage::showBoards()
 {
+	m_board = m_thread = -1;
+	m_creating = false;
 	setNavigation(-1, L"");
 	m_content->removeAllChildren();
 
@@ -77,20 +138,25 @@ void ForumPage::showBoards()
 	{
 		const Board& board = m_forum.boards[i];
 
+		int32_t threads = 0;
 		int32_t posts = 0;
 		const Post* last = nullptr;
 		for (const auto& thread : board.threads)
 		{
-			posts += (int32_t)thread.posts.size();
-			if (!last || thread.posts.back().time > last->time)
-				last = &thread.posts.back();
+			const auto visible = visiblePosts(thread);
+			if (visible.empty())
+				continue;
+			threads++;
+			posts += (int32_t)visible.size();
+			if (!last || visible.back()->time > last->time)
+				last = visible.back();
 		}
 
 		auto cell = table->addChild(new wbr::Container());
 		cell->addChild(new wbr::Link(board.name))->clicked() += [this, i]() { showBoard(i); };
 		addStatic(cell, board.description, L"forum_description");
 
-		addStatic(table, toString((int32_t)board.threads.size()), L"forum_count");
+		addStatic(table, toString(threads), L"forum_count");
 		addStatic(table, toString(posts), L"forum_count");
 		addStatic(table, last ? formatLastPost(*last) : std::wstring(L"-"), L"forum_last");
 	}
@@ -100,50 +166,82 @@ void ForumPage::showBoard(int32_t board)
 {
 	const Board& b = m_forum.boards[board];
 
+	m_board = board;
+	m_thread = -1;
+	m_creating = false;
 	setNavigation(board, L"");
 	m_content->removeAllChildren();
 
 	addStatic(m_content, b.name, L"forum_heading");
-	m_content->addChild(new wbr::Button(L"New thread"))->clicked() += [this, board]() { showNewThread(board); };
+	if (!m_user.empty())
+		m_content->addChild(new wbr::Button(L"New thread"))->clicked() += [this, board]() { showNewThread(board); };
 
 	// Most recently active threads first.
-	std::vector< int32_t > order(b.threads.size());
-	for (int32_t i = 0; i < (int32_t)order.size(); ++i)
-		order[i] = i;
-	std::stable_sort(order.begin(), order.end(), [&](int32_t lh, int32_t rh) {
-		return b.threads[lh].posts.back().time > b.threads[rh].posts.back().time;
+	std::vector< std::pair< int32_t, AlignedVector< const Post* > > > threads;
+	for (int32_t i = 0; i < (int32_t)b.threads.size(); ++i)
+	{
+		auto visible = visiblePosts(b.threads[i]);
+		if (!visible.empty())
+			threads.push_back({ i, visible });
+	}
+	std::stable_sort(threads.begin(), threads.end(), [](const auto& lh, const auto& rh) {
+		return lh.second.back()->time > rh.second.back()->time;
 	});
 
 	auto table = addContainer(m_content, L"forum_list");
 	table->setLayout(new wbr::Table({ L"Thread", L"Author", L"Replies", L"Last post" }));
 
-	for (auto i : order)
+	for (const auto& thread : threads)
 	{
-		const Thread& thread = b.threads[i];
-		table->addChild(new wbr::Link(thread.title))->clicked() += [this, board, i]() { showThread(board, i); };
-		addStatic(table, thread.posts.front().author, L"forum_author");
-		addStatic(table, toString((int32_t)thread.posts.size() - 1), L"forum_count");
-		addStatic(table, formatLastPost(thread.posts.back()), L"forum_last");
+		const int32_t i = thread.first;
+		const auto& posts = thread.second;
+		table->addChild(new wbr::Link(b.threads[i].title))->clicked() += [this, board, i]() { showThread(board, i); };
+		addStatic(table, posts.front()->author, L"forum_author");
+		addStatic(table, toString((int32_t)posts.size() - 1), L"forum_count");
+		addStatic(table, formatLastPost(*posts.back()), L"forum_last");
 	}
 }
 
 void ForumPage::showThread(int32_t board, int32_t thread)
 {
 	const Thread& t = m_forum.boards[board].threads[thread];
+	if (visiblePosts(t).empty())
+	{
+		showBoard(board);
+		return;
+	}
 
+	m_board = board;
+	m_thread = thread;
+	m_creating = false;
 	setNavigation(board, t.title);
 	m_content->removeAllChildren();
 
 	addStatic(m_content, t.title, L"forum_heading");
 
-	for (const auto& post : t.posts)
+	for (int32_t i = 0; i < (int32_t)t.posts.size(); ++i)
 	{
+		const Post& post = t.posts[i];
+		if (post.deleted)
+			continue;
+
 		auto epost = addContainer(m_content, L"forum_post");
 		auto header = addContainer(epost, L"forum_post_header");
 		addStatic(header, post.author, L"forum_author");
-		addStatic(header, formatTime(post.time), L"forum_time");
+		auto meta = addContainer(header, L"forum_post_meta");
+		addStatic(meta, formatTime(post.time), L"forum_time");
+		if (m_admin || (!m_user.empty() && post.author == m_user))
+		{
+			meta->addChild(new wbr::Link(L"Delete"))->clicked() += [this, board, thread, i]() {
+				m_forum.boards[board].threads[thread].posts[i].deleted = true;
+				showThread(board, thread);
+			};
+		}
 		addStatic(epost, post.text, L"forum_post_text");
 	}
+
+	if (m_user.empty())
+		return;
 
 	auto form = addContainer(m_content, L"forum_form");
 	addStatic(form, L"Reply", L"forum_label");
@@ -162,6 +260,9 @@ void ForumPage::showThread(int32_t board, int32_t thread)
 
 void ForumPage::showNewThread(int32_t board)
 {
+	m_board = board;
+	m_thread = -1;
+	m_creating = true;
 	setNavigation(board, L"New thread");
 	m_content->removeAllChildren();
 

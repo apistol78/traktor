@@ -22,7 +22,8 @@ struct Post
 	std::wstring title;
 	std::wstring author;
 	uint64_t time;	//!< Seconds since the Epoch.
-	AlignedVector< std::wstring > paragraphs;
+	std::wstring text;	//!< Markdown.
+	bool deleted = false;	//!< Deleted posts are kept so post indices stay valid.
 };
 
 /*! In-memory blog, shared by all sessions.

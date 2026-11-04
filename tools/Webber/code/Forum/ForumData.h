@@ -22,9 +22,10 @@ struct Post
 	std::wstring author;
 	std::wstring text;
 	uint64_t time;	//!< Seconds since the Epoch.
+	bool deleted = false;	//!< Deleted posts are kept so post indices stay valid.
 };
 
-/*! Forum thread; always has at least one post.
+/*! Forum thread; hidden when all its posts are deleted.
  * \ingroup Webber
  */
 struct Thread
