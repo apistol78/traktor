@@ -10,6 +10,15 @@
 
 #include <string>
 #include "Core/Containers/AlignedVector.h"
+#include "Core/Ref.h"
+#include "Core/Serialization/ISerializable.h"
+
+namespace traktor
+{
+
+class ISerializer;
+
+}
 
 namespace traktor::forum
 {
@@ -22,16 +31,21 @@ struct Post
 	std::wstring author;
 	std::wstring text;
 	uint64_t time;	//!< Seconds since the Epoch.
-	bool deleted = false;	//!< Deleted posts are kept so post indices stay valid.
+	int32_t id = 0;	//!< Unique within the forum; never reused.
+
+	void serialize(ISerializer& s);
 };
 
-/*! Forum thread; hidden when all its posts are deleted.
+/*! Forum thread; removed together with its last post.
  * \ingroup Webber
  */
 struct Thread
 {
 	std::wstring title;
 	AlignedVector< Post > posts;
+	int32_t id = 0;	//!< Unique within the forum; never reused.
+
+	void serialize(ISerializer& s);
 };
 
 /*! Forum board.
@@ -42,18 +56,26 @@ struct Board
 	std::wstring name;
 	std::wstring description;
 	AlignedVector< Thread > threads;
+
+	void serialize(ISerializer& s);
 };
 
-/*! In-memory forum, shared by all sessions.
+/*! In-memory forum, shared by all sessions; root of the forum data file.
  * \ingroup Webber
  */
-struct Forum
+class Forum : public ISerializable
 {
+	T_RTTI_CLASS;
+
+public:
+	int32_t nextId = 1;	//!< Id of next new thread or post.
 	std::wstring name;
 	AlignedVector< Board > boards;
+
+	virtual void serialize(ISerializer& s) override final;
 };
 
 /*! Create a forum populated with sample boards, threads and posts. */
-Forum createSampleForum();
+Ref< Forum > createSampleForum();
 
 }

@@ -8,6 +8,7 @@
  */
 #pragma once
 
+#include <functional>
 #include "Core/Containers/AlignedVector.h"
 #include "Webber/IApplication.h"
 
@@ -23,7 +24,7 @@ class Widget;
 namespace traktor::blog
 {
 
-struct Blog;
+class Blog;
 class BlogPage;
 
 }
@@ -31,7 +32,7 @@ class BlogPage;
 namespace traktor::forum
 {
 
-struct Forum;
+class Forum;
 class ForumPage;
 
 }
@@ -49,7 +50,16 @@ class DemoApplication : public wbr::IApplication
 	T_RTTI_CLASS;
 
 public:
-	explicit DemoApplication(const AlignedVector< User >& users, blog::Blog& blog, forum::Forum& forum);
+	/*! \param blogChanged Called after the blog has been modified.
+	 * \param forumChanged Called after the forum has been modified.
+	 */
+	explicit DemoApplication(
+		const AlignedVector< User >& users,
+		blog::Blog& blog,
+		const std::function< void() >& blogChanged,
+		forum::Forum& forum,
+		const std::function< void() >& forumChanged
+	);
 
 	virtual bool create() override final;
 
@@ -69,16 +79,20 @@ public:
 
 	void showBlog();
 
+	/*! \param post Post id. */
 	void showBlogPost(int32_t post);
 
 	void showForum();
 
+	/*! \param thread Thread id. */
 	void showForumThread(int32_t board, int32_t thread);
 
 private:
 	const AlignedVector< User >& m_users;
 	blog::Blog& m_blogData;
+	std::function< void() > m_blogChanged;
 	forum::Forum& m_forumData;
+	std::function< void() > m_forumChanged;
 	Ref< wbr::Container > m_root;
 	Ref< wbr::Link > m_homeLink;
 	Ref< wbr::Link > m_blogLink;

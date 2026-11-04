@@ -1,0 +1,143 @@
+{
+	"folders": [
+		{
+			"name": "webber",
+			"path": "."
+		},
+		{
+			"name": "traktor",
+			"path": "../.."
+		}
+	],
+	"settings": {
+		"files.associations": {
+			"*.run": "lua",
+			"*.xms": "xml",
+			"*.workspace": "xml"
+		},
+		"task.autoDetect": "off"
+	},
+	"tasks": {
+		"version": "2.0.0",
+		"tasks": [
+			{
+				"type": "shell",
+				"label": "Webber - DebugShared",
+				"group": "build",
+				"options": {
+					"cwd": "${workspaceFolder:webber}"
+				},
+
+				"linux": {
+					"command": "../../bin/linux/releasestatic/Traktor.SolutionBuilder.App -f=direct --dependent-only --target=DebugShared WebberLinux.xms",
+					"problemMatcher": [
+						"$gcc"
+					]
+				},
+
+				"windows": {
+					"options": {
+						"cwd": "${workspaceFolder:webber}",
+						"shell": { "executable": "cmd.exe", "args": [ "/d", "/c" ] }
+					},
+					"command": "call ..\\..\\scripts\\config-vs-x64.bat && ..\\..\\bin\\win64\\releasestatic\\Traktor.SolutionBuilder.App.exe -f=direct --dependent-only --target=DebugShared WebberWin64.xms",
+					"problemMatcher": [
+						"$msCompile"
+					]
+				}
+			},
+
+			{
+				"type": "shell",
+				"label": "Webber - ReleaseShared",
+				"group": {
+					"kind": "build",
+					"isDefault": true
+				},
+				"options": {
+					"cwd": "${workspaceFolder:webber}"
+				},
+
+				"linux": {
+					"command": "../../bin/linux/releasestatic/Traktor.SolutionBuilder.App -f=direct --dependent-only --target=ReleaseShared WebberLinux.xms",
+					"problemMatcher": [
+						"$gcc"
+					]
+				},
+
+				"windows": {
+					"options": {
+						"cwd": "${workspaceFolder:webber}",
+						"shell": { "executable": "cmd.exe", "args": [ "/d", "/c" ] }
+					},
+					"command": "call ..\\..\\scripts\\config-vs-x64.bat && ..\\..\\bin\\win64\\releasestatic\\Traktor.SolutionBuilder.App.exe -f=direct --dependent-only --target=ReleaseShared WebberWin64.xms",
+					"problemMatcher": [
+						"$msCompile"
+					]
+				}
+			}
+		]
+	},
+	"launch": {
+		"version": "0.2.0",
+		"configurations": [
+			{
+				"name": "Webber - DebugShared",
+				"request": "launch",
+
+				"type": "cppdbg",
+				"program": "${workspaceFolder:traktor}/bin/latest/linux/debugshared/Webber",
+				"args": [ "--port=1337" ],
+				"stopAtEntry": false,
+				"cwd": "${workspaceFolder:webber}",
+				"externalConsole": false,
+				"MIMode": "gdb",
+				"setupCommands": [
+					{
+						"description": "Enable pretty-printing for gdb",
+						"text": "-enable-pretty-printing",
+						"ignoreFailures": true
+					}
+				],
+
+				"windows": {
+					"type": "cppvsdbg",
+					"program": "${workspaceFolder:traktor}/bin/latest/win64/debugshared/Webber.exe",
+					"args": [ "--port=1337" ],
+					"stopAtEntry": false,
+					"cwd": "${workspaceFolder:webber}",
+					"externalConsole": false
+				}
+			},
+
+			{
+				"name": "Webber - ReleaseShared",
+				"request": "launch",
+
+				"type": "cppdbg",
+				"program": "${workspaceFolder:traktor}/bin/latest/linux/releaseshared/Webber",
+				"args": [ "--port=1337" ],
+				"stopAtEntry": false,
+				"cwd": "${workspaceFolder:webber}",
+				"externalConsole": false,
+				"MIMode": "gdb",
+				"setupCommands": [
+					{
+						"description": "Enable pretty-printing for gdb",
+						"text": "-enable-pretty-printing",
+						"ignoreFailures": true
+					}
+				],
+
+				"windows": {
+					"type": "cppvsdbg",
+					"program": "${workspaceFolder:traktor}/bin/latest/win64/releaseshared/Webber.exe",
+					"args": [ "--port=1337" ],
+					"stopAtEntry": false,
+					"cwd": "${workspaceFolder:webber}",
+					"externalConsole": false
+				}
+			}
+		]
+	}
+}

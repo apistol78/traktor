@@ -38,7 +38,7 @@ struct Token
 struct LatestThread
 {
 	int32_t board;
-	int32_t thread;
+	const forum::Thread* thread;
 	const forum::Post* last;
 };
 
@@ -128,22 +128,19 @@ HomePage::HomePage(DemoApplication* app, const blog::Blog& blog, const forum::Fo
 	addStatic(featured, L"Featured", L"home_section_title");
 	auto grid = addContainer(featured, L"home_grid");
 
-	std::vector< int32_t > posts;
-	for (int32_t i = 0; i < (int32_t)blog.posts.size(); ++i)
-	{
-		if (!blog.posts[i].deleted)
-			posts.push_back(i);
-	}
-	std::stable_sort(posts.begin(), posts.end(), [&](int32_t lh, int32_t rh) {
-		return blog.posts[lh].time > blog.posts[rh].time;
+	std::vector< const blog::Post* > posts;
+	for (const auto& post : blog.posts)
+		posts.push_back(&post);
+	std::stable_sort(posts.begin(), posts.end(), [](const blog::Post* lh, const blog::Post* rh) {
+		return lh->time > rh->time;
 	});
 	if ((int32_t)posts.size() > c_featuredPosts)
 		posts.resize(c_featuredPosts);
 
 	for (int32_t i = 0; i < (int32_t)posts.size(); ++i)
 	{
-		const int32_t post = posts[i];
-		const blog::Post& p = blog.posts[post];
+		const blog::Post& p = *posts[i];
+		const int32_t post = p.id;
 		auto card = addContainer(grid, L"home_card home_card_" + toString(i));
 		addStatic(card, L"BLOG  ·  " + DateTime(p.time).format(L"%Y-%m-%d"), L"home_card_label");
 		auto title = card->addChild(new wbr::Link(p.title));
@@ -155,16 +152,10 @@ HomePage::HomePage(DemoApplication* app, const blog::Blog& blog, const forum::Fo
 	std::vector< LatestThread > threads;
 	for (int32_t b = 0; b < (int32_t)forum.boards.size(); ++b)
 	{
-		for (int32_t t = 0; t < (int32_t)forum.boards[b].threads.size(); ++t)
+		for (const auto& thread : forum.boards[b].threads)
 		{
-			const forum::Post* last = nullptr;
-			for (const auto& p : forum.boards[b].threads[t].posts)
-			{
-				if (!p.deleted)
-					last = &p;
-			}
-			if (last)
-				threads.push_back({ b, t, last });
+			if (!thread.posts.empty())
+				threads.push_back({ b, &thread, &thread.posts.back() });
 		}
 	}
 	std::stable_sort(threads.begin(), threads.end(), [](const LatestThread& lh, const LatestThread& rh) {
@@ -179,8 +170,8 @@ HomePage::HomePage(DemoApplication* app, const blog::Blog& blog, const forum::Fo
 	{
 		auto item = addContainer(panel, L"home_panel_item");
 		const int32_t board = latest.board;
-		const int32_t thread = latest.thread;
-		item->addChild(new wbr::Link(forum.boards[board].threads[thread].title))->clicked() += [app, board, thread]() { app->showForumThread(board, thread); };
+		const int32_t thread = latest.thread->id;
+		item->addChild(new wbr::Link(latest.thread->title))->clicked() += [app, board, thread]() { app->showForumThread(board, thread); };
 		addStatic(item, latest.last->author + L"  ·  " + DateTime(latest.last->time).format(L"%Y-%m-%d"), L"home_panel_meta");
 	}
 

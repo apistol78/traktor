@@ -80,7 +80,12 @@ std::wstring decodeValue(const std::wstring& text)
 		const int32_t r = encoding.translate(&in[i], int32_t(std::min< size_t >(IEncoding::MaxEncodingSize, bytes.length() - i)), ch);
 		if (r <= 0)
 			break;
-		out.push_back(ch);
+
+		// Keep only characters valid in XML 1.0 text; control characters are never meaningful input.
+		const uint32_t c = uint32_t(ch);
+		if (c == 0x09 || c == 0x0a || c == 0x0d || (c >= 0x20 && c <= 0xd7ff) || (c >= 0xe000 && c <= 0xfffd) || (c >= 0x10000 && c <= 0x10ffff))
+			out.push_back(ch);
+
 		i += r;
 	}
 	return out;

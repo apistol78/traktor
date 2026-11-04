@@ -8,13 +8,14 @@
  */
 #pragma once
 
+#include <functional>
 #include <string>
 #include "Webber/Container.h"
 
 namespace traktor::blog
 {
 
-struct Blog;
+class Blog;
 
 /*! Blog page; lists posts, shows a single post and edits posts.
  * \ingroup Webber
@@ -24,7 +25,8 @@ class BlogPage : public wbr::Container
 	T_RTTI_CLASS;
 
 public:
-	explicit BlogPage(Blog& blog);
+	/*! \param changed Called after the blog has been modified. */
+	explicit BlogPage(Blog& blog, const std::function< void() >& changed);
 
 	/*! Set user and redraw current view.
 	 * \param user Author of posts made through this page, empty for guest.
@@ -40,16 +42,18 @@ public:
 
 	void showPosts();
 
+	/*! \param post Post id. */
 	void showPost(int32_t post);
 
 private:
 	Blog& m_blog;
+	std::function< void() > m_changed;
 	std::wstring m_user;
 	bool m_admin = false;
-	int32_t m_post = -1;	//!< Post being shown, -1 when listing posts.
+	int32_t m_post = -1;	//!< Id of post being shown, -1 when listing posts.
 	bool m_editing = false;	//!< Editor is shown for m_post.
 
-	/*! \param post Post to edit, -1 for a new post. */
+	/*! \param post Id of post to edit, -1 for a new post. */
 	void showEditor(int32_t post);
 };
 

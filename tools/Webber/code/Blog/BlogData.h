@@ -10,6 +10,15 @@
 
 #include <string>
 #include "Core/Containers/AlignedVector.h"
+#include "Core/Ref.h"
+#include "Core/Serialization/ISerializable.h"
+
+namespace traktor
+{
+
+class ISerializer;
+
+}
 
 namespace traktor::blog
 {
@@ -23,18 +32,26 @@ struct Post
 	std::wstring author;
 	uint64_t time;	//!< Seconds since the Epoch.
 	std::wstring text;	//!< Markdown.
-	bool deleted = false;	//!< Deleted posts are kept so post indices stay valid.
+	int32_t id = 0;	//!< Unique within the blog; never reused.
+
+	void serialize(ISerializer& s);
 };
 
-/*! In-memory blog, shared by all sessions.
+/*! In-memory blog, shared by all sessions; root of the blog data file.
  * \ingroup Webber
  */
-struct Blog
+class Blog : public ISerializable
 {
+	T_RTTI_CLASS;
+
+public:
+	int32_t nextId = 1;	//!< Id of next new post.
 	AlignedVector< Post > posts;
+
+	virtual void serialize(ISerializer& s) override final;
 };
 
 /*! Create a blog populated with sample posts. */
-Blog createSampleBlog();
+Ref< Blog > createSampleBlog();
 
 }

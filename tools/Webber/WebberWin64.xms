@@ -230,6 +230,12 @@
 					<solutionFileName>$(TRAKTOR_HOME)/resources/build/TraktorWin64.xms</solutionFileName>
 					<projectName>Traktor.Net</projectName>
 				</item>
+				<item type="traktor.sb.ExternalDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
+					<link>LnkYes</link>
+					<solutionFileName>$(TRAKTOR_HOME)/resources/build/TraktorWin64.xms</solutionFileName>
+					<projectName>Traktor.Xml</projectName>
+				</item>
 			</dependencies>
 		</item>
 	</projects>

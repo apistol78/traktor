@@ -10,6 +10,15 @@
 
 #include <string>
 #include "Core/Containers/AlignedVector.h"
+#include "Core/Ref.h"
+#include "Core/Serialization/ISerializable.h"
+
+namespace traktor
+{
+
+class ISerializer;
+
+}
 
 namespace traktor::demo
 {
@@ -22,9 +31,24 @@ struct User
 	std::wstring name;
 	std::wstring password;
 	bool admin;
+
+	void serialize(ISerializer& s);
+};
+
+/*! User accounts; root of the users data file.
+ * \ingroup Webber
+ */
+class Users : public ISerializable
+{
+	T_RTTI_CLASS;
+
+public:
+	AlignedVector< User > users;
+
+	virtual void serialize(ISerializer& s) override final;
 };
 
 /*! Create the demo's user accounts. */
-AlignedVector< User > createSampleUsers();
+Ref< Users > createSampleUsers();
 
 }

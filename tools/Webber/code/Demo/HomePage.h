@@ -13,14 +13,14 @@
 namespace traktor::blog
 {
 
-struct Blog;
+class Blog;
 
 }
 
 namespace traktor::forum
 {
 
-struct Forum;
+class Forum;
 
 }
 

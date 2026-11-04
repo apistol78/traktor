@@ -8,13 +8,14 @@
  */
 #pragma once
 
+#include <functional>
 #include <string>
 #include "Webber/Container.h"
 
 namespace traktor::forum
 {
 
-struct Forum;
+class Forum;
 
 /*! Forum page; navigates between boards, threads and the new thread form.
  * \ingroup Webber
@@ -24,7 +25,8 @@ class ForumPage : public wbr::Container
 	T_RTTI_CLASS;
 
 public:
-	explicit ForumPage(Forum& forum);
+	/*! \param changed Called after the forum has been modified. */
+	explicit ForumPage(Forum& forum, const std::function< void() >& changed);
 
 	/*! Set user and redraw current view.
 	 * \param user Author of posts made through this page, empty for guest.
@@ -42,14 +44,16 @@ public:
 
 	void showBoard(int32_t board);
 
+	/*! \param thread Thread id. */
 	void showThread(int32_t board, int32_t thread);
 
 private:
 	Forum& m_forum;
+	std::function< void() > m_changed;
 	std::wstring m_user;
 	bool m_admin = false;
 	int32_t m_board = -1;	//!< Board being shown, -1 when listing boards.
-	int32_t m_thread = -1;	//!< Thread being shown, -1 when not showing a thread.
+	int32_t m_thread = -1;	//!< Id of thread being shown, -1 when not showing a thread.
 	bool m_creating = false;	//!< New thread form is shown for m_board.
 	Ref< wbr::Container > m_navigation;
 	Ref< wbr::Container > m_content;

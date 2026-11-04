@@ -27,10 +27,18 @@ namespace traktor::demo
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.demo.DemoApplication", DemoApplication, wbr::IApplication)
 
-DemoApplication::DemoApplication(const AlignedVector< User >& users, blog::Blog& blog, forum::Forum& forum)
+DemoApplication::DemoApplication(
+	const AlignedVector< User >& users,
+	blog::Blog& blog,
+	const std::function< void() >& blogChanged,
+	forum::Forum& forum,
+	const std::function< void() >& forumChanged
+)
 :	m_users(users)
 ,	m_blogData(blog)
+,	m_blogChanged(blogChanged)
 ,	m_forumData(forum)
+,	m_forumChanged(forumChanged)
 {
 }
 
@@ -67,8 +75,8 @@ bool DemoApplication::create()
 	// Holds the login dialog; empty when no dialog is shown.
 	m_overlay = m_root->addChild(new wbr::Container());
 
-	m_blog = new blog::BlogPage(m_blogData);
-	m_forum = new forum::ForumPage(m_forumData);
+	m_blog = new blog::BlogPage(m_blogData, m_blogChanged);
+	m_forum = new forum::ForumPage(m_forumData, m_forumChanged);
 
 	setUser(nullptr);
 	showHome();

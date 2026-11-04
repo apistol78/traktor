@@ -24,12 +24,18 @@ namespace traktor::blog
 	namespace
 	{
 
-/*! Index from location segment, -1 unless only digits. */
-int32_t parseIndex(const std::wstring& text)
+/*! Post id from location segment, -1 unless only digits. */
+int32_t parseId(const std::wstring& text)
 {
 	if (text.empty() || text.size() > 9 || text.find_first_not_of(L"0123456789") != text.npos)
 		return -1;
 	return parseString< int32_t >(text);
+}
+
+Post* findPost(Blog& blog, int32_t id)
+{
+	auto it = std::find_if(blog.posts.begin(), blog.posts.end(), [=](const Post& post) { return post.id == id; });
+	return it != blog.posts.end() ? &(*it) : nullptr;
 }
 
 std::wstring formatByline(const Post& post)
@@ -55,8 +61,9 @@ wbr::Static* addStatic(wbr::Container* parent, const std::wstring& text, const s
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.blog.BlogPage", BlogPage, wbr::Container)
 
-BlogPage::BlogPage(Blog& blog)
+BlogPage::BlogPage(Blog& blog, const std::function< void() >& changed)
 :	m_blog(blog)
+,	m_changed(changed)
 {
 	setStyleClass(L"blog");
 	showPosts();
@@ -85,13 +92,13 @@ void BlogPage::navigate(const std::wstring& location)
 	const size_t p = location.find(L'/');
 	const std::wstring first = location.substr(0, p);
 	const std::wstring rest = (p != location.npos) ? location.substr(p + 1) : L"";
-	const int32_t post = parseIndex(first);
+	const int32_t post = parseId(first);
 
 	if (first == L"new" && m_admin)
 		showEditor(-1);
-	else if (post < 0 || post >= (int32_t)m_blog.posts.size())
+	else if (!findPost(m_blog, post))
 		showPosts();
-	else if (rest == L"edit" && m_admin && !m_blog.posts[post].deleted)
+	else if (rest == L"edit" && m_admin)
 		showEditor(post);
 	else
 		showPost(post);
@@ -107,34 +114,31 @@ void BlogPage::showPosts()
 		addChild(new wbr::Button(L"New post"))->clicked() += [this]() { showEditor(-1); };
 
 	// Newest first.
-	std::vector< int32_t > order;
-	for (int32_t i = 0; i < (int32_t)m_blog.posts.size(); ++i)
-	{
-		if (!m_blog.posts[i].deleted)
-			order.push_back(i);
-	}
-	std::stable_sort(order.begin(), order.end(), [&](int32_t lh, int32_t rh) {
-		return m_blog.posts[lh].time > m_blog.posts[rh].time;
+	std::vector< const Post* > order;
+	for (const auto& post : m_blog.posts)
+		order.push_back(&post);
+	std::stable_sort(order.begin(), order.end(), [](const Post* lh, const Post* rh) {
+		return lh->time > rh->time;
 	});
 
-	for (auto i : order)
+	for (const Post* post : order)
 	{
-		const Post& post = m_blog.posts[i];
+		const int32_t id = post->id;
 		auto summary = addContainer(this, L"blog_summary");
-		auto title = summary->addChild(new wbr::Link(post.title));
+		auto title = summary->addChild(new wbr::Link(post->title));
 		title->setStyleClass(L"blog_summary_title");
-		title->clicked() += [this, i]() { showPost(i); };
-		addStatic(summary, formatByline(post), L"blog_byline");
+		title->clicked() += [this, id]() { showPost(id); };
+		addStatic(summary, formatByline(*post), L"blog_byline");
 
 		// Excerpt is the first block, up to the first blank line.
-		summary->addChild(new wbr::Markdown(post.text.substr(0, post.text.find(L"\n\n"))))->setStyleClass(L"blog_excerpt");
+		summary->addChild(new wbr::Markdown(post->text.substr(0, post->text.find(L"\n\n"))))->setStyleClass(L"blog_excerpt");
 	}
 }
 
 void BlogPage::showPost(int32_t post)
 {
-	const Post& p = m_blog.posts[post];
-	if (p.deleted)
+	const Post* p = findPost(m_blog, post);
+	if (!p)
 	{
 		showPosts();
 		return;
@@ -149,15 +153,17 @@ void BlogPage::showPost(int32_t post)
 	back->clicked() += [this]() { showPosts(); };
 
 	auto article = addContainer(this, L"blog_article");
-	addStatic(article, p.title, L"blog_title");
-	addStatic(article, formatByline(p), L"blog_byline");
-	article->addChild(new wbr::Markdown(p.text))->setStyleClass(L"blog_text");
+	addStatic(article, p->title, L"blog_title");
+	addStatic(article, formatByline(*p), L"blog_byline");
+	article->addChild(new wbr::Markdown(p->text))->setStyleClass(L"blog_text");
 
 	if (m_admin)
 	{
 		article->addChild(new wbr::Button(L"Edit"))->clicked() += [this, post]() { showEditor(post); };
 		article->addChild(new wbr::Button(L"Delete"))->clicked() += [this, post]() {
-			m_blog.posts[post].deleted = true;
+			auto& posts = m_blog.posts;
+			posts.erase(std::remove_if(posts.begin(), posts.end(), [=](const Post& p) { return p.id == post; }), posts.end());
+			m_changed();
 			showPosts();
 		};
 	}
@@ -165,6 +171,13 @@ void BlogPage::showPost(int32_t post)
 
 void BlogPage::showEditor(int32_t post)
 {
+	const Post* p = post >= 0 ? findPost(m_blog, post) : nullptr;
+	if (post >= 0 && !p)
+	{
+		showPosts();
+		return;
+	}
+
 	m_post = post;
 	m_editing = true;
 	removeAllChildren();
@@ -177,10 +190,10 @@ void BlogPage::showEditor(int32_t post)
 	auto text = form->addChild(new wbr::TextArea());
 	auto error = addStatic(form, L"", L"blog_error");
 
-	if (post >= 0)
+	if (p)
 	{
-		title->setText(m_blog.posts[post].title);
-		text->setText(m_blog.posts[post].text);
+		title->setText(p->title);
+		text->setText(p->text);
 	}
 
 	auto buttons = addContainer(form, L"blog_buttons");
@@ -192,14 +205,22 @@ void BlogPage::showEditor(int32_t post)
 		}
 		if (post >= 0)
 		{
-			m_blog.posts[post].title = trim(title->getText());
-			m_blog.posts[post].text = text->getText();
+			// Post might have been deleted by someone else meanwhile.
+			Post* edited = findPost(m_blog, post);
+			if (edited)
+			{
+				edited->title = trim(title->getText());
+				edited->text = text->getText();
+				m_changed();
+			}
 			showPost(post);
 		}
 		else
 		{
-			m_blog.posts.push_back({ trim(title->getText()), m_user, DateTime::now().getSecondsSinceEpoch(), text->getText() });
-			showPost((int32_t)m_blog.posts.size() - 1);
+			const int32_t id = m_blog.nextId++;
+			m_blog.posts.push_back({ trim(title->getText()), m_user, DateTime::now().getSecondsSinceEpoch(), text->getText(), id });
+			m_changed();
+			showPost(id);
 		}
 	};
 	buttons->addChild(new wbr::Button(L"Cancel"))->clicked() += [this, post]() {
