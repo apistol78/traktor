@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2025 Anders Pistol.
+ * Copyright (c) 2025-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,6 +9,7 @@
 #pragma once
 
 #include "Animation/Types.h"
+#include "Core/Containers/AlignedVector.h"
 #include "Core/Object.h"
 #include "Core/Ref.h"
 
@@ -47,7 +48,7 @@ public:
 
 	bool haveConditions() const { return !m_conditions.empty(); }
 
-	bool conditionSatisfied(const bool* values) const;
+	bool conditionSatisfied(const AlignedVector< bool >& values) const;
 
 private:
 	friend class RtStateTransitionData;

@@ -9,8 +9,7 @@
 #pragma once
 
 #include "Animation/Pose.h"
-#include "Animation/StateGraph/StateContext.h"
-#include "Core/Containers/SmallMap.h"
+#include "Animation/StateGraph/RtStateContext.h"
 #include "Core/Math/Transform.h"
 #include "Core/Object.h"
 #include "Core/RefArray.h"
@@ -75,13 +74,10 @@ private:
 
 	RefArray< RtStateNode > m_states;
 	RefArray< RtStateTransition > m_transitions;
-	SmallMap< render::Handle, int32_t > m_parameters;
-	AlignedVector< bool > m_values;
 	RtStateNode* m_rootState = nullptr;
 	RtStateNode* m_currentState = nullptr;
 	RtStateNode* m_nextState = nullptr;
-	StateContext m_currentStateContext;
-	StateContext m_nextStateContext;
+	RtStateContext m_context;
 	Pose m_evaluatePose;
 	float m_blendState = 0.0f;
 	float m_blendDuration = 0.0;

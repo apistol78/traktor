@@ -12,7 +12,6 @@
 #include "Animation/ITransformTime.h"
 #include "Animation/Joint.h"
 #include "Animation/Skeleton.h"
-#include "Animation/StateGraph/StateContext.h"
 #include "Core/Misc/SafeDestroy.h"
 
 #include <limits>
@@ -28,48 +27,43 @@ void RtStateNodeAnimation::destroy()
 	m_transformTime = nullptr;
 }
 
-bool RtStateNodeAnimation::prepare(StateContext& outContext) const
-{
-	if (!m_animation)
-		return false;
-
-	const uint32_t poseCount = m_animation->getKeyPoseCount();
-	if (poseCount < 1)
-		return false;
-
-	const float duration = m_animation->getKeyPose(poseCount - 1).at;
-
-	outContext.setTime(0.0f);
-	outContext.setDuration(duration);
-	outContext.setRootMotionTime(-1.0f);
-	return true;
-}
-
 void RtStateNodeAnimation::reset(
 	const Transform& worldTransform,
 	const Skeleton* skeleton,
-	const AlignedVector< Transform >& poseTransforms) const
+	const AlignedVector< Transform >& poseTransforms)
 {
+	m_duration = 0.0f;
+	m_time = 0.0f;
+	m_lastTime = 0.0f;
+
+	if (!m_animation)
+		return;
+
+	const uint32_t poseCount = m_animation->getKeyPoseCount();
+	if (poseCount < 1)
+		return;
+
+	m_duration = m_animation->getKeyPose(poseCount - 1).at;
 }
 
-void RtStateNodeAnimation::evaluate(
-	StateContext& context,
+float RtStateNodeAnimation::evaluate(
+	const RtStateContext& /*context*/,
+	float /*time*/,
 	float deltaTime,
 	const Transform& worldTransform,
 	const Skeleton* skeleton,
 	const AlignedVector< Transform >& jointTransforms,
 	Pose& outPose,
-	Vector4* outRootMotion) const
+	Vector4* outRootMotion)
 {
-	float time = context.getTime();
+	float time = m_time;
 
 	if (m_transformTime && m_animation)
 		m_transformTime->calculateTime(
 			m_animation,
 			worldTransform,
 			time,
-			deltaTime
-		);
+			deltaTime);
 
 	if (m_animation)
 		m_animation->getPose(time, outPose);
@@ -77,19 +71,21 @@ void RtStateNodeAnimation::evaluate(
 	if (outRootMotion)
 	{
 		*outRootMotion = Vector4::zero();
-		if (m_animation && m_animation->haveRootMotion() && !m_transformTime)
+		if (m_animation && m_animation->haveRootMotion())
 		{
-			const float lastTime = context.getRootMotionTime() >= 0.0f ? context.getRootMotionTime() : 0.0f;
-			if (time > lastTime)
+			if (time > m_lastTime)
 			{
-				const Vector4 rm0 = m_animation->getRootMotion(lastTime);
+				const Vector4 rm0 = m_animation->getRootMotion(m_lastTime);
 				const Vector4 rm1 = m_animation->getRootMotion(time);
 				const Vector4 travel = Quaternion::fromAxisAngle(Vector4(0.0f, 1.0f, 0.0f, 0.0f), -rm0.w()) * (rm1 - rm0).xyz0();
 				*outRootMotion = Vector4(travel.x(), 0.0f, travel.z(), rm1.w() - rm0.w());
 			}
 		}
-		context.setRootMotionTime(time);
 	}
+
+	m_lastTime = time;
+	m_time += deltaTime;
+	return m_duration - m_time;
 }
 
 IPoseController* RtStateNodeAnimation::getActivePoseController() const
@@ -100,5 +96,4 @@ IPoseController* RtStateNodeAnimation::getActivePoseController() const
 void RtStateNodeAnimation::getPoseControllersOf(const TypeInfo& type, RefArray< IPoseController >& outControllers) const
 {
 }
-
 }

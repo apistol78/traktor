@@ -8,9 +8,9 @@
  */
 #pragma once
 
-#include "Core/Object.h"
 #include "Core/Containers/AlignedVector.h"
 #include "Core/Math/Transform.h"
+#include "Core/Object.h"
 #include "Core/RefArray.h"
 
 // import/export mechanism.
@@ -26,7 +26,7 @@ namespace traktor::animation
 
 class IPoseController;
 class Pose;
-class StateContext;
+class RtStateContext;
 class Skeleton;
 
 /*!
@@ -39,21 +39,20 @@ class T_DLLCLASS RtStateNode : public Object
 public:
 	virtual void destroy() = 0;
 
-	virtual bool prepare(StateContext& outContext) const = 0;
-
 	virtual void reset(
 		const Transform& worldTransform,
 		const Skeleton* skeleton,
-		const AlignedVector< Transform >& poseTransforms) const = 0;
+		const AlignedVector< Transform >& poseTransforms) = 0;
 
-	virtual void evaluate(
-		StateContext& context,
+	virtual float evaluate(
+		const RtStateContext& context,
+		float time,
 		float deltaTime,
 		const Transform& worldTransform,
 		const Skeleton* skeleton,
 		const AlignedVector< Transform >& jointTransforms,
 		Pose& outPose,
-		Vector4* outRootMotion) const = 0;
+		Vector4* outRootMotion) = 0;
 
 	virtual IPoseController* getActivePoseController() const = 0;
 

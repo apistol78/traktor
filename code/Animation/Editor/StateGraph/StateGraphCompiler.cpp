@@ -12,10 +12,12 @@
 #include "Animation/Editor/StateGraph/StateNodeAnimation.h"
 #include "Animation/Editor/StateGraph/StateNodeAny.h"
 #include "Animation/Editor/StateGraph/StateNodeController.h"
+#include "Animation/Editor/StateGraph/StateNodeStack.h"
 #include "Animation/Editor/StateGraph/StateTransition.h"
+#include "Animation/StateGraph/RtStateGraphData.h"
 #include "Animation/StateGraph/RtStateNodeAnimationData.h"
 #include "Animation/StateGraph/RtStateNodePoseControllerData.h"
-#include "Animation/StateGraph/RtStateGraphData.h"
+#include "Animation/StateGraph/RtStateNodeStackData.h"
 #include "Animation/StateGraph/RtStateTransitionData.h"
 #include "Core/Containers/SmallMap.h"
 
@@ -92,6 +94,20 @@ Ref< RtStateGraphData > StateGraphCompiler::compile(const StateGraph* stateGraph
 		{
 			Ref< RtStateNodePoseControllerData > rts = new RtStateNodePoseControllerData();
 			rts->m_poseController = stateController->getPoseController();
+			rtsg->m_states.push_back(rts);
+			stateToIndices.insert(state, { (int32_t)rtsg->m_states.size() - 1 });
+		}
+		else if (const auto stateStack = dynamic_type_cast< const StateNodeStack* >(state))
+		{
+			Ref< RtStateNodeStackData > rts = new RtStateNodeStackData();
+			for (const auto& stateLayer : stateStack->getLayers())
+			{
+				const int32_t index = addUnique(rtsg->m_parameters, stateLayer.name);
+
+				rts->m_layers.push_back({ .condition = index,
+					.animation = stateLayer.animation,
+					.transformTime = stateLayer.transformTime });
+			}
 			rtsg->m_states.push_back(rts);
 			stateToIndices.insert(state, { (int32_t)rtsg->m_states.size() - 1 });
 		}

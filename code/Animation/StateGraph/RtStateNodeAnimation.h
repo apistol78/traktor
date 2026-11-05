@@ -35,21 +35,20 @@ class T_DLLCLASS RtStateNodeAnimation : public RtStateNode
 public:
 	virtual void destroy() override final;
 
-	virtual bool prepare(StateContext& outContext) const override final;
-
 	virtual void reset(
 		const Transform& worldTransform,
 		const Skeleton* skeleton,
-		const AlignedVector< Transform >& poseTransforms) const override final;
+		const AlignedVector< Transform >& poseTransforms) override final;
 
-	virtual void evaluate(
-		StateContext& context,
+	virtual float evaluate(
+		const RtStateContext& context,
+		float time,
 		float deltaTime,
 		const Transform& worldTransform,
 		const Skeleton* skeleton,
 		const AlignedVector< Transform >& jointTransforms,
 		Pose& outPose,
-		Vector4* outRootMotion) const override final;
+		Vector4* outRootMotion) override final;
 
 	virtual IPoseController* getActivePoseController() const override final;
 
@@ -60,6 +59,10 @@ private:
 
 	resource::Proxy< Animation > m_animation;
 	Ref< ITransformTime > m_transformTime;
+
+	float m_duration = 0.0f;
+	float m_time = 0.0f;
+	float m_lastTime = 0.0f;
 };
 
 }

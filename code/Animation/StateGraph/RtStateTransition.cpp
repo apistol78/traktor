@@ -19,7 +19,7 @@ RtStateTransition::RtStateTransition(RtStateNode* from, RtStateNode* to)
 {
 }
 
-bool RtStateTransition::conditionSatisfied(const bool* values) const
+bool RtStateTransition::conditionSatisfied(const AlignedVector< bool >& values) const
 {
 	for (const Condition& condition : m_conditions)
 		if (values[condition.parameter] ^ condition.inverted)

@@ -13,7 +13,7 @@
 #include "Animation/Joint.h"
 #include "Animation/Pose.h"
 #include "Animation/Skeleton.h"
-#include "Animation/StateGraph/StateContext.h"
+#include "Animation/StateGraph/RtStateContext.h"
 #include "Core/Misc/SafeDestroy.h"
 
 #include <limits>
@@ -29,38 +29,25 @@ void RtStateNodePoseController::destroy()
 	m_transformTime = nullptr;
 }
 
-bool RtStateNodePoseController::prepare(StateContext& outContext) const
-{
-	if (!m_poseController)
-		return false;
-
-	outContext.setTime(0.0f);
-	outContext.setDuration(std::numeric_limits< float >::max());
-	return true;
-}
-
 void RtStateNodePoseController::reset(
 	const Transform& worldTransform,
 	const Skeleton* skeleton,
-	const AlignedVector< Transform >& poseTransforms) const
+	const AlignedVector< Transform >& poseTransforms)
 {
-	// Let the pose controller (e.g. rag doll) initialize itself from the pose the graph
-	// is transitioning away from, so it starts matching the current pose.
 	if (m_poseController)
 		m_poseController->reset(worldTransform, skeleton, poseTransforms);
 }
 
-void RtStateNodePoseController::evaluate(
-	StateContext& context,
+float RtStateNodePoseController::evaluate(
+	const RtStateContext& /*context*/,
+	float time,
 	float deltaTime,
 	const Transform& worldTransform,
 	const Skeleton* skeleton,
 	const AlignedVector< Transform >& jointTransforms,
 	Pose& outPose,
-	Vector4* outRootMotion) const
+	Vector4* outRootMotion)
 {
-	float time = context.getTime();
-
 	if (outRootMotion)
 		*outRootMotion = Vector4::zero();
 
@@ -87,6 +74,8 @@ void RtStateNodePoseController::evaluate(
 			outPose.setJointTransform(i, deltaTransform);
 		}
 	}
+
+	return std::numeric_limits< float >::max();
 }
 
 IPoseController* RtStateNodePoseController::getActivePoseController() const

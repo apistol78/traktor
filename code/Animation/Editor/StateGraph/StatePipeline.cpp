@@ -11,6 +11,9 @@
 #include "Animation/Editor/StateGraph/StateGraph.h"
 #include "Animation/Editor/StateGraph/StateGraphCompiler.h"
 #include "Animation/Editor/StateGraph/StateNodeAnimation.h"
+#include "Animation/Editor/StateGraph/StateNodeController.h"
+#include "Animation/Editor/StateGraph/StateNodeStack.h"
+#include "Animation/IPoseControllerData.h"
 #include "Animation/StateGraph/RtStateGraphData.h"
 #include "Core/Log/Log.h"
 #include "Database/Instance.h"
@@ -20,13 +23,15 @@
 namespace traktor::animation
 {
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.StatePipeline", 2, StatePipeline, editor::DefaultPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.StatePipeline", 3, StatePipeline, editor::DefaultPipeline)
 
 TypeInfoSet StatePipeline::getAssetTypes() const
 {
 	return makeTypeInfoSet<
 		StateGraph,
-		StateNodeAnimation >();
+		StateNodeAnimation,
+		StateNodeController,
+		StateNodeStack >();
 }
 
 bool StatePipeline::buildDependencies(
@@ -48,6 +53,15 @@ bool StatePipeline::buildDependencies(
 	{
 		for (const auto& animation : state->getAnimations())
 			pipelineDepends->addDependency(animation, editor::PdfBuild | editor::PdfResource);
+	}
+	else if (auto state = dynamic_type_cast< const StateNodeController* >(sourceAsset))
+	{
+		pipelineDepends->addDependency(state->getPoseController());
+	}
+	else if (auto state = dynamic_type_cast< const StateNodeStack* >(sourceAsset))
+	{
+		for (const auto& layer : state->getLayers())
+			pipelineDepends->addDependency(layer.animation, editor::PdfBuild | editor::PdfResource);
 	}
 
 	return true;

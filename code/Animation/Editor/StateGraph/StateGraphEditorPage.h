@@ -44,6 +44,7 @@ namespace traktor::ui
 {
 
 class ButtonClickEvent;
+class CheckBox;
 class Container;
 class ContentChangeEvent;
 class EdgeConnectEvent;
@@ -99,6 +100,7 @@ private:
 	Ref< ui::Container > m_containerPreview;
 	Ref< AnimationPreviewControl > m_previewControl;
 	Ref< ui::Container > m_previewConditions;
+	RefArray< ui::CheckBox > m_checkConditions;
 
 	void createEditorNodes(const RefArray< StateNode >& states, const RefArray< StateTransition >& transitions);
 

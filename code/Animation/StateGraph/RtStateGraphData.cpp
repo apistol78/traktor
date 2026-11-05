@@ -47,10 +47,11 @@ Ref< RtStateGraph > RtStateGraphData::createInstance(
 	}
 
 	// Initialize parameters.
-	instance->m_values.resize(m_parameters.size(), false);
-	instance->m_parameters.reserve(m_parameters.size());
+	auto& cx = instance->m_context;
+	cx.m_values.resize(m_parameters.size(), false);
+	cx.m_parameters.reserve(m_parameters.size());
 	for (int32_t i = 0; i < (int32_t)m_parameters.size(); ++i)
-		instance->m_parameters.insert(render::Handle(m_parameters[i].c_str()), i);
+		cx.m_parameters.insert(render::Handle(m_parameters[i].c_str()), i);
 
 	// Create transition instances.
 	instance->m_transitions.reserve(m_transitions.size());

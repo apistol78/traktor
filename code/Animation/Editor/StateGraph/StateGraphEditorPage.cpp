@@ -17,6 +17,7 @@
 #include "Animation/Editor/StateGraph/StateNodeAnimation.h"
 #include "Animation/Editor/StateGraph/StateNodeAny.h"
 #include "Animation/Editor/StateGraph/StateNodeController.h"
+#include "Animation/Editor/StateGraph/StateNodeStack.h"
 #include "Animation/Editor/StateGraph/StateTransition.h"
 #include "Animation/StateGraph/AnimationGraphPoseController.h"
 #include "Animation/StateGraph/AnimationGraphPoseControllerData.h"
@@ -109,6 +110,7 @@ bool StateGraphEditorPage::create(ui::Container* parent)
 	// Build pop up menu.
 	m_menuPopup = new ui::Menu();
 	m_menuPopup->add(new ui::MenuItem(ui::Command(L"StateGraph.Editor.CreateStateAnimation"), i18n::Text(L"STATEGRAPH_CREATE_STATE_ANIMATION")));
+	m_menuPopup->add(new ui::MenuItem(ui::Command(L"StateGraph.Editor.CreateStateStack"), i18n::Text(L"STATEGRAPH_CREATE_STATE_STACK")));
 	m_menuPopup->add(new ui::MenuItem(ui::Command(L"StateGraph.Editor.CreateStateAny"), i18n::Text(L"STATEGRAPH_CREATE_STATE_ANY")));
 	m_menuPopup->add(new ui::MenuItem(ui::Command(L"StateGraph.Editor.CreateStateController"), i18n::Text(L"STATEGRAPH_CREATE_STATE_CONTROLLER")));
 	m_menuPopup->add(new ui::MenuItem(ui::Command(L"Editor.Delete"), i18n::Text(L"STATEGRAPH_DELETE_STATE")));
@@ -586,6 +588,16 @@ void StateGraphEditorPage::updatePreviewConditions()
 		}
 	}
 
+	// Collect all stack layer names.
+	for (auto state : m_stateGraph->getStates())
+	{
+		if (const StateNodeStack* stateStack = dynamic_type_cast< const StateNodeStack* >(state))
+		{
+			for (const auto& layer : stateStack->getLayers())
+				conditions[layer.name] = false;
+		}
+	}
+
 	// Keep all existing condition states.
 	for (ui::Widget* it = m_previewConditions->getFirstChild(); it; it = it->getNextSibling())
 	{
@@ -595,8 +607,11 @@ void StateGraphEditorPage::updatePreviewConditions()
 	}
 
 	// Destroy all checkboxes.
-	while (m_previewConditions->getFirstChild())
-		m_previewConditions->getFirstChild()->destroy();
+	while (!m_checkConditions.empty())
+	{
+		m_checkConditions.back()->destroy();
+		m_checkConditions.pop_back();
+	}
 
 	// Recreate checkboxes.
 	for (auto i = conditions.begin(); i != conditions.end(); ++i)
@@ -604,6 +619,7 @@ void StateGraphEditorPage::updatePreviewConditions()
 		Ref< ui::CheckBox > cb = new ui::CheckBox();
 		cb->create(m_previewConditions, i->first, i->second);
 		cb->addEventHandler< ui::ButtonClickEvent >(this, &StateGraphEditorPage::eventPreviewConditionClick);
+		m_checkConditions.push_back(cb);
 	}
 
 	m_containerPreview->update();
@@ -632,6 +648,8 @@ void StateGraphEditorPage::eventButtonDown(ui::MouseButtonDownEvent* event)
 		createState(event->getPosition() - m_editorGraph->getOffset(), type_of< StateNodeAny >());
 	else if (command == L"StateGraph.Editor.CreateStateController")
 		createState(event->getPosition() - m_editorGraph->getOffset(), type_of< StateNodeController >());
+	else if (command == L"StateGraph.Editor.CreateStateStack")
+		createState(event->getPosition() - m_editorGraph->getOffset(), type_of< StateNodeStack >());
 	else
 		handleCommand(command);
 }
@@ -748,6 +766,21 @@ void StateGraphEditorPage::eventPreviewConditionClick(ui::ButtonClickEvent* even
 {
 	const ui::CheckBox* cb = mandatory_non_null_type_cast< ui::CheckBox* >(event->getSender());
 	m_previewControl->setParameterValue(cb->getText(), cb->isChecked());
+
+	// Clear other conditions if shift is being held.
+	if ((event->getKeyState() & ui::KsShift) != 0)
+	{
+		for (auto checkCondition : m_checkConditions)
+		{
+			if (checkCondition != cb)
+			{
+				checkCondition->setChecked(false);
+				m_previewControl->setParameterValue(checkCondition->getText(), false);
+			}
+		}
+	}
+
+	m_previewConditions->update();
 }
 
 void StateGraphEditorPage::eventRenderControl(render::RenderControlEvent* event)

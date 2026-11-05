@@ -59,23 +59,12 @@ void RtStateGraph::destroy()
 
 bool RtStateGraph::setParameterValue(const render::Handle& handle, bool value)
 {
-	const auto it = m_parameters.find(handle);
-	if (it != m_parameters.end())
-	{
-		m_values[it->second] = value;
-		return true;
-	}
-	else
-		return false;
+	return m_context.setParameterValue(handle, value);
 }
 
 bool RtStateGraph::getParameterValue(const render::Handle& handle) const
 {
-	const auto it = m_parameters.find(handle);
-	if (it != m_parameters.end())
-		return m_values[it->second];
-	else
-		return false;
+	return m_context.getParameterValue(handle);
 }
 
 bool RtStateGraph::evaluate(
@@ -97,13 +86,7 @@ bool RtStateGraph::evaluate(
 	{
 		m_currentState = m_rootState;
 		if (m_currentState)
-		{
-			if (!m_currentState->prepare(m_currentStateContext))
-				return false;
-			// No prior pose on the initial state; initialize from the incoming (bind/rest)
-			// joint transforms.
 			m_currentState->reset(worldTransform, skeleton, jointTransforms);
-		}
 		m_nextState = nullptr;
 		m_blendState = 0.0f;
 		m_blendDuration = 0.0f;
@@ -114,15 +97,15 @@ bool RtStateGraph::evaluate(
 
 	// Evaluate current state.
 	Vector4 currentRootMotion = Vector4::zero();
-	m_currentState->evaluate(
-		m_currentStateContext,
+	const float currentTimeLeft = m_currentState->evaluate(
+		m_context,
+		time,
 		deltaTime * m_timeFactor,
 		worldTransform,
 		skeleton,
 		jointTransforms,
 		m_evaluatePose,
 		&currentRootMotion);
-	m_currentStateContext.setTime(m_currentStateContext.getTime() + deltaTime * m_timeFactor);
 
 	// Build final pose transforms.
 	if (m_nextState)
@@ -134,14 +117,14 @@ bool RtStateGraph::evaluate(
 
 			Vector4 nextRootMotion = Vector4::zero();
 			m_nextState->evaluate(
-				m_nextStateContext,
+				m_context,
+				time,
 				deltaTime * m_timeFactor,
 				worldTransform,
 				skeleton,
 				jointTransforms,
 				nextPose,
 				&nextRootMotion);
-			m_nextStateContext.setTime(m_nextStateContext.getTime() + deltaTime * m_timeFactor);
 
 			const Scalar blend = Scalar(easeInOutCubic(m_blendState / m_blendDuration));
 
@@ -175,7 +158,6 @@ bool RtStateGraph::evaluate(
 		if (m_blendState >= m_blendDuration)
 		{
 			m_currentState = m_nextState;
-			m_currentStateContext = m_nextStateContext;
 			m_nextState = nullptr;
 			m_blendState = 0.0f;
 			m_blendDuration = 0.0f;
@@ -195,7 +177,6 @@ bool RtStateGraph::evaluate(
 	// Execute transition to another state.
 	if (!m_nextState)
 	{
-		const float timeLeft = max(m_currentStateContext.getDuration() - m_currentStateContext.getTime(), 0.0f);
 		RtStateTransition* selectedTransition = nullptr;
 		RefArray< RtStateTransition > candidateTransitions;
 
@@ -206,11 +187,11 @@ bool RtStateGraph::evaluate(
 				continue;
 
 			// Is transition permitted?
-			if (!transitionPermitted(transition, timeLeft))
+			if (!transitionPermitted(transition, currentTimeLeft))
 				continue;
 
 			// Is condition satisfied?
-			if (!transition->conditionSatisfied(m_values.c_ptr()))
+			if (!transition->conditionSatisfied(m_context.getValues()))
 				continue;
 
 			candidateTransitions.push_back(transition);
@@ -225,7 +206,7 @@ bool RtStateGraph::evaluate(
 					continue;
 
 				// Is transition permitted?
-				if (transitionPermitted(transition, timeLeft))
+				if (transitionPermitted(transition, currentTimeLeft))
 					candidateTransitions.push_back(transition);
 			}
 		}
@@ -239,7 +220,7 @@ bool RtStateGraph::evaluate(
 		}
 
 		// Still no transition, repeat current state if we're at the end.
-		if (selectedTransition == nullptr && timeLeft <= FUZZY_EPSILON)
+		if (selectedTransition == nullptr && currentTimeLeft <= FUZZY_EPSILON)
 			selectedTransition = new RtStateTransition(m_currentState, m_currentState);
 
 		// Begin transition to found state; without a transition time it is a cut, taken at once.
@@ -249,7 +230,6 @@ bool RtStateGraph::evaluate(
 			{
 				m_nextState = selectedTransition->getTo();
 				m_nextState->reset(worldTransform, skeleton, outPoseTransforms);
-				m_nextState->prepare(m_nextStateContext);
 				m_blendState = 0.0f;
 				m_blendDuration = selectedTransition->getDuration();
 			}
@@ -262,15 +242,11 @@ bool RtStateGraph::evaluate(
 	}
 	else
 	{
-		// A cut needs no pose to blend from, so one is taken even while blending, abandoning the
-		// blend; e.g. into a rag doll, which starts from the pose shown, rather than freezing on it
-		// until the blend is over.
-		const float timeLeft = max(m_nextStateContext.getDuration() - m_nextStateContext.getTime(), 0.0f);
 		for (auto transition : m_transitions)
 		{
 			if (transition->getFrom() != m_nextState || !transition->haveConditions() || transition->getDuration() > FUZZY_EPSILON)
 				continue;
-			if (!transitionPermitted(transition, timeLeft) || !transition->conditionSatisfied(m_values.c_ptr()))
+			if (!transition->conditionSatisfied(m_context.getValues()))
 				continue;
 
 			cut(transition->getTo(), worldTransform, skeleton, outPoseTransforms);
@@ -286,7 +262,6 @@ void RtStateGraph::cut(RtStateNode* state, const Transform& worldTransform, cons
 {
 	m_currentState = state;
 	m_currentState->reset(worldTransform, skeleton, poseTransforms);
-	m_currentState->prepare(m_currentStateContext);
 	m_nextState = nullptr;
 	m_blendState = 0.0f;
 	m_blendDuration = 0.0f;

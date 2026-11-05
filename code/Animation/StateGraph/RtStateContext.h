@@ -8,7 +8,9 @@
  */
 #pragma once
 
+#include "Core/Containers/SmallMap.h"
 #include "Core/Object.h"
+#include "Render/Types.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -24,27 +26,22 @@ namespace traktor::animation
 /*! State evaluation context.
  * \ingroup Animation
  */
-class T_DLLCLASS StateContext : public Object
+class T_DLLCLASS RtStateContext : public Object
 {
 	T_RTTI_CLASS;
 
 public:
-	void setTime(float time) { m_time = time; }
+	bool setParameterValue(const render::Handle& handle, bool value);
 
-	float getTime() const { return m_time; }
+	bool getParameterValue(const render::Handle& handle) const;
 
-	void setDuration(float duration) { m_duration = duration; }
-
-	float getDuration() const { return m_duration; }
-
-	void setRootMotionTime(float rootMotionTime) { m_rootMotionTime = rootMotionTime; }
-
-	float getRootMotionTime() const { return m_rootMotionTime; }
+	const AlignedVector< bool > getValues() const { return m_values; }
 
 private:
-	float m_time = 0.0f;
-	float m_duration = 0.0f;
-	float m_rootMotionTime = -1.0f;
+	friend class RtStateGraphData;
+
+	SmallMap< render::Handle, int32_t > m_parameters;
+	AlignedVector< bool > m_values;
 };
 
 }
