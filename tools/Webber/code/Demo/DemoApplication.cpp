@@ -11,8 +11,10 @@
 #include "Blog/BlogPage.h"
 #include "Demo/DemoApplication.h"
 #include "Demo/HomePage.h"
+#include "Demo/ImageStore.h"
 #include "Demo/UserData.h"
 #include "Forum/ForumPage.h"
+#include "Project/ProjectPage.h"
 #include "Webber/Button.h"
 #include "Webber/Container.h"
 #include "Webber/Edit.h"
@@ -29,14 +31,20 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.demo.DemoApplication", DemoApplication, wbr::IA
 
 DemoApplication::DemoApplication(
 	const AlignedVector< User >& users,
+	ImageStore* images,
 	blog::Blog& blog,
 	const std::function< void() >& blogChanged,
+	project::Projects& projects,
+	const std::function< void() >& projectsChanged,
 	forum::Forum& forum,
 	const std::function< void() >& forumChanged
 )
 :	m_users(users)
+,	m_images(images)
 ,	m_blogData(blog)
 ,	m_blogChanged(blogChanged)
+,	m_projectData(projects)
+,	m_projectsChanged(projectsChanged)
 ,	m_forumData(forum)
 ,	m_forumChanged(forumChanged)
 {
@@ -59,10 +67,12 @@ bool DemoApplication::create()
 
 	auto links = bar->addChild(new wbr::Container());
 	links->setStyleClass(L"demo_links");
-	m_homeLink = links->addChild(new wbr::Link(L"Home"));
+	m_homeLink = links->addChild(new wbr::Link(L"Hem"));
 	m_homeLink->clicked() += [this]() { showHome(); };
-	m_blogLink = links->addChild(new wbr::Link(L"Blog"));
+	m_blogLink = links->addChild(new wbr::Link(L"Blogg"));
 	m_blogLink->clicked() += [this]() { showBlog(); };
+	m_projectLink = links->addChild(new wbr::Link(L"Projekt"));
+	m_projectLink->clicked() += [this]() { showProjects(); };
 	m_forumLink = links->addChild(new wbr::Link(L"Forum"));
 	m_forumLink->clicked() += [this]() { showForum(); };
 
@@ -72,10 +82,29 @@ bool DemoApplication::create()
 	m_content = m_root->addChild(new wbr::Container());
 	m_content->setStyleClass(L"demo_content");
 
+	auto footer = m_root->addChild(new wbr::Container());
+	footer->setStyleClass(L"demo_footer");
+	auto footerInner = footer->addChild(new wbr::Container());
+	footerInner->setStyleClass(L"demo_footer_inner");
+	auto about = footerInner->addChild(new wbr::Container());
+	about->setStyleClass(L"demo_footer_column");
+	about->addChild(new wbr::Static(L"Veterankod"))->setStyleClass(L"demo_footer_title");
+	about->addChild(new wbr::Static(L"Byggt med Webber och Traktor."));
+	auto pages = footerInner->addChild(new wbr::Container());
+	pages->setStyleClass(L"demo_footer_column");
+	pages->addChild(new wbr::Static(L"Pages"))->setStyleClass(L"demo_footer_title");
+	pages->addChild(new wbr::Link(L"Hem"))->clicked() += [this]() { showHome(); };
+	pages->addChild(new wbr::Link(L"Blogg"))->clicked() += [this]() { showBlog(); };
+	pages->addChild(new wbr::Link(L"Projekt"))->clicked() += [this]() { showProjects(); };
+	pages->addChild(new wbr::Link(L"Forum"))->clicked() += [this]() { showForum(); };
+	footerInner->addChild(new wbr::Static(L"© 2026 Anders Pistol"))->setStyleClass(L"demo_footer_note");
+
 	// Holds the login dialog; empty when no dialog is shown.
 	m_overlay = m_root->addChild(new wbr::Container());
 
-	m_blog = new blog::BlogPage(m_blogData, m_blogChanged);
+	const auto storeImage = [this](const AlignedVector< uint8_t >& data) { return m_images->store(data); };
+	m_blog = new blog::BlogPage(m_blogData, m_blogChanged, storeImage);
+	m_project = new project::ProjectPage(m_projectData, m_projectsChanged, storeImage);
 	m_forum = new forum::ForumPage(m_forumData, m_forumChanged);
 
 	setUser(nullptr);
@@ -86,11 +115,13 @@ bool DemoApplication::create()
 void DemoApplication::destroy()
 {
 	m_forum = nullptr;
+	m_project = nullptr;
 	m_blog = nullptr;
 	m_overlay = nullptr;
 	m_content = nullptr;
 	m_userInfo = nullptr;
 	m_forumLink = nullptr;
+	m_projectLink = nullptr;
 	m_blogLink = nullptr;
 	m_homeLink = nullptr;
 	m_root = nullptr;
@@ -111,7 +142,7 @@ Ref< IStream > DemoApplication::resolve(const std::wstring& uri) const
 	if (uri == L"/Demo.css")
 		return new MemoryStream(c_ResourceDemo, sizeof(c_ResourceDemo));
 	else
-		return nullptr;
+		return m_images->open(uri);
 }
 
 std::wstring DemoApplication::getLocation() const
@@ -120,6 +151,11 @@ std::wstring DemoApplication::getLocation() const
 	{
 		const std::wstring location = m_blog->getLocation();
 		return location.empty() ? L"blog" : L"blog/" + location;
+	}
+	else if (m_activeLink == m_projectLink)
+	{
+		const std::wstring location = m_project->getLocation();
+		return location.empty() ? L"projekt" : L"projekt/" + location;
 	}
 	else if (m_activeLink == m_forumLink)
 	{
@@ -142,6 +178,11 @@ void DemoApplication::navigate(const std::wstring& location)
 	{
 		showPage(m_blog, m_blogLink);
 		m_blog->navigate(rest);
+	}
+	else if (section == L"projekt")
+	{
+		showPage(m_project, m_projectLink);
+		m_project->navigate(rest);
 	}
 	else if (section == L"forum")
 	{
@@ -169,6 +210,12 @@ void DemoApplication::showBlogPost(int32_t post)
 	m_blog->showPost(post);
 }
 
+void DemoApplication::showProjects()
+{
+	showPage(m_project, m_projectLink);
+	m_project->showProjects();
+}
+
 void DemoApplication::showForum()
 {
 	showPage(m_forum, m_forumLink);
@@ -186,6 +233,7 @@ void DemoApplication::showPage(wbr::Widget* page, wbr::Link* link)
 	m_activeLink = link;
 	m_homeLink->setStyleClass(link == m_homeLink ? L"demo_active" : L"");
 	m_blogLink->setStyleClass(link == m_blogLink ? L"demo_active" : L"");
+	m_projectLink->setStyleClass(link == m_projectLink ? L"demo_active" : L"");
 	m_forumLink->setStyleClass(link == m_forumLink ? L"demo_active" : L"");
 	m_content->removeAllChildren();
 	m_content->addChild(page);
@@ -228,6 +276,7 @@ void DemoApplication::showLogin()
 void DemoApplication::setUser(const User* user)
 {
 	m_blog->setUser(user ? user->name : L"", user && user->admin);
+	m_project->setUser(user ? user->name : L"", user && user->admin);
 	m_forum->setUser(user ? user->name : L"", user && user->admin);
 
 	m_userInfo->removeAllChildren();

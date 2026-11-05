@@ -35,7 +35,7 @@ namespace traktor::wbr
 
 const size_t c_maxSessions = 1000;
 const double c_sessionTimeout = 30.0 * 60.0;	//!< Seconds of inactivity before a session is removed.
-const int32_t c_maxEventSize = 1024 * 1024;
+const int32_t c_maxEventSize = 16 * 1024 * 1024;	//!< Events carry uploaded files.
 
 std::wstring getContentType(const std::wstring& uri)
 {
@@ -51,6 +51,8 @@ std::wstring getContentType(const std::wstring& uri)
 		return L"image/jpeg";
 	else if (extension == L"webp")
 		return L"image/webp";
+	else if (extension == L"gif")
+		return L"image/gif";
 	else
 		return L"application/octet-stream";
 }

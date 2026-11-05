@@ -194,6 +194,16 @@
 						</item>
 					</items>
 				</item>
+				<item type="traktor.sb.Filter">
+					<name>Project</name>
+					<items>
+						<item type="traktor.sb.File" version="1">
+							<fileName>Project/*.*</fileName>
+							<excludeFilter/>
+							<items/>
+						</item>
+					</items>
+				</item>
 			</items>
 			<dependencies>
 				<item type="traktor.sb.ExternalDependency" version="3">

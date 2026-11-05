@@ -17,7 +17,7 @@ namespace traktor::wbr
 /*! Markdown text, rendered as HTML.
  *
  * Supports headings, paragraphs, emphasis, inline code, code blocks,
- * lists, block quotes, links and horizontal rules. Raw HTML is shown as text.
+ * lists, block quotes, links, images and horizontal rules. Raw HTML is shown as text.
  *
  * \ingroup Webber
  */

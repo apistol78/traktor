@@ -165,7 +165,7 @@ HomePage::HomePage(DemoApplication* app, const blog::Blog& blog, const forum::Fo
 		threads.resize(c_latestThreads);
 
 	auto panel = addContainer(grid, L"home_panel");
-	addStatic(panel, L"Latest in the forum", L"home_panel_title");
+	addStatic(panel, L"Senaste aktivitet i forumet", L"home_panel_title");
 	for (const auto& latest : threads)
 	{
 		auto item = addContainer(panel, L"home_panel_item");

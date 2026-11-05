@@ -149,18 +149,27 @@ void parseInline(const std::wstring& text, html::Element* parent)
 				i += n;
 			}
 		}
-		else if (ch == L'[')
+		else if (ch == L'[' || (ch == L'!' && i + 1 < text.size() && text[i + 1] == L'['))
 		{
-			const size_t labelClose = findBracketClose(text, i, L'[', L']');
+			const bool image = (ch == L'!');
+			const size_t labelOpen = image ? i + 1 : i;
+			const size_t labelClose = findBracketClose(text, labelOpen, L'[', L']');
 			const size_t urlClose = (labelClose != text.npos && labelClose + 1 < text.size() && text[labelClose + 1] == L'(') ? findBracketClose(text, labelClose + 1, L'(', L')') : text.npos;
 			if (urlClose != text.npos)
 			{
-				const std::wstring label = text.substr(i + 1, labelClose - i - 1);
+				const std::wstring label = text.substr(labelOpen + 1, labelClose - labelOpen - 1);
 				std::wstring url = trim(text.substr(labelClose + 2, urlClose - labelClose - 2));
 				url = url.substr(0, url.find(L' '));
 
 				flushText(buffer, parent);
-				if (isSafeUrl(url))
+				if (isSafeUrl(url) && image)
+				{
+					auto img = addElement(parent, L"img");
+					img->setAttribute(L"src", url);
+					img->setAttribute(L"alt", label);
+					img->setAttribute(L"loading", L"lazy");
+				}
+				else if (isSafeUrl(url))
 				{
 					auto a = addElement(parent, L"a");
 					a->setAttribute(L"href", url);

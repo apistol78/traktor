@@ -12,11 +12,13 @@
 #include "Core/Log/Log.h"
 #include "Core/Misc/CommandLine.h"
 #include "Demo/DemoApplication.h"
+#include "Demo/ImageStore.h"
 #include "Demo/UserData.h"
 #include "Forum/ForumData.h"
 #include "Net/Network.h"
 #include "Net/SocketAddressIPv4.h"
 #include "Net/Http/HttpServer.h"
+#include "Project/ProjectData.h"
 #include "Webber/HttpRequestListener.h"
 #include "Xml/XmlDeserializer.h"
 #include "Xml/XmlSerializer.h"
@@ -31,7 +33,7 @@ bool saveData(const ISerializable* data, const Path& fileName)
 	// Write a temporary file and replace the data file with it; a failed save never damages existing data.
 	const Path tempFileName = fileName.getPathName() + L".tmp";
 
-	Ref< IStream > file = FileSystem::getInstance().open(tempFileName, File::FmWrite);
+	Ref< traktor::IStream > file = FileSystem::getInstance().open(tempFileName, File::FmWrite);
 	if (file)
 	{
 		const bool result = xml::XmlSerializer(file).writeObject(data);
@@ -60,7 +62,7 @@ Ref< DataType > loadData(const Path& fileName, Ref< DataType > (*createSample)()
 	}
 
 	// Existing data must load; never replace it with sample data.
-	Ref< IStream > file = FileSystem::getInstance().open(fileName, File::FmRead);
+	Ref< traktor::IStream > file = FileSystem::getInstance().open(fileName, File::FmRead);
 	Ref< DataType > data = file ? xml::XmlDeserializer(file, fileName.getPathName()).readObject< DataType >() : nullptr;
 	if (file)
 		file->close();
@@ -93,13 +95,17 @@ int main(int argc, const char** argv)
 
 	const Path usersFileName = dataPath + Path(L"Users.xml");
 	const Path blogFileName = dataPath + Path(L"Blog.xml");
+	const Path projectsFileName = dataPath + Path(L"Projects.xml");
 	const Path forumFileName = dataPath + Path(L"Forum.xml");
 
 	Ref< demo::Users > userData = loadData(usersFileName, &demo::createSampleUsers);
 	Ref< blog::Blog > blogData = loadData(blogFileName, &blog::createSampleBlog);
+	Ref< project::Projects > projectData = loadData(projectsFileName, &project::createSampleProjects);
 	Ref< forum::Forum > forumData = loadData(forumFileName, &forum::createSampleForum);
-	if (!userData || !blogData || !forumData)
+	if (!userData || !blogData || !projectData || !forumData)
 		return 1;
+
+	Ref< demo::ImageStore > images = new demo::ImageStore(dataPath + Path(L"Images"));
 
 	if (!net::Network::initialize())
 	{
@@ -118,7 +124,9 @@ int main(int argc, const char** argv)
 		[&]() -> Ref< wbr::IApplication > {
 			return new demo::DemoApplication(
 				userData->users,
+				images,
 				*blogData, [&]() { saveData(blogData, blogFileName); },
+				*projectData, [&]() { saveData(projectData, projectsFileName); },
 				*forumData, [&]() { saveData(forumData, forumFileName); }
 			);
 		},

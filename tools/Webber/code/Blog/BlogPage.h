@@ -10,6 +10,7 @@
 
 #include <functional>
 #include <string>
+#include "Core/Containers/AlignedVector.h"
 #include "Webber/Container.h"
 
 namespace traktor::blog
@@ -25,8 +26,10 @@ class BlogPage : public wbr::Container
 	T_RTTI_CLASS;
 
 public:
-	/*! \param changed Called after the blog has been modified. */
-	explicit BlogPage(Blog& blog, const std::function< void() >& changed);
+	/*! \param changed Called after the blog has been modified.
+	 * \param storeImage Stores an uploaded image and returns its URI, empty if it isn't a supported image.
+	 */
+	explicit BlogPage(Blog& blog, const std::function< void() >& changed, const std::function< std::wstring(const AlignedVector< uint8_t >&) >& storeImage);
 
 	/*! Set user and redraw current view.
 	 * \param user Author of posts made through this page, empty for guest.
@@ -48,6 +51,7 @@ public:
 private:
 	Blog& m_blog;
 	std::function< void() > m_changed;
+	std::function< std::wstring(const AlignedVector< uint8_t >&) > m_storeImage;
 	std::wstring m_user;
 	bool m_admin = false;
 	int32_t m_post = -1;	//!< Id of post being shown, -1 when listing posts.

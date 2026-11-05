@@ -37,12 +37,21 @@ class ForumPage;
 
 }
 
+namespace traktor::project
+{
+
+class Projects;
+class ProjectPage;
+
+}
+
 namespace traktor::demo
 {
 
+class ImageStore;
 struct User;
 
-/*! Demo site; top bar with links to home, blog and forum, and login.
+/*! Demo site; top bar with links to home, blog, projects and forum, and login.
  * \ingroup Webber
  */
 class DemoApplication : public wbr::IApplication
@@ -50,13 +59,18 @@ class DemoApplication : public wbr::IApplication
 	T_RTTI_CLASS;
 
 public:
-	/*! \param blogChanged Called after the blog has been modified.
+	/*! \param images Uploaded images, referenced from blog posts and projects.
+	 * \param blogChanged Called after the blog has been modified.
+	 * \param projectsChanged Called after projects have been modified.
 	 * \param forumChanged Called after the forum has been modified.
 	 */
 	explicit DemoApplication(
 		const AlignedVector< User >& users,
+		ImageStore* images,
 		blog::Blog& blog,
 		const std::function< void() >& blogChanged,
+		project::Projects& projects,
+		const std::function< void() >& projectsChanged,
 		forum::Forum& forum,
 		const std::function< void() >& forumChanged
 	);
@@ -82,6 +96,8 @@ public:
 	/*! \param post Post id. */
 	void showBlogPost(int32_t post);
 
+	void showProjects();
+
 	void showForum();
 
 	/*! \param thread Thread id. */
@@ -89,19 +105,24 @@ public:
 
 private:
 	const AlignedVector< User >& m_users;
+	Ref< ImageStore > m_images;
 	blog::Blog& m_blogData;
 	std::function< void() > m_blogChanged;
+	project::Projects& m_projectData;
+	std::function< void() > m_projectsChanged;
 	forum::Forum& m_forumData;
 	std::function< void() > m_forumChanged;
 	Ref< wbr::Container > m_root;
 	Ref< wbr::Link > m_homeLink;
 	Ref< wbr::Link > m_blogLink;
+	Ref< wbr::Link > m_projectLink;
 	Ref< wbr::Link > m_forumLink;
 	wbr::Link* m_activeLink = nullptr;	//!< Link of the page being shown.
 	Ref< wbr::Container > m_userInfo;
 	Ref< wbr::Container > m_content;
 	Ref< wbr::Container > m_overlay;
 	Ref< blog::BlogPage > m_blog;
+	Ref< project::ProjectPage > m_project;
 	Ref< forum::ForumPage > m_forum;
 
 	/*! Replace content with page and highlight its link in the top bar. */

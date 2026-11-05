@@ -82,6 +82,32 @@ function post_event(widgetId, action)
 	send_event("wid=" + widgetId + "&wa=" + action, false);
 }
 
+// Base64 and percent encoding must keep the event within the server's 16 MB limit.
+var c_maxFileSize = 10 * 1024 * 1024;
+
+function post_file(input, widgetId)
+{
+	var file = input.files[0];
+	input.value = "";
+	if (file == null)
+		return;
+
+	if (file.size > c_maxFileSize)
+	{
+		alert("The file is too large; at most 10 MB can be uploaded.");
+		return;
+	}
+
+	// File is sent as the upload widget's value; name and Base64 content separated by a line feed.
+	var reader = new FileReader();
+	reader.onload = function()
+	{
+		var data = reader.result.substring(reader.result.indexOf(",") + 1);
+		send_event("wid=" + widgetId + "&wa=1&_" + widgetId + "=" + encodeURIComponent(file.name + "\n" + data), false);
+	};
+	reader.readAsDataURL(file);
+}
+
 function post_navigate(loc)
 {
 	send_event("nav=" + encodeURIComponent(loc), true);

@@ -14,6 +14,7 @@
 #include "Blog/BlogPage.h"
 #include "Webber/Button.h"
 #include "Webber/Edit.h"
+#include "Webber/FileUpload.h"
 #include "Webber/Link.h"
 #include "Webber/Markdown.h"
 #include "Webber/Static.h"
@@ -61,9 +62,10 @@ wbr::Static* addStatic(wbr::Container* parent, const std::wstring& text, const s
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.blog.BlogPage", BlogPage, wbr::Container)
 
-BlogPage::BlogPage(Blog& blog, const std::function< void() >& changed)
+BlogPage::BlogPage(Blog& blog, const std::function< void() >& changed, const std::function< std::wstring(const AlignedVector< uint8_t >&) >& storeImage)
 :	m_blog(blog)
 ,	m_changed(changed)
+,	m_storeImage(storeImage)
 {
 	setStyleClass(L"blog");
 	showPosts();
@@ -188,7 +190,22 @@ void BlogPage::showEditor(int32_t post)
 	auto title = form->addChild(new wbr::Edit());
 	addStatic(form, L"Text (Markdown)", L"blog_label");
 	auto text = form->addChild(new wbr::TextArea());
+	auto upload = form->addChild(new wbr::FileUpload(L"Insert image", L"image/png,image/jpeg,image/gif,image/webp"));
 	auto error = addStatic(form, L"", L"blog_error");
+
+	// Uploaded image is referenced at the end of the text.
+	upload->uploaded() += [this, upload, text, error]() {
+		const std::wstring uri = m_storeImage(upload->getData());
+		if (uri.empty())
+		{
+			error->setText(L"Only PNG, JPEG, GIF and WebP images can be inserted.");
+			return;
+		}
+		const std::wstring& fileName = upload->getFileName();
+		const std::wstring before = rtrim(text->getText());
+		error->setText(L"");
+		text->setText(before + (before.empty() ? L"" : L"\n\n") + L"![" + fileName.substr(0, fileName.find_last_of(L'.')) + L"](" + uri + L")\n");
+	};
 
 	if (p)
 	{
