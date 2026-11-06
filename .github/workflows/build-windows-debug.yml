@@ -11,6 +11,7 @@ permissions:
 
 jobs:
   build:
+    if: github.repository == 'apistol78/traktor'
     runs-on: windows-2025-vs2026
     steps:
     - uses: actions/checkout@v3
