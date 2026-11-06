@@ -69,6 +69,20 @@ Ref< Model > ModelFormatBlend::read(const Path& filePath, const std::wstring& fi
 
 	FileOutputStream os(file, new Utf8Encoding());
 	os << L"import bpy" << Endl;
+
+	// FBX only carries an armature's rest pose as the bind pose of a skinned mesh; give
+	// armatures without one (animation only files) a single vertex mesh so retargeting
+	// has the animation rig's rest pose to measure against.
+	os << L"scene = bpy.context.scene" << Endl;
+	os << L"for arm in [o for o in scene.objects if o.type == 'ARMATURE' and o.visible_get()]:" << Endl;
+	os << L"	if any(m.type == 'ARMATURE' and m.object == arm for o in scene.objects if o.type == 'MESH' and o.visible_get() for m in o.modifiers):" << Endl;
+	os << L"		continue" << Endl;
+	os << L"	me = bpy.data.meshes.new('__rest__')" << Endl;
+	os << L"	me.from_pydata([(0.0, 0.0, 0.0)], [], [])" << Endl;
+	os << L"	ob = bpy.data.objects.new('__rest__', me)" << Endl;
+	os << L"	scene.collection.objects.link(ob)" << Endl;
+	os << L"	ob.modifiers.new('Armature', 'ARMATURE').object = arm" << Endl;
+
 	os << L"bpy.ops.export_scene.fbx(" << Endl;
 	os << L"	filepath=\"" << scratchPath << L"/" << intermediate << L"\"," << Endl;
 	os << L"    object_types={'ARMATURE', 'MESH', 'OTHER'}," << Endl;

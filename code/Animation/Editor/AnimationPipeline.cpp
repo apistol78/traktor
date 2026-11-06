@@ -33,12 +33,106 @@
 #include "Model/Operations/Transform.h"
 #include "Model/Pose.h"
 
+#include <algorithm>
+#include <cmath>
 #include <limits>
 
 namespace traktor::animation
 {
+	namespace
+	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.AnimationPipeline", 28, AnimationPipeline, editor::IPipeline)
+/*! Collect rest directions, in global space, from a joint to each of its children. */
+AlignedVector< Vector4 > childDirections(const model::Model* model, uint32_t joint)
+{
+	const Vector4 P = model->getJointGlobalTransform(joint).translation();
+	AlignedVector< Vector4 > directions;
+	for (uint32_t i = 0; i < model->getJointCount(); ++i)
+		if (model->getJoint(i).getParent() == joint)
+			directions.push_back((model->getJointGlobalTransform(i).translation() - P).xyz0());
+	return directions;
+}
+
+/*! Global rotation which turns a skeleton joint's rest bone directions onto the animation rig's.
+ *
+ * Bones are described by the directions towards their children; children are paired by name,
+ * else a lone child in both rigs is paired regardless of name (e.g. differently named finger
+ * tips). The longest pair is aligned with a minimal swing; another, not parallel, pair then
+ * resolves the twist around it. Returns false if no pair is found.
+ */
+bool alignRestDirections(const model::Model* modelSkeleton, uint32_t jointSkeleton, const model::Model* modelAnimation, uint32_t jointAnimation, Quaternion& outAlign)
+{
+	const AlignedVector< Vector4 > directionsAnimation = childDirections(modelAnimation, jointAnimation);
+
+	AlignedVector< std::pair< Vector4, Vector4 > > pairs;
+	const Vector4 Ps = modelSkeleton->getJointGlobalTransform(jointSkeleton).translation();
+	const Vector4 Pa = modelAnimation->getJointGlobalTransform(jointAnimation).translation();
+	for (uint32_t i = 0; i < modelSkeleton->getJointCount(); ++i)
+	{
+		if (modelSkeleton->getJoint(i).getParent() != jointSkeleton)
+			continue;
+
+		const uint32_t k = modelAnimation->findJointIndex(modelSkeleton->getJoint(i).getName());
+		if (k == model::c_InvalidIndex || modelAnimation->getJoint(k).getParent() != jointAnimation)
+			continue;
+
+		pairs.push_back({
+			(modelSkeleton->getJointGlobalTransform(i).translation() - Ps).xyz0(),
+			(modelAnimation->getJointGlobalTransform(k).translation() - Pa).xyz0()
+		});
+	}
+	if (pairs.empty())
+	{
+		const AlignedVector< Vector4 > directionsSkeleton = childDirections(modelSkeleton, jointSkeleton);
+		if (directionsSkeleton.size() == 1 && directionsAnimation.size() == 1)
+			pairs.push_back({ directionsSkeleton[0], directionsAnimation[0] });
+	}
+
+	pairs.erase(std::remove_if(pairs.begin(), pairs.end(), [](const std::pair< Vector4, Vector4 >& pair) {
+		return pair.first.length() <= FUZZY_EPSILON || pair.second.length() <= FUZZY_EPSILON;
+	}), pairs.end());
+	if (pairs.empty())
+		return false;
+
+	std::sort(pairs.begin(), pairs.end(), [](const std::pair< Vector4, Vector4 >& lh, const std::pair< Vector4, Vector4 >& rh) {
+		return lh.first.length() > rh.first.length();
+	});
+
+	const Vector4 ps = pairs[0].first.normalized();
+	const Vector4 pa = pairs[0].second.normalized();
+	const Quaternion Qswing(ps, pa);
+
+	// Pick the pair most perpendicular to the primary direction to resolve twist.
+	int32_t secondary = -1;
+	Scalar bestSine = 0.2_simd;
+	for (uint32_t i = 1; i < pairs.size(); ++i)
+	{
+		const Scalar sine = cross(ps, pairs[i].first.normalized()).length();
+		if (sine > bestSine)
+		{
+			bestSine = sine;
+			secondary = i;
+		}
+	}
+	if (secondary < 0)
+	{
+		outAlign = Qswing;
+		return true;
+	}
+
+	Vector4 ss = Qswing * pairs[secondary].first;
+	Vector4 sa = pairs[secondary].second;
+	ss = (ss - pa * dot3(ss, pa)).normalized();
+	sa = (sa - pa * dot3(sa, pa)).normalized();
+	const float twist = std::atan2((float)dot3(cross(ss, sa), pa), (float)dot3(ss, sa));
+
+	outAlign = Quaternion::fromAxisAngle(pa, twist) * Qswing;
+	return true;
+}
+
+	}
+
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.AnimationPipeline", 29, AnimationPipeline, editor::IPipeline)
 
 bool AnimationPipeline::create(const editor::IPipelineSettings* settings, db::Database* database)
 {
@@ -168,9 +262,10 @@ bool AnimationPipeline::buildOutput(
 	//
 	//   skeletonGlobal(t) = animGlobal(t) * animRestGlobal^-1 * skeletonRestGlobal
 	//
-	// At rest this lands exactly on the skeleton's bind orientation while following the
-	// animation's global-space rotation over time; for rigs sharing bind conventions the
-	// correction is identity.
+	// The skeleton's rest is first swung onto the animation rig's rest bone directions, so
+	// the delta only carries the difference in bone roll and the bones follow the
+	// animation's directions even when the rest postures differ (e.g. A-pose onto T-pose).
+	// For rigs sharing rest pose and bind conventions the correction is identity.
 	//
 	// Only possible when the animation's rig has an actual rest pose to measure against.
 	// Rigs imported from files without geometry have no bind pose; their rest is merely
@@ -182,6 +277,7 @@ bool AnimationPipeline::buildOutput(
 		log::info << L"Animation's rig has no bind pose; assuming it shares rest pose with skeleton." << Endl;
 
 	AlignedVector< Quaternion > restCorrections(modelSkeleton->getJointCount(), Quaternion::identity());
+	AlignedVector< Quaternion > restAligns(modelSkeleton->getJointCount(), Quaternion::identity());
 	for (uint32_t i = 0; i < modelSkeleton->getJointCount(); ++i)
 	{
 		const model::Joint& jointSkeleton = modelSkeleton->getJoint(i);
@@ -196,9 +292,16 @@ bool AnimationPipeline::buildOutput(
 		if (!matchOrientations)
 			continue;
 
+		// Joints without bone directions to align by, e.g. tips, follow their parent's alignment.
+		if (!alignRestDirections(modelSkeleton, i, modelAnimation, jointIdx, restAligns[i]))
+		{
+			const uint32_t parent = jointSkeleton.getParent();
+			restAligns[i] = (parent != model::c_InvalidIndex) ? restAligns[parent] : Quaternion::identity();
+		}
+
 		const Quaternion QanimRest = modelAnimation->getJointGlobalTransform(jointIdx).rotation();
 		const Quaternion QskeletonRest = modelSkeleton->getJointGlobalTransform(i).rotation();
-		restCorrections[i] = QanimRest.inverse() * QskeletonRest;
+		restCorrections[i] = QanimRest.inverse() * restAligns[i] * QskeletonRest;
 	}
 
 	// Find animation take.

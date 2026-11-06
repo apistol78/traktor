@@ -68,10 +68,6 @@ void writeSkinVertex(
 
 	if (std::abs(totalInfluence) > FUZZY_EPSILON)
 	{
-		// Don't normalize single bone vertices; skinned with world.
-		if (jointCount <= 1)
-			totalInfluence = 1.0f;
-
 		for (uint32_t i = 0; i < jointCount; ++i)
 		{
 			blendIndices[i] = influences[i].first;
