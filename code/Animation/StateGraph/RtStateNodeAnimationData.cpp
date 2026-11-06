@@ -30,7 +30,7 @@ Ref< RtStateNode > RtStateNodeAnimationData::createInstance(
 {
 	Ref< RtStateNodeAnimation > instance = new RtStateNodeAnimation();
 
-	if (m_transformTime)
+	if (!editor && m_transformTime)
 	{
 		if ((instance->m_transformTime = m_transformTime->createInstance()) == nullptr)
 			return nullptr;

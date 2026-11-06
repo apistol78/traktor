@@ -51,9 +51,7 @@ public:
 
 	virtual Vector4 consumeRootMotion() override final;
 
-	virtual IPoseController* getActivePoseController() override final;
-
-	virtual void getPoseControllersOf(const TypeInfo& type, RefArray< IPoseController >& outControllers) override final;
+	virtual void getPoseControllersOf(const TypeInfo& type, bool activeOnly, RefArray< IPoseController >& outControllers) override final;
 
 	void setActive(render::Handle name, bool active);
 

@@ -88,12 +88,7 @@ float RtStateNodeAnimation::evaluate(
 	return m_duration - m_time;
 }
 
-IPoseController* RtStateNodeAnimation::getActivePoseController() const
-{
-	return nullptr;
-}
-
-void RtStateNodeAnimation::getPoseControllersOf(const TypeInfo& type, RefArray< IPoseController >& outControllers) const
+void RtStateNodeAnimation::getPoseControllersOf(const TypeInfo& type, bool activeOnly, RefArray< IPoseController >& outControllers) const
 {
 }
 }

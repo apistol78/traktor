@@ -61,10 +61,9 @@ public:
 
 	const RtStateNode* getCurrentState() const { return m_currentState; }
 
-	/*! State being blended into, null if none. */
 	const RtStateNode* getNextState() const { return m_nextState; }
 
-	void getPoseControllersOf(const TypeInfo& type, RefArray< IPoseController >& outControllers) const;
+	void getPoseControllersOf(const TypeInfo& type, bool activeOnly, RefArray< IPoseController >& outControllers) const;
 
 	const RefArray< RtStateNode >& getStates() const { return m_states; }
 

@@ -55,9 +55,7 @@ public:
 		AlignedVector< Transform >& outPoseTransforms
 	) override final;
 
-	virtual IPoseController* getActivePoseController() override final;
-
-	virtual void getPoseControllersOf(const TypeInfo& type, RefArray< IPoseController >& outControllers) override final;
+	virtual void getPoseControllersOf(const TypeInfo& type, bool activeOnly, RefArray< IPoseController >& outControllers) override final;
 
 private:
 	resource::Proxy< Animation > m_animation;

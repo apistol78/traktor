@@ -22,7 +22,7 @@
 namespace traktor::animation
 {
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.RtStateNodeStackData", 0, RtStateNodeStackData, RtStateNodeData)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.RtStateNodeStackData", 1, RtStateNodeStackData, RtStateNodeData)
 
 Ref< RtStateNode > RtStateNodeStackData::createInstance(
 	resource::IResourceManager* resourceManager,
@@ -31,7 +31,18 @@ Ref< RtStateNode > RtStateNodeStackData::createInstance(
 	const Transform& worldTransform,
 	bool editor) const
 {
+	RtStateNodeStack::Layer defaultLayer;
 	AlignedVector< RtStateNodeStack::Layer > layers;
+
+	if (m_default.animation)
+	{
+		if (!resourceManager->bind(m_default.animation, defaultLayer.animation))
+			return nullptr;
+
+		if (!editor && m_default.transformTime)
+			defaultLayer.transformTime = m_default.transformTime->createInstance();
+	}
+
 	for (const auto& layerData : m_layers)
 	{
 		if (!layerData.animation)
@@ -43,15 +54,24 @@ Ref< RtStateNode > RtStateNodeStackData::createInstance(
 		if (!resourceManager->bind(layerData.animation, layer.animation))
 			return nullptr;
 
-		if (layerData.transformTime)
+		if (!editor && layerData.transformTime)
 			layer.transformTime = layerData.transformTime->createInstance();
 	}
-	return  new RtStateNodeStack(layers);
+
+	return new RtStateNodeStack(defaultLayer, layers);
 }
 
 void RtStateNodeStackData::serialize(ISerializer& s)
 {
+	if (s.getVersion< RtStateNodeStackData >() >= 1)
+		s >> MemberComposite< Default >(L"default", m_default);
 	s >> MemberAlignedVector< Layer, MemberComposite< Layer > >(L"layers", m_layers);
+}
+
+void RtStateNodeStackData::Default::serialize(ISerializer& s)
+{
+	s >> resource::Member< Animation >(L"animation", animation);
+	s >> MemberRef< const ITransformTimeData >(L"transformTime", transformTime);
 }
 
 void RtStateNodeStackData::Layer::serialize(ISerializer& s)

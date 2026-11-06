@@ -73,10 +73,10 @@ bool SkeletonComponent_concatenatePoseTransform(SkeletonComponent* self, const s
 		inclusive);
 }
 
-RefArray< IPoseController > SkeletonComponent_getPoseControllersOf(SkeletonComponent* self, const TypeInfo& controllerType)
+RefArray< IPoseController > SkeletonComponent_getPoseControllersOf(SkeletonComponent* self, bool activeOnly, const TypeInfo& controllerType)
 {
 	RefArray< IPoseController > controllers;
-	self->getPoseControllersOf(controllerType, controllers);
+	self->getPoseControllersOf(controllerType, activeOnly, controllers);
 	return controllers;
 }
 
@@ -117,7 +117,6 @@ void AnimationClassFactory::createClasses(IRuntimeClassRegistrar* registrar) con
 {
 	auto classSkeletonComponent = new AutoRuntimeClass< SkeletonComponent >();
 	classSkeletonComponent->addProperty("poseController", &SkeletonComponent::setPoseController, &SkeletonComponent::getPoseController);
-	classSkeletonComponent->addProperty("activePoseController", &SkeletonComponent::getActivePoseController);
 	classSkeletonComponent->addMethod("getJointTransform", &SkeletonComponent_getJointTransform);
 	classSkeletonComponent->addMethod("getPoseTransform", &SkeletonComponent_getPoseTransform);
 	classSkeletonComponent->addMethod("setPoseTransform", &SkeletonComponent_setPoseTransform);

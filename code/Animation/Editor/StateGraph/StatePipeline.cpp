@@ -60,6 +60,7 @@ bool StatePipeline::buildDependencies(
 	}
 	else if (auto state = dynamic_type_cast< const StateNodeStack* >(sourceAsset))
 	{
+		pipelineDepends->addDependency(state->getDefault().animation, editor::PdfBuild | editor::PdfResource);
 		for (const auto& layer : state->getLayers())
 			pipelineDepends->addDependency(layer.animation, editor::PdfBuild | editor::PdfResource);
 	}

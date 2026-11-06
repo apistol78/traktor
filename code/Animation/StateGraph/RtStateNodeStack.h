@@ -49,6 +49,8 @@ public:
 		float lastTime = 0.0f;
 		float weight = 0.0f;
 
+		void update(const Transform& worldTransform, float deltaTime, float deltaWeight);
+
 		void evaluate(
 			const Transform& worldTransform,
 			const Skeleton* skeleton,
@@ -57,7 +59,7 @@ public:
 			Vector4& outRootMotion) const;
 	};
 
-	explicit RtStateNodeStack(const AlignedVector< RtStateNodeStack::Layer >& layers);
+	explicit RtStateNodeStack(const RtStateNodeStack::Layer& defaultLayer, const AlignedVector< RtStateNodeStack::Layer >& layers);
 
 	virtual void destroy() override final;
 
@@ -76,13 +78,12 @@ public:
 		Pose& outPose,
 		Vector4* outRootMotion) override final;
 
-	virtual IPoseController* getActivePoseController() const override final;
-
-	virtual void getPoseControllersOf(const TypeInfo& type, RefArray< IPoseController >& outControllers) const override final;
+	virtual void getPoseControllersOf(const TypeInfo& type, bool activeOnly, RefArray< IPoseController >& outControllers) const override final;
 
 private:
 	friend class RtStateNodeStackData;
 
+	mutable Layer m_defaultLayer;
 	mutable AlignedVector< Layer > m_layers;
 };
 

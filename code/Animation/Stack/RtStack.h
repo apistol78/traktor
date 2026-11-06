@@ -95,7 +95,7 @@ public:
 
 	IPoseController* getActivePoseController() const;
 
-	void getPoseControllersOf(const TypeInfo& type, RefArray< IPoseController >& outControllers) const;
+	void getPoseControllersOf(const TypeInfo& type, bool activeOnly, RefArray< IPoseController >& outControllers) const;
 
 private:
 	AlignedVector< Layer > m_layers;

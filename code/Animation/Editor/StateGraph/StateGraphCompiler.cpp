@@ -100,6 +100,12 @@ Ref< RtStateGraphData > StateGraphCompiler::compile(const StateGraph* stateGraph
 		else if (const auto stateStack = dynamic_type_cast< const StateNodeStack* >(state))
 		{
 			Ref< RtStateNodeStackData > rts = new RtStateNodeStackData();
+
+			rts->m_default = {
+				.animation = stateStack->getDefault().animation,
+				.transformTime = stateStack->getDefault().transformTime
+			};
+
 			for (const auto& stateLayer : stateStack->getLayers())
 			{
 				const int32_t index = addUnique(rtsg->m_parameters, stateLayer.name);
@@ -108,6 +114,7 @@ Ref< RtStateGraphData > StateGraphCompiler::compile(const StateGraph* stateGraph
 					.animation = stateLayer.animation,
 					.transformTime = stateLayer.transformTime });
 			}
+
 			rtsg->m_states.push_back(rts);
 			stateToIndices.insert(state, { (int32_t)rtsg->m_states.size() - 1 });
 		}

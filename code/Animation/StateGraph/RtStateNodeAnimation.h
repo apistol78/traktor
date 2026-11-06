@@ -50,9 +50,7 @@ public:
 		Pose& outPose,
 		Vector4* outRootMotion) override final;
 
-	virtual IPoseController* getActivePoseController() const override final;
-
-	virtual void getPoseControllersOf(const TypeInfo& type, RefArray< IPoseController >& outControllers) const override final;
+	virtual void getPoseControllersOf(const TypeInfo& type, bool activeOnly, RefArray< IPoseController >& outControllers) const override final;
 
 private:
 	friend class RtStateNodeAnimationData;

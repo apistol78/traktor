@@ -63,9 +63,7 @@ public:
 
 	virtual Vector4 consumeRootMotion() override final;
 
-	virtual IPoseController* getActivePoseController() override final;
-
-	virtual void getPoseControllersOf(const TypeInfo& type, RefArray< IPoseController >& outControllers) override final;
+	virtual void getPoseControllersOf(const TypeInfo& type, bool activeOnly, RefArray< IPoseController >& outControllers) override final;
 
 private:
 	Ref< RtStateGraph > m_stateGraph;

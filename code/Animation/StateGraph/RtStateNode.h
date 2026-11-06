@@ -54,9 +54,7 @@ public:
 		Pose& outPose,
 		Vector4* outRootMotion) = 0;
 
-	virtual IPoseController* getActivePoseController() const = 0;
-
-	virtual void getPoseControllersOf(const TypeInfo& type, RefArray< IPoseController >& outControllers) const = 0;
+	virtual void getPoseControllersOf(const TypeInfo& type, bool activeOnly, RefArray< IPoseController >& outControllers) const = 0;
 };
 
 }

@@ -55,7 +55,7 @@ void AnimationGraphPoseController::setOwner(world::Entity* owner)
 	for (auto state : m_stateGraph->getStates())
 	{
 		RefArray< IPoseController > poseControllers;
-		state->getPoseControllersOf(type_of< IPoseController >(), poseControllers);
+		state->getPoseControllersOf(type_of< IPoseController >(), false, poseControllers);
 		for (auto poseController : poseControllers)
 			poseController->setOwner(owner);
 	}
@@ -81,17 +81,12 @@ Vector4 AnimationGraphPoseController::consumeRootMotion()
 	return m_stateGraph ? m_stateGraph->consumeRootMotion() : Vector4::zero();
 }
 
-IPoseController* AnimationGraphPoseController::getActivePoseController()
-{
-	return m_stateGraph ? m_stateGraph->getActivePoseController() : this;
-}
-
-void AnimationGraphPoseController::getPoseControllersOf(const TypeInfo& type, RefArray< IPoseController >& outControllers)
+void AnimationGraphPoseController::getPoseControllersOf(const TypeInfo& type, bool activeOnly, RefArray< IPoseController >& outControllers)
 {
 	if (is_type_of(type, type_of< AnimationGraphPoseController >()))
 		outControllers.push_back(this);
-	else if (m_stateGraph)
-		m_stateGraph->getPoseControllersOf(type, outControllers);
+	if (m_stateGraph)
+		m_stateGraph->getPoseControllersOf(type, activeOnly, outControllers);
 }
 
 }

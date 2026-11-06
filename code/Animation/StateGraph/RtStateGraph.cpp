@@ -97,7 +97,7 @@ bool RtStateGraph::evaluate(
 
 	// Evaluate current state.
 	Vector4 currentRootMotion = Vector4::zero();
-	const float currentTimeLeft = m_currentState->evaluate(
+	float currentTimeLeft = m_currentState->evaluate(
 		m_context,
 		time,
 		deltaTime * m_timeFactor,
@@ -110,13 +110,15 @@ bool RtStateGraph::evaluate(
 	// Build final pose transforms.
 	if (m_nextState)
 	{
+		float nextTimeLeft = 0.0f;
+
 		// Only blend between states if there is a transition time.
 		if (m_blendDuration > 0.0f)
 		{
 			Pose nextPose, blendPose;
 
 			Vector4 nextRootMotion = Vector4::zero();
-			m_nextState->evaluate(
+			nextTimeLeft = m_nextState->evaluate(
 				m_context,
 				time,
 				deltaTime * m_timeFactor,
@@ -157,6 +159,8 @@ bool RtStateGraph::evaluate(
 		m_blendState += wallDeltaTime;
 		if (m_blendState >= m_blendDuration)
 		{
+			// Transitions below are now taken from the next state, so use its time left.
+			currentTimeLeft = nextTimeLeft;
 			m_currentState = m_nextState;
 			m_nextState = nullptr;
 			m_blendState = 0.0f;
@@ -274,15 +278,20 @@ Vector4 RtStateGraph::consumeRootMotion()
 	return rootMotion;
 }
 
-IPoseController* RtStateGraph::getActivePoseController() const
+void RtStateGraph::getPoseControllersOf(const TypeInfo& type, bool activeOnly, RefArray< IPoseController >& outControllers) const
 {
-	return m_currentState ? m_currentState->getActivePoseController() : nullptr;
-}
-
-void RtStateGraph::getPoseControllersOf(const TypeInfo& type, RefArray< IPoseController >& outControllers) const
-{
-	if (m_currentState != nullptr)
-		m_currentState->getPoseControllersOf(type, outControllers);
+	if (activeOnly)
+	{
+		if (m_currentState != nullptr)
+			m_currentState->getPoseControllersOf(type, true, outControllers);
+		if (m_nextState != nullptr)
+			m_nextState->getPoseControllersOf(type, true, outControllers);
+	}
+	else
+	{
+		for (auto state : m_states)
+			state->getPoseControllersOf(type, false, outControllers);
+	}
 }
 
 }

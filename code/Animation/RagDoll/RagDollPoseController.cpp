@@ -122,7 +122,7 @@ bool RagDollPoseController::evaluate(
 		entityTransform = Transform(trackedJointTransform.translation().xyz1(), worldTransform.rotation());
 	}
 
-	const Transform worldTransformInv = entityTransform.inverse();
+	const Transform worldTransformInv = worldTransform.inverse();
 	const uint32_t jointCount = skeleton->getJointCount();
 
 	outPoseTransforms.resize(jointCount);
@@ -195,12 +195,7 @@ bool RagDollPoseController::evaluate(
 	return true;
 }
 
-IPoseController* RagDollPoseController::getActivePoseController()
-{
-	return this;
-}
-
-void RagDollPoseController::getPoseControllersOf(const TypeInfo& type, RefArray< IPoseController >& outControllers)
+void RagDollPoseController::getPoseControllersOf(const TypeInfo& type, bool activeOnly, RefArray< IPoseController >& outControllers)
 {
 	if (is_type_of(type, type_of< RagDollPoseController >()))
 		outControllers.push_back(this);

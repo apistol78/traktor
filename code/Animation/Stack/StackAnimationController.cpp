@@ -54,17 +54,12 @@ Vector4 StackAnimationController::consumeRootMotion()
 	return m_stack ? m_stack->consumeRootMotion() : Vector4::zero();
 }
 
-IPoseController* StackAnimationController::getActivePoseController()
-{
-	return m_stack ? m_stack->getActivePoseController() : this;
-}
-
-void StackAnimationController::getPoseControllersOf(const TypeInfo& type, RefArray< IPoseController >& outControllers)
+void StackAnimationController::getPoseControllersOf(const TypeInfo& type, bool activeOnly, RefArray< IPoseController >& outControllers)
 {
 	if (is_type_of(type, type_of< StackAnimationController >()))
 		outControllers.push_back(this);
-	else if (m_stack)
-		m_stack->getPoseControllersOf(type, outControllers);
+	if (m_stack)
+		m_stack->getPoseControllersOf(type, activeOnly, outControllers);
 }
 
 void StackAnimationController::setActive(render::Handle name, bool active)

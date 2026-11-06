@@ -23,13 +23,15 @@ namespace traktor::animation
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.RtStateNodeStack", RtStateNodeStack, RtStateNode)
 
-RtStateNodeStack::RtStateNodeStack(const AlignedVector< RtStateNodeStack::Layer >& layers)
-	: m_layers(layers)
+RtStateNodeStack::RtStateNodeStack(const RtStateNodeStack::Layer& defaultLayer, const AlignedVector< RtStateNodeStack::Layer >& layers)
+	: m_defaultLayer(defaultLayer)
+	, m_layers(layers)
 {
 }
 
 void RtStateNodeStack::destroy()
 {
+	m_defaultLayer = {};
 	m_layers.clear();
 }
 
@@ -38,16 +40,23 @@ void RtStateNodeStack::reset(
 	const Skeleton* skeleton,
 	const AlignedVector< Transform >& poseTransforms)
 {
+	if (m_defaultLayer.animation)
+	{
+		const uint32_t poseCount = m_defaultLayer.animation->getKeyPoseCount();
+		m_defaultLayer.duration = (poseCount >= 1) ? m_defaultLayer.animation->getKeyPose(poseCount - 1).at : 0.0f;
+		m_defaultLayer.time = 0.0f;
+		m_defaultLayer.realTime = 0.0f;
+		m_defaultLayer.lastTime = 0.0f;
+		m_defaultLayer.weight = 0.0f;
+	}
+
 	for (auto& layer : m_layers)
 	{
 		if (!layer.animation)
 			continue;
 
 		const uint32_t poseCount = layer.animation->getKeyPoseCount();
-		if (poseCount < 1)
-			continue;
-
-		layer.duration = layer.animation->getKeyPose(poseCount - 1).at;
+		layer.duration = (poseCount >= 1) ? layer.animation->getKeyPose(poseCount - 1).at : 0.0f;
 		layer.time = 0.0f;
 		layer.realTime = 0.0f;
 		layer.lastTime = 0.0f;
@@ -69,34 +78,28 @@ float RtStateNodeStack::evaluate(
 	const float dw = deltaTime * rate;
 
 	// Update layers.
+	bool anyActive = false;
 	for (auto& layer : m_layers)
 	{
 		const bool active = context.getValues()[layer.condition];
-
-		float T = layer.realTime;
-		float dT = deltaTime;
-
-		if (layer.transformTime)
-			layer.transformTime->calculateTime(layer.animation, worldTransform, T, dT);
-
-		layer.lastTime = layer.time;
-		layer.time = T;
-		layer.realTime += deltaTime;
-
-		layer.weight += active ? dw : -dw;
-		layer.weight = clamp(layer.weight, 0.0f, 1.0f);
+		layer.update(worldTransform, deltaTime, active ? dw : -dw);
+		anyActive |= active;
 	}
 
-	// Find two top most weighted layers.
+	if (m_defaultLayer.animation)
+		m_defaultLayer.update(worldTransform, deltaTime, !anyActive ? dw : -dw);
+
+	// Find two top most weighted layers, default layer included.
 	const Layer* layerTop = nullptr;
 	const Layer* layerBottom = nullptr;
 
 	float layerTopWeight = 0.0f;
 	float layerBottomWeight = 0.0f;
 
-	for (auto& layer : m_layers)
+	for (size_t i = 0; i <= m_layers.size(); ++i)
 	{
-		const float lw = layer.weight - FUZZY_EPSILON;
+		const Layer* layer = (i < m_layers.size()) ? &m_layers[i] : &m_defaultLayer;
+		const float lw = layer->weight - FUZZY_EPSILON;
 		if (lw > layerTopWeight)
 		{
 			if (layerTopWeight > layerBottomWeight)
@@ -105,13 +108,13 @@ float RtStateNodeStack::evaluate(
 				layerBottomWeight = layerTopWeight;
 			}
 
-			layerTop = &layer;
-			layerTopWeight = layer.weight;
+			layerTop = layer;
+			layerTopWeight = layer->weight;
 		}
 		else if (lw > layerBottomWeight)
 		{
-			layerBottom = &layer;
-			layerBottomWeight = layer.weight;
+			layerBottom = layer;
+			layerBottomWeight = layer->weight;
 		}
 	}
 
@@ -154,13 +157,23 @@ float RtStateNodeStack::evaluate(
 	return std::numeric_limits< float >::max();
 }
 
-IPoseController* RtStateNodeStack::getActivePoseController() const
+void RtStateNodeStack::getPoseControllersOf(const TypeInfo& type, bool activeOnly, RefArray< IPoseController >& outControllers) const
 {
-	return nullptr;
 }
 
-void RtStateNodeStack::getPoseControllersOf(const TypeInfo& type, RefArray< IPoseController >& outControllers) const
+void RtStateNodeStack::Layer::update(const Transform& worldTransform, float deltaTime, float deltaWeight)
 {
+	float T = realTime;
+	float dT = deltaTime;
+
+	if (transformTime)
+		transformTime->calculateTime(animation, worldTransform, T, dT);
+
+	lastTime = time;
+	time = T;
+	realTime += deltaTime;
+
+	weight = clamp(weight + deltaWeight, 0.0f, 1.0f);
 }
 
 void RtStateNodeStack::Layer::evaluate(

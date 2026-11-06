@@ -36,6 +36,14 @@ class T_DLLCLASS StateNodeStack : public StateNode
 	T_RTTI_CLASS;
 
 public:
+	struct Default
+	{
+		resource::Id< Animation > animation;
+		Ref< const ITransformTimeData > transformTime;
+
+		void serialize(ISerializer& s);
+	};
+
 	struct Layer
 	{
 		std::wstring name;
@@ -47,9 +55,12 @@ public:
 
 	virtual void serialize(ISerializer& s) override;
 
+	const Default& getDefault() const { return m_default; }
+
 	const AlignedVector< Layer >& getLayers() const { return m_layers; }
 
 private:
+	Default m_default;
 	AlignedVector< Layer > m_layers;
 };
 

@@ -79,12 +79,7 @@ bool SimpleAnimationController::evaluate(
 	return !wrapped;
 }
 
-IPoseController* SimpleAnimationController::getActivePoseController()
-{
-	return this;
-}
-
-void SimpleAnimationController::getPoseControllersOf(const TypeInfo& type, RefArray< IPoseController >& outControllers)
+void SimpleAnimationController::getPoseControllersOf(const TypeInfo& type, bool activeOnly, RefArray< IPoseController >& outControllers)
 {
 	if (is_type_of(type, type_of< SimpleAnimationController >()))
 		outControllers.push_back(this);

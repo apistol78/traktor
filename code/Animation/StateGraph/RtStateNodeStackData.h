@@ -34,6 +34,14 @@ class T_DLLCLASS RtStateNodeStackData : public RtStateNodeData
 	T_RTTI_CLASS;
 
 public:
+	struct Default
+	{
+		resource::Id< Animation > animation;
+		Ref< const ITransformTimeData > transformTime;
+
+		void serialize(ISerializer& s);
+	};
+
 	struct Layer
 	{
 		int32_t condition;
@@ -55,6 +63,7 @@ public:
 private:
 	friend class StateGraphCompiler;
 
+	Default m_default;
 	AlignedVector< Layer > m_layers;
 };
 

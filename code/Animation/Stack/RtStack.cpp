@@ -183,11 +183,11 @@ IPoseController* RtStack::getActivePoseController() const
 	return nullptr;
 }
 
-void RtStack::getPoseControllersOf(const TypeInfo& type, RefArray< IPoseController >& outControllers) const
+void RtStack::getPoseControllersOf(const TypeInfo& type, bool activeOnly, RefArray< IPoseController >& outControllers) const
 {
 	for (auto& layer : m_layers)
 		if (layer.poseController)
-			layer.poseController->getPoseControllersOf(type, outControllers);
+			layer.poseController->getPoseControllersOf(type, activeOnly, outControllers);
 }
 
 void RtStack::Layer::evaluate(

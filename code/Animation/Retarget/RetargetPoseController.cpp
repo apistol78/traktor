@@ -129,17 +129,12 @@ bool RetargetPoseController::evaluate(
 	return result;
 }
 
-IPoseController* RetargetPoseController::getActivePoseController()
-{
-	return this;
-}
-
-void RetargetPoseController::getPoseControllersOf(const TypeInfo& type, RefArray< IPoseController >& outControllers)
+void RetargetPoseController::getPoseControllersOf(const TypeInfo& type, bool activeOnly, RefArray< IPoseController >& outControllers)
 {
 	if (is_type_of(type, type_of< RetargetPoseController >()))
 		outControllers.push_back(this);
-	else if (m_poseController)
-		m_poseController->getPoseControllersOf(type, outControllers);
+	if (m_poseController)
+		m_poseController->getPoseControllersOf(type, activeOnly, outControllers);
 }
 
 }

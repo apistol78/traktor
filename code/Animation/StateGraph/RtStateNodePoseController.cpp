@@ -78,15 +78,10 @@ float RtStateNodePoseController::evaluate(
 	return std::numeric_limits< float >::max();
 }
 
-IPoseController* RtStateNodePoseController::getActivePoseController() const
-{
-	return m_poseController ? m_poseController->getActivePoseController() : nullptr;
-}
-
-void RtStateNodePoseController::getPoseControllersOf(const TypeInfo& type, RefArray< IPoseController >& outControllers) const
+void RtStateNodePoseController::getPoseControllersOf(const TypeInfo& type, bool activeOnly, RefArray< IPoseController >& outControllers) const
 {
 	if (m_poseController != nullptr)
-		m_poseController->getPoseControllersOf(type, outControllers);
+		m_poseController->getPoseControllersOf(type, activeOnly, outControllers);
 }
 
 }

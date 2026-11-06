@@ -88,11 +88,8 @@ public:
 	/*! Consume accumulated root motion played since last call. */
 	virtual Vector4 consumeRootMotion() { return Vector4::zero(); }
 
-	/*! Return the pose controller actually driving the pose right now. */
-	virtual IPoseController* getActivePoseController() = 0;
-
 	/*! */
-	virtual void getPoseControllersOf(const TypeInfo& type, RefArray< IPoseController >& outControllers) = 0;
+	virtual void getPoseControllersOf(const TypeInfo& type, bool activeOnly, RefArray< IPoseController >& outControllers) = 0;
 };
 
 }

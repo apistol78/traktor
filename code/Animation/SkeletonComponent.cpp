@@ -18,7 +18,7 @@
 #include <cmath>
 #include <cstdlib>
 
-//#define T_USE_UPDATE_JOBS
+// #define T_USE_UPDATE_JOBS
 
 namespace traktor::animation
 {
@@ -71,15 +71,10 @@ void SkeletonComponent::setTransform(const Transform& transform)
 		m_poseController->setTransform(transform);
 }
 
-IPoseController* SkeletonComponent::getActivePoseController() const
-{
-	return m_poseController ? m_poseController->getActivePoseController() : nullptr;
-}
-
-void SkeletonComponent::getPoseControllersOf(const TypeInfo& type, RefArray< IPoseController >& outControllers) const
+void SkeletonComponent::getPoseControllersOf(const TypeInfo& type, bool activeOnly, RefArray< IPoseController >& outControllers) const
 {
 	if (m_poseController)
-		m_poseController->getPoseControllersOf(type, outControllers);
+		m_poseController->getPoseControllersOf(type, activeOnly, outControllers);
 }
 
 Aabb3 SkeletonComponent::getBoundingBox() const
@@ -176,8 +171,7 @@ Transform SkeletonComponent::consumeRootMotion()
 	const Vector4 rootMotion = m_poseController ? m_poseController->consumeRootMotion() : Vector4::zero();
 	return Transform(
 		Vector4(rootMotion.x(), 0.0f, rootMotion.z(), 0.0f),
-		Quaternion::fromAxisAngle(Vector4(0.0f, 1.0f, 0.0f, 0.0f), rootMotion.w())
-	);
+		Quaternion::fromAxisAngle(Vector4(0.0f, 1.0f, 0.0f, 0.0f), rootMotion.w()));
 }
 
 bool SkeletonComponent::getJointTransform(render::handle_t jointName, Transform& outTransform) const
@@ -293,21 +287,35 @@ void SkeletonComponent::applyEntityTransform()
 	if (m_owner == nullptr || m_poseController == nullptr)
 		return;
 
-	const IPoseController* activePoseController = m_poseController->getActivePoseController();
-	if (activePoseController == nullptr)
-		return;
-
 	Transform entityTransform;
-	if (!activePoseController->getEntityTransform(entityTransform))
-		return;
-	if (fuzzyEqual(entityTransform, m_transform))
-		return;
+	bool foundEntityTransform = false;
 
-	// The owner skips the currently updating component when propagating the transform,
-	// so setTransform is not re-entered here; keep our own copy in sync manually. The
-	// controller already accounted for this transform when evaluating the pose.
-	m_transform = entityTransform;
-	m_owner->setTransform(entityTransform);
+	RefArray< IPoseController > activePoseControllers;
+	m_poseController->getPoseControllersOf(type_of< IPoseController >(), true, activePoseControllers);
+	for (auto activePoseController : activePoseControllers)
+	{
+		
+		if (!activePoseController->getEntityTransform(entityTransform))
+			continue;
+		if (!fuzzyEqual(entityTransform, m_transform))
+		{
+			foundEntityTransform = true;
+			break;
+		}
+	}
+
+	if (foundEntityTransform)
+	{
+		// Pose was evaluated relative to the previous transform; rebase it onto the driven transform.
+		const Transform rebase = entityTransform.inverse() * m_transform;
+		for (auto& poseTransform : m_poseTransforms)
+			poseTransform = rebase * poseTransform;
+		m_revision++;
+
+		// The owner skips the currently updating component when propagating the transform; keep our own copy in sync.
+		m_transform = entityTransform;
+		m_owner->setTransform(entityTransform);
+	}
 }
 
 }

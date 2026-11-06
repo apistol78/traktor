@@ -87,12 +87,8 @@ public:
 	/*! Get pose evaluation controller. */
 	IPoseController* getPoseController() const { return m_poseController; }
 
-	/*! The pose controller currently driving the pose (e.g. the rag doll controller while
-	 * in a rag doll state), or null. See IPoseController::getActivePoseController. */
-	IPoseController* getActivePoseController() const;
-
 	/*! */
-	void getPoseControllersOf(const TypeInfo& type, RefArray< IPoseController >& outControllers) const;
+	void getPoseControllersOf(const TypeInfo& type, bool activeOnly, RefArray< IPoseController >& outControllers) const;
 
 	/*! Get all joint base transforms. */
 	const AlignedVector< Transform >& getJointTransforms() const { return m_jointTransforms; }
