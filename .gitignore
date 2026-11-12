@@ -2,6 +2,7 @@
 /3rdp-restricted
 /build
 /tools/*/build
+WebberData/
 /bin/latest
 /bin/git
 /bin/win64/.wget-hsts
