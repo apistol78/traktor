@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,7 +8,6 @@
  */
 #include "Core/Math/Const.h"
 #include "Core/Math/Float.h"
-#include "Heightfield/Heightfield.h"
 #include "Terrain/Editor/IFallOff.h"
 #include "Terrain/Editor/SmoothBrush.h"
 
@@ -17,8 +16,8 @@ namespace traktor::terrain
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.SmoothBrush", SmoothBrush, IBrush)
 
-SmoothBrush::SmoothBrush(const resource::Proxy< hf::Heightfield >& heightfield)
-:	m_heightfield(heightfield)
+SmoothBrush::SmoothBrush(TerrainEditData* data)
+:	m_data(data)
 ,	m_radius(0)
 ,	m_fallOff(0)
 ,	m_strength(0.0f)
@@ -35,10 +34,7 @@ uint32_t SmoothBrush::begin(float x, float y, const State& state)
 
 void SmoothBrush::apply(float x, float y)
 {
-	hf::Heightfield* hf = m_heightfield;
-
-	const hf::height_t* hm = hf->getHeights();
-	const int32_t size = hf->getSize();
+	const int32_t size = m_data->getSize();
 
 	for (int32_t iy = -m_radius; iy <= m_radius; ++iy)
 	{
@@ -61,28 +57,20 @@ void SmoothBrush::apply(float x, float y)
 			if (abs(a) <= 0.0f)
 				continue;
 
-			const float h = hm[gx + gy * size] / 65535.0f;
+			const float h = m_data->getGridHeightNearest(gx, gy);
 
 			// Get the average height.
 			float height = 0.0f;
 			for (int32_t iiy = -1; iiy <= 1; ++iiy)
 			{
 				for (int32_t iix = -1; iix <= 1; ++iix)
-				{
-					height += hm[(gx + iix) + (gy + iiy) * size] / 65535.0f;
-				}
+					height += m_data->getGridHeightNearest(gx + iix, gy + iiy);
 			}
 			height /= 9.0f;
 
-			hf->setGridHeight(gx, gy, lerp(h, height, a));
+			m_data->setGridHeight(gx, gy, lerp(h, height, a));
 		}
 	}
-
-	const int32_t x0 = (int32_t)(x - m_radius);
-	const int32_t y0 = (int32_t)(y - m_radius);
-	const int32_t x1 = (int32_t)(x + m_radius);
-	const int32_t y1 = (int32_t)(y + m_radius);
-	hf->updateCellBounds(x0, y0, x1, y1);
 }
 
 void SmoothBrush::end(float x, float y)

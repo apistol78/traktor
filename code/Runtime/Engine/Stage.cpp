@@ -70,6 +70,14 @@ Stage::~Stage()
 	destroy();
 }
 
+void Stage::create()
+{
+	for (auto layer : m_layers)
+		layer->create();
+
+	invokeScript("create", 0, nullptr);
+}
+
 void Stage::destroy()
 {
 	m_environment = nullptr;

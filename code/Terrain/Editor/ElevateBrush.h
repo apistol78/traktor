@@ -8,8 +8,9 @@
  */
 #pragma once
 
-#include "Resource/Proxy.h"
+#include "Core/Containers/SmallMap.h"
 #include "Terrain/Editor/IBrush.h"
+#include "Terrain/Editor/TerrainEditData.h"
 
 namespace traktor::drawing
 {
@@ -33,7 +34,7 @@ class ElevateBrush : public IBrush
 	T_RTTI_CLASS;
 
 public:
-	explicit ElevateBrush(const resource::Proxy< hf::Heightfield >& heightfield, drawing::Image* splatImage);
+	explicit ElevateBrush(TerrainEditData* data);
 
 	virtual uint32_t begin(float x, float y, const State& state) override final;
 
@@ -42,12 +43,12 @@ public:
 	virtual void end(float x, float y) override final;
 
 private:
-	resource::Proxy< hf::Heightfield > m_heightfield;
-	Ref< drawing::Image > m_splatImage;
+	Ref< TerrainEditData > m_data;
 	int32_t m_radius;
 	const IFallOff* m_fallOff;
 	double m_strength;
 	int32_t m_attribute;
+	SmallMap< int32_t, double > m_heights; //!< Unquantized heights of samples touched by stroke.
 };
 
 }

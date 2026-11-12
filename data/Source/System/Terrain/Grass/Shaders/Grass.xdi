@@ -172,6 +172,10 @@
 					<id>{5C54C438-60EC-F643-9B77-1BB2520C3095}</id>
 					<name>x0z</name>
 				</item>
+				<item>
+					<id>{B4F18D27-5A63-4E9C-9C02-7D8E1F3A6B45}</id>
+					<name>xyz</name>
+				</item>
 			</outputPins>
 		</item>
 		<item type="traktor.render.External" version="3,traktor.render.Node:1">
@@ -1563,8 +1567,8 @@
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[17]"/>
-				<id>{C01A78F9-DDFA-F248-8713-7F1EA6A0450B}</id>
+				<node ref="/object/nodes/item[16]"/>
+				<id>{B4F18D27-5A63-4E9C-9C02-7D8E1F3A6B45}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[18]"/>

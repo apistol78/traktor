@@ -36,7 +36,7 @@ void IrradianceGridComponent::destroy()
 	m_irradianceGrid.clear();
 }
 
-void IrradianceGridComponent::update(World* world, const UpdateParams& update)
+void IrradianceGridComponent::update(const UpdateParams& update)
 {
 }
 

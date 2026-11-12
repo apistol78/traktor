@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,6 +8,7 @@
  */
 #pragma once
 
+#include "Core/Guid.h"
 #include "Editor/DefaultPipeline.h"
 
 // import/export mechanism.
@@ -51,6 +52,9 @@ public:
 		const Object* buildParams,
 		uint32_t reason
 	) const override final;
+
+	//! Id of heightfield of terrain tile.
+	static Guid getTileHeightfieldId(const Guid& terrainId, int32_t tileX, int32_t tileZ);
 
 private:
 	std::wstring m_assetPath;

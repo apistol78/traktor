@@ -22,7 +22,7 @@
 #include "Editor/IPipelineSettings.h"
 #include "Heightfield/Editor/ConvertHeightfield.h"
 #include "Heightfield/Editor/HeightfieldAsset.h"
-#include "Heightfield/HeightfieldFormat.h"
+#include "Heightfield/Editor/TileStorage.h"
 #include "Model/Model.h"
 #include "Model/ModelCache.h"
 #include "Model/Operations/Transform.h"
@@ -262,17 +262,9 @@ Ref< model::Model > PhysicsEntityReplicator::createModel(
 		if (!heightfieldAsset)
 			return nullptr;
 
-		Ref< IStream > sourceData = heightfieldAssetInstance->readData(L"Data");
-		if (!sourceData)
-			return nullptr;
-
-		Ref< hf::Heightfield > heightfield = hf::HeightfieldFormat().read(
-			sourceData,
-			heightfieldAsset->getWorldExtent());
+		Ref< hf::Heightfield > heightfield = hf::TileStorage(heightfieldAsset->getTileCount()).readHeightfieldOverview(heightfieldAssetInstance, heightfieldAsset->getWorldExtent());
 		if (!heightfield)
 			return nullptr;
-
-		safeClose(sourceData);
 
 		Ref< model::Model > m = hf::ConvertHeightfield().convert(heightfield, 1, c_heightfieldMaxError);
 		if (!m)

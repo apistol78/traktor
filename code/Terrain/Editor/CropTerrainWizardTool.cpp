@@ -12,8 +12,12 @@
 #include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/String.h"
+#include "Database/Database.h"
 #include "Database/Instance.h"
 #include "Drawing/Image.h"
+#include "Editor/IEditor.h"
+#include "Heightfield/Editor/HeightfieldAsset.h"
+#include "Heightfield/Editor/TileStorage.h"
 #include "I18N/Text.h"
 #include "Terrain/Editor/TerrainAsset.h"
 #include "Ui/InputDialog.h"
@@ -21,22 +25,6 @@
 
 namespace traktor::terrain
 {
-namespace
-{
-
-Ref< drawing::Image > loadImage(IStream* stream)
-{
-	Ref< drawing::Image > img = drawing::Image::load(stream, L"tri");
-	if (!img)
-	{
-		stream->seek(IStream::SeekSet, 0);
-		img = drawing::Image::load(stream, L"tga");
-	}
-	return img;
-}
-
-}
-
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.terrain.CropTerrainWizardTool", 0, CropTerrainWizardTool, editor::IWizardTool)
 
 bool CropTerrainWizardTool::create(const PropertyGroup* settings)
@@ -61,7 +49,6 @@ uint32_t CropTerrainWizardTool::getFlags() const
 
 bool CropTerrainWizardTool::launch(ui::Widget* parent, editor::IEditor* editor, db::Group* group, db::Instance* instance)
 {
-	Ref< IStream > file;
 	Ref< drawing::Image > colorImage;
 	Ref< drawing::Image > splatImage;
 
@@ -78,21 +65,17 @@ bool CropTerrainWizardTool::launch(ui::Widget* parent, editor::IEditor* editor, 
 		return false;
 	}
 
-	file = instance->readData(L"Color");
-	if (file)
+	Ref< const hf::HeightfieldAsset > heightfieldAsset = editor->getSourceDatabase()->getObjectReadOnly< hf::HeightfieldAsset >(terrainAsset->getHeightfield());
+	if (!heightfieldAsset)
 	{
-		colorImage = loadImage(file);
-		file->close();
-		file = 0;
+		log::error << L"Unable to get heightfield asset of terrain" << Endl;
+		return false;
 	}
 
-	file = instance->readData(L"Splat");
-	if (file)
-	{
-		splatImage = loadImage(file);
-		file->close();
-		file = 0;
-	}
+	const hf::TileStorage tileStorage(heightfieldAsset->getTileCount());
+
+	colorImage = tileStorage.readImage(instance, L"Color");
+	splatImage = tileStorage.readImage(instance, L"Splat");
 
 	if (!colorImage && !splatImage)
 	{
@@ -174,27 +157,11 @@ bool CropTerrainWizardTool::launch(ui::Widget* parent, editor::IEditor* editor, 
 		}
 	}
 
-	if (croppedColorImage)
-	{
-		file = instance->writeData(L"Color");
-		if (file)
-		{
-			croppedColorImage->save(file, L"tga");
-			file->close();
-			file = 0;
-		}
-	}
+	if (croppedColorImage && !tileStorage.writeImage(instance, L"Color", croppedColorImage))
+		return false;
 
-	if (croppedSplatImage)
-	{
-		file = instance->writeData(L"Splat");
-		if (file)
-		{
-			croppedSplatImage->save(file, L"tga");
-			file->close();
-			file = 0;
-		}
-	}
+	if (croppedSplatImage && !tileStorage.writeImage(instance, L"Splat", croppedSplatImage))
+		return false;
 
 	if (!instance->commit())
 		return false;

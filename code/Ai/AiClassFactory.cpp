@@ -9,7 +9,6 @@
 #include "Ai/AiClassFactory.h"
 #include "Ai/MoveQuery.h"
 #include "Ai/MoveQueryResult.h"
-#include "Ai/NavMesh.h"
 #include "Ai/NavMeshComponent.h"
 #include "Ai/NavMeshModifierEntityComponent.h"
 #include "Core/Class/AutoRuntimeClass.h"
@@ -39,7 +38,7 @@ Ref< BoxedVector4 > MoveQuery_constrain(MoveQuery* self, const Vector4& currentP
 		return nullptr;
 }
 
-Vector4 NavMesh_findClosestPoint(NavMesh* self, const Vector4& searchFrom, float searchDistance)
+Vector4 NavMeshComponent_findClosestPoint(NavMeshComponent* self, const Vector4& searchFrom, float searchDistance)
 {
 	Vector4 point;
 	if (self->findClosestPoint(searchFrom, searchDistance, point))
@@ -48,7 +47,7 @@ Vector4 NavMesh_findClosestPoint(NavMesh* self, const Vector4& searchFrom, float
 		return searchFrom;
 }
 
-Vector4 NavMesh_findClosestPointXZ(NavMesh* self, const Vector4& searchFrom, float searchDistance)
+Vector4 NavMeshComponent_findClosestPointXZ(NavMeshComponent* self, const Vector4& searchFrom, float searchDistance)
 {
 	Vector4 point;
 	if (self->findClosestPointXZ(searchFrom, searchDistance, point))
@@ -57,7 +56,7 @@ Vector4 NavMesh_findClosestPointXZ(NavMesh* self, const Vector4& searchFrom, flo
 		return searchFrom;
 }
 
-Vector4 NavMesh_findRandomPoint_1(NavMesh* self)
+Vector4 NavMeshComponent_findRandomPoint_1(NavMeshComponent* self)
 {
 	Vector4 point;
 	if (self->findRandomPoint(point))
@@ -66,7 +65,7 @@ Vector4 NavMesh_findRandomPoint_1(NavMesh* self)
 		return Vector4::zero();
 }
 
-Vector4 NavMesh_findRandomPoint_2(NavMesh* self, const Vector4& center, float radius)
+Vector4 NavMeshComponent_findRandomPoint_2(NavMeshComponent* self, const Vector4& center, float radius)
 {
 	Vector4 point;
 	if (self->findRandomPoint(center, radius, point))
@@ -75,18 +74,13 @@ Vector4 NavMesh_findRandomPoint_2(NavMesh* self, const Vector4& center, float ra
 		return Vector4::zero();
 }
 
-Any NavMesh_findDistanceToWall_1(NavMesh* self, const Vector4& center, float radius)
+Any NavMeshComponent_findDistanceToWall_1(NavMeshComponent* self, const Vector4& center, float radius)
 {
 	float distance;
 	if (self->findDistanceToWall(center, radius, distance))
 		return Any::fromFloat(distance);
 	else
 		return Any();
-}
-
-const NavMesh* NavMeshComponent_get(NavMeshComponent* self)
-{
-	return self->get();
 }
 
 	}
@@ -107,17 +101,13 @@ void AiClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classMoveQueryResult->addMethod("get", &MoveQueryResult::get);
 	registrar->registerClass(classMoveQueryResult);
 
-	auto classNavMesh = new AutoRuntimeClass< NavMesh >();
-	classNavMesh->addMethod("createMoveQuery", &NavMesh::createMoveQuery);
-	classNavMesh->addMethod("findClosestPoint", &NavMesh_findClosestPoint);
-	classNavMesh->addMethod("findClosestPointXZ", &NavMesh_findClosestPointXZ);
-	classNavMesh->addMethod("findRandomPoint", &NavMesh_findRandomPoint_1);
-	classNavMesh->addMethod("findRandomPoint", &NavMesh_findRandomPoint_2);
-	classNavMesh->addMethod("findDistanceToWall", &NavMesh_findDistanceToWall_1);
-	registrar->registerClass(classNavMesh);
-
 	auto classNavMeshComponent = new AutoRuntimeClass< NavMeshComponent >();
-	classNavMeshComponent->addMethod("get", &NavMeshComponent_get);
+	classNavMeshComponent->addMethod("createMoveQuery", &NavMeshComponent::createMoveQuery);
+	classNavMeshComponent->addMethod("findClosestPoint", &NavMeshComponent_findClosestPoint);
+	classNavMeshComponent->addMethod("findClosestPointXZ", &NavMeshComponent_findClosestPointXZ);
+	classNavMeshComponent->addMethod("findRandomPoint", &NavMeshComponent_findRandomPoint_1);
+	classNavMeshComponent->addMethod("findRandomPoint", &NavMeshComponent_findRandomPoint_2);
+	classNavMeshComponent->addMethod("findDistanceToWall", &NavMeshComponent_findDistanceToWall_1);
 	registrar->registerClass(classNavMeshComponent);
 
 	auto classNavMeshModifierEntityComponent = new AutoRuntimeClass< NavMeshModifierEntityComponent >();

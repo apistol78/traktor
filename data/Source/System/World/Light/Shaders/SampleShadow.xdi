@@ -209,16 +209,16 @@
 			<id>{EC66663D-71AA-4896-AC99-47175AFD8956}</id>
 			<comment/>
 			<position>
-				<first>467</first>
-				<second>1182</second>
+				<first>463</first>
+				<second>1238</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{0AF3C3E5-1E76-4B1E-98D8-A208D5F0C30C}</id>
 			<comment/>
 			<position>
-				<first>256</first>
-				<second>1289</second>
+				<first>252</first>
+				<second>1345</second>
 			</position>
 			<swizzle>xyz</swizzle>
 		</item>
@@ -226,24 +226,24 @@
 			<id>{F8206490-C6A9-4682-B099-63B0508F4813}</id>
 			<comment/>
 			<position>
-				<first>22</first>
-				<second>1272</second>
+				<first>18</first>
+				<second>1328</second>
 			</position>
 		</item>
 		<item type="traktor.render.Div" version="traktor.render.Node:1">
 			<id>{5C8116FC-B988-48C4-AE20-C543179E60F4}</id>
 			<comment/>
 			<position>
-				<first>699</first>
-				<second>1028</second>
+				<first>695</first>
+				<second>1084</second>
 			</position>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{9E4C7814-8353-4789-A018-AFCE118D0300}</id>
 			<comment/>
 			<position>
-				<first>-186</first>
-				<second>1263</second>
+				<first>-190</first>
+				<second>1319</second>
 			</position>
 			<name>L_LightPosition</name>
 		</item>
@@ -251,8 +251,8 @@
 			<id>{47FD7910-7BAB-4FA5-9D3D-A45BDA7CE168}</id>
 			<comment/>
 			<position>
-				<first>712</first>
-				<second>1659</second>
+				<first>708</first>
+				<second>1715</second>
 			</position>
 			<name>L_ViewToLight</name>
 		</item>
@@ -260,8 +260,8 @@
 			<id>{95C7EE78-7E2B-454A-A263-86854212AA1B}</id>
 			<comment/>
 			<position>
-				<first>-186</first>
-				<second>1331</second>
+				<first>-190</first>
+				<second>1387</second>
 			</position>
 			<name>L_ViewPosition</name>
 		</item>
@@ -269,8 +269,8 @@
 			<id>{6B7FB720-F8C0-4D15-A1AF-8D0384D537B9}</id>
 			<comment/>
 			<position>
-				<first>712</first>
-				<second>1595</second>
+				<first>708</first>
+				<second>1651</second>
 			</position>
 			<name>L_ViewPosition</name>
 		</item>
@@ -278,8 +278,8 @@
 			<id>{4E58D40F-1DA4-4DE2-9967-7EF23E11D248}</id>
 			<comment/>
 			<position>
-				<first>704</first>
-				<second>1403</second>
+				<first>700</first>
+				<second>1459</second>
 			</position>
 			<name>L_AtlasTransform</name>
 		</item>
@@ -287,8 +287,8 @@
 			<id>{E89D948D-7467-4BE9-85EA-BFB656645A00}</id>
 			<comment/>
 			<position>
-				<first>944</first>
-				<second>1484</second>
+				<first>940</first>
+				<second>1540</second>
 			</position>
 			<fragmentGuid>{98E94923-B934-8E4E-ADDC-A5CF9CD1CB23}</fragmentGuid>
 			<inputPins>
@@ -484,8 +484,8 @@ else
 			<id>{BD2401A7-A1B7-48DA-9F4C-6F730053E639}</id>
 			<comment/>
 			<position>
-				<first>717</first>
-				<second>1467</second>
+				<first>713</first>
+				<second>1523</second>
 			</position>
 			<value>0</value>
 		</item>
@@ -512,8 +512,8 @@ else
 			<id>{1B4C8986-52B3-41BD-AEBB-98D16F10705E}</id>
 			<comment/>
 			<position>
-				<first>688</first>
-				<second>1531</second>
+				<first>684</first>
+				<second>1587</second>
 			</position>
 			<parameterDeclaration>{4FAD9362-0B48-CC41-A154-D6806896E9E6}</parameterDeclaration>
 		</item>
@@ -627,8 +627,8 @@ else
 			<id>{86B5F11F-93B6-446D-968E-A1FBCF6751E5}</id>
 			<comment/>
 			<position>
-				<first>712</first>
-				<second>1275</second>
+				<first>708</first>
+				<second>1331</second>
 			</position>
 			<name>L_ViewPosition</name>
 		</item>
@@ -636,8 +636,8 @@ else
 			<id>{36DB5895-BCD2-41A5-A6E3-DFCD10E18BE7}</id>
 			<comment/>
 			<position>
-				<first>944</first>
-				<second>1169</second>
+				<first>940</first>
+				<second>1225</second>
 			</position>
 			<fragmentGuid>{BDB975E9-C995-3948-8615-2124A235B2C4}</fragmentGuid>
 			<inputPins>
@@ -678,8 +678,8 @@ else
 			<id>{9D768867-70EB-4D3A-B8F8-A0B967D201D9}</id>
 			<comment/>
 			<position>
-				<first>1242</first>
-				<second>1304</second>
+				<first>1238</first>
+				<second>1360</second>
 			</position>
 			<parameterName>World_RayTracingEnable</parameterName>
 		</item>
@@ -687,8 +687,8 @@ else
 			<id>{C763599C-14D2-42F9-AF1F-56EBA4BDF7C1}</id>
 			<comment/>
 			<position>
-				<first>707</first>
-				<second>1191</second>
+				<first>703</first>
+				<second>1247</second>
 			</position>
 			<name>Random</name>
 			<technique/>
@@ -726,8 +726,8 @@ $Output = BlueNoise(seed);
 			<id>{F2AB2E8C-C98A-4A8F-950E-1619604F0118}</id>
 			<comment/>
 			<position>
-				<first>464</first>
-				<second>1266</second>
+				<first>460</first>
+				<second>1322</second>
 			</position>
 			<parameterDeclaration>{46B1D101-2690-4E45-B38B-963CA9440B66}</parameterDeclaration>
 		</item>
@@ -861,8 +861,8 @@ $Output = BlueNoise(seed);
 			<id>{68003FC5-5D1B-41EA-8123-CE385E1A355E}</id>
 			<comment/>
 			<position>
-				<first>712</first>
-				<second>1339</second>
+				<first>708</first>
+				<second>1395</second>
 			</position>
 			<name>L_SampleCount</name>
 		</item>
@@ -889,8 +889,8 @@ $Output = BlueNoise(seed);
 			<id>{9CD909C6-255B-4E55-88AE-3ACBEF158D2B}</id>
 			<comment/>
 			<position>
-				<first>839</first>
-				<second>347</second>
+				<first>1240</first>
+				<second>354</second>
 			</position>
 			<name>L_Directional_Shadow</name>
 		</item>
@@ -898,8 +898,8 @@ $Output = BlueNoise(seed);
 			<id>{7F47EC72-7950-442C-A62E-497C9BD2A693}</id>
 			<comment/>
 			<position>
-				<first>763</first>
-				<second>734</second>
+				<first>998</first>
+				<second>651</second>
 			</position>
 			<name>L_Point_Shadow</name>
 		</item>
@@ -907,8 +907,8 @@ $Output = BlueNoise(seed);
 			<id>{0F2FE73D-03DC-454B-BB8C-F27EF8E4E0B3}</id>
 			<comment/>
 			<position>
-				<first>1524</first>
-				<second>1336</second>
+				<first>1520</first>
+				<second>1392</second>
 			</position>
 			<name>L_Spot_Shadow</name>
 		</item>
@@ -1035,8 +1035,8 @@ if (lightType.x == 2.0f && lightType.y > 0.0f)
 			<id>{221CC175-89C8-41F7-8FB2-0F693258B30D}</id>
 			<comment/>
 			<position>
-				<first>1000</first>
-				<second>2000</second>
+				<first>397</first>
+				<second>688</second>
 			</position>
 			<value>0</value>
 		</item>
@@ -1044,8 +1044,8 @@ if (lightType.x == 2.0f && lightType.y > 0.0f)
 			<id>{AC39F072-FDC7-4C3B-AC51-1F0D4B4159FE}</id>
 			<comment/>
 			<position>
-				<first>1300</first>
-				<second>2000</second>
+				<first>654</first>
+				<second>658</second>
 			</position>
 			<fragmentGuid>{98E94923-B934-8E4E-ADDC-A5CF9CD1CB23}</fragmentGuid>
 			<inputPins>
@@ -1086,8 +1086,8 @@ if (lightType.x == 2.0f && lightType.y > 0.0f)
 			<id>{6EF27B7D-EDA7-4318-8332-589C556EAD8E}</id>
 			<comment/>
 			<position>
-				<first>1000</first>
-				<second>2000</second>
+				<first>387</first>
+				<second>766</second>
 			</position>
 			<name>L_ViewPosition</name>
 		</item>
@@ -1095,8 +1095,8 @@ if (lightType.x == 2.0f && lightType.y > 0.0f)
 			<id>{674D7BD4-C838-4F23-B6D8-BAF19D5C2016}</id>
 			<comment/>
 			<position>
-				<first>1000</first>
-				<second>2040</second>
+				<first>387</first>
+				<second>805</second>
 			</position>
 			<name>L_ViewToLight</name>
 		</item>
@@ -1104,8 +1104,8 @@ if (lightType.x == 2.0f && lightType.y > 0.0f)
 			<id>{1727CCDB-9D2C-4B59-ADC1-4FF349FCDD1E}</id>
 			<comment/>
 			<position>
-				<first>1000</first>
-				<second>2080</second>
+				<first>371</first>
+				<second>649</second>
 			</position>
 			<name>L_AtlasTransform</name>
 		</item>
@@ -1126,6 +1126,76 @@ if (lightType.x == 2.0f && lightType.y > 0.0f)
 				<second>-657</second>
 			</position>
 			<name>L_ShadowIndex</name>
+		</item>
+		<item type="traktor.render.Script" version="8,traktor.render.Node:1">
+			<id>{4F7A2C93-8B1E-4D65-A0C7-9E3B5F1D8A26}</id>
+			<comment/>
+			<position>
+				<first>964</first>
+				<second>362</second>
+			</position>
+			<name>OutsideCascades</name>
+			<technique/>
+			<domain>Undefined</domain>
+			<localSize>
+				<X>1</X>
+				<Y>1</Y>
+				<Z>1</Z>
+			</localSize>
+			<useRayTracing>false</useRayTracing>
+			<include/>
+			<inputPins>
+				<item>
+					<id>{5C2E8A41-7B93-4D6F-A1E2-3F8B9C0D4E57}</id>
+					<name>ViewPosition</name>
+				</item>
+				<item>
+					<id>{8E1F4B62-2A75-4C9D-B3E8-6D0A7F1C5B24}</id>
+					<name>SlicePositions</name>
+				</item>
+				<item>
+					<id>{A3D7C915-4E28-4B6A-9F1D-2C8E5B7A0F63}</id>
+					<name>Shadow</name>
+				</item>
+			</inputPins>
+			<outputPins>
+				<item>
+					<id>{D6B2E837-1C4F-4A95-8E7B-0F3A9D6C2E18}</id>
+					<name>Output</name>
+					<type>Scalar</type>
+				</item>
+			</outputPins>
+			<script><![CDATA[
+// Last slice position is shadow far distance; nothing beyond it is in shadow.
+$Output = ($ViewPosition.z >= $SlicePositions.w) ? 1.0f : $Shadow;
+			]]></script>
+		</item>
+		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
+			<id>{C29B5039-071F-574F-9823-EA65B15C0EBB}</id>
+			<comment/>
+			<position>
+				<first>761</first>
+				<second>335</second>
+			</position>
+			<parameterDeclaration>{C07DE459-F7F5-E342-A08D-9713D548C99D}</parameterDeclaration>
+		</item>
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
+			<id>{1392063B-798F-8341-8A60-F27764E56645}</id>
+			<comment/>
+			<position>
+				<first>791</first>
+				<second>300</second>
+			</position>
+			<name>L_ViewPosition</name>
+		</item>
+		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
+			<id>{1BB2BA0D-789C-0E4B-A0CB-073F6EF74CD0}</id>
+			<comment/>
+			<position>
+				<first>339</first>
+				<second>727</second>
+			</position>
+			<parameterDeclaration>{4FAD9362-0B48-CC41-A154-D6806896E9E6}</parameterDeclaration>
 		</item>
 	</nodes>
 	<edges>
@@ -1845,8 +1915,8 @@ if (lightType.x == 2.0f && lightType.y > 0.0f)
 				<id>{A7D9AE88-308A-E842-AC54-BD1036B198BC}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[72]"/>
-				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
+				<node ref="/object/nodes/item[88]"/>
+				<id>{A3D7C915-4E28-4B6A-9F1D-2C8E5B7A0F63}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
@@ -1981,16 +2051,6 @@ if (lightType.x == 2.0f && lightType.y > 0.0f)
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[43]"/>
-				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[82]"/>
-				<id>{4020E901-E457-6D4A-9CB8-7A8881B4D794}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
 				<node ref="/object/nodes/item[81]"/>
 				<id>{D33F8931-C90C-4EBA-8A04-A31D3E08FAB7}</id>
 			</source>
@@ -2029,6 +2089,46 @@ if (lightType.x == 2.0f && lightType.y > 0.0f)
 				<id>{B0B4B6F6-BAD2-452F-9E41-0E1A50D2C629}</id>
 			</destination>
 		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[88]"/>
+				<id>{D6B2E837-1C4F-4A95-8E7B-0F3A9D6C2E18}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[72]"/>
+				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[90]"/>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[88]"/>
+				<id>{5C2E8A41-7B93-4D6F-A1E2-3F8B9C0D4E57}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[89]"/>
+				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[88]"/>
+				<id>{8E1F4B62-2A75-4C9D-B3E8-6D0A7F1C5B24}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[91]"/>
+				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[82]"/>
+				<id>{4020E901-E457-6D4A-9CB8-7A8881B4D794}</id>
+			</destination>
+		</item>
 	</edges>
 	<groups>
 		<item type="traktor.render.Group">
@@ -2047,20 +2147,20 @@ if (lightType.x == 2.0f && lightType.y > 0.0f)
 			<title>Point</title>
 			<comment/>
 			<position>
-				<first>458</first>
-				<second>604</second>
+				<first>95</first>
+				<second>579</second>
 			</position>
 			<size>
-				<first>553</first>
-				<second>259</second>
+				<first>1278</first>
+				<second>351</second>
 			</size>
 		</item>
 		<item type="traktor.render.Group">
 			<title>Spot</title>
 			<comment/>
 			<position>
-				<first>-250</first>
-				<second>932</second>
+				<first>-254</first>
+				<second>988</second>
 			</position>
 			<size>
 				<first>1972</first>

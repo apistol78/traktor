@@ -40,7 +40,8 @@ public:
 
 	explicit Heightfield(
 		int32_t size,
-		const Vector4& worldExtent);
+		const Vector4& worldExtent,
+		const Vector4& worldCenter);
 
 	/*! Set extent of heightfield in world.
 	 *
@@ -48,6 +49,9 @@ public:
 	 * reinterprets the grid; cell bounds are updated accordingly.
 	 */
 	void setWorldExtent(const Vector4& worldExtent);
+
+	//! Set horizontal center of heightfield in world, origin by default; cell bounds are updated accordingly.
+	void setWorldCenter(const Vector4& worldCenter);
 
 	void setGridHeight(int32_t gridX, int32_t gridZ, float unitY);
 
@@ -100,6 +104,8 @@ public:
 
 	const Vector4& getWorldExtent() const { return m_worldExtent; }
 
+	const Vector4& getWorldCenter() const { return m_worldCenter; }
+
 	height_t* getHeights() { return m_heights.ptr(); }
 
 	const height_t* getHeights() const { return m_heights.c_ptr(); }
@@ -126,10 +132,12 @@ public:
 	void updateCellBounds(int32_t gridX0, int32_t gridY0, int32_t gridX1, int32_t gridY1);
 
 private:
-	int32_t m_size;
-	int32_t m_cellBoundsPitch;
-	Vector4 m_worldExtent;
+	int32_t m_size = 0;
+	int32_t m_cellBoundsPitch = 0;
+	Vector4 m_worldExtent = Vector4::zero();
+	Vector4 m_worldCenter = Vector4::zero();
 	float m_worldExtentFloats[4];
+	float m_worldCenterFloats[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
 	AutoArrayPtr< height_t > m_heights;
 	AutoArrayPtr< uint8_t > m_cuts;
 	AutoArrayPtr< uint8_t > m_attributes[MaxAttributes];

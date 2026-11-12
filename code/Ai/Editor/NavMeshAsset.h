@@ -49,6 +49,7 @@ private:
 	float m_detailSampleDistance = 6.0f;
 	float m_detailSampleMaxError = 1.0f;
 	int32_t m_tileSize = 0;
+	float m_chunkSize = 0.0f;	//!< Size of separately built and streamed chunks, 0 if not chunked.
 };
 
 }

@@ -22,6 +22,7 @@
 #include "Drawing/Image.h"
 #include "Editor/IEditor.h"
 #include "Heightfield/Editor/HeightfieldAsset.h"
+#include "Heightfield/Editor/TileStorage.h"
 #include "Heightfield/Heightfield.h"
 #include "Heightfield/HeightfieldFormat.h"
 #include "I18N/Text.h"
@@ -174,14 +175,16 @@ bool ImportHeightfieldWizardTool::launch(ui::Widget* parent, editor::IEditor* ed
 
 		heightfield = new Heightfield(
 			size,
-			heightfieldAsset->getWorldExtent());
+			heightfieldAsset->getWorldExtent(),
+			Vector4::zero());
 	}
 	else
 	{
 		// Create heightfield.
 		heightfield = new Heightfield(
 			size,
-			Vector4(1024.0f, 128.0f, 1024.0f));
+			Vector4(1024.0f, 128.0f, 1024.0f),
+			Vector4::zero());
 	}
 
 	const height_t* sourceHeights = static_cast< const height_t* >(image->getData());
@@ -232,15 +235,13 @@ bool ImportHeightfieldWizardTool::launch(ui::Widget* parent, editor::IEditor* ed
 		}
 
 		// Replace heightfield in existing asset.
-		Ref< IStream > data = instance->writeData(L"Data");
-		if (!data)
+		Ref< const HeightfieldAsset > heightfieldAsset = instance->getObject< HeightfieldAsset >();
+		if (!heightfieldAsset || !TileStorage(heightfieldAsset->getTileCount()).writeHeightfield(instance, heightfield))
 		{
 			log::error << L"Failed to write heightfield data into instance; import heights failed." << Endl;
 			instance->revert();
 			return false;
 		}
-
-		HeightfieldFormat().write(data, heightfield);
 
 		instance->commit();
 	}

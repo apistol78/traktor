@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -16,11 +16,11 @@
 #include "Drawing/Image.h"
 #include "Drawing/PixelFormat.h"
 #include "Heightfield/Heightfield.h"
-#include "Heightfield/HeightfieldFormat.h"
 #include "Heightfield/Editor/ConvertHeightfield.h"
 #include "Heightfield/Editor/CropHeightfieldDialog.h"
 #include "Heightfield/Editor/HeightfieldAsset.h"
 #include "Heightfield/Editor/HeightfieldAssetEditor.h"
+#include "Heightfield/Editor/TileStorage.h"
 #include "I18N/Text.h"
 #include "Model/ModelFormat.h"
 #include "Ui/Application.h"
@@ -99,25 +99,12 @@ bool HeightfieldAssetEditor::create(ui::Widget* parent, db::Instance* instance, 
 	m_instance = instance;
 	m_asset = mandatory_non_null_type_cast< HeightfieldAsset* >(object);
 
-	Ref< IStream > sourceData = m_instance->readData(L"Data");
-	if (!sourceData)
-	{
-		log::error << L"Heightfield asset editor failed; unable to open heights." << Endl;
-		return false;
-	}
-
-	m_heightfield = HeightfieldFormat().read(
-		sourceData,
-		m_asset->getWorldExtent()
-	);
+	m_heightfield = TileStorage(m_asset->getTileCount()).readHeightfield(m_instance, m_asset->getWorldExtent());
 	if (!m_heightfield)
 	{
 		log::error << L"Heightfield asset editor failed; unable to read heights." << Endl;
 		return false;
 	}
-
-	sourceData->close();
-	sourceData = nullptr;
 
 	m_container = new ui::Container();
 	m_container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,*,100%", 4_ut, 4_ut));
@@ -202,20 +189,9 @@ void HeightfieldAssetEditor::apply()
 
 	if (m_heightfieldModified)
 	{
-		Ref< IStream > sourceData = m_instance->writeData(L"Data");
-		if (sourceData)
-		{
-			if (!HeightfieldFormat().write(
-				sourceData,
-				m_heightfield
-			))
-				log::error << L"Unable to write heightfield to instance data stream." << Endl;
-
-			sourceData->close();
-			m_heightfieldModified = false;
-		}
-		else
-			log::error << L"Unable to write data to instance." << Endl;
+		if (!TileStorage(m_asset->getTileCount()).writeHeightfield(m_instance, m_heightfield))
+			log::error << L"Unable to write heightfield to instance." << Endl;
+		m_heightfieldModified = false;
 	}
 
 	m_instance->setObject(m_asset);
@@ -320,7 +296,8 @@ bool HeightfieldAssetEditor::handleCommand(const ui::Command& command)
 
 		Ref< Heightfield > resized = new Heightfield(
 			size,
-			m_heightfield->getWorldExtent()
+			m_heightfield->getWorldExtent(),
+			m_heightfield->getWorldCenter()
 		);
 
 		const auto attributes = usedAttributes(m_heightfield);
@@ -382,7 +359,8 @@ bool HeightfieldAssetEditor::handleCommand(const ui::Command& command)
 
 		Ref< Heightfield > cropped = new Heightfield(
 			size,
-			m_heightfield->getWorldExtent()
+			m_heightfield->getWorldExtent(),
+			m_heightfield->getWorldCenter()
 		);
 
 		const auto attributes = usedAttributes(m_heightfield);
@@ -427,7 +405,8 @@ bool HeightfieldAssetEditor::handleCommand(const ui::Command& command)
 
 		Ref< Heightfield > cropped = new Heightfield(
 			size,
-			newWorldExtent
+			newWorldExtent,
+			m_heightfield->getWorldCenter()
 		);
 
 		const auto attributes = usedAttributes(m_heightfield);

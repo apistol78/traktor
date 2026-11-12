@@ -10,7 +10,6 @@
 
 #include "Core/Math/Const.h"
 #include "Core/Math/Float.h"
-#include "Heightfield/Heightfield.h"
 #include "Terrain/Editor/IFallOff.h"
 
 namespace traktor::terrain
@@ -18,8 +17,8 @@ namespace traktor::terrain
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.CutBrush", CutBrush, IBrush)
 
-CutBrush::CutBrush(const resource::Proxy< hf::Heightfield >& heightfield)
-	: m_heightfield(heightfield)
+CutBrush::CutBrush(TerrainEditData* data)
+	: m_data(data)
 	, m_radius(0)
 	, m_fallOff(0)
 	, m_strength(0.0f)
@@ -47,7 +46,7 @@ void CutBrush::apply(float x, float y)
 			if (abs(a) <= FUZZY_EPSILON)
 				continue;
 
-			m_heightfield->setGridCut(x + ix, y + iy, a < 0.0f);
+			m_data->setGridCut(x + ix, y + iy, a < 0.0f);
 		}
 	}
 }

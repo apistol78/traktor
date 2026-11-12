@@ -10,6 +10,7 @@
 
 #include "Core/Math/Color4f.h"
 #include "Terrain/Editor/IBrush.h"
+#include "Terrain/Editor/TerrainEditData.h"
 
 namespace traktor::drawing
 {
@@ -26,7 +27,7 @@ class ColorBrush : public IBrush
 	T_RTTI_CLASS;
 
 public:
-	explicit ColorBrush(drawing::Image* colorImage);
+	explicit ColorBrush(TerrainEditData* data);
 
 	virtual uint32_t begin(float x, float y, const State& state) override final;
 
@@ -35,7 +36,7 @@ public:
 	virtual void end(float x, float y) override final;
 
 private:
-	Ref< drawing::Image > m_colorImage;
+	Ref< TerrainEditData > m_data;
 	int32_t m_radius;
 	const IFallOff* m_fallOff;
 	float m_strength;

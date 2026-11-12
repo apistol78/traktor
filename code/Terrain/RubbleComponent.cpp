@@ -97,13 +97,45 @@ void RubbleComponent::setup(const world::WorldRenderView& worldRenderView)
 	if (!terrainComponent)
 		return;
 
-	const auto& terrain = terrainComponent->getTerrain();
-	if (!terrain)
-		return;
+	// Clusters are created on tiles as they are loaded.
+	const int32_t tileCount = terrainComponent->getTileCount();
+	if ((int32_t)m_tiles.size() != tileCount)
+	{
+		m_tiles.resize(0);
+		m_tiles.resize(tileCount);
+	}
 
-	const auto& heightfield = terrain->getHeightfield();
-	if (!heightfield)
-		return;
+	bool changed = false;
+	for (int32_t i = 0; i < tileCount; ++i)
+	{
+		const uint32_t revision = terrainComponent->getTileRevision(i);
+		if (m_tiles[i].revision != revision)
+		{
+			updateTile(m_tiles[i], i, terrainComponent->getTileHeightfield(i));
+			m_tiles[i].revision = revision;
+			changed = true;
+		}
+	}
+	if (changed)
+	{
+		m_clusters.resize(0);
+		m_instances.resize(0);
+		for (const auto& tile : m_tiles)
+		{
+			const int32_t offset = (int32_t)m_instances.size();
+			for (const auto& cluster : tile.clusters)
+			{
+				Cluster& c = m_clusters.push_back();
+				c = cluster;
+				c.from += offset;
+				c.to += offset;
+			}
+			m_instances.resize(offset + tile.instanceCount);
+		}
+
+		// Move last eye position, forces scatter of visible clusters.
+		m_eye = Vector4::zero();
+	}
 
 	const Matrix44 view = worldRenderView.getView();
 	const Vector4 eye = view.inverse().translation();
@@ -130,6 +162,10 @@ void RubbleComponent::setup(const world::WorldRenderView& worldRenderView)
 			if (cluster.visible && visible)
 				continue;
 
+			const hf::Heightfield* heightfield = terrainComponent->getTileHeightfield(cluster.tile);
+			if (!heightfield)
+				continue;
+
 			const float randomScaleAmount = cluster.rubbleDef->randomScaleAmount;
 			const float randomTilt = cluster.rubbleDef->randomTilt;
 			const float upness = cluster.rubbleDef->upness;
@@ -143,7 +179,7 @@ void RubbleComponent::setup(const world::WorldRenderView& worldRenderView)
 				// Calculate world position.
 				const float px = cluster.center.x() + dx;
 				const float pz = cluster.center.z() + dz;
-				const float py = terrain->getHeightfield()->getWorldHeight(px, pz);
+				const float py = heightfield->getWorldHeight(px, pz);
 
 				// Get ground normal.
 				float gx, gz;
@@ -181,9 +217,8 @@ void RubbleComponent::build(
 	if (!terrain)
 		return;
 
-	const auto& heightfield = terrain->getHeightfield();
-	if (!heightfield)
-		return;
+	const Terrain::TileResources& overview = terrain->getOverview();
+	const Vector4& worldExtent = overview.heightfield->getWorldExtent();
 
 	const Matrix44 view = worldRenderView.getView();
 	const Vector4 eye = view.inverse().translation();
@@ -194,11 +229,11 @@ void RubbleComponent::build(
 	// Expose some more shader parameters, such as terrain color etc.
 	render::ProgramParameters* extraParameters = renderContext->alloc< render::ProgramParameters >();
 	extraParameters->beginParameters(renderContext);
-	extraParameters->setTextureParameter(s_handleTerrain_Normals, terrain->getNormalMap());
-	extraParameters->setTextureParameter(s_handleTerrain_Heightfield, terrain->getHeightMap());
+	extraParameters->setTextureParameter(s_handleTerrain_Normals, overview.normalMap);
+	extraParameters->setTextureParameter(s_handleTerrain_Heightfield, overview.heightMap);
 	extraParameters->setTextureParameter(s_handleTerrain_Surface, terrainComponent->getSurfaceCache()->getBaseTexture());
-	extraParameters->setVectorParameter(s_handleTerrain_WorldOrigin, -terrain->getHeightfield()->getWorldExtent() * 0.5_simd);
-	extraParameters->setVectorParameter(s_handleTerrain_WorldExtent, terrain->getHeightfield()->getWorldExtent());
+	extraParameters->setVectorParameter(s_handleTerrain_WorldOrigin, -worldExtent * 0.5_simd);
+	extraParameters->setVectorParameter(s_handleTerrain_WorldExtent, worldExtent);
 	extraParameters->setVectorParameter(s_handleRubble_Eye, eye);
 	extraParameters->setFloatParameter(s_handleRubble_MaxDistance, m_data.m_spreadDistance + m_clusterSize);
 	extraParameters->endParameters(renderContext);
@@ -235,23 +270,26 @@ void RubbleComponent::build(
 
 void RubbleComponent::updatePatches()
 {
-	m_instances.resize(0);
-	m_clusters.resize(0);
+	// Every tile is scattered again by next setup.
+	for (auto& tile : m_tiles)
+		tile.revision = ~0U;
+}
 
-	auto terrainComponent = m_owner->getComponent< TerrainComponent >();
-	if (!terrainComponent)
+void RubbleComponent::updateTile(Tile& tile, int32_t tileIndex, const hf::Heightfield* heightfield)
+{
+	tile.clusters.resize(0);
+	tile.instanceCount = 0;
+
+	if (!heightfield)
 		return;
 
-	const auto& terrain = terrainComponent->getTerrain();
-	const auto& heightfield = terrain->getHeightfield();
-
-	const int32_t size = heightfield->getSize();
-	const Vector4 extentPerGrid = heightfield->getWorldExtent() / Scalar(float(size));
+	// Last row and column of tile's heightfield belong to neighbour tile.
+	const int32_t size = heightfield->getSize() - 1;
+	const Vector4 extentPerGrid = heightfield->getWorldExtent() / Scalar(float(heightfield->getSize()));
 
 	m_clusterSize = (16.0f / 2.0f) * max< float >(extentPerGrid.x(), extentPerGrid.z());
 
-	// Create clusters.
-	Random random;
+	Random random(tileIndex);
 	for (int32_t z = 0; z < size; z += 16)
 	{
 		for (int32_t x = 0; x < size; x += 16)
@@ -262,8 +300,7 @@ void RubbleComponent::updatePatches()
 
 			for (auto& rubble : m_rubble)
 			{
-				// Accumulated attribute density across the cluster, 0 to 16 * 16 as a
-				// fully painted cluster contribute full density from every cell.
+				// Accumulated attribute density across the cluster, 0 to 16 * 16 when fully painted.
 				int32_t densityFactor = 0;
 				for (int32_t cz = 0; cz < 16; ++cz)
 				{
@@ -278,30 +315,20 @@ void RubbleComponent::updatePatches()
 				if (density <= 4)
 					continue;
 
-				const int32_t from = (int32_t)m_instances.size();
-				for (int32_t k = 0; k < density; ++k)
-				{
-					Instance& instance = m_instances.push_back();
-					instance.position = Vector4::zero();
-					instance.rotation = Quaternion::identity();
-					instance.scale = 0.0f;
-				}
-				const int32_t to = (int32_t)m_instances.size();
-
-				Cluster& c = m_clusters.push_back();
+				Cluster& c = tile.clusters.push_back();
 				c.rubbleDef = &rubble;
 				c.center = Vector4(wx, wy, wz, 1.0f);
 				c.distance = std::numeric_limits< float >::max();
 				c.seed = (int32_t)random.next();
-				c.from = from;
-				c.to = to;
+				c.tile = tileIndex;
+				c.from = tile.instanceCount;
+				c.to = c.from + density;
 				c.visible = false;
+
+				tile.instanceCount = c.to;
 			}
 		}
 	}
-
-	// Move last eye position, forces rescatter of visible clusters.
-	m_eye = Vector4::zero();
 }
 
 }

@@ -22,12 +22,11 @@
 #include "Editor/IPipelineCommon.h"
 #include "Heightfield/Editor/HeightfieldAsset.h"
 #include "Heightfield/Heightfield.h"
-#include "Heightfield/HeightfieldFormat.h"
 #include "Model/Model.h"
 #include "Scene/Editor/SceneAsset.h"
 #include "Terrain/Editor/AlignToTerrainOperationData.h"
 #include "Terrain/Editor/TerrainAsset.h"
-#include "Terrain/Terrain.h"
+#include "Terrain/Editor/TerrainEditData.h"
 #include "Terrain/TerrainComponent.h"
 #include "Terrain/TerrainComponentData.h"
 #include "World/Editor/IEntityReplicator.h"
@@ -56,11 +55,7 @@ constexpr float c_minUpY = 0.001f;
 constexpr int32_t c_maxEntityDepth = 8;
 
 /*! Pipeline common interface backed by a scene operator transform context.
- *
- * Entity replicators are written against the pipeline interface; since a
- * transform context offers exactly the same read only access this adapter
- * lets the operator generate models both at pipeline time and from the editor
- * preview.
+ * Lets entity replicators generate models both at pipeline time and from editor preview.
  */
 class TransformContextPipelineCommon : public editor::IPipelineCommon
 {
@@ -84,13 +79,7 @@ private:
 	const scene::ISceneOperator::TransformContext& m_context;
 };
 
-/*! Project a rotated bounding box onto the XZ plane.
- *
- * \param boundingBox Entity local bounding box.
- * \param rotation Entity world rotation.
- * \param outMin Minimum footprint extent, relative to the entity origin.
- * \param outMax Maximum footprint extent, relative to the entity origin.
- */
+/*! Project rotated bounding box onto XZ plane; out min and max are relative to entity origin. */
 void projectFootprint(const Aabb3& boundingBox, const Quaternion& rotation, Vector4& outMin, Vector4& outMax)
 {
 	Vector4 extents[8];
@@ -113,24 +102,43 @@ int32_t footprintSampleCount(float extent, float cellSize)
 	return clamp((int32_t)(extent / cellSize) + 2, 2, c_maxFootprintSamples);
 }
 
-/*! Sample terrain below an entity's projected bounding box.
- *
- * Samples are laid out on a regular grid covering the footprint, at no coarser
- * resolution than the heightfield itself. A footprint smaller than a single
- * heightfield cell collapses into a single sample at the entity origin, which
- * is identical to sampling only the entity center.
- *
- * \param heightfield Terrain heightfield.
- * \param worldX Entity world X.
- * \param worldZ Entity world Z.
- * \param footprintMin Minimum footprint extent, relative to the entity origin.
- * \param footprintMax Maximum footprint extent, relative to the entity origin.
- * \param outPositions Sampled terrain positions.
- * \param outNormals Sampled terrain normals; optional.
- * \return Number of samples written.
+//! Terrain height, and optionally normal, from loaded tile of instantiated terrain or else from terrain data.
+float sampleTerrain(const TerrainComponent* terrainComponent, TerrainEditData* terrainData, float worldX, float worldZ, Vector4* outNormal)
+{
+	const Vector4& worldExtent = terrainData->getWorldExtent();
+	const int32_t tileCount = terrainData->getTileCount();
+	const int32_t tileX = clamp((int32_t)((worldX / worldExtent.x() + 0.5f) * tileCount), 0, tileCount - 1);
+	const int32_t tileZ = clamp((int32_t)((worldZ / worldExtent.z() + 0.5f) * tileCount), 0, tileCount - 1);
+
+	const hf::Heightfield* heightfield = nullptr;
+	if (terrainComponent && terrainComponent->getTileCount() == tileCount * tileCount)
+		heightfield = terrainComponent->getTileHeightfield(tileX + tileZ * tileCount);
+
+	float gridX, gridZ;
+	if (heightfield)
+	{
+		if (outNormal)
+		{
+			heightfield->worldToGrid(worldX, worldZ, gridX, gridZ);
+			*outNormal = heightfield->normalAt(gridX, gridZ);
+		}
+		return heightfield->getWorldHeight(worldX, worldZ);
+	}
+
+	if (outNormal)
+	{
+		terrainData->worldToGrid(worldX, worldZ, gridX, gridZ);
+		*outNormal = terrainData->normalAt(gridX, gridZ);
+	}
+	return terrainData->getWorldHeight(worldX, worldZ);
+}
+
+/*! Sample terrain below entity's projected footprint, relative to entity origin, at no coarser resolution than terrain.
+ * Footprint smaller than a cell collapse into a single sample at entity origin; out normals are optional, return number of samples.
  */
 int32_t sampleFootprint(
-	const hf::Heightfield* heightfield,
+	const TerrainComponent* terrainComponent,
+	TerrainEditData* terrainData,
 	float worldX,
 	float worldZ,
 	const Vector4& footprintMin,
@@ -138,7 +146,7 @@ int32_t sampleFootprint(
 	Vector4* outPositions,
 	Vector4* outNormals)
 {
-	const float cellSize = heightfield->getWorldExtent().x() / (float)heightfield->getSize();
+	const float cellSize = terrainData->getWorldExtent().x() / (float)terrainData->getSize();
 	const float extentX = footprintMax.x() - footprintMin.x();
 	const float extentZ = footprintMax.z() - footprintMin.z();
 
@@ -158,16 +166,9 @@ int32_t sampleFootprint(
 
 			outPositions[count] = Vector4(
 				worldSampleX,
-				heightfield->getWorldHeight(worldSampleX, worldSampleZ),
+				sampleTerrain(terrainComponent, terrainData, worldSampleX, worldSampleZ, outNormals ? &outNormals[count] : nullptr),
 				worldSampleZ,
 				1.0f);
-
-			if (outNormals)
-			{
-				float gridX, gridZ;
-				heightfield->worldToGrid(worldSampleX, worldSampleZ, gridX, gridZ);
-				outNormals[count] = heightfield->normalAt(gridX, gridZ);
-			}
 
 			++count;
 		}
@@ -176,20 +177,8 @@ int32_t sampleFootprint(
 	return count;
 }
 
-/*! Resolve entity height from terrain samples.
- *
- * The entity is considered to rest on the plane which passes through its
- * origin and is spanned by its local XZ axes. Each sample yields the entity Y
- * which would place that plane exactly through the sample; the fit mode picks
- * which of those candidates is used.
- *
- * \param groundFit How candidate heights are reduced into one.
- * \param up Entity up axis in world space.
- * \param worldX Entity world X.
- * \param worldZ Entity world Z.
- * \param positions Sampled terrain positions.
- * \param count Number of samples.
- * \return Entity world Y.
+/*! Resolve entity world Y from terrain samples, each sample yield Y which place entity's local XZ plane through it.
+ * Ground fit picks which of those candidates is used.
  */
 float resolveHeight(
 	AlignToTerrainOperationData::GroundFit groundFit,
@@ -314,9 +303,7 @@ void AlignToTerrainOperator::gatherGeometry(
 	if (!entityData || depth >= c_maxEntityDepth)
 		return;
 
-	// External entities carry their geometry in the referenced instance; measure
-	// it once and reuse it for every placement of the same prefab. Only the
-	// resulting contact box is known here, not the models behind it.
+	// External entities are measured once and reused for every placement; only contact box is known, not models.
 	if (auto externalEntityData = dynamic_type_cast< const world::ExternalEntityData* >(entityData))
 	{
 		const Guid& externalId = externalEntityData->getEntityData();
@@ -435,43 +422,31 @@ bool AlignToTerrainOperator::transform(
 		return true;
 	}
 
-	Ref< const hf::Heightfield > heightfield;
+	const Guid terrainId = terrainEntityData->getComponent< TerrainComponentData >()->getTerrain();
 
-	// Use heightfield of instantiated terrain if available, avoid reading it from the database.
+	Ref< const TerrainAsset > terrainAsset = context.getObjectReadOnly< TerrainAsset >(terrainId);
+	if (!terrainAsset)
+		return true;
+
+	Ref< db::Instance > heightfieldInstance = context.getSourceDatabase()->getInstance(terrainAsset->getHeightfield());
+	if (!heightfieldInstance)
+		return true;
+
+	Ref< const hf::HeightfieldAsset > heightfieldAsset = heightfieldInstance->getObject< const hf::HeightfieldAsset >();
+	if (!heightfieldAsset)
+		return true;
+
+	// Tiles of terrain data are read when first sampled.
+	Ref< TerrainEditData > terrainData = new TerrainEditData();
+	if (!terrainData->create(heightfieldInstance, nullptr, heightfieldAsset))
+		return true;
+
+	// Loaded tiles of instantiated terrain are used if available, avoid reading them from database.
+	const TerrainComponent* terrainComponent = nullptr;
 	if (world::World* world = context.getWorld())
 	{
 		world::Entity* terrainEntity = world->getEntity(terrainEntityData->getId());
-		TerrainComponent* terrainComponent = terrainEntity ? terrainEntity->getComponent< TerrainComponent >() : nullptr;
-		if (terrainComponent && terrainComponent->getTerrain())
-			heightfield = terrainComponent->getTerrain()->getHeightfield();
-	}
-
-	if (!heightfield)
-	{
-		const Guid terrainId = terrainEntityData->getComponent< TerrainComponentData >()->getTerrain();
-
-		Ref< const TerrainAsset > terrainAsset = context.getObjectReadOnly< TerrainAsset >(terrainId);
-		if (!terrainAsset)
-			return true;
-
-		Ref< db::Instance > heightfieldInstance = context.getSourceDatabase()->getInstance(terrainAsset->getHeightfield());
-		if (!heightfieldInstance)
-			return true;
-
-		Ref< const hf::HeightfieldAsset > heightfieldAsset = heightfieldInstance->getObject< const hf::HeightfieldAsset >();
-		if (!heightfieldAsset)
-			return true;
-
-		Ref< IStream > sourceData = heightfieldInstance->readData(L"Data");
-		if (!sourceData)
-			return true;
-
-		heightfield = hf::HeightfieldFormat().read(
-			sourceData,
-			heightfieldAsset->getWorldExtent());
-		safeClose(sourceData);
-		if (!heightfield)
-			return true;
+		terrainComponent = terrainEntity ? terrainEntity->getComponent< TerrainComponent >() : nullptr;
 	}
 
 	const AlignedVector< std::wstring >& layerFilters = data->getLayers();
@@ -511,10 +486,7 @@ bool AlignToTerrainOperator::transform(
 			const float worldX = position.x();
 			const float worldZ = position.z();
 
-			// Measure the part of the entity which rests on the ground, so that
-			// terrain can be sampled across its footprint; an entity without
-			// measurable geometry, or an explicit request to only consider the
-			// origin, collapses to a point.
+			// Measure part of entity resting on ground; without measurable geometry, or when fit at center, it collapse to a point.
 			Aabb3 boundingBox;
 			if (groundFit != AlignToTerrainOperationData::GroundFit::Center)
 				boundingBox = calculateContactBoundingBox(&pipelineCommon, entityData, data->getContactRatio(), boundingBoxCache, 0);
@@ -526,14 +498,13 @@ bool AlignToTerrainOperator::transform(
 
 			if (data->getAlignOrientation())
 			{
-				// Average the surface normal across the footprint so large
-				// entities follow the general slope instead of whichever bump
-				// happens to be below their origin.
+				// Average surface normal across footprint so large entities follow general slope.
 				if (!boundingBox.empty())
 					projectFootprint(boundingBox, rotation, footprintMin, footprintMax);
 
 				const int32_t count = sampleFootprint(
-					heightfield,
+					terrainComponent,
+					terrainData,
 					worldX,
 					worldZ,
 					footprintMin,
@@ -564,7 +535,8 @@ bool AlignToTerrainOperator::transform(
 				projectFootprint(boundingBox, rotation, footprintMin, footprintMax);
 
 			const int32_t count = sampleFootprint(
-				heightfield,
+				terrainComponent,
+				terrainData,
 				worldX,
 				worldZ,
 				footprintMin,

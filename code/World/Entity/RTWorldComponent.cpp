@@ -41,7 +41,7 @@ void RTWorldComponent::destroy()
 	m_renderSystem = nullptr;
 }
 
-void RTWorldComponent::update(World* world, const UpdateParams& update)
+void RTWorldComponent::update(const UpdateParams& update)
 {
 }
 

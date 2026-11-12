@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2023 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -275,8 +275,12 @@ Ref< IStream > LocalInstance::readData(const std::wstring& dataName) const
 	if (m_transaction)
 	{
 		RefArray< ActionWriteData > actions;
-		if (m_transaction->get< ActionWriteData >(actions) > 0)
-			return actions.back()->getReadStream();
+		m_transaction->get< ActionWriteData >(actions);
+		for (int32_t i = (int32_t)actions.size() - 1; i >= 0; --i)
+		{
+			if (actions[i]->getName() == dataName)
+				return actions[i]->getReadStream();
+		}
 	}
 
 	const Path instanceDataPath = getInstanceDataPath(m_instancePath, dataName);

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2024 Anders Pistol.
+ * Copyright (c) 2024-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -32,13 +32,16 @@ class T_DLLCLASS IWorldComponent : public Object
 	T_RTTI_CLASS;
 
 public:
+	/*! */
 	virtual void destroy() = 0;
 
+	/*! */
+	virtual void setWorld(World* world) {}
+
 	/*! Update component
-	 * \param world World instance.
 	 * \param update Update information.
 	 */
-	virtual void update(World* world, const UpdateParams& update) = 0;
+	virtual void update(const UpdateParams& update) = 0;
 };
 
 }

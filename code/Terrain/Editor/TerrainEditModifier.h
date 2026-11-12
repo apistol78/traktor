@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,10 +9,9 @@
 #pragma once
 
 #include "Core/Math/Color4f.h"
-#include "Core/Misc/AutoPtr.h"
-#include "Resource/Proxy.h"
 #include "Scene/Editor/IModifier.h"
 #include "Terrain/TerrainComponent.h"
+#include "Terrain/Editor/TerrainEditData.h"
 
 namespace traktor
 {
@@ -64,6 +63,15 @@ class TerrainLayerComponent;
 class TerrainEditModifier : public scene::IModifier
 {
 	T_RTTI_CLASS;
+
+	struct TileMaps
+	{
+		Ref< render::ITexture > heightMap;
+		Ref< render::ITexture > normalMap;
+		Ref< render::ITexture > splatMap;
+		Ref< render::ITexture > colorMap;
+		Ref< render::ITexture > cutMap;
+	};
 
 public:
 	explicit TerrainEditModifier(scene::SceneEditorContext* context);
@@ -132,17 +140,8 @@ private:
 	Ref< db::Instance > m_terrainInstance;
 	Ref< db::Instance > m_heightfieldInstance;
 	Ref< hf::HeightfieldAsset > m_heightfieldAsset;
-	resource::Proxy< hf::Heightfield > m_heightfield;
-	Ref< render::ITexture > m_heightMap;
-	Ref< drawing::Image > m_splatImage;
-	Ref< render::ITexture > m_splatMap;
-	Ref< drawing::Image > m_colorImage;
-	Ref< drawing::Image > m_colorImageLowPrecision;
-	Ref< render::ITexture > m_colorMap;
-	AutoArrayPtr< uint8_t > m_normalData;
-	Ref< render::ITexture > m_normalMap;
-	AutoArrayPtr< uint8_t > m_cutData;
-	Ref< render::ITexture > m_cutMap;
+	Ref< TerrainEditData > m_data;
+	AlignedVector< TileMaps > m_tileMaps;
 	Ref< IBrush > m_brush;
 	uint32_t m_brushMode;
 	Ref< IFallOff > m_fallOff;
@@ -153,7 +152,7 @@ private:
 	int32_t m_attribute;
 	TerrainComponent::VisualizeMode m_visualizeMode;
 	Vector4 m_center;
-	uint32_t m_updateRegion[4];
+	int32_t m_dirtyRegion[4];	//!< Grid region modified by current stroke.
 	float m_radius = 4.0f;
 	bool m_applied;
 	bool m_editBrushSize = false;
@@ -161,6 +160,9 @@ private:
 	bool begin(bool inverted);
 
 	void apply(const Vector4& center);
+
+	//! Update maps of tiles intersecting grid region; editable tile maps are created first time tile is edited.
+	void updateTiles(const int32_t* region, uint32_t brushMode);
 
 	void end();
 

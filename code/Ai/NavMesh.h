@@ -8,10 +8,10 @@
  */
 #pragma once
 
+#include "Core/Containers/AlignedVector.h"
 #include "Core/Containers/SmallMap.h"
 #include "Core/Guid.h"
 #include "Core/Math/Aabb3.h"
-#include "Core/Math/Vector4.h"
 #include "Core/Object.h"
 #include "Core/Ref.h"
 
@@ -23,94 +23,25 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-class dtNavMesh;
-
 namespace traktor::ai
 {
 
-class MoveQueryResult;
+class NavMeshChunk;
 
 /*! Navigation mesh.
  * \ingroup AI
+ *
+ * Immutable description of a navigation mesh, which is
+ * instantiated and queried through a NavMeshComponent.
  */
 class T_DLLCLASS NavMesh : public Object
 {
 	T_RTTI_CLASS;
 
-public:
-	virtual ~NavMesh();
-
-	/*! Create a movement query from start to end position.
-	 *
-	 * Since calculating a movement query is really expensive
-	 * we need to be able to amortize this call, thus
-	 * it will return a "deferred result" which
-	 * will become ready sometime in the future.
-	 *
-	 * \param startPosition Start of movement.
-	 * \param endPosition End of movement.
-	 * \return Movement query async result.
-	 */
-	Ref< MoveQueryResult > createMoveQuery(const Vector4& startPosition, const Vector4& endPosition) const;
-
-	/*! Find closest point on navigation mesh.
-	 *
-	 * Searches a cube of half-extent \a searchDistance (uniform on all three axes)
-	 * around \a searchFrom.
-	 *
-	 * \param searchFrom Search from point.
-	 * \param searchDistance Search half-extent, applied uniformly on all axes.
-	 * \param outPoint Closest point on navigation mesh.
-	 * \return True if closest point found.
-	 */
-	bool findClosestPoint(const Vector4& searchFrom, float searchDistance, Vector4& outPoint) const;
-
-	/*! Find closest point on navigation mesh in the XZ plane only.
-	 *
-	 * Searches \a searchDistance in X and Z but the whole vertical column (Y is
-	 * effectively unbounded), so it resolves to ground directly beneath \a searchFrom
-	 * no matter how far above the mesh the point is. When several walkable surfaces
-	 * stack at the same spot (e.g. ground under a roof) the one whose height is closest
-	 * to searchFrom.y is returned.
-	 *
-	 * \param searchFrom Search from point.
-	 * \param searchDistance Search half-extent in the X and Z axes.
-	 * \param outPoint Closest point on navigation mesh.
-	 * \return True if closest point found.
-	 */
-	bool findClosestPointXZ(const Vector4& searchFrom, float searchDistance, Vector4& outPoint) const;
-
-	/*! Find a random point which is guaranteed to be on navigation mesh.
-	 *
-	 * \param outPoint Random point on navigation mesh.
-	 * \return True if random point found.
-	 */
-	bool findRandomPoint(Vector4& outPoint) const;
-
-	/*! Find a random point inside a sphere which is also guaranteed to be on navigation mesh.
-	 *
-	 * \param center Center of search sphere.
-	 * \param radius Radius of search sphere.
-	 * \param outPoint Random point on navigation mesh and also inside sphere.
-	 * \return True if random point found.
-	 */
-	bool findRandomPoint(const Vector4& center, float radius, Vector4& outPoint) const;
-
-	/*!
-	 */
-	bool findDistanceToWall(const Vector4& center, float radius, float& outDistance) const;
-
-	/*! Enable or disable navigation through a modifier's area.
-	 *
-	 * \param id Id of modifier's owner entity.
-	 * \param enable True if area should be navigable.
-	 * \return True if modifier found.
-	 */
-	bool setModifierEnable(const Guid& id, bool enable);
-
 private:
-	friend class NavMeshFactory;
+	friend class NavMeshComponent;
 	friend class NavMeshComponentEditor;
+	friend class NavMeshFactory;
 
 	struct Modifier
 	{
@@ -118,8 +49,22 @@ private:
 		uint8_t area = 0;
 	};
 
-	dtNavMesh* m_navMesh = nullptr;
+	struct Chunk
+	{
+		int32_t x = 0;
+		int32_t z = 0;
+		Guid id;
+	};
+
+	float m_origin[3] = { 0.0f, 0.0f, 0.0f };
+	float m_tileWidth = 0.0f;
+	float m_tileHeight = 0.0f;
+	int32_t m_maxTiles = 0;
+	int32_t m_maxPolys = 0;
 	SmallMap< Guid, Modifier > m_modifiers;
+	Ref< NavMeshChunk > m_tiles;	//!< Tiles of a navigation mesh which isn't chunked.
+	AlignedVector< Chunk > m_chunks;	//!< Chunks of a chunked navigation mesh.
+	float m_chunkWidth = 0.0f;
 };
 
 }

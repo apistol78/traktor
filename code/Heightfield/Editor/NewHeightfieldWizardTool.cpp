@@ -62,7 +62,7 @@ bool NewHeightfieldWizardTool::launch(ui::Widget* parent, editor::IEditor* edito
 	if (!heightfieldInstance)
 		return false;
 
-	Ref< Heightfield > heightfield = new Heightfield(gridSize, worldExtent);
+	Ref< Heightfield > heightfield = new Heightfield(gridSize, worldExtent, Vector4::zero());
 
 	for (int32_t z = 0; z < gridSize; ++z)
 	{

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,8 +9,6 @@
 #include <numeric>
 #include "Core/Math/Const.h"
 #include "Core/Math/MathUtils.h"
-#include "Drawing/Image.h"
-#include "Heightfield/Heightfield.h"
 #include "Terrain/Editor/MaterialBrush.h"
 #include "Terrain/Editor/IFallOff.h"
 
@@ -31,9 +29,8 @@ const int32_t c_others[4][3] =
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.MaterialBrush", MaterialBrush, IBrush)
 
-MaterialBrush::MaterialBrush(const resource::Proxy< hf::Heightfield >& heightfield, drawing::Image* splatImage)
-:	m_heightfield(heightfield)
-,	m_splatImage(splatImage)
+MaterialBrush::MaterialBrush(TerrainEditData* data)
+:	m_data(data)
 ,	m_radius(0)
 ,	m_fallOff(0)
 ,	m_strength(0.0f)
@@ -66,7 +63,7 @@ void MaterialBrush::apply(float x, float y)
 			const float a = m_fallOff->evaluate(fx, fy) * m_strength;
 
 			/*
-			Vector4 normal = m_heightfield->normalAt(x + ix, y + iy);
+			Vector4 normal = m_data->normalAt(x + ix, y + iy);
 			float slope = abs(acos(normal.y()) / HALF_PI);
 
 			slope = slope * 2.0f - 0.5f;
@@ -81,7 +78,7 @@ void MaterialBrush::apply(float x, float y)
 			if (abs(a) <= FUZZY_EPSILON)
 				continue;
 
-			m_splatImage->getPixel(x + ix, y + iy, targetColor);
+			m_data->getSplat(x + ix, y + iy, targetColor);
 
 			targetColor.storeAligned(weights);
 
@@ -104,7 +101,7 @@ void MaterialBrush::apply(float x, float y)
 				}
 			}
 
-			m_splatImage->setPixel(x + ix, y + iy, Color4f(weights));
+			m_data->setSplat(x + ix, y + iy, Color4f(weights));
 		}
 	}
 }

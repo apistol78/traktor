@@ -73,6 +73,8 @@ public:
 
 	virtual ~Stage();
 
+	void create();
+
 	void destroy();
 
 	/*! Add layer to stage.

@@ -59,7 +59,12 @@ void EntityStreamingComponent::destroy()
 	m_entityBuilder = nullptr;
 }
 
-void EntityStreamingComponent::update(World* world, const UpdateParams& update)
+void EntityStreamingComponent::setWorld(World* world)
+{
+	m_world = world;
+}
+
+void EntityStreamingComponent::update(const UpdateParams& update)
 {
 	if (!m_haveFocus)
 		return;
@@ -67,41 +72,8 @@ void EntityStreamingComponent::update(World* world, const UpdateParams& update)
 	const Scalar loadDistance(m_data->getLoadDistance());
 	const Scalar unloadDistance(m_data->getUnloadDistance());
 
-	// Cells initially in range are created immediately, as if they were part of scene.
-	if (!m_primed)
-	{
-		for (auto& cell : m_cells)
-		{
-			if (distanceToCell(m_focus, cell.data->boundingBox) >= loadDistance)
-				continue;
-			createEntities(cell);
-			for (auto entity : cell.entities)
-				world->addEntity(entity);
-			cell.loaded = true;
-		}
-		m_primed = true;
-		return;
-	}
-
 	// Add entities of loaded cell to world, or discard them if cell is no longer wanted.
-	if (m_job && m_job->wait(0))
-	{
-		Cell& cell = m_cells[m_loadingCell];
-		if (distanceToCell(m_focus, cell.data->boundingBox) <= unloadDistance)
-		{
-			for (auto entity : cell.entities)
-				world->addEntity(entity);
-			cell.loaded = true;
-		}
-		else
-		{
-			for (auto entity : cell.entities)
-				entity->destroy();
-			cell.entities.clear();
-		}
-		m_job = nullptr;
-		m_loadingCell = -1;
-	}
+	processPendingJob(0);
 
 	// Unload cells beyond unload distance and find nearest cell to load.
 	Scalar nearestDistance = loadDistance;
@@ -119,12 +91,12 @@ void EntityStreamingComponent::update(World* world, const UpdateParams& update)
 				for (auto entity : cell.entities)
 				{
 					// Entity no longer in world has been taken by others and is theirs.
-					if (entity->getWorld() != world)
+					if (entity->getWorld() != m_world)
 					{
 						cell.removed.insert(entity->getId());
 						continue;
 					}
-					world->removeEntity(entity);
+					m_world->removeEntity(entity);
 					entity->destroy();
 				}
 				cell.entities.clear();
@@ -154,15 +126,59 @@ void EntityStreamingComponent::update(World* world, const UpdateParams& update)
 		m_resourceManager->unloadUnusedResident();
 }
 
+void EntityStreamingComponent::load(const Vector4& focus)
+{
+	processPendingJob(-1);
+	setFocus(focus);
+
+	const Scalar loadDistance(m_data->getLoadDistance());
+	const Scalar unloadDistance(m_data->getUnloadDistance());
+
+	for (auto& cell : m_cells)
+	{
+		if (distanceToCell(m_focus, cell.data->boundingBox) >= loadDistance)
+			continue;
+		createEntities(cell);
+		for (auto entity : cell.entities)
+			m_world->addEntity(entity);
+		cell.loaded = true;
+	}
+}
+
 void EntityStreamingComponent::setFocus(const Vector4& focus)
 {
 	m_focus = focus;
 	m_haveFocus = true;
 }
 
-bool EntityStreamingComponent::idle() const
+bool EntityStreamingComponent::processPendingJob(int32_t timeout)
 {
-	return m_primed && (m_job == nullptr);
+	if (!m_job)
+		return true;
+
+	if (!m_job->wait(timeout))
+		return false;
+
+	const Scalar loadDistance(m_data->getLoadDistance());
+	const Scalar unloadDistance(m_data->getUnloadDistance());
+
+	Cell& cell = m_cells[m_loadingCell];
+	if (distanceToCell(m_focus, cell.data->boundingBox) <= unloadDistance)
+	{
+		for (auto entity : cell.entities)
+			m_world->addEntity(entity);
+		cell.loaded = true;
+	}
+	else
+	{
+		for (auto entity : cell.entities)
+			entity->destroy();
+		cell.entities.clear();
+	}
+	m_job = nullptr;
+	m_loadingCell = -1;
+	
+	return true;
 }
 
 void EntityStreamingComponent::createEntities(Cell& cell) const

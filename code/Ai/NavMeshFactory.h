@@ -18,8 +18,17 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
+namespace traktor
+{
+
+class Reader;
+
+}
+
 namespace traktor::ai
 {
+
+class NavMeshChunk;
 
 /*! Navigation mesh resource factory.
  * \ingroup AI
@@ -40,6 +49,9 @@ public:
 	virtual Ref< Object > create(resource::IResourceManager* resourceManager, const db::Database* database, const db::Instance* instance, const TypeInfo& productType, const Object* current) const override final;
 
 	virtual void destroy(Object* resource) const override final;
+
+private:
+	Ref< NavMeshChunk > readTiles(Reader& r) const;
 };
 
 }

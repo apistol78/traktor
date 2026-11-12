@@ -18,13 +18,13 @@ namespace traktor::hf
 	namespace
 	{
 
-const int32_t c_version = 3;
+const int32_t c_version = 4;
 
 	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.hf.HeightfieldFormat", HeightfieldFormat, Object)
 
-Ref< Heightfield > HeightfieldFormat::read(IStream* stream, const Vector4& worldExtent) const
+Ref< Heightfield > HeightfieldFormat::read(IStream* stream, const Vector4& worldExtent, const Vector4& worldCenter) const
 {
 	int32_t version;
 	Reader(stream) >> version;
@@ -37,7 +37,8 @@ Ref< Heightfield > HeightfieldFormat::read(IStream* stream, const Vector4& world
 
 	Ref< Heightfield > heightfield = new Heightfield(
 		size,
-		worldExtent
+		worldExtent,
+		worldCenter
 	);
 
 	height_t* heights = heightfield->getHeights();
@@ -46,7 +47,7 @@ Ref< Heightfield > HeightfieldFormat::read(IStream* stream, const Vector4& world
 
 	uint8_t* cuts = heightfield->getCuts();
 	T_ASSERT_M (cuts, L"No cuts in heightfield");
-	Reader(stream).read(cuts, size * size / 8, sizeof(uint8_t));
+	Reader(stream).read(cuts, (version >= 4) ? (size * size + 7) / 8 : size * size / 8, sizeof(uint8_t));
 
 	if (version == 2)
 	{
@@ -97,7 +98,7 @@ bool HeightfieldFormat::write(IStream* stream, const Heightfield* heightfield) c
 
 	Writer(stream).write(
 		heightfield->getCuts(),
-		heightfield->getSize() * heightfield->getSize() / 8,
+		(heightfield->getSize() * heightfield->getSize() + 7) / 8,
 		sizeof(uint8_t)
 	);
 

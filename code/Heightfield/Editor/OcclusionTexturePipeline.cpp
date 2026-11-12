@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2023 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -29,10 +29,10 @@
 #include "Editor/IPipelineDepends.h"
 #include "Editor/IPipelineSettings.h"
 #include "Heightfield/Heightfield.h"
-#include "Heightfield/HeightfieldFormat.h"
 #include "Heightfield/Editor/HeightfieldAsset.h"
 #include "Heightfield/Editor/OcclusionTextureAsset.h"
 #include "Heightfield/Editor/OcclusionTexturePipeline.h"
+#include "Heightfield/Editor/TileStorage.h"
 #include "Mesh/MeshComponentData.h"
 #include "Mesh/Editor/MeshAsset.h"
 #include "Model/Model.h"
@@ -310,25 +310,12 @@ bool OcclusionTexturePipeline::buildOutput(
 		return false;
 	}
 
-	Ref< IStream > sourceData = heightfieldAssetInstance->readData(L"Data");
-	if (!sourceData)
-	{
-		log::error << L"Heightfield pipeline failed; unable to open heights" << Endl;
-		return false;
-	}
-
-	Ref< Heightfield > heightfield = HeightfieldFormat().read(
-		sourceData,
-		heightfieldAsset->getWorldExtent()
-	);
+	Ref< Heightfield > heightfield = TileStorage(heightfieldAsset->getTileCount()).readHeightfield(heightfieldAssetInstance, heightfieldAsset->getWorldExtent());
 	if (!heightfield)
 	{
 		log::error << L"Heightfield pipeline failed; unable to read heights" << Endl;
-		return 0;
+		return false;
 	}
-
-	sourceData->close();
-	sourceData = 0;
 
 	const uint32_t size = heightfield->getSize();
 

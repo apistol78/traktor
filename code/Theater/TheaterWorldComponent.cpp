@@ -30,12 +30,17 @@ void TheaterWorldComponent::destroy()
 	m_performance = nullptr;
 }
 
-void TheaterWorldComponent::update(world::World* world, const world::UpdateParams& update)
+void TheaterWorldComponent::setWorld(world::World* world)
 {
-	const WorldEntityResolver resolver(world);
+	m_world = world;
+}
+
+void TheaterWorldComponent::update(const world::UpdateParams& update)
+{
+	const WorldEntityResolver resolver(m_world);
 	m_performance->update(
 		resolver,
-		world->getComponent< world::EventManagerComponent >(),
+		m_world->getComponent< world::EventManagerComponent >(),
 		nullptr,
 		Transform::identity(),
 		update.totalTime,

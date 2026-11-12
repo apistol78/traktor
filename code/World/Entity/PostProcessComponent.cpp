@@ -25,7 +25,7 @@ void PostProcessComponent::destroy()
 	m_imageGraph.clear();
 }
 
-void PostProcessComponent::update(World* world, const UpdateParams& update)
+void PostProcessComponent::update(const UpdateParams& update)
 {
 }
 

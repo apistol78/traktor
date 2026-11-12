@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -17,7 +17,7 @@
 namespace traktor::hf
 {
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.hf.HeightfieldTextureAsset", 0, HeightfieldTextureAsset, ISerializable)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.hf.HeightfieldTextureAsset", 1, HeightfieldTextureAsset, ISerializable)
 
 void HeightfieldTextureAsset::serialize(ISerializer& s)
 {
@@ -33,6 +33,14 @@ void HeightfieldTextureAsset::serialize(ISerializer& s)
 	s >> resource::Member< Heightfield >(L"heightfield", m_heightfield);
 	s >> MemberEnum< OutputType >(L"output", m_output, c_OutputType_Keys);
 	s >> Member< float >(L"scale", m_scale);
+
+	if (s.getVersion() >= 1)
+	{
+		s >> Member< int32_t >(L"tileX", m_tileX);
+		s >> Member< int32_t >(L"tileZ", m_tileZ);
+		s >> Member< int32_t >(L"overviewSize", m_overviewSize);
+		s >> Member< uint32_t >(L"stamp", m_stamp);
+	}
 }
 
 }

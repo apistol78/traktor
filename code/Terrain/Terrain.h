@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -11,6 +11,7 @@
 #include "Core/Object.h"
 #include "Core/Containers/AlignedVector.h"
 #include "Resource/Proxy.h"
+#include "Terrain/TerrainResource.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -35,6 +36,13 @@ class Shader;
 
 }
 
+namespace traktor::resource
+{
+
+class IResourceManager;
+
+}
+
 namespace traktor::terrain
 {
 
@@ -46,99 +54,54 @@ class T_DLLCLASS Terrain : public Object
 	T_RTTI_CLASS;
 
 public:
-	struct Patch
+	//! Resources of a tile, or overview, of terrain.
+	struct TileResources
 	{
-		float height[2];
-		float error[3];
+		resource::Proxy< hf::Heightfield > heightfield;
+		resource::Proxy< render::ITexture > heightMap;
+		resource::Proxy< render::ITexture > normalMap;
+		resource::Proxy< render::ITexture > cutMap;
+		resource::Proxy< render::ITexture > splatMap;
+		resource::Proxy< render::ITexture > colorMap;
 	};
 
-	/*! Get amount of detail to skip.
-	 *
-	 * \return Level of detail skipped.
-	 */
+	//! Amount of detail to skip.
 	uint32_t getDetailSkip() const { return m_detailSkip; }
 
-	/*! Get size of a single patch.
-	 *
-	 * \return Size of single patch.
-	 */
+	//! Size of a single patch.
 	uint32_t getPatchDim() const { return m_patchDim; }
 
-	/*! Get heightfield resource.
-	 *
-	 * \return Heightfield resource.
-	 */
-	const resource::Proxy< hf::Heightfield >& getHeightfield() const { return m_heightfield; }
-
-	/*! Get terrain color map resource.
-	 *
-	 * \return Color map resource.
-	 */
-	const resource::Proxy< render::ITexture >& getColorMap() const { return m_colorMap; }
-
-	/*! Get terrain normal map resource.
-	 *
-	 * \return Normal map resource.
-	 */
-	const resource::Proxy< render::ITexture >& getNormalMap() const { return m_normalMap; }
-
-	/*! Get heightmap resource.
-	 *
-	 * \return Heightmap resource.
-	 */
-	const resource::Proxy< render::ITexture >& getHeightMap() const { return m_heightMap; }
-
-	/*! Get material splat map resource.
-	 *
-	 * \return Material splat map resource.
-	 */
-	const resource::Proxy< render::ITexture >& getSplatMap() const { return m_splatMap; }
-
-	/*! Get terrain cut map resource.
-	 *
-	 * \return Cut map resource.
-	 */
-	const resource::Proxy< render::ITexture >& getCutMap() const { return m_cutMap; }
-
-	/*! Get terrain shader resource.
-	 *
-	 * \return Terrain shader resource.
-	 */
+	//! Terrain shader resource.
 	const resource::Proxy< render::Shader >& getTerrainShader() const { return m_terrainShader; }
 
-	/*! Get terrain surface shader resource.
-	 *
-	 * \return Terrain surface shader resource.
-	 */
+	//! Terrain surface shader resource.
 	const resource::Proxy< render::Shader >& getSurfaceShader() const { return m_surfaceShader; }
 
-	/*! Get vector of patch information.
-	 *
-	 * \return Information about each patch.
-	 */
-	const AlignedVector< Patch >& getPatches() const { return m_patches; }
+	//! Number of tiles along each side.
+	int32_t getTileCount() const { return m_tileCount; }
 
-	/*! Get vector of patch information.
-	 *
-	 * \return Information about each patch.
-	 */
-	AlignedVector< Patch >& editPatches() { return m_patches; }
+	//! Number of heightfield samples along each side of a tile, excluding seam.
+	int32_t getTileSize() const { return m_tileSize; }
+
+	//! Bind resources of tile, row major index; blocks until loaded.
+	bool bindTile(resource::IResourceManager* resourceManager, int32_t tile, TileResources& outResources) const;
+
+	//! Resources of low resolution overview of entire terrain; always loaded.
+	const TileResources& getOverview() const { return m_overview; }
 
 private:
 	friend class TerrainFactory;
-	friend class TerrainEditModifier;
 
 	uint32_t m_detailSkip = 0;
 	uint32_t m_patchDim = 0;
-	resource::Proxy< hf::Heightfield > m_heightfield;
-	resource::Proxy< render::ITexture > m_colorMap;
-	resource::Proxy< render::ITexture > m_normalMap;
-	resource::Proxy< render::ITexture > m_heightMap;
-	resource::Proxy< render::ITexture > m_splatMap;
-	resource::Proxy< render::ITexture > m_cutMap;
 	resource::Proxy< render::Shader > m_terrainShader;
 	resource::Proxy< render::Shader > m_surfaceShader;
-	AlignedVector< Patch > m_patches;
+	int32_t m_tileCount = 0;
+	int32_t m_tileSize = 0;
+	AlignedVector< TerrainResource::Tile > m_tiles;
+	TileResources m_overview;
+
+	static bool bindResources(resource::IResourceManager* resourceManager, const TerrainResource::Tile& tile, TileResources& outResources);
 };
 
 }

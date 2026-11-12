@@ -41,7 +41,9 @@ public:
 
 	virtual void destroy() override final;
 
-	virtual void update(world::World* world, const world::UpdateParams& update) override final;
+	virtual void setWorld(world::World* world) override final;
+
+	virtual void update(const world::UpdateParams& update) override final;
 
 	bool play(const std::wstring& actName);
 
@@ -53,6 +55,7 @@ public:
 
 private:
 	Ref< Performance > m_performance;
+	world::World* m_world = nullptr;
 };
 
 }

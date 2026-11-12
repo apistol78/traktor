@@ -10,7 +10,6 @@
 
 #include "Core/Math/Const.h"
 #include "Core/Math/MathUtils.h"
-#include "Heightfield/Heightfield.h"
 #include "Terrain/Editor/IFallOff.h"
 
 namespace traktor::terrain
@@ -18,8 +17,8 @@ namespace traktor::terrain
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.AttributeBrush", AttributeBrush, IBrush)
 
-AttributeBrush::AttributeBrush(const resource::Proxy< hf::Heightfield >& heightfield)
-	: m_heightfield(heightfield)
+AttributeBrush::AttributeBrush(TerrainEditData* data)
+	: m_data(data)
 	, m_radius(0)
 	, m_fallOff(0)
 	, m_strength(0.0f)
@@ -53,14 +52,14 @@ void AttributeBrush::apply(float x, float y)
 			if (abs(a) <= FUZZY_EPSILON)
 				continue;
 
-			const float density = m_heightfield->getGridAttributeDensity(gx + ix, gz + iy, m_attribute) / 255.0f;
+			const float density = m_data->getGridAttributeDensity(gx + ix, gz + iy, m_attribute) / 255.0f;
 
 			// Approach the profile rather than accumulate onto it, thus a stroke lay
 			// down the shape of the falloff instead of saturating where it overlap
 			// itself. An inverted stroke carve the density back down the same way.
 			const float target = (a >= 0.0f) ? max(density, a) : min(density, 1.0f + a);
 
-			m_heightfield->setGridAttribute(gx + ix, gz + iy, m_attribute, (uint8_t)(clamp(target, 0.0f, 1.0f) * 255.0f + 0.5f));
+			m_data->setGridAttribute(gx + ix, gz + iy, m_attribute, (uint8_t)(clamp(target, 0.0f, 1.0f) * 255.0f + 0.5f));
 		}
 	}
 }

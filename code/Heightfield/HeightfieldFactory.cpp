@@ -6,10 +6,11 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Heightfield/HeightfieldFactory.h"
+
 #include "Core/Io/IStream.h"
 #include "Database/Instance.h"
 #include "Heightfield/Heightfield.h"
-#include "Heightfield/HeightfieldFactory.h"
 #include "Heightfield/HeightfieldFormat.h"
 #include "Heightfield/HeightfieldResource.h"
 
@@ -48,9 +49,10 @@ Ref< Object > HeightfieldFactory::create(resource::IResourceManager* resourceMan
 	if (!stream)
 		return nullptr;
 
-	Ref< Heightfield > heightfield = HeightfieldFormat().read(stream, resource->getWorldExtent());
+	Ref< Heightfield > heightfield = HeightfieldFormat().read(stream, resource->getWorldExtent(), resource->getWorldCenter());
 
 	stream->close();
+
 	return heightfield;
 }
 

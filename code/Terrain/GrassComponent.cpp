@@ -30,6 +30,8 @@
 #include "World/WorldBuildContext.h"
 #include "World/WorldRenderView.h"
 
+#include <cmath>
+#include <cstring>
 #include <limits>
 
 namespace traktor::terrain
@@ -62,7 +64,7 @@ struct BladeData
 	float positionX;
 	float positionZ;
 	float rotation;
-	float dummy1;
+	float positionY;
 	float scale;
 	float random;
 	float dummy2;
@@ -72,7 +74,6 @@ struct BladeData
 #pragma pack()
 
 const render::Handle s_handleTerrain_Normals(L"Terrain_Normals");
-const render::Handle s_handleTerrain_Heightfield(L"Terrain_Heightfield");
 const render::Handle s_handleTerrain_SurfaceAlbedo(L"Terrain_SurfaceAlbedo");
 const render::Handle s_handleTerrain_WorldExtent(L"Terrain_WorldExtent");
 const render::Handle s_handleGrass_Eye(L"Grass_Eye");
@@ -104,18 +105,8 @@ bool anyAttributeDensity(const hf::Heightfield* heightfield, int32_t gridX, int3
 	return false;
 }
 
-/*! Scatter blades of a single grass type across a cluster.
- *
- * Each candidate is accepted with a probability equal to the painted attribute density
- * at it's own position, thus both the number and the size of the blades follow the
- * density at grid cell resolution instead of being constant across the entire cluster.
- *
- * Deterministic in the cluster center and the heightfield alone; it's called once to
- * count the accepted blades and later once more to write them. Should the heightfield
- * have been repainted in between the passes disagree, thus writing is capped.
- *
- * \return Number of accepted blades, of which the first \a maxBlades are written to
- * \a outBlades when given.
+/*! Scatter blades of a grass type across a cluster, each candidate accepted by attribute density at it's position.
+ * Deterministic, called once to count blades and once to write first maxBlades into outBlades; return number of blades.
  */
 int32_t scatterCluster(
 	const hf::Heightfield* heightfield,
@@ -143,8 +134,7 @@ int32_t scatterCluster(
 
 		const float density = heightfield->getWorldAttributeDensity(px, pz, attribute);
 
-		// Draw every random value unconditionally, thus the stream stay in lockstep
-		// between the counting and the writing pass.
+		// Draw every random value unconditionally to keep counting and writing pass in lockstep.
 		const float accept = random.nextFloat();
 		const float rotation = random.nextFloat();
 		const float size = random.nextFloat();
@@ -159,9 +149,8 @@ int32_t scatterCluster(
 			bd.positionX = px;
 			bd.positionZ = pz;
 			bd.rotation = rotation * TWO_PI;
-			bd.dummy1 = 0.0f;
-			// Blades shrink as the density fade out, thus a thinned out region also
-			// read as shorter grass instead of only fewer blades.
+			bd.positionY = heightfield->getWorldHeight(px, pz);
+			// Blades shrink as density fade out, thinned out regions read as shorter grass.
 			bd.scale = scale * (0.5f + 0.5f * density) * (0.5f + 0.5f * size);
 			bd.random = variation;
 			bd.dummy2 = 0.0f;
@@ -300,88 +289,54 @@ void GrassComponent::update(const world::UpdateParams& update)
 	TerrainLayerComponent::update(update);
 }
 
-bool GrassComponent::updateBladeBuffer()
-{
-	m_bladeBuffer = nullptr;
-
-	if (!m_bladesCount)
-		return true;
-
-	auto terrainComponent = m_owner->getComponent< TerrainComponent >();
-	if (!terrainComponent)
-		return false;
-
-	const hf::Heightfield* heightfield = terrainComponent->getTerrain()->getHeightfield();
-
-	m_bladeBuffer = m_renderSystem->createBuffer(render::BufferUsage::BuStructured, m_bladesCount * sizeof(BladeData), false, T_FILE_LINE_W);
-	if (!m_bladeBuffer)
-		return false;
-
-	BladeData* bladeData = (BladeData*)m_bladeBuffer->lock();
-	if (!bladeData)
-	{
-		m_bladeBuffer = nullptr;
-		return false;
-	}
-
-	for (const Cluster& cluster : m_clusters)
-	{
-		const auto& grass = m_layerData.m_grass[cluster.grass];
-		const int32_t count = scatterCluster(
-			heightfield,
-			cluster.center,
-			m_clusterSize,
-			grass.attribute,
-			grass.density,
-			grass.scale,
-			bladeData + cluster.from,
-			cluster.to - cluster.from);
-
-		// Should only differ if the heightfield changed since updatePatches; the
-		// cluster then render a few blades of stale data until it's rebuilt.
-		T_ASSERT(count == cluster.to - cluster.from);
-	}
-
-	m_bladeBuffer->unlock();
-	return true;
-}
-
 void GrassComponent::setup(const world::WorldRenderView& worldRenderView)
 {
+	auto terrainComponent = m_owner->getComponent< TerrainComponent >();
+	if (!terrainComponent)
+		return;
+
+	// Clusters follow primary view, scattered again as eye enter another cluster or when tiles change.
+	if (worldRenderView.getIndex() == 0 && !worldRenderView.getSnapshot())
+	{
+		const int32_t tileCount = terrainComponent->getTileCount();
+		bool changed = ((int32_t)m_tileRevisions.size() != tileCount);
+		m_tileRevisions.resize(tileCount);
+		for (int32_t i = 0; i < tileCount; ++i)
+		{
+			const uint32_t revision = terrainComponent->getTileRevision(i);
+			changed |= (m_tileRevisions[i] != revision);
+			m_tileRevisions[i] = revision;
+		}
+		updateClusters(terrainComponent, worldRenderView.getEyePosition(), changed);
+	}
+
 	if (!m_bladesCount)
 		return;
 
-	// Blade data is view independent and constant over time; build it on demand,
-	// it's invalidated when the clusters are rebuilt.
-	if (m_bladeBuffer == nullptr && !updateBladeBuffer())
-		return;
-
-	const Matrix44 view = worldRenderView.getView();
-
-	// Get blade state for current view.
 	ViewState& vs = m_viewState[worldRenderView.getIndex()];
+	vs.drawInstanceCount = 0;
+
 	if (vs.orderBuffer == nullptr || vs.orderBuffer->getBufferSize() / sizeof(int32_t) != m_bladesCount)
 	{
-		vs.drawInstanceCount = 0;
 		vs.orderBuffer = m_renderSystem->createBuffer(render::BufferUsage::BuStructured, m_bladesCount * sizeof(int32_t), true, T_FILE_LINE_W);
 		if (!vs.orderBuffer)
 			return;
 	}
 
+	const Matrix44 view = worldRenderView.getView();
+
 	Frustum viewFrustum = worldRenderView.getViewFrustum();
 	viewFrustum.setFarZ(Scalar(m_layerData.m_spreadDistance + m_clusterSize));
-
-	vs.drawInstanceCount = 0;
 
 	int32_t* orderPtr = (int32_t*)vs.orderBuffer->lock();
 	if (!orderPtr)
 		return;
 
-	// Compact indices of visible blades; the blade data itself is already resident
-	// and indexed through this list.
+	// Compact indices of visible blades, blade data is resident and indexed through this list.
 	const Scalar clusterSize(m_clusterSize);
-	for (const Cluster& cluster : m_clusters)
+	for (const auto& it : m_clusters)
 	{
+		const Cluster& cluster = it.second;
 		if (viewFrustum.inside(view * cluster.center, clusterSize) == Frustum::Result::Outside)
 			continue;
 
@@ -403,10 +358,15 @@ void GrassComponent::build(
 	if (!terrainComponent)
 		return;
 
-	if (!m_bladesCount)
+	if (!m_bladeBuffer)
+		return;
+
+	ViewState& vs = m_viewState[worldRenderView.getIndex()];
+	if (!vs.orderBuffer || vs.drawInstanceCount <= 0)
 		return;
 
 	const auto& terrain = terrainComponent->getTerrain();
+	const Terrain::TileResources& overview = terrain->getOverview();
 
 	const Matrix44 view = worldRenderView.getView();
 	const Matrix44 viewInv = view.inverse();
@@ -422,13 +382,6 @@ void GrassComponent::build(
 
 	auto sp = m_shader->getProgram(perm);
 	if (!sp)
-		return;
-
-	if (!m_bladeBuffer)
-		return;
-
-	ViewState& vs = m_viewState[worldRenderView.getIndex()];
-	if (!vs.orderBuffer || vs.drawInstanceCount <= 0)
 		return;
 
 	render::RenderContext* renderContext = context.getRenderContext();
@@ -448,10 +401,9 @@ void GrassComponent::build(
 
 	renderBlock->programParams->beginParameters(renderContext);
 	worldRenderPass.setProgramParameters(renderBlock->programParams);
-	renderBlock->programParams->setTextureParameter(s_handleTerrain_Normals, terrain->getNormalMap());
-	renderBlock->programParams->setTextureParameter(s_handleTerrain_Heightfield, terrain->getHeightMap());
+	renderBlock->programParams->setTextureParameter(s_handleTerrain_Normals, overview.normalMap);
 	renderBlock->programParams->setTextureParameter(s_handleTerrain_SurfaceAlbedo, terrainComponent->getSurfaceCache()->getBaseTexture());
-	renderBlock->programParams->setVectorParameter(s_handleTerrain_WorldExtent, terrain->getHeightfield()->getWorldExtent());
+	renderBlock->programParams->setVectorParameter(s_handleTerrain_WorldExtent, overview.heightfield->getWorldExtent());
 	renderBlock->programParams->setVectorParameter(s_handleGrass_Eye, eye);
 	renderBlock->programParams->setFloatParameter(s_handleGrass_MaxDistance, m_layerData.m_spreadDistance + m_clusterSize);
 	renderBlock->programParams->setBufferViewParameter(s_handleGrass_Blades, m_bladeBuffer->getBufferView());
@@ -466,68 +418,131 @@ void GrassComponent::build(
 
 void GrassComponent::updatePatches()
 {
-	m_clusters.resize(0);
-	m_bladesCount = 0;
+	// Every cluster is scattered again by next setup.
+	m_clusters.clear();
+	m_valid = false;
+}
 
-	// Blade buffer is built from the clusters; invalidate it and let setup rebuild
-	// it on the next frame.
-	m_bladeBuffer = nullptr;
-
-	auto terrainComponent = m_owner->getComponent< TerrainComponent >();
-	if (!terrainComponent)
+void GrassComponent::updateClusters(const TerrainComponent* terrainComponent, const Vector4& eye, bool force)
+{
+	const auto& terrain = terrainComponent->getTerrain();
+	const hf::Heightfield* overviewHeightfield = terrain->getOverview().heightfield;
+	const int32_t tileCount = terrain->getTileCount();
+	const int32_t tileSize = terrain->getTileSize();
+	if (!overviewHeightfield || tileCount <= 0 || terrainComponent->getTileCount() != tileCount * tileCount)
 		return;
 
-	const hf::Heightfield* heightfield = terrainComponent->getTerrain()->getHeightfield();
+	const Vector4& worldExtent = overviewHeightfield->getWorldExtent();
+	const int32_t size = tileCount * tileSize;
+	const float cellSize = worldExtent.x() / size;
+	const float clusterExtent = c_clusterGridSize * cellSize;
+	const int32_t clusterCount = size / c_clusterGridSize;
 
-	const int32_t size = heightfield->getSize();
-	const Vector4 extentPerGrid = heightfield->getWorldExtent() / Scalar(float(size));
+	const int32_t eyeClusterX = (int32_t)std::floor((eye.x() + worldExtent.x() * 0.5f) / clusterExtent);
+	const int32_t eyeClusterZ = (int32_t)std::floor((eye.z() + worldExtent.z() * 0.5f) / clusterExtent);
+	if (!force && m_valid && eyeClusterX == m_eyeCluster[0] && eyeClusterZ == m_eyeCluster[1])
+		return;
 
-	m_clusterSize = (c_clusterGridSize / 2.0f) * max< float >(extentPerGrid.x(), extentPerGrid.z());
+	m_clusterSize = clusterExtent * 0.5f;
 
-	// Create clusters; a cluster only determine which blades are scattered and culled
-	// together, the density within it follow the attribute channel per blade.
-	for (int32_t z = 0; z < size; z += c_clusterGridSize)
+	const float radius = m_layerData.m_spreadDistance + clusterExtent;
+	const int32_t range = (int32_t)std::ceil(radius / clusterExtent);
+	const int32_t cx0 = std::max(eyeClusterX - range, 0);
+	const int32_t cz0 = std::max(eyeClusterZ - range, 0);
+	const int32_t cx1 = std::min(eyeClusterX + range, clusterCount - 1);
+	const int32_t cz1 = std::min(eyeClusterZ + range, clusterCount - 1);
+
+	SmallMap< uint64_t, Cluster > clusters;
+	clusters.reserve(std::max((cx1 - cx0 + 1) * (cz1 - cz0 + 1), 0) * m_layerData.m_grass.size());
+
+	// Keys increase with iteration order, thus clusters are appended.
+	for (int32_t cz = cz0; cz <= cz1; ++cz)
 	{
-		for (int32_t x = 0; x < size; x += c_clusterGridSize)
+		for (int32_t cx = cx0; cx <= cx1; ++cx)
 		{
-			float wx, wz;
-			heightfield->gridToWorld(x + c_clusterGridSize / 2, z + c_clusterGridSize / 2, wx, wz);
+			const int32_t tileX = (cx * c_clusterGridSize) / tileSize;
+			const int32_t tileZ = (cz * c_clusterGridSize) / tileSize;
+			const int32_t tileIndex = tileX + tileZ * tileCount;
 
-			const float wy = heightfield->getWorldHeight(wx, wz);
-			const Vector4 center(wx, wy, wz, 1.0f);
+			const hf::Heightfield* heightfield = terrainComponent->getTileHeightfield(tileIndex);
+			if (!heightfield)
+				continue;
 
-			for (uint32_t i = 0; i < m_layerData.m_grass.size(); ++i)
+			const float wx = -worldExtent.x() * 0.5f + (cx * c_clusterGridSize + c_clusterGridSize / 2 + 0.5f) * cellSize;
+			const float wz = -worldExtent.z() * 0.5f + (cz * c_clusterGridSize + c_clusterGridSize / 2 + 0.5f) * cellSize;
+			const float dx = wx - eye.x();
+			const float dz = wz - eye.z();
+			if (dx * dx + dz * dz > radius * radius)
+				continue;
+
+			const Vector4 center(wx, heightfield->getWorldHeight(wx, wz), wz, 1.0f);
+			const uint32_t revision = terrainComponent->getTileRevision(tileIndex);
+			const int32_t gridX = cx * c_clusterGridSize - tileX * tileSize;
+			const int32_t gridZ = cz * c_clusterGridSize - tileZ * tileSize;
+
+			for (int32_t i = 0; i < (int32_t)m_layerData.m_grass.size(); ++i)
 			{
 				const auto& grass = m_layerData.m_grass[i];
+				const uint64_t key = ((uint64_t)cz << 40) | ((uint64_t)cx << 16) | (uint64_t)i;
 
-				// Density is filtered, thus a one cell border is included since a cluster
-				// next to a painted region also carry a fringe of grass.
-				if (!anyAttributeDensity(heightfield, x - 1, z - 1, c_clusterGridSize + 2, grass.attribute))
+				auto it = m_clusters.find(key);
+				if (it != m_clusters.end() && it->second.revision == revision)
+				{
+					Cluster& c = clusters[key];
+					c.center = center;
+					c.revision = revision;
+					c.blades.swap(it->second.blades);
+					continue;
+				}
+
+				// Density is filtered, thus a cluster next to a painted region also carry a fringe of grass.
+				if (!anyAttributeDensity(heightfield, gridX - 1, gridZ - 1, c_clusterGridSize + 2, grass.attribute))
 					continue;
 
-				const int32_t density = scatterCluster(
-					heightfield,
-					center,
-					m_clusterSize,
-					grass.attribute,
-					grass.density,
-					grass.scale,
-					nullptr,
-					0);
-				if (density <= 0)
+				const int32_t count = scatterCluster(heightfield, center, m_clusterSize, grass.attribute, grass.density, grass.scale, nullptr, 0);
+				if (count <= 0)
 					continue;
 
-				Cluster c;
+				Cluster& c = clusters[key];
 				c.center = center;
-				c.grass = (int32_t)i;
-				c.from = m_bladesCount;
-				c.to = c.from + density;
-				m_clusters.push_back(c);
-
-				m_bladesCount = c.to;
+				c.revision = revision;
+				c.blades.resize(count * 8);
+				scatterCluster(heightfield, center, m_clusterSize, grass.attribute, grass.density, grass.scale, (BladeData*)c.blades.ptr(), count);
 			}
 		}
 	}
+
+	m_clusters.swap(clusters);
+	m_eyeCluster[0] = eyeClusterX;
+	m_eyeCluster[1] = eyeClusterZ;
+	m_valid = true;
+
+	// Fill blade buffer with blades of every cluster.
+	m_bladesCount = 0;
+	for (auto& it : m_clusters)
+	{
+		it.second.from = m_bladesCount;
+		it.second.to = it.second.from + (int32_t)it.second.blades.size() / 8;
+		m_bladesCount = it.second.to;
+	}
+
+	m_bladeBuffer = nullptr;
+	if (!m_bladesCount)
+		return;
+
+	m_bladeBuffer = m_renderSystem->createBuffer(render::BufferUsage::BuStructured, m_bladesCount * sizeof(BladeData), false, T_FILE_LINE_W);
+	uint8_t* bladeData = m_bladeBuffer ? (uint8_t*)m_bladeBuffer->lock() : nullptr;
+	if (!bladeData)
+	{
+		m_bladeBuffer = nullptr;
+		m_bladesCount = 0;
+		return;
+	}
+
+	for (const auto& it : m_clusters)
+		std::memcpy(bladeData + it.second.from * sizeof(BladeData), it.second.blades.c_ptr(), it.second.blades.size() * sizeof(float));
+
+	m_bladeBuffer->unlock();
 }
 
 }

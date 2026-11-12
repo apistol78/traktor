@@ -121,6 +121,7 @@ private:
 	RefArray< physics::Joint > m_joints;
 	AlignedVector< AlignedVector< Binding > > m_jointBindings;
 	Binding m_driveBinding;
+	Vector4 m_driveOffset = Vector4::zero();
 	Transform m_worldTransform = Transform::identity();
 };
 

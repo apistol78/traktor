@@ -77,14 +77,9 @@ Ref< SkyComponent > SkyComponentData::createComponent(resource::IResourceManager
 	const Scalar saturation(m_saturation);
 
 	WrappedSHFunction shFunction([&](const Vector4& rd) -> Vector4 {
-		// Clamp since darkening towards zenith goes negative with dim, linear, colors.
-		Vector4 col = max(Vector4(m_skyOverHorizon.linear()) - max(rd.y(), 0.01_simd) * max(rd.y(), 0.01_simd) * 0.5_simd, Vector4::zero());
-		col = lerp(col, m_skyUnderHorizon.linear(), power(1.0_simd - max(rd.y(), 0.0_simd), 6.0_simd));
-
-		// Apply saturation.
+		Vector4 col = lerp(m_skyOverHorizon.linear(), m_skyUnderHorizon.linear(), power(1.0_simd - max(rd.y(), 0.0_simd), 6.0_simd));
 		const Scalar bw = dot3(col, Vector4(1.0f, 1.0f, 1.0f)) / 3.0_simd;
 		col = lerp(Vector4(bw, bw, bw, 0.0f), col, saturation);
-
 		return col * intensity;
 	});
 

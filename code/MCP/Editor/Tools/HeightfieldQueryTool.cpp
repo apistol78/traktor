@@ -8,15 +8,17 @@
  */
 #include "MCP/Editor/Tools/HeightfieldQueryTool.h"
 
+#include "Core/Containers/SmallMap.h"
 #include "Core/Io/IStream.h"
+#include "Core/Math/MathUtils.h"
 #include "Core/Math/Vector4.h"
 #include "Core/Serialization/ISerializable.h"
 #include "Database/Database.h"
 #include "Database/Instance.h"
 #include "Editor/IEditor.h"
 #include "Heightfield/Editor/HeightfieldAsset.h"
+#include "Heightfield/Editor/TileStorage.h"
 #include "Heightfield/Heightfield.h"
-#include "Heightfield/HeightfieldFormat.h"
 #include "MCP/Editor/McpToolSupport.h"
 #include "MCP/Editor/Json.h"
 
@@ -146,30 +148,20 @@ Ref< Json > HeightfieldQueryTool::invoke(const Json* arguments, std::wstring& ou
 	}
 	hf::HeightfieldAsset* asset = static_cast< hf::HeightfieldAsset* >(object.ptr());
 
-	// Read and parse the height data channel (mirrors HeightfieldAssetEditor).
-	Ref< IStream > sourceData = instance->readData(L"Data");
-	if (!sourceData)
-	{
-		outError = L"Unable to open heightfield \"Data\" channel.";
-		return nullptr;
-	}
-
-	Ref< hf::Heightfield > heightfield = hf::HeightfieldFormat().read(
-		sourceData,
-		asset->getWorldExtent());
-	sourceData->close();
-	sourceData = nullptr;
-
-	if (!heightfield)
+	const hf::TileStorage storage(asset->getTileCount());
+	const int32_t size = storage.readSize(instance);
+	if (size <= 0)
 	{
 		outError = L"Failed to read heightfield heights.";
 		return nullptr;
 	}
 
-	// "points" is normally a JSON array, but some MCP clients deliver array
-	// arguments as a JSON-encoded string; decode that case here. (We only coerce
-	// this member - coercing the whole argument object would misread a
-	// brace-wrapped guid like "{...}" as a JSON object.)
+	const Vector4& worldExtent = asset->getWorldExtent();
+	const int32_t tileCount = std::max(asset->getTileCount(), 1);
+	SmallMap< int32_t, Ref< hf::Heightfield > > tiles;
+
+	// Some clients deliver array arguments as a JSON encoded string; only this member is decoded
+	// since decoding every argument would misread a brace wrapped guid as a JSON object.
 	const Json* points = arguments ? arguments->getMember(L"points") : nullptr;
 	Ref< Json > pointsDecoded;
 	if (points && points->isString())
@@ -190,6 +182,18 @@ Ref< Json > HeightfieldQueryTool::invoke(const Json* arguments, std::wstring& ou
 		if (!readPoint(points->at(i), worldX, worldZ))
 		{
 			outError = L"Point at index " + std::to_wstring(i) + L" is not a valid { x, z } coordinate.";
+			return nullptr;
+		}
+
+		// Only tiles containing points are read, border make normals continuous across tiles.
+		const int32_t tileX = clamp((int32_t)((worldX / worldExtent.x() + 0.5f) * tileCount), 0, tileCount - 1);
+		const int32_t tileZ = clamp((int32_t)((worldZ / worldExtent.z() + 0.5f) * tileCount), 0, tileCount - 1);
+		Ref< hf::Heightfield >& heightfield = tiles[tileX + tileZ * tileCount];
+		if (!heightfield)
+			heightfield = storage.readHeightfieldTile(instance, worldExtent, tileX, tileZ, 1);
+		if (!heightfield)
+		{
+			outError = L"Failed to read heightfield heights.";
 			return nullptr;
 		}
 
@@ -214,7 +218,7 @@ Ref< Json > HeightfieldQueryTool::invoke(const Json* arguments, std::wstring& ou
 	result->setString(L"path", instance->getPath());
 	result->setString(L"name", instance->getName());
 	result->set(L"worldExtent", vec3ToJson(asset->getWorldExtent()));
-	result->setNumber(L"size", heightfield->getSize());
+	result->setNumber(L"size", size);
 	result->set(L"samples", samples);
 	return result;
 }

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2025 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,11 +8,16 @@
  */
 #pragma once
 
+#include "Core/Containers/SmallMap.h"
+#include "Core/Math/Vector4.h"
 #include "Core/Ref.h"
 #include "Scene/Editor/IComponentPanelEditor.h"
 
 namespace traktor::ai
 {
+
+class NavMeshChunk;
+class NavMeshComponent;
 
 /*! Navigation mesh component editor.
  * \ingroup AI
@@ -40,6 +45,12 @@ public:
 
 private:
 	Ref< scene::SceneEditorContext > m_context;
+	Ref< NavMeshComponent > m_navMeshComponent;	//!< Navigation mesh component chunks have been added to.
+	SmallMap< int32_t, Ref< const NavMeshChunk > > m_chunks;	//!< Added chunks by index.
+
+	void updateChunks(NavMeshComponent* navMeshComponent, const Vector4& eye);
+
+	void removeChunks();
 };
 
 }

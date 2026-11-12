@@ -9,8 +9,8 @@
 #pragma once
 
 #include "Core/Containers/AlignedVector.h"
+#include "Core/Containers/SmallMap.h"
 #include "Core/Math/Vector4.h"
-#include "Core/Thread/SpinLock.h"
 #include "Resource/Proxy.h"
 #include "Terrain/GrassComponentData.h"
 #include "Terrain/TerrainLayerComponent.h"
@@ -35,11 +35,10 @@ class IResourceManager;
 namespace traktor::terrain
 {
 
+class TerrainComponent;
+
 /*! Grass layer component.
- *
- * Similar to UndergrowthComponent but renders geometric grass strands,
- * each instance being a segmented blade mesh which is oriented and
- * animated by the shader, instead of camera oriented billboards.
+ * Renders segmented blade meshes, oriented and animated by the shader, scattered on terrain near camera.
  */
 class GrassComponent : public TerrainLayerComponent
 {
@@ -71,12 +70,14 @@ public:
 	virtual void updatePatches() override final;
 
 private:
+	//! Blades of a single grass type in a cluster near camera.
 	struct Cluster
 	{
 		Vector4 center;
-		int32_t grass;	//!< Index of grass type in layer data.
-		int32_t from;
-		int32_t to;
+		uint32_t revision = 0;			//!< Revision of terrain tile when scattered.
+		AlignedVector< float > blades;	//!< Eight floats per blade.
+		int32_t from = 0;				//!< First blade in blade buffer.
+		int32_t to = 0;
 	};
 
 	struct ViewState
@@ -93,18 +94,16 @@ private:
 	Ref< render::Buffer > m_indexBuffer;
 	Ref< render::Buffer > m_bladeBuffer;
 	resource::Proxy< render::Shader > m_shader;
-	AlignedVector< Cluster > m_clusters;
+	SmallMap< uint64_t, Cluster > m_clusters;	//!< Keyed by cluster coordinate and grass type.
+	AlignedVector< uint32_t > m_tileRevisions;
 	SmallMap< int32_t, ViewState > m_viewState;
+	int32_t m_eyeCluster[2] = { 0, 0 };
+	bool m_valid = false;	//!< Clusters are scattered around eye cluster.
 	float m_clusterSize = 0.0f;
 	uint32_t m_bladesCount = 0;
 
-	/*! Create and fill the blade buffer from the current set of clusters.
-	 *
-	 * Blade data is a pure function of the clusters, thus view independent and
-	 * constant over time; it's built once and only invalidated when the clusters
-	 * are rebuilt.
-	 */
-	bool updateBladeBuffer();
+	//! Scatter clusters within spread distance of eye, reuse already scattered clusters, and fill blade buffer.
+	void updateClusters(const TerrainComponent* terrainComponent, const Vector4& eye, bool force);
 };
 
 }

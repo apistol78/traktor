@@ -81,6 +81,7 @@ Ref< Stage > StageData::createInstance(IEnvironment* environment, const Object* 
 	if (environment->getSettings()->getProperty< bool >(L"Runtime.DebugLayer", false))
 		stage->addLayer(new DebugLayer(stage, environment));
 
+	stage->create();
 	return stage;
 }
 

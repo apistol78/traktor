@@ -50,43 +50,18 @@ Ref< Object > TerrainFactory::create(resource::IResourceManager* resourceManager
 	terrain->m_detailSkip = terrainResource->getDetailSkip();
 	terrain->m_patchDim = terrainResource->getPatchDim();
 
-	if (!resourceManager->bind(terrainResource->getHeightfield(), terrain->m_heightfield))
-		return nullptr;
-
-	if (terrainResource->getColorMap())
-	{
-		if (!resourceManager->bind(terrainResource->getColorMap(), terrain->m_colorMap))
-			return nullptr;
-	}
-
-	if (!resourceManager->bind(terrainResource->getNormalMap(), terrain->m_normalMap))
-		return nullptr;
-	if (!resourceManager->bind(terrainResource->getHeightMap(), terrain->m_heightMap))
-		return nullptr;
-	if (!resourceManager->bind(terrainResource->getSplatMap(), terrain->m_splatMap))
-		return nullptr;
-
-	if (terrainResource->getCutMap())
-	{
-		if (!resourceManager->bind(terrainResource->getCutMap(), terrain->m_cutMap))
-			return nullptr;
-	}
-
 	if (!resourceManager->bind(terrainResource->getTerrainShader(), terrain->m_terrainShader))
 		return nullptr;
 	if (!resourceManager->bind(terrainResource->getSurfaceShader(), terrain->m_surfaceShader))
 		return nullptr;
 
-	terrain->m_patches.resize(terrainResource->getPatches().size());
-	for (uint32_t i = 0; i < terrainResource->getPatches().size(); ++i)
-	{
-		terrain->m_patches[i].height[0] = terrainResource->getPatches()[i].height[0];
-		terrain->m_patches[i].height[1] = terrainResource->getPatches()[i].height[1];
+	// Overview is always loaded; tiles are bound when needed.
+	if (!Terrain::bindResources(resourceManager, terrainResource->getOverview(), terrain->m_overview))
+		return nullptr;
 
-		terrain->m_patches[i].error[0] = terrainResource->getPatches()[i].error[0];
-		terrain->m_patches[i].error[1] = terrainResource->getPatches()[i].error[1];
-		terrain->m_patches[i].error[2] = terrainResource->getPatches()[i].error[2];
-	}
+	terrain->m_tileCount = terrainResource->getTileCount();
+	terrain->m_tileSize = terrainResource->getTileSize();
+	terrain->m_tiles = terrainResource->getTiles();
 
 	return terrain;
 }

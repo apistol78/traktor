@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -28,24 +28,14 @@ class Heightfield;
 namespace traktor::terrain
 {
 
-/*! Calculate grid coordinate from patch coordinate.
+/*! Calculate min/max world heights of patch covering grid gridX to gridX + gridSize.
  * \ingroup Terrain
  */
-uint32_t T_DLLCLASS patchToGrid(const hf::Heightfield* heightfield, uint32_t patchDim, uint32_t detailSkip, uint32_t patch);
+void T_DLLCLASS calculatePatchMinMaxHeight(const hf::Heightfield* heightfield, float gridX, float gridZ, float gridSize, float outHeights[2]);
 
-/*! Calculate patch coordinate from grid coordinate.
+/*! Calculate world height error of each lod, 1 to lodCount - 1, of patch covering grid gridX to gridX + gridSize with patchDim vertices along each side.
  * \ingroup Terrain
  */
-uint32_t T_DLLCLASS gridToPatch(const hf::Heightfield* heightfield, uint32_t patchDim, uint32_t detailSkip, uint32_t grid);
-
-/*! Calculate min/max heights for patch.
- * \ingroup Terrain
- */
-void T_DLLCLASS calculatePatchMinMaxHeight(const hf::Heightfield* heightfield, uint32_t patchX, uint32_t patchZ, uint32_t patchDim, uint32_t detailSkip, float outHeights[2]);
-
-/*! Calculate error metrics for patch.
- * \ingroup Terrain
- */
-void T_DLLCLASS calculatePatchErrorMetrics(const hf::Heightfield* heightfield, uint32_t lodCount, uint32_t patchX, uint32_t patchZ, uint32_t patchDim, uint32_t detailSkip, float* outErrors);
+void T_DLLCLASS calculatePatchErrorMetrics(const hf::Heightfield* heightfield, uint32_t lodCount, float gridX, float gridZ, float gridSize, uint32_t patchDim, float* outErrors);
 
 }

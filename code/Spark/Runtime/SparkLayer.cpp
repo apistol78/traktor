@@ -141,6 +141,13 @@ SparkLayer::SparkLayer(
 {
 }
 
+void SparkLayer::create()
+{
+	m_movie.consume();
+	createMoviePlayer();
+	Layer::create();
+}
+
 void SparkLayer::destroy()
 {
 	m_environment = nullptr;
@@ -160,9 +167,9 @@ void SparkLayer::transition(Layer* fromLayer)
 {
 	SparkLayer* fromSparkLayer = checked_type_cast< SparkLayer*, false >(fromLayer);
 
-	// Pass movie as well, if it's the same movie and we're allowed.
+	// Pass movie as well, if it's the same movie and we're allowed; a created layer keeps its own player.
 	const bool permit = fromLayer->isTransitionPermitted() && isTransitionPermitted();
-	if (m_movie == fromSparkLayer->m_movie)
+	if (!m_moviePlayer && m_movie == fromSparkLayer->m_movie)
 	{
 		if (permit)
 		{
@@ -177,6 +184,9 @@ void SparkLayer::transition(Layer* fromLayer)
 	m_soundRenderer = fromSparkLayer->m_soundRenderer;
 	fromSparkLayer->m_displayRenderer = nullptr;
 	fromSparkLayer->m_soundRenderer = nullptr;
+
+	// Movie renderer is bound to the display renderer; re-create.
+	m_movieRenderer = nullptr;
 
 	// Ensure display renderer's caches are fresh.
 	if (m_displayRenderer)

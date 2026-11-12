@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -42,6 +42,10 @@ public:
 	resource::Id< Heightfield > m_heightfield;
 	OutputType m_output = OtHeights;
 	float m_scale = 1.0f;
+	int32_t m_tileX = -1;			//!< Tile, including +X/+Z seam, of tiled heightfield; -1 for whole heightfield.
+	int32_t m_tileZ = -1;
+	int32_t m_overviewSize = 0;		//!< Size of overview of whole heightfield, 0 for full resolution.
+	uint32_t m_stamp = 0;			//!< Stamp of tiles read; tiled outputs depend on stamp instead of heightfield instance.
 
 	virtual void serialize(ISerializer& s) override final;
 };

@@ -10,7 +10,6 @@
 
 #include "Core/Math/Const.h"
 #include "Core/Math/MathUtils.h"
-#include "Drawing/Image.h"
 #include "Terrain/Editor/IFallOff.h"
 
 namespace traktor::terrain
@@ -18,8 +17,8 @@ namespace traktor::terrain
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.ColorBrush", ColorBrush, IBrush)
 
-ColorBrush::ColorBrush(drawing::Image* colorImage)
-	: m_colorImage(colorImage)
+ColorBrush::ColorBrush(TerrainEditData* data)
+	: m_data(data)
 	, m_radius(0)
 	, m_fallOff(0)
 	, m_strength(0.0f)
@@ -49,13 +48,13 @@ void ColorBrush::apply(float x, float y)
 			if (abs(a) <= FUZZY_EPSILON)
 				continue;
 
-			m_colorImage->getPixel(x + ix, y + iy, targetColor);
+			m_data->getColor(x + ix, y + iy, targetColor);
 
 			Scalar alpha = targetColor.getAlpha();
 			targetColor = targetColor * Scalar(1.0f - a) + m_color * Scalar(a);
 			targetColor.setAlpha(alpha);
 
-			m_colorImage->setPixel(x + ix, y + iy, targetColor.saturated());
+			m_data->setColor(x + ix, y + iy, targetColor.saturated());
 		}
 	}
 }

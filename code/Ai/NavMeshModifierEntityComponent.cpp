@@ -8,7 +8,6 @@
  */
 #include "Ai/NavMeshModifierEntityComponent.h"
 
-#include "Ai/NavMesh.h"
 #include "Ai/NavMeshComponent.h"
 #include "World/Entity.h"
 #include "World/World.h"
@@ -21,10 +20,10 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.ai.NavMeshModifierEntityComponent", NavMeshModi
 void NavMeshModifierEntityComponent::destroy()
 {
 	// Restore area since navigation mesh outlives modifier.
-	if (m_navMesh && !m_enable)
-		m_navMesh->setModifierEnable(m_owner->getId(), true);
+	if (m_navMeshComponent && !m_enable)
+		m_navMeshComponent->setModifierEnable(m_owner->getId(), true);
 
-	m_navMesh.clear();
+	m_navMeshComponent = nullptr;
 	m_owner = nullptr;
 }
 
@@ -48,17 +47,15 @@ void NavMeshModifierEntityComponent::update(const world::UpdateParams& update)
 
 void NavMeshModifierEntityComponent::setEnable(bool enable)
 {
-	if (!m_navMesh)
+	if (!m_navMeshComponent)
 	{
 		const world::World* world = m_owner ? m_owner->getWorld() : nullptr;
-		const NavMeshComponent* navMeshComponent = world ? world->getComponent< NavMeshComponent >() : nullptr;
-		if (!navMeshComponent)
+		m_navMeshComponent = world ? world->getComponent< NavMeshComponent >() : nullptr;
+		if (!m_navMeshComponent)
 			return;
-
-		m_navMesh = navMeshComponent->get();
 	}
 
-	if (m_navMesh->setModifierEnable(m_owner->getId(), enable))
+	if (m_navMeshComponent->setModifierEnable(m_owner->getId(), enable))
 		m_enable = enable;
 }
 

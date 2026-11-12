@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -30,9 +30,10 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.hf.HeightfieldClassFactory", 0, Heightf
 void HeightfieldClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 {
 	auto classHeightfield = new AutoRuntimeClass< Heightfield >();
-	classHeightfield->addConstructor< int32_t, const Vector4& >();
+	classHeightfield->addConstructor< int32_t, const Vector4&, const Vector4& >();
 	classHeightfield->addProperty("size", &Heightfield::getSize);
 	classHeightfield->addProperty("worldExtent", &Heightfield::getWorldExtent);
+	classHeightfield->addProperty("worldCenter", &Heightfield::getWorldCenter);
 	registrar->registerClass(classHeightfield);
 }
 

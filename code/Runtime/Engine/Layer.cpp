@@ -33,6 +33,10 @@ Layer::~Layer()
 	destroy();
 }
 
+void Layer::create()
+{
+}
+
 void Layer::destroy()
 {
 	m_stage = nullptr;

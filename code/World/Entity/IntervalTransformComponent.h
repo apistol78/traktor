@@ -42,7 +42,7 @@ public:
 
 	virtual void destroy() override final;
 
-	virtual void update(World* world, const UpdateParams& update) override final;
+	virtual void update(const UpdateParams& update) override final;
 
 	Entry* alloc();
 

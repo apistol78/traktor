@@ -41,7 +41,9 @@ public:
 
 	virtual void destroy() override final;
 
-	virtual void update(World* world, const UpdateParams& update) override final;
+	virtual void setWorld(World* world) override final;
+
+	virtual void update(const UpdateParams& update) override final;
 
 	IEntityEventInstance* raise(const IEntityEvent* event, Entity* sender, const Transform& Toffset);
 
@@ -49,6 +51,7 @@ public:
 
 private:
 	uint32_t m_maxEventInstances;
+	World* m_world = nullptr;
 	RefArray< IEntityEventInstance > m_eventInstances;
 	mutable Semaphore m_lock;
 };

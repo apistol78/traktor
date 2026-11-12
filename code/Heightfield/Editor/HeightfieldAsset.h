@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -45,14 +45,14 @@ public:
 
 	const Vector4& getWorldExtent() const { return m_worldExtent; }
 
-	bool getErosionEnable() const { return m_erosionEnable; }
+	void setTileCount(int32_t tileCount) { m_tileCount = tileCount; }
 
-	int32_t getErodeIterations() const { return m_erodeIterations; }
+	/*! Number of tiles along each side; 0 if data is stored as a single, untiled, channel. */
+	int32_t getTileCount() const { return m_tileCount; }
 
 private:
 	Vector4 m_worldExtent = Vector4::zero();
-	bool m_erosionEnable = 0.0f;
-	int32_t m_erodeIterations = 100000;
+	int32_t m_tileCount = 0;
 };
 
 }

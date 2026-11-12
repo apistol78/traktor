@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -134,9 +134,7 @@ void addQuad(AlignedVector< uint32_t >& indices, uint32_t gridSize, uint32_t x, 
 }
 
 /*! Generate tile indices, cells is the number of cells along an edge (must be even and >= 4).
- *
- * Edges flagged in stitchMask are generated with half the vertex density so
- * they match a neighbour tile of the next coarser level of detail without cracks.
+ * Edges flagged in stitchMask get half vertex density to match a coarser neighbour tile without cracks.
  */
 void generateTileIndices(AlignedVector< uint32_t >& indices, uint32_t cells, uint32_t stitchMask)
 {
@@ -524,9 +522,8 @@ void OceanComponent::setup(
 		context.getRenderGraph().addPass(rp);
 	}
 
-	// Compute inverse FFT of spectrums to get time domain heights. Displacement
-	// and slope are transformed together in one dispatch per axis, so a single
-	// set of group barriers and one twiddle evaluation serve both.
+	// Compute inverse FFT of spectrums to get time domain heights.
+	// Displacement and slope are transformed together in one dispatch per axis.
 	const render::RGDependency rowDependency = context.getRenderGraph().addDependency();
 	const render::RGDependency computeDependency = context.getRenderGraph().addDependency();
 
@@ -579,9 +576,8 @@ void OceanComponent::setup(
 			renderBlock->programParams->beginParameters(renderContext);
 			renderBlock->programParams->setFloatParameter(s_handleWorld_Time, worldRenderView.getTime());
 			renderBlock->programParams->setFloatParameter(s_handleOcean_TileIndex, 0);
-			// Column pass reads the transposed intermediate, transposes again on
-			// store to restore the natural orientation, and assembles the final
-			// displacement, slope and foam without a separate pass.
+			// Column pass reads transposed intermediate, transposes again on store
+			// and assembles final displacement, slope and foam.
 			renderBlock->programParams->setImageViewParameter(s_handleOcean_WaveTexture, m_fftScratchTextures[0], 0);
 			renderBlock->programParams->setImageViewParameter(s_handleOcean_WaveInput1, m_fftScratchTextures[1], 0);
 			renderBlock->programParams->setImageViewParameter(s_handleOcean_WaveOutput0, m_evolvedSpectrumTextures[0], 0);
@@ -656,7 +652,7 @@ void OceanComponent::build(
 	if (terrainComponent)
 	{
 		const auto& terrain = terrainComponent->getTerrain();
-		haveTerrain = (terrain && terrain->getHeightfield() && terrain->getHeightMap());
+		haveTerrain = (terrain && terrain->getOverview().heightfield && terrain->getOverview().heightMap);
 	}
 
 	const Transform transform = m_owner->getTransform() * Transform(Vector4(0.0f, m_elevation, 0.0f, 0.0f));
@@ -702,14 +698,14 @@ void OceanComponent::build(
 
 	if (haveTerrain)
 	{
-		const auto& terrain = terrainComponent->getTerrain();
+		const Terrain::TileResources& overview = terrainComponent->getTerrain()->getOverview();
 
-		const Vector4& worldExtent = terrain->getHeightfield()->getWorldExtent();
+		const Vector4& worldExtent = overview.heightfield->getWorldExtent();
 		const Vector4 worldOrigin = -worldExtent * 0.5_simd;
 
 		renderBlock->programParams->setVectorParameter(s_handleTerrain_WorldOrigin, worldOrigin);
 		renderBlock->programParams->setVectorParameter(s_handleTerrain_WorldExtent, worldExtent);
-		renderBlock->programParams->setTextureParameter(s_handleTerrain_Heightfield, terrain->getHeightMap());
+		renderBlock->programParams->setTextureParameter(s_handleTerrain_Heightfield, overview.heightMap);
 	}
 
 	worldRenderPass.setProgramParameters(
@@ -771,10 +767,8 @@ void OceanComponent::updateTiles(const world::WorldRenderView& worldRenderView)
 	const float farZ = worldRenderView.getViewFrustum().getFarZ();
 	const float surfaceY = m_owner->getTransform().translation().y() + m_elevation;
 
-	// Tiles are laid out in camera centered, concentric, levels of detail. Each
-	// level covers a square around the eye which is aligned to the grid of the next
-	// coarser level; thus tiles of a level are either completely inside or outside
-	// the finer level and never overlap.
+	// Tiles are laid out in camera centered levels of detail, each aligned to grid of next coarser level;
+	// thus tiles of a level are either completely inside or outside the finer level.
 	float lastMinX = 0.0f, lastMinZ = 0.0f, lastMaxX = 0.0f, lastMaxZ = 0.0f;
 	for (int32_t lod = 0; lod < m_lodCount; ++lod)
 	{

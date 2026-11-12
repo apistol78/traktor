@@ -1,26 +1,21 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include <cstring>
 #include <limits>
 #include "Core/RefArray.h"
 #include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
-#include "Core/Thread/JobManager.h"
 #include "Database/Database.h"
 #include "Database/Instance.h"
 #include "Drawing/Image.h"
-#include "Drawing/PixelFormat.h"
-#include "Drawing/Filters/ScaleFilter.h"
 #include "Editor/IDocument.h"
 #include "Editor/IEditor.h"
 #include "Heightfield/Heightfield.h"
-#include "Heightfield/HeightfieldFormat.h"
 #include "Heightfield/Editor/HeightfieldAsset.h"
 #include "Render/IRenderSystem.h"
 #include "Render/PrimitiveRenderer.h"
@@ -32,7 +27,6 @@
 #include "Terrain/TerrainComponent.h"
 #include "Terrain/TerrainComponentData.h"
 #include "Terrain/TerrainLayerComponent.h"
-#include "Terrain/TerrainUtilities.h"
 #include "Terrain/Editor/ColorBrush.h"
 #include "Terrain/Editor/CutBrush.h"
 #include "Terrain/Editor/ElevateBrush.h"
@@ -151,6 +145,80 @@ void line_dda(float x0, float y0, float x1, float y1, const Visitor& visitor)
 	}
 }
 
+enum class TileMap
+{
+	Heights,
+	Normals,
+	Splat,
+	Color,
+	Cuts
+};
+
+Ref< render::ITexture > createTileMap(render::IRenderSystem* renderSystem, int32_t size, render::TextureFormat format)
+{
+	render::SimpleTextureCreateDesc desc = {};
+	desc.width = size;
+	desc.height = size;
+	desc.mipCount = 1;
+	desc.format = format;
+	desc.sRGB = false;
+	desc.immutable = false;
+	return renderSystem->createSimpleTexture(desc, T_FILE_LINE_W);
+}
+
+//! Fill region, x0, z0, x1, z1 inclusive in tile coordinates, of tile map from edited data; samples beyond terrain are clamped.
+void fillTileMap(render::ITexture* tileMap, TileMap map, TerrainEditData* data, int32_t tileX, int32_t tileZ, const int32_t* region)
+{
+	const int32_t size = data->getSize();
+
+	render::ITexture::Lock lock;
+	if (!tileMap->lock(0, 0, lock))
+		return;
+
+	for (int32_t z = region[1]; z <= region[3]; ++z)
+	{
+		const int32_t gz = std::min(tileZ + z, size - 1);
+		uint8_t* row = (uint8_t*)lock.bits + z * lock.pitch;
+
+		for (int32_t x = region[0]; x <= region[2]; ++x)
+		{
+			const int32_t gx = std::min(tileX + x, size - 1);
+
+			if (map == TileMap::Heights)
+				((float*)row)[x] = data->getGridHeightNearest(gx, gz);
+			else if (map == TileMap::Normals)
+			{
+				const Vector4 normal = data->normalAt((float)gx, (float)gz) * Vector4(0.5f, 0.5f, 0.5f, 0.0f) + Vector4(0.5f, 0.5f, 0.5f, 0.0f);
+				uint8_t* ptr = row + x * 4;
+				ptr[0] = uint8_t(normal.x() * 255);
+				ptr[1] = uint8_t(normal.z() * 255);
+				ptr[2] = uint8_t(normal.y() * 255);
+				ptr[3] = 0;
+			}
+			else if (map == TileMap::Splat || map == TileMap::Color)
+			{
+				Color4f color(0.0f, 0.0f, 0.0f, 0.0f);
+				if (map == TileMap::Splat)
+					data->getSplat(gx, gz, color);
+				else
+					data->getColor(gx, gz, color);
+
+				float rgba[4];
+				color.saturated().storeUnaligned(rgba);
+
+				uint8_t* ptr = row + x * 4;
+				for (int32_t i = 0; i < 4; ++i)
+					ptr[i] = uint8_t(rgba[i] * 255.0f + 0.5f);
+			}
+			else
+				row[x] = data->getGridCut(gx, gz) ? 0xff : 0x00;
+		}
+	}
+
+	const render::ITexture::Region dirty = { region[0], region[1], region[2] - region[0] + 1, region[3] - region[1] + 1 };
+	tileMap->unlock(0, 0, dirty);
+}
+
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.TerrainEditModifier", TerrainEditModifier, scene::IModifier)
@@ -171,8 +239,6 @@ bool TerrainEditModifier::activate()
 {
 	db::Database* sourceDatabase = m_context->getEditor()->getSourceDatabase();
 	T_ASSERT(sourceDatabase);
-
-	render::SimpleTextureCreateDesc desc;
 
 	// Call deactivate again to make sure everything is fresh.
 	deactivate();
@@ -208,248 +274,24 @@ bool TerrainEditModifier::activate()
 			m_terrainLayers.push_back(terrainLayer);
 	}
 
-	// Get runtime heightfield.
-	m_heightfield = m_terrainComponent->getTerrain()->getHeightfield();
-	if (!m_heightfield)
-	{
-		m_terrainComponent = nullptr;
-		m_terrainComponentData = nullptr;
-		return false;
-	}
-
-	const int32_t size = m_heightfield->getSize();
-
+	// Source data is loaded tile by tile when edited.
 	m_terrainInstance = sourceDatabase->getInstance(m_terrainComponentData->getTerrain());
+	Ref< const TerrainAsset > terrainAsset = m_terrainInstance ? m_terrainInstance->getObject< TerrainAsset >() : nullptr;
+	m_heightfieldInstance = terrainAsset ? sourceDatabase->getInstance(terrainAsset->getHeightfield()) : nullptr;
+	Ref< const hf::HeightfieldAsset > heightfieldAsset = m_heightfieldInstance ? m_heightfieldInstance->getObject< hf::HeightfieldAsset >() : nullptr;
 
-	// Create non-compressed texture for heights.
-	desc.width = size;
-	desc.height = size;
-	desc.mipCount = 1;
-	desc.format = render::TfR32F;
-	desc.sRGB = false;
-	desc.immutable = false;
-
-	m_heightMap = m_context->getRenderSystem()->createSimpleTexture(desc, T_FILE_LINE_W);
-	if (m_heightMap)
+	m_data = new TerrainEditData();
+	if (!heightfieldAsset || !m_data->create(m_heightfieldInstance, m_terrainInstance, heightfieldAsset))
 	{
-		// Transfer heights to texture.
-		render::ITexture::Lock nl;
-		if (m_heightMap->lock(0, 0, nl))
-		{
-			float* ptr = (float*)nl.bits;
-			for (int32_t v = 0; v < size; ++v)
-			{
-				for (int32_t u = 0; u < size; ++u)
-				{
-					const float height = m_heightfield->getGridHeightNearest(u, v); // * asset->m_scale;
-					*ptr++ = height;
-				}
-			}
-			m_heightMap->unlock(0, 0);
-		}
-
-		// Replace height map in resource with our texture.
-		m_terrainComponent->m_terrain->m_heightMap = resource::Proxy< render::ITexture >(m_heightMap);
-	}
-
-	// Get splat image from terrain asset.
-	if (m_terrainInstance)
-	{
-		Ref< IStream > file = m_terrainInstance->readData(L"Splat");
-		if (file)
-		{
-			m_splatImage = drawing::Image::load(file, L"tri");
-			if (!m_splatImage)
-			{
-				file->seek(IStream::SeekSet, 0);
-				m_splatImage = drawing::Image::load(file, L"tga");
-			}
-			if (m_splatImage)
-				m_splatImage->convert(drawing::PixelFormat::getR8G8B8A8().endianSwapped());
-			file->close();
-			file = nullptr;
-		}
-	}
-
-	// Create splat image if none attached.
-	if (!m_splatImage)
-	{
-		m_splatImage = new drawing::Image(drawing::PixelFormat::getR8G8B8A8().endianSwapped(), size, size);
-		m_splatImage->clear(Color4f(1.0f, 0.0f, 0.0f, 0.0f));
-	}
-
-	// Ensure splat image is of correct size.
-	if (m_splatImage->getWidth() != size)
-	{
-		drawing::ScaleFilter scaleFilter(size, size, drawing::ScaleFilter::MnAverage, drawing::ScaleFilter::MgLinear);
-		m_splatImage->apply(&scaleFilter);
-	}
-
-	// Create non-compressed texture for splats.
-	desc.width = size;
-	desc.height = size;
-	desc.mipCount = 1;
-	desc.format = render::TfR8G8B8A8;
-	desc.sRGB = false;
-	desc.immutable = false;
-
-	m_splatMap = m_context->getRenderSystem()->createSimpleTexture(desc, T_FILE_LINE_W);
-	if (m_splatMap)
-	{
-		// Transfer splats to texture.
-		render::ITexture::Lock nl;
-		if (m_splatMap->lock(0, 0, nl))
-		{
-			std::memcpy(nl.bits, m_splatImage->getData(), size * size * 4);
-			m_splatMap->unlock(0, 0);
-		}
-
-		// Replace splat map in resource with our texture.
-		m_terrainComponent->m_terrain->m_splatMap = resource::Proxy< render::ITexture >(m_splatMap);
-	}
-
-	// Get color image from terrain asset.
-	if (m_terrainInstance)
-	{
-		Ref< IStream > file = m_terrainInstance->readData(L"Color");
-		if (file)
-		{
-			m_colorImage = drawing::Image::load(file, L"tri");
-			if (!m_colorImage)
-			{
-				file->seek(IStream::SeekSet, 0);
-				m_colorImage = drawing::Image::load(file, L"tga");
-			}
-			if (m_colorImage)
-				m_colorImage->convert(drawing::PixelFormat::getABGRF32());
-			file->close();
-			file = nullptr;
-		}
-	}
-
-	// Create color image if none attached.
-	if (!m_colorImage)
-	{
-		m_colorImage = new drawing::Image(drawing::PixelFormat::getABGRF32(), size, size);
-		m_colorImage->clear(Color4f(0.5f, 0.5f, 0.5f, 0.0f));
-	}
-
-	// Ensure color image is of correct size.
-	if (m_colorImage->getWidth() != size)
-	{
-		drawing::ScaleFilter scaleFilter(size, size, drawing::ScaleFilter::MnAverage, drawing::ScaleFilter::MgLinear);
-		m_colorImage->apply(&scaleFilter);
-	}
-
-	// Create low-precision color image used for transfer.
-	m_colorImageLowPrecision = new drawing::Image(drawing::PixelFormat::getA8B8G8R8(), size, size);
-	m_colorImageLowPrecision->copy(m_colorImage, 0, 0, size, size);
-
-	// Create non-compressed texture for colors.
-	desc.width = size;
-	desc.height = size;
-	desc.mipCount = 1;
-	desc.format = render::TfR8G8B8A8;
-	desc.sRGB = false;
-	desc.immutable = false;
-
-	m_colorMap = m_context->getRenderSystem()->createSimpleTexture(desc, T_FILE_LINE_W);
-	if (m_colorMap)
-	{
-		// Transfer colors to texture.
-		render::ITexture::Lock nl;
-		if (m_colorMap->lock(0, 0, nl))
-		{
-			std::memcpy(nl.bits, m_colorImageLowPrecision->getData(), size * size * 4);
-			m_colorMap->unlock(0, 0);
-		}
-
-		// Replace color map in resource with our texture.
-		m_terrainComponent->m_terrain->m_colorMap = resource::Proxy< render::ITexture >(m_colorMap);
-	}
-
-	// Create normal texture data.
-	m_normalData.reset(new uint8_t [size * size * 4]);
-	for (int32_t v = 0; v < size; ++v)
-	{
-		for (int32_t u = 0; u < size; ++u)
-		{
-			const Vector4 normal = m_heightfield->normalAt((float)u, (float)v) * Vector4(0.5f, 0.5f, 0.5f, 0.0f) + Vector4(0.5f, 0.5f, 0.5f, 0.0f);
-			const uint8_t nx = uint8_t(normal.x() * 255);
-			const uint8_t ny = uint8_t(normal.y() * 255);
-			const uint8_t nz = uint8_t(normal.z() * 255);
-
-			uint8_t* ptr = &m_normalData[(u + v * size) * 4];
-			ptr[0] = nx;
-			ptr[1] = nz;
-			ptr[2] = ny;
-			ptr[3] = 0;
-		}
-	}
-
-	// Create non-compressed texture for normals.
-	desc.width = size;
-	desc.height = size;
-	desc.mipCount = 1;
-	desc.format = render::TfR8G8B8A8;
-	desc.sRGB = false;
-	desc.immutable = false;
-
-	m_normalMap = m_context->getRenderSystem()->createSimpleTexture(desc, T_FILE_LINE_W);
-	if (m_normalMap)
-	{
-		// Transfer normals to texture.
-		render::ITexture::Lock nl;
-		if (m_normalMap->lock(0, 0, nl))
-		{
-			std::memcpy(nl.bits, m_normalData.c_ptr(), size * size * 4);
-			m_normalMap->unlock(0, 0);
-		}
-
-		// Replace normal map in resource with our texture.
-		m_terrainComponent->m_terrain->m_normalMap = resource::Proxy< render::ITexture >(m_normalMap);
-	}
-
-	// Create cut texture data.
-	m_cutData.reset(new uint8_t [size * size]);
-	for (int32_t v = 0; v < size; ++v)
-	{
-		for (int32_t u = 0; u < size; ++u)
-		{
-			m_cutData[u + v * size] = m_heightfield->getGridCut(u, v) ? 0xff : 0x00;
-		}
-	}
-
-	// Create non-compressed texture for cut data.
-	desc.width = size;
-	desc.height = size;
-	desc.mipCount = 1;
-	desc.format = render::TfR8;
-	desc.sRGB = false;
-	desc.immutable = false;
-
-	m_cutMap = m_context->getRenderSystem()->createSimpleTexture(desc, T_FILE_LINE_W);
-	if (m_cutMap)
-	{
-		// Transfer cuts to texture.
-		render::ITexture::Lock nl;
-		if (m_cutMap->lock(0, 0, nl))
-		{
-			std::memcpy(nl.bits, m_cutData.c_ptr(), size * size);
-			m_cutMap->unlock(0, 0);
-		}
-
-		// Replace cut map in resource with our texture.
-		m_terrainComponent->m_terrain->m_cutMap = resource::Proxy< render::ITexture >(m_cutMap);
+		deactivate();
+		return false;
 	}
 
 	// Create default brush; try set same brush type as before.
 	if (m_brush)
 		setBrush(type_of(m_brush));
-
 	if (!m_brush)
-		m_brush = new ElevateBrush(m_heightfield, m_splatImage);
-
+		m_brush = new ElevateBrush(m_data);
 	if (!m_fallOff)
 		m_fallOff = new SmoothFallOff();
 
@@ -467,13 +309,8 @@ void TerrainEditModifier::deactivate()
 	m_terrainInstance = nullptr;
 	m_heightfieldInstance = nullptr;
 	m_heightfieldAsset = nullptr;
-	m_heightfield.clear();
-	m_splatImage = nullptr;
-	m_colorImage = nullptr;
-	m_colorImageLowPrecision = nullptr;
-	m_colorMap = nullptr;
-	m_normalMap = nullptr;
-	m_cutMap = nullptr;
+	m_data = nullptr;
+	m_tileMaps.clear();
 }
 
 void TerrainEditModifier::selectionChanged()
@@ -492,7 +329,7 @@ scene::IModifier::CursorMovedResult TerrainEditModifier::cursorMoved(
 	const Vector4& worldRayDirection
 )
 {
-	if (!m_terrainComponent || !m_heightfield)
+	if (!m_terrainComponent || !m_data)
 		return { false, false };
 
 	const Vector4 lastCenter = m_center;
@@ -500,7 +337,7 @@ scene::IModifier::CursorMovedResult TerrainEditModifier::cursorMoved(
 	bool redraw = false;
 
 	Scalar distance;
-	if (m_heightfield->queryRay(
+	if (m_terrainComponent->queryRay(
 		worldRayOrigin,
 		worldRayDirection,
 		distance
@@ -542,7 +379,7 @@ bool TerrainEditModifier::handleCommand(const ui::Command& command)
 		return true;
 	}
 	else
-		return false;	
+		return false;
 }
 
 bool TerrainEditModifier::begin(
@@ -570,7 +407,7 @@ void TerrainEditModifier::apply(
 	bool snapOverrideEnable
 )
 {
-	if (!m_terrainComponent || m_center.w() <= FUZZY_EPSILON)
+	if (!m_terrainComponent || !m_data || m_center.w() <= FUZZY_EPSILON)
 		return;
 
 	Vector4 center = Vector4::zero();
@@ -586,8 +423,7 @@ void TerrainEditModifier::apply(
 		for (;;)
 		{
 			step += worldRayDirection * 0.01_simd;
-
-			if (!m_heightfield->queryRay(
+			if (!m_terrainComponent->queryRay(
 				step,
 				worldRayDirection,
 				distance
@@ -610,16 +446,16 @@ void TerrainEditModifier::apply(
 	}
 	else
 	{
-		if (!m_heightfield->queryRay(
+		if (!m_terrainComponent->queryRay(
 			worldRayOrigin,
 			worldRayDirection,
 			distance
 		))
 			return;
-		
+
 		center = (worldRayOrigin + worldRayDirection * distance).xyz1();
 	}
-	
+
 	apply(center);
 }
 
@@ -630,7 +466,7 @@ void TerrainEditModifier::end(const scene::TransformChain& transformChain)
 
 void TerrainEditModifier::draw(render::PrimitiveRenderer* primitiveRenderer, bool orthogonal) const
 {
-	if (!m_terrainComponent || !m_heightfield || m_center.w() <= FUZZY_EPSILON)
+	if (!m_terrainComponent || !m_data || m_center.w() <= FUZZY_EPSILON)
 		return;
 
 	primitiveRenderer->drawSolidPoint(m_center, 8, Color4ub(255, 0, 0, 255));
@@ -638,15 +474,14 @@ void TerrainEditModifier::draw(render::PrimitiveRenderer* primitiveRenderer, boo
 
 	float x0 = m_center.x() + cosf(0.0f) * m_radius;
 	float z0 = m_center.z() + sinf(0.0f) * m_radius;
-	float y0 = m_heightfield->getWorldHeight(x0, z0);
+	float y0 = m_terrainComponent->getWorldHeight(x0, z0);
 
 	for (int32_t i = 1; i <= 32; ++i)
 	{
 		const float a = TWO_PI * i / 32.0f;
-
 		const float x1 = m_center.x() + cosf(a) * m_radius;
 		const float z1 = m_center.z() + sinf(a) * m_radius;
-		const float y1 = m_heightfield->getWorldHeight(x1, z1);
+		const float y1 = m_terrainComponent->getWorldHeight(x1, z1);
 
 		primitiveRenderer->drawLine(
 			Vector4(x0, y0 + FUZZY_EPSILON, z0, 1.0f),
@@ -666,21 +501,21 @@ void TerrainEditModifier::draw(render::PrimitiveRenderer* primitiveRenderer, boo
 void TerrainEditModifier::setBrush(const TypeInfo& brushType)
 {
 	if (is_type_a< ColorBrush >(brushType))
-		m_brush = new ColorBrush(m_colorImage);
+		m_brush = new ColorBrush(m_data);
 	else if (is_type_a< CutBrush >(brushType))
-		m_brush = new CutBrush(m_heightfield);
+		m_brush = new CutBrush(m_data);
 	else if (is_type_a< ElevateBrush >(brushType))
-		m_brush = new ElevateBrush(m_heightfield, m_splatImage);
+		m_brush = new ElevateBrush(m_data);
 	else if (is_type_a< FlattenBrush >(brushType))
-		m_brush = new FlattenBrush(m_heightfield);
+		m_brush = new FlattenBrush(m_data);
 	else if (is_type_a< MaterialBrush >(brushType))
-		m_brush = new MaterialBrush(m_heightfield, m_splatImage);
+		m_brush = new MaterialBrush(m_data);
 	else if (is_type_a< NoiseBrush >(brushType))
-		m_brush = new NoiseBrush(m_heightfield);
+		m_brush = new NoiseBrush(m_data);
 	else if (is_type_a< SmoothBrush >(brushType))
-		m_brush = new SmoothBrush(m_heightfield);
+		m_brush = new SmoothBrush(m_data);
 	else if (is_type_a< AttributeBrush >(brushType))
-		m_brush = new AttributeBrush(m_heightfield);
+		m_brush = new AttributeBrush(m_data);
 }
 
 void TerrainEditModifier::setFallOff(const std::wstring& fallOff)
@@ -728,15 +563,15 @@ void TerrainEditModifier::setFallOffImage(drawing::Image* fallOffImage)
 
 bool TerrainEditModifier::begin(bool inverted)
 {
-	if (!m_heightfield)
+	if (!m_data)
 		return false;
 
 	m_context->setPlaying(false);
 
-	const int32_t gridRadius = int32_t(m_heightfield->getSize() * m_radius / m_heightfield->getWorldExtent().x());
+	const int32_t gridRadius = int32_t(m_data->getSize() * m_radius / m_data->getWorldExtent().x());
 
 	float gx, gz;
-	m_heightfield->worldToGrid(m_center.x(), m_center.z(), gx, gz);
+	m_data->worldToGrid(m_center.x(), m_center.z(), gx, gz);
 
 	IBrush::State state;
 	state.radius = gridRadius;
@@ -748,40 +583,36 @@ bool TerrainEditModifier::begin(bool inverted)
 
 	m_brushMode = m_brush->begin(gx, gz, state);
 
-	m_updateRegion[0] =
-	m_updateRegion[1] =
-	m_updateRegion[2] =
-	m_updateRegion[3] = 0;
+	m_dirtyRegion[0] =
+	m_dirtyRegion[1] =
+	m_dirtyRegion[2] =
+	m_dirtyRegion[3] = 0;
 	m_applied = false;
 	return true;
 }
 
 void TerrainEditModifier::apply(const Vector4& center)
 {
-	Terrain* terrain = m_terrainComponent->getTerrain();
-	if (!terrain)
-		return;
-
 	if (!m_applied)
 		m_center = center;
 
 	float gx0, gz0;
-	float gx1, gz1;	
+	float gx1, gz1;
 
-	m_heightfield->worldToGrid(m_center.x(), m_center.z(), gx0, gz0);
-	m_heightfield->worldToGrid(center.x(), center.z(), gx1, gz1);
+	m_data->worldToGrid(m_center.x(), m_center.z(), gx0, gz0);
+	m_data->worldToGrid(center.x(), center.z(), gx1, gz1);
 
 	// Apply brush along entire line.
-	line_dda(gx0, gz0, gx1, gz1, [&](int32_t x, int32_t y) {
+	line_dda(gx0, gz0, gx1, gz1, [=](int32_t x, int32_t y) {
 		m_brush->apply(x, y);
 	});
 
 	m_center = center;
 
-	const int32_t size = m_heightfield->getSize();
+	const int32_t size = m_data->getSize();
 
 	// Calculate region which needs to be updated.
-	const int32_t gridRadius = int32_t(size * m_radius / m_heightfield->getWorldExtent().x());
+	const int32_t gridRadius = int32_t(size * m_radius / m_data->getWorldExtent().x());
 
 	int32_t mnx = (int32_t)min(std::floor(gx0) - gridRadius, std::floor(gx1) - gridRadius);
 	int32_t mxx = (int32_t)max(std::ceil(gx0) + gridRadius, std::ceil(gx1) + gridRadius);
@@ -793,232 +624,151 @@ void TerrainEditModifier::apply(const Vector4& center)
 	mnz = clamp(mnz, 0, size - 1);
 	mxz = clamp(mxz, 0, size - 1);
 
-	const uint32_t pmnx = gridToPatch(m_heightfield, terrain->getPatchDim(), terrain->getDetailSkip(), mnx);
-	const uint32_t pmxx = gridToPatch(m_heightfield, terrain->getPatchDim(), terrain->getDetailSkip(), mxx);
-	const uint32_t pmnz = gridToPatch(m_heightfield, terrain->getPatchDim(), terrain->getDetailSkip(), mnz);
-	const uint32_t pmxz = gridToPatch(m_heightfield, terrain->getPatchDim(), terrain->getDetailSkip(), mxz);
-
-	const uint32_t region[] = { pmnx, pmnz, pmxx, pmxz };
-	m_terrainComponent->updatePatches(region, false);
-
 	// Track entire updated region.
 	if (m_applied)
 	{
-		m_updateRegion[0] = min(m_updateRegion[0], region[0]);
-		m_updateRegion[1] = min(m_updateRegion[1], region[1]);
-		m_updateRegion[2] = max(m_updateRegion[2], region[2]);
-		m_updateRegion[3] = max(m_updateRegion[3], region[3]);
+		m_dirtyRegion[0] = min(m_dirtyRegion[0], mnx);
+		m_dirtyRegion[1] = min(m_dirtyRegion[1], mnz);
+		m_dirtyRegion[2] = max(m_dirtyRegion[2], mxx);
+		m_dirtyRegion[3] = max(m_dirtyRegion[3], mxz);
 	}
 	else
 	{
-		for (int32_t i = 0; i < 4; ++i)
-			m_updateRegion[i] = region[i];
+		m_dirtyRegion[0] = mnx;
+		m_dirtyRegion[1] = mnz;
+		m_dirtyRegion[2] = mxx;
+		m_dirtyRegion[3] = mxz;
 	}
 
-	// Region, in heightfield grid texels, touched by this apply; used to limit
-	// how much of each map is refilled and transferred to the GPU.
-	const render::ITexture::Region dirty = { mnx, mnz, mxx - mnx + 1, mxz - mnz + 1 };
-
-	RefArray< Job > jobs;
-
-	// Update heights.
-	if ((m_brushMode & IBrush::MdHeight) != 0)
-	{
-		jobs.push_back(JobManager::getInstance().add([&](){
-			// Transfer heights to texture.
-			render::ITexture::Lock nl;
-			if (m_heightMap->lock(0, 0, nl))
-			{
-				hf::Heightfield* hf = m_heightfield;
-				for (int32_t v = mnz; v <= mxz; ++v)
-				{
-					float* ptr = (float*)((uint8_t*)nl.bits + v * nl.pitch) + mnx;
-					for (int32_t u = mnx; u <= mxx; ++u)
-					{
-						const float height = hf->getGridHeightNearestUnsafe(u, v);
-						*ptr++ = height;
-					}
-				}
-				m_heightMap->unlock(0, 0, dirty);
-			}
-
-			// Replace height map in resource with our texture.
-			m_terrainComponent->m_terrain->m_heightMap = resource::Proxy< render::ITexture >(m_heightMap);
-		}));
-	}
-
-	// Update splats.
-	if ((m_brushMode & IBrush::MdMaterial) != 0)
-	{
-		jobs.push_back(JobManager::getInstance().add([&](){
-			// Transfer splats to texture.
-			render::ITexture::Lock cl;
-			if (m_splatMap->lock(0, 0, cl))
-			{
-				const uint8_t* src = static_cast< const uint8_t* >(m_splatImage->getData());
-				uint8_t* dst = static_cast< uint8_t* >(cl.bits);
-
-				for (int32_t y = mnz; y <= mxz; ++y)
-					std::memcpy(&dst[y * cl.pitch + mnx * 4], &src[(y * size + mnx) * 4], (mxx - mnx + 1) * 4);
-
-				m_splatMap->unlock(0, 0, dirty);
-			}
-
-			// Replace splat map in resource with our texture.
-			m_terrainComponent->m_terrain->m_splatMap = resource::Proxy< render::ITexture >(m_splatMap);
-		}));
-	}
-
-	// Update colors.
-	if ((m_brushMode & IBrush::MdColor) != 0)
-	{
-		jobs.push_back(JobManager::getInstance().add([&](){
-			// Transfer colors to texture.
-			render::ITexture::Lock cl;
-			if (m_colorMap->lock(0, 0, cl))
-			{
-				m_colorImageLowPrecision->copy(m_colorImage, mnx, mnz, mnx, mnz, mxx - mnx, mxz - mnz);
-
-				const uint8_t* src = static_cast< const uint8_t* >(m_colorImageLowPrecision->getData());
-				uint8_t* dst = static_cast< uint8_t* >(cl.bits);
-
-				for (int32_t y = mnz; y <= mxz; ++y)
-					std::memcpy(&dst[y * cl.pitch + mnx * 4], &src[(y * size + mnx) * 4], (mxx - mnx + 1) * 4);
-
-				m_colorMap->unlock(0, 0, dirty);
-			}
-
-			// Replace color map in resource with our texture.
-			m_terrainComponent->m_terrain->m_colorMap = resource::Proxy< render::ITexture >(m_colorMap);
-		}));
-	}
-
-	// Update normals.
-	if ((m_brushMode & IBrush::MdHeight) != 0)
-	{
-		jobs.push_back(JobManager::getInstance().add([&](){
-			hf::Heightfield* hf = m_heightfield;
-
-			for (int32_t v = mnz; v <= mxz; ++v)
-			{
-				for (int32_t u = mnx; u <= mxx; ++u)
-				{
-					const Vector4 normal = hf->normalAt((float)u, (float)v) * Vector4(0.5f, 0.5f, 0.5f, 0.0f) + Vector4(0.5f, 0.5f, 0.5f, 0.0f);
-					const uint8_t nx = uint8_t(normal.x() * 255);
-					const uint8_t ny = uint8_t(normal.y() * 255);
-					const uint8_t nz = uint8_t(normal.z() * 255);
-					uint8_t* ptr = &m_normalData[(u + v * size) * 4];
-					ptr[0] = nx;
-					ptr[1] = nz;
-					ptr[2] = ny;
-					ptr[3] = 0;
-				}
-			}
-
-			// Transfer normals to texture.
-			render::ITexture::Lock nl;
-			if (m_normalMap->lock(0, 0, nl))
-			{
-				const uint8_t* src = static_cast< const uint8_t* >(m_normalData.c_ptr());
-				uint8_t* dst = static_cast< uint8_t* >(nl.bits);
-
-				for (int32_t y = mnz; y <= mxz; ++y)
-					std::memcpy(&dst[y * nl.pitch + mnx * 4], &src[(y * size + mnx) * 4], (mxx - mnx + 1) * 4);
-
-				m_normalMap->unlock(0, 0, dirty);
-			}
-
-			// Replace normal map in resource with our texture.
-			m_terrainComponent->m_terrain->m_normalMap = resource::Proxy< render::ITexture >(m_normalMap);
-		}));
-	}
-
-	// Update cuts.
-	if ((m_brushMode & IBrush::MdCut) != 0)
-	{
-		jobs.push_back(JobManager::getInstance().add([&](){
-			hf::Heightfield* hf = m_heightfield;
-
-			for (int32_t v = mnz; v <= mxz; ++v)
-			{
-				for (int32_t u = mnx; u <= mxx; ++u)
-				{
-					m_cutData[u + v * size] = hf->getGridCut(u, v) ? 0xff : 0x00;
-				}
-			}
-
-			// Transfer cuts to texture.
-			render::ITexture::Lock cl;
-			if (m_cutMap->lock(0, 0, cl))
-			{
-				const uint8_t* src = static_cast< const uint8_t* >(m_cutData.c_ptr());
-				uint8_t* dst = static_cast< uint8_t* >(cl.bits);
-
-				for (int32_t y = mnz; y <= mxz; ++y)
-					std::memcpy(&dst[y * cl.pitch + mnx], &src[y * size + mnx], mxx - mnx + 1);
-
-				m_cutMap->unlock(0, 0, dirty);
-			}
-
-			// Replace cut map in resource with our texture.
-			m_terrainComponent->m_terrain->m_cutMap = resource::Proxy< render::ITexture >(m_cutMap);
-		}));
-	}
-
-	// Wait until all transfers has finished.
-	while (!jobs.empty())
-	{
-		jobs.back()->wait();
-		jobs.pop_back();
-	}
+	const int32_t region[] = { mnx, mnz, mxx, mxz };
+	updateTiles(region, m_brushMode);
 
 	m_context->raiseRedraw(nullptr);
-	m_applied = true;	
+	m_applied = true;
+}
+
+void TerrainEditModifier::updateTiles(const int32_t* region, uint32_t brushMode)
+{
+	const Terrain* terrain = m_terrainComponent->getTerrain();
+	const int32_t tileCount = terrain->getTileCount();
+	const int32_t tileSize = terrain->getTileSize();
+	if (tileCount != m_data->getTileCount() || tileSize != m_data->getTileSize() || (int32_t)m_terrainComponent->m_tiles.size() != tileCount * tileCount)
+		return;
+
+	m_tileMaps.resize(tileCount * tileCount);
+
+	// Tiles also contain first row and column of next tile.
+	const int32_t mnx = clamp((region[0] - 1) / tileSize, 0, tileCount - 1);
+	const int32_t mnz = clamp((region[1] - 1) / tileSize, 0, tileCount - 1);
+	const int32_t mxx = clamp(region[2] / tileSize, 0, tileCount - 1);
+	const int32_t mxz = clamp(region[3] / tileSize, 0, tileCount - 1);
+	const int32_t mapSize = tileSize + 1;
+
+	for (int32_t tz = mnz; tz <= mxz; ++tz)
+	{
+		for (int32_t tx = mnx; tx <= mxx; ++tx)
+		{
+			const int32_t tileIndex = tx + tz * tileCount;
+			const int32_t x0 = tx * tileSize;
+			const int32_t z0 = tz * tileSize;
+			TileMaps& maps = m_tileMaps[tileIndex];
+
+			// Tile maps are created, from edited data, first time tile is edited.
+			const bool create = (maps.heightMap == nullptr);
+			if (create)
+			{
+				maps.heightMap = createTileMap(m_context->getRenderSystem(), mapSize, render::TfR32F);
+				maps.normalMap = createTileMap(m_context->getRenderSystem(), mapSize, render::TfR8G8B8A8);
+				maps.splatMap = createTileMap(m_context->getRenderSystem(), mapSize, render::TfR8G8B8A8);
+				maps.colorMap = createTileMap(m_context->getRenderSystem(), mapSize, render::TfR8G8B8A8);
+				maps.cutMap = createTileMap(m_context->getRenderSystem(), mapSize, render::TfR8);
+				if (!maps.heightMap || !maps.normalMap || !maps.splatMap || !maps.colorMap || !maps.cutMap)
+				{
+					maps = TileMaps();
+					continue;
+				}
+			}
+
+			const int32_t tileRegion[] = {
+				create ? 0 : clamp(region[0] - x0, 0, mapSize - 1),
+				create ? 0 : clamp(region[1] - z0, 0, mapSize - 1),
+				create ? mapSize - 1 : clamp(region[2] - x0, 0, mapSize - 1),
+				create ? mapSize - 1 : clamp(region[3] - z0, 0, mapSize - 1)
+			};
+
+			if (create || (brushMode & IBrush::MdHeight) != 0)
+			{
+				fillTileMap(maps.heightMap, TileMap::Heights, m_data, x0, z0, tileRegion);
+				fillTileMap(maps.normalMap, TileMap::Normals, m_data, x0, z0, tileRegion);
+			}
+			if (create || (brushMode & IBrush::MdMaterial) != 0)
+				fillTileMap(maps.splatMap, TileMap::Splat, m_data, x0, z0, tileRegion);
+			if (create || (brushMode & IBrush::MdColor) != 0)
+				fillTileMap(maps.colorMap, TileMap::Color, m_data, x0, z0, tileRegion);
+			if (create || (brushMode & IBrush::MdCut) != 0)
+				fillTileMap(maps.cutMap, TileMap::Cuts, m_data, x0, z0, tileRegion);
+
+			// Tile maps are assigned again if tiles has been recreated, such as when terrain is reloaded.
+			if (m_terrainComponent->m_tiles[tileIndex].resources.heightMap.getResource() != maps.heightMap)
+				m_terrainComponent->editTile(tileIndex, maps.heightMap, maps.normalMap, maps.splatMap, maps.colorMap, maps.cutMap);
+
+			// Tile's heightfield is used for picking, patch bounds and terrain layers.
+			hf::Heightfield* heightfield = m_terrainComponent->m_tiles[tileIndex].resources.heightfield;
+			if (heightfield && (brushMode & (IBrush::MdHeight | IBrush::MdCut | IBrush::MdAttribute)) != 0)
+			{
+				for (int32_t z = tileRegion[1]; z <= tileRegion[3]; ++z)
+				{
+					for (int32_t x = tileRegion[0]; x <= tileRegion[2]; ++x)
+					{
+						heightfield->setGridHeight(x, z, m_data->getGridHeightNearest(x0 + x, z0 + z));
+						heightfield->setGridCut(x, z, m_data->getGridCut(x0 + x, z0 + z));
+						if ((brushMode & IBrush::MdAttribute) != 0)
+							heightfield->setGridAttribute(x, z, (uint8_t)m_attribute, m_data->getGridAttributeDensity(x0 + x, z0 + z, (uint8_t)m_attribute));
+					}
+				}
+				heightfield->updateCellBounds(tileRegion[0], tileRegion[1], tileRegion[2], tileRegion[3]);
+			}
+		}
+	}
 }
 
 void TerrainEditModifier::end()
 {
-	db::Database* sourceDatabase = m_context->getEditor()->getSourceDatabase();
-	T_ASSERT(sourceDatabase);
-
-	// Update errors metrics after modifier to prevent popping while drawing.
-	m_terrainComponent->updatePatches(nullptr, true);
-	m_terrainComponent->updateRayTracingPatches();
+	// Terrain layers are scattered from tile heightfields.
 	for (auto terrainLayer : m_terrainLayers)
 		terrainLayer->updatePatches();
 
 	float gx, gz;
-	m_heightfield->worldToGrid(m_center.x(), m_center.z(), gx, gz);
+	m_data->worldToGrid(m_center.x(), m_center.z(), gx, gz);
 	m_brush->end(gx, gz);
 
-	// Update patch lod metrics if heights has been modified.
+	// Update error metrics of edited tiles after stroke to prevent popping while drawing.
 	if (
 		(m_brushMode & IBrush::MdHeight) != 0 &&
 		m_applied
 	)
 	{
-		Terrain* terrain = m_terrainComponent->getTerrain();
-		T_ASSERT(terrain);
+		const int32_t tileCount = m_data->getTileCount();
+		const int32_t tileSize = m_data->getTileSize();
 
-		auto& patches = terrain->editPatches();
-
-		const uint32_t heightfieldSize = m_heightfield->getSize();
-		const uint32_t patchCount = heightfieldSize / (terrain->getPatchDim() * terrain->getDetailSkip());
-
-		for (uint32_t pz = m_updateRegion[1]; pz <= m_updateRegion[3]; ++pz)
+		for (int32_t i = 0; i < (int32_t)m_tileMaps.size(); ++i)
 		{
-			for (uint32_t px = m_updateRegion[0]; px <= m_updateRegion[2]; ++px)
-			{
-				Terrain::Patch& patch = patches[px + pz * patchCount];
-				calculatePatchMinMaxHeight(m_heightfield, px, pz, terrain->getPatchDim(), terrain->getDetailSkip(), patch.height);
-				calculatePatchErrorMetrics(m_heightfield, 4, px, pz, terrain->getPatchDim(), terrain->getDetailSkip(), patch.error);
-			}
+			const int32_t x0 = (i % tileCount) * tileSize;
+			const int32_t z0 = (i / tileCount) * tileSize;
+			if (
+				!m_tileMaps[i].heightMap ||
+				m_dirtyRegion[2] < x0 || m_dirtyRegion[0] > x0 + tileSize ||
+				m_dirtyRegion[3] < z0 || m_dirtyRegion[1] > z0 + tileSize
+			)
+				continue;
+
+			m_terrainComponent->updateTilePatches(i, m_dirtyRegion);
 		}
 	}
 
-	// Write modifications to splats.
+	// Write modified tiles of splat and color.
 	if (
-		(m_brushMode & IBrush::MdMaterial) != 0 &&
+		(m_brushMode & (IBrush::MdMaterial | IBrush::MdColor)) != 0 &&
 		m_terrainInstance
 	)
 	{
@@ -1026,18 +776,13 @@ void TerrainEditModifier::end()
 		{
 			if (!m_terrainInstance->checkout())
 			{
-				m_terrainInstance = nullptr;
+				log::error << L"Unable to checkout terrain instance." << Endl;
 				return;
 			}
 		}
 
-		Ref< IStream > file = m_terrainInstance->writeData(L"Splat");
-		if (file)
-		{
-			m_splatImage->save(file, L"tri");
-			file->close();
-			file = nullptr;
-		}
+		if (!m_data->writeImages(m_terrainInstance))
+			log::error << L"Unable to write terrain images." << Endl;
 
 		m_context->getDocument()->editInstance(
 			m_terrainInstance,
@@ -1046,93 +791,37 @@ void TerrainEditModifier::end()
 		m_context->getDocument()->setModified();
 	}
 
-	// Write modifications to color.
-	if (
-		(m_brushMode & IBrush::MdColor) != 0 &&
-		m_terrainInstance
-	)
-	{
-		if (!m_context->getDocument()->containInstance(m_terrainInstance))
-		{
-			if (!m_terrainInstance->checkout())
-			{
-				m_terrainInstance = nullptr;
-				return;
-			}
-		}
-
-		Ref< IStream > file = m_terrainInstance->writeData(L"Color");
-		if (file)
-		{
-			m_colorImageLowPrecision->save(file, L"tri");
-			file->close();
-			file = nullptr;
-		}
-
-		m_context->getDocument()->editInstance(
-			m_terrainInstance,
-			nullptr
-		);
-		m_context->getDocument()->setModified();
-	}
-
-	// Checkout heightfield asset.
-	if (
-		(m_brushMode & (IBrush::MdHeight | IBrush::MdCut | IBrush::MdAttribute)) != 0 &&
-		!m_heightfieldInstance
-	)
-	{
-		const resource::Id< Terrain >& terrain = m_terrainComponentData->getTerrain();
-		Ref< const TerrainAsset > terrainAsset = sourceDatabase->getObjectReadOnly< TerrainAsset >(terrain);
-		if (!terrainAsset)
-			return;
-
-		const resource::Id< hf::Heightfield >& heightfield = terrainAsset->getHeightfield();
-		m_heightfieldInstance = sourceDatabase->getInstance(heightfield);
-		if (!m_heightfieldInstance)
-			return;
-
-		if (!m_context->getDocument()->containInstance(m_heightfieldInstance))
-		{
-			if (!m_heightfieldInstance->checkout())
-			{
-				m_heightfieldInstance = nullptr;
-				return;
-			}
-		}
-
-		m_heightfieldAsset = m_heightfieldInstance->getObject< hf::HeightfieldAsset >();
-		if (!m_heightfieldAsset)
-		{
-			m_heightfieldInstance->revert();
-			m_heightfieldInstance = nullptr;
-			return;
-		}
-
-		m_context->getDocument()->editInstance(
-			m_heightfieldInstance,
-			m_heightfieldAsset
-		);
-	}
-
-	// Write modifications to heightfield.
+	// Write modified tiles of heightfield.
 	if (
 		(m_brushMode & (IBrush::MdHeight | IBrush::MdCut | IBrush::MdAttribute)) != 0 &&
 		m_heightfieldInstance
 	)
 	{
-		Ref< IStream > data = m_heightfieldInstance->writeData(L"Data");
-		if (data)
+		if (!m_context->getDocument()->containInstance(m_heightfieldInstance))
 		{
-			hf::HeightfieldFormat().write(data, m_heightfield);
+			if (!m_heightfieldInstance->checkout())
+			{
+				log::error << L"Unable to checkout heightfield instance." << Endl;
+				return;
+			}
 
-			data->close();
-			data = nullptr;
+			m_heightfieldAsset = m_heightfieldInstance->getObject< hf::HeightfieldAsset >();
+			if (!m_heightfieldAsset)
+			{
+				m_heightfieldInstance->revert();
+				return;
+			}
 
-			m_context->getDocument()->setModified();
+			m_context->getDocument()->editInstance(
+				m_heightfieldInstance,
+				m_heightfieldAsset
+			);
 		}
+
+		if (m_data->writeHeightfield(m_heightfieldInstance))
+			m_context->getDocument()->setModified();
 		else
-			log::error << L"Unable to write heights" << Endl;
+			log::error << L"Unable to write heights." << Endl;
 	}
 
 	m_context->raiseRedraw(nullptr);
@@ -1149,7 +838,7 @@ void TerrainEditModifier::flattenUnderSpline()
 		scene::SceneEditorContext::GfDefault | scene::SceneEditorContext::GfSelectedOnly | scene::SceneEditorContext::GfNoExternalChild
 	);
 
-	FlattenBrush flattenBrush(m_heightfield);
+	FlattenBrush flattenBrush(m_data);
 	m_brush = &flattenBrush;
 
 	for (auto entityAdapter : entityAdapters)

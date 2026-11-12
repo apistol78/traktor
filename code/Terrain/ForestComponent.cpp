@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -90,6 +90,36 @@ void ForestComponent::update(const world::UpdateParams& update)
 
 void ForestComponent::setup(const world::WorldRenderView& worldRenderView)
 {
+	auto terrainComponent = m_owner->getComponent< TerrainComponent >();
+	if (!terrainComponent)
+		return;
+
+	// Trees are scattered on tiles as they are loaded.
+	const int32_t tileCount = terrainComponent->getTileCount();
+	if ((int32_t)m_tiles.size() != tileCount)
+	{
+		m_tiles.resize(0);
+		m_tiles.resize(tileCount);
+	}
+
+	bool changed = false;
+	for (int32_t i = 0; i < tileCount; ++i)
+	{
+		const uint32_t revision = terrainComponent->getTileRevision(i);
+		if (m_tiles[i].revision != revision)
+		{
+			updateTile(m_tiles[i], i, terrainComponent->getTileHeightfield(i));
+			m_tiles[i].revision = revision;
+			changed = true;
+		}
+	}
+	if (changed)
+	{
+		m_trees.resize(0);
+		for (const auto& tile : m_tiles)
+			m_trees.insert(m_trees.end(), tile.trees.begin(), tile.trees.end());
+	}
+
 	m_lod0Indices.resize(0);
 	m_lod1Indices.resize(0);
 	m_lod2Indices.resize(0);
@@ -126,6 +156,7 @@ void ForestComponent::build(
 		return;
 
 	const resource::Proxy< Terrain >& terrain = terrainComponent->getTerrain();
+	const Terrain::TileResources& overview = terrain->getOverview();
 
 	const Frustum& cullFrustum = worldRenderView.getCullFrustum();
 	const Matrix44& view = worldRenderView.getView();
@@ -157,10 +188,10 @@ void ForestComponent::build(
 	// Expose some more shader parameters, such as terrain color etc.
 	render::ProgramParameters* extraParameters = renderContext->alloc< render::ProgramParameters >();
 	extraParameters->beginParameters(renderContext);
-	extraParameters->setTextureParameter(s_handleTerrain_Normals, terrain->getNormalMap());
-	extraParameters->setTextureParameter(s_handleTerrain_Heightfield, terrain->getHeightMap());
+	extraParameters->setTextureParameter(s_handleTerrain_Normals, overview.normalMap);
+	extraParameters->setTextureParameter(s_handleTerrain_Heightfield, overview.heightMap);
 	extraParameters->setTextureParameter(s_handleTerrain_Surface, terrainComponent->getSurfaceCache()->getBaseTexture());
-	extraParameters->setVectorParameter(s_handleTerrain_WorldExtent, terrain->getHeightfield()->getWorldExtent());
+	extraParameters->setVectorParameter(s_handleTerrain_WorldExtent, overview.heightfield->getWorldExtent());
 	extraParameters->setVectorParameter(s_handleForest_Eye, eye);
 	extraParameters->endParameters(renderContext);
 /*
@@ -257,18 +288,24 @@ void ForestComponent::build(
 
 void ForestComponent::updatePatches()
 {
-	auto terrainComponent = m_owner->getComponent< TerrainComponent >();
-	if (!terrainComponent)
+	// Every tile is scattered again by next setup.
+	for (auto& tile : m_tiles)
+		tile.revision = ~0U;
+}
+
+void ForestComponent::updateTile(Tile& tile, int32_t tileIndex, const hf::Heightfield* heightfield)
+{
+	tile.trees.resize(0);
+
+	if (!heightfield)
 		return;
 
-	const auto& terrain = terrainComponent->getTerrain();
-	const auto& heightfield = terrain->getHeightfield();
+	// Last row and column of tile's heightfield belong to neighbour tile.
 	const float densityInv = 1.0f / m_data.m_density;
-	const int32_t size = heightfield->getSize();
-	const Vector4 extentPerGrid = heightfield->getWorldExtent() / Scalar(float(size));
-	Random random;
+	const int32_t size = heightfield->getSize() - 1;
+	const Vector4 extentPerGrid = heightfield->getWorldExtent() / Scalar(float(heightfield->getSize()));
+	Random random(tileIndex);
 
-	m_trees.resize(0);
 	for (float z = 0; z < size; z += densityInv)
 	{
 		for (float x = 0; x < size; x += densityInv)
@@ -304,7 +341,7 @@ void ForestComponent::updatePatches()
 			const Quaternion Qh = Quaternion::fromAxisAngle(Vector4(0.0f, 1.0f, 0.0f), head);
 
 			// Add tree on position.
-			auto& tree = m_trees.push_back();
+			auto& tree = tile.trees.push_back();
 			tree.position = Vector4(wx, wy, wz, 1.0f);
 			tree.rotation = Qr * Qu * Qh;
 			tree.scale = random.nextFloat() * m_data.m_randomScale + (1.0f - m_data.m_randomScale);

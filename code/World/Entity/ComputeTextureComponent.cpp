@@ -30,7 +30,7 @@ void ComputeTextureComponent::destroy()
 	m_textures.clear();
 }
 
-void ComputeTextureComponent::update(World* world, const UpdateParams& update)
+void ComputeTextureComponent::update(const UpdateParams& update)
 {
 }
 

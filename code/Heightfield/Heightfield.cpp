@@ -29,18 +29,21 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.hf.Heightfield", Heightfield, Object)
 
 Heightfield::Heightfield(
 	int32_t size,
-	const Vector4& worldExtent)
+	const Vector4& worldExtent,
+	const Vector4& worldCenter)
 	: m_size(size)
 	, m_worldExtent(worldExtent)
+	, m_worldCenter(worldCenter * Vector4(1.0f, 0.0f, 1.0f, 0.0f))
 {
 	m_cellBoundsPitch = (m_size + c_cellSize - 1) / c_cellSize;
 
 	m_heights.reset(new height_t[m_size * m_size]);
-	m_cuts.reset(new uint8_t[(m_size * m_size) / 8]);
+	m_cuts.reset(new uint8_t[(m_size * m_size + 7) / 8]);
 	m_cellBounds.reset(new Aabb3[m_cellBoundsPitch * m_cellBoundsPitch]);
 
 	// Attribute layers are allocated on demand; a terrain rarely use more than a few.
 	m_worldExtent.storeUnaligned(m_worldExtentFloats);
+	m_worldCenter.storeUnaligned(m_worldCenterFloats);
 }
 
 void Heightfield::setWorldExtent(const Vector4& worldExtent)
@@ -50,13 +53,20 @@ void Heightfield::setWorldExtent(const Vector4& worldExtent)
 	updateCellBounds();
 }
 
+void Heightfield::setWorldCenter(const Vector4& worldCenter)
+{
+	m_worldCenter = worldCenter * Vector4(1.0f, 0.0f, 1.0f, 0.0f);
+	m_worldCenter.storeUnaligned(m_worldCenterFloats);
+	updateCellBounds();
+}
+
 void Heightfield::setGridHeight(int32_t gridX, int32_t gridZ, float unitY)
 {
 	if (gridX < 0 || gridX >= (int32_t)m_size)
 		return;
 	if (gridZ < 0 || gridZ >= (int32_t)m_size)
 		return;
-	m_heights[gridX + gridZ * m_size] = height_t(clamp(unitY, 0.0f, 1.0f) * 65535.0f);
+	m_heights[gridX + gridZ * m_size] = height_t(clamp(unitY, 0.0f, 1.0f) * 65535.0f + 0.5f);
 }
 
 void Heightfield::setGridCut(int32_t gridX, int32_t gridZ, bool cut)
@@ -314,8 +324,8 @@ void Heightfield::gridToWorld(int32_t gridX, int32_t gridZ, float& outWorldX, fl
 void Heightfield::gridToWorld(float gridX, float gridZ, float& outWorldX, float& outWorldZ) const
 {
 	// Samples are located at texel centers, same as the terrain height map is sampled by the GPU.
-	outWorldX = m_worldExtentFloats[0] * ((gridX + 0.5f) / m_size - 0.5f);
-	outWorldZ = m_worldExtentFloats[2] * ((gridZ + 0.5f) / m_size - 0.5f);
+	outWorldX = m_worldCenterFloats[0] + m_worldExtentFloats[0] * ((gridX + 0.5f) / m_size - 0.5f);
+	outWorldZ = m_worldCenterFloats[2] + m_worldExtentFloats[2] * ((gridZ + 0.5f) / m_size - 0.5f);
 }
 
 Vector4 Heightfield::gridToWorld(float gridX, float gridZ) const
@@ -339,8 +349,8 @@ void Heightfield::worldToGrid(float worldX, float worldZ, int32_t& outGridX, int
 
 void Heightfield::worldToGrid(float worldX, float worldZ, float& outGridX, float& outGridZ) const
 {
-	outGridX = m_size * (worldX + m_worldExtentFloats[0] * 0.5f) / m_worldExtentFloats[0] - 0.5f;
-	outGridZ = m_size * (worldZ + m_worldExtentFloats[2] * 0.5f) / m_worldExtentFloats[2] - 0.5f;
+	outGridX = m_size * (worldX - m_worldCenterFloats[0] + m_worldExtentFloats[0] * 0.5f) / m_worldExtentFloats[0] - 0.5f;
+	outGridZ = m_size * (worldZ - m_worldCenterFloats[2] + m_worldExtentFloats[2] * 0.5f) / m_worldExtentFloats[2] - 0.5f;
 }
 
 float Heightfield::unitToWorld(float unitY) const
@@ -410,7 +420,7 @@ bool Heightfield::queryRay(const Vector4& worldRayOrigin, const Vector4& worldRa
 	Scalar kIn, kOut;
 	Winding3 w;
 
-	const Aabb3 boundingBox(-m_worldExtent * 0.5_simd, m_worldExtent * 0.5_simd);
+	const Aabb3 boundingBox(m_worldCenter - m_worldExtent * 0.5_simd, m_worldCenter + m_worldExtent * 0.5_simd);
 	if (!boundingBox.intersectRay(worldRayOrigin, worldRayDirection, kIn, kOut))
 		return false;
 

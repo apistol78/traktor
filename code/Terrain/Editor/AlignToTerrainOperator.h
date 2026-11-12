@@ -108,20 +108,8 @@ private:
 
 	SmallMap< const TypeInfo*, Ref< const world::IEntityReplicator > > m_entityReplicators;
 
-	/*! Collect all geometry belonging to an entity, in the entity's own local space.
-	 *
-	 * Geometry is generated through the entity replicators, so any component
-	 * which is able to describe itself as a model contributes. External
-	 * entities are resolved into their cached contact bounding box instead of
-	 * their models.
-	 *
-	 * \param pipelineCommon Used to read referenced instances.
-	 * \param entityData Entity to collect from.
-	 * \param transform Transform into the entity local space being collected into.
-	 * \param contactRatio Height fraction used when measuring external entities.
-	 * \param outPlacements Collected geometry.
-	 * \param inoutCache Cache of already measured external entities.
-	 * \param depth Current recursion depth.
+	/*! Collect geometry, through entity replicators, of an entity in it's own local space.
+	 * External entities are resolved into their cached contact bounding box instead of their models.
 	 */
 	void gatherGeometry(
 		editor::IPipelineCommon* pipelineCommon,
@@ -133,19 +121,8 @@ private:
 		int32_t depth
 	) const;
 
-	/*! Calculate the ground contact bounding box of an entity, in its own local space.
-	 *
-	 * Only geometry within a slab at the bottom of the entity is measured, so
-	 * that the footprint projected onto the terrain is the part of the entity
-	 * which actually rests on the ground; the trunk of a tree rather than its
-	 * canopy.
-	 *
-	 * \param pipelineCommon Used to read referenced instances.
-	 * \param entityData Entity to measure.
-	 * \param contactRatio Height fraction, measured from the lowest point, forming the slab.
-	 * \param inoutCache Cache of already measured external entities.
-	 * \param depth Current recursion depth.
-	 * \return Bounding box; empty if the entity has no measurable geometry.
+	/*! Ground contact bounding box of entity in it's own local space, empty if entity has no measurable geometry.
+	 * Only geometry within a slab, contact ratio of height from lowest point, is measured; trunk of a tree rather than canopy.
 	 */
 	Aabb3 calculateContactBoundingBox(
 		editor::IPipelineCommon* pipelineCommon,

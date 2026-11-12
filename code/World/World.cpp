@@ -57,7 +57,10 @@ void World::destroy()
 	while (!m_entities.empty());
 
 	for (auto component : m_components)
+	{
+		component->setWorld(nullptr);
 		component->destroy();
+	}
 	m_components.clear();
 }
 
@@ -70,13 +73,16 @@ void World::setComponent(IWorldComponent* component)
 	{
 		if (is_type_of(type_of(comp), type_of(component)))
 		{
+			comp->setWorld(nullptr);
 			comp = component;
+			comp->setWorld(this);
 			return;
 		}
 	}
 
 	// No such component, add last.
 	m_components.push_back(component);
+	component->setWorld(this);
 }
 
 bool World::removeComponent(IWorldComponent* component)
@@ -186,7 +192,7 @@ void World::update(const UpdateParams& update)
 {
 	// Update all world components.
 	for (auto component : m_components)
-		component->update(this, update);
+		component->update(update);
 
 	// Update all entities.
 	m_update = true;

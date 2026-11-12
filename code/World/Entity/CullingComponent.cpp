@@ -75,7 +75,7 @@ void CullingComponent::destroy()
 	m_renderSystem = nullptr;
 }
 
-void CullingComponent::update(World* world, const UpdateParams& update)
+void CullingComponent::update(const UpdateParams& update)
 {
 }
 

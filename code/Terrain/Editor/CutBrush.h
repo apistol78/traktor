@@ -8,8 +8,8 @@
  */
 #pragma once
 
-#include "Resource/Proxy.h"
 #include "Terrain/Editor/IBrush.h"
+#include "Terrain/Editor/TerrainEditData.h"
 
 namespace traktor::hf
 {
@@ -26,7 +26,7 @@ class CutBrush : public IBrush
 	T_RTTI_CLASS;
 
 public:
-	explicit CutBrush(const resource::Proxy< hf::Heightfield >& heightfield);
+	explicit CutBrush(TerrainEditData* data);
 
 	virtual uint32_t begin(float x, float y, const State& state) override final;
 
@@ -35,7 +35,7 @@ public:
 	virtual void end(float x, float y) override final;
 
 private:
-	resource::Proxy< hf::Heightfield > m_heightfield;
+	Ref< TerrainEditData > m_data;
 	int32_t m_radius;
 	const IFallOff* m_fallOff;
 	float m_strength;

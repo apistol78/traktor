@@ -301,7 +301,7 @@ void WorldClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classCameraComponent);
 
 	auto classEntityStreamingComponent = new AutoRuntimeClass< EntityStreamingComponent >();
-	classEntityStreamingComponent->addProperty("idle", &EntityStreamingComponent::idle);
+	classEntityStreamingComponent->addMethod("load", &EntityStreamingComponent::load);
 	registrar->registerClass(classEntityStreamingComponent);
 
 	auto classLightComponentData = new AutoRuntimeClass< LightComponentData >();

@@ -860,9 +860,10 @@ void RenderViewVk::endFrame()
 		{},
 		frame.computeFinishedSemaphore);
 
+	// Waited by graphics, not present, so the semaphore is consumed once this slot's fence has signalled.
 	frame.graphicsCommandBuffer->submit(
-		{ m_imageAvailableSemaphores[m_currentImageIndex] },
-		{ VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT },
+		{ m_imageAvailableSemaphores[m_currentImageIndex], frame.computeFinishedSemaphore },
+		{ VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT, VK_PIPELINE_STAGE_ALL_COMMANDS_BIT },
 		frame.renderFinishedSemaphore);
 
 	// Everything recorded during the frame has been submitted now.
@@ -891,11 +892,10 @@ void RenderViewVk::present()
 	auto& frame = m_frames[m_currentImageIndex];
 
 	// Queue presentation of current primary target.
-	const VkSemaphore waitSemaphores[] = { frame.computeFinishedSemaphore, frame.renderFinishedSemaphore };
 	const VkPresentInfoKHR pi = {
 		.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR,
-		.waitSemaphoreCount = sizeof_array(waitSemaphores),
-		.pWaitSemaphores = waitSemaphores,
+		.waitSemaphoreCount = 1,
+		.pWaitSemaphores = &frame.renderFinishedSemaphore,
 		.swapchainCount = 1,
 		.pSwapchains = &m_swapChain,
 		.pImageIndices = &m_currentImageIndex,

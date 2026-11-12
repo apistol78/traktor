@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,7 +8,6 @@
  */
 #include "Core/Math/Const.h"
 #include "Core/Math/Random.h"
-#include "Heightfield/Heightfield.h"
 #include "Terrain/Editor/NoiseBrush.h"
 #include "Terrain/Editor/IFallOff.h"
 
@@ -25,8 +24,8 @@ Random g_random;
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.NoiseBrush", NoiseBrush, IBrush)
 
-NoiseBrush::NoiseBrush(const resource::Proxy< hf::Heightfield >& heightfield)
-:	m_heightfield(heightfield)
+NoiseBrush::NoiseBrush(TerrainEditData* data)
+:	m_data(data)
 ,	m_radius(0)
 ,	m_fallOff(0)
 ,	m_strength(0.0f)
@@ -37,7 +36,7 @@ uint32_t NoiseBrush::begin(float x, float y, const State& state)
 {
 	m_radius = state.radius;
 	m_fallOff = state.falloff;
-	m_strength = state.strength / m_heightfield->getWorldExtent().y();
+	m_strength = state.strength / m_data->getWorldExtent().y();
 	return MdHeight;
 }
 
@@ -54,16 +53,11 @@ void NoiseBrush::apply(float x, float y)
 			if (abs(a) <= FUZZY_EPSILON)
 				continue;
 
-			const float h = m_heightfield->getGridHeightNearest(x + ix, y + iy);
-			m_heightfield->setGridHeight(x + ix, y + iy, h + (g_random.nextFloat() * 2.0f - 1.0f) * a);
+			const float h = m_data->getGridHeightNearest(x + ix, y + iy);
+			m_data->setGridHeight(x + ix, y + iy, h + (g_random.nextFloat() * 2.0f - 1.0f) * a);
 		}
 	}
 
-	const int32_t x0 = (int32_t)(x - m_radius);
-	const int32_t y0 = (int32_t)(y - m_radius);
-	const int32_t x1 = (int32_t)(x + m_radius);
-	const int32_t y1 = (int32_t)(y + m_radius);
-	m_heightfield->updateCellBounds(x0, y0, x1, y1);
 }
 
 void NoiseBrush::end(float x, float y)

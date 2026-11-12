@@ -49,6 +49,8 @@ public:
 
 	virtual ~Layer();
 
+	virtual void create();
+
 	virtual void destroy();
 
 	/*! Called during transition between stages.

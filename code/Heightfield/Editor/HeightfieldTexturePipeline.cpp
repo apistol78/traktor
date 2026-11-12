@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -11,6 +11,8 @@
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyString.h"
 #include "Core/Thread/Acquire.h"
+#include "Core/Thread/Job.h"
+#include "Core/Thread/JobManager.h"
 #include "Database/Database.h"
 #include "Database/Instance.h"
 #include "Drawing/Image.h"
@@ -18,17 +20,18 @@
 #include "Editor/IPipelineDepends.h"
 #include "Editor/IPipelineSettings.h"
 #include "Heightfield/Heightfield.h"
-#include "Heightfield/HeightfieldFormat.h"
-#include "Heightfield/Editor/ErosionFilter.h"
 #include "Heightfield/Editor/HeightfieldAsset.h"
 #include "Heightfield/Editor/HeightfieldTextureAsset.h"
 #include "Heightfield/Editor/HeightfieldTexturePipeline.h"
+#include "Heightfield/Editor/TileStorage.h"
 #include "Render/Editor/Texture/TextureOutput.h"
 
 namespace traktor::hf
 {
 	namespace
 	{
+
+const int32_t c_rowsPerTask = 64;
 
 float fract(float v)
 {
@@ -37,7 +40,7 @@ float fract(float v)
 
 	}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.hf.HeightfieldTexturePipeline", 6, HeightfieldTexturePipeline, editor::DefaultPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.hf.HeightfieldTexturePipeline", 8, HeightfieldTexturePipeline, editor::DefaultPipeline)
 
 bool HeightfieldTexturePipeline::create(const editor::IPipelineSettings* settings, db::Database* database)
 {
@@ -79,7 +82,11 @@ bool HeightfieldTexturePipeline::buildDependencies(
 ) const
 {
 	const HeightfieldTextureAsset* asset = checked_type_cast< const HeightfieldTextureAsset* >(sourceAsset);
-	pipelineDepends->addDependency(asset->m_heightfield, editor::PdfUse);
+
+	// Tiles and overviews depend on stamp of tiles read, not on every tile in heightfield instance.
+	if (asset->m_tileX < 0 && asset->m_overviewSize <= 0)
+		pipelineDepends->addDependency(asset->m_heightfield, editor::PdfUse);
+
 	pipelineDepends->addDependency< render::TextureOutput >();
 	return true;
 }
@@ -118,56 +125,60 @@ bool HeightfieldTexturePipeline::buildOutput(
 		return false;
 	}
 
-	Ref< IStream > sourceData = heightfieldAssetInstance->readData(L"Data");
-	if (!sourceData)
-	{
-		log::error << L"Heightfield pipeline failed; unable to open heights" << Endl;
-		return false;
-	}
+	// Normals of tiles need a border of samples from neighbour tiles.
+	const bool region = (asset->m_tileX >= 0 || asset->m_overviewSize > 0);
+	const int32_t border = (asset->m_tileX >= 0 && asset->m_output == HeightfieldTextureAsset::OtNormals) ? 1 : 0;
 
-	Ref< Heightfield > heightfield = HeightfieldFormat().read(
-		sourceData,
-		heightfieldAsset->getWorldExtent()
-	);
+	const TileStorage tileStorage(heightfieldAsset->getTileCount());
+
+	Ref< Heightfield > heightfield;
+	if (asset->m_tileX >= 0)
+		heightfield = tileStorage.readHeightfieldTile(heightfieldAssetInstance, heightfieldAsset->getWorldExtent(), asset->m_tileX, asset->m_tileZ, border);
+	else if (asset->m_overviewSize > 0)
+		heightfield = tileStorage.readHeightfieldOverview(heightfieldAssetInstance, heightfieldAsset->getWorldExtent(), asset->m_overviewSize);
+	else
+		heightfield = tileStorage.readHeightfield(heightfieldAssetInstance, heightfieldAsset->getWorldExtent());
+
 	if (!heightfield)
 	{
 		log::error << L"Heightfield pipeline failed; unable to read heights" << Endl;
 		return false;
 	}
 
-	sourceData->close();
-	sourceData = nullptr;
-
-	// Apply erosion filter.
-	if (heightfieldAsset->getErosionEnable())
-		ErosionFilter(heightfieldAsset->getErodeIterations()).apply(heightfield);
-
-	const int32_t size = heightfield->getSize();
+	const int32_t size = heightfield->getSize() - 2 * border;
 
 	if (asset->m_output == HeightfieldTextureAsset::OtHeights)
 	{
 		Ref< drawing::Image > outputMap = new drawing::Image(drawing::PixelFormat::getR32F(), size, size);
 
-		for (int32_t v = 0; v < size; ++v)
+		// Rows are filled in parallel.
+		AlignedVector< Job::task_t > tasks;
+		for (int32_t v0 = 0; v0 < size; v0 += c_rowsPerTask)
 		{
-			for (int32_t u = 0; u < size; ++u)
-			{
-				const float height = heightfield->getGridHeightNearest(u, v) * asset->m_scale;
-				if (m_heightFormat == HfARGBEncoded)
+			tasks.push_back([&, v0]() {
+				for (int32_t v = v0; v < std::min(v0 + c_rowsPerTask, size); ++v)
 				{
-					Vector4 enc = Vector4(
-						fract(1.0f * height),
-						fract(255.0f * height),
-						fract(65025.0f * height),
-						fract(160581375.0f * height)
-					);
-					enc -= enc.shuffle< 1, 2, 3, 3 >() * Vector4(1.0 / 255.0f, 1.0f / 255.0f, 1.0f / 255.0f, 0.0f);
-					outputMap->setPixelUnsafe(u, v, Color4f(enc));
+					for (int32_t u = 0; u < size; ++u)
+					{
+						const float height = heightfield->getGridHeightNearest(u, v) * asset->m_scale;
+						if (m_heightFormat == HfARGBEncoded)
+						{
+							Vector4 enc = Vector4(
+								fract(1.0f * height),
+								fract(255.0f * height),
+								fract(65025.0f * height),
+								fract(160581375.0f * height)
+							);
+							enc -= enc.shuffle< 1, 2, 3, 3 >() * Vector4(1.0 / 255.0f, 1.0f / 255.0f, 1.0f / 255.0f, 0.0f);
+							outputMap->setPixelUnsafe(u, v, Color4f(enc));
+						}
+						else
+							outputMap->setPixelUnsafe(u, v, Color4f(height, height, height, height));
+					}
 				}
-				else
-					outputMap->setPixelUnsafe(u, v, Color4f(height, height, height, height));
-			}
+			});
 		}
+		JobManager::getInstance().fork(tasks.c_ptr(), tasks.size());
 
 		const render::TextureFormat c_heightTextureFormats[] = { render::TfR16F, render::TfR32F, render::TfR8G8B8A8 };
 
@@ -205,19 +216,33 @@ bool HeightfieldTexturePipeline::buildOutput(
 	{
 		// Create normal map from heightfield; we're storing in XZY since
 		// we assume B to be "primary" axis when compressing.
-		Ref< drawing::Image > outputMap = new drawing::Image(drawing::PixelFormat::getR8G8B8(), size, size);
-		for (int32_t v = 0; v < size; ++v)
+
+		// Mipmapped tile maps are power-of-2 with first and last texel centered on first and seam sample.
+		const int32_t normalSize = (asset->m_tileX >= 0) ? size - 1 : size;
+		const float normalScale = (asset->m_tileX >= 0) ? (float)(size - 1) / (normalSize - 1) : 1.0f;
+
+		Ref< drawing::Image > outputMap = new drawing::Image(drawing::PixelFormat::getR8G8B8(), normalSize, normalSize);
+
+		// Rows are filled in parallel.
+		AlignedVector< Job::task_t > tasks;
+		for (int32_t v0 = 0; v0 < normalSize; v0 += c_rowsPerTask)
 		{
-			for (int32_t u = 0; u < size; ++u)
-			{
-				const Vector4 normal = heightfield->normalAt((float)u, (float)v) * Vector4(0.5f, 0.5f, 0.5f, 0.0f) + Vector4(0.5f, 0.5f, 0.5f, 0.0f);
-				outputMap->setPixelUnsafe(u, v, Color4f(
-					normal.x(),
-					normal.z(),
-					normal.y()
-				));
-			}
+			tasks.push_back([&, v0]() {
+				for (int32_t v = v0; v < std::min(v0 + c_rowsPerTask, normalSize); ++v)
+				{
+					for (int32_t u = 0; u < normalSize; ++u)
+					{
+						const Vector4 normal = heightfield->normalAt(border + u * normalScale, border + v * normalScale) * Vector4(0.5f, 0.5f, 0.5f, 0.0f) + Vector4(0.5f, 0.5f, 0.5f, 0.0f);
+						outputMap->setPixelUnsafe(u, v, Color4f(
+							normal.x(),
+							normal.z(),
+							normal.y()
+						));
+					}
+				}
+			});
 		}
+		JobManager::getInstance().fork(tasks.c_ptr(), tasks.size());
 
 		Ref< render::TextureOutput > output = new render::TextureOutput();
 		output->m_textureFormat = render::TfInvalid;
@@ -251,11 +276,20 @@ bool HeightfieldTexturePipeline::buildOutput(
 	}
 	else if (asset->m_output == HeightfieldTextureAsset::OtCuts)
 	{
-		Ref< drawing::Image > outputMap = new drawing::Image(drawing::PixelFormat::getR8(), size, size);
-
-		for (int32_t v = 0; v < size; ++v)
+		bool holes = false;
+		for (int32_t v = 0; v < size && !holes; ++v)
 		{
-			for (int32_t u = 0; u < size; ++u)
+			for (int32_t u = 0; u < size && !holes; ++u)
+				holes = !heightfield->getGridCut(u, v);
+		}
+
+		// Tiles and overviews without holes get a single texel cut map.
+		const int32_t cutSize = (region && !holes) ? 1 : size;
+
+		Ref< drawing::Image > outputMap = new drawing::Image(drawing::PixelFormat::getR8(), cutSize, cutSize);
+		for (int32_t v = 0; v < cutSize; ++v)
+		{
+			for (int32_t u = 0; u < cutSize; ++u)
 			{
 				const float cut = heightfield->getGridCut(u, v) ? 1.0f : 0.0f;
 				outputMap->setPixelUnsafe(u, v, Color4f(cut, cut, cut, cut));

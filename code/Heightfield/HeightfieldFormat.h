@@ -33,7 +33,7 @@ class T_DLLCLASS HeightfieldFormat : public Object
 	T_RTTI_CLASS;
 
 public:
-	Ref< Heightfield > read(IStream* stream, const Vector4& worldExtent) const;
+	Ref< Heightfield > read(IStream* stream, const Vector4& worldExtent, const Vector4& worldCenter) const;
 
 	bool write(IStream* stream, const Heightfield* heightfield) const;
 };

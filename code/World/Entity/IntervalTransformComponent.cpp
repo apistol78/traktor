@@ -18,7 +18,7 @@ void IntervalTransformComponent::destroy()
 	T_FATAL_ASSERT_M(m_entries.empty(), L"Interval transform entries not empty.");
 }
 
-void IntervalTransformComponent::update(World* world, const UpdateParams& update)
+void IntervalTransformComponent::update(const UpdateParams& update)
 {
 	for (auto& entry : m_entries)
 		entry->lastUpdate = entry->currentUpdate;

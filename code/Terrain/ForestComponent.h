@@ -15,6 +15,13 @@
 #include "Terrain/ForestComponentData.h"
 #include "Terrain/TerrainLayerComponent.h"
 
+namespace traktor::hf
+{
+
+class Heightfield;
+
+}
+
 namespace traktor::render
 {
 
@@ -71,11 +78,19 @@ private:
 		float scale;
 	};
 
+	//! Trees scattered on a terrain tile.
+	struct Tile
+	{
+		uint32_t revision = 0;	//!< Revision of terrain tile when scattered.
+		AlignedVector< Tree > trees;
+	};
+
 	world::Entity* m_owner = nullptr;
 	ForestComponentData m_data;
 	resource::Proxy< mesh::InstanceMesh > m_lod0mesh;
 	resource::Proxy< mesh::InstanceMesh > m_lod1mesh;
 	resource::Proxy< mesh::InstanceMesh > m_lod2mesh;
+	AlignedVector< Tile > m_tiles;
 	AlignedVector< Tree > m_trees;
 	AlignedVector< uint32_t > m_lod0Indices;
 	AlignedVector< uint32_t > m_lod1Indices;
@@ -83,6 +98,9 @@ private:
 	AlignedVector< uint32_t > m_lodShadowIndices;
 	//AlignedVector< mesh::InstanceMesh::RenderInstance > m_instanceData;
 	Aabb3 m_boundingBox;
+
+	//! Scatter trees of tile; tile without heightfield has no trees.
+	void updateTile(Tile& tile, int32_t tileIndex, const hf::Heightfield* heightfield);
 };
 
 }

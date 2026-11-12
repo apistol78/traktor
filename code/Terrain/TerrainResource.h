@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2023 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -45,10 +45,15 @@ class T_DLLCLASS TerrainResource : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	struct Patch
+	//! Resources of a tile, or overview, of a tiled terrain.
+	struct Tile
 	{
-		float height[2];
-		float error[3];
+		resource::Id< hf::Heightfield > heightfield;
+		resource::Id< render::ITexture > heightMap;
+		resource::Id< render::ITexture > normalMap;
+		resource::Id< render::ITexture > cutMap;
+		resource::Id< render::ITexture > splatMap;
+		resource::Id< render::ITexture > colorMap;
 
 		void serialize(ISerializer& s);
 	};
@@ -59,38 +64,33 @@ public:
 
 	uint32_t getPatchDim() const { return m_patchDim; }
 
-	const resource::Id< hf::Heightfield >& getHeightfield() const { return m_heightfield; }
-
-	const resource::Id< render::ITexture >& getColorMap() const { return m_colorMap; }
-
-	const resource::Id< render::ITexture >& getNormalMap() const { return m_normalMap; }
-
-	const resource::Id< render::ITexture >& getHeightMap() const { return m_heightMap; }
-
-	const resource::Id< render::ITexture >& getSplatMap() const { return m_splatMap; }
-
-	const resource::Id< render::ITexture >& getCutMap() const { return m_cutMap; }
-
 	const resource::Id< render::Shader >& getTerrainShader() const { return m_terrainShader; }
 
 	const resource::Id< render::Shader >& getSurfaceShader() const { return m_surfaceShader; }
 
-	const AlignedVector< Patch >& getPatches() const { return m_patches; }
+	//! Number of tiles along each side.
+	int32_t getTileCount() const { return m_tileCount; }
+
+	//! Number of heightfield samples along each side of a tile, excluding seam.
+	int32_t getTileSize() const { return m_tileSize; }
+
+	//! Tiles, row major, each including one row and column of its +X/+Z neighbours.
+	const AlignedVector< Tile >& getTiles() const { return m_tiles; }
+
+	//! Low resolution overview of entire terrain.
+	const Tile& getOverview() const { return m_overview; }
 
 private:
 	friend class TerrainPipeline;
 
 	uint32_t m_detailSkip = 0;
 	uint32_t m_patchDim = 0;
-	resource::Id< hf::Heightfield > m_heightfield;
-	resource::Id< render::ITexture > m_colorMap;
-	resource::Id< render::ITexture > m_normalMap;
-	resource::Id< render::ITexture > m_heightMap;
-	resource::Id< render::ITexture > m_splatMap;
-	resource::Id< render::ITexture > m_cutMap;
 	resource::Id< render::Shader > m_terrainShader;
 	resource::Id< render::Shader > m_surfaceShader;
-	AlignedVector< Patch > m_patches;
+	int32_t m_tileCount = 0;
+	int32_t m_tileSize = 0;
+	AlignedVector< Tile > m_tiles;
+	Tile m_overview;
 };
 
 }

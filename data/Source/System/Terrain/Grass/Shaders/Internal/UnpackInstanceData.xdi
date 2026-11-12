@@ -158,6 +158,24 @@
 			</position>
 			<name>Random</name>
 		</item>
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{6E2B4C1A-9D37-4F0B-A8E5-3C71B2D94F60}</id>
+			<comment/>
+			<position>
+				<first>1041</first>
+				<second>48</second>
+			</position>
+			<swizzle>xwy</swizzle>
+		</item>
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{B4F18D27-5A63-4E9C-9C02-7D8E1F3A6B45}</id>
+			<comment/>
+			<position>
+				<first>1283</first>
+				<second>48</second>
+			</position>
+			<name>xyz</name>
+		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge" version="1">
@@ -327,6 +345,26 @@
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[17]"/>
+				<id>{731844D4-AFDC-4EAA-8B41-C4BA2455898F}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[8]"/>
+				<id>{8FFB3BDB-A00E-4406-994C-0D52FAF04871}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[18]"/>
+				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[18]"/>
+				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[19]"/>
 				<id>{731844D4-AFDC-4EAA-8B41-C4BA2455898F}</id>
 			</destination>
 		</item>

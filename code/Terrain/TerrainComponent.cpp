@@ -8,25 +8,30 @@
  */
 #include "Terrain/TerrainComponent.h"
 
+#include "Core/Log/Log.h"
 #include "Core/Math/Float.h"
 #include "Core/Math/MathUtils.h"
 #include "Core/Misc/SafeDestroy.h"
+#include "Core/Thread/Job.h"
+#include "Core/Thread/JobManager.h"
 #include "Heightfield/Heightfield.h"
 #include "Render/Buffer.h"
 #include "Render/Context/RenderContext.h"
 #include "Render/IRenderSystem.h"
+#include "Render/ITexture.h"
 #include "Render/VertexElement.h"
 #include "Resource/IResourceManager.h"
 #include "Terrain/Terrain.h"
 #include "Terrain/TerrainSurfaceCache.h"
+#include "Terrain/TerrainUtilities.h"
 #include "World/IWorldRenderPass.h"
 #include "World/World.h"
 #include "World/WorldBuildContext.h"
-#include "World/WorldHandles.h"
 #include "World/WorldRenderView.h"
 #include "World/WorldSetupContext.h"
 
 #include <algorithm>
+#include <cmath>
 #include <limits>
 
 namespace traktor::terrain
@@ -34,45 +39,30 @@ namespace traktor::terrain
 namespace
 {
 
-const resource::Id< render::Shader > c_shaderCull(L"{8BA73DD8-0FD9-4C15-A772-EACC14014AEC}");
-
 const render::Handle c_handleTerrain_VisualizeLods(L"Terrain_VisualizeLods");
 const render::Handle c_handleTerrain_VisualizeMap(L"Terrain_VisualizeMap");
 const render::Handle c_handleTerrain_SurfaceAlbedo(L"Terrain_SurfaceAlbedo");
-const render::Handle c_handleTerrain_SurfaceOffset(L"Terrain_SurfaceOffset");
 const render::Handle c_handleTerrain_Heightfield(L"Terrain_Heightfield");
 const render::Handle c_handleTerrain_ColorMap(L"Terrain_ColorMap");
 const render::Handle c_handleTerrain_SplatMap(L"Terrain_SplatMap");
 const render::Handle c_handleTerrain_CutMap(L"Terrain_CutMap");
 const render::Handle c_handleTerrain_Normals(L"Terrain_Normals");
-const render::Handle c_handleTerrain_ViewProjection(L"Terrain_ViewProjection");
 const render::Handle c_handleTerrain_Eye(L"Terrain_Eye");
 const render::Handle c_handleTerrain_WorldOrigin(L"Terrain_WorldOrigin");
 const render::Handle c_handleTerrain_WorldExtent(L"Terrain_WorldExtent");
 const render::Handle c_handleTerrain_PatchExtent(L"Terrain_PatchExtent");
-const render::Handle c_handleTerrain_DebugPatchIndex(L"Terrain_DebugPatchIndex");
+const render::Handle c_handleTerrain_TileTransform(L"Terrain_TileTransform");
 const render::Handle c_handleTerrain_DebugMap(L"Terrain_DebugMap");
 const render::Handle c_handleTerrain_CutEnable(L"Terrain_CutEnable");
 const render::Handle c_handleTerrain_PatchData(L"Terrain_PatchData");
-const render::Handle c_handleTerrain_TargetSize(L"Terrain_TargetSize");
-const render::Handle c_handleTerrain_DrawBuffer(L"Terrain_DrawBuffer");
-const render::Handle c_handleTerrain_CulledDrawBuffer(L"Terrain_CulledDrawBuffer");
 
 const uint32_t c_rtPatchCells = 64;	//!< Number of cells along each side of a ray tracing patch.
 const float c_rtCellSize = 2.0f;	//!< Approximate size of a ray tracing cell, in world units.
 
 const int32_t c_patchLodSteps = 3;
 
-struct CullPatch
-{
-	float error[4];
-	float distance;
-	float area;
-	uint32_t patchId;
-	Vector4 patchOrigin;
-};
-
-typedef std::pair< float, const TerrainComponent::Patch* > cull_patch_t;
+const float c_tileLoadDistance = 640.0f;	//!< Tiles within this distance from camera are loaded.
+const float c_tileUnloadDistance = 768.0f;	//!< Tiles beyond this distance from camera are unloaded.
 
 struct DrawData
 {
@@ -96,6 +86,14 @@ Ref< render::ITexture > create1x1Texture(render::IRenderSystem* renderSystem, co
 	return renderSystem->createSimpleTexture(stcd, T_FILE_LINE_W);
 }
 
+//! Horizontal distance from position to tile's area.
+float distanceToTile(const Vector4& position, const Aabb3& boundingBox)
+{
+	const float dx = std::max(std::max((float)(boundingBox.mn.x() - position.x()), (float)(position.x() - boundingBox.mx.x())), 0.0f);
+	const float dz = std::max(std::max((float)(boundingBox.mn.z() - position.z()), (float)(position.z() - boundingBox.mx.z())), 0.0f);
+	return std::sqrt(dx * dx + dz * dz);
+}
+
 }
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.TerrainComponent", TerrainComponent, world::IEntityComponent)
@@ -111,19 +109,16 @@ bool TerrainComponent::create(const TerrainComponentData& data)
 	if (!m_resourceManager->bind(data.getTerrain(), m_terrain))
 		return false;
 
-	if (!m_resourceManager->bind(c_shaderCull, m_shaderCull))
+	if (!createGeometry())
+		return false;
+	if (!createTiles())
 		return false;
 
-	m_heightfield = m_terrain->getHeightfield();
-
-	if (!createPatches())
-		return false;
-	if (!createRayTracingPatches())
-		return false;
+	// Ray tracing patches are created as surface cache is created.
+	m_terrain.consume();
 
 	m_defaultColorMap = create1x1Texture(m_renderSystem, Color4ub(128, 128, 128, 128));
 	m_defaultCutMap = create1x1Texture(m_renderSystem, Color4ub(0, 0, 0, 0));
-
 	return true;
 }
 
@@ -139,36 +134,722 @@ void TerrainComponent::setup(
 	if (!validate(viewIndex, cacheSize))
 		return;
 
-	const Vector4& worldExtent = m_heightfield->getWorldExtent();
-
-	const Matrix44 viewInv = worldRenderView.getView().inverse();
-	const Matrix44 viewProj = worldRenderView.getProjection() * worldRenderView.getView();
-	const Vector4 eyePosition = worldRenderView.getEyePosition();
-	const Vector4 eyeDirection = worldRenderView.getEyeDirection();
-
-	const Vector4 patchExtent(worldExtent.x() / float(m_patchCount), worldExtent.y(), worldExtent.z() / float(m_patchCount), 0.0f);
-	const Vector4 patchDeltaHalf = patchExtent * Vector4(0.5f, 0.5f, 0.5f, 0.0f);
-	const Vector4 patchDeltaX = patchExtent * Vector4(1.0f, 0.0f, 0.0f, 0.0f);
-	const Vector4 patchDeltaZ = patchExtent * Vector4(0.0f, 0.0f, 1.0f, 0.0f);
-	Vector4 patchTopLeft = (-worldExtent * Scalar(0.5f)).xyz1();
+	// Tiles are streamed around primary view, ray tracing patches follow tiles.
+	if (viewIndex == 0 && !snapshot)
+	{
+		updateStreaming(worldRenderView.getEyePosition());
+		updateRayTracingPatches();
+	}
 
 	// Calculate world frustum.
-	const Frustum viewCullFrustum = worldRenderView.getCullFrustum();
-	Frustum worldCullFrustum = viewCullFrustum;
+	const Matrix44 viewInv = worldRenderView.getView().inverse();
+	Frustum worldCullFrustum = worldRenderView.getCullFrustum();
 	for (uint32_t i = 0; i < worldCullFrustum.planes.size(); ++i)
 		worldCullFrustum.planes[i] = viewInv * worldCullFrustum.planes[i];
 
+	for (auto& tile : m_tiles)
+		if (tile.loaded)
+			setupTile(tile, viewIndex, worldRenderView, worldCullFrustum, snapshot);
+	setupTile(m_overview, viewIndex, worldRenderView, worldCullFrustum, snapshot);
+
+	// Update base color texture.
+	if (!snapshot)
+	{
+		const Vector4& worldExtent = m_overview.worldExtent;
+		m_surfaceCache->setupBaseColor(
+			context.getRenderGraph(),
+			m_terrain,
+			-worldExtent * 0.5_simd,
+			worldExtent);
+	}
+}
+
+void TerrainComponent::build(
+	const world::WorldBuildContext& context,
+	const world::WorldRenderView& worldRenderView,
+	const world::IWorldRenderPass& worldRenderPass,
+	float detailDistance,
+	uint32_t cacheSize)
+{
+	const int32_t viewIndex = worldRenderView.getIndex();
+
+	if (!validate(viewIndex, cacheSize))
+		return;
+
+	for (const auto& tile : m_tiles)
+		if (tile.loaded)
+			buildTile(tile, viewIndex, context, worldRenderView, worldRenderPass);
+	buildTile(m_overview, viewIndex, context, worldRenderView, worldRenderPass);
+}
+
+void TerrainComponent::setVisualizeMode(VisualizeMode visualizeMode)
+{
+	m_visualizeMode = visualizeMode;
+}
+
+bool TerrainComponent::queryRay(const Vector4& worldRayOrigin, const Vector4& worldRayDirection, Scalar& outDistance) const
+{
+	bool found = false;
+	outDistance = Scalar(std::numeric_limits< float >::max());
+
+	for (const auto& tile : m_tiles)
+	{
+		const hf::Heightfield* heightfield = tile.resources.heightfield;
+		Scalar distance;
+		if (tile.loaded && heightfield && heightfield->queryRay(worldRayOrigin, worldRayDirection, distance) && distance < outDistance)
+		{
+			outDistance = distance;
+			found = true;
+		}
+	}
+
+	// Overview is only valid where tile isn't loaded.
+	const hf::Heightfield* overviewHeightfield = m_overview.resources.heightfield;
+	Scalar distance;
+	if (overviewHeightfield && overviewHeightfield->queryRay(worldRayOrigin, worldRayDirection, distance) && distance < outDistance)
+	{
+		const Vector4 position = worldRayOrigin + worldRayDirection * distance;
+		for (const auto& tile : m_tiles)
+		{
+			if (
+				!tile.loaded &&
+				position.x() >= tile.boundingBox.mn.x() && position.x() <= tile.boundingBox.mx.x() &&
+				position.z() >= tile.boundingBox.mn.z() && position.z() <= tile.boundingBox.mx.z()
+			)
+			{
+				outDistance = distance;
+				found = true;
+				break;
+			}
+		}
+	}
+
+	return found;
+}
+
+float TerrainComponent::getWorldHeight(float worldX, float worldZ) const
+{
+	const hf::Heightfield* heightfield = getHeightfield(worldX, worldZ);
+	return heightfield ? heightfield->getWorldHeight(worldX, worldZ) : 0.0f;
+}
+
+const hf::Heightfield* TerrainComponent::getTileHeightfield(int32_t tileIndex) const
+{
+	const Tile& tile = m_tiles[tileIndex];
+	return tile.loaded ? tile.resources.heightfield.getResource() : nullptr;
+}
+
+void TerrainComponent::destroy()
+{
+	if (m_loadJob)
+	{
+		m_loadJob->wait();
+		m_loadJob = nullptr;
+		m_loadingTile = -1;
+	}
+
+	for (auto& tile : m_tiles)
+	{
+		safeDestroy(tile.drawBuffer);
+		safeDestroy(tile.dataBuffer);
+	}
+	m_tiles.clear();
+
+	safeDestroy(m_overview.drawBuffer);
+	safeDestroy(m_overview.dataBuffer);
+
+	safeDestroy(m_indexBuffer);
+	safeDestroy(m_vertexBuffer);
+	safeDestroy(m_rtwInstance);
+}
+
+void TerrainComponent::setOwner(world::Entity* owner)
+{
+	m_owner = owner;
+}
+
+void TerrainComponent::setWorld(world::World* world)
+{
+	// Remove from last world.
+	safeDestroy(m_rtwInstance);
+
+	// Add to new world.
+	if (world != nullptr)
+	{
+		T_FATAL_ASSERT(m_rtwInstance == nullptr);
+		world::RTWorldComponent* rtw = world->getComponent< world::RTWorldComponent >();
+		if (rtw != nullptr)
+			m_rtwInstance = rtw->createInstance(m_rtParts, false);
+	}
+
+	m_world = world;
+}
+
+void TerrainComponent::setTransform(const Transform& transform)
+{
+}
+
+Aabb3 TerrainComponent::getBoundingBox() const
+{
+	const Vector4& worldExtent = m_overview.worldExtent;
+	return Aabb3(-worldExtent, worldExtent);
+}
+
+void TerrainComponent::update(const world::UpdateParams& update)
+{
+}
+
+bool TerrainComponent::validate(int32_t viewIndex, uint32_t cacheSize)
+{
+	const bool cacheSizeChange = (m_surfaceCache == nullptr) || (cacheSize != m_cacheSize);
+	if (cacheSizeChange)
+	{
+		safeDestroy(m_surfaceCache);
+
+		m_surfaceCache = new TerrainSurfaceCache();
+		if (!m_surfaceCache->create(m_resourceManager, m_renderSystem, cacheSize))
+		{
+			m_surfaceCache = nullptr;
+			return false;
+		}
+
+		m_cacheSize = cacheSize;
+	}
+
+	if (m_terrain.changed())
+	{
+		m_terrain.consume();
+
+		if (!createGeometry())
+			return false;
+		if (!createTiles())
+			return false;
+	}
+	else if (!cacheSizeChange)
+		return true;
+
+	// Ray tracing patches reference base color of surface cache.
+	return createRayTracingPatches();
+}
+
+bool TerrainComponent::createGeometry()
+{
+	safeDestroy(m_indexBuffer);
+	safeDestroy(m_vertexBuffer);
+
+	const uint32_t patchDim = m_terrain->getPatchDim();
+	const uint32_t patchVertexCount = patchDim * patchDim;
+
+	AlignedVector< render::VertexElement > vertexElements;
+	vertexElements.push_back(render::VertexElement(render::DataUsage::Position, render::DtFloat2, 0));
+	const uint32_t vertexSize = render::getVertexSize(vertexElements);
+
+	m_vertexBuffer = m_renderSystem->createBuffer(
+		render::BuVertex,
+		patchVertexCount * vertexSize,
+		false,
+		T_FILE_LINE_W);
+	if (!m_vertexBuffer)
+		return false;
+
+	float* vertex = static_cast< float* >(m_vertexBuffer->lock());
+	T_ASSERT_M(vertex, L"Unable to lock vertex buffer");
+
+	for (uint32_t z = 0; z < patchDim; ++z)
+	{
+		for (uint32_t x = 0; x < patchDim; ++x)
+		{
+			*vertex++ = float(x) / (patchDim - 1);
+			*vertex++ = float(z) / (patchDim - 1);
+		}
+	}
+
+	m_vertexBuffer->unlock();
+
+	m_vertexLayout = m_renderSystem->createVertexLayout(vertexElements);
+
+	AlignedVector< uint32_t > indices;
+	for (uint32_t lod = 0; lod < LodCount; ++lod)
+	{
+		const size_t indexOffset = indices.size();
+		const uint32_t lodSkip = 1 << lod;
+
+		for (uint32_t y = 0; y < patchDim - 1; y += lodSkip)
+		{
+			const uint32_t offset = y * patchDim;
+			for (uint32_t x = 0; x < patchDim - 1; x += lodSkip)
+			{
+				if (lod > 0 && (x == 0 || y == 0 || x == patchDim - 1 - lodSkip || y == patchDim - 1 - lodSkip))
+				{
+					const int mid = x + offset + (lodSkip >> 1) + (lodSkip >> 1) * patchDim;
+
+					if (x == 0)
+					{
+						indices.push_back(mid);
+						indices.push_back(lodSkip + offset);
+						indices.push_back(lodSkip + offset + lodSkip * patchDim);
+
+						for (uint32_t i = 0; i < lodSkip; ++i)
+						{
+							indices.push_back(mid);
+							indices.push_back(offset + i * patchDim + patchDim);
+							indices.push_back(offset + i * patchDim);
+						}
+					}
+					else if (x == patchDim - 1 - lodSkip)
+					{
+						indices.push_back(mid);
+						indices.push_back(x + offset + lodSkip * patchDim);
+						indices.push_back(x + offset);
+
+						for (uint32_t i = 0; i < lodSkip; ++i)
+						{
+							indices.push_back(mid);
+							indices.push_back(x + offset + i * patchDim + lodSkip);
+							indices.push_back(x + offset + i * patchDim + lodSkip + patchDim);
+						}
+					}
+					else
+					{
+						indices.push_back(mid);
+						indices.push_back(x + offset + lodSkip * patchDim);
+						indices.push_back(x + offset);
+
+						indices.push_back(mid);
+						indices.push_back(x + offset + lodSkip);
+						indices.push_back(x + offset + lodSkip + lodSkip * patchDim);
+					}
+
+					if (y == 0)
+					{
+						indices.push_back(mid);
+						indices.push_back(x + lodSkip * patchDim + offset + lodSkip);
+						indices.push_back(x + lodSkip * patchDim + offset);
+
+						for (uint32_t i = 0; i < lodSkip; ++i)
+						{
+							indices.push_back(mid);
+							indices.push_back(x + offset + i);
+							indices.push_back(x + offset + i + 1);
+						}
+					}
+					else if (y == patchDim - 1 - lodSkip)
+					{
+						indices.push_back(mid);
+						indices.push_back(x + offset);
+						indices.push_back(x + offset + lodSkip);
+
+						for (uint32_t i = 0; i < lodSkip; ++i)
+						{
+							indices.push_back(mid);
+							indices.push_back(x + offset + i + lodSkip * patchDim + 1);
+							indices.push_back(x + offset + i + lodSkip * patchDim);
+						}
+					}
+					else
+					{
+						indices.push_back(mid);
+						indices.push_back(x + offset);
+						indices.push_back(x + offset + lodSkip);
+
+						indices.push_back(mid);
+						indices.push_back(x + offset + lodSkip * patchDim + lodSkip);
+						indices.push_back(x + offset + lodSkip * patchDim);
+					}
+				}
+				else
+				{
+					indices.push_back(x + offset);
+					indices.push_back(lodSkip + x + offset);
+					indices.push_back(lodSkip * patchDim + x + offset);
+
+					indices.push_back(lodSkip + x + offset);
+					indices.push_back(lodSkip * patchDim + lodSkip + x + offset);
+					indices.push_back(lodSkip * patchDim + x + offset);
+				}
+			}
+		}
+
+		const size_t indexEndOffset = indices.size();
+		T_ASSERT((indexEndOffset - indexOffset) % 3 == 0);
+
+		m_primitives[lod] = render::Primitives::setIndexed(
+			render::PrimitiveType::Triangles,
+			(uint32_t)indexOffset,
+			(uint32_t)(indexEndOffset - indexOffset) / 3);
+	}
+
+	m_indexBuffer = m_renderSystem->createBuffer(
+		render::BuIndex,
+		(uint32_t)indices.size() * sizeof(uint32_t),
+		false,
+		T_FILE_LINE_W);
+	if (!m_indexBuffer)
+		return false;
+
+	uint32_t* index = static_cast< uint32_t* >(m_indexBuffer->lock());
+	T_ASSERT_M(index, L"Unable to lock index buffer");
+
+	for (uint32_t i = 0; i < uint32_t(indices.size()); ++i)
+		index[i] = indices[i];
+
+	m_indexBuffer->unlock();
+
+	return true;
+}
+
+bool TerrainComponent::createTiles()
+{
+	// Tile being loaded is about to be replaced.
+	if (m_loadJob)
+	{
+		m_loadJob->wait();
+		m_loadJob = nullptr;
+		m_loadingTile = -1;
+	}
+
+	for (auto& tile : m_tiles)
+	{
+		safeDestroy(tile.drawBuffer);
+		safeDestroy(tile.dataBuffer);
+	}
+	m_tiles.clear();
+
+	safeDestroy(m_overview.drawBuffer);
+	safeDestroy(m_overview.dataBuffer);
+	m_overview = Tile();
+
+	m_primed = false;
+
+	const Terrain* terrain = m_terrain;
+	const hf::Heightfield* overviewHeightfield = terrain->getOverview().heightfield;
+	if (!overviewHeightfield || terrain->getTileCount() <= 0 || terrain->getTileSize() <= 0)
+	{
+		log::error << L"Unable to create terrain; no tiles, terrain need to be rebuilt." << Endl;
+		return false;
+	}
+
+	const int32_t cellsPerPatch = (terrain->getPatchDim() - 1) * terrain->getDetailSkip();
+	const int32_t tileCount = terrain->getTileCount();
+	const int32_t tileSize = terrain->getTileSize();
+	const Vector4 worldExtent = overviewHeightfield->getWorldExtent();
+	const float cellSizeX = worldExtent.x() / (tileSize * tileCount);
+	const float cellSizeZ = worldExtent.z() / (tileSize * tileCount);
+	const float tileSizeX = tileSize * cellSizeX;
+	const float tileSizeZ = tileSize * cellSizeZ;
+
+	// Tile maps cover its samples and the seam, first patch vertex at first sample.
+	m_tiles.resize(tileCount * tileCount);
+	for (int32_t tz = 0; tz < tileCount; ++tz)
+	{
+		for (int32_t tx = 0; tx < tileCount; ++tx)
+		{
+			Tile& tile = m_tiles[tx + tz * tileCount];
+			const float x0 = -worldExtent.x() * 0.5f + tx * tileSizeX;
+			const float z0 = -worldExtent.z() * 0.5f + tz * tileSizeZ;
+			tile.worldOrigin = Vector4(x0, -worldExtent.y() * 0.5f, z0, 0.0f);
+			tile.worldExtent = Vector4((tileSize + 1) * cellSizeX, worldExtent.y(), (tileSize + 1) * cellSizeZ, 0.0f);
+			tile.patchOrigin = Vector4(x0 + cellSizeX * 0.5f, -worldExtent.y() * 0.5f, z0 + cellSizeZ * 0.5f, 1.0f);
+			tile.patchExtent = Vector4(cellsPerPatch * cellSizeX, worldExtent.y(), cellsPerPatch * cellSizeZ, 0.0f);
+			tile.boundingBox = Aabb3(
+				Vector4(x0, -worldExtent.y() * 0.5f, z0, 1.0f),
+				Vector4(x0 + tileSizeX, worldExtent.y() * 0.5f, z0 + tileSizeZ, 1.0f));
+			tile.patchCount = std::max(tileSize / cellsPerPatch, 1);
+		}
+	}
+
+	// Overview patches are about as dense as overview's samples, each patch belong to a single tile.
+	const float overviewCellSize = worldExtent.x() / overviewHeightfield->getSize();
+	const int32_t overviewPatchesPerTile = std::max((int32_t)(tileSizeX / (overviewCellSize * cellsPerPatch) + 0.5f), 1);
+
+	m_overview.resources = terrain->getOverview();
+	m_overview.worldOrigin = (-worldExtent * 0.5_simd).xyz0();
+	m_overview.worldExtent = worldExtent;
+	m_overview.patchOrigin = Vector4(-worldExtent.x() * 0.5f + cellSizeX * 0.5f, -worldExtent.y() * 0.5f, -worldExtent.z() * 0.5f + cellSizeZ * 0.5f, 1.0f);
+	m_overview.patchExtent = Vector4(tileSizeX / overviewPatchesPerTile, worldExtent.y(), tileSizeZ / overviewPatchesPerTile, 0.0f);
+	m_overview.patchCount = tileCount * overviewPatchesPerTile;
+	m_overview.boundingBox = Aabb3(-worldExtent * 0.5_simd, worldExtent * 0.5_simd);
+	m_overview.loaded = true;
+
+	m_overview.patchTiles.resize(m_overview.patchCount * m_overview.patchCount);
+	for (int32_t pz = 0; pz < m_overview.patchCount; ++pz)
+		for (int32_t px = 0; px < m_overview.patchCount; ++px)
+			m_overview.patchTiles[px + pz * m_overview.patchCount] = (px / overviewPatchesPerTile) + (pz / overviewPatchesPerTile) * tileCount;
+
+	float gridX, gridZ;
+	overviewHeightfield->worldToGrid(m_overview.patchOrigin.x(), m_overview.patchOrigin.z(), gridX, gridZ);
+	updatePatches(m_overview, overviewHeightfield, gridX, gridZ, m_overview.patchExtent.x() / overviewCellSize, nullptr);
+
+	return createTileBuffers(m_overview);
+}
+
+bool TerrainComponent::createTileBuffers(Tile& tile)
+{
+	const uint32_t patchCount = tile.patchCount * tile.patchCount;
+
+	for (auto& view : tile.view)
+		view.viewPatches.resize(patchCount);
+
+	// Buffers are kept when tile is unloaded since they might still be in flight.
+	if (tile.drawBuffer)
+		return true;
+
+	const uint32_t alignedPatchCount = alignUp(patchCount, 16);
+
+	tile.drawBuffer = m_renderSystem->createBuffer(
+		render::BuStructured | render::BuIndirect,
+		alignedPatchCount * sizeof(render::IndexedIndirectDraw),
+		true,
+		T_FILE_LINE_W);
+	if (!tile.drawBuffer)
+		return false;
+
+	tile.dataBuffer = m_renderSystem->createBuffer(
+		render::BuStructured,
+		alignedPatchCount * sizeof(DrawData),
+		true,
+		T_FILE_LINE_W);
+	if (!tile.dataBuffer)
+		return false;
+
+	return true;
+}
+
+void TerrainComponent::updatePatches(Tile& tile, const hf::Heightfield* heightfield, float gridX, float gridZ, float gridSize, const int32_t* region)
+{
+	const uint32_t patchDim = m_terrain->getPatchDim();
+	const int32_t patchCount = tile.patchCount;
+
+	tile.patches.resize(patchCount * patchCount);
+
+	const int32_t mnx = region ? clamp(region[0], 0, patchCount - 1) : 0;
+	const int32_t mnz = region ? clamp(region[1], 0, patchCount - 1) : 0;
+	const int32_t mxx = region ? clamp(region[2], 0, patchCount - 1) : patchCount - 1;
+	const int32_t mxz = region ? clamp(region[3], 0, patchCount - 1) : patchCount - 1;
+
+	for (int32_t pz = mnz; pz <= mxz; ++pz)
+	{
+		for (int32_t px = mnx; px <= mxx; ++px)
+		{
+			const float gx = gridX + px * gridSize;
+			const float gz = gridZ + pz * gridSize;
+
+			float heights[2];
+			float errors[LodCount - 1];
+			calculatePatchMinMaxHeight(heightfield, gx, gz, gridSize, heights);
+			calculatePatchErrorMetrics(heightfield, LodCount, gx, gz, gridSize, patchDim, errors);
+
+			Patch& patch = tile.patches[px + pz * patchCount];
+			patch.minHeight = heights[0];
+			patch.maxHeight = heights[1];
+			patch.error[0] = 0.0f;
+			for (int32_t i = 1; i < LodCount; ++i)
+				patch.error[i] = errors[i - 1];
+		}
+	}
+}
+
+void TerrainComponent::loadTile(int32_t tileIndex)
+{
+	Tile& tile = m_tiles[tileIndex];
+	if (!m_terrain->bindTile(m_resourceManager, tileIndex, tile.resources))
+	{
+		log::error << L"Unable to load terrain tile " << tileIndex << L"." << Endl;
+		tile.failed = true;
+		return;
+	}
+
+	const float cellsPerPatch = (float)((m_terrain->getPatchDim() - 1) * m_terrain->getDetailSkip());
+	updatePatches(tile, tile.resources.heightfield, 0.0f, 0.0f, cellsPerPatch, nullptr);
+}
+
+void TerrainComponent::unloadTile(Tile& tile)
+{
+	tile.resources = Terrain::TileResources();
+	tile.patches.clear();
+	tile.loaded = false;
+	tile.revision = ++m_revision;
+}
+
+void TerrainComponent::updateStreaming(const Vector4& eyePosition)
+{
+	// Tiles initially in range are loaded immediately, as if they were part of terrain.
+	if (!m_primed)
+	{
+		for (int32_t i = 0; i < (int32_t)m_tiles.size(); ++i)
+		{
+			Tile& tile = m_tiles[i];
+			if (tile.loaded || tile.failed || tile.pinned || distanceToTile(eyePosition, tile.boundingBox) >= c_tileLoadDistance)
+				continue;
+
+			loadTile(i);
+			tile.loaded = !tile.patches.empty() && createTileBuffers(tile);
+			tile.revision = ++m_revision;
+		}
+		m_primed = true;
+		return;
+	}
+
+	// Finish loading tile, or discard it if no longer wanted.
+	if (m_loadJob && m_loadJob->wait(0))
+	{
+		Tile& tile = m_tiles[m_loadingTile];
+		if (!tile.pinned)
+		{
+			if (!tile.patches.empty() && distanceToTile(eyePosition, tile.boundingBox) <= c_tileUnloadDistance && createTileBuffers(tile))
+			{
+				tile.loaded = true;
+				tile.revision = ++m_revision;
+			}
+			else
+				unloadTile(tile);
+		}
+		m_loadJob = nullptr;
+		m_loadingTile = -1;
+	}
+
+	// Unload tiles beyond unload distance and find nearest tile to load.
+	float nearestDistance = c_tileLoadDistance;
+	int32_t nearestTile = -1;
+	int32_t unloadCount = 0;
+
+	for (int32_t i = 0; i < (int32_t)m_tiles.size(); ++i)
+	{
+		Tile& tile = m_tiles[i];
+		if (tile.failed || tile.pinned || i == m_loadingTile)
+			continue;
+
+		const float distance = distanceToTile(eyePosition, tile.boundingBox);
+		if (tile.loaded)
+		{
+			if (distance > c_tileUnloadDistance)
+			{
+				unloadTile(tile);
+				++unloadCount;
+			}
+		}
+		else if (distance < nearestDistance)
+		{
+			nearestDistance = distance;
+			nearestTile = i;
+		}
+	}
+
+	// Load one tile at a time in background.
+	if (!m_loadJob && nearestTile >= 0)
+	{
+		m_loadingTile = nearestTile;
+		m_loadJob = JobManager::getInstance().add([this, nearestTile]() {
+			loadTile(nearestTile);
+		});
+	}
+
+	// Release resources of unloaded tiles.
+	if (unloadCount > 0)
+		m_resourceManager->unloadUnusedResident();
+}
+
+void TerrainComponent::editTile(int32_t tileIndex, render::ITexture* heightMap, render::ITexture* normalMap, render::ITexture* splatMap, render::ITexture* colorMap, render::ITexture* cutMap)
+{
+	// Tile being loaded would overwrite edited maps.
+	if (m_loadJob && m_loadingTile == tileIndex)
+	{
+		m_loadJob->wait();
+		m_loadJob = nullptr;
+		m_loadingTile = -1;
+	}
+
+	Tile& tile = m_tiles[tileIndex];
+
+	// Edited tile's heightfield is used to calculate it's patches.
+	if (!tile.resources.heightfield)
+	{
+		Terrain::TileResources resources;
+		if (m_terrain->bindTile(m_resourceManager, tileIndex, resources))
+			tile.resources.heightfield = resources.heightfield;
+	}
+
+	tile.resources.heightMap = resource::Proxy< render::ITexture >(heightMap);
+	tile.resources.normalMap = resource::Proxy< render::ITexture >(normalMap);
+	tile.resources.splatMap = resource::Proxy< render::ITexture >(splatMap);
+	tile.resources.colorMap = resource::Proxy< render::ITexture >(colorMap);
+	tile.resources.cutMap = resource::Proxy< render::ITexture >(cutMap);
+	tile.pinned = true;
+	tile.failed = false;
+
+	updateTilePatches(tileIndex, nullptr);
+	tile.loaded = !tile.patches.empty() && createTileBuffers(tile);
+	tile.revision = ++m_revision;
+}
+
+void TerrainComponent::updateTilePatches(int32_t tileIndex, const int32_t* gridRegion)
+{
+	Tile& tile = m_tiles[tileIndex];
+
+	const hf::Heightfield* heightfield = tile.resources.heightfield;
+	if (!heightfield)
+		return;
+
+	const int32_t tileCount = m_terrain->getTileCount();
+	const int32_t tileSize = m_terrain->getTileSize();
+	const int32_t cellsPerPatch = (m_terrain->getPatchDim() - 1) * m_terrain->getDetailSkip();
+	const int32_t gridX = (tileIndex % tileCount) * tileSize;
+	const int32_t gridZ = (tileIndex / tileCount) * tileSize;
+
+	// Samples on patch borders belong to both patches.
+	if (gridRegion)
+	{
+		const int32_t region[] = {
+			(gridRegion[0] - gridX - 1) / cellsPerPatch,
+			(gridRegion[1] - gridZ - 1) / cellsPerPatch,
+			(gridRegion[2] - gridX) / cellsPerPatch,
+			(gridRegion[3] - gridZ) / cellsPerPatch
+		};
+		updatePatches(tile, heightfield, 0.0f, 0.0f, (float)cellsPerPatch, region);
+	}
+	else
+		updatePatches(tile, heightfield, 0.0f, 0.0f, (float)cellsPerPatch, nullptr);
+
+	tile.revision = ++m_revision;
+}
+
+void TerrainComponent::setupTile(Tile& tile, int32_t viewIndex, const world::WorldRenderView& worldRenderView, const Frustum& worldCullFrustum, bool snapshot)
+{
+	View& view = tile.view[viewIndex];
+
+	const Vector4& worldExtent = m_overview.worldExtent;
+	const Matrix44 viewProj = worldRenderView.getProjection() * worldRenderView.getView();
+	const Vector4 eyePosition = worldRenderView.getEyePosition();
+	const Frustum viewCullFrustum = worldRenderView.getCullFrustum();
+
+	const Vector4 patchExtent = tile.patchExtent;
+	const Vector4 patchDeltaHalf = patchExtent * Vector4(0.5f, 0.5f, 0.5f, 0.0f);
+	const Vector4 patchDeltaX = patchExtent * Vector4(1.0f, 0.0f, 0.0f, 0.0f);
+	const Vector4 patchDeltaZ = patchExtent * Vector4(0.0f, 0.0f, 1.0f, 0.0f);
+	Vector4 patchTopLeft = tile.patchOrigin;
+
 	// Cull patches to world frustum.
-	AlignedVector< CullPatch >& visiblePatches = m_view[viewIndex].visiblePatches;
+	AlignedVector< CullPatch >& visiblePatches = view.visiblePatches;
 	visiblePatches.resize(0);
-	for (uint32_t pz = 0; pz < m_patchCount; ++pz)
+
+	for (int32_t pz = 0; pz < tile.patchCount; ++pz)
 	{
 		Vector4 patchOrigin = patchTopLeft;
-		for (uint32_t px = 0; px < m_patchCount; ++px)
+		for (int32_t px = 0; px < tile.patchCount; ++px)
 		{
-			const uint32_t patchId = px + pz * m_patchCount;
+			const uint32_t patchId = px + pz * tile.patchCount;
+			ViewPatch& viewPatch = view.viewPatches[patchId];
 
-			const Patch& patch = m_patches[patchId];
+			// Overview patches are only rendered where tile isn't loaded.
+			if (!tile.patchTiles.empty() && m_tiles[tile.patchTiles[patchId]].loaded)
+			{
+				viewPatch.lastPatchLod = c_patchLodSteps;
+				patchOrigin += patchDeltaX;
+				continue;
+			}
+
+			const Patch& patch = tile.patches[patchId];
+
 			const Vector4 patchCenterWorld = (patchOrigin + patchDeltaHalf) * Vector4(1.0f, 0.0f, 1.0f, 0.0f) + Vector4(0.0f, (patch.minHeight + patch.maxHeight) * 0.5f, 0.0f, 1.0f);
 
 			const Aabb3 patchAabb(
@@ -178,6 +859,7 @@ void TerrainComponent::setup(
 			if (worldCullFrustum.inside(patchAabb) != Frustum::Result::Outside)
 			{
 				const Scalar lodDistance = (patchCenterWorld - eyePosition).xyz0().length();
+
 				const Vector4 patchCenterWorld_x0zw = patchCenterWorld * Vector4(1.0f, 0.0f, 1.0f, 1.0f);
 				const Vector4 eyePosition_0y00 = Vector4(0.0f, eyePosition.y(), 0.0f, 0.0f);
 
@@ -264,10 +946,7 @@ void TerrainComponent::setup(
 				visiblePatches.push_back(cp);
 			}
 			else
-			{
-				ViewPatch& viewPatch = m_view[viewIndex].viewPatches[patchId];
 				viewPatch.lastPatchLod = c_patchLodSteps;
-			}
 
 			patchOrigin += patchDeltaX;
 		}
@@ -280,17 +959,13 @@ void TerrainComponent::setup(
 	});
 
 	for (uint32_t i = 0; i < LodCount; ++i)
-		m_view[viewIndex].patchLodInstances[i].resize(0);
+		view.patchLodInstances[i].resize(0);
 
-	// Update all patch surfaces.
+	// Find patch lod based on screen space error.
 	for (const auto& visiblePatch : visiblePatches)
 	{
-		const Patch& patch = m_patches[visiblePatch.patchId];
-		const Vector4& patchOrigin = visiblePatch.patchOrigin;
+		ViewPatch& viewPatch = view.viewPatches[visiblePatch.patchId];
 
-		ViewPatch& viewPatch = m_view[viewIndex].viewPatches[visiblePatch.patchId];
-
-		// Find patch lod based on screen space error.
 		int32_t patchLod = 0;
 		for (int32_t j = 3; j > 0; --j)
 		{
@@ -304,83 +979,64 @@ void TerrainComponent::setup(
 		viewPatch.lastPatchLod = patchLod;
 		viewPatch.surfaceOffset = Vector4::zero();
 
-		// Queue patch instance.
-		m_view[viewIndex].patchLodInstances[patchLod].push_back(&visiblePatch);
+		view.patchLodInstances[patchLod].push_back(&visiblePatch);
 	}
 
-	// Update base color texture.
-	if (!snapshot)
-		m_surfaceCache->setupBaseColor(
-			context.getRenderGraph(),
-			m_terrain,
-			-worldExtent * 0.5_simd,
-			worldExtent);
-
-	// Update indirect draw buffers; do this only once per frame
-	// since all draws are the same for other passes.
-	{
-		auto draw = (render::IndexedIndirectDraw*)m_drawBuffer->lock();
-		auto data = (DrawData*)m_dataBuffer->lock();
-
-		for (const auto& visiblePatch : m_view[viewIndex].visiblePatches)
-		{
-			const Patch& patch = m_patches[visiblePatch.patchId];
-			const Vector4& patchOrigin = visiblePatch.patchOrigin;
-
-			ViewPatch& viewPatch = m_view[viewIndex].viewPatches[visiblePatch.patchId];
-
-			const auto& p = m_primitives[viewPatch.lastPatchLod];
-
-			draw->indexCount = p.getVertexCount();
-			draw->instanceCount = 1;
-			draw->firstIndex = p.offset;
-			draw->vertexOffset = 0;
-			draw->firstInstance = 0;
-			draw++;
-
-			patchOrigin.storeUnaligned(data->patchOrigin);
-			if (!snapshot)
-				viewPatch.surfaceOffset.storeUnaligned(data->surfaceOffset);
-			else
-			{
-				const Vector4 snapshotOffset(
-					patchOrigin.x() / worldExtent.x() + 0.5f,
-					patchOrigin.z() / worldExtent.z() + 0.5f,
-					patchExtent.x() / worldExtent.x(),
-					patchExtent.z() / worldExtent.z());
-				snapshotOffset.storeUnaligned(data->surfaceOffset);
-			}
-
-			visiblePatch.patchAabb.mn.storeAligned(data->patchBoundingBoxMn);
-			visiblePatch.patchAabb.mx.storeAligned(data->patchBoundingBoxMx);
-
-			data++;
-		}
-
-		m_drawBuffer->unlock();
-		m_dataBuffer->unlock();
-	}
-}
-
-void TerrainComponent::build(
-	const world::WorldBuildContext& context,
-	const world::WorldRenderView& worldRenderView,
-	const world::IWorldRenderPass& worldRenderPass,
-	float detailDistance,
-	uint32_t cacheSize)
-{
-	const int32_t viewIndex = worldRenderView.getIndex();
-	const bool snapshot = worldRenderView.getSnapshot();
-
-	if (!validate(viewIndex, cacheSize))
+	if (visiblePatches.empty())
 		return;
 
+	// Update indirect draw buffers.
+	auto draw = (render::IndexedIndirectDraw*)tile.drawBuffer->lock();
+	auto data = (DrawData*)tile.dataBuffer->lock();
+
+	for (const auto& visiblePatch : visiblePatches)
+	{
+		const Vector4& patchOrigin = visiblePatch.patchOrigin;
+		const ViewPatch& viewPatch = view.viewPatches[visiblePatch.patchId];
+
+		const auto& p = m_primitives[viewPatch.lastPatchLod];
+		draw->indexCount = p.getVertexCount();
+		draw->instanceCount = 1;
+		draw->firstIndex = p.offset;
+		draw->vertexOffset = 0;
+		draw->firstInstance = 0;
+		draw++;
+
+		patchOrigin.storeUnaligned(data->patchOrigin);
+
+		if (!snapshot)
+			viewPatch.surfaceOffset.storeUnaligned(data->surfaceOffset);
+		else
+		{
+			const Vector4 snapshotOffset(
+				patchOrigin.x() / worldExtent.x() + 0.5f,
+				patchOrigin.z() / worldExtent.z() + 0.5f,
+				patchExtent.x() / worldExtent.x(),
+				patchExtent.z() / worldExtent.z());
+			snapshotOffset.storeUnaligned(data->surfaceOffset);
+		}
+
+		visiblePatch.patchAabb.mn.storeAligned(data->patchBoundingBoxMn);
+		visiblePatch.patchAabb.mx.storeAligned(data->patchBoundingBoxMx);
+		data++;
+	}
+
+	tile.drawBuffer->unlock();
+	tile.dataBuffer->unlock();
+}
+
+void TerrainComponent::buildTile(const Tile& tile, int32_t viewIndex, const world::WorldBuildContext& context, const world::WorldRenderView& worldRenderView, const world::IWorldRenderPass& worldRenderPass)
+{
+	const View& view = tile.view[viewIndex];
+	if (view.visiblePatches.empty())
+		return;
+
+	render::ITexture* cutMap = tile.resources.cutMap;
+	render::ITexture* colorMap = tile.resources.colorMap;
+
 	render::Shader* shader = m_terrain->getTerrainShader();
-
 	auto perm = worldRenderPass.getPermutation(shader);
-
-	shader->setCombination(c_handleTerrain_CutEnable, m_terrain->getCutMap(), perm);
-
+	shader->setCombination(c_handleTerrain_CutEnable, cutMap != nullptr && cutMap->getSize().x > 1, perm);
 	if (m_visualizeMode == VmPatchLod)
 		shader->setCombination(c_handleTerrain_VisualizeLods, true, perm);
 	else if (m_visualizeMode >= VmColorMap && m_visualizeMode <= VmCutMap)
@@ -390,440 +1046,101 @@ void TerrainComponent::build(
 	if (!program)
 		return;
 
-	const Vector4& worldExtent = m_heightfield->getWorldExtent();
-	const Vector4 eyePosition = worldRenderView.getEyePosition();
-	const Vector4 patchExtent(worldExtent.x() / float(m_patchCount), worldExtent.y(), worldExtent.z() / float(m_patchCount), 0.0f);
-
 	render::RenderContext* renderContext = context.getRenderContext();
 
-	// Cull draw buffer to HiZ target; only deferred renderer using HiZ culling.
-	if (!snapshot && worldRenderPass.getTechnique() == world::ShaderTechnique::DeferredGBufferWrite)
+	// Render all visible patches using indirect draw.
+	auto rb = renderContext->allocNamed< render::IndirectRenderBlock >(L"Terrain patches");
+	rb->distance = 10000.0f;
+	rb->program = program;
+	rb->programParams = renderContext->alloc< render::ProgramParameters >();
+	rb->indexBuffer = m_indexBuffer->getBufferView();
+	rb->indexType = render::IndexType::UInt32;
+	rb->vertexBuffer = m_vertexBuffer->getBufferView();
+	rb->vertexLayout = m_vertexLayout;
+	rb->primitive = render::PrimitiveType::Triangles;
+	rb->drawBuffer = tile.drawBuffer->getBufferView();
+	rb->drawCount = (uint32_t)view.visiblePatches.size();
+
+	rb->programParams->beginParameters(renderContext);
+
+	rb->programParams->setTextureParameter(c_handleTerrain_Heightfield, tile.resources.heightMap);
+	rb->programParams->setTextureParameter(c_handleTerrain_SurfaceAlbedo, m_surfaceCache->getBaseTexture());
+	rb->programParams->setTextureParameter(c_handleTerrain_ColorMap, colorMap ? colorMap : m_defaultColorMap.ptr());
+	rb->programParams->setTextureParameter(c_handleTerrain_Normals, tile.resources.normalMap);
+	rb->programParams->setTextureParameter(c_handleTerrain_SplatMap, tile.resources.splatMap);
+	rb->programParams->setTextureParameter(c_handleTerrain_CutMap, cutMap ? cutMap : m_defaultCutMap.ptr());
+	rb->programParams->setVectorParameter(c_handleTerrain_Eye, worldRenderView.getEyePosition());
+	rb->programParams->setVectorParameter(c_handleTerrain_WorldOrigin, tile.worldOrigin);
+	rb->programParams->setVectorParameter(c_handleTerrain_WorldExtent, tile.worldExtent);
+	rb->programParams->setVectorParameter(c_handleTerrain_PatchExtent, tile.patchExtent);
+
+	// Scale and offset from tile texture coordinates into terrain texture coordinates.
+	const Vector4& terrainOrigin = m_overview.worldOrigin;
+	const Vector4& terrainExtent = m_overview.worldExtent;
+	rb->programParams->setVectorParameter(c_handleTerrain_TileTransform, Vector4(
+		tile.worldExtent.x() / terrainExtent.x(),
+		tile.worldExtent.z() / terrainExtent.z(),
+		(tile.worldOrigin.x() - terrainOrigin.x()) / terrainExtent.x(),
+		(tile.worldOrigin.z() - terrainOrigin.z()) / terrainExtent.z()));
+
+	if (m_visualizeMode == VmColorMap)
+		rb->programParams->setTextureParameter(c_handleTerrain_DebugMap, colorMap ? colorMap : m_defaultColorMap.ptr());
+	else if (m_visualizeMode == VmNormalMap)
+		rb->programParams->setTextureParameter(c_handleTerrain_DebugMap, tile.resources.normalMap);
+	else if (m_visualizeMode == VmHeightMap)
+		rb->programParams->setTextureParameter(c_handleTerrain_DebugMap, tile.resources.heightMap);
+	else if (m_visualizeMode == VmSplatMap)
+		rb->programParams->setTextureParameter(c_handleTerrain_DebugMap, tile.resources.splatMap);
+	else if (m_visualizeMode == VmCutMap)
+		rb->programParams->setTextureParameter(c_handleTerrain_DebugMap, cutMap ? cutMap : m_defaultCutMap.ptr());
+
+	worldRenderPass.setProgramParameters(rb->programParams);
+
+	rb->programParams->setBufferViewParameter(c_handleTerrain_PatchData, tile.dataBuffer->getBufferView());
+	rb->programParams->endParameters(renderContext);
+
+	renderContext->draw(render::RenderPriority::Opaque, rb);
+}
+
+const hf::Heightfield* TerrainComponent::getHeightfield(float worldX, float worldZ) const
+{
+	const int32_t tileCount = m_terrain->getTileCount();
+	if ((int32_t)m_tiles.size() == tileCount * tileCount)
 	{
-		const Vector2 viewSize = worldRenderView.getViewSize();
-
-		auto renderBlock = renderContext->allocNamed< render::ComputeRenderBlock >(L"Terrain cull");
-
-		renderBlock->program = m_shaderCull->getProgram().program;
-
-		renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
-		renderBlock->programParams->beginParameters(renderContext);
-
-		worldRenderPass.setProgramParameters(renderBlock->programParams);
-
-		renderBlock->programParams->setVectorParameter(c_handleTerrain_TargetSize, Vector4(viewSize.x, viewSize.y, 0.0f, 0.0f));
-		renderBlock->programParams->setMatrixParameter(c_handleTerrain_ViewProjection, worldRenderView.getProjection() * worldRenderView.getView());
-		renderBlock->programParams->setBufferViewParameter(c_handleTerrain_DrawBuffer, m_drawBuffer->getBufferView());
-		renderBlock->programParams->setBufferViewParameter(c_handleTerrain_CulledDrawBuffer, m_culledDrawBuffer->getBufferView());
-		renderBlock->programParams->setBufferViewParameter(c_handleTerrain_PatchData, m_dataBuffer->getBufferView());
-		renderBlock->programParams->endParameters(renderContext);
-
-		renderBlock->workSize[0] = (int32_t)m_view[viewIndex].visiblePatches.size();
-
-		renderContext->compute(renderBlock);
-		renderContext->compute< render::BarrierRenderBlock >(render::Stage::Compute, render::Stage::Indirect, nullptr, 0);
+		const Vector4& worldExtent = m_overview.worldExtent;
+		const int32_t tx = clamp((int32_t)((worldX / worldExtent.x() + 0.5f) * tileCount), 0, tileCount - 1);
+		const int32_t tz = clamp((int32_t)((worldZ / worldExtent.z() + 0.5f) * tileCount), 0, tileCount - 1);
+		const Tile& tile = m_tiles[tx + tz * tileCount];
+		if (tile.loaded && tile.resources.heightfield)
+			return tile.resources.heightfield;
 	}
-
-	// Render all patches using indirect draw.
-	{
-		auto rb = renderContext->allocNamed< render::IndirectRenderBlock >(L"Terrain patches");
-		rb->distance = 10000.0f;
-		rb->program = program;
-		rb->programParams = renderContext->alloc< render::ProgramParameters >();
-		rb->indexBuffer = m_indexBuffer->getBufferView();
-		rb->indexType = render::IndexType::UInt32;
-		rb->vertexBuffer = m_vertexBuffer->getBufferView();
-		rb->vertexLayout = m_vertexLayout;
-		rb->primitive = render::PrimitiveType::Triangles;
-
-		if (worldRenderPass.getTechnique() == world::ShaderTechnique::DeferredGBufferWrite)
-			rb->drawBuffer = m_culledDrawBuffer->getBufferView();
-		else
-			rb->drawBuffer = m_drawBuffer->getBufferView();
-
-		rb->drawCount = (uint32_t)m_view[viewIndex].visiblePatches.size();
-
-		rb->programParams->beginParameters(renderContext);
-
-		rb->programParams->setTextureParameter(c_handleTerrain_Heightfield, m_terrain->getHeightMap());
-		rb->programParams->setTextureParameter(c_handleTerrain_SurfaceAlbedo, m_surfaceCache->getBaseTexture());
-		rb->programParams->setTextureParameter(c_handleTerrain_ColorMap, m_terrain->getColorMap() ? m_terrain->getColorMap().getResource() : m_defaultColorMap.ptr());
-		rb->programParams->setTextureParameter(c_handleTerrain_Normals, m_terrain->getNormalMap());
-		rb->programParams->setTextureParameter(c_handleTerrain_SplatMap, m_terrain->getSplatMap());
-		rb->programParams->setTextureParameter(c_handleTerrain_CutMap, m_terrain->getCutMap() ? m_terrain->getCutMap().getResource() : m_defaultCutMap.ptr());
-		rb->programParams->setVectorParameter(c_handleTerrain_Eye, eyePosition);
-		rb->programParams->setVectorParameter(c_handleTerrain_WorldOrigin, -worldExtent * Scalar(0.5f));
-		rb->programParams->setVectorParameter(c_handleTerrain_WorldExtent, worldExtent);
-		rb->programParams->setVectorParameter(c_handleTerrain_PatchExtent, patchExtent);
-
-		if (m_visualizeMode == VmColorMap)
-			rb->programParams->setTextureParameter(c_handleTerrain_DebugMap, m_terrain->getColorMap());
-		else if (m_visualizeMode == VmNormalMap)
-			rb->programParams->setTextureParameter(c_handleTerrain_DebugMap, m_terrain->getNormalMap());
-		else if (m_visualizeMode == VmHeightMap)
-			rb->programParams->setTextureParameter(c_handleTerrain_DebugMap, m_terrain->getHeightMap());
-		else if (m_visualizeMode == VmSplatMap)
-			rb->programParams->setTextureParameter(c_handleTerrain_DebugMap, m_terrain->getSplatMap());
-		else if (m_visualizeMode == VmCutMap)
-			rb->programParams->setTextureParameter(c_handleTerrain_DebugMap, m_terrain->getCutMap());
-
-		worldRenderPass.setProgramParameters(rb->programParams);
-
-		rb->programParams->setBufferViewParameter(c_handleTerrain_PatchData, m_dataBuffer->getBufferView());
-		rb->programParams->endParameters(renderContext);
-
-		renderContext->draw(render::RenderPriority::Opaque, rb);
-	}
-}
-
-void TerrainComponent::setVisualizeMode(VisualizeMode visualizeMode)
-{
-	m_visualizeMode = visualizeMode;
-}
-
-void TerrainComponent::destroy()
-{
-	safeDestroy(m_indexBuffer);
-	safeDestroy(m_vertexBuffer);
-	safeDestroy(m_drawBuffer);
-	safeDestroy(m_dataBuffer);
-
-	// for (auto vb : m_rtVertexBuffers)
-	//	vb->destroy();
-	// for (auto va : m_rtPerVertexAttributes)
-	//	va->destroy();
-	// for (auto as : m_rtAS)
-	//	as->destroy();
-
-	// m_rtVertexBuffers.clear();
-	// m_rtPerVertexAttributes.clear();
-	// m_rtAS.clear();
-
-	safeDestroy(m_rtwInstance);
-}
-
-void TerrainComponent::setOwner(world::Entity* owner)
-{
-	m_owner = owner;
-}
-
-void TerrainComponent::setWorld(world::World* world)
-{
-	// Remove from last world.
-	safeDestroy(m_rtwInstance);
-
-	// Add to new world.
-	if (world != nullptr)
-	{
-		T_FATAL_ASSERT(m_rtwInstance == nullptr);
-		world::RTWorldComponent* rtw = world->getComponent< world::RTWorldComponent >();
-		if (rtw != nullptr)
-			m_rtwInstance = rtw->createInstance(m_rtParts, false);
-	}
-
-	m_world = world;
-}
-
-void TerrainComponent::setTransform(const Transform& transform)
-{
-}
-
-Aabb3 TerrainComponent::getBoundingBox() const
-{
-	const Vector4& worldExtent = m_heightfield->getWorldExtent();
-	return Aabb3(-worldExtent, worldExtent);
-}
-
-void TerrainComponent::update(const world::UpdateParams& update)
-{
-}
-
-bool TerrainComponent::validate(int32_t viewIndex, uint32_t cacheSize)
-{
-	const bool cacheSizeChange = (m_surfaceCache == nullptr) || (cacheSize != m_cacheSize);
-
-	if (cacheSizeChange)
-	{
-		safeDestroy(m_surfaceCache);
-		m_surfaceCache = new TerrainSurfaceCache();
-		if (!m_surfaceCache->create(m_resourceManager, m_renderSystem, cacheSize))
-		{
-			m_surfaceCache = nullptr;
-			return false;
-		}
-		m_cacheSize = cacheSize;
-	}
-
-	if (
-		m_terrain.changed() ||
-		m_heightfield.changed() ||
-		cacheSizeChange)
-	{
-		m_heightfield.consume();
-		m_terrain.consume();
-
-		if (!createPatches())
-			return false;
-		if (!createRayTracingPatches())
-			return false;
-	}
-
-	return true;
-}
-
-void TerrainComponent::updatePatches(const uint32_t* region, bool updateErrors)
-{
-	const uint32_t patchDim = m_terrain->getPatchDim();
-	const uint32_t heightfieldSize = m_heightfield->getSize();
-
-	const uint32_t mnx = region ? max< uint32_t >(region[0], 0) : 0;
-	const uint32_t mnz = region ? max< uint32_t >(region[1], 0) : 0;
-	const uint32_t mxx = region ? min< uint32_t >(region[2] + 1, m_patchCount) : m_patchCount;
-	const uint32_t mxz = region ? min< uint32_t >(region[3] + 1, m_patchCount) : m_patchCount;
-
-	for (uint32_t pz = mnz; pz < mxz; ++pz)
-	{
-		for (uint32_t px = mnx; px < mxx; ++px)
-		{
-			const uint32_t patchId = px + pz * m_patchCount;
-
-			if (updateErrors)
-			{
-				const Terrain::Patch& patchData = m_terrain->getPatches()[patchId];
-				Patch& patch = m_patches[patchId];
-				patch.minHeight = patchData.height[0];
-				patch.maxHeight = patchData.height[1];
-				patch.error[0] = 0.0f;
-				patch.error[1] = patchData.error[0];
-				patch.error[2] = patchData.error[1];
-				patch.error[3] = patchData.error[2];
-			}
-		}
-	}
+	return m_overview.resources.heightfield;
 }
 
 void TerrainComponent::updateRayTracingPatches()
 {
-	if (m_renderSystem->supportRayTracing())
-		createRayTracingPatches();
-}
+	if (!m_renderSystem->supportRayTracing() || m_rtTiles.size() != m_tiles.size())
+		return;
 
-bool TerrainComponent::createPatches()
-{
-	m_patches.clear();
-	m_patchCount = 0;
-
-	safeDestroy(m_indexBuffer);
-	safeDestroy(m_vertexBuffer);
-	safeDestroy(m_drawBuffer);
-	safeDestroy(m_culledDrawBuffer);
-	safeDestroy(m_dataBuffer);
-
-	const uint32_t heightfieldSize = m_heightfield->getSize();
-	T_ASSERT(heightfieldSize > 0);
-
-	const uint32_t patchDim = m_terrain->getPatchDim();
-	const uint32_t detailSkip = m_terrain->getDetailSkip();
-
-	const uint32_t patchVertexCount = patchDim * patchDim;
-	m_patchCount = heightfieldSize / (patchDim * detailSkip);
-
-	AlignedVector< render::VertexElement > vertexElements;
-	vertexElements.push_back(render::VertexElement(render::DataUsage::Position, render::DtFloat2, 0));
-	const uint32_t vertexSize = render::getVertexSize(vertexElements);
-
-	m_vertexBuffer = m_renderSystem->createBuffer(
-		render::BuVertex,
-		patchVertexCount * vertexSize,
-		false,
-		T_FILE_LINE_W);
-	if (!m_vertexBuffer)
-		return false;
-
-	float* vertex = static_cast< float* >(m_vertexBuffer->lock());
-	T_ASSERT_M(vertex, L"Unable to lock vertex buffer");
-
-	for (uint32_t z = 0; z < patchDim; ++z)
+	bool changed = false;
+	for (int32_t i = 0; i < (int32_t)m_tiles.size(); ++i)
 	{
-		for (uint32_t x = 0; x < patchDim; ++x)
-		{
-			*vertex++ = float(x) / (patchDim - 1);
-			*vertex++ = float(z) / (patchDim - 1);
-		}
+		if (m_rtTiles[i].revision == m_tiles[i].revision)
+			continue;
+
+		createRayTracingTile(i);
+		m_rtTiles[i].revision = m_tiles[i].revision;
+		changed = true;
 	}
+	if (!changed)
+		return;
 
-	m_vertexBuffer->unlock();
+	m_rtParts.resize(0);
+	for (const auto& rtTile : m_rtTiles)
+		m_rtParts.insert(m_rtParts.end(), rtTile.parts.begin(), rtTile.parts.end());
 
-	m_vertexLayout = m_renderSystem->createVertexLayout(vertexElements);
-
-	m_patches.reserve(m_patchCount * m_patchCount);
-	for (uint32_t pz = 0; pz < m_patchCount; ++pz)
-	{
-		for (uint32_t px = 0; px < m_patchCount; ++px)
-		{
-			m_patches.push_back(
-				{ 0.0f, 0.0f, { 0.0f, 0.0f, 0.0f, 0.0f } });
-			for (int32_t i = 0; i < sizeof_array(m_view); ++i)
-				m_view[i].viewPatches.push_back(
-					{ c_patchLodSteps, Vector4::zero() });
-		}
-	}
-
-	updatePatches(nullptr, true);
-
-	m_indices.resize(0);
-	for (uint32_t lod = 0; lod < LodCount; ++lod)
-	{
-		const size_t indexOffset = m_indices.size();
-		const uint32_t lodSkip = 1 << lod;
-
-		for (uint32_t y = 0; y < patchDim - 1; y += lodSkip)
-		{
-			const uint32_t offset = y * patchDim;
-			for (uint32_t x = 0; x < patchDim - 1; x += lodSkip)
-			{
-				if (lod > 0 && (x == 0 || y == 0 || x == patchDim - 1 - lodSkip || y == patchDim - 1 - lodSkip))
-				{
-					const int mid = x + offset + (lodSkip >> 1) + (lodSkip >> 1) * patchDim;
-
-					if (x == 0)
-					{
-						m_indices.push_back(mid);
-						m_indices.push_back(lodSkip + offset);
-						m_indices.push_back(lodSkip + offset + lodSkip * patchDim);
-
-						for (uint32_t i = 0; i < lodSkip; ++i)
-						{
-							m_indices.push_back(mid);
-							m_indices.push_back(offset + i * patchDim + patchDim);
-							m_indices.push_back(offset + i * patchDim);
-						}
-					}
-					else if (x == patchDim - 1 - lodSkip)
-					{
-						m_indices.push_back(mid);
-						m_indices.push_back(x + offset + lodSkip * patchDim);
-						m_indices.push_back(x + offset);
-
-						for (uint32_t i = 0; i < lodSkip; ++i)
-						{
-							m_indices.push_back(mid);
-							m_indices.push_back(x + offset + i * patchDim + lodSkip);
-							m_indices.push_back(x + offset + i * patchDim + lodSkip + patchDim);
-						}
-					}
-					else
-					{
-						m_indices.push_back(mid);
-						m_indices.push_back(x + offset + lodSkip * patchDim);
-						m_indices.push_back(x + offset);
-
-						m_indices.push_back(mid);
-						m_indices.push_back(x + offset + lodSkip);
-						m_indices.push_back(x + offset + lodSkip + lodSkip * patchDim);
-					}
-
-					if (y == 0)
-					{
-						m_indices.push_back(mid);
-						m_indices.push_back(x + lodSkip * patchDim + offset + lodSkip);
-						m_indices.push_back(x + lodSkip * patchDim + offset);
-
-						for (uint32_t i = 0; i < lodSkip; ++i)
-						{
-							m_indices.push_back(mid);
-							m_indices.push_back(x + offset + i);
-							m_indices.push_back(x + offset + i + 1);
-						}
-					}
-					else if (y == patchDim - 1 - lodSkip)
-					{
-						m_indices.push_back(mid);
-						m_indices.push_back(x + offset);
-						m_indices.push_back(x + offset + lodSkip);
-
-						for (uint32_t i = 0; i < lodSkip; ++i)
-						{
-							m_indices.push_back(mid);
-							m_indices.push_back(x + offset + i + lodSkip * patchDim + 1);
-							m_indices.push_back(x + offset + i + lodSkip * patchDim);
-						}
-					}
-					else
-					{
-						m_indices.push_back(mid);
-						m_indices.push_back(x + offset);
-						m_indices.push_back(x + offset + lodSkip);
-
-						m_indices.push_back(mid);
-						m_indices.push_back(x + offset + lodSkip * patchDim + lodSkip);
-						m_indices.push_back(x + offset + lodSkip * patchDim);
-					}
-				}
-				else
-				{
-					m_indices.push_back(x + offset);
-					m_indices.push_back(lodSkip + x + offset);
-					m_indices.push_back(lodSkip * patchDim + x + offset);
-
-					m_indices.push_back(lodSkip + x + offset);
-					m_indices.push_back(lodSkip * patchDim + lodSkip + x + offset);
-					m_indices.push_back(lodSkip * patchDim + x + offset);
-				}
-			}
-		}
-
-		const size_t indexEndOffset = m_indices.size();
-		T_ASSERT((indexEndOffset - indexOffset) % 3 == 0);
-
-		m_primitives[lod] = render::Primitives::setIndexed(
-			render::PrimitiveType::Triangles,
-			(uint32_t)indexOffset,
-			(uint32_t)(indexEndOffset - indexOffset) / 3);
-	}
-
-	m_indexBuffer = m_renderSystem->createBuffer(
-		render::BuIndex,
-		(uint32_t)m_indices.size() * sizeof(uint32_t),
-		false,
-		T_FILE_LINE_W);
-	if (!m_indexBuffer)
-		return false;
-
-	uint32_t* index = static_cast< uint32_t* >(m_indexBuffer->lock());
-	T_ASSERT_M(index, L"Unable to lock index buffer");
-
-	for (uint32_t i = 0; i < uint32_t(m_indices.size()); ++i)
-		index[i] = m_indices[i];
-
-	m_indexBuffer->unlock();
-
-	const uint32_t alignedPatchCount = alignUp((uint32_t)m_patches.size(), 16);
-
-	m_drawBuffer = m_renderSystem->createBuffer(
-		render::BuStructured | render::BuIndirect,
-		alignedPatchCount * sizeof(render::IndexedIndirectDraw),
-		true,
-		T_FILE_LINE_W);
-	if (!m_drawBuffer)
-		return false;
-
-	m_culledDrawBuffer = m_renderSystem->createBuffer(
-		render::BuStructured | render::BuIndirect,
-		alignedPatchCount * sizeof(render::IndexedIndirectDraw),
-		false,
-		T_FILE_LINE_W);
-	if (!m_culledDrawBuffer)
-		return false;
-
-	m_dataBuffer = m_renderSystem->createBuffer(
-		render::BuStructured,
-		alignedPatchCount * sizeof(DrawData),
-		true,
-		T_FILE_LINE_W);
-	if (!m_dataBuffer)
-		return false;
-
-	return true;
+	// Reset world to create new RT instance.
+	setWorld(m_world);
 }
 
 bool TerrainComponent::createRayTracingPatches()
@@ -831,56 +1148,23 @@ bool TerrainComponent::createRayTracingPatches()
 	if (!m_renderSystem->supportRayTracing())
 		return true;
 
-	// Ray tracing patches are laid out on a grid of their own, sized only by world extent; raster patches at
-	// high detail amount to thousands, far too many bottom level structures for a coarse approximation.
-	const Vector4& worldExtent = m_heightfield->getWorldExtent();
-	const float rtPatchSize = c_rtPatchCells * c_rtCellSize;
-	const uint32_t rtPatchCountX = std::max< uint32_t >((uint32_t)(worldExtent.x() / rtPatchSize + 0.5f), 1);
-	const uint32_t rtPatchCountZ = std::max< uint32_t >((uint32_t)(worldExtent.z() / rtPatchSize + 0.5f), 1);
-
-	const uint32_t patchVertexDim = c_rtPatchCells + 1;
-	const uint32_t patchVertexCount = patchVertexDim * patchVertexDim;
-	const uint32_t patchTriangleCount = c_rtPatchCells * c_rtPatchCells * 2;
-
-	// Vertices are placed on a single grid spanning all patches so neighbouring
-	// patches share their border vertices exactly.
-	const float cellSizeX = worldExtent.x() / float(rtPatchCountX * c_rtPatchCells);
-	const float cellSizeZ = worldExtent.z() / float(rtPatchCountZ * c_rtPatchCells);
-	const float originX = -worldExtent.x() * 0.5f;
-	const float originZ = -worldExtent.z() * 0.5f;
-
-	AlignedVector< render::VertexElement > vertexElements;
-	vertexElements.push_back(render::VertexElement(render::DataUsage::Position, render::DtFloat3, 0));
-	const uint32_t vertexSize = render::getVertexSize(vertexElements);
-
-	Ref< const render::IVertexLayout > vertexLayout = m_renderSystem->createVertexLayout(vertexElements);
-	if (!vertexLayout)
-		return false;
-
-	// All patches are triangulated alike, two triangles per cell, thus share index buffer.
-	AlignedVector< uint32_t > indices;
-	indices.reserve(patchTriangleCount * 3);
-	for (uint32_t z = 0; z < c_rtPatchCells; ++z)
+	if (!m_rtVertexLayout)
 	{
-		for (uint32_t x = 0; x < c_rtPatchCells; ++x)
-		{
-			const uint32_t offset = x + z * patchVertexDim;
-
-			indices.push_back(offset);
-			indices.push_back(offset + 1);
-			indices.push_back(offset + patchVertexDim);
-
-			indices.push_back(offset + 1);
-			indices.push_back(offset + 1 + patchVertexDim);
-			indices.push_back(offset + patchVertexDim);
-		}
+		AlignedVector< render::VertexElement > vertexElements;
+		vertexElements.push_back(render::VertexElement(render::DataUsage::Position, render::DtFloat3, 0));
+		m_rtVertexLayout = m_renderSystem->createVertexLayout(vertexElements);
+		if (!m_rtVertexLayout)
+			return false;
 	}
 
+	// All patches are triangulated alike, two triangles per cell, thus share index buffer.
 	if (!m_rtIndexBuffer)
 	{
+		const uint32_t patchVertexDim = c_rtPatchCells + 1;
+
 		m_rtIndexBuffer = m_renderSystem->createBuffer(
 			render::BuIndex,
-			(uint32_t)indices.size() * sizeof(uint32_t),
+			c_rtPatchCells * c_rtPatchCells * 6 * sizeof(uint32_t),
 			false,
 			T_FILE_LINE_W);
 		if (!m_rtIndexBuffer)
@@ -888,54 +1172,82 @@ bool TerrainComponent::createRayTracingPatches()
 
 		uint32_t* index = static_cast< uint32_t* >(m_rtIndexBuffer->lock());
 		T_ASSERT_M(index, L"Unable to lock index buffer");
-		for (uint32_t i = 0; i < (uint32_t)indices.size(); ++i)
-			index[i] = indices[i];
+		for (uint32_t z = 0; z < c_rtPatchCells; ++z)
+		{
+			for (uint32_t x = 0; x < c_rtPatchCells; ++x)
+			{
+				const uint32_t offset = x + z * patchVertexDim;
+
+				*index++ = offset;
+				*index++ = offset + 1;
+				*index++ = offset + patchVertexDim;
+
+				*index++ = offset + 1;
+				*index++ = offset + 1 + patchVertexDim;
+				*index++ = offset + patchVertexDim;
+			}
+		}
 		m_rtIndexBuffer->unlock();
 	}
+
+	// Patches of tiles are created by next update.
+	safeDestroy(m_rtwInstance);
+	m_rtParts.resize(0);
+	m_rtTiles.resize(0);
+	m_rtTiles.resize(m_tiles.size());
+	return true;
+}
+
+bool TerrainComponent::createRayTracingTile(int32_t tileIndex)
+{
+	RtTile& rtTile = m_rtTiles[tileIndex];
+	rtTile.vertexBuffers.resize(0);
+	rtTile.parts.resize(0);
+
+	const Tile& tile = m_tiles[tileIndex];
+	const Vector4& worldExtent = m_overview.worldExtent;
+	const float tileExtentX = tile.boundingBox.mx.x() - tile.boundingBox.mn.x();
+	const float tileExtentZ = tile.boundingBox.mx.z() - tile.boundingBox.mn.z();
+
+	// Loaded tiles are full resolution, unloaded tiles are a single coarse patch from overview.
+	const uint32_t patchCount = tile.loaded ? std::max< uint32_t >((uint32_t)(tileExtentX / (c_rtPatchCells * c_rtCellSize) + 0.5f), 1) : 1;
+	const uint32_t patchVertexDim = c_rtPatchCells + 1;
+	const uint32_t patchVertexCount = patchVertexDim * patchVertexDim;
+	const uint32_t patchTriangleCount = c_rtPatchCells * c_rtPatchCells * 2;
+
+	// Vertices are placed on a single grid spanning all patches so neighbouring patches share border vertices.
+	const float cellSizeX = tileExtentX / float(patchCount * c_rtPatchCells);
+	const float cellSizeZ = tileExtentZ / float(patchCount * c_rtPatchCells);
+	const float originX = -worldExtent.x() * 0.5f;
+	const float originZ = -worldExtent.z() * 0.5f;
+
+	// Shrink the RT terrain a bit to reduce self intersection due to mismatch between GBuffer and RT geometry.
+	const Scalar elevationOffset = -1.0_simd;
+
+	const auto albedoMap = (m_surfaceCache != nullptr && m_surfaceCache->getBaseTexture() != nullptr) ? m_surfaceCache->getBaseTexture()->getBindlessIndex() : -1;
 
 	const render::Primitives primitives = render::Primitives::setIndexed(
 		render::PrimitiveType::Triangles,
 		0,
 		patchTriangleCount);
 
-	safeDestroy(m_rtwInstance);
-
-	// Per-vertex attribute buffers are kept, and rewritten, as long as there are as many patches.
-	if (m_rtParts.size() != rtPatchCountX * rtPatchCountZ)
-	{
-		m_rtParts.resize(0);
-		m_rtParts.resize(rtPatchCountX * rtPatchCountZ);
-	}
-	m_rtVertexBuffers.resize(rtPatchCountX * rtPatchCountZ);
-
-	// Shrink the RT terrain a bit to reduce self intersection due
-	// to mismatch between GBuffer and RT geometry.
-	const Scalar elevationOffset = -1.0_simd;
-
-	const float heightfieldSize = (float)m_heightfield->getSize();
-	const auto albedoMap = (m_surfaceCache != nullptr && m_surfaceCache->getBaseTexture() != nullptr) ? m_surfaceCache->getBaseTexture()->getBindlessIndex() : -1;
-
-	// Attributes are fetched per triangle corner; normals and texture coordinates
-	// are calculated once per vertex and then gathered for each corner.
+	// Attributes are fetched per triangle corner; normals and texture coordinates are calculated per vertex and then gathered.
 	AlignedVector< Vector4 > normals(patchVertexCount);
 	AlignedVector< float > texCoords(patchVertexCount * 2);
 
-	for (uint32_t pz = 0; pz < rtPatchCountZ; ++pz)
+	for (uint32_t pz = 0; pz < patchCount; ++pz)
 	{
-		for (uint32_t px = 0; px < rtPatchCountX; ++px)
+		for (uint32_t px = 0; px < patchCount; ++px)
 		{
-			const uint32_t patchId = px + pz * rtPatchCountX;
-
-			// Create vertex buffer.
-			m_rtVertexBuffers[patchId] = m_renderSystem->createBuffer(
+			Ref< render::Buffer > vertexBuffer = m_renderSystem->createBuffer(
 				render::BuVertex,
-				patchVertexCount * vertexSize,
+				patchVertexCount * 3 * sizeof(float),
 				false,
 				T_FILE_LINE_W);
-			if (!m_rtVertexBuffers[patchId])
+			if (!vertexBuffer)
 				return false;
 
-			float* vertex = static_cast< float* >(m_rtVertexBuffers[patchId]->lock());
+			float* vertex = static_cast< float* >(vertexBuffer->lock());
 			T_ASSERT_M(vertex, L"Unable to lock vertex buffer");
 			for (uint32_t z = 0; z < patchVertexDim; ++z)
 			{
@@ -943,70 +1255,67 @@ bool TerrainComponent::createRayTracingPatches()
 				{
 					const uint32_t i = x + z * patchVertexDim;
 
-					const float worldX = originX + float(px * c_rtPatchCells + x) * cellSizeX;
-					const float worldZ = originZ + float(pz * c_rtPatchCells + z) * cellSizeZ;
-					const float worldY = m_heightfield->getWorldHeight(worldX, worldZ);
+					const float worldX = tile.boundingBox.mn.x() + float(px * c_rtPatchCells + x) * cellSizeX;
+					const float worldZ = tile.boundingBox.mn.z() + float(pz * c_rtPatchCells + z) * cellSizeZ;
+
+					const hf::Heightfield* heightfield = getHeightfield(worldX, worldZ);
+					const float worldY = heightfield->getWorldHeight(worldX, worldZ);
 
 					float gridX, gridZ;
-					m_heightfield->worldToGrid(worldX, worldZ, gridX, gridZ);
+					heightfield->worldToGrid(worldX, worldZ, gridX, gridZ);
 
-					const Vector4 normal = m_heightfield->normalAt(gridX, gridZ);
+					const Vector4 normal = heightfield->normalAt(gridX, gridZ);
 					normals[i] = normal;
-					texCoords[i * 2 + 0] = gridX / heightfieldSize;
-					texCoords[i * 2 + 1] = gridZ / heightfieldSize;
+					texCoords[i * 2 + 0] = (worldX - originX) / worldExtent.x();
+					texCoords[i * 2 + 1] = (worldZ - originZ) / worldExtent.z();
 
 					*vertex++ = worldX + normal.x() * elevationOffset;
 					*vertex++ = worldY + normal.y() * elevationOffset;
 					*vertex++ = worldZ + normal.z() * elevationOffset;
 				}
 			}
-			m_rtVertexBuffers[patchId]->unlock();
+			vertexBuffer->unlock();
 
-			// Create "per-vertex" attribute buffer.
-			const uint32_t vertexAttribCount = (uint32_t)indices.size();
-
-			Ref< render::Buffer > perVertexData = const_cast< render::Buffer* >(m_rtParts[patchId].perVertexData.ptr());
+			// Create "per-vertex" attribute buffer, one attribute per triangle corner.
+			Ref< render::Buffer > perVertexData = m_renderSystem->createBuffer(
+				render::BuStructured,
+				patchTriangleCount * 3 * sizeof(world::HWRT_Material),
+				false,
+				T_FILE_LINE_W);
 			if (!perVertexData)
-			{
-				perVertexData = m_renderSystem->createBuffer(
-					render::BuStructured,
-					vertexAttribCount * sizeof(world::HWRT_Material),
-					false,
-					T_FILE_LINE_W);
-				if (!perVertexData)
-					return false;
-			}
+				return false;
 
 			world::HWRT_Material* va = static_cast< world::HWRT_Material* >(perVertexData->lock());
 			T_ASSERT_M(va, L"Unable to lock vertex attribute buffer");
-			for (uint32_t i = 0; i < vertexAttribCount; ++i)
+			for (uint32_t cz = 0; cz < c_rtPatchCells; ++cz)
 			{
-				const uint32_t index = indices[i];
-
-				Vector4(0.2f, 0.4f, 0.1f, 0.0f).storeUnaligned3(va->albedo);
-				normals[index].storeUnaligned3(va->normal);
-
-				va->emissive = 0.0f;
-
-				va->texCoord[0] = texCoords[index * 2 + 0];
-				va->texCoord[1] = texCoords[index * 2 + 1];
-				va->albedoMap = albedoMap;
-
-				va++;
+				for (uint32_t cx = 0; cx < c_rtPatchCells; ++cx)
+				{
+					const uint32_t offset = cx + cz * patchVertexDim;
+					const uint32_t corners[] = { offset, offset + 1, offset + patchVertexDim, offset + 1, offset + 1 + patchVertexDim, offset + patchVertexDim };
+					for (uint32_t index : corners)
+					{
+						Vector4(0.2f, 0.4f, 0.1f, 0.0f).storeUnaligned3(va->albedo);
+						normals[index].storeUnaligned3(va->normal);
+						va->emissive = 0.0f;
+						va->texCoord[0] = texCoords[index * 2 + 0];
+						va->texCoord[1] = texCoords[index * 2 + 1];
+						va->albedoMap = albedoMap;
+						va++;
+					}
+				}
 			}
 			perVertexData->unlock();
 
-			m_rtParts[patchId].perVertexData = perVertexData;
-
-			// Create bottom level acceleration structure.
-			m_rtParts[patchId].blas = m_renderSystem->createAccelerationStructure(m_rtVertexBuffers[patchId], vertexLayout, m_rtIndexBuffer, render::IndexType::UInt32, { { primitives, true } }, false, false);
-			if (!m_rtParts[patchId].blas)
+			world::RTWorldComponent::Part& part = rtTile.parts.push_back();
+			part.perVertexData = perVertexData;
+			part.blas = m_renderSystem->createAccelerationStructure(vertexBuffer, m_rtVertexLayout, m_rtIndexBuffer, render::IndexType::UInt32, { { primitives, true } }, false, false);
+			if (!part.blas)
 				return false;
+
+			rtTile.vertexBuffers.push_back(vertexBuffer);
 		}
 	}
-
-	// Reset world to create new RT instance.
-	setWorld(m_world);
 
 	return true;
 }

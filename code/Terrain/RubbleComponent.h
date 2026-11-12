@@ -15,6 +15,13 @@
 #include "Terrain/TerrainLayerComponent.h"
 #include "Terrain/RubbleComponentData.h"
 
+namespace traktor::hf
+{
+
+class Heightfield;
+
+}
+
 namespace traktor::render
 {
 
@@ -87,20 +94,33 @@ private:
 		Vector4 center;
 		float distance;
 		int32_t seed;
+		int32_t tile;
 		int32_t from;
 		int32_t to;
 		bool visible;
 	};
 
+	//! Clusters scattered on a terrain tile.
+	struct Tile
+	{
+		uint32_t revision = 0;	//!< Revision of terrain tile when scattered.
+		AlignedVector< Cluster > clusters;
+		int32_t instanceCount = 0;
+	};
+
 	world::Entity* m_owner = nullptr;
 	RubbleComponentData m_data;
 	AlignedVector< RubbleMesh > m_rubble;
+	AlignedVector< Tile > m_tiles;
 	AlignedVector< Instance > m_instances;
 	AlignedVector< Cluster > m_clusters;
 	float m_clusterSize = 0.0f;
 	Vector4 m_eye = Vector4::zero();
 	Vector4 m_fwd = Vector4::zero();
 	//AlignedVector< mesh::InstanceMesh::RenderInstance > m_instanceData;
+
+	//! Create clusters of tile; tile without heightfield has no clusters.
+	void updateTile(Tile& tile, int32_t tileIndex, const hf::Heightfield* heightfield);
 };
 
 }

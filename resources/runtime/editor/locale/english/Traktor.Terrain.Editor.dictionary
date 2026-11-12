@@ -2,6 +2,18 @@
 <object type="traktor.i18n.Dictionary">
   <map>
     <item>
+      <first>SPLIT_TERRAIN_WIZARDTOOL_DESCRIPTION</first>
+      <second>Split terrain into tiles...</second>
+    </item>
+    <item>
+      <first>SPLIT_TERRAIN_WIZARDTOOL_MESSAGE</first>
+      <second>Enter size of each tile; terrain extent must be a multiple of tile size</second>
+    </item>
+    <item>
+      <first>SPLIT_TERRAIN_WIZARDTOOL_TITLE</first>
+      <second>Split terrain into tiles</second>
+    </item>
+    <item>
       <first>TERRAIN_EDITOR_ATTRIBUTE</first>
       <second>Attribute</second>
     </item>

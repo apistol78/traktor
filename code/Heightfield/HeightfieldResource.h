@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -35,10 +35,13 @@ public:
 
 	const Vector4& getWorldExtent() const { return m_worldExtent; }
 
+	const Vector4& getWorldCenter() const { return m_worldCenter; }
+
 private:
 	friend class HeightfieldPipeline;
 
 	Vector4 m_worldExtent = Vector4::zero();
+	Vector4 m_worldCenter = Vector4::zero();
 };
 
 }

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -38,12 +38,6 @@ void TerrainClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	auto classTerrain = new AutoRuntimeClass< Terrain >();
 	classTerrain->addProperty("detailSkip", &Terrain::getDetailSkip);
 	classTerrain->addProperty("patchDim", &Terrain::getPatchDim);
-	classTerrain->addProperty("heightfield", &Terrain::getHeightfield);
-	classTerrain->addProperty("colorMap", &Terrain::getColorMap);
-	classTerrain->addProperty("normalMap", &Terrain::getNormalMap);
-	classTerrain->addProperty("heightMap", &Terrain::getHeightMap);
-	classTerrain->addProperty("splatMap", &Terrain::getSplatMap);
-	classTerrain->addProperty("cutMap", &Terrain::getCutMap);
 	registrar->registerClass(classTerrain);
 
 	auto classTerrainSurfaceCache = new AutoRuntimeClass< TerrainSurfaceCache >();
@@ -51,7 +45,6 @@ void TerrainClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 
 	auto classTerrainComponent = new AutoRuntimeClass< TerrainComponent >();
 	classTerrainComponent->addProperty("terrain", &TerrainComponent::getTerrain);
-	classTerrainComponent->addProperty("patchCount", &TerrainComponent::getPatchCount);
 	classTerrainComponent->addMethod("getSurfaceCache", &TerrainComponent::getSurfaceCache);
 	registrar->registerClass(classTerrainComponent);
 }

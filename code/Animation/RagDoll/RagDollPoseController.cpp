@@ -104,6 +104,14 @@ void RagDollPoseController::reset(
 			limb->setActive(true);
 		}
 	}
+
+	// Keep the entity where it is when the rag doll takes over; it then follows the drive joint
+	// from here, else the owner would leap up to the joint and drag any blended pose along.
+	if (m_driveBinding.limb >= 0)
+	{
+		const Transform trackedJointTransform = m_limbs[m_driveBinding.limb]->getTransform() * m_driveBinding.limbToJoint;
+		m_driveOffset = (trackedJointTransform.translation() - worldTransform.translation()).xyz0();
+	}
 }
 
 bool RagDollPoseController::evaluate(
@@ -119,7 +127,7 @@ bool RagDollPoseController::evaluate(
 	if (m_driveBinding.limb >= 0)
 	{
 		const Transform trackedJointTransform = m_limbs[m_driveBinding.limb]->getTransform() * m_driveBinding.limbToJoint;
-		entityTransform = Transform(trackedJointTransform.translation().xyz1(), worldTransform.rotation());
+		entityTransform = Transform((trackedJointTransform.translation() - m_driveOffset).xyz1(), worldTransform.rotation());
 	}
 
 	const Transform worldTransformInv = worldTransform.inverse();

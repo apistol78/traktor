@@ -25,7 +25,7 @@ void ColorCorrectionComponent::destroy()
 	m_colorGrading.clear();
 }
 
-void ColorCorrectionComponent::update(World* world, const UpdateParams& update)
+void ColorCorrectionComponent::update(const UpdateParams& update)
 {
 }
 

@@ -9,6 +9,9 @@
 #include "Ai/NavMeshEntityFactory.h"
 
 #include "Ai/NavMesh.h"
+#include "Ai/NavMeshChunk.h"
+#include "Ai/NavMeshChunkComponent.h"
+#include "Ai/NavMeshChunkComponentData.h"
 #include "Ai/NavMeshComponent.h"
 #include "Ai/NavMeshComponentData.h"
 #include "Ai/NavMeshModifierEntityComponent.h"
@@ -34,7 +37,7 @@ bool NavMeshEntityFactory::initialize(const ObjectStore& objectStore)
 
 const TypeInfoSet NavMeshEntityFactory::getEntityComponentTypes() const
 {
-	return makeTypeInfoSet< NavMeshModifierEntityComponentData >();
+	return makeTypeInfoSet< NavMeshChunkComponentData, NavMeshModifierEntityComponentData >();
 }
 
 const TypeInfoSet NavMeshEntityFactory::getWorldComponentTypes() const
@@ -44,7 +47,16 @@ const TypeInfoSet NavMeshEntityFactory::getWorldComponentTypes() const
 
 Ref< world::IEntityComponent > NavMeshEntityFactory::createEntityComponent(const world::IEntityBuilder* builder, const world::IEntityComponentData& entityComponentData) const
 {
-	return new NavMeshModifierEntityComponent();
+	if (auto chunkComponentData = dynamic_type_cast< const NavMeshChunkComponentData* >(&entityComponentData))
+	{
+		resource::Proxy< NavMeshChunk > chunk;
+		if (!m_resourceManager->bind(chunkComponentData->get(), chunk))
+			return nullptr;
+
+		return new NavMeshChunkComponent(chunk);
+	}
+	else
+		return new NavMeshModifierEntityComponent();
 }
 
 Ref< world::IWorldComponent > NavMeshEntityFactory::createWorldComponent(const world::IEntityBuilder* builder, const world::IWorldComponentData& worldComponentData) const

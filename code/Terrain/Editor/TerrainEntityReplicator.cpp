@@ -17,8 +17,8 @@
 #include "Editor/IPipelineSettings.h"
 #include "Heightfield/Editor/ConvertHeightfield.h"
 #include "Heightfield/Editor/HeightfieldAsset.h"
+#include "Heightfield/Editor/TileStorage.h"
 #include "Heightfield/Heightfield.h"
-#include "Heightfield/HeightfieldFormat.h"
 #include "Model/Model.h"
 #include "Render/Editor/Shader/ShaderGraph.h"
 #include "Render/Editor/Shader/ShaderGraphPreview.h"
@@ -76,19 +76,15 @@ Ref< model::Model > TerrainEntityReplicator::createModel(
 	if (!heightfieldAsset)
 		return nullptr;
 
-	Ref< IStream > sourceData = heightfieldAssetInstance->readData(L"Data");
-	if (!sourceData)
-		return nullptr;
+	const hf::TileStorage storage(heightfieldAsset->getTileCount());
+	const int32_t size = storage.readSize(heightfieldAssetInstance);
 
-	Ref< hf::Heightfield > heightfield = hf::HeightfieldFormat().read(
-		sourceData,
-		heightfieldAsset->getWorldExtent());
+	Ref< hf::Heightfield > heightfield = storage.readHeightfieldOverview(heightfieldAssetInstance, heightfieldAsset->getWorldExtent());
 	if (!heightfield)
 		return nullptr;
 
-	safeClose(sourceData);
-
-	Ref< model::Model > heightfieldModel = hf::ConvertHeightfield().convert(heightfield, 64);
+	// Same distance between vertices as with heightfield of entire terrain.
+	Ref< model::Model > heightfieldModel = hf::ConvertHeightfield().convert(heightfield, std::max(64 * heightfield->getSize() / size, 1));
 	if (!heightfieldModel)
 		return nullptr;
 

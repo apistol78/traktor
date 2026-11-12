@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2025 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -115,10 +115,11 @@ bool TerrainSurfaceCache::setupBaseColor(
 			if (!shader)
 				return;
 
-			render::ITexture* heightMap = terrain->getHeightMap();
-			render::ITexture* normalMap = terrain->getNormalMap();
-			render::ITexture* colorMap = terrain->getColorMap();
-			render::ITexture* splatMap = terrain->getSplatMap();
+			const Terrain::TileResources& overview = terrain->getOverview();
+			render::ITexture* heightMap = overview.heightMap;
+			render::ITexture* normalMap = overview.normalMap;
+			render::ITexture* colorMap = overview.colorMap;
+			render::ITexture* splatMap = overview.splatMap;
 
 			render::Shader::Permutation perm(c_handleTerrain_SurfaceBase);
 			shader->setCombination(c_handleTerrain_ColorEnable, colorMap != nullptr, perm);

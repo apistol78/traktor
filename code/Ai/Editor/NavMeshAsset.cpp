@@ -15,7 +15,7 @@
 namespace traktor::ai
 {
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.ai.NavMeshAsset", 1, NavMeshAsset, ISerializable)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.ai.NavMeshAsset", 2, NavMeshAsset, ISerializable)
 
 void NavMeshAsset::serialize(ISerializer& s)
 {
@@ -34,6 +34,8 @@ void NavMeshAsset::serialize(ISerializer& s)
 	s >> Member< float >(L"detailSampleMaxError", m_detailSampleMaxError, AttributeRange(0.0f));
 	if (s.getVersion< NavMeshAsset >() >= 1)
 		s >> Member< int32_t >(L"tileSize", m_tileSize, AttributeRange(0));
+	if (s.getVersion< NavMeshAsset >() >= 2)
+		s >> Member< float >(L"chunkSize", m_chunkSize, AttributeRange(0.0f) | AttributeUnit(UnitType::Metres));
 }
 
 }

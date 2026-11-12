@@ -67,6 +67,8 @@ public:
 		bool enableSound
 	);
 
+	virtual void create() override;
+
 	virtual void destroy() override;
 
 	virtual void transition(Layer* fromLayer) override final;

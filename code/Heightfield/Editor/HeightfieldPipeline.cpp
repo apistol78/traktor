@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -11,6 +11,7 @@
 #include "Core/Log/Log.h"
 #include "Core/Serialization/DeepHash.h"
 #include "Core/Settings/PropertyString.h"
+#include "Database/Database.h"
 #include "Database/Instance.h"
 #include "Editor/IPipelineBuilder.h"
 #include "Editor/IPipelineDepends.h"
@@ -18,14 +19,15 @@
 #include "Heightfield/Heightfield.h"
 #include "Heightfield/HeightfieldFormat.h"
 #include "Heightfield/HeightfieldResource.h"
-#include "Heightfield/Editor/ErosionFilter.h"
 #include "Heightfield/Editor/HeightfieldAsset.h"
 #include "Heightfield/Editor/HeightfieldPipeline.h"
+#include "Heightfield/Editor/HeightfieldTileAsset.h"
+#include "Heightfield/Editor/TileStorage.h"
 
 namespace traktor::hf
 {
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.hf.HeightfieldPipeline", 2, HeightfieldPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.hf.HeightfieldPipeline", 5, HeightfieldPipeline, editor::IPipeline)
 
 bool HeightfieldPipeline::create(const editor::IPipelineSettings* settings, db::Database* database)
 {
@@ -39,7 +41,7 @@ void HeightfieldPipeline::destroy()
 
 TypeInfoSet HeightfieldPipeline::getAssetTypes() const
 {
-	return makeTypeInfoSet< HeightfieldAsset >();
+	return makeTypeInfoSet< HeightfieldAsset, HeightfieldTileAsset >();
 }
 
 bool HeightfieldPipeline::shouldCache() const
@@ -75,31 +77,39 @@ bool HeightfieldPipeline::buildOutput(
 	uint32_t reason
 ) const
 {
-	Ref< const HeightfieldAsset > heightfieldAsset = checked_type_cast< const HeightfieldAsset* >(sourceAsset);
+	Ref< const db::Instance > heightfieldInstance = sourceInstance;
+	Ref< const HeightfieldAsset > heightfieldAsset;
+	Ref< Heightfield > heightfield;
 
-	Ref< IStream > sourceData = sourceInstance->readData(L"Data");
-	if (!sourceData)
+	if (auto tileAsset = dynamic_type_cast< const HeightfieldTileAsset* >(sourceAsset))
 	{
-		log::error << L"Heightfield pipeline failed; unable to open heights." << Endl;
-		return false;
+		heightfieldInstance = pipelineBuilder->getSourceDatabase()->getInstance(tileAsset->m_heightfield);
+		heightfieldAsset = heightfieldInstance ? heightfieldInstance->getObject< HeightfieldAsset >() : nullptr;
+		if (!heightfieldAsset)
+		{
+			log::error << L"Heightfield pipeline failed; unable to get heightfield asset of tile." << Endl;
+			return false;
+		}
+
+		const TileStorage tileStorage(heightfieldAsset->getTileCount());
+		if (tileAsset->m_tileX >= 0)
+			heightfield = tileStorage.readHeightfieldTile(heightfieldInstance, heightfieldAsset->getWorldExtent(), tileAsset->m_tileX, tileAsset->m_tileZ, 0);
+		else
+			heightfield = tileStorage.readHeightfieldOverview(heightfieldInstance, heightfieldAsset->getWorldExtent(), tileAsset->m_overviewSize);
+	}
+	else
+	{
+		heightfieldAsset = checked_type_cast< const HeightfieldAsset* >(sourceAsset);
+
+		// Product of asset itself is a low resolution overview.
+		heightfield = TileStorage(heightfieldAsset->getTileCount()).readHeightfieldOverview(sourceInstance, heightfieldAsset->getWorldExtent());
 	}
 
-	Ref< Heightfield > heightfield = HeightfieldFormat().read(
-		sourceData,
-		heightfieldAsset->getWorldExtent()
-	);
 	if (!heightfield)
 	{
 		log::error << L"Heightfield pipeline failed; unable to read heights." << Endl;
 		return false;
 	}
-
-	sourceData->close();
-	sourceData = nullptr;
-
-	// Apply erosion filter.
-	if (heightfieldAsset->getErosionEnable())
-		ErosionFilter(heightfieldAsset->getErodeIterations()).apply(heightfield);
 
 	// Create height field resource.
 	Ref< HeightfieldResource > resource = new HeightfieldResource();
@@ -128,7 +138,8 @@ bool HeightfieldPipeline::buildOutput(
 	outputData->close();
 	outputData = nullptr;
 
-	resource->m_worldExtent = heightfieldAsset->getWorldExtent();
+	resource->m_worldExtent = heightfield->getWorldExtent();
+	resource->m_worldCenter = heightfield->getWorldCenter();
 
 	instance->setObject(resource);
 

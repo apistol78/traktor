@@ -27,12 +27,17 @@ void EventManagerComponent::destroy()
 	cancelAll(Cancel::Immediate);
 }
 
-void EventManagerComponent::update(World* world, const UpdateParams& update)
+void EventManagerComponent::setWorld(World* world)
+{
+	m_world = world;
+}
+
+void EventManagerComponent::update(const UpdateParams& update)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	for (auto it = m_eventInstances.begin(); it != m_eventInstances.end(); )
 	{
-		if ((*it)->update(world, update))
+		if ((*it)->update(m_world, update))
 			++it;
 		else
 			it = m_eventInstances.erase(it);

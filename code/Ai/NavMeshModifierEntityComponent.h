@@ -8,7 +8,7 @@
  */
 #pragma once
 
-#include "Resource/Proxy.h"
+#include "Core/Ref.h"
 #include "World/IEntityComponent.h"
 
 // import/export mechanism.
@@ -22,7 +22,7 @@
 namespace traktor::ai
 {
 
-class NavMesh;
+class NavMeshComponent;
 
 /*! Navigation mesh modifier component.
  * \ingroup AI
@@ -58,7 +58,7 @@ public:
 
 private:
 	world::Entity* m_owner = nullptr;
-	resource::Proxy< NavMesh > m_navMesh;
+	Ref< NavMeshComponent > m_navMeshComponent;
 	bool m_enable = true;
 };
 

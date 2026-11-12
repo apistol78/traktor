@@ -53,13 +53,13 @@ public:
 
 	virtual void destroy() override final;
 
-	virtual void update(World* world, const UpdateParams& update) override final;
+	virtual void setWorld(World* world) override final;
 
-	/*! Set point around which cells are streamed; nothing is streamed until set. */
+	virtual void update(const UpdateParams& update) override final;
+
+	void load(const Vector4& focus);
+
 	void setFocus(const Vector4& focus);
-
-	/*! No cell being loaded; after an update, every cell in range of focus is loaded. */
-	bool idle() const;
 
 private:
 	struct Cell
@@ -73,13 +73,15 @@ private:
 	Ref< const IEntityBuilder > m_entityBuilder;
 	Ref< resource::IResourceManager > m_resourceManager;
 	Ref< const EntityStreamingComponentData > m_data;
+	World* m_world = nullptr;
 	AlignedVector< Cell > m_cells;
 	Vector4 m_focus = Vector4::origo();
 	bool m_haveFocus = false;
-	bool m_primed = false;
 	Ref< Job > m_job;
 	int32_t m_loadingCell = -1;
 	std::atomic< bool > m_cancel = false;
+
+	bool processPendingJob(int32_t timeout);
 
 	void createEntities(Cell& cell) const;
 };

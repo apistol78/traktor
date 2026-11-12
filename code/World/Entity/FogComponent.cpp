@@ -38,7 +38,7 @@ void FogComponent::destroy()
 	m_mediumShader.clear();
 }
 
-void FogComponent::update(World* world, const UpdateParams& update)
+void FogComponent::update(const UpdateParams& update)
 {
 }
 

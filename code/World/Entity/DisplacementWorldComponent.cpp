@@ -159,7 +159,7 @@ void DisplacementWorldComponent::destroy()
 	m_renderSystem = nullptr;
 }
 
-void DisplacementWorldComponent::update(World* world, const UpdateParams& update)
+void DisplacementWorldComponent::update(const UpdateParams& update)
 {
 }
 

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -70,14 +70,12 @@ const btVector3& HeightfieldShapeBullet::getLocalScaling() const
 void HeightfieldShapeBullet::getAabb(const btTransform& t, btVector3& aabbMin, btVector3& aabbMax) const
 {
 	const Vector4& worldExtent = m_heightfield->getWorldExtent();
+	const Vector4& worldCenter = m_heightfield->getWorldCenter();
 
-	const btVector3 localAabbMin = toBtVector3(-worldExtent * 0.5_simd);
-	const btVector3 localAabbMax = toBtVector3(worldExtent * 0.5_simd);
-
-	const btVector3 halfExtents = (localAabbMax - localAabbMin) * btScalar(0.5);
+	const btVector3 halfExtents = toBtVector3(worldExtent * 0.5_simd);
 
 	const btMatrix3x3 basisAbs = t.getBasis().absolute();
-	const btVector3 center = t.getOrigin();
+	const btVector3 center = t(toBtVector3(worldCenter.xyz0()));
 
 	const btVector3 extent = btVector3(
 		basisAbs[0].dot(halfExtents) + getMargin(),
