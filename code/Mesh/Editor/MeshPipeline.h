@@ -93,6 +93,7 @@ private:
 	bool m_editor;
 	mutable Semaphore m_programCompilerLock;
 	mutable Ref< render::IProgramCompiler > m_programCompiler;
+	mutable Semaphore m_linkerCacheLock;
 	mutable SmallMap< Key, Ref< render::ShaderGraph > > m_linkerCache;
 	Ref< render::ShaderGraphPreview > m_shaderGraphPreview;
 

@@ -21,6 +21,7 @@
 #include "Core/Thread/Acquire.h"
 #include "Core/Thread/Thread.h"
 #include "Core/Thread/ThreadManager.h"
+#include "Core/Thread/ThreadPool.h"
 #include "Core/Timer/Timer.h"
 #include "Database/Database.h"
 #include "Database/Group.h"
@@ -126,6 +127,7 @@ PipelineBuilder::PipelineBuilder(
 	IPipelineDb* pipelineDb,
 	IPipelineInstanceCache* instanceCache,
 	IListener* listener,
+	bool buildThreads,
 	bool verbose)
 	: m_pipelineFactory(pipelineFactory)
 	, m_sourceDatabase(sourceDatabase)
@@ -134,11 +136,11 @@ PipelineBuilder::PipelineBuilder(
 	, m_pipelineDb(pipelineDb)
 	, m_instanceCache(instanceCache)
 	, m_listener(listener)
+	, m_buildThreads(buildThreads)
 	, m_verbose(verbose)
 	, m_rebuild(false)
 	, m_profiler(new PipelineProfiler())
 	, m_dependencySet(nullptr)
-	, m_adHocDepth(0)
 	, m_progressEnd(0)
 	, m_progress(0)
 	, m_succeeded(0)
@@ -349,36 +351,66 @@ bool PipelineBuilder::build(const PipelineDependencySet* dependencySet, bool reb
 	m_cacheVoid = 0; // No hash on source asset will result in a void.
 	m_dependencySet = dependencySet;
 
-	for (const auto& w : workSet)
+	// Builds are independent of each other; each worker pick next work item until work set is exhausted.
+	Thread* controlThread = ThreadManager::getInstance().getCurrentThread();
+	std::atomic< int32_t > nextWork = 0;
+	const auto worker = [&]() {
+		BuildContext context;
+		m_context.set(&context);
+
+		for (int32_t i = nextWork++; i < (int32_t)workSet.size() && !controlThread->stopped(); i = nextWork++)
+		{
+			const Work& w = workSet[i];
+
+			if (m_listener)
+			{
+				T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_listenerLock);
+				m_listener->beginBuild(
+					m_progress,
+					m_progressEnd,
+					w.dependency);
+			}
+
+			const BuildResult result = performBuild(dependencySet, w.dependency, w.buildParams, w.reason);
+			if (result == BuildResult::Succeeded || result == BuildResult::SucceededWithWarnings)
+				m_succeeded++;
+			else
+				m_failed++;
+
+			if (m_listener)
+			{
+				T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_listenerLock);
+				m_listener->endBuild(
+					m_progress,
+					m_progressEnd,
+					w.dependency,
+					result);
+			}
+
+			m_progress++;
+		}
+
+		m_context.set(nullptr);
+	};
+
+	const int32_t threadCount = m_buildThreads ? std::min< int32_t >(OS::getInstance().getCPUCoreCount(), (int32_t)workSet.size()) : 1;
+	if (threadCount > 1)
 	{
-		if (ThreadManager::getInstance().getCurrentThread()->stopped())
-			break;
-
-		if (m_listener)
-			m_listener->beginBuild(
-				m_progress,
-				m_progressEnd,
-				w.dependency);
-
-		const BuildResult result = performBuild(dependencySet, w.dependency, w.buildParams, w.reason);
-		if (result == BuildResult::Succeeded || result == BuildResult::SucceededWithWarnings)
-			m_succeeded++;
-		else
-			m_failed++;
-
-		if (m_listener)
-			m_listener->endBuild(
-				m_progress,
-				m_progressEnd,
-				w.dependency,
-				result);
-
-		m_progress++;
+		AlignedVector< Thread* > threads(threadCount, nullptr);
+		for (auto& thread : threads)
+			ThreadPool::getInstance().spawn(worker, thread);
+		for (auto& thread : threads)
+		{
+			if (thread)
+				ThreadPool::getInstance().join(thread);
+		}
 	}
+	else
+		worker();
 
 	// Log cache performance.
 	if (m_cache && m_verbose)
-		log::info << L"Pipeline cache; " << m_cacheHit << L" hit(s), " << m_cacheMiss << L" miss(es), " << m_cacheVoid << L" uncachable(s)." << Endl;
+		log::info << L"Pipeline cache; " << m_cacheHit.load() << L" hit(s), " << m_cacheMiss.load() << L" miss(es), " << m_cacheVoid.load() << L" uncachable(s)." << Endl;
 
 	// Log results.
 	if (!ThreadManager::getInstance().getCurrentThread()->stopped())
@@ -397,9 +429,9 @@ bool PipelineBuilder::build(const PipelineDependencySet* dependencySet, bool reb
 		}
 
 		if (m_failed == 0)
-			log::info << L"Build finished in " << formatDuration(timer.getElapsedTime()) << L"; " << m_succeeded << L" succeeded (" << m_succeededBuilt << L" built), " << m_failed << L" failed." << Endl;
+			log::info << L"Build finished in " << formatDuration(timer.getElapsedTime()) << L"; " << m_succeeded.load() << L" succeeded (" << m_succeededBuilt.load() << L" built), " << m_failed.load() << L" failed." << Endl;
 		else
-			log::error << L"Build failed in " << formatDuration(timer.getElapsedTime()) << L"; " << m_succeeded << L" succeeded (" << m_succeededBuilt << L" built), " << m_failed << L" failed." << Endl;
+			log::error << L"Build failed in " << formatDuration(timer.getElapsedTime()) << L"; " << m_succeeded.load() << L" succeeded (" << m_succeededBuilt.load() << L" built), " << m_failed.load() << L" failed." << Endl;
 	}
 	else
 		log::info << L"Build finished; aborted." << Endl;
@@ -425,16 +457,19 @@ Ref< ISerializable > PipelineBuilder::buildProduct(const db::Instance* sourceIns
 	if (const ISerializable* sbp = dynamic_type_cast< const ISerializable* >(buildParams))
 		sourceHash += DeepHash(sbp).get();
 
-	auto it = m_builtCache.find(sourceHash);
-	if (it != m_builtCache.end())
 	{
-		built_cache_list_t& bcl = it->second;
-		T_ASSERT(!bcl.empty());
+		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_builtCacheLock);
+		auto it = m_builtCache.find(sourceHash);
+		if (it != m_builtCache.end())
+		{
+			built_cache_list_t& bcl = it->second;
+			T_ASSERT(!bcl.empty());
 
-		// Return same instance as before if pointer and hash match.
-		for (built_cache_list_t::const_iterator j = bcl.begin(); j != bcl.end(); ++j)
-			if (j->sourceAsset == sourceAsset)
-				return j->product;
+			// Return same instance as before if pointer and hash match.
+			for (built_cache_list_t::const_iterator j = bcl.begin(); j != bcl.end(); ++j)
+				if (j->sourceAsset == sourceAsset)
+					return j->product;
+		}
 	}
 
 	m_profiler->begin(*pipelineType);
@@ -443,13 +478,21 @@ Ref< ISerializable > PipelineBuilder::buildProduct(const db::Instance* sourceIns
 	if (!product)
 		return nullptr;
 
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_builtCacheLock);
 	m_builtCache[sourceHash].push_back({ sourceAsset, product });
 	return product;
 }
 
 bool PipelineBuilder::buildAdHocOutput(const Guid& outputGuid)
 {
-	m_adHocBuilds.insert(outputGuid);
+	AdHocBuild* adHocBuild;
+	{
+		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_adHocBuildsLock);
+		adHocBuild = &m_adHocBuilds[outputGuid];
+	}
+
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(adHocBuild->lock);
+	adHocBuild->built = true;
 	return true;
 }
 
@@ -492,6 +535,8 @@ bool PipelineBuilder::buildAdHocOutput(const ISerializable* sourceAsset, const s
 
 	T_ANONYMOUS_VAR(ScopeIndent)(log::info);
 
+	BuildContext& context = getContext();
+
 	// Build dependencies.
 	bool result = true;
 	for (uint32_t i = 0; i < dependencySet.size() && result; ++i)
@@ -505,7 +550,15 @@ bool PipelineBuilder::buildAdHocOutput(const ISerializable* sourceAsset, const s
 		if (i != index && m_dependencySet->get(dependency->outputGuid) != PipelineDependencySet::DiInvalid)
 			continue;
 
-		if (m_adHocBuilds.find(dependency->outputGuid) != m_adHocBuilds.end())
+		AdHocBuild* adHocBuild;
+		{
+			T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_adHocBuildsLock);
+			adHocBuild = &m_adHocBuilds[dependency->outputGuid];
+		}
+
+		// Concurrent builds of same ad-hoc output wait for first to finish.
+		T_ANONYMOUS_VAR(Acquire< Semaphore >)(adHocBuild->lock);
+		if (adHocBuild->built)
 			continue;
 
 		// Calculate hash entry.
@@ -537,9 +590,9 @@ bool PipelineBuilder::buildAdHocOutput(const ISerializable* sourceAsset, const s
 		// Build output instances; keep an array of written instances as we
 		// need them to update the cache for this specific build.
 		RefArray< db::Instance > previousBuiltInstances;
-		m_builtInstances.swap(previousBuiltInstances);
+		context.builtInstances.swap(previousBuiltInstances);
 		AlignedVector< CacheKey > previousBuiltAdHocKeys;
-		m_builtAdHocKeys.swap(previousBuiltAdHocKeys);
+		context.builtAdHocKeys.swap(previousBuiltAdHocKeys);
 
 		// Get output instances from memory cache.
 		if (m_cache && pipeline->shouldCache() && cachePermitted && !m_rebuild)
@@ -547,10 +600,10 @@ bool PipelineBuilder::buildAdHocOutput(const ISerializable* sourceAsset, const s
 			if (getInstancesFromCache(
 					m_cache,
 					{ dependency->outputGuid, dependencyHash },
-					&m_builtInstances,
-					&m_builtAdHocKeys) == 0)
+					&context.builtInstances,
+					&context.builtAdHocKeys) == 0)
 			{
-				for (const auto& child : m_builtAdHocKeys)
+				for (const auto& child : context.builtAdHocKeys)
 				{
 					const int32_t result = getInstancesFromCache(
 						m_cache,
@@ -567,12 +620,12 @@ bool PipelineBuilder::buildAdHocOutput(const ISerializable* sourceAsset, const s
 				m_pipelineDb->setDependency(dependency->outputGuid, dependencyHash);
 
 				previousBuiltAdHocKeys.push_back({ dependency->outputGuid, dependencyHash });
-				previousBuiltAdHocKeys.insert(previousBuiltAdHocKeys.end(), m_builtAdHocKeys.begin(), m_builtAdHocKeys.end());
+				previousBuiltAdHocKeys.insert(previousBuiltAdHocKeys.end(), context.builtAdHocKeys.begin(), context.builtAdHocKeys.end());
 
-				m_builtInstances.swap(previousBuiltInstances);
-				m_builtAdHocKeys.swap(previousBuiltAdHocKeys);
+				context.builtInstances.swap(previousBuiltInstances);
+				context.builtAdHocKeys.swap(previousBuiltAdHocKeys);
 
-				m_adHocBuilds.insert(dependency->outputGuid);
+				adHocBuild->built = true;
 
 				m_cacheHit++;
 				continue;
@@ -584,10 +637,10 @@ bool PipelineBuilder::buildAdHocOutput(const ISerializable* sourceAsset, const s
 			m_cacheVoid++;
 
 		if (m_verbose)
-			log::info << L"Building \"" << dependency->outputPath << L"\" (ad-hoc " << m_adHocDepth << L")..." << Endl;
+			log::info << L"Building \"" << dependency->outputPath << L"\" (ad-hoc " << context.adHocDepth << L")..." << Endl;
 		log::info << IncreaseIndent;
 
-		m_adHocDepth++;
+		context.adHocDepth++;
 		m_profiler->begin(*dependency->pipelineType);
 		result &= pipeline->buildOutput(
 			this,
@@ -600,19 +653,19 @@ bool PipelineBuilder::buildAdHocOutput(const ISerializable* sourceAsset, const s
 			(index == i) ? buildParams : nullptr,
 			PbrSourceModified);
 		m_profiler->end();
-		m_adHocDepth--;
+		context.adHocDepth--;
 
 		if (result && m_cache && pipeline->shouldCache() && cachePermitted)
 		{
 			const int32_t result = putInstancesInCache(
 				m_cache,
 				{ dependency->outputGuid, dependencyHash },
-				m_builtInstances,
-				m_builtAdHocKeys);
+				context.builtInstances,
+				context.builtAdHocKeys);
 			if (result == 0)
 			{
 				previousBuiltAdHocKeys.push_back({ dependency->outputGuid, dependencyHash });
-				previousBuiltAdHocKeys.insert(previousBuiltAdHocKeys.end(), m_builtAdHocKeys.begin(), m_builtAdHocKeys.end());
+				previousBuiltAdHocKeys.insert(previousBuiltAdHocKeys.end(), context.builtAdHocKeys.begin(), context.builtAdHocKeys.end());
 			}
 			else
 			{
@@ -628,10 +681,10 @@ bool PipelineBuilder::buildAdHocOutput(const ISerializable* sourceAsset, const s
 
 		// Restore previous set but also insert built instances from synthesized build;
 		// when caching is enabled then synthesized built instances should be included in parent build as well.
-		m_builtInstances.swap(previousBuiltInstances);
-		m_builtAdHocKeys.swap(previousBuiltAdHocKeys);
+		context.builtInstances.swap(previousBuiltInstances);
+		context.builtAdHocKeys.swap(previousBuiltAdHocKeys);
 
-		m_adHocBuilds.insert(dependency->outputGuid);
+		adHocBuild->built = true;
 
 		log::info << DecreaseIndent;
 		if (m_verbose)
@@ -692,6 +745,7 @@ Ref< ISerializable > PipelineBuilder::getBuildProduct(const ISerializable* sourc
 
 	const uint32_t sourceHash = DeepHash(sourceAsset).get();
 
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_builtCacheLock);
 	const auto it = m_builtCache.find(sourceHash);
 	if (it == m_builtCache.end())
 		return nullptr;
@@ -711,6 +765,8 @@ Ref< db::Instance > PipelineBuilder::createOutputInstance(const std::wstring& in
 		log::error << L"Invalid guid for output instance." << Endl;
 		return nullptr;
 	}
+
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_createOutputLock);
 
 	instance = m_outputDatabase->getInstance(instanceGuid);
 	if (instance && instancePath != instance->getPath())
@@ -736,7 +792,7 @@ Ref< db::Instance > PipelineBuilder::createOutputInstance(const std::wstring& in
 		&instanceGuid);
 	if (instance)
 	{
-		m_builtInstances.push_back(instance);
+		getContext().builtInstances.push_back(instance);
 		return instance;
 	}
 	else
@@ -814,8 +870,9 @@ IPipelineBuilder::BuildResult PipelineBuilder::performBuild(
 	Ref< IPipeline > pipeline = m_pipelineFactory->findPipeline(*dependency->pipelineType);
 	T_ASSERT(pipeline);
 
-	m_builtInstances.resize(0);
-	m_builtAdHocKeys.resize(0);
+	BuildContext& context = getContext();
+	context.builtInstances.resize(0);
+	context.builtAdHocKeys.resize(0);
 
 	// Get output instances from cache.
 	if (m_cache && pipeline->shouldCache() && !m_rebuild)
@@ -823,10 +880,10 @@ IPipelineBuilder::BuildResult PipelineBuilder::performBuild(
 		if (getInstancesFromCache(
 				m_cache,
 				{ dependency->outputGuid, currentDependencyHash },
-				&m_builtInstances,
-				&m_builtAdHocKeys) == 0)
+				&context.builtInstances,
+				&context.builtAdHocKeys) == 0)
 		{
-			for (const auto& child : m_builtAdHocKeys)
+			for (const auto& child : context.builtAdHocKeys)
 			{
 				const int32_t result = getInstancesFromCache(
 						m_cache,
@@ -893,8 +950,8 @@ IPipelineBuilder::BuildResult PipelineBuilder::performBuild(
 		const int32_t pr = putInstancesInCache(
 			m_cache,
 			{ dependency->outputGuid, currentDependencyHash },
-			m_builtInstances,
-			m_builtAdHocKeys);
+			context.builtInstances,
+			context.builtAdHocKeys);
 		if (pr != 0)
 		{
 			log::error << L"Failed to add instances to pipeline cache (result " << pr << L")." << Endl;
@@ -915,8 +972,8 @@ IPipelineBuilder::BuildResult PipelineBuilder::performBuild(
 			log::info << L"Build \"" << dependency->outputPath << L"\" failed (" << type_name(pipeline) << L")." << Endl;
 	}
 
-	m_builtInstances.resize(0);
-	m_builtAdHocKeys.resize(0);
+	context.builtInstances.resize(0);
+	context.builtAdHocKeys.resize(0);
 
 	if (result)
 		return (warningTarget.getCount() + errorTarget.getCount()) > 0 ? BuildResult::SucceededWithWarnings : BuildResult::Succeeded;
@@ -1139,6 +1196,13 @@ int32_t PipelineBuilder::getInstancesFromCache(
 		*outChildren = children;
 
 	return 0;
+}
+
+PipelineBuilder::BuildContext& PipelineBuilder::getContext()
+{
+	// Calls from threads other than build workers share default context.
+	BuildContext* context = (BuildContext*)m_context.get();
+	return context ? *context : m_defaultContext;
 }
 
 }

@@ -38,7 +38,7 @@ Heightfield::Heightfield(
 	m_cellBoundsPitch = (m_size + c_cellSize - 1) / c_cellSize;
 
 	m_heights.reset(new height_t[m_size * m_size]);
-	m_cuts.reset(new uint8_t[(m_size * m_size + 7) / 8]);
+	m_cuts.reset(new uint8_t[(m_size * m_size + 7) / 8]());
 	m_cellBounds.reset(new Aabb3[m_cellBoundsPitch * m_cellBoundsPitch]);
 
 	// Attribute layers are allocated on demand; a terrain rarely use more than a few.

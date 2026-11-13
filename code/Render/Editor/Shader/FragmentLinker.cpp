@@ -10,6 +10,7 @@
 
 #include "Core/Log/Log.h"
 #include "Core/Serialization/DeepClone.h"
+#include "Core/Thread/Acquire.h"
 #include "Render/Editor/Edge.h"
 #include "Render/Editor/Node.h"
 #include "Render/Editor/Shader/Algorithms/ShaderGraphHash.h"
@@ -308,20 +309,24 @@ void FragmentLinker::FragmentReaderNoCache::put(const Key& key, const ShaderGrap
 {
 }
 
-FragmentLinker::FragmentReaderTransientCache::FragmentReaderTransientCache(SmallMap< Key, Ref< ShaderGraph > >& cache)
+FragmentLinker::FragmentReaderTransientCache::FragmentReaderTransientCache(SmallMap< Key, Ref< ShaderGraph > >& cache, Semaphore& lock)
 	: m_cache(cache)
+	, m_lock(lock)
 {
 }
 
 Ref< const ShaderGraph > FragmentLinker::FragmentReaderTransientCache::get(const Key& key) const
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	const auto it = m_cache.find(key);
 	return it != m_cache.end() ? it->second : nullptr;
 }
 
 void FragmentLinker::FragmentReaderTransientCache::put(const Key& key, const ShaderGraph* shaderGraph) const
 {
-	m_cache.insert(key, DeepClone(shaderGraph).create< ShaderGraph >());
+	Ref< ShaderGraph > clone = DeepClone(shaderGraph).create< ShaderGraph >();
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+	m_cache.insert(key, clone);
 }
 
 }

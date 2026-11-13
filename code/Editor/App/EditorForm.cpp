@@ -1813,6 +1813,7 @@ void EditorForm::buildAssetsThread(AlignedVector< Guid > assetGuids, bool rebuil
 			m_pipelineDb,
 			&instanceCache,
 			this,
+			m_mergedSettings->getProperty< bool >(L"Pipeline.BuildThreads", false),
 			verbose);
 
 		if (rebuild)

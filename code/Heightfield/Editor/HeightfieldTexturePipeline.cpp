@@ -8,9 +8,9 @@
  */
 #include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
+#include "Core/Misc/EnterLeave.h"
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyString.h"
-#include "Core/Thread/Acquire.h"
 #include "Core/Thread/Job.h"
 #include "Core/Thread/JobManager.h"
 #include "Database/Database.h"
@@ -103,12 +103,14 @@ bool HeightfieldTexturePipeline::buildOutput(
 	uint32_t reason
 ) const
 {
-	// Due to memory usage of this pipeline we need to serialize
-	// building of these assets. Pipeline should try reduce number
-	// of concurrent builds with same pipeline type.
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-
 	const HeightfieldTextureAsset* asset = checked_type_cast< const HeightfieldTextureAsset* >(sourceAsset);
+	const bool region = (asset->m_tileX >= 0 || asset->m_overviewSize > 0);
+
+	// Whole heightfield use a lot of memory; serialize those builds, tiles and overviews are built concurrently.
+	T_ANONYMOUS_VAR(EnterLeave)(
+		[&]() { if (!region) m_lock.wait(); },
+		[&]() { if (!region) m_lock.release(); }
+	);
 
 	// Get heightfield asset and instance.
 	Ref< const db::Instance > heightfieldAssetInstance = pipelineBuilder->getSourceDatabase()->getInstance(asset->m_heightfield);
@@ -126,7 +128,6 @@ bool HeightfieldTexturePipeline::buildOutput(
 	}
 
 	// Normals of tiles need a border of samples from neighbour tiles.
-	const bool region = (asset->m_tileX >= 0 || asset->m_overviewSize > 0);
 	const int32_t border = (asset->m_tileX >= 0 && asset->m_output == HeightfieldTextureAsset::OtNormals) ? 1 : 0;
 
 	const TileStorage tileStorage(heightfieldAsset->getTileCount());

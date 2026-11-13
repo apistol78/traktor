@@ -104,8 +104,8 @@ const wchar_t* const c_deformOffsetPin = L"WorldPositionOffset";
 class FragmentReaderAdapter : public render::FragmentLinker::FragmentReaderTransientCache
 {
 public:
-	explicit FragmentReaderAdapter(SmallMap< Key, Ref< render::ShaderGraph > >& cache, editor::IPipelineBuilder* pipelineBuilder)
-		: render::FragmentLinker::FragmentReaderTransientCache(cache)
+	explicit FragmentReaderAdapter(SmallMap< Key, Ref< render::ShaderGraph > >& cache, Semaphore& lock, editor::IPipelineBuilder* pipelineBuilder)
+		: render::FragmentLinker::FragmentReaderTransientCache(cache, lock)
 		, m_pipelineBuilder(pipelineBuilder)
 	{
 	}
@@ -754,7 +754,7 @@ bool MeshPipeline::buildOutput(
 		Ref< render::ShaderGraph > materialShaderGraph;
 		Guid materialShaderGraphId;
 
-		FragmentReaderAdapter linkerFragmentReader(m_linkerCache, pipelineBuilder);
+		FragmentReaderAdapter linkerFragmentReader(m_linkerCache, m_linkerCacheLock, pipelineBuilder);
 
 		// Materials providing a world position offset are deformed on the compute queue; they
 		// render from a vertex fragment reading the deformed positions and keep the Deform

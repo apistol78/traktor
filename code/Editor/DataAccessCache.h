@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,9 +9,11 @@
 #pragma once
 
 #include <functional>
+#include <map>
 #include "Core/Ref.h"
 #include "Core/Misc/Key.h"
 #include "Core/Serialization/ISerializable.h"
+#include "Core/Thread/Semaphore.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -61,6 +63,8 @@ public:
 private:
 	Ref< PipelineProfiler > m_profiler;
 	IPipelineCache* m_cache;
+	Semaphore m_lock;
+	std::map< Key, Semaphore > m_keyLocks;
 
 	Ref< ISerializable > readObject(
 		const Key& key,

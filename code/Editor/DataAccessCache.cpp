@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -10,6 +10,7 @@
 #include "Core/Log/Log.h"
 #include "Core/Misc/EnterLeave.h"
 #include "Core/Serialization/BinarySerializer.h"
+#include "Core/Thread/Acquire.h"
 #include "Editor/DataAccessCache.h"
 #include "Editor/IPipelineCache.h"
 #include "Editor/Pipeline/PipelineProfiler.h"
@@ -34,6 +35,15 @@ Ref< ISerializable > DataAccessCache::readObject(
 		[&](){ m_profiler->begin(L"DataAccessCache::readObject"); },
 		[&](){ m_profiler->end(); }
 	);
+
+	Semaphore* keyLock;
+	{
+		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+		keyLock = &m_keyLocks[key];
+	}
+
+	// Concurrent reads of same key wait for first to create and upload object.
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(*keyLock);
 
 	Ref< IStream > s;
 

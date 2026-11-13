@@ -484,6 +484,7 @@ bool perform(const PipelineParameters& params)
 		pipelineDb,
 		sourceDatabaseAndCache.cache,
 		statusListener.ptr(),
+		settings->getProperty< bool >(L"Pipeline.BuildThreads", false),
 		params.getVerbose()
 	);
 

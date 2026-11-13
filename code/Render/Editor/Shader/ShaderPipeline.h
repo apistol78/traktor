@@ -87,6 +87,7 @@ private:
 	bool m_debugCompleteGraphs = false;
 	std::wstring m_debugPath;
 	bool m_editor = false;
+	mutable Semaphore m_linkerCacheLock;
 	mutable SmallMap< Key, Ref< ShaderGraph > > m_linkerCache;
 
 	IProgramCompiler* getProgramCompiler() const;

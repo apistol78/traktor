@@ -14,6 +14,7 @@
 #include "Core/Object.h"
 #include "Core/Ref.h"
 #include "Core/RefArray.h"
+#include "Core/Thread/Semaphore.h"
 
 #include <functional>
 #include <string>
@@ -75,7 +76,7 @@ public:
 	class T_DLLCLASS FragmentReaderTransientCache : public IFragmentReader
 	{
 	public:
-		explicit FragmentReaderTransientCache(SmallMap< Key, Ref< ShaderGraph > >& cache);
+		explicit FragmentReaderTransientCache(SmallMap< Key, Ref< ShaderGraph > >& cache, Semaphore& lock);
 
 		virtual Ref< const ShaderGraph > get(const Key& key) const override final;
 
@@ -83,6 +84,7 @@ public:
 
 	private:
 		SmallMap< Key, Ref< ShaderGraph > >& m_cache;
+		Semaphore& m_lock;
 	};
 
 	FragmentLinker() = default;

@@ -72,8 +72,8 @@ namespace
 class FragmentReaderAdapter : public FragmentLinker::FragmentReaderTransientCache
 {
 public:
-	explicit FragmentReaderAdapter(SmallMap< Key, Ref< ShaderGraph > >& cache, editor::IPipelineCommon* pipeline)
-		: FragmentLinker::FragmentReaderTransientCache(cache)
+	explicit FragmentReaderAdapter(SmallMap< Key, Ref< ShaderGraph > >& cache, Semaphore& lock, editor::IPipelineCommon* pipeline)
+		: FragmentLinker::FragmentReaderTransientCache(cache, lock)
 		, m_pipeline(pipeline)
 	{
 	}
@@ -312,7 +312,7 @@ bool ShaderPipeline::buildOutput(
 
 	// Link shader fragments.
 	pipelineBuilder->getProfiler()->begin(L"ShaderPipeline link fragments");
-	FragmentReaderAdapter fragmentReader(m_linkerCache, pipelineBuilder);
+	FragmentReaderAdapter fragmentReader(m_linkerCache, m_linkerCacheLock, pipelineBuilder);
 	shaderGraph = FragmentLinker(fragmentReader).resolve(shaderGraph, true);
 	pipelineBuilder->getProfiler()->end();
 	if (!shaderGraph)

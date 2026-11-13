@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,12 +8,13 @@
  */
 #pragma once
 
+#include <atomic>
 #include <list>
 #include <map>
-#include <set>
 #include "Core/Containers/SmallMap.h"
 #include "Core/Io/Path.h"
 #include "Core/Thread/Semaphore.h"
+#include "Core/Thread/ThreadLocal.h"
 #include "Editor/IPipelineBuilder.h"
 #include "Editor/PipelineTypes.h"
 
@@ -64,6 +65,7 @@ public:
 		IPipelineDb* db,
 		IPipelineInstanceCache* instanceCache,
 		IListener* listener,
+		bool buildThreads,
 		bool verbose
 	);
 
@@ -108,6 +110,20 @@ private:
 
 	typedef std::list< BuiltCacheEntry > built_cache_list_t;
 
+	//! State of build performed by a thread, including nested ad-hoc builds.
+	struct BuildContext
+	{
+		RefArray< db::Instance > builtInstances;
+		AlignedVector< CacheKey > builtAdHocKeys;
+		int32_t adHocDepth = 0;
+	};
+
+	struct AdHocBuild
+	{
+		Semaphore lock;
+		bool built = false;
+	};
+
 	Ref< PipelineFactory > m_pipelineFactory;
 	Ref< db::Database > m_sourceDatabase;
 	Ref< db::Database > m_outputDatabase;
@@ -116,26 +132,29 @@ private:
 	Ref< IPipelineInstanceCache > m_instanceCache;
 	Ref< DataAccessCache > m_dataAccessCache;
 	IListener* m_listener;
+	Semaphore m_listenerLock;
+	bool m_buildThreads;
 	bool m_verbose;
 	bool m_rebuild;
 	Ref< PipelineProfiler > m_profiler;
 	const PipelineDependencySet* m_dependencySet;
-	std::map< Guid, Ref< ISerializable > > m_readCache;
+	Semaphore m_builtCacheLock;
 	std::map< uint32_t, built_cache_list_t > m_builtCache;
 	mutable Semaphore m_inclusiveHashCacheLock;
 	mutable SmallMap< uint32_t, uint32_t > m_inclusiveHashCache;
-	std::set< Guid > m_adHocBuilds;
-	RefArray< db::Instance > m_builtInstances;
-	AlignedVector< CacheKey > m_builtAdHocKeys;
-	int32_t m_adHocDepth;
+	Semaphore m_adHocBuildsLock;
+	std::map< Guid, AdHocBuild > m_adHocBuilds;
+	Semaphore m_createOutputLock;
+	ThreadLocal m_context;
+	BuildContext m_defaultContext;
 	int32_t m_progressEnd;
-	int32_t m_progress;
-	int32_t m_succeeded;
-	int32_t m_succeededBuilt;
-	int32_t m_failed;
-	int32_t m_cacheHit;
-	int32_t m_cacheMiss;
-	int32_t m_cacheVoid;
+	std::atomic< int32_t > m_progress;
+	std::atomic< int32_t > m_succeeded;
+	std::atomic< int32_t > m_succeededBuilt;
+	std::atomic< int32_t > m_failed;
+	std::atomic< int32_t > m_cacheHit;
+	std::atomic< int32_t > m_cacheMiss;
+	std::atomic< int32_t > m_cacheVoid;
 
 	/*! Perform build. */
 	BuildResult performBuild(const PipelineDependencySet* dependencySet, const PipelineDependency* dependency, const Object* buildParams, uint32_t reason);
@@ -155,6 +174,9 @@ private:
 		RefArray< db::Instance >* outInstances,
 		AlignedVector< CacheKey >* outChildren
 	) const;
+
+	/*! Get build context of calling thread. */
+	BuildContext& getContext();
 };
 
 }

@@ -134,6 +134,10 @@
 			<second>Pipeline</second>
 		</item>
 		<item>
+			<first>EDITOR_SETTINGS_PIPELINE_BUILD_THREADS</first>
+			<second>Use multiple build threads</second>
+		</item>
+		<item>
 			<first>EDITOR_SETTINGS_PIPELINE_CACHE_READ</first>
 			<second>Read access</second>
 		</item>

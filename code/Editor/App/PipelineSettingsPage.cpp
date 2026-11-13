@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -44,6 +44,12 @@ bool PipelineSettingsPage::create(ui::Container* parent, const PropertyGroup* or
 	m_checkDependsThreads = new ui::CheckBox();
 	m_checkDependsThreads->create(container, i18n::Text(L"EDITOR_SETTINGS_PIPELINE_DEPENDS_THREADS"));
 	m_checkDependsThreads->setChecked(dependsThreads);
+
+	bool buildThreads = settings->getProperty< bool >(L"Pipeline.BuildThreads", false);
+
+	m_checkBuildThreads = new ui::CheckBox();
+	m_checkBuildThreads->create(container, i18n::Text(L"EDITOR_SETTINGS_PIPELINE_BUILD_THREADS"));
+	m_checkBuildThreads->setChecked(buildThreads);
 
 	// Avalanche
 	bool avalancheEnable = settings->getProperty< bool >(L"Pipeline.AvalancheCache", false);
@@ -115,6 +121,7 @@ bool PipelineSettingsPage::apply(PropertyGroup* settings)
 	settings->setProperty< PropertyBoolean >(L"Pipeline.Verbose", m_checkVerbose->isChecked());
 
 	settings->setProperty< PropertyBoolean >(L"Pipeline.DependsThreads", m_checkDependsThreads->isChecked());
+	settings->setProperty< PropertyBoolean >(L"Pipeline.BuildThreads", m_checkBuildThreads->isChecked());
 
 	settings->setProperty< PropertyBoolean >(L"Pipeline.AvalancheCache", m_checkUseAvalanche->isChecked());
 	settings->setProperty< PropertyString >(L"Pipeline.AvalancheCache.Host", m_editAvalancheHost->getText());
