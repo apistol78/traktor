@@ -20,12 +20,19 @@
 namespace traktor::world
 {
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.EntityStreamingComponentData", 0, EntityStreamingComponentData, IWorldComponentData)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.EntityStreamingComponentData", 1, EntityStreamingComponentData, IWorldComponentData)
 
 void EntityStreamingComponentData::serialize(ISerializer& s)
 {
 	s >> Member< float >(L"loadDistance", m_loadDistance, AttributeRange(0.0f));
 	s >> Member< float >(L"unloadDistance", m_unloadDistance, AttributeRange(0.0f));
+
+	if (s.getVersion< EntityStreamingComponentData >() >= 1)
+	{
+		s >> Member< float >(L"hlodLoadDistance", m_hlodLoadDistance, AttributeRange(0.0f));
+		s >> Member< float >(L"hlodUnloadDistance", m_hlodUnloadDistance, AttributeRange(0.0f));
+	}
+
 	s >> MemberAlignedVector< Cell, MemberComposite< Cell > >(L"cells", m_cells, AttributePrivate());
 }
 
@@ -33,6 +40,9 @@ void EntityStreamingComponentData::Cell::serialize(ISerializer& s)
 {
 	s >> MemberAabb3(L"boundingBox", boundingBox);
 	s >> MemberRefArray< EntityData >(L"entityData", entityData);
+
+	if (s.getVersion< EntityStreamingComponentData >() >= 1)
+		s >> MemberRefArray< EntityData >(L"hlodEntityData", hlodEntityData);
 }
 
 }

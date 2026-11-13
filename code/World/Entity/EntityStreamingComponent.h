@@ -62,12 +62,19 @@ public:
 	void setFocus(const Vector4& focus);
 
 private:
+	enum class Level
+	{
+		None,
+		Hlod,
+		Full
+	};
+
 	struct Cell
 	{
 		const EntityStreamingComponentData::Cell* data = nullptr;
-		RefArray< Entity > entities;
+		RefArray< Entity > entities; //!< Entities of current level, in world.
 		SmallSet< Guid > removed; //!< Entities removed from world by others; never created again.
-		bool loaded = false;
+		Level level = Level::None;
 	};
 
 	Ref< const IEntityBuilder > m_entityBuilder;
@@ -79,11 +86,18 @@ private:
 	bool m_haveFocus = false;
 	Ref< Job > m_job;
 	int32_t m_loadingCell = -1;
+	Level m_loadingLevel = Level::None;
+	RefArray< Entity > m_loadingEntities;
 	std::atomic< bool > m_cancel = false;
+
+	Level wantedLevel(const Cell& cell, const Scalar& distance) const;
+
+	/*! Replace entities of cell with entities of level, returns true if full level entities was removed from world. */
+	bool replaceEntities(Cell& cell, Level level, RefArray< Entity >& entities);
 
 	bool processPendingJob(int32_t timeout);
 
-	void createEntities(Cell& cell) const;
+	void createEntities(const Cell& cell, Level level, RefArray< Entity >& outEntities) const;
 };
 
 }

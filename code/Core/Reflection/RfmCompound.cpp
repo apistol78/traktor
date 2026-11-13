@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -59,7 +59,7 @@ ReflectionMember* RfmCompound::findMember(const ReflectionMemberPredicate& predi
 
 void RfmCompound::findMembers(const ReflectionMemberPredicate& predicate, RefArray< ReflectionMember >& outMembers) const
 {
-	outMembers.reserve(outMembers.capacity() + m_members.size());
+	outMembers.reserve(outMembers.size() + m_members.size());
 	for (auto member : m_members)
 	{
 		if (predicate(member))

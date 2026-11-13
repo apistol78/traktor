@@ -10,6 +10,7 @@
 
 #include "Core/Log/Log.h"
 #include "Editor/IPipelineDepends.h"
+#include "World/Entity/BillboardComponentData.h"
 #include "World/Entity/ColorCorrectionComponentData.h"
 #include "World/Entity/DecalComponentData.h"
 #include "World/Entity/DecalEventData.h"
@@ -29,6 +30,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.WorldEntityPipeline", 0, WorldEnt
 TypeInfoSet WorldEntityPipeline::getAssetTypes() const
 {
 	TypeInfoSet typeSet;
+	typeSet.insert< BillboardComponentData >();
 	typeSet.insert< ColorCorrectionComponentData >();
 	typeSet.insert< DecalComponentData >();
 	typeSet.insert< DecalEventData >();
@@ -51,6 +53,12 @@ bool WorldEntityPipeline::buildDependencies(
 {
 	if (auto scriptComponentData = dynamic_type_cast< const ScriptComponentData* >(sourceAsset))
 		pipelineDepends->addDependency(scriptComponentData->getRuntimeClass(), editor::PdfBuild);
+	else if (auto billboardComponentData = dynamic_type_cast< const BillboardComponentData* >(sourceAsset))
+	{
+		pipelineDepends->addDependency(billboardComponentData->getShader(), editor::PdfBuild | editor::PdfResource);
+		pipelineDepends->addDependency(billboardComponentData->getAlbedoTexture(), editor::PdfBuild | editor::PdfResource);
+		pipelineDepends->addDependency(billboardComponentData->getNormalTexture(), editor::PdfBuild | editor::PdfResource);
+	}
 	else if (auto colorCorrectionComponentData = dynamic_type_cast< const ColorCorrectionComponentData* >(sourceAsset))
 		pipelineDepends->addDependency(colorCorrectionComponentData->getColorGrading(), editor::PdfBuild | editor::PdfResource);
 	else if (auto decalComponentData = dynamic_type_cast< const DecalComponentData* >(sourceAsset))

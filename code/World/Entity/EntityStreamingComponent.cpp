@@ -15,6 +15,8 @@
 #include "World/IEntityBuilder.h"
 #include "World/World.h"
 
+#include <limits>
+
 namespace traktor::world
 {
 namespace
@@ -50,8 +52,9 @@ void EntityStreamingComponent::destroy()
 		m_cancel = true;
 		m_job->wait();
 		m_job = nullptr;
-		for (auto entity : m_cells[m_loadingCell].entities)
+		for (auto entity : m_loadingEntities)
 			entity->destroy();
+		m_loadingEntities.clear();
 	}
 	m_cells.clear();
 	m_data = nullptr;
@@ -69,60 +72,57 @@ void EntityStreamingComponent::update(const UpdateParams& update)
 	if (!m_haveFocus)
 		return;
 
-	const Scalar loadDistance(m_data->getLoadDistance());
-	const Scalar unloadDistance(m_data->getUnloadDistance());
+	// Swap in entities of loaded cell, or discard them if level is no longer wanted.
+	bool unloaded = processPendingJob(0);
 
-	// Add entities of loaded cell to world, or discard them if cell is no longer wanted.
-	processPendingJob(0);
-
-	// Unload cells beyond unload distance and find nearest cell to load.
-	Scalar nearestDistance = loadDistance;
+	// Unload cells beyond reach and find nearest cell which need another level.
+	Scalar nearestDistance(std::numeric_limits< float >::max());
 	int32_t nearestCell = -1;
+	Level nearestLevel = Level::None;
 	int32_t unloadCount = 0;
 
 	for (int32_t i = 0; i < (int32_t)m_cells.size(); ++i)
 	{
+		// Cell being loaded is left alone until its job has finished.
+		if (i == m_loadingCell)
+			continue;
+
 		Cell& cell = m_cells[i];
 		const Scalar distance = distanceToCell(m_focus, cell.data->boundingBox);
-		if (cell.loaded)
+		const Level level = wantedLevel(cell, distance);
+		if (level == cell.level)
+			continue;
+
+		if (level == Level::None)
 		{
-			if (distance > unloadDistance && unloadCount < c_maxUnloadsPerUpdate)
+			if (unloadCount < c_maxUnloadsPerUpdate)
 			{
-				for (auto entity : cell.entities)
-				{
-					// Entity no longer in world has been taken by others and is theirs.
-					if (entity->getWorld() != m_world)
-					{
-						cell.removed.insert(entity->getId());
-						continue;
-					}
-					m_world->removeEntity(entity);
-					entity->destroy();
-				}
-				cell.entities.clear();
-				cell.loaded = false;
+				RefArray< Entity > none;
+				unloaded |= replaceEntities(cell, Level::None, none);
 				++unloadCount;
 			}
 		}
-		else if (i != m_loadingCell && distance < nearestDistance)
+		else if (distance < nearestDistance)
 		{
 			nearestDistance = distance;
 			nearestCell = i;
+			nearestLevel = level;
 		}
 	}
 
 	// Create entities of one cell at a time in background.
 	if (!m_job && nearestCell >= 0)
 	{
-		Cell& cell = m_cells[nearestCell];
+		const Cell& cell = m_cells[nearestCell];
 		m_loadingCell = nearestCell;
+		m_loadingLevel = nearestLevel;
 		m_job = JobManager::getInstance().add([this, &cell]() {
-			createEntities(cell);
+			createEntities(cell, m_loadingLevel, m_loadingEntities);
 		});
 	}
 
 	// Release resources no longer used by any entity.
-	if (unloadCount > 0)
+	if (unloaded)
 		m_resourceManager->unloadUnusedResident();
 }
 
@@ -131,17 +131,15 @@ void EntityStreamingComponent::load(const Vector4& focus)
 	processPendingJob(-1);
 	setFocus(focus);
 
-	const Scalar loadDistance(m_data->getLoadDistance());
-	const Scalar unloadDistance(m_data->getUnloadDistance());
-
 	for (auto& cell : m_cells)
 	{
-		if (distanceToCell(m_focus, cell.data->boundingBox) >= loadDistance)
+		const Level level = wantedLevel(cell, distanceToCell(m_focus, cell.data->boundingBox));
+		if (level == cell.level)
 			continue;
-		createEntities(cell);
-		for (auto entity : cell.entities)
-			m_world->addEntity(entity);
-		cell.loaded = true;
+
+		RefArray< Entity > entities;
+		createEntities(cell, level, entities);
+		replaceEntities(cell, level, entities);
 	}
 }
 
@@ -151,49 +149,84 @@ void EntityStreamingComponent::setFocus(const Vector4& focus)
 	m_haveFocus = true;
 }
 
+EntityStreamingComponent::Level EntityStreamingComponent::wantedLevel(const Cell& cell, const Scalar& distance) const
+{
+	// Current level is kept until beyond its unload distance.
+	if (distance < Scalar(m_data->getLoadDistance()) || (cell.level == Level::Full && distance <= Scalar(m_data->getUnloadDistance())))
+		return Level::Full;
+
+	if (cell.data->hlodEntityData.empty())
+		return Level::None;
+
+	if (distance < Scalar(m_data->getHlodLoadDistance()) || (cell.level != Level::None && distance <= Scalar(m_data->getHlodUnloadDistance())))
+		return Level::Hlod;
+
+	return Level::None;
+}
+
+bool EntityStreamingComponent::replaceEntities(Cell& cell, Level level, RefArray< Entity >& entities)
+{
+	const bool unloaded = (cell.level == Level::Full && !cell.entities.empty());
+
+	for (auto entity : cell.entities)
+	{
+		// Entity no longer in world has been taken by others and is theirs.
+		if (entity->getWorld() != m_world)
+		{
+			cell.removed.insert(entity->getId());
+			continue;
+		}
+		m_world->removeEntity(entity);
+		entity->destroy();
+	}
+
+	for (auto entity : entities)
+		m_world->addEntity(entity);
+
+	cell.entities.swap(entities);
+	cell.level = level;
+	entities.clear();
+	return unloaded;
+}
+
 bool EntityStreamingComponent::processPendingJob(int32_t timeout)
 {
 	if (!m_job)
-		return true;
+		return false;
 
 	if (!m_job->wait(timeout))
 		return false;
 
-	const Scalar loadDistance(m_data->getLoadDistance());
-	const Scalar unloadDistance(m_data->getUnloadDistance());
+	bool unloaded = false;
 
 	Cell& cell = m_cells[m_loadingCell];
-	if (distanceToCell(m_focus, cell.data->boundingBox) <= unloadDistance)
-	{
-		for (auto entity : cell.entities)
-			m_world->addEntity(entity);
-		cell.loaded = true;
-	}
-	else
-	{
-		for (auto entity : cell.entities)
-			entity->destroy();
-		cell.entities.clear();
-	}
+	if (wantedLevel(cell, distanceToCell(m_focus, cell.data->boundingBox)) == m_loadingLevel)
+		unloaded = replaceEntities(cell, m_loadingLevel, m_loadingEntities);
+
+	for (auto entity : m_loadingEntities)
+		entity->destroy();
+	m_loadingEntities.clear();
+
 	m_job = nullptr;
 	m_loadingCell = -1;
-	
-	return true;
+	m_loadingLevel = Level::None;
+	return unloaded;
 }
 
-void EntityStreamingComponent::createEntities(Cell& cell) const
+void EntityStreamingComponent::createEntities(const Cell& cell, Level level, RefArray< Entity >& outEntities) const
 {
-	for (auto entityData : cell.data->entityData)
+	const auto& entityData = (level == Level::Full) ? cell.data->entityData : cell.data->hlodEntityData;
+	for (auto ed : entityData)
 	{
 		if (m_cancel)
 			break;
 
-		if (cell.removed.find(entityData->getId()) != cell.removed.end())
+		if (cell.removed.find(ed->getId()) != cell.removed.end())
 			continue;
 
-		Ref< Entity > entity = m_entityBuilder->create(entityData);
+		Ref< Entity > entity = m_entityBuilder->create(ed);
 		if (entity)
-			cell.entities.push_back(entity);
+			outEntities.push_back(entity);
 	}
 }
 

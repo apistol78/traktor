@@ -13,6 +13,7 @@
 #include "Core/Containers/AlignedVector.h"
 #include "Core/Containers/SmallMap.h"
 #include "Core/Containers/SmallSet.h"
+#include "Core/Guid.h"
 #include "Core/Math/Aabb3.h"
 #include "Scene/Editor/ISceneOperator.h"
 
@@ -27,6 +28,7 @@
 namespace traktor::editor
 {
 
+class IPipelineBuilder;
 class IPipelineCommon;
 
 }
@@ -77,6 +79,15 @@ public:
 	) const override final;
 
 private:
+	/*! Atlas textures and framing of a billboard; shared by every entity of same source. */
+	struct Billboard
+	{
+		Guid albedoTexture;
+		Guid normalTexture;
+		float size = 0.0f;
+		Vector4 offset = Vector4::origo();
+	};
+
 	SmallMap< const TypeInfo*, Ref< const world::IEntityReplicator > > m_entityReplicators;
 	bool m_targetEditor = false;
 
@@ -94,7 +105,16 @@ private:
 	Aabb3 calculateBoundingBox(
 		editor::IPipelineCommon* pipelineCommon,
 		const world::EntityData* entityData,
+		bool visualOnly,
 		SmallMap< uint32_t, Aabb3 >& inoutModelBoundingBoxes
+	) const;
+
+	/*! Billboard entity standing in for entity, null if entity has no billboard component. */
+	Ref< world::EntityData > createBillboardEntity(
+		editor::IPipelineBuilder* pipelineBuilder,
+		const world::EntityData* entityData,
+		SmallMap< uint32_t, Aabb3 >& inoutModelBoundingBoxes,
+		SmallMap< uint32_t, Billboard >& inoutBillboards
 	) const;
 };
 

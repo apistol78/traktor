@@ -18,7 +18,7 @@
 namespace traktor::scene
 {
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.scene.EntityStreamingOperationData", 2, EntityStreamingOperationData, ISceneOperationData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.scene.EntityStreamingOperationData", 3, EntityStreamingOperationData, ISceneOperationData)
 
 void EntityStreamingOperationData::serialize(ISerializer& s)
 {
@@ -30,6 +30,12 @@ void EntityStreamingOperationData::serialize(ISerializer& s)
 	{
 		RefArray< world::PropertyEntityReference > dummy;
 		s >> MemberRefArray< world::PropertyEntityReference >(L"residentEntities", dummy);
+	}
+
+	if (s.getVersion< EntityStreamingOperationData >() >= 3)
+	{
+		s >> Member< float >(L"hlodLoadDistance", m_hlodLoadDistance, AttributeRange(0.0f) | AttributeUnit(UnitType::Metres));
+		s >> Member< float >(L"hlodUnloadDistance", m_hlodUnloadDistance, AttributeRange(0.0f) | AttributeUnit(UnitType::Metres));
 	}
 }
 

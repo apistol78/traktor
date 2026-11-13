@@ -38,12 +38,20 @@ public:
 	/*! Distance from focus beyond which a cell is unloaded. */
 	float getUnloadDistance() const { return m_unloadDistance; }
 
+	/*! Distance from focus within which billboards of a cell are loaded, when cell is beyond load distance. */
+	float getHlodLoadDistance() const { return m_hlodLoadDistance; }
+
+	/*! Distance from focus beyond which billboards of a cell are unloaded. */
+	float getHlodUnloadDistance() const { return m_hlodUnloadDistance; }
+
 	virtual void serialize(ISerializer& s) override final;
 
 private:
 	float m_cellSize = 64.0f;
 	float m_loadDistance = 200.0f;
 	float m_unloadDistance = 250.0f;
+	float m_hlodLoadDistance = 600.0f;
+	float m_hlodUnloadDistance = 650.0f;
 };
 
 }

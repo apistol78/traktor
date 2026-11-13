@@ -7,6 +7,8 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #if defined(T_STATIC)
+#	include "World/Entity/BillboardComponentData.h"
+#	include "World/Entity/BillboardComponentRenderer.h"
 #	include "World/Entity/ComputeTextureComponentData.h"
 #	include "World/Entity/ComputeTextureRenderer.h"
 #	include "World/Entity/DisplacementEntityComponentData.h"
@@ -23,6 +25,8 @@ namespace traktor::world
 
 extern "C" void __module__Traktor_World()
 {
+	T_FORCE_LINK_REF(BillboardComponentData);
+	T_FORCE_LINK_REF(BillboardComponentRenderer);
 	T_FORCE_LINK_REF(ComputeTextureComponentData);
 	T_FORCE_LINK_REF(ComputeTextureRenderer);
 	T_FORCE_LINK_REF(DisplacementEntityComponentData);

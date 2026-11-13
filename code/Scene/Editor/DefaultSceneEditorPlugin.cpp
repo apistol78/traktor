@@ -27,6 +27,7 @@
 #include "World/WorldResourceFactory.h"
 
 // Entity factories
+#include "Scene/Editor/EntityStreamingHLODComponentEntityFactory.h"
 #include "Scene/Editor/MarkerEntityComponentEntityFactory.h"
 #include "Weather/WeatherFactory.h"
 #include "World/Entity/WorldEntityFactory.h"
@@ -34,6 +35,7 @@
 // Entity renderers
 #include "Weather/Precipitation/PrecipitationRenderer.h"
 #include "Weather/Sky/SkyRenderer.h"
+#include "World/Entity/BillboardComponentRenderer.h"
 #include "World/Entity/ComputeTextureRenderer.h"
 #include "World/Entity/CullingRenderer.h"
 #include "World/Entity/DecalRenderer.h"
@@ -92,6 +94,7 @@ void DefaultSceneEditorPlugin::createEntityFactories(
 {
 	outEntityFactories.push_back(new world::WorldEntityFactory(true));
 	outEntityFactories.push_back(new weather::WeatherFactory());
+	outEntityFactories.push_back(new EntityStreamingHLODComponentEntityFactory());
 	outEntityFactories.push_back(new MarkerEntityComponentEntityFactory());
 }
 
@@ -102,6 +105,7 @@ void DefaultSceneEditorPlugin::createEntityRenderers(
 	const TypeInfo& worldRendererType,
 	RefArray< world::IEntityRenderer >& outEntityRenderers) const
 {
+	outEntityRenderers.push_back(new world::BillboardComponentRenderer(context->getRenderSystem()));
 	outEntityRenderers.push_back(new world::ComputeTextureRenderer());
 	outEntityRenderers.push_back(new world::CullingRenderer());
 	outEntityRenderers.push_back(new world::DecalRenderer(context->getRenderSystem()));

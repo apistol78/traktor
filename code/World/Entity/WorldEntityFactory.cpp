@@ -12,9 +12,12 @@
 #include "Core/Serialization/DeepClone.h"
 #include "Render/IRenderSystem.h"
 #include "Render/Image2/ImageGraph.h"
+#include "Render/ITexture.h"
 #include "Render/Shader.h"
 #include "Resource/IResourceManager.h"
 #include "World/Entity.h"
+#include "World/Entity/BillboardComponent.h"
+#include "World/Entity/BillboardComponentData.h"
 #include "World/Entity/CameraComponent.h"
 #include "World/Entity/CameraComponentData.h"
 #include "World/Entity/ColorCorrectionComponent.h"
@@ -95,6 +98,7 @@ const TypeInfoSet WorldEntityFactory::getEntityEventTypes() const
 const TypeInfoSet WorldEntityFactory::getEntityComponentTypes() const
 {
 	TypeInfoSet typeSet;
+	typeSet.insert< BillboardComponentData >();
 	typeSet.insert< CameraComponentData >();
 	typeSet.insert< DecalComponentData >();
 	typeSet.insert< DisplacementEntityComponentData >();
@@ -207,6 +211,32 @@ Ref< IEntityEvent > WorldEntityFactory::createEntityEvent(const IEntityBuilder* 
 
 Ref< IEntityComponent > WorldEntityFactory::createEntityComponent(const IEntityBuilder* builder, const IEntityComponentData& entityComponentData) const
 {
+	if (auto billboardComponentData = dynamic_type_cast< const BillboardComponentData* >(&entityComponentData))
+	{
+		resource::Proxy< render::Shader > shader;
+		if (!m_resourceManager->bind(billboardComponentData->getShader(), shader))
+			return nullptr;
+
+		resource::Proxy< render::ITexture > albedoTexture;
+		if (!m_resourceManager->bind(billboardComponentData->getAlbedoTexture(), albedoTexture))
+			return nullptr;
+
+		resource::Proxy< render::ITexture > normalTexture;
+		if (!m_resourceManager->bind(billboardComponentData->getNormalTexture(), normalTexture))
+			return nullptr;
+
+		return new BillboardComponent(
+			shader,
+			albedoTexture,
+			normalTexture,
+			billboardComponentData->getAngles(),
+			billboardComponentData->getElevations(),
+			billboardComponentData->getElevationFrom(),
+			billboardComponentData->getElevationTo(),
+			billboardComponentData->getSize(),
+			billboardComponentData->getOffset());
+	}
+
 	if (auto cameraComponentData = dynamic_type_cast< const CameraComponentData* >(&entityComponentData))
 		return new CameraComponent(cameraComponentData);
 

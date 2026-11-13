@@ -38,6 +38,7 @@ public:
 	{
 		Aabb3 boundingBox;
 		RefArray< EntityData > entityData;
+		RefArray< EntityData > hlodEntityData; //!< Stand-ins for entities when cell is beyond load distance.
 
 		void serialize(ISerializer& s);
 	};
@@ -50,6 +51,14 @@ public:
 
 	float getUnloadDistance() const { return m_unloadDistance; }
 
+	void setHlodLoadDistance(float hlodLoadDistance) { m_hlodLoadDistance = hlodLoadDistance; }
+
+	float getHlodLoadDistance() const { return m_hlodLoadDistance; }
+
+	void setHlodUnloadDistance(float hlodUnloadDistance) { m_hlodUnloadDistance = hlodUnloadDistance; }
+
+	float getHlodUnloadDistance() const { return m_hlodUnloadDistance; }
+
 	void setCells(const AlignedVector< Cell >& cells) { m_cells = cells; }
 
 	const AlignedVector< Cell >& getCells() const { return m_cells; }
@@ -59,6 +68,8 @@ public:
 private:
 	float m_loadDistance = 200.0f;
 	float m_unloadDistance = 250.0f;
+	float m_hlodLoadDistance = 0.0f;
+	float m_hlodUnloadDistance = 0.0f;
 	AlignedVector< Cell > m_cells;
 };
 
