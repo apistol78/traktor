@@ -37,7 +37,15 @@ Ref< drawing::Image > getEmbeddedTexture(const ufbx_texture* texture)
 	if (texture->type == UFBX_TEXTURE_FILE)
 	{
 		if (texture->content.data != nullptr)
-			return drawing::Image::load(texture->content.data, texture->content.size, L"png");
+		{
+			// Embedded content keeps the original file's format; determine decoder from its name.
+			std::wstring extension = Path(mbstows(texture->filename.data)).getExtension();
+			if (extension.empty())
+				extension = Path(mbstows(texture->relative_filename.data)).getExtension();
+			if (extension.empty())
+				extension = L"png";
+			return drawing::Image::load(texture->content.data, (uint32_t)texture->content.size, extension);
+		}
 		else
 		{
 			const Path fileName(mbstows(texture->absolute_filename.data));

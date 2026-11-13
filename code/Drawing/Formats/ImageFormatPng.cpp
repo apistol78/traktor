@@ -11,9 +11,9 @@
 
 #include <cstring>
 #include <png.h>
+#include "Core/Containers/AlignedVector.h"
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
-#include "Core/Misc/Endian.h"
 #include "Drawing/Formats/ImageFormatPng.h"
 #include "Drawing/Image.h"
 #include "Drawing/ImageInfo.h"
@@ -60,8 +60,9 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.drawing.ImageFormatPng", ImageFormatPng, IImage
 Ref< Image > ImageFormatPng::read(IStream* stream)
 {
 	Ref< Image > image;
+	AlignedVector< png_bytep > rows;
 	png_structp png_ptr;
-	png_infop info_ptr;
+	png_infop info_ptr = nullptr;
 	png_uint_32 width;
 	png_uint_32 height;
 	int bit_depth;
@@ -75,7 +76,7 @@ Ref< Image > ImageFormatPng::read(IStream* stream)
 
 	if (setjmp(png_jmpbuf(png_ptr)))
 	{
-		png_destroy_read_struct(&png_ptr, NULL, NULL);
+		png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
 		return nullptr;
 	}
 
@@ -87,18 +88,25 @@ Ref< Image > ImageFormatPng::read(IStream* stream)
 	}
 
 	png_set_read_fn(png_ptr, (void *)stream, t_user_read);
+	png_read_info(png_ptr, info_ptr);
+	png_get_IHDR(png_ptr, info_ptr, &width, &height, &bit_depth, &color_type, NULL, NULL, NULL);
 
-	png_read_png(
-		png_ptr,
-		info_ptr,
+	// Rows end up in memory as G[A] for gray and B,G,R[,A] for color.
+	png_set_packing(png_ptr);
+	png_set_expand(png_ptr);
+	png_set_bgr(png_ptr);
 #if defined(T_LITTLE_ENDIAN)
-		PNG_TRANSFORM_PACKING | PNG_TRANSFORM_EXPAND | PNG_TRANSFORM_BGR,
+	png_set_swap(png_ptr);
 #else
-		PNG_TRANSFORM_PACKING | PNG_TRANSFORM_EXPAND | PNG_TRANSFORM_BGR | PNG_TRANSFORM_PACKSWAP,
+	png_set_packswap(png_ptr);
 #endif
-		NULL
-	);
 
+	// Pixel formats wider than 32 bits are not reliably supported by PixelFormat
+	// conversions thus reduce 16-bit color images to 8-bit; gray (+alpha) fit in 32 bits.
+	if (bit_depth == 16 && (color_type & PNG_COLOR_MASK_COLOR) != 0)
+		png_set_strip_16(png_ptr);
+
+	png_read_update_info(png_ptr, info_ptr);
 	png_get_IHDR(png_ptr, info_ptr, &width, &height, &bit_depth, &color_type, NULL, NULL, NULL);
 
 	double gamma = 2.2;
@@ -120,58 +128,43 @@ Ref< Image > ImageFormatPng::read(IStream* stream)
 
 	case PNG_COLOR_TYPE_GRAY_ALPHA:
 		if (bit_depth == 8)
-			pixelFormat = PixelFormat::getR8A8();
+			pixelFormat = PixelFormat(16, 8, 0, 0, 0, 0, 0, 8, 8, false, false);
 		else if (bit_depth == 16)
-			pixelFormat = PixelFormat::getR16A16();
+			pixelFormat = PixelFormat(32, 16, 0, 0, 0, 0, 0, 16, 16, false, false);
 		break;
 
 	case PNG_COLOR_TYPE_RGB:
 		if (bit_depth == 8)
 			pixelFormat = PixelFormat::getR8G8B8();
-		else if (bit_depth == 16)
-			pixelFormat = PixelFormat::getR16G16B16();
 		break;
 
 	case PNG_COLOR_TYPE_RGB_ALPHA:
 		if (bit_depth == 8)
 			pixelFormat = PixelFormat::getA8R8G8B8();
-		else if (bit_depth == 16)
-			pixelFormat = PixelFormat::getA16R16G16B16().endianSwapped();
 		break;
 
 	default:
 		break;
 	}
 
-	if (pixelFormat.getByteSize() == 0)
+	if (
+		pixelFormat.getByteSize() == 0 ||
+		png_get_rowbytes(png_ptr, info_ptr) != pixelFormat.getByteSize() * width
+	)
 	{
-		png_destroy_read_struct(&png_ptr, NULL, NULL);
+		png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
 		return nullptr;
 	}
 
 	image = new Image(pixelFormat, uint32_t(width), uint32_t(height));
 
-	uint8_t* data = (uint8_t *)image->getData();
-	const void** rows = (const void **)png_get_rows(png_ptr, info_ptr);
+	rows.resize(height);
+	uint8_t* data = (uint8_t*)image->getData();
 	for (uint32_t i = 0; i < height; ++i)
-	{
-		const int rowsize = image->getPixelFormat().getByteSize() * uint32_t(width);
-		std::memcpy(
-			data,
-			rows[i],
-			rowsize
-		);
+		rows[i] = data + i * pixelFormat.getByteSize() * width;
 
-#if defined(T_LITTLE_ENDIAN)
-		if (bit_depth == 16)
-		{
-			uint16_t* p = (uint16_t*)data;
-			for (uint32_t x = 0; x < width; ++x)
-				swap8in16(*p++);
-		}
-#endif
-		data += rowsize;
-	}
+	png_read_image(png_ptr, rows.ptr());
+	png_read_end(png_ptr, nullptr);
 
 	Ref< ImageInfo > imageInfo = new ImageInfo();
 	imageInfo->setAuthor(L"Unknown");
