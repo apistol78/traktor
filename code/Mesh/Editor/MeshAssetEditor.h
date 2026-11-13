@@ -121,7 +121,7 @@ private:
 
 	void createMaterialShader();
 
-	Ref< db::Instance > createEmbeddedTexture(const std::wstring& textureName, drawing::Image* image, bool normalMap);
+	Ref< db::Instance > createEmbeddedTexture(const std::wstring& textureName, const drawing::Image* image, bool normalMap);
 
 	void browseMaterialShader();
 

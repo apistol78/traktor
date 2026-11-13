@@ -159,7 +159,7 @@ Ref< model::Model > PrefabEntityReplicator::createVisualModel(
 			if (!materialShaderGraph)
 				continue;
 
-			Ref< drawing::Image > image = render::ShaderGraphPreview(m_assetPath, pipelineCommon->getSourceDatabase()).generate(materialShaderGraph, 128, 128);
+			Ref< const drawing::Image > image = render::ShaderGraphPreview(m_assetPath, pipelineCommon->getSourceDatabase()).generate(materialShaderGraph, 128, 128);
 			if (!image)
 				continue;
 

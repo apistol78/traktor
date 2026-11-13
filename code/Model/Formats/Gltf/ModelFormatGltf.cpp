@@ -555,11 +555,11 @@ bool ModelFormatGltf::write(const Path& filePath, const Model* model) const
 	// roughness maps are recombined into a single glTF metallic-roughness
 	// texture (roughness in G, metalness in B), mirroring how the reader
 	// splits that texture apart on import.
-	std::vector< Ref< drawing::Image > > imageStore;
-	std::vector< drawing::Image* > uniqueImages;
-	std::map< drawing::Image*, int32_t > imageIndex;
+	std::vector< Ref< const drawing::Image > > imageStore;
+	std::vector< const drawing::Image* > uniqueImages;
+	std::map< const drawing::Image*, int32_t > imageIndex;
 
-	const auto addImage = [&](drawing::Image* image) -> int32_t {
+	const auto addImage = [&](const drawing::Image* image) -> int32_t {
 		if (!image)
 			return -1;
 		auto it = imageIndex.find(image);
@@ -571,7 +571,7 @@ bool ModelFormatGltf::write(const Path& filePath, const Model* model) const
 		return index;
 	};
 
-	const auto buildMetallicRoughness = [&](drawing::Image* rough, drawing::Image* metal) -> Ref< drawing::Image > {
+	const auto buildMetallicRoughness = [&](const drawing::Image* rough, const drawing::Image* metal) -> Ref< const drawing::Image > {
 		const int32_t w = rough ? rough->getWidth() : metal->getWidth();
 		const int32_t h = rough ? rough->getHeight() : metal->getHeight();
 		Ref< drawing::Image > out = new drawing::Image(drawing::PixelFormat::getR8G8B8(), w, h);
@@ -603,11 +603,11 @@ bool ModelFormatGltf::write(const Path& filePath, const Model* model) const
 		mt.normal = addImage(src.getNormalMap().image);
 		mt.emissive = addImage(src.getEmissiveMap().image);
 
-		drawing::Image* rough = src.getRoughnessMap().image;
-		drawing::Image* metal = src.getMetalnessMap().image;
+		const drawing::Image* rough = src.getRoughnessMap().image;
+		const drawing::Image* metal = src.getMetalnessMap().image;
 		if (rough != nullptr || metal != nullptr)
 		{
-			Ref< drawing::Image > mr = buildMetallicRoughness(rough, metal);
+			Ref< const drawing::Image > mr = buildMetallicRoughness(rough, metal);
 			imageStore.push_back(mr);
 			mt.metallicRoughness = addImage(mr);
 		}

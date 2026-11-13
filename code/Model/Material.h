@@ -56,11 +56,11 @@ public:
 		uint32_t channel = c_InvalidIndex;
 		bool anisotropic = false;
 		Guid texture;
-		Ref< drawing::Image > image;
+		Ref< const drawing::Image > image;
 
 		Map() = default;
 
-		explicit Map(const std::wstring& name_, uint32_t channel_, bool anisotropic_ = true, const Guid& texture_ = Guid(), drawing::Image* image_ = nullptr)
+		explicit Map(const std::wstring& name_, uint32_t channel_, bool anisotropic_ = true, const Guid& texture_ = Guid(), const drawing::Image* image_ = nullptr)
 		:	name(name_)
 		,	channel(channel_)
 		,	anisotropic(anisotropic_)

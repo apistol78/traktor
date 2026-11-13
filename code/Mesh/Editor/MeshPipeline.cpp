@@ -328,12 +328,14 @@ bool MeshPipeline::create(const editor::IPipelineSettings* settings, db::Databas
 	m_programCompilerTypeName = settings->getPropertyIncludeHash< std::wstring >(L"ShaderPipeline.ProgramCompiler");
 	m_platform = settings->getPropertyIncludeHash< std::wstring >(L"ShaderPipeline.Platform");
 	m_editor = settings->getPropertyIncludeHash< bool >(L"Pipeline.TargetEditor", false);
+	m_shaderGraphPreview = new render::ShaderGraphPreview(m_assetPath, database);
 	return true;
 }
 
 void MeshPipeline::destroy()
 {
 	m_programCompiler = nullptr;
+	m_shaderGraphPreview = nullptr;
 }
 
 TypeInfoSet MeshPipeline::getAssetTypes() const
@@ -606,14 +608,16 @@ bool MeshPipeline::buildOutput(
 			Ref< const render::ShaderGraph > materialShaderGraph = pipelineBuilder->getSourceDatabase()->getObjectReadOnly< render::ShaderGraph >(it->second);
 			if (materialShaderGraph)
 			{
-				Ref< drawing::Image > image = render::ShaderGraphPreview(m_assetPath, pipelineBuilder->getSourceDatabase()).generate(materialShaderGraph, 128, 128);
+				Ref< const drawing::Image > image = m_shaderGraphPreview->generate(materialShaderGraph, 128, 128);
 				if (image)
 				{
+					Ref< drawing::Image > mutableImage = image->clone();
+
 					// Convert image into linear color space.
 					const drawing::GammaFilter gammaFilter(1.0f, 2.2f);
-					image->apply(&gammaFilter);
+					mutableImage->apply(&gammaFilter);
 
-					maps[0].image = image;
+					maps[0].image = mutableImage;
 					buildEmbeddedTexture(pipelineBuilder, maps[0], false);
 				}
 			}

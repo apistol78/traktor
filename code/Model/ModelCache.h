@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -14,6 +14,10 @@
 #include "Core/Io/Path.h"
 #include "Core/Singleton/ISingleton.h"
 #include "Core/Thread/Semaphore.h"
+
+#include <map>
+#include <string>
+#include <utility>
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -52,12 +56,13 @@ public:
 private:
 	struct ModelWithStamp
 	{
+		Semaphore lock;
 		Ref< const Model > model;
 		DateTime timeStamp;
 	};
 
 	Semaphore m_lock;
-	SmallMap< std::pair< Path, std::wstring >, ModelWithStamp > m_models;
+	std::map< std::pair< Path, std::wstring >, ModelWithStamp > m_models;
 };
 
 }

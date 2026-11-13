@@ -33,6 +33,7 @@ namespace traktor::render
 
 class IProgramCompiler;
 class ShaderGraph;
+class ShaderGraphPreview;
 
 }
 
@@ -93,6 +94,7 @@ private:
 	mutable Semaphore m_programCompilerLock;
 	mutable Ref< render::IProgramCompiler > m_programCompiler;
 	mutable SmallMap< Key, Ref< render::ShaderGraph > > m_linkerCache;
+	Ref< render::ShaderGraphPreview > m_shaderGraphPreview;
 
 	render::IProgramCompiler* getProgramCompiler() const;
 };

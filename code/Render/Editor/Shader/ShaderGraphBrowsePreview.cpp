@@ -34,7 +34,7 @@ Ref< ui::IBitmap > ShaderGraphBrowsePreview::generate(editor::IEditor* editor, d
 	const float sw = (float)100 / 100.0f;
 	const float ns = (float)200 / 100.0f;
 
-	Ref< drawing::Image > shaderGraphThumb = ShaderGraphPreview(editor).generate(shaderGraph, w, h);
+	Ref< const drawing::Image > shaderGraphThumb = ShaderGraphPreview(editor).generate(shaderGraph, w, h);
 	if (shaderGraphThumb)
 		return new ui::Bitmap(shaderGraphThumb);
 	else

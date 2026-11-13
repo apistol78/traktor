@@ -169,7 +169,7 @@ void Material::Map::serialize(ISerializer& s)
 	s >> Member< uint32_t >(L"channel", channel);
 	s >> Member< bool >(L"anisotropic", anisotropic);
 	s >> Member< Guid >(L"texture", texture);
-	s >> MemberRef< drawing::Image >(L"image", image);
+	s >> MemberRef< const drawing::Image >(L"image", image);
 }
 
 }

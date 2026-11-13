@@ -1,6 +1,16 @@
+/*
+ * TRAKTOR
+ * Copyright (c) 2023-2026 Anders Pistol.
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ */
 #include "Core/Io/FileSystem.h"
+#include "Core/Serialization/DeepHash.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyString.h"
+#include "Core/Thread/Acquire.h"
 #include "Database/Database.h"
 #include "Drawing/Image.h"
 #include "Drawing/Filters/ScaleFilter.h"
@@ -30,7 +40,27 @@ ShaderGraphPreview::ShaderGraphPreview(const std::wstring& assetPath, db::Databa
 {
 }
 
-Ref< drawing::Image > ShaderGraphPreview::generate(const ShaderGraph* shaderGraph, int32_t width, int32_t height) const
+Ref< const drawing::Image > ShaderGraphPreview::generate(const ShaderGraph* shaderGraph, int32_t width, int32_t height) const
+{
+	const auto key = std::make_tuple(DeepHash(shaderGraph).get(), width, height);
+
+	Preview* preview;
+	{
+		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+		preview = &m_previews[key];
+	}
+
+	// Concurrent requests of same preview wait for first to generate it.
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(preview->lock);
+	if (!preview->generated)
+	{
+		preview->image = generateUncached(shaderGraph, width, height);
+		preview->generated = true;
+	}
+	return preview->image;
+}
+
+Ref< const drawing::Image > ShaderGraphPreview::generateUncached(const ShaderGraph* shaderGraph, int32_t width, int32_t height) const
 {
 	Ref< drawing::Image > image;
 

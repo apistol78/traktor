@@ -455,7 +455,7 @@ void MeshAssetEditor::updateMaterialList()
 			struct
 			{
 				std::wstring name;
-				drawing::Image* embedded;
+				const drawing::Image* embedded;
 			} modelTextures[] = {
 				{ material.getDiffuseMap().name, material.getDiffuseMap().image },
 				{ material.getSpecularMap().name, material.getSpecularMap().image },
@@ -521,7 +521,7 @@ void MeshAssetEditor::updateMaterialList()
 				textureItem->add(ss.str().substr(3));
 
 				textureItem->setData(L"INSTANCE", materialTextureInstance);
-				textureItem->setData(L"EMBEDDED_IMAGE", modelTextures[j].embedded);
+				textureItem->setData(L"EMBEDDED_IMAGE", (Object*)modelTextures[j].embedded);
 				m_materialTextureList->addRow(textureItem);
 			}
 		}
@@ -679,7 +679,7 @@ void MeshAssetEditor::createMaterialShader()
 	}
 }
 
-Ref< db::Instance > MeshAssetEditor::createEmbeddedTexture(const std::wstring& textureName, drawing::Image* image, bool normalMap)
+Ref< db::Instance > MeshAssetEditor::createEmbeddedTexture(const std::wstring& textureName, const drawing::Image* image, bool normalMap)
 {
 	if (!image)
 		return nullptr;

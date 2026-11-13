@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2023 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -62,13 +62,18 @@ Ref< const Model > ModelCache::get(const Path& cachePath, const Path& fileName, 
 	if (!file)
 		return nullptr;
 
-	// First check if we have recent model loaded into memory.
-	auto it = m_models.find(key);
-	if (it != m_models.end())
+	ModelWithStamp* entry;
 	{
-		if (it->second.timeStamp >= file->getLastWriteTime())
-			return it->second.model;
+		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+		entry = &m_models[key];
 	}
+
+	// Concurrent requests of same model wait for first to load it.
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(entry->lock);
+
+	// First check if we have recent model loaded into memory.
+	if (entry->model && entry->timeStamp >= file->getLastWriteTime())
+		return entry->model;
 
 	// Calculate hash of resolved file name.
 	const uint32_t fileNameHash = hash(fileName.getPathName() + L"!" + filter);
@@ -77,22 +82,14 @@ Ref< const Model > ModelCache::get(const Path& cachePath, const Path& fileName, 
 	const Path cachedFileName = cachePath.getPathName() + L"/" + str(L"%08x_%d.tmd", fileNameHash, c_cacheVersion);
 
 	// Check if cached file exist and if it's time stamp match source file's.
-	bool haveCachedFile = false;
-	{
-		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-		Ref< File > cachedFile = FileSystem::getInstance().get(cachedFileName);
-		if (cachedFile != nullptr && file->getLastWriteTime() <= cachedFile->getLastWriteTime())
-			haveCachedFile = true;
-	}
-	if (haveCachedFile)
+	Ref< File > cachedFile = FileSystem::getInstance().get(cachedFileName);
+	if (cachedFile != nullptr && file->getLastWriteTime() <= cachedFile->getLastWriteTime())
 	{
 		// Valid cache entry found; read from model from cache,
 		// do not use filter as it's written into cache after filter has been applied.
 		Ref< const Model > model = ModelFormat::readAny(cachedFileName, L"");
-		{
-			T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-			m_models.insert(key, { model, file->getLastWriteTime() });
-		}
+		entry->model = model;
+		entry->timeStamp = file->getLastWriteTime();
 		return model;
 	}
 
@@ -101,30 +98,27 @@ Ref< const Model > ModelCache::get(const Path& cachePath, const Path& fileName, 
 	if (!model)
 		return nullptr;
 
-	{
-		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+	// Add model to memory map.
+	entry->model = model;
+	entry->timeStamp = file->getLastWriteTime();
 
-		// Add model to memory map.
-		m_models.insert(key, { model, file->getLastWriteTime() });
+	// Write cached copy of post-operation model.
+	const Path intermediateFileName = cachedFileName.getPathNameNoExtension() + L"~." + cachedFileName.getExtension();
+	JobManager::getInstance().add([=]() {
+		if (!FileSystem::getInstance().makeAllDirectories(cachedFileName.getPathOnly()))
+		{
+			log::error << L"Unable to create model cache directory." << Endl;
+			return;
+		}
 
-		// Write cached copy of post-operation model.
-		const Path intermediateFileName = cachedFileName.getPathNameNoExtension() + L"~." + cachedFileName.getExtension();
-		JobManager::getInstance().add([=]() {
-			if (!FileSystem::getInstance().makeAllDirectories(cachedFileName.getPathOnly()))
-			{
-				log::error << L"Unable to create model cache directory." << Endl;
-				return;
-			}
+		if (!ModelFormat::writeAny(intermediateFileName, model))
+		{
+			log::error << L"Unable to write model into cache directory \"" << intermediateFileName.getOriginal() << L"\"." << Endl;
+			return;
+		}
 
-			if (!ModelFormat::writeAny(intermediateFileName, model))
-			{
-				log::error << L"Unable to write model into cache directory \"" << intermediateFileName.getOriginal() << L"\"." << Endl;
-				return;
-			}
-
-			FileSystem::getInstance().move(cachedFileName, intermediateFileName, true);
-		});
-	}
+		FileSystem::getInstance().move(cachedFileName, intermediateFileName, true);
+	});
 
 	// Return model; should be same as one we've written to cache.
 	return model;

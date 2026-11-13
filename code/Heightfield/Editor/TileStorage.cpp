@@ -11,6 +11,7 @@
 #include "Compress/Zip/DeflateStreamZip.h"
 #include "Compress/Zip/InflateStreamZip.h"
 #include "Core/Containers/AlignedVector.h"
+#include "Core/Containers/SmallMap.h"
 #include "Core/Date/DateTime.h"
 #include "Core/Io/IStream.h"
 #include "Core/Io/Reader.h"
@@ -19,8 +20,10 @@
 #include "Core/Math/MathUtils.h"
 #include "Core/Misc/Murmur3.h"
 #include "Core/Misc/String.h"
+#include "Core/Thread/Acquire.h"
 #include "Core/Thread/Job.h"
 #include "Core/Thread/JobManager.h"
+#include "Core/Thread/Semaphore.h"
 #include "Database/Instance.h"
 #include "Drawing/Image.h"
 #include "Drawing/PixelFormat.h"
@@ -39,6 +42,19 @@ const uint32_t c_zipBufferSize = 65536;
 const float c_overviewSampleDistance = 2.0f;	//!< Maximum distance between overview samples, in world units.
 const int32_t c_overviewMinSize = 2048;	//!< Overview isn't downsampled below this size.
 const int32_t c_rowsPerTask = 64;	//!< Output rows per task; multiple of 8 so packed cut bits of tasks never share a byte.
+const int64_t c_maxCachedSamples = 1024ll * 1024 * 1024;	//!< Samples of decoded tiles kept by region reads.
+
+struct CachedTile
+{
+	Ref< const Heightfield > tile;
+	uint64_t lastWriteTime;
+	uint64_t lastUsed;
+};
+
+Semaphore s_cacheLock;
+SmallMap< std::wstring, CachedTile > s_cache;
+int64_t s_cacheSamples = 0;
+uint64_t s_cacheUseCounter = 0;
 
 void tileRange(const int32_t* region, int32_t tileCount, int32_t tileWidth, int32_t tileHeight, int32_t outRange[4])
 {
@@ -84,6 +100,13 @@ int32_t TileStorage::calculateOverviewSize(int32_t size, float worldSize)
 	while ((size % (step * 2)) == 0 && size / (step * 2) >= c_overviewMinSize && step * 2 * worldSize / size <= c_overviewSampleDistance)
 		step *= 2;
 	return size / step;
+}
+
+void TileStorage::flushCache()
+{
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(s_cacheLock);
+	s_cache.clear();
+	s_cacheSamples = 0;
 }
 
 int32_t TileStorage::readSize(const db::Instance* instance) const
@@ -445,6 +468,56 @@ std::wstring TileStorage::getChannelName(const std::wstring& name, int32_t tileX
 	return (m_tileCount > 0) ? name + L"_" + toString(tileX) + L"_" + toString(tileZ) : name;
 }
 
+Ref< const Heightfield > TileStorage::readCachedTile(const db::Instance* instance, const Vector4& worldExtent, int32_t tileX, int32_t tileZ) const
+{
+	const std::wstring name = getChannelName(L"Data", tileX, tileZ);
+	const std::wstring key = instance->getGuid().format() + L"/" + name;
+
+	DateTime lastWriteTime;
+	instance->getDataLastWriteTime(name, lastWriteTime);
+
+	{
+		T_ANONYMOUS_VAR(Acquire< Semaphore >)(s_cacheLock);
+		auto it = s_cache.find(key);
+		if (it != s_cache.end() && it->second.lastWriteTime == (uint64_t)lastWriteTime)
+		{
+			it->second.lastUsed = ++s_cacheUseCounter;
+			return it->second.tile;
+		}
+	}
+
+	Ref< const Heightfield > tile = readStoredTile(instance, worldExtent, tileX, tileZ);
+	if (!tile)
+		return nullptr;
+
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(s_cacheLock);
+
+	auto it = s_cache.find(key);
+	if (it != s_cache.end())
+	{
+		s_cacheSamples -= (int64_t)it->second.tile->getSize() * it->second.tile->getSize();
+		s_cache.erase(it);
+	}
+
+	// Evict least recently used tiles until new tile fit within budget.
+	const int64_t samples = (int64_t)tile->getSize() * tile->getSize();
+	while (!s_cache.empty() && s_cacheSamples + samples > c_maxCachedSamples)
+	{
+		auto lru = s_cache.begin();
+		for (auto i = s_cache.begin(); i != s_cache.end(); ++i)
+		{
+			if (i->second.lastUsed < lru->second.lastUsed)
+				lru = i;
+		}
+		s_cacheSamples -= (int64_t)lru->second.tile->getSize() * lru->second.tile->getSize();
+		s_cache.erase(lru);
+	}
+
+	s_cache.insert(key, { tile, (uint64_t)lastWriteTime, ++s_cacheUseCounter });
+	s_cacheSamples += samples;
+	return tile;
+}
+
 Ref< Heightfield > TileStorage::readHeightfieldRegion(const db::Instance* instance, const Vector4& worldExtent, int32_t tileSize, int32_t x0, int32_t z0, int32_t width, int32_t step) const
 {
 	const int32_t count = std::max(m_tileCount, 1);
@@ -475,10 +548,10 @@ Ref< Heightfield > TileStorage::readHeightfieldRegion(const db::Instance* instan
 	for (int32_t tz = mnz; tz <= mxz; ++tz)
 	{
 		// Tiles of a row are decoded in parallel.
-		AlignedVector< Ref< Heightfield > > rowTiles(mxx - mnx + 1);
+		AlignedVector< Ref< const Heightfield > > rowTiles(mxx - mnx + 1);
 		AlignedVector< Job::task_t > tasks;
 		for (int32_t tx = mnx; tx <= mxx; ++tx)
-			tasks.push_back([&, tx]() { rowTiles[tx - mnx] = readStoredTile(instance, worldExtent, tx, tz); });
+			tasks.push_back([&, tx]() { rowTiles[tx - mnx] = readCachedTile(instance, worldExtent, tx, tz); });
 		JobManager::getInstance().fork(tasks.c_ptr(), tasks.size());
 
 		for (int32_t tx = mnx; tx <= mxx; ++tx)

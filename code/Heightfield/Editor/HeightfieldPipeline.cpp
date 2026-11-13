@@ -37,6 +37,7 @@ bool HeightfieldPipeline::create(const editor::IPipelineSettings* settings, db::
 
 void HeightfieldPipeline::destroy()
 {
+	TileStorage::flushCache();
 }
 
 TypeInfoSet HeightfieldPipeline::getAssetTypes() const

@@ -91,10 +91,9 @@ Ref< model::Model > prepareModel(const editor::IEditor* editor, const MeshAsset*
 			if (!materialShaderGraph)
 				continue;
 
-			Ref< drawing::Image > image = render::ShaderGraphPreview(editor).generate(materialShaderGraph, 128, 128);
+			Ref< const drawing::Image > image = render::ShaderGraphPreview(editor).generate(materialShaderGraph, 128, 128);
 			if (!image)
 				continue;
-
 
 			diffuseMap.image = image;
 		}

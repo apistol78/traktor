@@ -8,6 +8,7 @@
  */
 #pragma once
 
+#include "Core/Thread/Semaphore.h"
 #include "World/Editor/IEntityReplicator.h"
 
 // import/export mechanism.
@@ -17,6 +18,13 @@
 #else
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
+
+namespace traktor::render
+{
+
+class ShaderGraphPreview;
+
+}
 
 namespace traktor::mesh
 {
@@ -44,6 +52,8 @@ public:
 private:
 	std::wstring m_assetPath;
 	std::wstring m_modelCachePath;
+	mutable Semaphore m_shaderGraphPreviewLock;
+	mutable Ref< render::ShaderGraphPreview > m_shaderGraphPreview;
 };
 
 }

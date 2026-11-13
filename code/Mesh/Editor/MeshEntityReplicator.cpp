@@ -12,6 +12,7 @@
 #include "Core/Io/IStream.h"
 #include "Core/Settings/PropertyObject.h"
 #include "Core/Settings/PropertyString.h"
+#include "Core/Thread/Acquire.h"
 #include "Drawing/Image.h"
 #include "Editor/IPipelineCommon.h"
 #include "Editor/IPipelineDepends.h"
@@ -101,6 +102,15 @@ Ref< model::Model > MeshEntityReplicator::createModel(
 			}
 		}
 
+		// Previews are shared by all models created by this replicator.
+		Ref< render::ShaderGraphPreview > shaderGraphPreview;
+		{
+			T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_shaderGraphPreviewLock);
+			if (!m_shaderGraphPreview)
+				m_shaderGraphPreview = new render::ShaderGraphPreview(m_assetPath, pipelineCommon->getSourceDatabase());
+			shaderGraphPreview = m_shaderGraphPreview;
+		}
+
 		for (auto& material : model->getMaterials())
 		{
 			const auto it = materialShaders.find(material.getName());
@@ -110,7 +120,7 @@ Ref< model::Model > MeshEntityReplicator::createModel(
 				if (!materialShaderGraph)
 					continue;
 
-				Ref< drawing::Image > image = render::ShaderGraphPreview(m_assetPath, pipelineCommon->getSourceDatabase()).generate(materialShaderGraph, 128, 128);
+				Ref< const drawing::Image > image = shaderGraphPreview->generate(materialShaderGraph, 128, 128);
 				if (!image)
 					continue;
 

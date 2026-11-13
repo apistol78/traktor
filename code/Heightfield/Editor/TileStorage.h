@@ -55,6 +55,9 @@ public:
 	//! Size of overview; heightfield is downsampled by largest power of two which keep samples within overview sample distance.
 	static int32_t calculateOverviewSize(int32_t size, float worldSize);
 
+	//! Release decoded tiles kept by region reads.
+	static void flushCache();
+
 	//! Number of samples along each side of the whole heightfield; 0 if unable to read.
 	int32_t readSize(const db::Instance* instance) const;
 
@@ -106,6 +109,9 @@ private:
 	int32_t m_tileCount;
 
 	std::wstring getChannelName(const std::wstring& name, int32_t tileX, int32_t tileZ) const;
+
+	//! Read stored tile through cache shared by all storages; cached tiles are immutable.
+	Ref< const Heightfield > readCachedTile(const db::Instance* instance, const Vector4& worldExtent, int32_t tileX, int32_t tileZ) const;
 
 	//! Read region, of width * width samples starting at x0, z0, box filtered by step; samples outside heightfield are clamped to edge.
 	Ref< Heightfield > readHeightfieldRegion(const db::Instance* instance, const Vector4& worldExtent, int32_t tileSize, int32_t x0, int32_t z0, int32_t width, int32_t step) const;

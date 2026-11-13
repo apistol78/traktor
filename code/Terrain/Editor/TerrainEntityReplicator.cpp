@@ -95,7 +95,7 @@ Ref< model::Model > TerrainEntityReplicator::createModel(
 		Ref< const render::ShaderGraph > surfaceShader = pipelineCommon->getSourceDatabase()->getObjectReadOnly< render::ShaderGraph >(terrainAsset->getSurfaceShader());
 		if (surfaceShader)
 		{
-			Ref< drawing::Image > surfaceImage = render::ShaderGraphPreview(m_assetPath, pipelineCommon->getSourceDatabase()).generate(surfaceShader, 1024, 1024);
+			Ref< const drawing::Image > surfaceImage = render::ShaderGraphPreview(m_assetPath, pipelineCommon->getSourceDatabase()).generate(surfaceShader, 1024, 1024);
 			if (surfaceImage)
 			{
 				AlignedVector< model::Material > materials = heightfieldModel->getMaterials();

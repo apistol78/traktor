@@ -16,20 +16,12 @@
 #include "Core/Misc/String.h"
 #include "Core/System/IProcess.h"
 #include "Core/System/OS.h"
-#include "Core/Thread/Acquire.h"
-#include "Core/Thread/Semaphore.h"
 #include "Core/Thread/Thread.h"
 #include "Core/Thread/ThreadManager.h"
 #include "Model/Model.h"
 
 namespace traktor::model
 {
-namespace
-{
-
-Semaphore g_lock;
-
-}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.model.ModelFormatBlend", 0, ModelFormatBlend, ModelFormat)
 
@@ -46,8 +38,6 @@ bool ModelFormatBlend::supportFormat(const std::wstring& extension) const
 
 Ref< Model > ModelFormatBlend::read(const Path& filePath, const std::wstring& filter) const
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(g_lock);
-
 	const std::wstring threadFolder = str(L"%08x", ThreadManager::getInstance().getCurrentThread()->id());
 	const std::wstring intermediate = L"intermediate.fbx";
 

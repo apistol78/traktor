@@ -542,7 +542,7 @@ bool PipelineBuilder::buildAdHocOutput(const ISerializable* sourceAsset, const s
 		m_builtAdHocKeys.swap(previousBuiltAdHocKeys);
 
 		// Get output instances from memory cache.
-		if (m_cache && pipeline->shouldCache() && cachePermitted)
+		if (m_cache && pipeline->shouldCache() && cachePermitted && !m_rebuild)
 		{
 			if (getInstancesFromCache(
 					m_cache,
@@ -818,7 +818,7 @@ IPipelineBuilder::BuildResult PipelineBuilder::performBuild(
 	m_builtAdHocKeys.resize(0);
 
 	// Get output instances from cache.
-	if (m_cache && pipeline->shouldCache())
+	if (m_cache && pipeline->shouldCache() && !m_rebuild)
 	{
 		if (getInstancesFromCache(
 				m_cache,
