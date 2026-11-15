@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,6 +9,7 @@
 #include "Drawing/Config.h"
 #if defined(DRAWING_INCLUDE_JPEG)
 
+#include <setjmp.h>
 #include <stdio.h>
 
 extern "C"
@@ -17,6 +18,7 @@ extern "C"
 }
 
 #include "Core/Log/Log.h"
+#include "Core/Misc/TString.h"
 #include "Drawing/Formats/ImageFormatJpeg.h"
 #include "Drawing/Image.h"
 #include "Drawing/ImageInfo.h"
@@ -26,7 +28,6 @@ namespace traktor::drawing
 {
 
 const int c_bufferSize = 4096;
-static bool s_errorOccured = false;
 
 struct my_source_mgr : jpeg_source_mgr
 {
@@ -34,10 +35,24 @@ struct my_source_mgr : jpeg_source_mgr
 	JOCTET buffer[c_bufferSize];
 };
 
+struct my_error_mgr : jpeg_error_mgr
+{
+	jmp_buf setjmpBuffer;
+};
+
 void errorExit(j_common_ptr cinfo)
 {
-	log::error << L"JPEG decompress error" << Endl;
-	s_errorOccured = true;
+	char message[JMSG_LENGTH_MAX];
+	(*cinfo->err->format_message)(cinfo, message);
+	log::error << L"JPEG decompress error; " << mbstows(message) << Endl;
+	longjmp(static_cast< my_error_mgr* >(cinfo->err)->setjmpBuffer, 1);
+}
+
+void outputMessage(j_common_ptr cinfo)
+{
+	char message[JMSG_LENGTH_MAX];
+	(*cinfo->err->format_message)(cinfo, message);
+	log::warning << L"JPEG decompress warning; " << mbstows(message) << Endl;
 }
 
 void initializeSource(j_decompress_ptr cinfo)
@@ -101,6 +116,51 @@ void terminateSource(j_decompress_ptr cinfo)
 	src.stream = 0;
 }
 
+bool guardedCreateDecompress(j_decompress_ptr cinfo)
+{
+	if (setjmp(static_cast< my_error_mgr* >(cinfo->err)->setjmpBuffer))
+		return false;
+	jpeg_create_decompress(cinfo);
+	return true;
+}
+
+bool guardedReadHeader(j_decompress_ptr cinfo, boolean requireImage)
+{
+	if (setjmp(static_cast< my_error_mgr* >(cinfo->err)->setjmpBuffer))
+		return false;
+	jpeg_read_header(cinfo, requireImage);
+	return true;
+}
+
+bool guardedStartDecompress(j_decompress_ptr cinfo)
+{
+	if (setjmp(static_cast< my_error_mgr* >(cinfo->err)->setjmpBuffer))
+		return false;
+	jpeg_start_decompress(cinfo);
+	return true;
+}
+
+bool guardedReadScanlines(j_decompress_ptr cinfo, uint8_t* data, uint32_t pitch)
+{
+	if (setjmp(static_cast< my_error_mgr* >(cinfo->err)->setjmpBuffer))
+		return false;
+	while (cinfo->output_scanline < cinfo->output_height)
+	{
+		JSAMPROW row = (JSAMPROW)(data + cinfo->output_scanline * pitch);
+		if (jpeg_read_scanlines(cinfo, &row, 1) != 1)
+			return false;
+	}
+	return true;
+}
+
+bool guardedFinishDecompress(j_decompress_ptr cinfo)
+{
+	if (setjmp(static_cast< my_error_mgr* >(cinfo->err)->setjmpBuffer))
+		return false;
+	jpeg_finish_decompress(cinfo);
+	return true;
+}
+
 class ImageFormatJpegImpl
 {
 public:
@@ -114,19 +174,22 @@ public:
 
 private:
 	struct jpeg_decompress_struct m_cinfo;
-	struct jpeg_error_mgr m_jerr;
+	struct my_error_mgr m_jerr;
 	struct my_source_mgr m_pub;
+	bool m_created = false;
+
+	void reset();
 };
 
 ImageFormatJpegImpl::ImageFormatJpegImpl()
 {
-	s_errorOccured = false;
-
 	m_cinfo.err = jpeg_std_error(&m_jerr);
 	m_cinfo.err->error_exit = errorExit;
+	m_cinfo.err->output_message = outputMessage;
 
-	jpeg_create_decompress(&m_cinfo);
-	T_ASSERT(!s_errorOccured);
+	m_created = guardedCreateDecompress(&m_cinfo);
+	if (!m_created)
+		return;
 
 	m_pub.init_source = initializeSource;
 	m_pub.fill_input_buffer = fillInputBuffer;
@@ -140,15 +203,30 @@ ImageFormatJpegImpl::ImageFormatJpegImpl()
 
 ImageFormatJpegImpl::~ImageFormatJpegImpl()
 {
-	jpeg_destroy_decompress(&m_cinfo);
+	if (m_created)
+		jpeg_destroy_decompress(&m_cinfo);
+}
+
+void ImageFormatJpegImpl::reset()
+{
+	m_pub.bytes_in_buffer = 0;
+	m_pub.next_input_byte = NULL;
+	jpeg_abort_decompress(&m_cinfo);
 }
 
 bool ImageFormatJpegImpl::readJpegHeader(IStream* stream)
 {
+	if (!m_created)
+		return false;
+
 	T_ASSERT(m_pub.bytes_in_buffer == 0);
 	m_pub.stream = stream;
 
-	jpeg_read_header(&m_cinfo, FALSE);
+	if (!guardedReadHeader(&m_cinfo, FALSE))
+	{
+		reset();
+		return false;
+	}
 
 	// Roll back unused bytes.
 	if (m_pub.bytes_in_buffer)
@@ -158,27 +236,34 @@ bool ImageFormatJpegImpl::readJpegHeader(IStream* stream)
 		m_pub.next_input_byte = NULL;
 	}
 
-	return !s_errorOccured;
+	return true;
 }
 
 Ref< Image > ImageFormatJpegImpl::readJpegImage(IStream* stream)
 {
+	if (!m_created)
+		return nullptr;
+
 	T_ASSERT(m_pub.bytes_in_buffer == 0);
 	m_pub.stream = stream;
 
 	if (m_cinfo.global_state == /*DSTATE_START*/200 || m_cinfo.global_state == /*DSTATE_INHEADER*/201)
 	{
-		jpeg_read_header(&m_cinfo, TRUE);
-		if (s_errorOccured)
+		if (!guardedReadHeader(&m_cinfo, TRUE))
+		{
+			reset();
 			return nullptr;
+		}
 	}
 
 	if (m_cinfo.global_state != /*DSTATE_READY*/202)
 		return nullptr;
 
-	jpeg_start_decompress(&m_cinfo);
-	if (s_errorOccured)
+	if (!guardedStartDecompress(&m_cinfo))
+	{
+		reset();
 		return nullptr;
+	}
 
 	PixelFormat pixelFormat;
 	if (m_cinfo.output_components == 4)
@@ -194,6 +279,7 @@ Ref< Image > ImageFormatJpegImpl::readJpegImage(IStream* stream)
 	else
 	{
 		log::error << L"Unsupported number of components, must be either 3 or 4" << Endl;
+		reset();
 		return nullptr;
 	}
 
@@ -203,15 +289,10 @@ Ref< Image > ImageFormatJpegImpl::readJpegImage(IStream* stream)
 		m_cinfo.output_height
 	);
 
-	uint8_t* data = (uint8_t *)image->getData();
-	for (uint32_t y = 0; y < m_cinfo.output_height; ++y)
+	if (!guardedReadScanlines(&m_cinfo, (uint8_t*)image->getData(), m_cinfo.output_width * m_cinfo.output_components))
 	{
-#if defined(_DEBUG)
-		int linesRead =
-#endif
-		jpeg_read_scanlines(&m_cinfo, &data, 1);
-		T_ASSERT(linesRead == 1);
-		data += m_cinfo.output_width * m_cinfo.output_components;
+		reset();
+		return nullptr;
 	}
 
 	Ref< ImageInfo > imageInfo = new ImageInfo();
@@ -221,7 +302,11 @@ Ref< Image > ImageFormatJpegImpl::readJpegImage(IStream* stream)
 	imageInfo->setGamma(2.2f);
 	image->setImageInfo(imageInfo);
 
-	jpeg_finish_decompress(&m_cinfo);
+	if (!guardedFinishDecompress(&m_cinfo))
+	{
+		reset();
+		return nullptr;
+	}
 
 	// Roll back unused bytes.
 	if (m_pub.bytes_in_buffer)

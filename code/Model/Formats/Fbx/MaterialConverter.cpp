@@ -8,6 +8,8 @@
  */
 #include "Model/Formats/Fbx/MaterialConverter.h"
 
+#include <cstring>
+
 #include "Core/Io/Path.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/String.h"
@@ -32,19 +34,47 @@ std::wstring getTextureName(const ufbx_texture* texture)
 		return std::wstring(mbstows(texture->name.data));
 }
 
+std::wstring sniffImageExtension(const void* data, size_t size)
+{
+	const uint8_t* d = (const uint8_t*)data;
+	if (size >= 8 && std::memcmp(d, "\x89PNG\r\n\x1a\n", 8) == 0)
+		return L"png";
+	else if (size >= 3 && d[0] == 0xff && d[1] == 0xd8 && d[2] == 0xff)
+		return L"jpg";
+	else if (size >= 4 && d[0] == 0x76 && d[1] == 0x2f && d[2] == 0x31 && d[3] == 0x01)
+		return L"exr";
+	else if (size >= 4 && std::memcmp(d, "DDS ", 4) == 0)
+		return L"dds";
+	else if (size >= 4 && std::memcmp(d, "GIF8", 4) == 0)
+		return L"gif";
+	else if (size >= 2 && d[0] == 'B' && d[1] == 'M')
+		return L"bmp";
+	else
+		return L"";
+}
+
 Ref< drawing::Image > getEmbeddedTexture(const ufbx_texture* texture)
 {
 	if (texture->type == UFBX_TEXTURE_FILE)
 	{
 		if (texture->content.data != nullptr)
 		{
-			// Embedded content keeps the original file's format; determine decoder from its name.
-			std::wstring extension = Path(mbstows(texture->filename.data)).getExtension();
+			const Path textureFileName(mbstows(texture->filename.data));
+			std::wstring extension = textureFileName.getExtension();
 			if (extension.empty())
 				extension = Path(mbstows(texture->relative_filename.data)).getExtension();
+
+			const std::wstring sniffed = sniffImageExtension(texture->content.data, texture->content.size);
+			if (!sniffed.empty())
+				extension = sniffed;
+
 			if (extension.empty())
 				extension = L"png";
-			return drawing::Image::load(texture->content.data, (uint32_t)texture->content.size, extension);
+
+			Ref< drawing::Image > image = drawing::Image::load(texture->content.data, (uint32_t)texture->content.size, extension);
+			if (!image)
+				log::warning << L"Unable to decode embedded texture \"" << textureFileName.getFileName() << L"\"." << Endl;
+			return image;
 		}
 		else
 		{
