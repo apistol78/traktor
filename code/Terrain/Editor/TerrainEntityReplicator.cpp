@@ -92,7 +92,7 @@ Ref< model::Model > TerrainEntityReplicator::createModel(
 	{
 		const uint32_t baseChannel = heightfieldModel->getTexCoordChannel(L"Base");
 
-		Ref< const render::ShaderGraph > surfaceShader = pipelineCommon->getSourceDatabase()->getObjectReadOnly< render::ShaderGraph >(terrainAsset->getSurfaceShader());
+		Ref< const render::ShaderGraph > surfaceShader = pipelineCommon->getSourceDatabase()->getObjectReadOnly< render::ShaderGraph >(terrainAsset->getSurfaceShader(0));
 		if (surfaceShader)
 		{
 			Ref< const drawing::Image > surfaceImage = render::ShaderGraphPreview(m_assetPath, pipelineCommon->getSourceDatabase()).generate(surfaceShader, 1024, 1024);

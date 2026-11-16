@@ -6,8 +6,8 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include <algorithm>
-#include <limits>
+#include "Terrain/Editor/TerrainPipeline.h"
+
 #include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Math/Float.h"
@@ -25,24 +25,26 @@
 #include "Editor/IPipelineBuilder.h"
 #include "Editor/IPipelineDepends.h"
 #include "Editor/IPipelineSettings.h"
-#include "Heightfield/Heightfield.h"
 #include "Heightfield/Editor/HeightfieldAsset.h"
 #include "Heightfield/Editor/HeightfieldTextureAsset.h"
 #include "Heightfield/Editor/HeightfieldTileAsset.h"
 #include "Heightfield/Editor/TileStorage.h"
-#include "Render/Editor/Texture/TextureOutput.h"
+#include "Heightfield/Heightfield.h"
 #include "Render/Editor/Shader/External.h"
 #include "Render/Editor/Shader/FragmentLinker.h"
 #include "Render/Editor/Shader/ShaderGraph.h"
-#include "Terrain/TerrainResource.h"
+#include "Render/Editor/Texture/TextureOutput.h"
 #include "Terrain/Editor/TerrainAsset.h"
 #include "Terrain/Editor/TerrainImageAsset.h"
-#include "Terrain/Editor/TerrainPipeline.h"
+#include "Terrain/TerrainResource.h"
+
+#include <algorithm>
+#include <limits>
 
 namespace traktor::terrain
 {
-	namespace
-	{
+namespace
+{
 
 const Guid c_guidSplatMapSeed(L"{3BDF1640-E844-404b-85F2-277C022B8E23}");
 
@@ -51,7 +53,10 @@ const Guid c_guidSurfaceShaderSeed(L"{8481FC82-A8E8-49b8-906F-9F8F6365B1F5}");
 const Guid c_guidTerrainShaderTemplate(L"{A6C4532A-0540-4D42-93FC-964C7BFDD1FD}");
 const Guid c_guidSurfaceShaderTemplate(L"{BAD675B3-9799-7D49-A045-BDA471DD5A3E}");
 
-const Guid c_materialInterface(L"{139CACBD-2A79-5644-B9BC-B113F66D50EA}");
+const Guid c_materialInterface0(L"{FD36CE03-7585-2F4E-9382-F1D72477B3F1}");
+const Guid c_materialInterface1(L"{78B08A6E-6A92-3944-B9B8-F70A5FC9AAE7}");
+const Guid c_materialInterface2(L"{A55F7BD9-A838-D446-9AF1-32EA508DFED2}");
+const Guid c_materialInterface3(L"{19206B25-D068-C94D-8EF7-9F386F5BC0C1}");
 
 const Guid c_guidTileHeightfieldSeed(L"{DB111426-6ECE-4C29-BE4B-732A81D6246A}");
 const Guid c_guidTileHeightMapSeed(L"{3427B3E2-E59F-4C2E-B715-D99469F778E2}");
@@ -60,27 +65,32 @@ const Guid c_guidTileCutMapSeed(L"{9AD3F604-0541-414A-A0E9-E2AA767BD452}");
 const Guid c_guidTileSplatMapSeed(L"{071FD99B-6D7E-4601-8DD2-C6C501B36572}");
 const Guid c_guidTileColorMapSeed(L"{B9AB3117-689B-4282-92AB-42BF38E2C1E5}");
 
-
 class FragmentReaderAdapter : public render::FragmentLinker::FragmentReaderNoCache
 {
 public:
-	explicit FragmentReaderAdapter(editor::IPipelineBuilder* pipelineBuilder, const render::ShaderGraph* surfaceShaderImpl)
-	:	m_pipelineBuilder(pipelineBuilder)
-	,	m_surfaceShaderImpl(surfaceShaderImpl)
+	explicit FragmentReaderAdapter(editor::IPipelineBuilder* pipelineBuilder, const Ref< const render::ShaderGraph >* surfaceShaderImpls)
+		: m_pipelineBuilder(pipelineBuilder)
+		, m_surfaceShaderImpls(surfaceShaderImpls)
 	{
 	}
 
 	virtual Ref< const render::ShaderGraph > read(const Guid& fragmentGuid) const
 	{
-		if (fragmentGuid == c_materialInterface)
-			return m_surfaceShaderImpl;
+		if (fragmentGuid == c_materialInterface0)
+			return m_surfaceShaderImpls[0];
+		else if (fragmentGuid == c_materialInterface1)
+			return m_surfaceShaderImpls[1];
+		else if (fragmentGuid == c_materialInterface2)
+			return m_surfaceShaderImpls[2];
+		else if (fragmentGuid == c_materialInterface3)
+			return m_surfaceShaderImpls[3];
 		else
 			return m_pipelineBuilder->getObjectReadOnly< render::ShaderGraph >(fragmentGuid);
 	}
 
 private:
 	Ref< editor::IPipelineBuilder > m_pipelineBuilder;
-	Ref< const render::ShaderGraph > m_surfaceShaderImpl;
+	const Ref< const render::ShaderGraph >* m_surfaceShaderImpls;
 };
 
 Guid combineGuids(const Guid& g1, const Guid& g2)
@@ -166,8 +176,7 @@ void addTileDependencies(
 	const Guid& outputGuid,
 	int32_t tileX,
 	int32_t tileZ,
-	int32_t overviewSize
-)
+	int32_t overviewSize)
 {
 	const uint32_t flags = editor::PdfBuild | editor::PdfResource;
 	const int32_t tileCount = std::max(heightfieldAsset->getTileCount(), 1);
@@ -243,7 +252,7 @@ TerrainResource::Tile createTile(const Guid& outputGuid, int32_t tileX, int32_t 
 	return tile;
 }
 
-	}
+}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.terrain.TerrainPipeline", 19, TerrainPipeline, editor::DefaultPipeline)
 
@@ -263,8 +272,7 @@ bool TerrainPipeline::buildDependencies(
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,
 	const std::wstring& outputPath,
-	const Guid& outputGuid
-) const
+	const Guid& outputGuid) const
 {
 	if (is_a< TerrainImageAsset >(sourceAsset))
 	{
@@ -275,12 +283,18 @@ bool TerrainPipeline::buildDependencies(
 	const TerrainAsset* terrainAsset = checked_type_cast< const TerrainAsset*, false >(sourceAsset);
 
 	pipelineDepends->addDependency(terrainAsset->getHeightfield(), editor::PdfUse);
-	pipelineDepends->addDependency(terrainAsset->getSurfaceShader(), editor::PdfUse);
+	pipelineDepends->addDependency(terrainAsset->getSurfaceShader(0), editor::PdfUse);
+	pipelineDepends->addDependency(terrainAsset->getSurfaceShader(1), editor::PdfUse);
+	pipelineDepends->addDependency(terrainAsset->getSurfaceShader(2), editor::PdfUse);
+	pipelineDepends->addDependency(terrainAsset->getSurfaceShader(3), editor::PdfUse);
 
 	pipelineDepends->addDependency(c_guidTerrainShaderTemplate, editor::PdfUse);
 	pipelineDepends->addDependency(c_guidSurfaceShaderTemplate, editor::PdfUse);
 
-	pipelineDepends->addDependency(c_materialInterface, editor::PdfUse);
+	pipelineDepends->addDependency(c_materialInterface0, editor::PdfUse);
+	pipelineDepends->addDependency(c_materialInterface1, editor::PdfUse);
+	pipelineDepends->addDependency(c_materialInterface2, editor::PdfUse);
+	pipelineDepends->addDependency(c_materialInterface3, editor::PdfUse);
 
 	// Resources for each tile, untiled terrains are a single tile, and a low resolution overview of entire terrain.
 	Ref< const hf::HeightfieldAsset > heightfieldAsset = pipelineDepends->getObjectReadOnly< hf::HeightfieldAsset >(terrainAsset->getHeightfield());
@@ -297,10 +311,8 @@ bool TerrainPipeline::buildDependencies(
 		}
 
 		for (int32_t tz = 0; tz < tileCount; ++tz)
-		{
 			for (int32_t tx = 0; tx < tileCount; ++tx)
 				addTileDependencies(pipelineDepends, sourceInstance, heightfieldInstance, heightfieldAsset, outputPath, outputGuid, tx, tz, 0);
-		}
 
 		addTileDependencies(pipelineDepends, sourceInstance, heightfieldInstance, heightfieldAsset, outputPath, outputGuid, -1, -1, hf::TileStorage::calculateOverviewSize(size, heightfieldAsset->getWorldExtent().x()));
 	}
@@ -318,8 +330,7 @@ bool TerrainPipeline::buildOutput(
 	const std::wstring& outputPath,
 	const Guid& outputGuid,
 	const Object* buildParams,
-	uint32_t reason
-) const
+	uint32_t reason) const
 {
 	if (auto imageAsset = dynamic_type_cast< const TerrainImageAsset* >(sourceAsset))
 	{
@@ -331,9 +342,7 @@ bool TerrainPipeline::buildOutput(
 		}
 
 		const hf::TileStorage imageTileStorage(imageInstance, imageAsset->m_tileCount);
-		Ref< drawing::Image > image = (imageAsset->m_tileX >= 0) ?
-			imageTileStorage.readImageTile(imageAsset->m_name, imageAsset->m_tileX, imageAsset->m_tileZ) :
-			imageTileStorage.readImageOverview(imageAsset->m_name, imageAsset->m_overviewSize);
+		Ref< drawing::Image > image = (imageAsset->m_tileX >= 0) ? imageTileStorage.readImageTile(imageAsset->m_name, imageAsset->m_tileX, imageAsset->m_tileZ) : imageTileStorage.readImageOverview(imageAsset->m_name, imageAsset->m_overviewSize);
 		if (!image)
 		{
 			log::error << L"Terrain pipeline failed; unable to read tile of \"" << imageAsset->m_name << L"\" image." << Endl;
@@ -400,14 +409,20 @@ bool TerrainPipeline::buildOutput(
 	}
 
 	// Read surface shader and prepare with proper input and output ports.
-	Ref< const render::ShaderGraph > assetSurfaceShader = pipelineBuilder->getObjectReadOnly< render::ShaderGraph >(terrainAsset->getSurfaceShader());
-	if (!assetSurfaceShader)
-	{
-		log::error << L"Terrain pipeline failed; unable to get terrain template shader." << Endl;
-		return false;
-	}
+	Ref< const render::ShaderGraph > assetSurfaceShaders[4];
+	Ref< const render::ShaderGraph > surfaceShaderImpls[4];
 
-	Ref< render::ShaderGraph > surfaceShaderImpl = DeepClone(assetSurfaceShader).create< render::ShaderGraph >();
+	for (int32_t i = 0; i < sizeof_array(assetSurfaceShaders); ++i)
+	{
+		assetSurfaceShaders[i] = pipelineBuilder->getObjectReadOnly< render::ShaderGraph >(terrainAsset->getSurfaceShader(i));
+		if (!assetSurfaceShaders[i])
+		{
+			log::error << L"Terrain pipeline failed; unable to get terrain template shader." << Endl;
+			return false;
+		}
+
+		surfaceShaderImpls[i] = DeepClone(assetSurfaceShaders[i]).create< render::ShaderGraph >();
+	}
 
 	// Read shader templates.
 	Ref< const render::ShaderGraph > terrainShaderTemplate = pipelineBuilder->getObjectReadOnly< render::ShaderGraph >(c_guidTerrainShaderTemplate);
@@ -425,7 +440,7 @@ bool TerrainPipeline::buildOutput(
 	}
 
 	// Resolve fragments in templates and insert surface shader at placeholders.
-	FragmentReaderAdapter fragmentReader(pipelineBuilder, surfaceShaderImpl);
+	FragmentReaderAdapter fragmentReader(pipelineBuilder, surfaceShaderImpls);
 
 	Ref< render::ShaderGraph > terrainShader = render::FragmentLinker(fragmentReader).resolve(terrainShaderTemplate, false);
 	if (!terrainShader)
@@ -445,20 +460,18 @@ bool TerrainPipeline::buildOutput(
 	const std::wstring shaderPath = Path(outputPath).getPathOnly() + L"/" + outputGuid.format();
 
 	if (!pipelineBuilder->buildAdHocOutput(
-		terrainShader,
-		shaderPath,
-		terrainShaderGuid
-	))
+			terrainShader,
+			shaderPath,
+			terrainShaderGuid))
 	{
 		log::error << L"Terrain pipeline failed; unable to build terrain shader." << Endl;
 		return false;
 	}
 
 	if (!pipelineBuilder->buildAdHocOutput(
-		surfaceShader,
-		shaderPath + L"/Surface",
-		surfaceShaderGuid
-	))
+			surfaceShader,
+			shaderPath + L"/Surface",
+			surfaceShaderGuid))
 	{
 		log::error << L"Terrain pipeline failed; unable to build surface shader." << Endl;
 		return false;
@@ -476,10 +489,8 @@ bool TerrainPipeline::buildOutput(
 	terrainResource->m_tileCount = tileCount;
 	terrainResource->m_tileSize = size / tileCount;
 	for (int32_t tz = 0; tz < tileCount; ++tz)
-	{
 		for (int32_t tx = 0; tx < tileCount; ++tx)
 			terrainResource->m_tiles.push_back(createTile(outputGuid, tx, tz, haveSplat, haveColor, splatMapGuid));
-	}
 	terrainResource->m_overview = createTile(outputGuid, -1, -1, haveSplat, haveColor, splatMapGuid);
 
 	Ref< db::Instance > outputInstance = pipelineBuilder->createOutputInstance(outputPath, outputGuid);

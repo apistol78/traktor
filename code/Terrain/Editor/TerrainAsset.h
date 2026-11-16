@@ -56,13 +56,13 @@ public:
 
 	const resource::Id< hf::Heightfield >& getHeightfield() const { return m_heightfield; }
 
-	const resource::Id< render::Shader >& getSurfaceShader() const { return m_surfaceShader; }
+	const resource::Id< render::Shader >& getSurfaceShader(int32_t index) const { return m_surfaceShaders[index]; }
 
 private:
 	uint32_t m_detailSkip = 1;
 	uint32_t m_patchDim = 129;
 	resource::Id< hf::Heightfield > m_heightfield;
-	resource::Id< render::Shader > m_surfaceShader;
+	resource::Id< render::Shader > m_surfaceShaders[4];
 };
 
 }
