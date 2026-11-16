@@ -192,6 +192,9 @@ bool BuildTargetAction::execute(IProgressListener* progressListener)
 	const bool dependsThreads = m_globalSettings->getProperty< bool >(L"Pipeline.DependsThreads", true);
 	pipelineConfiguration->setProperty< PropertyBoolean >(L"Pipeline.DependsThreads", dependsThreads);
 
+	const bool buildThreads = m_globalSettings->getProperty< bool >(L"Pipeline.BuildThreads", true);
+	pipelineConfiguration->setProperty< PropertyBoolean >(L"Pipeline.BuildThreads", buildThreads);
+
 	// Set database connection strings.
 	db::ConnectionString sourceDatabaseCs = m_globalSettings->getProperty< std::wstring >(L"Editor.SourceDatabase");
 	db::ConnectionString outputDatabaseCs(L"provider=traktor.db.LocalDatabase;groupPath=" + FileSystem::getInstance().getAbsolutePath(m_outputPath + L"/db").getPathName() + L";binary=true;fileStore=traktor.db.NoFileStore");
