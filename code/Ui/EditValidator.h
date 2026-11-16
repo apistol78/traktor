@@ -37,7 +37,7 @@ public:
 		VrInvalid
 	};
 
-	virtual Result validate(const std::wstring& text) const = 0;
+	virtual Result validate(const std::wstring& text, bool checkRange) const = 0;
 };
 
 }

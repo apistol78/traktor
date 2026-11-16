@@ -72,10 +72,10 @@ bool CropTerrainWizardTool::launch(ui::Widget* parent, editor::IEditor* editor, 
 		return false;
 	}
 
-	const hf::TileStorage tileStorage(heightfieldAsset->getTileCount());
+	const hf::TileStorage tileStorage(instance, heightfieldAsset->getTileCount());
 
-	colorImage = tileStorage.readImage(instance, L"Color");
-	splatImage = tileStorage.readImage(instance, L"Splat");
+	colorImage = tileStorage.readImage(L"Color");
+	splatImage = tileStorage.readImage(L"Splat");
 
 	if (!colorImage && !splatImage)
 	{
@@ -157,10 +157,10 @@ bool CropTerrainWizardTool::launch(ui::Widget* parent, editor::IEditor* editor, 
 		}
 	}
 
-	if (croppedColorImage && !tileStorage.writeImage(instance, L"Color", croppedColorImage))
+	if (croppedColorImage && !tileStorage.writeImage(L"Color", croppedColorImage))
 		return false;
 
-	if (croppedSplatImage && !tileStorage.writeImage(instance, L"Splat", croppedSplatImage))
+	if (croppedSplatImage && !tileStorage.writeImage(L"Splat", croppedSplatImage))
 		return false;
 
 	if (!instance->commit())

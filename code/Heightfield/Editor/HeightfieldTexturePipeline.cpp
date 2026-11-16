@@ -130,15 +130,15 @@ bool HeightfieldTexturePipeline::buildOutput(
 	// Normals of tiles need a border of samples from neighbour tiles.
 	const int32_t border = (asset->m_tileX >= 0 && asset->m_output == HeightfieldTextureAsset::OtNormals) ? 1 : 0;
 
-	const TileStorage tileStorage(heightfieldAsset->getTileCount());
+	const TileStorage tileStorage(heightfieldAssetInstance, heightfieldAsset->getTileCount());
 
 	Ref< Heightfield > heightfield;
 	if (asset->m_tileX >= 0)
-		heightfield = tileStorage.readHeightfieldTile(heightfieldAssetInstance, heightfieldAsset->getWorldExtent(), asset->m_tileX, asset->m_tileZ, border);
+		heightfield = tileStorage.readHeightfieldTile(heightfieldAsset->getWorldExtent(), asset->m_tileX, asset->m_tileZ, border);
 	else if (asset->m_overviewSize > 0)
-		heightfield = tileStorage.readHeightfieldOverview(heightfieldAssetInstance, heightfieldAsset->getWorldExtent(), asset->m_overviewSize);
+		heightfield = tileStorage.readHeightfieldOverview(heightfieldAsset->getWorldExtent(), asset->m_overviewSize);
 	else
-		heightfield = tileStorage.readHeightfield(heightfieldAssetInstance, heightfieldAsset->getWorldExtent());
+		heightfield = tileStorage.readHeightfield(heightfieldAsset->getWorldExtent());
 
 	if (!heightfield)
 	{

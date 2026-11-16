@@ -92,18 +92,18 @@ bool HeightfieldPipeline::buildOutput(
 			return false;
 		}
 
-		const TileStorage tileStorage(heightfieldAsset->getTileCount());
+		const TileStorage tileStorage(heightfieldInstance, heightfieldAsset->getTileCount());
 		if (tileAsset->m_tileX >= 0)
-			heightfield = tileStorage.readHeightfieldTile(heightfieldInstance, heightfieldAsset->getWorldExtent(), tileAsset->m_tileX, tileAsset->m_tileZ, 0);
+			heightfield = tileStorage.readHeightfieldTile(heightfieldAsset->getWorldExtent(), tileAsset->m_tileX, tileAsset->m_tileZ, 0);
 		else
-			heightfield = tileStorage.readHeightfieldOverview(heightfieldInstance, heightfieldAsset->getWorldExtent(), tileAsset->m_overviewSize);
+			heightfield = tileStorage.readHeightfieldOverview(heightfieldAsset->getWorldExtent(), tileAsset->m_overviewSize);
 	}
 	else
 	{
 		heightfieldAsset = checked_type_cast< const HeightfieldAsset* >(sourceAsset);
 
 		// Product of asset itself is a low resolution overview.
-		heightfield = TileStorage(heightfieldAsset->getTileCount()).readHeightfieldOverview(sourceInstance, heightfieldAsset->getWorldExtent());
+		heightfield = TileStorage(sourceInstance, heightfieldAsset->getTileCount()).readHeightfieldOverview(heightfieldAsset->getWorldExtent());
 	}
 
 	if (!heightfield)

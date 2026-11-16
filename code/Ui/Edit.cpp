@@ -61,7 +61,7 @@ bool Edit::create(Widget* parent, const std::wstring& text, uint32_t style, cons
 
 	if ((m_validator = validator) != nullptr)
 	{
-		if (m_validator->validate(text) == EditValidator::VrInvalid)
+		if (m_validator->validate(text, true) == EditValidator::VrInvalid)
 			return false;
 	}
 
@@ -101,7 +101,7 @@ bool Edit::setValidator(const EditValidator* validator)
 {
 	if (validator)
 	{
-		if (validator->validate(getText()) == EditValidator::VrInvalid)
+		if (validator->validate(getText(), true) == EditValidator::VrInvalid)
 			return false;
 	}
 	m_validator = validator;
@@ -512,7 +512,7 @@ void Edit::eventKey(KeyEvent* event)
 		caret = std::min< int32_t >(caret, (int32_t)text.length());
 		caret = std::max< int32_t >(caret, 0);
 
-		if (m_validator == nullptr || m_validator->validate(text) != EditValidator::VrInvalid)
+		if (m_validator == nullptr || m_validator->validate(text, false) != EditValidator::VrInvalid)
 		{
 			setText(text);
 			m_caret = caret;

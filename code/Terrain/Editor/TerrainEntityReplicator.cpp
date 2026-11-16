@@ -76,10 +76,10 @@ Ref< model::Model > TerrainEntityReplicator::createModel(
 	if (!heightfieldAsset)
 		return nullptr;
 
-	const hf::TileStorage storage(heightfieldAsset->getTileCount());
-	const int32_t size = storage.readSize(heightfieldAssetInstance);
+	const hf::TileStorage storage(heightfieldAssetInstance, heightfieldAsset->getTileCount());
+	const int32_t size = storage.readSize();
 
-	Ref< hf::Heightfield > heightfield = storage.readHeightfieldOverview(heightfieldAssetInstance, heightfieldAsset->getWorldExtent());
+	Ref< hf::Heightfield > heightfield = storage.readHeightfieldOverview(heightfieldAsset->getWorldExtent());
 	if (!heightfield)
 		return nullptr;
 

@@ -14,8 +14,8 @@
 			<id>{A678C368-CBBF-2444-8167-B1451E270206}</id>
 			<comment/>
 			<position>
-				<first>441</first>
-				<second>-86</second>
+				<first>443</first>
+				<second>-61</second>
 			</position>
 			<swizzle>y</swizzle>
 		</item>
@@ -69,8 +69,8 @@
 			<id>{FD5C2C12-DB17-4143-B487-51038EF66FB5}</id>
 			<comment/>
 			<position>
-				<first>112</first>
-				<second>-71</second>
+				<first>128</first>
+				<second>-79</second>
 			</position>
 			<parameterDeclaration>{4EA758E3-4DD8-E940-8308-105A6AA76314}</parameterDeclaration>
 		</item>
@@ -79,7 +79,7 @@
 			<comment/>
 			<position>
 				<first>1183</first>
-				<second>-168</second>
+				<second>-158</second>
 			</position>
 			<parameterDeclaration>{2124EB5A-AA38-3C49-932B-48CDE7844EC6}</parameterDeclaration>
 		</item>
@@ -87,7 +87,7 @@
 			<id>{E0A9EAF2-632F-40D1-94E5-08FC04377201}</id>
 			<comment/>
 			<position>
-				<first>1169</first>
+				<first>1173</first>
 				<second>-103</second>
 			</position>
 			<name>FogFactor</name>
@@ -126,7 +126,7 @@ $Output = 1.0f - 1.0f / exp($Distance * $Density);
 			<comment/>
 			<position>
 				<first>356</first>
-				<second>-291</second>
+				<second>-287</second>
 			</position>
 			<parameterDeclaration>{C1FFA687-8FE7-C54E-AA46-23305604D4F5}</parameterDeclaration>
 		</item>
@@ -222,7 +222,7 @@ $Output = max(sHi - sLo, 0.0f) * len;
 			<comment/>
 			<position>
 				<first>388</first>
-				<second>-245</second>
+				<second>-237</second>
 			</position>
 			<parameterDeclaration>{AABCA285-2CA4-A946-8482-63D96B37F538}</parameterDeclaration>
 		</item>
@@ -230,14 +230,14 @@ $Output = max(sHi - sLo, 0.0f) * len;
 			<id>{54859C6E-0584-4D2B-8DAA-184D08C8F730}</id>
 			<comment/>
 			<position>
-				<first>441</first>
-				<second>-47</second>
+				<first>443</first>
+				<second>-102</second>
 			</position>
 			<swizzle>w</swizzle>
 		</item>
 		<item type="traktor.render.InputPort" version="3,traktor.render.Node:1">
 			<id>{429F0454-93B0-4344-A450-8CCFACCCCDE1}</id>
-			<comment><![CDATA[Distance along the ray already accounted for by the volumetric fog; 0 to fog the whole ray.]]></comment>
+			<comment/>
 			<position>
 				<first>318</first>
 				<second>-187</second>
@@ -349,16 +349,6 @@ $Output = max(sHi - sLo, 0.0f) * len;
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[9]"/>
-				<id>{6B6BADC6-F11B-42DA-B348-CFA90E59CCF7}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[2]"/>
-				<id>{5A25771B-894F-4D92-8D1E-FBF8449850E8}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
 				<node ref="/object/nodes/item[11]"/>
 				<id>{41DA406A-9D77-45A8-A635-F858DDBD3792}</id>
 			</source>
@@ -385,6 +375,16 @@ $Output = max(sHi - sLo, 0.0f) * len;
 			<destination>
 				<node ref="/object/nodes/item[11]"/>
 				<id>{B681FE29-04F7-4E8D-B71D-44019D9F450C}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[9]"/>
+				<id>{6B6BADC6-F11B-42DA-B348-CFA90E59CCF7}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[2]"/>
+				<id>{5A25771B-894F-4D92-8D1E-FBF8449850E8}</id>
 			</destination>
 		</item>
 	</edges>

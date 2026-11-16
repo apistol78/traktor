@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -24,7 +24,7 @@ void CharacterSetEditValidator::addRange(wchar_t from, wchar_t to)
 		add(ch);
 }
 
-EditValidator::Result CharacterSetEditValidator::validate(const std::wstring& text) const
+EditValidator::Result CharacterSetEditValidator::validate(const std::wstring& text, bool checkRange) const
 {
 	for (auto ch : text)
 	{

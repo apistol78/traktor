@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -40,7 +40,7 @@ public:
 		int32_t decimals = 8
 	);
 
-	virtual EditValidator::Result validate(const std::wstring& text) const override;
+	virtual EditValidator::Result validate(const std::wstring& text, bool checkRange) const override;
 
 private:
 	bool m_floatPoint;

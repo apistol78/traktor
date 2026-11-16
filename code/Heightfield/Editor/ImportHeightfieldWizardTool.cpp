@@ -236,7 +236,7 @@ bool ImportHeightfieldWizardTool::launch(ui::Widget* parent, editor::IEditor* ed
 
 		// Replace heightfield in existing asset.
 		Ref< const HeightfieldAsset > heightfieldAsset = instance->getObject< HeightfieldAsset >();
-		if (!heightfieldAsset || !TileStorage(heightfieldAsset->getTileCount()).writeHeightfield(instance, heightfield))
+		if (!heightfieldAsset || !TileStorage(instance, heightfieldAsset->getTileCount()).writeHeightfield(heightfield))
 		{
 			log::error << L"Failed to write heightfield data into instance; import heights failed." << Endl;
 			instance->revert();

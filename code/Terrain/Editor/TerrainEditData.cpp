@@ -42,11 +42,14 @@ bool TerrainEditData::create(const db::Instance* heightfieldInstance, const db::
 {
 	m_heightfieldInstance = heightfieldInstance;
 	m_terrainInstance = terrainInstance;
-	m_storage = new hf::TileStorage(heightfieldAsset->getTileCount());
+
+	m_heightfieldStorage = new hf::TileStorage(m_heightfieldInstance, heightfieldAsset->getTileCount());
+	m_terrainStorage = new hf::TileStorage(m_terrainInstance, heightfieldAsset->getTileCount());
+
 	m_worldExtent = heightfieldAsset->getWorldExtent();
 	m_tileCount = std::max(heightfieldAsset->getTileCount(), 1);
 
-	m_size = m_storage->readSize(heightfieldInstance);
+	m_size = m_heightfieldStorage->readSize();
 	if (m_size <= 0)
 	{
 		log::error << L"Unable to edit terrain; failed to read heightfield size." << Endl;
@@ -248,7 +251,7 @@ bool TerrainEditData::setColor(int32_t x, int32_t z, const Color4f& color)
 	return true;
 }
 
-bool TerrainEditData::writeHeightfield(db::Instance* instance)
+bool TerrainEditData::writeHeightfield()
 {
 	for (int32_t i = 0; i < (int32_t)m_tiles.size(); ++i)
 	{
@@ -256,7 +259,7 @@ bool TerrainEditData::writeHeightfield(db::Instance* instance)
 		if (!tile.heightfieldModified)
 			continue;
 
-		if (!m_storage->writeStoredTile(instance, i % m_tileCount, i / m_tileCount, tile.heightfield))
+		if (!m_heightfieldStorage->writeStoredTile(i % m_tileCount, i / m_tileCount, tile.heightfield))
 			return false;
 
 		tile.heightfieldModified = false;
@@ -264,7 +267,7 @@ bool TerrainEditData::writeHeightfield(db::Instance* instance)
 	return true;
 }
 
-bool TerrainEditData::writeImages(db::Instance* instance)
+bool TerrainEditData::writeImages()
 {
 	for (int32_t image = 0; image < 2; ++image)
 	{
@@ -291,7 +294,7 @@ bool TerrainEditData::writeImages(db::Instance* instance)
 			if (image == Color)
 				stored->convert(drawing::PixelFormat::getA8B8G8R8());
 
-			if (!m_storage->writeStoredImageTile(instance, c_imageNames[image], i % m_tileCount, i / m_tileCount, stored))
+			if (!m_terrainStorage->writeStoredImageTile(c_imageNames[image], i % m_tileCount, i / m_tileCount, stored))
 				return false;
 
 			tile.imageModified[image] = false;
@@ -312,7 +315,7 @@ hf::Heightfield* TerrainEditData::getHeightfieldTile(int32_t& inoutX, int32_t& i
 	Tile& tile = m_tiles[tileX + tileZ * m_tileCount];
 	if (!tile.heightfield)
 	{
-		tile.heightfield = m_storage->readStoredTile(m_heightfieldInstance, m_worldExtent, tileX, tileZ);
+		tile.heightfield = m_heightfieldStorage->readStoredTile(m_worldExtent, tileX, tileZ);
 		if (tile.heightfield && tile.heightfield->getSize() != m_tileSize)
 		{
 			log::error << L"Unable to edit terrain; tile " << tileX << L", " << tileZ << L" size mismatch." << Endl;
@@ -332,7 +335,7 @@ drawing::Image* TerrainEditData::getImageTile(int32_t image, int32_t& inoutX, in
 	Tile& tile = m_tiles[tileX + tileZ * m_tileCount];
 	if (!tile.images[image])
 	{
-		Ref< drawing::Image > imageTile = m_storage->readStoredImageTile(m_terrainInstance, c_imageNames[image], tileX, tileZ);
+		Ref< drawing::Image > imageTile = m_terrainStorage->readStoredImageTile(c_imageNames[image], tileX, tileZ);
 		if (imageTile)
 		{
 			imageTile->convert(imageFormat(image));

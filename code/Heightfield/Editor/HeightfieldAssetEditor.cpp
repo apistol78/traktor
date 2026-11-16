@@ -99,7 +99,7 @@ bool HeightfieldAssetEditor::create(ui::Widget* parent, db::Instance* instance, 
 	m_instance = instance;
 	m_asset = mandatory_non_null_type_cast< HeightfieldAsset* >(object);
 
-	m_heightfield = TileStorage(m_asset->getTileCount()).readHeightfield(m_instance, m_asset->getWorldExtent());
+	m_heightfield = TileStorage(m_instance, m_asset->getTileCount()).readHeightfieldOverview(m_asset->getWorldExtent());
 	if (!m_heightfield)
 	{
 		log::error << L"Heightfield asset editor failed; unable to read heights." << Endl;
@@ -189,7 +189,7 @@ void HeightfieldAssetEditor::apply()
 
 	if (m_heightfieldModified)
 	{
-		if (!TileStorage(m_asset->getTileCount()).writeHeightfield(m_instance, m_heightfield))
+		if (!TileStorage(m_instance, m_asset->getTileCount()).writeHeightfield(m_heightfield))
 			log::error << L"Unable to write heightfield to instance." << Endl;
 		m_heightfieldModified = false;
 	}

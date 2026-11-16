@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -22,7 +22,7 @@ NumericEditValidator::NumericEditValidator(bool floatPoint, float min, float max
 {
 }
 
-EditValidator::Result NumericEditValidator::validate(const std::wstring& text) const
+EditValidator::Result NumericEditValidator::validate(const std::wstring& text, bool checkRange) const
 {
 	EditValidator::Result result = EditValidator::VrOk;
 	int32_t state = 0;
@@ -106,7 +106,7 @@ EditValidator::Result NumericEditValidator::validate(const std::wstring& text) c
 	}
 
 	// Check number within range.
-	if (result == EditValidator::VrOk)
+	if (result == EditValidator::VrOk && checkRange)
 	{
 		if (!text.empty())
 		{

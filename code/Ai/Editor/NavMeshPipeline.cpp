@@ -200,8 +200,8 @@ uint32_t readTerrainStamp(editor::IPipelineBuilder* pipelineBuilder, const NavMe
 	int32_t range[4];
 	getTerrainTileRange(heightfieldAsset, bounds.transform(terrain.transform.inverse()), range);
 
-	const hf::TileStorage tileStorage(heightfieldAsset->getTileCount());
-	return DeepHash(heightfieldAsset).get() + tileStorage.readStamp(heightfieldInstance, L"Data", range[0], range[1], range[2], range[3]);
+	const hf::TileStorage tileStorage(heightfieldInstance, heightfieldAsset->getTileCount());
+	return DeepHash(heightfieldAsset).get() + tileStorage.readStamp(L"Data", range[0], range[1], range[2], range[3]);
 }
 
 /*! Convert heightfield tiles of terrain overlapping bounds, or every tile if bounds are empty, at full resolution.
@@ -215,7 +215,7 @@ bool createTerrainModels(editor::IPipelineBuilder* pipelineBuilder, const NavMes
 		return false;
 
 	const Vector4& worldExtent = heightfieldAsset->getWorldExtent();
-	const hf::TileStorage tileStorage(heightfieldAsset->getTileCount());
+	const hf::TileStorage tileStorage(heightfieldInstance, heightfieldAsset->getTileCount());
 	const int32_t tileCount = std::max(heightfieldAsset->getTileCount(), 1);
 
 	int32_t range[4];
@@ -224,7 +224,7 @@ bool createTerrainModels(editor::IPipelineBuilder* pipelineBuilder, const NavMes
 	int32_t borderSamples = 0;
 	if (border > 0.0f && heightfieldAsset->getTileCount() > 0)
 	{
-		const int32_t size = tileStorage.readSize(heightfieldInstance);
+		const int32_t size = tileStorage.readSize();
 		if (size <= 0)
 			return false;
 		borderSamples = (int32_t)std::ceil(border * size / worldExtent.x()) + 1;
@@ -244,8 +244,8 @@ bool createTerrainModels(editor::IPipelineBuilder* pipelineBuilder, const NavMes
 
 			Ref< Job > job = JobManager::getInstance().add([&, tx, tz, tile]() {
 				Ref< hf::Heightfield > heightfield = (heightfieldAsset->getTileCount() > 0) ?
-					tileStorage.readHeightfieldTile(heightfieldInstance, worldExtent, tx, tz, borderSamples) :
-					tileStorage.readHeightfield(heightfieldInstance, worldExtent);
+					tileStorage.readHeightfieldTile(worldExtent, tx, tz, borderSamples) :
+					tileStorage.readHeightfield(worldExtent);
 				if (heightfield)
 					models[tile] = hf::ConvertHeightfield().convert(heightfield, 1, c_heightfieldMaxError);
 			});

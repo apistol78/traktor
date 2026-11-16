@@ -781,7 +781,7 @@ void TerrainEditModifier::end()
 			}
 		}
 
-		if (!m_data->writeImages(m_terrainInstance))
+		if (!m_data->writeImages())
 			log::error << L"Unable to write terrain images." << Endl;
 
 		m_context->getDocument()->editInstance(
@@ -818,7 +818,7 @@ void TerrainEditModifier::end()
 			);
 		}
 
-		if (m_data->writeHeightfield(m_heightfieldInstance))
+		if (m_data->writeHeightfield())
 			m_context->getDocument()->setModified();
 		else
 			log::error << L"Unable to write heights." << Endl;

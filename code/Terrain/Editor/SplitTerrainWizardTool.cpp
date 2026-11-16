@@ -116,15 +116,15 @@ bool SplitTerrainWizardTool::launch(ui::Widget* parent, editor::IEditor* editor,
 	}
 
 	// Read everything before anything is modified.
-	const hf::TileStorage sourceStorage(heightfieldAsset->getTileCount());
-	const hf::TileStorage targetStorage(tileCount);
+	const hf::TileStorage sourceStorage(instance, heightfieldAsset->getTileCount());
+	const hf::TileStorage targetStorage(heightfieldInstance, tileCount);
 
-	Ref< hf::Heightfield > heightfield = sourceStorage.readHeightfield(heightfieldInstance, worldExtent);
+	Ref< hf::Heightfield > heightfield = sourceStorage.readHeightfield(worldExtent);
 	if (!heightfield)
 		return false;
 
-	Ref< drawing::Image > colorImage = sourceStorage.readImage(instance, L"Color");
-	Ref< drawing::Image > splatImage = sourceStorage.readImage(instance, L"Splat");
+	Ref< drawing::Image > colorImage = sourceStorage.readImage(L"Color");
+	Ref< drawing::Image > splatImage = sourceStorage.readImage(L"Splat");
 
 	if ((heightfield->getSize() % tileCount) != 0 || !divisible(colorImage, tileCount) || !divisible(splatImage, tileCount))
 	{
@@ -149,11 +149,11 @@ bool SplitTerrainWizardTool::launch(ui::Widget* parent, editor::IEditor* editor,
 
 	const bool result =
 		heightfieldInstance->removeAllData() &&
-		targetStorage.writeHeightfield(heightfieldInstance, heightfield) &&
+		targetStorage.writeHeightfield(heightfield) &&
 		heightfieldInstance->setObject(heightfieldAsset) &&
 		instance->removeAllData() &&
-		(!colorImage || targetStorage.writeImage(instance, L"Color", colorImage)) &&
-		(!splatImage || targetStorage.writeImage(instance, L"Splat", splatImage));
+		(!colorImage || targetStorage.writeImage(L"Color", colorImage)) &&
+		(!splatImage || targetStorage.writeImage(L"Splat", splatImage));
 
 	if (!result || !heightfieldInstance->commit() || !instance->commit())
 	{

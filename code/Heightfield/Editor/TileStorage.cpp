@@ -39,10 +39,10 @@ namespace
 {
 
 const uint32_t c_zipBufferSize = 65536;
-const float c_overviewSampleDistance = 2.0f;	//!< Maximum distance between overview samples, in world units.
-const int32_t c_overviewMinSize = 2048;	//!< Overview isn't downsampled below this size.
-const int32_t c_rowsPerTask = 64;	//!< Output rows per task; multiple of 8 so packed cut bits of tasks never share a byte.
-const int64_t c_maxCachedSamples = 1024ll * 1024 * 1024;	//!< Samples of decoded tiles kept by region reads.
+const float c_overviewSampleDistance = 2.0f;			 //!< Maximum distance between overview samples, in world units.
+const int32_t c_overviewMinSize = 2048;					 //!< Overview isn't downsampled below this size.
+const int32_t c_rowsPerTask = 64;						 //!< Output rows per task; multiple of 8 so packed cut bits of tasks never share a byte.
+const int64_t c_maxCachedSamples = 1024ll * 1024 * 1024; //!< Samples of decoded tiles kept by region reads.
 
 struct CachedTile
 {
@@ -89,8 +89,15 @@ int32_t bandEnd(int32_t begin, int32_t end, int32_t step)
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.hf.TileStorage", TileStorage, Object)
 
-TileStorage::TileStorage(int32_t tileCount)
-	: m_tileCount(tileCount)
+TileStorage::TileStorage(db::Instance* instance, int32_t tileCount)
+	: m_instance(instance)
+	, m_tileCount(tileCount)
+{
+}
+
+TileStorage::TileStorage(const db::Instance* instance, int32_t tileCount)
+	: m_instance(const_cast< db::Instance* >(instance))
+	, m_tileCount(tileCount)
 {
 }
 
@@ -109,9 +116,9 @@ void TileStorage::flushCache()
 	s_cacheSamples = 0;
 }
 
-int32_t TileStorage::readSize(const db::Instance* instance) const
+int32_t TileStorage::readSize() const
 {
-	Ref< IStream > stream = instance->readData(getChannelName(L"Data", 0, 0));
+	Ref< IStream > stream = m_instance->readData(getChannelName(L"Data", 0, 0));
 	if (!stream)
 		return 0;
 
@@ -133,24 +140,24 @@ int32_t TileStorage::readSize(const db::Instance* instance) const
 	return size * std::max(m_tileCount, 1);
 }
 
-Ref< Heightfield > TileStorage::readHeightfield(const db::Instance* instance, const Vector4& worldExtent) const
+Ref< Heightfield > TileStorage::readHeightfield(const Vector4& worldExtent) const
 {
 	if (m_tileCount <= 0)
-		return readStoredTile(instance, worldExtent, 0, 0);
+		return readStoredTile(worldExtent, 0, 0);
 
-	const int32_t size = readSize(instance);
+	const int32_t size = readSize();
 	if (size <= 0)
 	{
 		log::error << L"Unable to read heightfield; no data in instance." << Endl;
 		return nullptr;
 	}
 
-	return readHeightfieldRegion(instance, worldExtent, size / m_tileCount, 0, 0, size, 1);
+	return readHeightfieldRegion(worldExtent, size / m_tileCount, 0, 0, size, 1);
 }
 
-Ref< Heightfield > TileStorage::readHeightfieldTile(const db::Instance* instance, const Vector4& worldExtent, int32_t tileX, int32_t tileZ, int32_t border) const
+Ref< Heightfield > TileStorage::readHeightfieldTile(const Vector4& worldExtent, int32_t tileX, int32_t tileZ, int32_t border) const
 {
-	const int32_t size = readSize(instance);
+	const int32_t size = readSize();
 	if (size <= 0)
 	{
 		log::error << L"Unable to read heightfield tile; no data in instance." << Endl;
@@ -158,37 +165,37 @@ Ref< Heightfield > TileStorage::readHeightfieldTile(const db::Instance* instance
 	}
 
 	const int32_t tileSize = size / std::max(m_tileCount, 1);
-	return readHeightfieldRegion(instance, worldExtent, tileSize, tileX * tileSize - border, tileZ * tileSize - border, tileSize + 1 + 2 * border, 1);
+	return readHeightfieldRegion(worldExtent, tileSize, tileX * tileSize - border, tileZ * tileSize - border, tileSize + 1 + 2 * border, 1);
 }
 
-Ref< Heightfield > TileStorage::readHeightfieldOverview(const db::Instance* instance, const Vector4& worldExtent, int32_t size) const
+Ref< Heightfield > TileStorage::readHeightfieldOverview(const Vector4& worldExtent, int32_t size) const
 {
-	const int32_t fullSize = readSize(instance);
+	const int32_t fullSize = readSize();
 	if (fullSize <= 0 || size <= 0 || (fullSize % size) != 0)
 	{
 		log::error << L"Unable to read heightfield overview; size " << fullSize << L" not divisible into " << size << L"." << Endl;
 		return nullptr;
 	}
 
-	return readHeightfieldRegion(instance, worldExtent, fullSize / std::max(m_tileCount, 1), 0, 0, fullSize, fullSize / size);
+	return readHeightfieldRegion(worldExtent, fullSize / std::max(m_tileCount, 1), 0, 0, fullSize, fullSize / size);
 }
 
-Ref< Heightfield > TileStorage::readHeightfieldOverview(const db::Instance* instance, const Vector4& worldExtent) const
+Ref< Heightfield > TileStorage::readHeightfieldOverview(const Vector4& worldExtent) const
 {
-	const int32_t fullSize = readSize(instance);
+	const int32_t fullSize = readSize();
 	if (fullSize <= 0)
 	{
 		log::error << L"Unable to read heightfield overview; no data in instance." << Endl;
 		return nullptr;
 	}
 
-	return readHeightfieldOverview(instance, worldExtent, calculateOverviewSize(fullSize, worldExtent.x()));
+	return readHeightfieldOverview(worldExtent, calculateOverviewSize(fullSize, worldExtent.x()));
 }
 
-bool TileStorage::writeHeightfield(db::Instance* instance, const Heightfield* heightfield, const int32_t* region) const
+bool TileStorage::writeHeightfield(const Heightfield* heightfield, const int32_t* region) const
 {
 	if (m_tileCount <= 0)
-		return writeStoredTile(instance, 0, 0, heightfield);
+		return writeStoredTile(0, 0, heightfield);
 
 	const int32_t size = heightfield->getSize();
 	if ((size % m_tileCount) != 0)
@@ -229,7 +236,7 @@ bool TileStorage::writeHeightfield(db::Instance* instance, const Heightfield* he
 					std::memcpy(dst + z * tileSize, src + x0 + (z0 + z) * size, tileSize);
 			}
 
-			if (!writeStoredTile(instance, tx, tz, tile))
+			if (!writeStoredTile(tx, tz, tile))
 				return false;
 		}
 	}
@@ -237,32 +244,32 @@ bool TileStorage::writeHeightfield(db::Instance* instance, const Heightfield* he
 	return true;
 }
 
-Ref< drawing::Image > TileStorage::readImage(const db::Instance* instance, const std::wstring& name) const
+Ref< drawing::Image > TileStorage::readImage(const std::wstring& name) const
 {
 	if (m_tileCount <= 0)
-		return readStoredImageTile(instance, name, 0, 0);
+		return readStoredImageTile(name, 0, 0);
 
-	Ref< drawing::Image > anchor = readStoredImageTile(instance, name, 0, 0);
+	Ref< drawing::Image > anchor = readStoredImageTile(name, 0, 0);
 	if (!anchor)
 		return nullptr;
 
-	return readImageRegion(instance, name, anchor, 0, 0, anchor->getWidth() * m_tileCount, anchor->getHeight() * m_tileCount, 1, 1);
+	return readImageRegion(name, anchor, 0, 0, anchor->getWidth() * m_tileCount, anchor->getHeight() * m_tileCount, 1, 1);
 }
 
-Ref< drawing::Image > TileStorage::readImageTile(const db::Instance* instance, const std::wstring& name, int32_t tileX, int32_t tileZ) const
+Ref< drawing::Image > TileStorage::readImageTile(const std::wstring& name, int32_t tileX, int32_t tileZ) const
 {
-	Ref< drawing::Image > anchor = readStoredImageTile(instance, name, tileX, tileZ);
+	Ref< drawing::Image > anchor = readStoredImageTile(name, tileX, tileZ);
 	if (!anchor)
 		return nullptr;
 
 	const int32_t tileWidth = anchor->getWidth();
 	const int32_t tileHeight = anchor->getHeight();
-	return readImageRegion(instance, name, anchor, tileX * tileWidth, tileZ * tileHeight, tileWidth + 1, tileHeight + 1, 1, 1);
+	return readImageRegion(name, anchor, tileX * tileWidth, tileZ * tileHeight, tileWidth + 1, tileHeight + 1, 1, 1);
 }
 
-Ref< drawing::Image > TileStorage::readImageOverview(const db::Instance* instance, const std::wstring& name, int32_t size) const
+Ref< drawing::Image > TileStorage::readImageOverview(const std::wstring& name, int32_t size) const
 {
-	Ref< drawing::Image > anchor = readStoredImageTile(instance, name, 0, 0);
+	Ref< drawing::Image > anchor = readStoredImageTile(name, 0, 0);
 	if (!anchor)
 		return nullptr;
 
@@ -275,13 +282,13 @@ Ref< drawing::Image > TileStorage::readImageOverview(const db::Instance* instanc
 		return nullptr;
 	}
 
-	return readImageRegion(instance, name, anchor, 0, 0, width, height, width / size, height / size);
+	return readImageRegion(name, anchor, 0, 0, width, height, width / size, height / size);
 }
 
-bool TileStorage::writeImage(db::Instance* instance, const std::wstring& name, const drawing::Image* image, const int32_t* region) const
+bool TileStorage::writeImage(const std::wstring& name, const drawing::Image* image, const int32_t* region) const
 {
 	if (m_tileCount <= 0)
-		return writeStoredImageTile(instance, name, 0, 0, image);
+		return writeStoredImageTile(name, 0, 0, image);
 
 	const int32_t width = image->getWidth();
 	const int32_t height = image->getHeight();
@@ -304,7 +311,7 @@ bool TileStorage::writeImage(db::Instance* instance, const std::wstring& name, c
 			Ref< drawing::Image > tile = new drawing::Image(image->getPixelFormat(), tileWidth, tileHeight);
 			tile->copy(image, tx * tileWidth, tz * tileHeight, tileWidth, tileHeight);
 
-			if (!writeStoredImageTile(instance, name, tx, tz, tile))
+			if (!writeStoredImageTile(name, tx, tz, tile))
 				return false;
 		}
 	}
@@ -312,7 +319,7 @@ bool TileStorage::writeImage(db::Instance* instance, const std::wstring& name, c
 	return true;
 }
 
-uint32_t TileStorage::readStamp(const db::Instance* instance, const std::wstring& name, int32_t tileX0, int32_t tileZ0, int32_t tileX1, int32_t tileZ1) const
+uint32_t TileStorage::readStamp(const std::wstring& name, int32_t tileX0, int32_t tileZ0, int32_t tileX1, int32_t tileZ1) const
 {
 	const int32_t count = std::max(m_tileCount, 1);
 
@@ -327,7 +334,7 @@ uint32_t TileStorage::readStamp(const db::Instance* instance, const std::wstring
 			const uint64_t stamp[] = {
 				(uint64_t)tx,
 				(uint64_t)tz,
-				instance->getDataLastWriteTime(getChannelName(name, tx, tz), lastWriteTime) ? lastWriteTime.getSecondsSinceEpoch() : 0
+				m_instance->getDataLastWriteTime(getChannelName(name, tx, tz), lastWriteTime) ? lastWriteTime.getSecondsSinceEpoch() : 0
 			};
 			hash.feedBuffer(stamp, sizeof(stamp));
 		}
@@ -337,17 +344,17 @@ uint32_t TileStorage::readStamp(const db::Instance* instance, const std::wstring
 	return hash.get();
 }
 
-bool TileStorage::haveData(const db::Instance* instance, const std::wstring& name) const
+bool TileStorage::haveData(const std::wstring& name) const
 {
 	DateTime lastWriteTime;
-	return instance->getDataLastWriteTime(getChannelName(name, 0, 0), lastWriteTime);
+	return m_instance->getDataLastWriteTime(getChannelName(name, 0, 0), lastWriteTime);
 }
 
-Ref< Heightfield > TileStorage::readStoredTile(const db::Instance* instance, const Vector4& worldExtent, int32_t tileX, int32_t tileZ) const
+Ref< Heightfield > TileStorage::readStoredTile(const Vector4& worldExtent, int32_t tileX, int32_t tileZ) const
 {
 	const std::wstring name = getChannelName(L"Data", tileX, tileZ);
 
-	Ref< IStream > stream = instance->readData(name);
+	Ref< IStream > stream = m_instance->readData(name);
 	if (!stream)
 	{
 		log::error << L"Unable to read heightfield; no \"" << name << L"\" in instance." << Endl;
@@ -372,11 +379,11 @@ Ref< Heightfield > TileStorage::readStoredTile(const db::Instance* instance, con
 	return tile;
 }
 
-bool TileStorage::writeStoredTile(db::Instance* instance, int32_t tileX, int32_t tileZ, const Heightfield* tile) const
+bool TileStorage::writeStoredTile(int32_t tileX, int32_t tileZ, const Heightfield* tile) const
 {
 	const std::wstring name = getChannelName(L"Data", tileX, tileZ);
 
-	Ref< IStream > stream = instance->writeData(name);
+	Ref< IStream > stream = m_instance->writeData(name);
 	if (!stream)
 	{
 		log::error << L"Unable to write heightfield; failed to create \"" << name << L"\" in instance." << Endl;
@@ -401,11 +408,11 @@ bool TileStorage::writeStoredTile(db::Instance* instance, int32_t tileX, int32_t
 	return result;
 }
 
-Ref< drawing::Image > TileStorage::readStoredImageTile(const db::Instance* instance, const std::wstring& name, int32_t tileX, int32_t tileZ) const
+Ref< drawing::Image > TileStorage::readStoredImageTile(const std::wstring& name, int32_t tileX, int32_t tileZ) const
 {
 	const std::wstring channel = getChannelName(name, tileX, tileZ);
 
-	Ref< IStream > stream = instance->readData(channel);
+	Ref< IStream > stream = m_instance->readData(channel);
 	if (!stream)
 		return nullptr;
 
@@ -434,11 +441,11 @@ Ref< drawing::Image > TileStorage::readStoredImageTile(const db::Instance* insta
 	return image;
 }
 
-bool TileStorage::writeStoredImageTile(db::Instance* instance, const std::wstring& name, int32_t tileX, int32_t tileZ, const drawing::Image* tile) const
+bool TileStorage::writeStoredImageTile(const std::wstring& name, int32_t tileX, int32_t tileZ, const drawing::Image* tile) const
 {
 	const std::wstring channel = getChannelName(name, tileX, tileZ);
 
-	Ref< IStream > stream = instance->writeData(channel);
+	Ref< IStream > stream = m_instance->writeData(channel);
 	if (!stream)
 	{
 		log::error << L"Unable to write image; failed to create \"" << channel << L"\" in instance." << Endl;
@@ -468,13 +475,13 @@ std::wstring TileStorage::getChannelName(const std::wstring& name, int32_t tileX
 	return (m_tileCount > 0) ? name + L"_" + toString(tileX) + L"_" + toString(tileZ) : name;
 }
 
-Ref< const Heightfield > TileStorage::readCachedTile(const db::Instance* instance, const Vector4& worldExtent, int32_t tileX, int32_t tileZ) const
+Ref< const Heightfield > TileStorage::readCachedTile(const Vector4& worldExtent, int32_t tileX, int32_t tileZ) const
 {
 	const std::wstring name = getChannelName(L"Data", tileX, tileZ);
-	const std::wstring key = instance->getGuid().format() + L"/" + name;
+	const std::wstring key = m_instance->getGuid().format() + L"/" + name;
 
 	DateTime lastWriteTime;
-	instance->getDataLastWriteTime(name, lastWriteTime);
+	m_instance->getDataLastWriteTime(name, lastWriteTime);
 
 	{
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(s_cacheLock);
@@ -486,7 +493,7 @@ Ref< const Heightfield > TileStorage::readCachedTile(const db::Instance* instanc
 		}
 	}
 
-	Ref< const Heightfield > tile = readStoredTile(instance, worldExtent, tileX, tileZ);
+	Ref< const Heightfield > tile = readStoredTile(worldExtent, tileX, tileZ);
 	if (!tile)
 		return nullptr;
 
@@ -505,10 +512,8 @@ Ref< const Heightfield > TileStorage::readCachedTile(const db::Instance* instanc
 	{
 		auto lru = s_cache.begin();
 		for (auto i = s_cache.begin(); i != s_cache.end(); ++i)
-		{
 			if (i->second.lastUsed < lru->second.lastUsed)
 				lru = i;
-		}
 		s_cacheSamples -= (int64_t)lru->second.tile->getSize() * lru->second.tile->getSize();
 		s_cache.erase(lru);
 	}
@@ -518,7 +523,7 @@ Ref< const Heightfield > TileStorage::readCachedTile(const db::Instance* instanc
 	return tile;
 }
 
-Ref< Heightfield > TileStorage::readHeightfieldRegion(const db::Instance* instance, const Vector4& worldExtent, int32_t tileSize, int32_t x0, int32_t z0, int32_t width, int32_t step) const
+Ref< Heightfield > TileStorage::readHeightfieldRegion(const Vector4& worldExtent, int32_t tileSize, int32_t x0, int32_t z0, int32_t width, int32_t step) const
 {
 	const int32_t count = std::max(m_tileCount, 1);
 	const int32_t size = tileSize * count;
@@ -551,7 +556,9 @@ Ref< Heightfield > TileStorage::readHeightfieldRegion(const db::Instance* instan
 		AlignedVector< Ref< const Heightfield > > rowTiles(mxx - mnx + 1);
 		AlignedVector< Job::task_t > tasks;
 		for (int32_t tx = mnx; tx <= mxx; ++tx)
-			tasks.push_back([&, tx]() { rowTiles[tx - mnx] = readCachedTile(instance, worldExtent, tx, tz); });
+			tasks.push_back([&, tx]() {
+				rowTiles[tx - mnx] = readCachedTile(worldExtent, tx, tz);
+			});
 		JobManager::getInstance().fork(tasks.c_ptr(), tasks.size());
 
 		for (int32_t tx = mnx; tx <= mxx; ++tx)
@@ -665,7 +672,7 @@ Ref< Heightfield > TileStorage::readHeightfieldRegion(const db::Instance* instan
 	return heightfield;
 }
 
-Ref< drawing::Image > TileStorage::readImageRegion(const db::Instance* instance, const std::wstring& name, const drawing::Image* anchor, int32_t x0, int32_t y0, int32_t width, int32_t height, int32_t stepX, int32_t stepY) const
+Ref< drawing::Image > TileStorage::readImageRegion(const std::wstring& name, const drawing::Image* anchor, int32_t x0, int32_t y0, int32_t width, int32_t height, int32_t stepX, int32_t stepY) const
 {
 	const int32_t count = std::max(m_tileCount, 1);
 	const int32_t tileWidth = anchor->getWidth();
@@ -695,14 +702,12 @@ Ref< drawing::Image > TileStorage::readImageRegion(const db::Instance* instance,
 		AlignedVector< Ref< drawing::Image > > rowTiles(mxx - mnx + 1);
 		AlignedVector< Job::task_t > tasks;
 		for (int32_t tx = mnx; tx <= mxx; ++tx)
-		{
 			tasks.push_back([&, tx]() {
-				Ref< drawing::Image > tile = readStoredImageTile(instance, name, tx, ty);
+				Ref< drawing::Image > tile = readStoredImageTile(name, tx, ty);
 				if (tile && tile->getWidth() == tileWidth && tile->getHeight() == tileHeight && !(tile->getPixelFormat() == pf))
 					tile->convert(pf);
 				rowTiles[tx - mnx] = tile;
 			});
-		}
 		JobManager::getInstance().fork(tasks.c_ptr(), tasks.size());
 
 		for (int32_t tx = mnx; tx <= mxx; ++tx)

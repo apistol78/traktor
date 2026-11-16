@@ -148,8 +148,8 @@ Ref< Json > HeightfieldQueryTool::invoke(const Json* arguments, std::wstring& ou
 	}
 	hf::HeightfieldAsset* asset = static_cast< hf::HeightfieldAsset* >(object.ptr());
 
-	const hf::TileStorage storage(asset->getTileCount());
-	const int32_t size = storage.readSize(instance);
+	const hf::TileStorage storage(instance, asset->getTileCount());
+	const int32_t size = storage.readSize();
 	if (size <= 0)
 	{
 		outError = L"Failed to read heightfield heights.";
@@ -190,7 +190,7 @@ Ref< Json > HeightfieldQueryTool::invoke(const Json* arguments, std::wstring& ou
 		const int32_t tileZ = clamp((int32_t)((worldZ / worldExtent.z() + 0.5f) * tileCount), 0, tileCount - 1);
 		Ref< hf::Heightfield >& heightfield = tiles[tileX + tileZ * tileCount];
 		if (!heightfield)
-			heightfield = storage.readHeightfieldTile(instance, worldExtent, tileX, tileZ, 1);
+			heightfield = storage.readHeightfieldTile(worldExtent, tileX, tileZ, 1);
 		if (!heightfield)
 		{
 			outError = L"Failed to read heightfield heights.";

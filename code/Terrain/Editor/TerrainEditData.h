@@ -98,11 +98,11 @@ public:
 
 	bool setColor(int32_t x, int32_t z, const Color4f& color);
 
-	//! Write modified heightfield tiles into instance.
-	bool writeHeightfield(db::Instance* instance);
+	//! Write modified heightfield tiles into heightfield instance.
+	bool writeHeightfield();
 
-	//! Write modified splat and color tiles into instance.
-	bool writeImages(db::Instance* instance);
+	//! Write modified splat and color tiles into terrain instance.
+	bool writeImages();
 
 private:
 	enum
@@ -121,7 +121,8 @@ private:
 
 	Ref< const db::Instance > m_heightfieldInstance;
 	Ref< const db::Instance > m_terrainInstance;
-	Ref< hf::TileStorage > m_storage;
+	Ref< hf::TileStorage > m_heightfieldStorage;
+	Ref< hf::TileStorage > m_terrainStorage;
 	Vector4 m_worldExtent = Vector4::zero();
 	int32_t m_size = 0;
 	int32_t m_tileCount = 0;

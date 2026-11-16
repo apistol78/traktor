@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -34,7 +34,7 @@ public:
 
 	void addRange(wchar_t from, wchar_t to);
 
-	virtual EditValidator::Result validate(const std::wstring& text) const override;
+	virtual EditValidator::Result validate(const std::wstring& text, bool checkRange) const override;
 
 private:
 	std::set< wchar_t > m_set;
