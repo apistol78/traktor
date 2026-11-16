@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -12,6 +12,8 @@
 #include "Ui/Point.h"
 #include "Ui/Unit.h"
 #include "Ui/ToolBar/ToolBarItem.h"
+
+#include <vector>
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -35,6 +37,10 @@ public:
 	explicit ToolBarDropDown(const Command& command, Unit width, const std::wstring& toolTip);
 
 	int32_t add(const std::wstring& item, Object* data = nullptr);
+
+	void setItem(int32_t index, const std::wstring& item);
+
+	void setData(int32_t index, Object* data);
 
 	bool remove(int32_t index);
 

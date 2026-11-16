@@ -6,49 +6,52 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include <limits>
-#include "Core/RefArray.h"
+#include "Terrain/Editor/TerrainEditModifier.h"
+
 #include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
+#include "Core/RefArray.h"
 #include "Database/Database.h"
 #include "Database/Instance.h"
 #include "Drawing/Image.h"
 #include "Editor/IDocument.h"
 #include "Editor/IEditor.h"
-#include "Heightfield/Heightfield.h"
 #include "Heightfield/Editor/HeightfieldAsset.h"
+#include "Heightfield/Heightfield.h"
 #include "Render/IRenderSystem.h"
 #include "Render/PrimitiveRenderer.h"
 #include "Scene/Editor/EntityAdapter.h"
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Scene/Editor/TransformChain.h"
 #include "Shape/Editor/Spline/SplineComponent.h"
-#include "Terrain/Terrain.h"
-#include "Terrain/TerrainComponent.h"
-#include "Terrain/TerrainComponentData.h"
-#include "Terrain/TerrainLayerComponent.h"
+#include "Terrain/Editor/AttributeBrush.h"
 #include "Terrain/Editor/ColorBrush.h"
 #include "Terrain/Editor/CutBrush.h"
 #include "Terrain/Editor/ElevateBrush.h"
 #include "Terrain/Editor/FlattenBrush.h"
 #include "Terrain/Editor/ImageFallOff.h"
-#include "Terrain/Editor/AttributeBrush.h"
 #include "Terrain/Editor/MaterialBrush.h"
 #include "Terrain/Editor/NoiseBrush.h"
 #include "Terrain/Editor/SharpFallOff.h"
 #include "Terrain/Editor/SmoothBrush.h"
 #include "Terrain/Editor/SmoothFallOff.h"
 #include "Terrain/Editor/TerrainAsset.h"
-#include "Terrain/Editor/TerrainEditModifier.h"
+#include "Terrain/Editor/TerrainSceneEditorUIExtension.h"
+#include "Terrain/Terrain.h"
+#include "Terrain/TerrainComponent.h"
+#include "Terrain/TerrainComponentData.h"
+#include "Terrain/TerrainLayerComponent.h"
 #include "Ui/Application.h"
 #include "Ui/Command.h"
 
+#include <limits>
+
 namespace traktor
 {
-	namespace terrain
-	{
-		namespace
-		{
+namespace terrain
+{
+namespace
+{
 
 template < typename Visitor >
 void line_dda(float x0, float y0, float x1, float y1, const Visitor& visitor)
@@ -219,19 +222,19 @@ void fillTileMap(render::ITexture* tileMap, TileMap map, TerrainEditData* data, 
 	tileMap->unlock(0, 0, dirty);
 }
 
-		}
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.TerrainEditModifier", TerrainEditModifier, scene::IModifier)
 
 TerrainEditModifier::TerrainEditModifier(scene::SceneEditorContext* context)
-:	m_context(context)
-,	m_brushMode(0)
-,	m_strength(1.0f)
-,	m_color(Color4f(0.5f, 0.5f, 0.5f, 1.0f))
-,	m_material(0)
-,	m_attribute(0)
-,	m_center(Vector4::zero())
-,	m_applied(false)
+	: m_context(context)
+	, m_brushMode(0)
+	, m_strength(1.0f)
+	, m_color(Color4f(0.5f, 0.5f, 0.5f, 1.0f))
+	, m_material(0)
+	, m_attribute(0)
+	, m_center(Vector4::zero())
+	, m_applied(false)
 {
 }
 
@@ -246,10 +249,9 @@ bool TerrainEditModifier::activate()
 	// Get terrain component from scene.
 	RefArray< scene::EntityAdapter > entityAdapters;
 	if (m_context->findAdaptersOfType(
-		type_of< TerrainComponent >(),
-		entityAdapters,
-		scene::SceneEditorContext::GfDefault | scene::SceneEditorContext::GfNoExternalChild
-	) != 1)
+			type_of< TerrainComponent >(),
+			entityAdapters,
+			scene::SceneEditorContext::GfDefault | scene::SceneEditorContext::GfNoExternalChild) != 1)
 	{
 		// Must exist only one terrain in scene.
 		return false;
@@ -269,14 +271,13 @@ bool TerrainEditModifier::activate()
 
 	// Get terrain layer components.
 	for (auto component : entityAdapters[0]->getComponents())
-	{
 		if (auto terrainLayer = dynamic_type_cast< TerrainLayerComponent* >(component))
 			m_terrainLayers.push_back(terrainLayer);
-	}
 
 	// Source data is loaded tile by tile when edited.
 	m_terrainInstance = sourceDatabase->getInstance(m_terrainComponentData->getTerrain());
 	Ref< const TerrainAsset > terrainAsset = m_terrainInstance ? m_terrainInstance->getObject< TerrainAsset >() : nullptr;
+
 	m_heightfieldInstance = terrainAsset ? sourceDatabase->getInstance(terrainAsset->getHeightfield()) : nullptr;
 	Ref< const hf::HeightfieldAsset > heightfieldAsset = m_heightfieldInstance ? m_heightfieldInstance->getObject< hf::HeightfieldAsset >() : nullptr;
 
@@ -285,6 +286,14 @@ bool TerrainEditModifier::activate()
 	{
 		deactivate();
 		return false;
+	}
+
+	for (int32_t i = 0; i < 4; ++i)
+	{
+		const resource::Id< render::Shader >& surfaceShader = terrainAsset->getSurfaceShader(i);
+		const Ref< const db::Instance > surfaceShaderInstance = sourceDatabase->getInstance(surfaceShader);
+		if (surfaceShaderInstance)
+			m_context->getUIExtensionOf< TerrainSceneEditorUIExtension >()->setSurfaceShaderName(i, surfaceShaderInstance->getName());
 	}
 
 	// Create default brush; try set same brush type as before.
@@ -326,8 +335,7 @@ scene::IModifier::CursorMovedResult TerrainEditModifier::cursorMoved(
 	const scene::TransformChain& transformChain,
 	const Vector2& cursorPosition,
 	const Vector4& worldRayOrigin,
-	const Vector4& worldRayDirection
-)
+	const Vector4& worldRayDirection)
 {
 	if (!m_terrainComponent || !m_data)
 		return { false, false };
@@ -338,10 +346,9 @@ scene::IModifier::CursorMovedResult TerrainEditModifier::cursorMoved(
 
 	Scalar distance;
 	if (m_terrainComponent->queryRay(
-		worldRayOrigin,
-		worldRayDirection,
-		distance
-	))
+			worldRayOrigin,
+			worldRayDirection,
+			distance))
 	{
 		if (!m_editBrushSize)
 		{
@@ -387,8 +394,7 @@ bool TerrainEditModifier::begin(
 	const Vector2& cursorPosition,
 	const Vector4& worldRayOrigin,
 	const Vector4& worldRayDirection,
-	int32_t mouseButton
-)
+	int32_t mouseButton)
 {
 	if (m_editBrushSize)
 		return false;
@@ -404,8 +410,7 @@ void TerrainEditModifier::apply(
 	const Vector4& worldRayDirection,
 	const Vector4& screenDelta,
 	const Vector4& viewDelta,
-	bool snapOverrideEnable
-)
+	bool snapOverrideEnable)
 {
 	if (!m_terrainComponent || !m_data || m_center.w() <= FUZZY_EPSILON)
 		return;
@@ -424,10 +429,9 @@ void TerrainEditModifier::apply(
 		{
 			step += worldRayDirection * 0.01_simd;
 			if (!m_terrainComponent->queryRay(
-				step,
-				worldRayDirection,
-				distance
-			))
+					step,
+					worldRayDirection,
+					distance))
 				break;
 
 			step = (step + worldRayDirection * distance).xyz1();
@@ -447,10 +451,9 @@ void TerrainEditModifier::apply(
 	else
 	{
 		if (!m_terrainComponent->queryRay(
-			worldRayOrigin,
-			worldRayDirection,
-			distance
-		))
+				worldRayOrigin,
+				worldRayDirection,
+				distance))
 			return;
 
 		center = (worldRayOrigin + worldRayDirection * distance).xyz1();
@@ -487,8 +490,7 @@ void TerrainEditModifier::draw(render::PrimitiveRenderer* primitiveRenderer, boo
 			Vector4(x0, y0 + FUZZY_EPSILON, z0, 1.0f),
 			Vector4(x1, y1 + FUZZY_EPSILON, z1, 1.0f),
 			2.0f,
-			Color4ub(255, 0, 0, 180)
-		);
+			Color4ub(255, 0, 0, 180));
 
 		x0 = x1;
 		z0 = z1;
@@ -584,9 +586,9 @@ bool TerrainEditModifier::begin(bool inverted)
 	m_brushMode = m_brush->begin(gx, gz, state);
 
 	m_dirtyRegion[0] =
-	m_dirtyRegion[1] =
-	m_dirtyRegion[2] =
-	m_dirtyRegion[3] = 0;
+		m_dirtyRegion[1] =
+			m_dirtyRegion[2] =
+				m_dirtyRegion[3] = 0;
 	m_applied = false;
 	return true;
 }
@@ -745,8 +747,7 @@ void TerrainEditModifier::end()
 	// Update error metrics of edited tiles after stroke to prevent popping while drawing.
 	if (
 		(m_brushMode & IBrush::MdHeight) != 0 &&
-		m_applied
-	)
+		m_applied)
 	{
 		const int32_t tileCount = m_data->getTileCount();
 		const int32_t tileSize = m_data->getTileSize();
@@ -758,8 +759,7 @@ void TerrainEditModifier::end()
 			if (
 				!m_tileMaps[i].heightMap ||
 				m_dirtyRegion[2] < x0 || m_dirtyRegion[0] > x0 + tileSize ||
-				m_dirtyRegion[3] < z0 || m_dirtyRegion[1] > z0 + tileSize
-			)
+				m_dirtyRegion[3] < z0 || m_dirtyRegion[1] > z0 + tileSize)
 				continue;
 
 			m_terrainComponent->updateTilePatches(i, m_dirtyRegion);
@@ -769,8 +769,7 @@ void TerrainEditModifier::end()
 	// Write modified tiles of splat and color.
 	if (
 		(m_brushMode & (IBrush::MdMaterial | IBrush::MdColor)) != 0 &&
-		m_terrainInstance
-	)
+		m_terrainInstance)
 	{
 		if (!m_context->getDocument()->containInstance(m_terrainInstance))
 		{
@@ -786,16 +785,14 @@ void TerrainEditModifier::end()
 
 		m_context->getDocument()->editInstance(
 			m_terrainInstance,
-			nullptr
-		);
+			nullptr);
 		m_context->getDocument()->setModified();
 	}
 
 	// Write modified tiles of heightfield.
 	if (
 		(m_brushMode & (IBrush::MdHeight | IBrush::MdCut | IBrush::MdAttribute)) != 0 &&
-		m_heightfieldInstance
-	)
+		m_heightfieldInstance)
 	{
 		if (!m_context->getDocument()->containInstance(m_heightfieldInstance))
 		{
@@ -814,8 +811,7 @@ void TerrainEditModifier::end()
 
 			m_context->getDocument()->editInstance(
 				m_heightfieldInstance,
-				m_heightfieldAsset
-			);
+				m_heightfieldAsset);
 		}
 
 		if (m_data->writeHeightfield())
@@ -835,8 +831,7 @@ void TerrainEditModifier::flattenUnderSpline()
 	m_context->findAdaptersOfType(
 		type_of< shape::SplineComponent >(),
 		entityAdapters,
-		scene::SceneEditorContext::GfDefault | scene::SceneEditorContext::GfSelectedOnly | scene::SceneEditorContext::GfNoExternalChild
-	);
+		scene::SceneEditorContext::GfDefault | scene::SceneEditorContext::GfSelectedOnly | scene::SceneEditorContext::GfNoExternalChild);
 
 	FlattenBrush flattenBrush(m_data);
 	m_brush = &flattenBrush;
@@ -854,8 +849,8 @@ void TerrainEditModifier::flattenUnderSpline()
 		if (!begin(false))
 			continue;
 
-	 	const float st = path.getStartTime();
-	 	const float et = path.getEndTime();
+		const float st = path.getStartTime();
+		const float et = path.getEndTime();
 
 		const uint32_t nsteps = keys.size() * 20;
 		for (uint32_t i = 0; i <= nsteps; ++i)
@@ -873,5 +868,5 @@ void TerrainEditModifier::flattenUnderSpline()
 	m_brush = currentBrush;
 }
 
-	}
+}
 }

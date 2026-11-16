@@ -49,6 +49,8 @@ public:
 
 	virtual void handleDatabaseEvent(db::Database* database, const Guid& eventId) override final;
 
+	void setSurfaceShaderName(int32_t channel, const std::wstring& name);
+
 private:
 	scene::SceneEditorContext* m_context;
 	Ref< TerrainEditModifier > m_terrainEditModifier;

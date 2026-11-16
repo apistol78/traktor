@@ -87,7 +87,7 @@ bool TerrainSceneEditorUIExtension::create(ui::Widget* parent, ui::ToolBar* tool
 
 	m_toolColor = new ui::ToolBarEmbed(m_colorControl, 24_ut, 16_ut);
 
-	m_toolMaterial = new ui::ToolBarDropDown(ui::Command(L"Terrain.Editor.SelectMaterial"), 80_ut, i18n::Text(L"TERRAIN_EDITOR_MATERIAL"));
+	m_toolMaterial = new ui::ToolBarDropDown(ui::Command(L"Terrain.Editor.SelectMaterial"), 160_ut, i18n::Text(L"TERRAIN_EDITOR_MATERIAL"));
 	m_toolMaterial->add(L"1");
 	m_toolMaterial->add(L"2");
 	m_toolMaterial->add(L"3");
@@ -269,6 +269,11 @@ bool TerrainSceneEditorUIExtension::handleCommand(const ui::Command& command)
 
 void TerrainSceneEditorUIExtension::handleDatabaseEvent(db::Database* database, const Guid& eventId)
 {
+}
+
+void TerrainSceneEditorUIExtension::setSurfaceShaderName(int32_t channel, const std::wstring& name)
+{
+	m_toolMaterial->setItem(channel, str(L"%d. ", channel) + name);
 }
 
 void TerrainSceneEditorUIExtension::updateModifierState()

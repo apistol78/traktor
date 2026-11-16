@@ -1,11 +1,13 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2023 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Ui/ToolBar/ToolBarDropDown.h"
+
 #include "Ui/Application.h"
 #include "Ui/Canvas.h"
 #include "Ui/Menu.h"
@@ -13,12 +15,11 @@
 #include "Ui/StyleSheet.h"
 #include "Ui/ToolBar/ToolBar.h"
 #include "Ui/ToolBar/ToolBarButtonClickEvent.h"
-#include "Ui/ToolBar/ToolBarDropDown.h"
 
 namespace traktor::ui
 {
-	namespace
-	{
+namespace
+{
 
 const Unit c_fieldPad = 8_ut;
 const Unit c_chevronArea = 18_ut;
@@ -33,18 +34,18 @@ void paintChevron(ToolBar* toolBar, Canvas& canvas, const Point& center)
 	canvas.setPenThickness(1);
 }
 
-	}
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.ToolBarDropDown", ToolBarDropDown, ToolBarItem)
 
 ToolBarDropDown::ToolBarDropDown(const Command& command, Unit width, const std::wstring& toolTip)
-:	m_command(command)
-,	m_width(width)
-,	m_toolTip(toolTip)
-,	m_selected(-1)
-,	m_hover(false)
-,	m_dropPosition(0)
-,	m_menuWidth(0)
+	: m_command(command)
+	, m_width(width)
+	, m_toolTip(toolTip)
+	, m_selected(-1)
+	, m_hover(false)
+	, m_dropPosition(0)
+	, m_menuWidth(0)
 {
 }
 
@@ -54,9 +55,21 @@ int32_t ToolBarDropDown::add(const std::wstring& item, Object* data)
 	return int32_t(m_items.size() - 1);
 }
 
+void ToolBarDropDown::setItem(int32_t index, const std::wstring& item)
+{
+	if (index >= 0 && index < (int32_t)m_items.size())
+		m_items[index].text = item;
+}
+
+void ToolBarDropDown::setData(int32_t index, Object* data)
+{
+	if (index >= 0 && index < (int32_t)m_items.size())
+		m_items[index].data = data;
+}
+
 bool ToolBarDropDown::remove(int32_t index)
 {
-	if (index >= int32_t(m_items.size()))
+	if (index >= (int32_t)m_items.size())
 		return false;
 
 	auto it = m_items.begin() + index;
@@ -141,8 +154,7 @@ void ToolBarDropDown::paint(ToolBar* toolBar, Canvas& canvas, const Point& at, c
 		at.x + pad,
 		at.y,
 		at.x + size.cx - chevron,
-		at.y + size.cy
-	);
+		at.y + size.cy);
 
 	canvas.setBackground(ss->getColor(toolBar, m_hover ? L"item-background-color-dropdown-hover" : L"item-background-color-dropdown"));
 	canvas.fillRoundRect(rcField, radius);
