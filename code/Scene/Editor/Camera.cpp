@@ -65,7 +65,7 @@ bool Camera::update(float deltaTime)
 	if (deltaLength > 0.0001_simd)
 	{
 		deltaLength *= k;
-		deltaLength = min(deltaLength, 4.0_simd);
+		deltaLength = min(deltaLength, 16.0_simd);
 		m_filteredPosition += deltaOffset.normalized() * deltaLength;
 	}
 
