@@ -239,12 +239,6 @@ bool ShaderPipeline::buildDependencies(
 			if (declarationGuid.isNotNull())
 			{
 				pipelineDepends->addDependency(declarationGuid, editor::PdfUse);
-
-				// A parameter declaration reference its struct layout by ID only; since
-				// the declaration's own hash therefore doesn't change when the layout
-				// change we must add the layout as an explicit dependency. Without it a
-				// changed layout will not rebuild shaders reading through it, leaving
-				// them with a stale stride and thus reading outside of the buffer.
 				if (const auto parameterDeclaration = pipelineDepends->getObjectReadOnly< ParameterDeclaration >(declarationGuid))
 				{
 					const Guid& structDeclarationGuid = parameterDeclaration->getStructDeclarationId();

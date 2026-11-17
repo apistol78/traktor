@@ -489,6 +489,7 @@ bool PipelineBuilder::buildAdHocOutput(const Guid& outputGuid)
 	{
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_adHocBuildsLock);
 		adHocBuild = &m_adHocBuilds[outputGuid];
+		adHocBuild->synthesized = true;
 	}
 
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(adHocBuild->lock);
@@ -506,12 +507,8 @@ bool PipelineBuilder::buildAdHocOutput(const ISerializable* sourceAsset, const s
 {
 	PipelineDependencySet dependencySet;
 
-	// Scan dependencies of source asset; no dependencies are excluded since hash of this
-	// ad-hoc output is calculated from the entire dependency set. If dependencies already
-	// in the work set were excluded then a synthesized shader graph would, for instance, be
-	// hashed from it's unresolved fragment references alone; a modified fragment would then
-	// never invalidate the cached product. Dependencies built by the main build are skipped
-	// when building below.
+	// Scan all dependencies since they contribute to our hash; only synthesized ad-hoc
+	// outputs are excluded as they have no source instance.
 	m_profiler->begin(type_of< PipelineDependsIncremental >());
 	PipelineDependsIncremental pipelineDepends(
 		m_pipelineFactory,
@@ -519,7 +516,12 @@ bool PipelineBuilder::buildAdHocOutput(const ISerializable* sourceAsset, const s
 		m_outputDatabase,
 		&dependencySet,
 		m_pipelineDb,
-		m_instanceCache);
+		m_instanceCache,
+		[&](const Guid& id) -> bool {
+			T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_adHocBuildsLock);
+			const auto it = m_adHocBuilds.find(id);
+			return it == m_adHocBuilds.end() || !it->second.synthesized;
+		});
 	pipelineDepends.addDependency(
 		sourceAsset,
 		outputPath,
@@ -554,6 +556,7 @@ bool PipelineBuilder::buildAdHocOutput(const ISerializable* sourceAsset, const s
 		{
 			T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_adHocBuildsLock);
 			adHocBuild = &m_adHocBuilds[dependency->outputGuid];
+			adHocBuild->synthesized = dependency->sourceInstanceGuid.isNull();
 		}
 
 		// Concurrent builds of same ad-hoc output wait for first to finish.
@@ -919,10 +922,8 @@ IPipelineBuilder::BuildResult PipelineBuilder::performBuild(
 
 	Timer timer;
 
-	// Build asset through pipeline, this might call back buildAdHoc or buildProduct.
-	// So it's safe to assume this is the outmost build thus we can utilize cache
-	// differently where each ad-hoc output is cached individually and referenced from
-	// this output cache.
+	// Outermost build; each nested ad-hoc output is cached individually and referenced
+	// from this output's cache.
 	m_profiler->begin(*dependency->pipelineType);
 	const bool result = pipeline->buildOutput(
 		this,

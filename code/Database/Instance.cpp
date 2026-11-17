@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2023 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -185,70 +185,79 @@ bool Instance::commit(uint32_t flags)
 	T_FATAL_ASSERT(m_transactionThread == ThreadManager::getInstance().getCurrentThread());
 	T_ASSERT(m_providerInstance);
 
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-
-	if ((flags & CfKeepCheckedOut) != 0 && (m_transactionFlags & TfRemoved) != 0)
+	uint32_t transactionFlags;
+	Guid transactionGuid;
+	std::wstring transactionName;
 	{
-		log::error << L"Instance commit failed; cannot keep checked out as instance was removed." << Endl;
-		return false;
-	}
+		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
-	if (!m_providerInstance->commitTransaction())
-	{
-		log::error << L"Instance commit failed; commitTransaction failed." << Endl;
-		return false;
-	}
-
-	if ((flags & CfKeepCheckedOut) == 0)
-	{
-		if (!m_providerInstance->closeTransaction())
+		if ((flags & CfKeepCheckedOut) != 0 && (m_transactionFlags & TfRemoved) != 0)
 		{
-			log::error << L"Instance commit failed; closeTransaction failed." << Endl;
+			log::error << L"Instance commit failed; cannot keep checked out as instance was removed." << Endl;
 			return false;
 		}
-	}
 
-	if ((m_transactionFlags & TfGuidChanged) != 0)
-	{
-		m_guid = m_providerInstance->getGuid();
-		m_cachedFlags |= IchGuid;
-	}
+		if (!m_providerInstance->commitTransaction())
+		{
+			log::error << L"Instance commit failed; commitTransaction failed." << Endl;
+			return false;
+		}
 
-	if ((m_transactionFlags & TfObjectChanged) != 0)
-	{
-		m_type = m_providerInstance->getPrimaryTypeName();
-		m_cachedFlags |= IchPrimaryType;
-	}
+		if ((flags & CfKeepCheckedOut) == 0)
+		{
+			if (!m_providerInstance->closeTransaction())
+			{
+				log::error << L"Instance commit failed; closeTransaction failed." << Endl;
+				return false;
+			}
+		}
 
-	if ((m_transactionFlags & TfNameChanged) != 0)
-	{
-		m_name = m_providerInstance->getName();
-		m_cachedFlags |= IchName;
+		if ((m_transactionFlags & TfGuidChanged) != 0)
+		{
+			m_guid = m_providerInstance->getGuid();
+			m_cachedFlags |= IchGuid;
+		}
+
+		if ((m_transactionFlags & TfObjectChanged) != 0)
+		{
+			m_type = m_providerInstance->getPrimaryTypeName();
+			m_cachedFlags |= IchPrimaryType;
+		}
+
+		if ((m_transactionFlags & TfNameChanged) != 0)
+		{
+			m_name = m_providerInstance->getName();
+			m_cachedFlags |= IchName;
+		}
+
+		transactionFlags = m_transactionFlags;
+		transactionGuid = m_transactionGuid;
+		transactionName = m_transactionName;
+
+		m_transactionFlags = 0;
+		if ((flags & CfKeepCheckedOut) == 0)
+			m_transactionThread = nullptr;
 	}
 
 	if (m_eventListener)
 	{
-		if ((m_transactionFlags & TfCreated) != 0)
+		if ((transactionFlags & TfCreated) != 0)
 			m_eventListener->instanceEventCreated(this);
 
-		if ((m_transactionFlags & TfGuidChanged) != 0)
-			m_eventListener->instanceEventGuidChanged(this, m_transactionGuid);
+		if ((transactionFlags & TfGuidChanged) != 0)
+			m_eventListener->instanceEventGuidChanged(this, transactionGuid);
 
-		if ((m_transactionFlags & TfNameChanged) != 0)
-			m_eventListener->instanceEventRenamed(this, m_transactionName);
+		if ((transactionFlags & TfNameChanged) != 0)
+			m_eventListener->instanceEventRenamed(this, transactionName);
 
-		if ((m_transactionFlags & TfRemoved) != 0)
+		if ((transactionFlags & TfRemoved) != 0)
 			m_eventListener->instanceEventRemoved(this);
 
 		m_eventListener->instanceEventCommitted(this);
 	}
 
-	if ((m_transactionFlags & TfRemoved) != 0)
+	if ((transactionFlags & TfRemoved) != 0)
 		internalDestroy();
-
-	m_transactionFlags = 0;
-	if ((flags & CfKeepCheckedOut) == 0)
-		m_transactionThread = nullptr;
 
 	return true;
 }

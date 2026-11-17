@@ -121,6 +121,7 @@ private:
 	struct AdHocBuild
 	{
 		Semaphore lock;
+		bool synthesized = false;
 		bool built = false;
 	};
 
