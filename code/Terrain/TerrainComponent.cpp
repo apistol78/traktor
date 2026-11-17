@@ -1222,7 +1222,8 @@ bool TerrainComponent::createRayTracingTile(int32_t tileIndex)
 	const float originZ = -worldExtent.z() * 0.5f;
 
 	// Shrink the RT terrain a bit to reduce self intersection due to mismatch between GBuffer and RT geometry.
-	const Scalar elevationOffset = 0.0_simd; // -1.0_simd;
+	const Scalar elevationOffsetXZ = -1.0_simd;
+	const Scalar elevationOffsetY = -0.5_simd;
 
 	const auto albedoMap = (m_surfaceCache != nullptr && m_surfaceCache->getBaseTexture() != nullptr) ? m_surfaceCache->getBaseTexture()->getBindlessIndex() : -1;
 
@@ -1265,13 +1266,14 @@ bool TerrainComponent::createRayTracingTile(int32_t tileIndex)
 					heightfield->worldToGrid(worldX, worldZ, gridX, gridZ);
 
 					const Vector4 normal = heightfield->normalAt(gridX, gridZ);
+
 					normals[i] = normal;
 					texCoords[i * 2 + 0] = (worldX - originX) / worldExtent.x();
 					texCoords[i * 2 + 1] = (worldZ - originZ) / worldExtent.z();
 
-					*vertex++ = worldX + normal.x() * elevationOffset;
-					*vertex++ = worldY + normal.y() * elevationOffset;
-					*vertex++ = worldZ + normal.z() * elevationOffset;
+					*vertex++ = worldX + normal.x() * elevationOffsetXZ;
+					*vertex++ = worldY + normal.y() * elevationOffsetY;
+					*vertex++ = worldZ + normal.z() * elevationOffsetXZ;
 				}
 			}
 			vertexBuffer->unlock();
