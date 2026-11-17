@@ -1222,7 +1222,7 @@ bool TerrainComponent::createRayTracingTile(int32_t tileIndex)
 	const float originZ = -worldExtent.z() * 0.5f;
 
 	// Shrink the RT terrain a bit to reduce self intersection due to mismatch between GBuffer and RT geometry.
-	const Scalar elevationOffset = -1.0_simd;
+	const Scalar elevationOffset = 0.0_simd; // -1.0_simd;
 
 	const auto albedoMap = (m_surfaceCache != nullptr && m_surfaceCache->getBaseTexture() != nullptr) ? m_surfaceCache->getBaseTexture()->getBindlessIndex() : -1;
 
