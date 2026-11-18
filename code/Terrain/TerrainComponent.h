@@ -95,7 +95,8 @@ public:
 		VmNormalMap = 3,
 		VmHeightMap = 4,
 		VmSplatMap = 5,
-		VmCutMap = 6
+		VmCutMap = 6,
+		VmTile = 7
 	};
 
 	struct Patch
@@ -193,6 +194,7 @@ private:
 		Vector4 patchExtent;					//!< Extent of a single patch.
 		Aabb3 boundingBox;						//!< Area covered by tile's patches, used for streaming.
 		int32_t patchCount = 0;					//!< Number of patches along each side.
+		int32_t debugIndex = 0;
 		AlignedVector< Patch > patches;
 		AlignedVector< int32_t > patchTiles;	//!< Tile covered by each overview patch.
 		View view[4];

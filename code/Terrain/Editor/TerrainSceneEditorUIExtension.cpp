@@ -109,6 +109,7 @@ bool TerrainSceneEditorUIExtension::create(ui::Widget* parent, ui::ToolBar* tool
 	m_toolVisualize->add(L"Height Map");
 	m_toolVisualize->add(L"Splat Map");
 	m_toolVisualize->add(L"Cut Map");
+	m_toolVisualize->add(L"Stream Tile");
 	m_toolVisualize->select(0);
 
 	m_toolToggleElevate->setToggled(true);

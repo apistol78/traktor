@@ -53,6 +53,7 @@ const render::Handle c_handleTerrain_WorldExtent(L"Terrain_WorldExtent");
 const render::Handle c_handleTerrain_PatchExtent(L"Terrain_PatchExtent");
 const render::Handle c_handleTerrain_TileTransform(L"Terrain_TileTransform");
 const render::Handle c_handleTerrain_DebugMap(L"Terrain_DebugMap");
+const render::Handle c_handleTerrain_DebugPatchIndex(L"Terrain_DebugPatchIndex");
 const render::Handle c_handleTerrain_CutEnable(L"Terrain_CutEnable");
 const render::Handle c_handleTerrain_PatchData(L"Terrain_PatchData");
 
@@ -555,6 +556,7 @@ bool TerrainComponent::createTiles()
 				Vector4(x0, -worldExtent.y() * 0.5f, z0, 1.0f),
 				Vector4(x0 + tileSizeX, worldExtent.y() * 0.5f, z0 + tileSizeZ, 1.0f));
 			tile.patchCount = std::max(tileSize / cellsPerPatch, 1);
+			tile.debugIndex = tx + tz * tileCount;
 		}
 	}
 
@@ -568,6 +570,7 @@ bool TerrainComponent::createTiles()
 	m_overview.patchOrigin = Vector4(-worldExtent.x() * 0.5f + cellSizeX * 0.5f, -worldExtent.y() * 0.5f, -worldExtent.z() * 0.5f + cellSizeZ * 0.5f, 1.0f);
 	m_overview.patchExtent = Vector4(tileSizeX / overviewPatchesPerTile, worldExtent.y(), tileSizeZ / overviewPatchesPerTile, 0.0f);
 	m_overview.patchCount = tileCount * overviewPatchesPerTile;
+	m_overview.debugIndex = 0;
 	m_overview.boundingBox = Aabb3(-worldExtent * 0.5_simd, worldExtent * 0.5_simd);
 	m_overview.loaded = true;
 
@@ -1037,7 +1040,7 @@ void TerrainComponent::buildTile(const Tile& tile, int32_t viewIndex, const worl
 	render::Shader* shader = m_terrain->getTerrainShader();
 	auto perm = worldRenderPass.getPermutation(shader);
 	shader->setCombination(c_handleTerrain_CutEnable, cutMap != nullptr && cutMap->getSize().x > 1, perm);
-	if (m_visualizeMode == VmPatchLod)
+	if (m_visualizeMode == VmPatchLod || m_visualizeMode == VmTile)
 		shader->setCombination(c_handleTerrain_VisualizeLods, true, perm);
 	else if (m_visualizeMode >= VmColorMap && m_visualizeMode <= VmCutMap)
 		shader->setCombination(c_handleTerrain_VisualizeMap, true, perm);
@@ -1093,6 +1096,11 @@ void TerrainComponent::buildTile(const Tile& tile, int32_t viewIndex, const worl
 		rb->programParams->setTextureParameter(c_handleTerrain_DebugMap, tile.resources.splatMap);
 	else if (m_visualizeMode == VmCutMap)
 		rb->programParams->setTextureParameter(c_handleTerrain_DebugMap, cutMap ? cutMap : m_defaultCutMap.ptr());
+
+	if (m_visualizeMode == VmPatchLod)
+		rb->programParams->setVectorParameter(c_handleTerrain_DebugPatchIndex, Vector4(0.0f, 0.0f, 0.0f, 0.0f));
+	else if (m_visualizeMode == VmTile)
+		rb->programParams->setVectorParameter(c_handleTerrain_DebugPatchIndex, Vector4(tile.debugIndex % 4, 0.0f, 0.0f, 0.0f));
 
 	worldRenderPass.setProgramParameters(rb->programParams);
 

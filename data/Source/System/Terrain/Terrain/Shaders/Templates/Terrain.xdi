@@ -378,8 +378,8 @@
 			<id>{D2DA13C3-F34F-B046-B1D5-BCF080AB6D69}</id>
 			<comment/>
 			<position>
-				<first>2998</first>
-				<second>-2468</second>
+				<first>3001</first>
+				<second>-2426</second>
 			</position>
 			<value>0.25</value>
 		</item>
@@ -851,8 +851,8 @@ $Output = gl_DrawID;
 			<id>{C7CCCEA2-C0C9-D447-9C33-4447DA846E78}</id>
 			<comment/>
 			<position>
-				<first>2969</first>
-				<second>-2532</second>
+				<first>2972</first>
+				<second>-2490</second>
 			</position>
 			<parameterDeclaration>{D16BB7FF-36A0-3945-9588-BC6295417965}</parameterDeclaration>
 		</item>
@@ -4885,8 +4885,8 @@ else
 				<second>-2081</second>
 			</position>
 			<size>
-				<first>200</first>
-				<second>200</second>
+				<first>1530</first>
+				<second>562</second>
 			</size>
 		</item>
 	</groups>
