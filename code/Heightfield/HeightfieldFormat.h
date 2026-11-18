@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -34,6 +34,9 @@ class T_DLLCLASS HeightfieldFormat : public Object
 
 public:
 	Ref< Heightfield > read(IStream* stream, const Vector4& worldExtent, const Vector4& worldCenter) const;
+
+	//! Read only size and optional layers, Heightfield::Layers, of heightfield.
+	bool readHeader(IStream* stream, int32_t& outSize, uint32_t& outLayers) const;
 
 	bool write(IStream* stream, const Heightfield* heightfield) const;
 };

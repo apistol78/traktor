@@ -275,14 +275,13 @@ bool TerrainEditModifier::activate()
 			m_terrainLayers.push_back(terrainLayer);
 
 	// Source data is loaded tile by tile when edited.
-	m_terrainInstance = sourceDatabase->getInstance(m_terrainComponentData->getTerrain());
-	Ref< const TerrainAsset > terrainAsset = m_terrainInstance ? m_terrainInstance->getObject< TerrainAsset >() : nullptr;
+	Ref< const TerrainAsset > terrainAsset = sourceDatabase->getObjectReadOnly< TerrainAsset >(m_terrainComponentData->getTerrain());
 
 	m_heightfieldInstance = terrainAsset ? sourceDatabase->getInstance(terrainAsset->getHeightfield()) : nullptr;
 	Ref< const hf::HeightfieldAsset > heightfieldAsset = m_heightfieldInstance ? m_heightfieldInstance->getObject< hf::HeightfieldAsset >() : nullptr;
 
 	m_data = new TerrainEditData();
-	if (!heightfieldAsset || !m_data->create(m_heightfieldInstance, m_terrainInstance, heightfieldAsset))
+	if (!heightfieldAsset || !m_data->create(m_heightfieldInstance, heightfieldAsset))
 	{
 		deactivate();
 		return false;
@@ -315,7 +314,6 @@ void TerrainEditModifier::deactivate()
 	m_terrainComponent = nullptr;
 	m_terrainComponentData = nullptr;
 	m_terrainLayers.resize(0);
-	m_terrainInstance = nullptr;
 	m_heightfieldInstance = nullptr;
 	m_heightfieldAsset = nullptr;
 	m_data = nullptr;
@@ -766,33 +764,8 @@ void TerrainEditModifier::end()
 		}
 	}
 
-	// Write modified tiles of splat and color.
-	if (
-		(m_brushMode & (IBrush::MdMaterial | IBrush::MdColor)) != 0 &&
-		m_terrainInstance)
-	{
-		if (!m_context->getDocument()->containInstance(m_terrainInstance))
-		{
-			if (!m_terrainInstance->checkout())
-			{
-				log::error << L"Unable to checkout terrain instance." << Endl;
-				return;
-			}
-		}
-
-		if (!m_data->writeImages())
-			log::error << L"Unable to write terrain images." << Endl;
-
-		m_context->getDocument()->editInstance(
-			m_terrainInstance,
-			nullptr);
-		m_context->getDocument()->setModified();
-	}
-
 	// Write modified tiles of heightfield.
-	if (
-		(m_brushMode & (IBrush::MdHeight | IBrush::MdCut | IBrush::MdAttribute)) != 0 &&
-		m_heightfieldInstance)
+	if (m_brushMode != 0 && m_heightfieldInstance)
 	{
 		if (!m_context->getDocument()->containInstance(m_heightfieldInstance))
 		{
@@ -817,7 +790,7 @@ void TerrainEditModifier::end()
 		if (m_data->writeHeightfield())
 			m_context->getDocument()->setModified();
 		else
-			log::error << L"Unable to write heights." << Endl;
+			log::error << L"Unable to write heightfield." << Endl;
 	}
 
 	m_context->raiseRedraw(nullptr);

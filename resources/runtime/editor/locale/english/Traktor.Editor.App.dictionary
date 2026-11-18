@@ -54,18 +54,6 @@
 			<second>Crop heightfield</second>
 		</item>
 		<item>
-			<first>CROP_TERRAIN_WIZARDTOOL_DESCRIPTION</first>
-			<second>Crop terrain maps...</second>
-		</item>
-		<item>
-			<first>CROP_TERRAIN_WIZARDTOOL_MESSAGE</first>
-			<second>Enter crop rectangle dimensions</second>
-		</item>
-		<item>
-			<first>CROP_TERRAIN_WIZARDTOOL_TITLE</first>
-			<second>Crop terrain maps</second>
-		</item>
-		<item>
 			<first>DATABASE_BUILD</first>
 			<second>Build</second>
 		</item>

@@ -14,9 +14,7 @@
 #include "Core/Containers/SmallMap.h"
 #include "Core/Date/DateTime.h"
 #include "Core/Io/IStream.h"
-#include "Core/Io/Reader.h"
 #include "Core/Log/Log.h"
-#include "Core/Math/Color4f.h"
 #include "Core/Math/MathUtils.h"
 #include "Core/Misc/Murmur3.h"
 #include "Core/Misc/String.h"
@@ -25,8 +23,6 @@
 #include "Core/Thread/JobManager.h"
 #include "Core/Thread/Semaphore.h"
 #include "Database/Instance.h"
-#include "Drawing/Image.h"
-#include "Drawing/PixelFormat.h"
 #include "Heightfield/Heightfield.h"
 #include "Heightfield/HeightfieldFormat.h"
 
@@ -42,7 +38,8 @@ const uint32_t c_zipBufferSize = 65536;
 const float c_overviewSampleDistance = 2.0f;			 //!< Maximum distance between overview samples, in world units.
 const int32_t c_overviewMinSize = 2048;					 //!< Overview isn't downsampled below this size.
 const int32_t c_rowsPerTask = 64;						 //!< Output rows per task; multiple of 8 so packed cut bits of tasks never share a byte.
-const int64_t c_maxCachedSamples = 1024ll * 1024 * 1024; //!< Samples of decoded tiles kept by region reads.
+const int64_t c_maxCachedBytes = 4096ll * 1024 * 1024;	 //!< Bytes of decoded tiles kept by region reads.
+const uint32_t c_layers[] = { Heightfield::LySplat, Heightfield::LyColor };
 
 struct CachedTile
 {
@@ -53,8 +50,25 @@ struct CachedTile
 
 Semaphore s_cacheLock;
 SmallMap< std::wstring, CachedTile > s_cache;
-int64_t s_cacheSamples = 0;
+int64_t s_cacheBytes = 0;
 uint64_t s_cacheUseCounter = 0;
+
+uint8_t* createLayer(Heightfield* heightfield, uint32_t layer)
+{
+	return (layer == Heightfield::LySplat) ? heightfield->createSplats() : heightfield->createColors();
+}
+
+const uint8_t* getLayer(const Heightfield* heightfield, uint32_t layer)
+{
+	return (layer == Heightfield::LySplat) ? heightfield->getSplats() : heightfield->getColors();
+}
+
+//! Memory of heights and optional layers of tile.
+int64_t tileBytes(const Heightfield* tile)
+{
+	const int64_t samples = (int64_t)tile->getSize() * tile->getSize();
+	return samples * (sizeof(height_t) + (tile->getSplats() ? 4 : 0) + (tile->getColors() ? 4 : 0));
+}
 
 void tileRange(const int32_t* region, int32_t tileCount, int32_t tileWidth, int32_t tileHeight, int32_t outRange[4])
 {
@@ -113,38 +127,38 @@ void TileStorage::flushCache()
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(s_cacheLock);
 	s_cache.clear();
-	s_cacheSamples = 0;
+	s_cacheBytes = 0;
 }
 
 int32_t TileStorage::readSize() const
 {
-	Ref< IStream > stream = m_instance->readData(getChannelName(L"Data", 0, 0));
-	if (!stream)
+	int32_t size;
+	uint32_t layers;
+	if (!readHeader(0, 0, size, layers))
 		return 0;
-
-	Ref< IStream > source = stream;
-	if (m_tileCount > 0)
-		source = new compress::InflateStreamZip(stream, 4096);
-
-	int32_t version = 0;
-	int32_t size = 0;
-
-	Reader reader(source);
-	reader >> version;
-	reader >> size;
-
-	if (source != stream)
-		source->close();
-	stream->close();
 
 	return size * std::max(m_tileCount, 1);
 }
 
-Ref< Heightfield > TileStorage::readHeightfield(const Vector4& worldExtent) const
+uint32_t TileStorage::readLayers() const
 {
-	if (m_tileCount <= 0)
-		return readStoredTile(worldExtent, 0, 0);
+	const int32_t count = std::max(m_tileCount, 1);
+	uint32_t layers = 0;
+	for (int32_t tz = 0; tz < count && layers != Heightfield::LyAll; ++tz)
+	{
+		for (int32_t tx = 0; tx < count && layers != Heightfield::LyAll; ++tx)
+		{
+			int32_t size;
+			uint32_t tileLayers;
+			if (readHeader(tx, tz, size, tileLayers))
+				layers |= tileLayers;
+		}
+	}
+	return layers;
+}
 
+Ref< Heightfield > TileStorage::readHeightfield(const Vector4& worldExtent, uint32_t layers) const
+{
 	const int32_t size = readSize();
 	if (size <= 0)
 	{
@@ -152,10 +166,10 @@ Ref< Heightfield > TileStorage::readHeightfield(const Vector4& worldExtent) cons
 		return nullptr;
 	}
 
-	return readHeightfieldRegion(worldExtent, size / m_tileCount, 0, 0, size, 1);
+	return readHeightfieldRegion(worldExtent, size / std::max(m_tileCount, 1), 0, 0, size, 1, layers);
 }
 
-Ref< Heightfield > TileStorage::readHeightfieldTile(const Vector4& worldExtent, int32_t tileX, int32_t tileZ, int32_t border) const
+Ref< Heightfield > TileStorage::readHeightfieldTile(const Vector4& worldExtent, int32_t tileX, int32_t tileZ, int32_t border, uint32_t layers) const
 {
 	const int32_t size = readSize();
 	if (size <= 0)
@@ -165,10 +179,10 @@ Ref< Heightfield > TileStorage::readHeightfieldTile(const Vector4& worldExtent, 
 	}
 
 	const int32_t tileSize = size / std::max(m_tileCount, 1);
-	return readHeightfieldRegion(worldExtent, tileSize, tileX * tileSize - border, tileZ * tileSize - border, tileSize + 1 + 2 * border, 1);
+	return readHeightfieldRegion(worldExtent, tileSize, tileX * tileSize - border, tileZ * tileSize - border, tileSize + 1 + 2 * border, 1, layers);
 }
 
-Ref< Heightfield > TileStorage::readHeightfieldOverview(const Vector4& worldExtent, int32_t size) const
+Ref< Heightfield > TileStorage::readHeightfieldOverview(const Vector4& worldExtent, int32_t size, uint32_t layers) const
 {
 	const int32_t fullSize = readSize();
 	if (fullSize <= 0 || size <= 0 || (fullSize % size) != 0)
@@ -177,7 +191,7 @@ Ref< Heightfield > TileStorage::readHeightfieldOverview(const Vector4& worldExte
 		return nullptr;
 	}
 
-	return readHeightfieldRegion(worldExtent, fullSize / std::max(m_tileCount, 1), 0, 0, fullSize, fullSize / size);
+	return readHeightfieldRegion(worldExtent, fullSize / std::max(m_tileCount, 1), 0, 0, fullSize, fullSize / size, layers);
 }
 
 Ref< Heightfield > TileStorage::readHeightfieldOverview(const Vector4& worldExtent) const
@@ -236,82 +250,18 @@ bool TileStorage::writeHeightfield(const Heightfield* heightfield, const int32_t
 					std::memcpy(dst + z * tileSize, src + x0 + (z0 + z) * size, tileSize);
 			}
 
+			for (const uint32_t layer : c_layers)
+			{
+				const uint8_t* src = getLayer(heightfield, layer);
+				if (!src)
+					continue;
+
+				uint8_t* dst = createLayer(tile, layer);
+				for (int32_t z = 0; z < tileSize; ++z)
+					std::memcpy(dst + (size_t)z * tileSize * 4, src + ((size_t)x0 + (size_t)(z0 + z) * size) * 4, tileSize * 4);
+			}
+
 			if (!writeStoredTile(tx, tz, tile))
-				return false;
-		}
-	}
-
-	return true;
-}
-
-Ref< drawing::Image > TileStorage::readImage(const std::wstring& name) const
-{
-	if (m_tileCount <= 0)
-		return readStoredImageTile(name, 0, 0);
-
-	Ref< drawing::Image > anchor = readStoredImageTile(name, 0, 0);
-	if (!anchor)
-		return nullptr;
-
-	return readImageRegion(name, anchor, 0, 0, anchor->getWidth() * m_tileCount, anchor->getHeight() * m_tileCount, 1, 1);
-}
-
-Ref< drawing::Image > TileStorage::readImageTile(const std::wstring& name, int32_t tileX, int32_t tileZ) const
-{
-	Ref< drawing::Image > anchor = readStoredImageTile(name, tileX, tileZ);
-	if (!anchor)
-		return nullptr;
-
-	const int32_t tileWidth = anchor->getWidth();
-	const int32_t tileHeight = anchor->getHeight();
-	return readImageRegion(name, anchor, tileX * tileWidth, tileZ * tileHeight, tileWidth + 1, tileHeight + 1, 1, 1);
-}
-
-Ref< drawing::Image > TileStorage::readImageOverview(const std::wstring& name, int32_t size) const
-{
-	Ref< drawing::Image > anchor = readStoredImageTile(name, 0, 0);
-	if (!anchor)
-		return nullptr;
-
-	const int32_t count = std::max(m_tileCount, 1);
-	const int32_t width = anchor->getWidth() * count;
-	const int32_t height = anchor->getHeight() * count;
-	if (size <= 0 || (width % size) != 0 || (height % size) != 0)
-	{
-		log::error << L"Unable to read image overview; size " << width << L" * " << height << L" not divisible into " << size << L"." << Endl;
-		return nullptr;
-	}
-
-	return readImageRegion(name, anchor, 0, 0, width, height, width / size, height / size);
-}
-
-bool TileStorage::writeImage(const std::wstring& name, const drawing::Image* image, const int32_t* region) const
-{
-	if (m_tileCount <= 0)
-		return writeStoredImageTile(name, 0, 0, image);
-
-	const int32_t width = image->getWidth();
-	const int32_t height = image->getHeight();
-	if ((width % m_tileCount) != 0 || (height % m_tileCount) != 0)
-	{
-		log::error << L"Unable to write image; size " << width << L" * " << height << L" not divisible into " << m_tileCount << L" tiles." << Endl;
-		return false;
-	}
-
-	const int32_t tileWidth = width / m_tileCount;
-	const int32_t tileHeight = height / m_tileCount;
-
-	int32_t range[4];
-	tileRange(region, m_tileCount, tileWidth, tileHeight, range);
-
-	for (int32_t tz = range[1]; tz <= range[3]; ++tz)
-	{
-		for (int32_t tx = range[0]; tx <= range[2]; ++tx)
-		{
-			Ref< drawing::Image > tile = new drawing::Image(image->getPixelFormat(), tileWidth, tileHeight);
-			tile->copy(image, tx * tileWidth, tz * tileHeight, tileWidth, tileHeight);
-
-			if (!writeStoredImageTile(name, tx, tz, tile))
 				return false;
 		}
 	}
@@ -342,12 +292,6 @@ uint32_t TileStorage::readStamp(const std::wstring& name, int32_t tileX0, int32_
 
 	hash.end();
 	return hash.get();
-}
-
-bool TileStorage::haveData(const std::wstring& name) const
-{
-	DateTime lastWriteTime;
-	return m_instance->getDataLastWriteTime(getChannelName(name, 0, 0), lastWriteTime);
 }
 
 Ref< Heightfield > TileStorage::readStoredTile(const Vector4& worldExtent, int32_t tileX, int32_t tileZ) const
@@ -408,71 +352,28 @@ bool TileStorage::writeStoredTile(int32_t tileX, int32_t tileZ, const Heightfiel
 	return result;
 }
 
-Ref< drawing::Image > TileStorage::readStoredImageTile(const std::wstring& name, int32_t tileX, int32_t tileZ) const
-{
-	const std::wstring channel = getChannelName(name, tileX, tileZ);
-
-	Ref< IStream > stream = m_instance->readData(channel);
-	if (!stream)
-		return nullptr;
-
-	Ref< drawing::Image > image;
-	if (m_tileCount > 0)
-	{
-		Ref< IStream > inflate = new compress::InflateStreamZip(stream, c_zipBufferSize);
-		image = drawing::Image::load(inflate, L"tri");
-		inflate->close();
-	}
-	else
-	{
-		image = drawing::Image::load(stream, L"tri");
-		if (!image)
-		{
-			stream->seek(IStream::SeekSet, 0);
-			image = drawing::Image::load(stream, L"tga");
-		}
-	}
-
-	stream->close();
-
-	if (!image)
-		log::error << L"Unable to read image; corrupt \"" << channel << L"\"." << Endl;
-
-	return image;
-}
-
-bool TileStorage::writeStoredImageTile(const std::wstring& name, int32_t tileX, int32_t tileZ, const drawing::Image* tile) const
-{
-	const std::wstring channel = getChannelName(name, tileX, tileZ);
-
-	Ref< IStream > stream = m_instance->writeData(channel);
-	if (!stream)
-	{
-		log::error << L"Unable to write image; failed to create \"" << channel << L"\" in instance." << Endl;
-		return false;
-	}
-
-	bool result;
-	if (m_tileCount > 0)
-	{
-		Ref< IStream > deflate = new compress::DeflateStreamZip(stream, c_zipBufferSize);
-		result = tile->save(deflate, L"tri");
-		deflate->close();
-	}
-	else
-		result = tile->save(stream, L"tri");
-
-	stream->close();
-
-	if (!result)
-		log::error << L"Unable to write image; failed to write \"" << channel << L"\"." << Endl;
-
-	return result;
-}
-
 std::wstring TileStorage::getChannelName(const std::wstring& name, int32_t tileX, int32_t tileZ) const
 {
 	return (m_tileCount > 0) ? name + L"_" + toString(tileX) + L"_" + toString(tileZ) : name;
+}
+
+bool TileStorage::readHeader(int32_t tileX, int32_t tileZ, int32_t& outSize, uint32_t& outLayers) const
+{
+	Ref< IStream > stream = m_instance->readData(getChannelName(L"Data", tileX, tileZ));
+	if (!stream)
+		return false;
+
+	Ref< IStream > source = stream;
+	if (m_tileCount > 0)
+		source = new compress::InflateStreamZip(stream, 4096);
+
+	const bool result = HeightfieldFormat().readHeader(source, outSize, outLayers);
+
+	if (source != stream)
+		source->close();
+	stream->close();
+
+	return result;
 }
 
 Ref< const Heightfield > TileStorage::readCachedTile(const Vector4& worldExtent, int32_t tileX, int32_t tileZ) const
@@ -502,28 +403,28 @@ Ref< const Heightfield > TileStorage::readCachedTile(const Vector4& worldExtent,
 	auto it = s_cache.find(key);
 	if (it != s_cache.end())
 	{
-		s_cacheSamples -= (int64_t)it->second.tile->getSize() * it->second.tile->getSize();
+		s_cacheBytes -= tileBytes(it->second.tile);
 		s_cache.erase(it);
 	}
 
 	// Evict least recently used tiles until new tile fit within budget.
-	const int64_t samples = (int64_t)tile->getSize() * tile->getSize();
-	while (!s_cache.empty() && s_cacheSamples + samples > c_maxCachedSamples)
+	const int64_t bytes = tileBytes(tile);
+	while (!s_cache.empty() && s_cacheBytes + bytes > c_maxCachedBytes)
 	{
 		auto lru = s_cache.begin();
 		for (auto i = s_cache.begin(); i != s_cache.end(); ++i)
 			if (i->second.lastUsed < lru->second.lastUsed)
 				lru = i;
-		s_cacheSamples -= (int64_t)lru->second.tile->getSize() * lru->second.tile->getSize();
+		s_cacheBytes -= tileBytes(lru->second.tile);
 		s_cache.erase(lru);
 	}
 
 	s_cache.insert(key, { tile, (uint64_t)lastWriteTime, ++s_cacheUseCounter });
-	s_cacheSamples += samples;
+	s_cacheBytes += bytes;
 	return tile;
 }
 
-Ref< Heightfield > TileStorage::readHeightfieldRegion(const Vector4& worldExtent, int32_t tileSize, int32_t x0, int32_t z0, int32_t width, int32_t step) const
+Ref< Heightfield > TileStorage::readHeightfieldRegion(const Vector4& worldExtent, int32_t tileSize, int32_t x0, int32_t z0, int32_t width, int32_t step, uint32_t layers) const
 {
 	const int32_t count = std::max(m_tileCount, 1);
 	const int32_t size = tileSize * count;
@@ -534,15 +435,31 @@ Ref< Heightfield > TileStorage::readHeightfieldRegion(const Vector4& worldExtent
 	const Vector4 extent = (width == size) ? worldExtent : Vector4(cellX * width, worldExtent.y(), cellZ * width, 0.0f);
 	Ref< Heightfield > heightfield = new Heightfield(outSize, extent, Vector4::zero());
 
+	// Optional layers are only read if stored; tiles without layer contribute the layer's default.
+	const uint32_t optionalLayers = (layers != 0) ? (layers & readLayers()) : 0;
+	Ref< Heightfield > defaults = new Heightfield(1, worldExtent, Vector4::zero());
+
 	// Box filtered regions are accumulated before being normalized.
 	AlignedVector< uint32_t > heightSums;
 	AlignedVector< uint32_t > cutSums;
 	AlignedVector< uint32_t > attributeSums[Heightfield::MaxAttributes];
+	AlignedVector< uint32_t > layerSums[sizeof_array(c_layers)];
 	uint8_t* attributes[Heightfield::MaxAttributes] = { nullptr };
+	uint8_t* outputLayers[sizeof_array(c_layers)] = { nullptr };
 	if (step > 1)
 	{
 		heightSums.resize(outSize * outSize, 0);
 		cutSums.resize(outSize * outSize, 0);
+	}
+	for (int32_t i = 0; i < sizeof_array(c_layers); ++i)
+	{
+		if ((optionalLayers & c_layers[i]) == 0)
+			continue;
+
+		outputLayers[i] = createLayer(heightfield, c_layers[i]);
+		createLayer(defaults, c_layers[i]);
+		if (step > 1)
+			layerSums[i].resize((size_t)outSize * outSize * 4, 0);
 	}
 
 	const int32_t mnx = clamp(x0, 0, size - 1) / tileSize;
@@ -606,6 +523,20 @@ Ref< Heightfield > TileStorage::readHeightfieldRegion(const Vector4& worldExtent
 					for (uint8_t a = 0; a < Heightfield::MaxAttributes; ++a)
 						tileAttributes[a] = tile->getAttributes(a);
 
+					// Default of layer is a single sample, thus read with zero stride.
+					const uint8_t* tileLayers[sizeof_array(c_layers)] = { nullptr };
+					size_t tileLayerStrides[sizeof_array(c_layers)] = { 0 };
+					for (int32_t i = 0; i < sizeof_array(c_layers); ++i)
+					{
+						if (!outputLayers[i])
+							continue;
+
+						tileLayers[i] = getLayer(tile, c_layers[i]);
+						tileLayerStrides[i] = tileLayers[i] ? 4 : 0;
+						if (!tileLayers[i])
+							tileLayers[i] = getLayer(defaults, c_layers[i]);
+					}
+
 					int32_t ix0, ix1;
 					regionRange(tx, count, tileSize, x0, width, ix0, ix1);
 
@@ -628,6 +559,10 @@ Ref< Heightfield > TileStorage::readHeightfieldRegion(const Vector4& worldExtent
 								for (uint8_t a = 0; a < Heightfield::MaxAttributes; ++a)
 									if (tileAttributes[a])
 										attributeSums[a][dst] += tileAttributes[a][src];
+								for (int32_t i = 0; i < sizeof_array(c_layers); ++i)
+									if (tileLayers[i])
+										for (int32_t c = 0; c < 4; ++c)
+											layerSums[i][(size_t)dst * 4 + c] += tileLayers[i][src * tileLayerStrides[i] + c];
 							}
 							else
 							{
@@ -636,6 +571,9 @@ Ref< Heightfield > TileStorage::readHeightfieldRegion(const Vector4& worldExtent
 								for (uint8_t a = 0; a < Heightfield::MaxAttributes; ++a)
 									if (tileAttributes[a])
 										attributes[a][dst] = tileAttributes[a][src];
+								for (int32_t i = 0; i < sizeof_array(c_layers); ++i)
+									if (tileLayers[i])
+										std::memcpy(outputLayers[i] + (size_t)dst * 4, tileLayers[i] + src * tileLayerStrides[i], 4);
 							}
 						}
 					}
@@ -662,6 +600,9 @@ Ref< Heightfield > TileStorage::readHeightfieldRegion(const Vector4& worldExtent
 			for (int32_t i = 0; i < outSize * outSize; ++i)
 				attributes[i] = (uint8_t)((attributeSums[a][i] + n / 2) / n);
 		}
+		for (int32_t i = 0; i < sizeof_array(c_layers); ++i)
+			for (size_t j = 0; j < layerSums[i].size(); ++j)
+				outputLayers[i][j] = (uint8_t)((layerSums[i][j] + n / 2) / n);
 	}
 
 	heightfield->setWorldCenter(Vector4(
@@ -670,114 +611,6 @@ Ref< Heightfield > TileStorage::readHeightfieldRegion(const Vector4& worldExtent
 		cellZ * (z0 + (width - size) * 0.5f),
 		0.0f));
 	return heightfield;
-}
-
-Ref< drawing::Image > TileStorage::readImageRegion(const std::wstring& name, const drawing::Image* anchor, int32_t x0, int32_t y0, int32_t width, int32_t height, int32_t stepX, int32_t stepY) const
-{
-	const int32_t count = std::max(m_tileCount, 1);
-	const int32_t tileWidth = anchor->getWidth();
-	const int32_t tileHeight = anchor->getHeight();
-	const int32_t imageWidth = tileWidth * count;
-	const int32_t imageHeight = tileHeight * count;
-	const int32_t outWidth = width / stepX;
-	const int32_t outHeight = height / stepY;
-	const drawing::PixelFormat& pf = anchor->getPixelFormat();
-	const int32_t pixelSize = pf.getByteSize();
-
-	Ref< drawing::Image > image = new drawing::Image(pf, outWidth, outHeight);
-
-	// Box filtered regions are accumulated before being normalized.
-	AlignedVector< Color4f > sums;
-	if (stepX > 1 || stepY > 1)
-		sums.resize(outWidth * outHeight, Color4f(0.0f, 0.0f, 0.0f, 0.0f));
-
-	const int32_t mnx = clamp(x0, 0, imageWidth - 1) / tileWidth;
-	const int32_t mny = clamp(y0, 0, imageHeight - 1) / tileHeight;
-	const int32_t mxx = clamp(x0 + width - 1, 0, imageWidth - 1) / tileWidth;
-	const int32_t mxy = clamp(y0 + height - 1, 0, imageHeight - 1) / tileHeight;
-
-	for (int32_t ty = mny; ty <= mxy; ++ty)
-	{
-		// Tiles of a row are decoded in parallel.
-		AlignedVector< Ref< drawing::Image > > rowTiles(mxx - mnx + 1);
-		AlignedVector< Job::task_t > tasks;
-		for (int32_t tx = mnx; tx <= mxx; ++tx)
-			tasks.push_back([&, tx]() {
-				Ref< drawing::Image > tile = readStoredImageTile(name, tx, ty);
-				if (tile && tile->getWidth() == tileWidth && tile->getHeight() == tileHeight && !(tile->getPixelFormat() == pf))
-					tile->convert(pf);
-				rowTiles[tx - mnx] = tile;
-			});
-		JobManager::getInstance().fork(tasks.c_ptr(), tasks.size());
-
-		for (int32_t tx = mnx; tx <= mxx; ++tx)
-		{
-			const drawing::Image* tile = rowTiles[tx - mnx];
-			if (!tile)
-			{
-				log::error << L"Unable to read image; no tile " << tx << L", " << ty << L" of \"" << name << L"\"." << Endl;
-				return nullptr;
-			}
-
-			if (tile->getWidth() != tileWidth || tile->getHeight() != tileHeight)
-			{
-				log::error << L"Unable to read image; tile " << tx << L", " << ty << L" of \"" << name << L"\" size mismatch." << Endl;
-				return nullptr;
-			}
-		}
-
-		int32_t iy0, iy1;
-		regionRange(ty, count, tileHeight, y0, height, iy0, iy1);
-
-		// Bands of whole output rows are accumulated in parallel.
-		tasks.resize(0);
-		for (int32_t by0 = iy0; by0 < iy1; by0 = bandEnd(by0, iy1, stepY))
-		{
-			const int32_t by1 = bandEnd(by0, iy1, stepY);
-			tasks.push_back([&, by0, by1]() {
-				uint8_t* data = static_cast< uint8_t* >(image->getData());
-				for (int32_t tx = mnx; tx <= mxx; ++tx)
-				{
-					const drawing::Image* tile = rowTiles[tx - mnx];
-					const uint8_t* tileData = static_cast< const uint8_t* >(tile->getData());
-
-					int32_t ix0, ix1;
-					regionRange(tx, count, tileWidth, x0, width, ix0, ix1);
-
-					for (int32_t iy = by0; iy < by1; ++iy)
-					{
-						const int32_t ly = clamp(y0 + iy, 0, imageHeight - 1) - ty * tileHeight;
-						const int32_t oy = iy / stepY;
-
-						for (int32_t ix = ix0; ix < ix1; ++ix)
-						{
-							const int32_t lx = clamp(x0 + ix, 0, imageWidth - 1) - tx * tileWidth;
-							const int32_t ox = ix / stepX;
-
-							if (!sums.empty())
-							{
-								Color4f color;
-								tile->getPixelUnsafe(lx, ly, color);
-								sums[ox + oy * outWidth] += color;
-							}
-							else
-								std::memcpy(data + (ox + oy * outWidth) * pixelSize, tileData + (lx + ly * tileWidth) * pixelSize, pixelSize);
-						}
-					}
-				}
-			});
-		}
-		JobManager::getInstance().fork(tasks.c_ptr(), tasks.size());
-	}
-
-	if (!sums.empty())
-	{
-		const Scalar n(1.0f / (stepX * stepY));
-		for (int32_t i = 0; i < outWidth * outHeight; ++i)
-			image->setPixelUnsafe(i % outWidth, i / outWidth, sums[i] * n);
-	}
-
-	return image;
 }
 
 }

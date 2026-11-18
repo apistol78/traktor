@@ -31,12 +31,13 @@ uint32_t ColorBrush::begin(float x, float y, const State& state)
 	m_fallOff = state.falloff;
 	m_strength = powf(abs(state.strength), 2.0f);
 	m_color = state.color;
+	m_colors.clear();
 	return MdColor;
 }
 
 void ColorBrush::apply(float x, float y)
 {
-	Color4f targetColor;
+	const int32_t size = m_data->getSize();
 	for (int32_t iy = -m_radius; iy <= m_radius; ++iy)
 	{
 		for (int32_t ix = -m_radius; ix <= m_radius; ++ix)
@@ -48,19 +49,37 @@ void ColorBrush::apply(float x, float y)
 			if (abs(a) <= FUZZY_EPSILON)
 				continue;
 
-			m_data->getColor(x + ix, y + iy, targetColor);
+			const int32_t gx = (int32_t)(x + ix);
+			const int32_t gy = (int32_t)(y + iy);
+			if (gx < 0 || gy < 0 || gx >= size || gy >= size)
+				continue;
 
-			Scalar alpha = targetColor.getAlpha();
+			// Accumulate unquantized since a step can be smaller than color resolution.
+			Color4f targetColor;
+			auto it = m_colors.find(gx + gy * size);
+			if (it != m_colors.end())
+				targetColor = it->second;
+			else if (!m_data->getColor(gx, gy, targetColor))
+				continue;
+
+			const Scalar alpha = targetColor.getAlpha();
 			targetColor = targetColor * Scalar(1.0f - a) + m_color * Scalar(a);
 			targetColor.setAlpha(alpha);
+			targetColor = targetColor.saturated();
 
-			m_data->setColor(x + ix, y + iy, targetColor.saturated());
+			if (it != m_colors.end())
+				it->second = targetColor;
+			else
+				m_colors.insert(gx + gy * size, targetColor);
+
+			m_data->setColor(gx, gy, targetColor);
 		}
 	}
 }
 
 void ColorBrush::end(float x, float y)
 {
+	m_colors.clear();
 }
 
 }

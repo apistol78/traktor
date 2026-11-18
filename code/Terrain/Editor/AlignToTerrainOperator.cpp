@@ -438,7 +438,7 @@ bool AlignToTerrainOperator::transform(
 
 	// Tiles of terrain data are read when first sampled.
 	Ref< TerrainEditData > terrainData = new TerrainEditData();
-	if (!terrainData->create(heightfieldInstance, nullptr, heightfieldAsset))
+	if (!terrainData->create(heightfieldInstance, heightfieldAsset))
 		return true;
 
 	// Loaded tiles of instantiated terrain are used if available, avoid reading them from database.

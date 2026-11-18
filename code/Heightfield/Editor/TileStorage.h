@@ -29,13 +29,6 @@ class Instance;
 
 }
 
-namespace traktor::drawing
-{
-
-class Image;
-
-}
-
 namespace traktor::hf
 {
 
@@ -64,13 +57,17 @@ public:
 	//! Number of samples along each side of the whole heightfield; 0 if unable to read.
 	int32_t readSize() const;
 
-	Ref< Heightfield > readHeightfield(const Vector4& worldExtent) const;
+	//! Optional layers, Heightfield::Layers, stored by any tile.
+	uint32_t readLayers() const;
+
+	/*! \param layers Optional layers, Heightfield::Layers, to read if stored; tiles without a layer get the layer's default. */
+	Ref< Heightfield > readHeightfield(const Vector4& worldExtent, uint32_t layers = 0) const;
 
 	/*! Read tile, including one row and column of its +X/+Z neighbours and border samples on all sides, positioned in world. */
-	Ref< Heightfield > readHeightfieldTile(const Vector4& worldExtent, int32_t tileX, int32_t tileZ, int32_t border) const;
+	Ref< Heightfield > readHeightfieldTile(const Vector4& worldExtent, int32_t tileX, int32_t tileZ, int32_t border, uint32_t layers = 0) const;
 
 	//! Read whole heightfield box filtered into size * size samples.
-	Ref< Heightfield > readHeightfieldOverview(const Vector4& worldExtent, int32_t size) const;
+	Ref< Heightfield > readHeightfieldOverview(const Vector4& worldExtent, int32_t size, uint32_t layers = 0) const;
 
 	//! Read whole heightfield box filtered into overview of calculated size.
 	Ref< Heightfield > readHeightfieldOverview(const Vector4& worldExtent) const;
@@ -78,35 +75,14 @@ public:
 	/*! Write heightfield; only tiles intersecting region, { x0, z0, x1, z1 } inclusive grid coordinates, if specified. */
 	bool writeHeightfield(const Heightfield* heightfield, const int32_t* region = nullptr) const;
 
-	/*! Read image; null if instance has no such image. */
-	Ref< drawing::Image > readImage(const std::wstring& name) const;
-
-	//! Read image tile, including one row and column of its +X/+Z neighbours; null if instance has no such image.
-	Ref< drawing::Image > readImageTile(const std::wstring& name, int32_t tileX, int32_t tileZ) const;
-
-	//! Read whole image box filtered into size * size pixels; null if instance has no such image.
-	Ref< drawing::Image > readImageOverview(const std::wstring& name, int32_t size) const;
-
-	/*! Write image; only tiles intersecting region, { x0, y0, x1, y1 } inclusive pixel coordinates, if specified. */
-	bool writeImage(const std::wstring& name, const drawing::Image* image, const int32_t* region = nullptr) const;
-
 	//! Stamp which change whenever any tile in range, inclusive tile coordinates, is written.
 	uint32_t readStamp(const std::wstring& name, int32_t tileX0, int32_t tileZ0, int32_t tileX1, int32_t tileZ1) const;
 
-	//! True if instance contain data, such as an image, of given name.
-	bool haveData(const std::wstring& name) const;
-
-	//! Read single tile exactly as stored; null if missing.
+	//! Read single tile, with all of its layers, exactly as stored; null if missing.
 	Ref< Heightfield > readStoredTile(const Vector4& worldExtent, int32_t tileX, int32_t tileZ) const;
 
-	//! Write single tile exactly as stored.
+	//! Write single tile, with all of its layers, exactly as stored.
 	bool writeStoredTile(int32_t tileX, int32_t tileZ, const Heightfield* tile) const;
-
-	//! Read single image tile exactly as stored; null if instance has no such image.
-	Ref< drawing::Image > readStoredImageTile(const std::wstring& name, int32_t tileX, int32_t tileZ) const;
-
-	//! Write single image tile exactly as stored.
-	bool writeStoredImageTile(const std::wstring& name, int32_t tileX, int32_t tileZ, const drawing::Image* tile) const;
 
 private:
 	Ref< db::Instance > m_instance;
@@ -114,14 +90,14 @@ private:
 
 	std::wstring getChannelName(const std::wstring& name, int32_t tileX, int32_t tileZ) const;
 
+	//! Read size and optional layers of single tile.
+	bool readHeader(int32_t tileX, int32_t tileZ, int32_t& outSize, uint32_t& outLayers) const;
+
 	//! Read stored tile through cache shared by all storages; cached tiles are immutable.
 	Ref< const Heightfield > readCachedTile(const Vector4& worldExtent, int32_t tileX, int32_t tileZ) const;
 
 	//! Read region, of width * width samples starting at x0, z0, box filtered by step; samples outside heightfield are clamped to edge.
-	Ref< Heightfield > readHeightfieldRegion(const Vector4& worldExtent, int32_t tileSize, int32_t x0, int32_t z0, int32_t width, int32_t step) const;
-
-	//! Read region, of width * height pixels starting at x0, y0, box filtered by step; pixels outside image are clamped to edge.
-	Ref< drawing::Image > readImageRegion(const std::wstring& name, const drawing::Image* anchor, int32_t x0, int32_t y0, int32_t width, int32_t height, int32_t stepX, int32_t stepY) const;
+	Ref< Heightfield > readHeightfieldRegion(const Vector4& worldExtent, int32_t tileSize, int32_t x0, int32_t z0, int32_t width, int32_t step, uint32_t layers) const;
 };
 
 }

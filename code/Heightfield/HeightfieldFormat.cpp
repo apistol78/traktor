@@ -18,7 +18,7 @@ namespace traktor::hf
 	namespace
 	{
 
-const int32_t c_version = 4;
+const int32_t c_version = 5;
 
 	}
 
@@ -34,6 +34,10 @@ Ref< Heightfield > HeightfieldFormat::read(IStream* stream, const Vector4& world
 
 	int32_t size;
 	Reader(stream) >> size;
+
+	uint32_t layers = 0;
+	if (version >= 5)
+		Reader(stream) >> layers;
 
 	Ref< Heightfield > heightfield = new Heightfield(
 		size,
@@ -79,16 +83,47 @@ Ref< Heightfield > HeightfieldFormat::read(IStream* stream, const Vector4& world
 		}
 	}
 
+	if ((layers & Heightfield::LySplat) != 0)
+		Reader(stream).read(heightfield->createSplats(), (int64_t)size * size * 4, sizeof(uint8_t));
+
+	if ((layers & Heightfield::LyColor) != 0)
+		Reader(stream).read(heightfield->createColors(), (int64_t)size * size * 4, sizeof(uint8_t));
+
 	heightfield->updateCellBounds();
 
 	stream->close();
 	return heightfield;
 }
 
+bool HeightfieldFormat::readHeader(IStream* stream, int32_t& outSize, uint32_t& outLayers) const
+{
+	int32_t version;
+	Reader(stream) >> version;
+
+	if (version < 1 || version > c_version)
+		return false;
+
+	Reader(stream) >> outSize;
+
+	outLayers = 0;
+	if (version >= 5)
+		Reader(stream) >> outLayers;
+
+	return true;
+}
+
 bool HeightfieldFormat::write(IStream* stream, const Heightfield* heightfield) const
 {
+	// Optional layers are part of header so they can be queried without reading entire heightfield.
+	uint32_t layers = 0;
+	if (heightfield->getSplats())
+		layers |= Heightfield::LySplat;
+	if (heightfield->getColors())
+		layers |= Heightfield::LyColor;
+
 	Writer(stream) << int32_t(c_version);
 	Writer(stream) << int32_t(heightfield->getSize());
+	Writer(stream) << layers;
 
 	Writer(stream).write(
 		heightfield->getHeights(),
@@ -123,6 +158,12 @@ bool HeightfieldFormat::write(IStream* stream, const Heightfield* heightfield) c
 			sizeof(uint8_t)
 		);
 	}
+
+	if ((layers & Heightfield::LySplat) != 0)
+		Writer(stream).write(heightfield->getSplats(), (int64_t)heightfield->getSize() * heightfield->getSize() * 4, sizeof(uint8_t));
+
+	if ((layers & Heightfield::LyColor) != 0)
+		Writer(stream).write(heightfield->getColors(), (int64_t)heightfield->getSize() * heightfield->getSize() * 4, sizeof(uint8_t));
 
 	return true;
 }

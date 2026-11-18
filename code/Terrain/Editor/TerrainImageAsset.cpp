@@ -18,9 +18,8 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.terrain.TerrainImageAsset", 0, TerrainI
 
 void TerrainImageAsset::serialize(ISerializer& s)
 {
-	s >> Member< Guid >(L"instance", m_instance);
+	s >> Member< Guid >(L"heightfield", m_heightfield);
 	s >> Member< std::wstring >(L"name", m_name);
-	s >> Member< int32_t >(L"tileCount", m_tileCount);
 	s >> Member< int32_t >(L"tileX", m_tileX);
 	s >> Member< int32_t >(L"tileZ", m_tileZ);
 	s >> Member< int32_t >(L"overviewSize", m_overviewSize);

@@ -24,7 +24,7 @@
 namespace traktor::terrain
 {
 
-/*! Tile, or overview, of a tiled terrain image; synthesized by terrain pipeline.
+/*! Tile, or overview, of splat or color layer of terrain's heightfield; synthesized by terrain pipeline.
  * \ingroup Terrain
  */
 class T_DLLCLASS TerrainImageAsset : public ISerializable
@@ -32,9 +32,8 @@ class T_DLLCLASS TerrainImageAsset : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	Guid m_instance;				//!< Terrain asset instance containing image.
-	std::wstring m_name;			//!< Name of image, "Splat" or "Color".
-	int32_t m_tileCount = 0;
+	Guid m_heightfield;				//!< Heightfield asset instance containing layer.
+	std::wstring m_name;			//!< Name of layer, "Splat" or "Color".
 	int32_t m_tileX = -1;			//!< Tile, including +X/+Z seam; -1 for overview.
 	int32_t m_tileZ = -1;
 	int32_t m_overviewSize = 0;		//!< Size of overview of whole image.

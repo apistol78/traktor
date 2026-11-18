@@ -43,7 +43,6 @@ namespace traktor::hf
 	namespace
 	{
 
-//! Attribute layers which carry any data, thus only those need to be carried across.
 StaticVector< uint8_t, Heightfield::MaxAttributes > usedAttributes(const Heightfield* heightfield)
 {
 	StaticVector< uint8_t, Heightfield::MaxAttributes > attributes;
@@ -55,7 +54,7 @@ StaticVector< uint8_t, Heightfield::MaxAttributes > usedAttributes(const Heightf
 	return attributes;
 }
 
-Ref< drawing::Image > generatePreviewImage(const Heightfield* hf)
+Ref< drawing::Image > generateHeightsPreview(const Heightfield* hf)
 {
 	Ref< drawing::Image > img = new drawing::Image(drawing::PixelFormat::getR8G8B8(), hf->getSize(), hf->getSize());
 	for (int32_t y = 0; y < hf->getSize(); ++y)
@@ -85,6 +84,20 @@ Ref< drawing::Image > generatePreviewImage(const Heightfield* hf)
 	return img;
 }
 
+Ref< drawing::Image > generateSplatsPreview(const Heightfield* hf)
+{
+	Ref< drawing::Image > img = new drawing::Image(drawing::PixelFormat::getR8G8B8(), hf->getSize(), hf->getSize());
+	for (int32_t y = 0; y < hf->getSize(); ++y)
+	{
+		for (int32_t x = 0; x < hf->getSize(); ++x)
+		{
+			const Color4f splat = hf->getGridSplat(x, y);
+			img->setPixel(x, y, splat);
+		}
+	}
+	return img;
+}
+
 	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.hf.HeightfieldAssetEditor", HeightfieldAssetEditor, editor::IObjectEditor)
@@ -99,7 +112,9 @@ bool HeightfieldAssetEditor::create(ui::Widget* parent, db::Instance* instance, 
 	m_instance = instance;
 	m_asset = mandatory_non_null_type_cast< HeightfieldAsset* >(object);
 
-	m_heightfield = TileStorage(m_instance, m_asset->getTileCount()).readHeightfieldOverview(m_asset->getWorldExtent());
+	// Splat and color are read as well since operations must keep them aligned with heights.
+	const TileStorage tileStorage(m_instance, m_asset->getTileCount());
+	m_heightfield = tileStorage.readHeightfieldOverview(m_asset->getWorldExtent(), TileStorage::calculateOverviewSize(tileStorage.readSize(), m_asset->getWorldExtent().x()), Heightfield::LyAll);
 	if (!m_heightfield)
 	{
 		log::error << L"Heightfield asset editor failed; unable to read heights." << Endl;
@@ -112,6 +127,7 @@ bool HeightfieldAssetEditor::create(ui::Widget* parent, db::Instance* instance, 
 	Ref< ui::Container > containerFields = new ui::Container();
 	containerFields->create(m_container, ui::WsNone, new ui::TableLayout(L"*,*,*", L"*", 0_ut, 4_ut));
 
+	// World extent.
 	Ref< ui::Static > staticExtent = new ui::Static();
 	staticExtent->create(containerFields, i18n::Text(L"HEIGHTFIELD_ASSET_EXTENT"));
 
@@ -130,6 +146,17 @@ bool HeightfieldAssetEditor::create(ui::Widget* parent, db::Instance* instance, 
 	Ref< ui::Static > staticExtentUnit = new ui::Static();
 	staticExtentUnit->create(containerFields, i18n::Text(L"HEIGHTFIELD_ASSET_EXTENT_UNIT"));
 
+	// Tile count.
+	Ref< ui::Static > staticTiles = new ui::Static();
+	staticTiles->create(containerFields, i18n::Text(L"HEIGHTFIELD_ASSET_TILES"));
+
+	m_editTiles = new ui::Edit();
+	m_editTiles->create(containerFields, toString(m_asset->getTileCount()), ui::Edit::WsReadOnly);
+
+	Ref< ui::Static > staticTileUnit = new ui::Static();
+	staticTileUnit->create(containerFields, i18n::Text(L"HEIGHTFIELD_ASSET_TILE_UNIT"));
+
+	// Data size.
 	Ref< ui::Static > staticSize = new ui::Static();
 	staticSize->create(containerFields, i18n::Text(L"HEIGHTFIELD_ASSET_SIZE"));
 
@@ -151,7 +178,7 @@ bool HeightfieldAssetEditor::create(ui::Widget* parent, db::Instance* instance, 
 	toolBar->addItem(new ui::ToolBarButton(L"Remap height...", ui::Command(L"HeightfieldAssetEditor.RemapHeight")));
 	toolBar->addEventHandler< ui::ToolBarButtonClickEvent >(this, &HeightfieldAssetEditor::eventToolBar);
 
-	m_previewImage = generatePreviewImage(m_heightfield);
+	m_previewImage = generateSplatsPreview(m_heightfield);
 
 	m_imagePreview = new ui::Image();
 	m_imagePreview->create(
@@ -320,6 +347,11 @@ bool HeightfieldAssetEditor::handleCommand(const ui::Command& command)
 
 				for (uint8_t a : attributes)
 					resized->setGridAttribute(ix, iy, a, m_heightfield->getGridAttributeDensity((int32_t)sx, (int32_t)sy, a));
+
+				if (m_heightfield->getSplats())
+					resized->setGridSplat(ix, iy, m_heightfield->getGridSplat((int32_t)sx, (int32_t)sy));
+				if (m_heightfield->getColors())
+					resized->setGridColor(ix, iy, m_heightfield->getGridColor((int32_t)sx, (int32_t)sy));
 			}
 		}
 
@@ -383,6 +415,11 @@ bool HeightfieldAssetEditor::handleCommand(const ui::Command& command)
 
 				for (uint8_t a : attributes)
 					cropped->setGridAttribute(ix, iy, a, m_heightfield->getGridAttributeDensity(sx, sy, a));
+
+				if (m_heightfield->getSplats())
+					cropped->setGridSplat(ix, iy, m_heightfield->getGridSplat(sx, sy));
+				if (m_heightfield->getColors())
+					cropped->setGridColor(ix, iy, m_heightfield->getGridColor(sx, sy));
 			}
 		}
 
@@ -423,6 +460,11 @@ bool HeightfieldAssetEditor::handleCommand(const ui::Command& command)
 
 				for (uint8_t a : attributes)
 					cropped->setGridAttribute(ix, iy, a, m_heightfield->getGridAttributeDensity(ix, iy, a));
+
+				if (m_heightfield->getSplats())
+					cropped->setGridSplat(ix, iy, m_heightfield->getGridSplat(ix, iy));
+				if (m_heightfield->getColors())
+					cropped->setGridColor(ix, iy, m_heightfield->getGridColor(ix, iy));
 			}
 		}
 
@@ -453,7 +495,7 @@ ui::Size HeightfieldAssetEditor::getPreferredSize() const
 
 void HeightfieldAssetEditor::updatePreviewImage()
 {
-	m_previewImage = generatePreviewImage(m_heightfield);
+	m_previewImage = generateSplatsPreview(m_heightfield);
 	m_imagePreview->setImage(
 		new ui::Bitmap(m_previewImage),
 		false

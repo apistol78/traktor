@@ -12,16 +12,19 @@
 
 // import/export mechanism.
 #undef T_DLLCLASS
-#if defined(T_TERRAIN_EDITOR_EXPORT)
+#if defined(T_HEIGHTFIELD_EDITOR_EXPORT)
 #	define T_DLLCLASS T_DLLEXPORT
 #else
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor::terrain
+namespace traktor::hf
 {
 
-class T_DLLCLASS CropTerrainWizardTool : public editor::IWizardTool
+/*! Crop heightfield, with all of its layers, in full resolution.
+ * \ingroup Heightfield
+ */
+class T_DLLCLASS CropHeightfieldWizardTool : public editor::IWizardTool
 {
 	T_RTTI_CLASS;
 

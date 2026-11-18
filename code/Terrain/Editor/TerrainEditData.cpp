@@ -11,45 +11,24 @@
 #include "Core/Log/Log.h"
 #include "Core/Math/MathUtils.h"
 #include "Database/Instance.h"
-#include "Drawing/Filters/ScaleFilter.h"
-#include "Drawing/Image.h"
-#include "Drawing/PixelFormat.h"
 #include "Heightfield/Editor/HeightfieldAsset.h"
 #include "Heightfield/Editor/TileStorage.h"
 #include "Heightfield/Heightfield.h"
 
 namespace traktor::terrain
 {
-namespace
-{
-
-const wchar_t* c_imageNames[] = { L"Splat", L"Color" };
-
-const Color4f c_imageDefaults[] = { Color4f(1.0f, 0.0f, 0.0f, 0.0f), Color4f(0.5f, 0.5f, 0.5f, 0.0f) };
-
-//! Pixel format of image in memory; color is kept in high precision since brush blend in small increments.
-const drawing::PixelFormat& imageFormat(int32_t image)
-{
-	static const drawing::PixelFormat c_splatFormat = drawing::PixelFormat::getR8G8B8A8().endianSwapped();
-	return (image == 0) ? c_splatFormat : drawing::PixelFormat::getABGRF32();
-}
-
-}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.TerrainEditData", TerrainEditData, Object)
 
-bool TerrainEditData::create(const db::Instance* heightfieldInstance, const db::Instance* terrainInstance, const hf::HeightfieldAsset* heightfieldAsset)
+bool TerrainEditData::create(const db::Instance* heightfieldInstance, const hf::HeightfieldAsset* heightfieldAsset)
 {
 	m_heightfieldInstance = heightfieldInstance;
-	m_terrainInstance = terrainInstance;
-
-	m_heightfieldStorage = new hf::TileStorage(m_heightfieldInstance, heightfieldAsset->getTileCount());
-	m_terrainStorage = new hf::TileStorage(m_terrainInstance, heightfieldAsset->getTileCount());
+	m_storage = new hf::TileStorage(m_heightfieldInstance, heightfieldAsset->getTileCount());
 
 	m_worldExtent = heightfieldAsset->getWorldExtent();
 	m_tileCount = std::max(heightfieldAsset->getTileCount(), 1);
 
-	m_size = m_heightfieldStorage->readSize();
+	m_size = m_storage->readSize();
 	if (m_size <= 0)
 	{
 		log::error << L"Unable to edit terrain; failed to read heightfield size." << Endl;
@@ -113,7 +92,7 @@ void TerrainEditData::setGridHeight(int32_t gridX, int32_t gridZ, float unitY)
 		return;
 
 	tile->setGridHeight(gridX, gridZ, unitY);
-	m_tiles[tileIndex].heightfieldModified = true;
+	m_tiles[tileIndex].modified = true;
 }
 
 bool TerrainEditData::getGridCut(int32_t gridX, int32_t gridZ)
@@ -135,7 +114,7 @@ void TerrainEditData::setGridCut(int32_t gridX, int32_t gridZ, bool cut)
 		return;
 
 	tile->setGridCut(gridX, gridZ, cut);
-	m_tiles[tileIndex].heightfieldModified = true;
+	m_tiles[tileIndex].modified = true;
 }
 
 uint8_t TerrainEditData::getGridAttributeDensity(int32_t gridX, int32_t gridZ, uint8_t attribute)
@@ -157,7 +136,7 @@ void TerrainEditData::setGridAttribute(int32_t gridX, int32_t gridZ, uint8_t att
 		return;
 
 	tile->setGridAttribute(gridX, gridZ, attribute, density);
-	m_tiles[tileIndex].heightfieldModified = true;
+	m_tiles[tileIndex].modified = true;
 }
 
 Vector4 TerrainEditData::normalAt(float gridX, float gridZ)
@@ -211,8 +190,13 @@ bool TerrainEditData::getSplat(int32_t x, int32_t z, Color4f& outSplat)
 {
 	if (x < 0 || x >= m_size || z < 0 || z >= m_size)
 		return false;
-	drawing::Image* tile = getImageTile(Splat, x, z);
-	return tile ? tile->getPixel(x, z, outSplat) : false;
+
+	hf::Heightfield* tile = getHeightfieldTile(x, z);
+	if (!tile)
+		return false;
+
+	outSplat = tile->getGridSplat(x, z);
+	return true;
 }
 
 bool TerrainEditData::setSplat(int32_t x, int32_t z, const Color4f& splat)
@@ -221,11 +205,12 @@ bool TerrainEditData::setSplat(int32_t x, int32_t z, const Color4f& splat)
 		return false;
 
 	const int32_t tileIndex = (x / m_tileSize) + (z / m_tileSize) * m_tileCount;
-	drawing::Image* tile = getImageTile(Splat, x, z);
-	if (!tile || !tile->setPixel(x, z, splat))
+	hf::Heightfield* tile = getHeightfieldTile(x, z);
+	if (!tile)
 		return false;
 
-	m_tiles[tileIndex].imageModified[Splat] = true;
+	tile->setGridSplat(x, z, splat);
+	m_tiles[tileIndex].modified = true;
 	return true;
 }
 
@@ -233,8 +218,13 @@ bool TerrainEditData::getColor(int32_t x, int32_t z, Color4f& outColor)
 {
 	if (x < 0 || x >= m_size || z < 0 || z >= m_size)
 		return false;
-	drawing::Image* tile = getImageTile(Color, x, z);
-	return tile ? tile->getPixel(x, z, outColor) : false;
+
+	hf::Heightfield* tile = getHeightfieldTile(x, z);
+	if (!tile)
+		return false;
+
+	outColor = tile->getGridColor(x, z);
+	return true;
 }
 
 bool TerrainEditData::setColor(int32_t x, int32_t z, const Color4f& color)
@@ -243,11 +233,12 @@ bool TerrainEditData::setColor(int32_t x, int32_t z, const Color4f& color)
 		return false;
 
 	const int32_t tileIndex = (x / m_tileSize) + (z / m_tileSize) * m_tileCount;
-	drawing::Image* tile = getImageTile(Color, x, z);
-	if (!tile || !tile->setPixel(x, z, color))
+	hf::Heightfield* tile = getHeightfieldTile(x, z);
+	if (!tile)
 		return false;
 
-	m_tiles[tileIndex].imageModified[Color] = true;
+	tile->setGridColor(x, z, color);
+	m_tiles[tileIndex].modified = true;
 	return true;
 }
 
@@ -256,51 +247,13 @@ bool TerrainEditData::writeHeightfield()
 	for (int32_t i = 0; i < (int32_t)m_tiles.size(); ++i)
 	{
 		Tile& tile = m_tiles[i];
-		if (!tile.heightfieldModified)
+		if (!tile.modified)
 			continue;
 
-		if (!m_heightfieldStorage->writeStoredTile(i % m_tileCount, i / m_tileCount, tile.heightfield))
+		if (!m_storage->writeStoredTile(i % m_tileCount, i / m_tileCount, tile.heightfield))
 			return false;
 
-		tile.heightfieldModified = false;
-	}
-	return true;
-}
-
-bool TerrainEditData::writeImages()
-{
-	for (int32_t image = 0; image < 2; ++image)
-	{
-		bool modified = false;
-		for (const auto& tile : m_tiles)
-			modified |= tile.imageModified[image];
-		if (!modified)
-			continue;
-
-		for (int32_t i = 0; i < (int32_t)m_tiles.size(); ++i)
-		{
-			Tile& tile = m_tiles[i];
-			if (!m_writeAllImage[image] && !tile.imageModified[image])
-				continue;
-
-			int32_t x = (i % m_tileCount) * m_tileSize;
-			int32_t z = (i / m_tileCount) * m_tileSize;
-			const drawing::Image* imageTile = getImageTile(image, x, z);
-			if (!imageTile)
-				return false;
-
-			// Color is stored in low precision.
-			Ref< drawing::Image > stored = imageTile->clone();
-			if (image == Color)
-				stored->convert(drawing::PixelFormat::getA8B8G8R8());
-
-			if (!m_terrainStorage->writeStoredImageTile(c_imageNames[image], i % m_tileCount, i / m_tileCount, stored))
-				return false;
-
-			tile.imageModified[image] = false;
-		}
-
-		m_writeAllImage[image] = false;
+		tile.modified = false;
 	}
 	return true;
 }
@@ -315,7 +268,7 @@ hf::Heightfield* TerrainEditData::getHeightfieldTile(int32_t& inoutX, int32_t& i
 	Tile& tile = m_tiles[tileX + tileZ * m_tileCount];
 	if (!tile.heightfield)
 	{
-		tile.heightfield = m_heightfieldStorage->readStoredTile(m_worldExtent, tileX, tileZ);
+		tile.heightfield = m_storage->readStoredTile(m_worldExtent, tileX, tileZ);
 		if (tile.heightfield && tile.heightfield->getSize() != m_tileSize)
 		{
 			log::error << L"Unable to edit terrain; tile " << tileX << L", " << tileZ << L" size mismatch." << Endl;
@@ -323,38 +276,6 @@ hf::Heightfield* TerrainEditData::getHeightfieldTile(int32_t& inoutX, int32_t& i
 		}
 	}
 	return tile.heightfield;
-}
-
-drawing::Image* TerrainEditData::getImageTile(int32_t image, int32_t& inoutX, int32_t& inoutZ)
-{
-	const int32_t tileX = inoutX / m_tileSize;
-	const int32_t tileZ = inoutZ / m_tileSize;
-	inoutX -= tileX * m_tileSize;
-	inoutZ -= tileZ * m_tileSize;
-
-	Tile& tile = m_tiles[tileX + tileZ * m_tileCount];
-	if (!tile.images[image])
-	{
-		Ref< drawing::Image > imageTile = m_terrainStorage->readStoredImageTile(c_imageNames[image], tileX, tileZ);
-		if (imageTile)
-		{
-			imageTile->convert(imageFormat(image));
-			if (imageTile->getWidth() != m_tileSize || imageTile->getHeight() != m_tileSize)
-			{
-				drawing::ScaleFilter scaleFilter(m_tileSize, m_tileSize, drawing::ScaleFilter::MnAverage, drawing::ScaleFilter::MgLinear);
-				imageTile->apply(&scaleFilter);
-				m_writeAllImage[image] = true;
-			}
-		}
-		else
-		{
-			imageTile = new drawing::Image(imageFormat(image), m_tileSize, m_tileSize);
-			imageTile->clear(c_imageDefaults[image]);
-			m_writeAllImage[image] = true;
-		}
-		tile.images[image] = imageTile;
-	}
-	return tile.images[image];
 }
 
 }

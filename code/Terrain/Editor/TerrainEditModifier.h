@@ -137,7 +137,6 @@ private:
 	Ref< TerrainComponent > m_terrainComponent;
 	Ref< TerrainComponentData > m_terrainComponentData;
 	RefArray< TerrainLayerComponent > m_terrainLayers;
-	Ref< db::Instance > m_terrainInstance;
 	Ref< db::Instance > m_heightfieldInstance;
 	Ref< hf::HeightfieldAsset > m_heightfieldAsset;
 	Ref< TerrainEditData > m_data;

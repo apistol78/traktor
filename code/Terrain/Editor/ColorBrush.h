@@ -8,6 +8,7 @@
  */
 #pragma once
 
+#include "Core/Containers/SmallMap.h"
 #include "Core/Math/Color4f.h"
 #include "Terrain/Editor/IBrush.h"
 #include "Terrain/Editor/TerrainEditData.h"
@@ -41,6 +42,7 @@ private:
 	const IFallOff* m_fallOff;
 	float m_strength;
 	Color4f m_color;
+	SmallMap< int32_t, Color4f > m_colors; //!< Unquantized colors of samples touched by stroke.
 };
 
 }

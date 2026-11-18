@@ -9,6 +9,7 @@
 #pragma once
 
 #include "Core/Math/Aabb3.h"
+#include "Core/Math/Color4f.h"
 #include "Core/Misc/AutoPtr.h"
 #include "Core/Object.h"
 #include "Heightfield/HeightfieldTypes.h"
@@ -38,6 +39,14 @@ public:
 		MaxAttributes = 16
 	};
 
+	//! Optional layers of four 8-bit channels per grid sample.
+	enum Layers : uint32_t
+	{
+		LySplat = 1,	//!< Material weights.
+		LyColor = 2,	//!< Color.
+		LyAll = LySplat | LyColor
+	};
+
 	explicit Heightfield(
 		int32_t size,
 		const Vector4& worldExtent,
@@ -64,6 +73,12 @@ public:
 	 */
 	void setGridAttribute(int32_t gridX, int32_t gridZ, uint8_t attribute, uint8_t density);
 
+	//! Set material weights of a grid sample; the layer is allocated on first use.
+	void setGridSplat(int32_t gridX, int32_t gridZ, const Color4f& splat);
+
+	//! Set color of a grid sample; the layer is allocated on first use.
+	void setGridColor(int32_t gridX, int32_t gridZ, const Color4f& color);
+
 	float getGridHeightNearest(int32_t gridX, int32_t gridZ) const;
 
 	float getGridHeightNearestUnsafe(int32_t gridX, int32_t gridZ) const { return m_heights[gridX + gridZ * m_size] / 65535.0f; }
@@ -81,6 +96,12 @@ public:
 
 	//! Bilinear filtered density of a single attribute at a world position, 0 to 1.
 	float getWorldAttributeDensity(float worldX, float worldZ, uint8_t attribute) const;
+
+	//! Material weights of a grid sample; only first material if the layer doesn't exist.
+	Color4f getGridSplat(int32_t gridX, int32_t gridZ) const;
+
+	//! Color of a grid sample; neutral grey if the layer doesn't exist.
+	Color4f getGridColor(int32_t gridX, int32_t gridZ) const;
 
 	void gridToWorld(int32_t gridX, int32_t gridZ, float& outWorldX, float& outWorldZ) const;
 
@@ -123,6 +144,18 @@ public:
 	//! True if the attribute layer exist and contain any density.
 	bool haveAttribute(uint8_t attribute) const;
 
+	//! Allocate splat layer, four 8-bit weights per sample, cleared to first material unless it already exist.
+	uint8_t* createSplats();
+
+	//! Raw splat layer; null when the layer has never been written.
+	const uint8_t* getSplats() const { return m_splats.c_ptr(); }
+
+	//! Allocate color layer, 8-bit RGBA per sample, cleared to neutral grey unless it already exist.
+	uint8_t* createColors();
+
+	//! Raw color layer; null when the layer has never been written.
+	const uint8_t* getColors() const { return m_colors.c_ptr(); }
+
 	int32_t gridToCell(int32_t grid) const;
 
 	void updateCellBounds();
@@ -141,6 +174,8 @@ private:
 	AutoArrayPtr< height_t > m_heights;
 	AutoArrayPtr< uint8_t > m_cuts;
 	AutoArrayPtr< uint8_t > m_attributes[MaxAttributes];
+	AutoArrayPtr< uint8_t > m_splats;
+	AutoArrayPtr< uint8_t > m_colors;
 	AutoArrayPtr< Aabb3 > m_cellBounds;
 };
 

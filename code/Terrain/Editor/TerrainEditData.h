@@ -8,11 +8,11 @@
  */
 #pragma once
 
-#include "Core/Object.h"
-#include "Core/Ref.h"
 #include "Core/Containers/AlignedVector.h"
 #include "Core/Math/Color4f.h"
 #include "Core/Math/Vector4.h"
+#include "Core/Object.h"
+#include "Core/Ref.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -29,13 +29,6 @@ class Instance;
 
 }
 
-namespace traktor::drawing
-{
-
-class Image;
-
-}
-
 namespace traktor::hf
 {
 
@@ -48,17 +41,17 @@ class TileStorage;
 namespace traktor::terrain
 {
 
-/*! Source data of terrain being edited, each tile is loaded when first accessed.
+/*! Source heightfield of terrain being edited, each tile is loaded when first accessed.
  * \ingroup Terrain
  *
- * Coordinates are grid coordinates of entire terrain; splat and color are kept in heightfield's resolution.
+ * Coordinates are grid coordinates of entire terrain.
  */
 class T_DLLCLASS TerrainEditData : public Object
 {
 	T_RTTI_CLASS;
 
 public:
-	bool create(const db::Instance* heightfieldInstance, const db::Instance* terrainInstance, const hf::HeightfieldAsset* heightfieldAsset);
+	bool create(const db::Instance* heightfieldInstance, const hf::HeightfieldAsset* heightfieldAsset);
 
 	int32_t getSize() const { return m_size; }
 
@@ -98,43 +91,26 @@ public:
 
 	bool setColor(int32_t x, int32_t z, const Color4f& color);
 
-	//! Write modified heightfield tiles into heightfield instance.
+	//! Write modified tiles into heightfield instance.
 	bool writeHeightfield();
 
-	//! Write modified splat and color tiles into terrain instance.
-	bool writeImages();
-
 private:
-	enum
-	{
-		Splat = 0,
-		Color = 1
-	};
-
 	struct Tile
 	{
 		Ref< hf::Heightfield > heightfield;
-		Ref< drawing::Image > images[2];
-		bool heightfieldModified = false;
-		bool imageModified[2] = { false, false };
+		bool modified = false;
 	};
 
 	Ref< const db::Instance > m_heightfieldInstance;
-	Ref< const db::Instance > m_terrainInstance;
-	Ref< hf::TileStorage > m_heightfieldStorage;
-	Ref< hf::TileStorage > m_terrainStorage;
+	Ref< hf::TileStorage > m_storage;
 	Vector4 m_worldExtent = Vector4::zero();
 	int32_t m_size = 0;
 	int32_t m_tileCount = 0;
 	int32_t m_tileSize = 0;
-	bool m_writeAllImage[2] = { false, false };	//!< Stored image is missing or of another size, thus every tile need to be written.
 	AlignedVector< Tile > m_tiles;
 
 	//! Heightfield tile of grid coordinate; coordinate is converted into tile's coordinate.
 	hf::Heightfield* getHeightfieldTile(int32_t& inoutX, int32_t& inoutZ);
-
-	//! Image tile of pixel coordinate; coordinate is converted into tile's coordinate.
-	drawing::Image* getImageTile(int32_t image, int32_t& inoutX, int32_t& inoutZ);
 };
 
 }

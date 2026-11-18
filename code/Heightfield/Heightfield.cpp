@@ -8,6 +8,7 @@
  */
 #include "Heightfield/Heightfield.h"
 
+#include "Core/Math/MathUtils.h"
 #include "Core/Math/Winding3.h"
 
 #include <algorithm>
@@ -22,6 +23,35 @@ namespace
 
 constexpr int32_t c_cellSize = 64;
 constexpr int32_t c_skip = 1;
+
+const uint8_t c_defaultSplat[] = { 255, 0, 0, 0 };
+const uint8_t c_defaultColor[] = { 128, 128, 128, 0 };
+
+//! Allocate layer of four 8-bit channels per sample, cleared to value, unless it already exist.
+uint8_t* createLayer(AutoArrayPtr< uint8_t >& layer, int32_t size, const uint8_t* value)
+{
+	if (layer.c_ptr() == nullptr)
+	{
+		const size_t count = (size_t)size * size;
+		layer.reset(new uint8_t[count * 4]);
+		for (size_t i = 0; i < count; ++i)
+			std::memcpy(layer.ptr() + i * 4, value, 4);
+	}
+	return layer.ptr();
+}
+
+void encodeSample(const Color4f& value, uint8_t* outSample)
+{
+	float rgba[4];
+	value.saturated().storeUnaligned(rgba);
+	for (int32_t i = 0; i < 4; ++i)
+		outSample[i] = (uint8_t)(rgba[i] * 255.0f + 0.5f);
+}
+
+Color4f decodeSample(const uint8_t* sample)
+{
+	return Color4f(sample[0] / 255.0f, sample[1] / 255.0f, sample[2] / 255.0f, sample[3] / 255.0f);
+}
 
 }
 
@@ -103,6 +133,20 @@ void Heightfield::setGridAttribute(int32_t gridX, int32_t gridZ, uint8_t attribu
 
 	const int32_t offset = gridX + gridZ * m_size;
 	attributes[offset] = density;
+}
+
+void Heightfield::setGridSplat(int32_t gridX, int32_t gridZ, const Color4f& splat)
+{
+	if (gridX < 0 || gridX >= m_size || gridZ < 0 || gridZ >= m_size)
+		return;
+	encodeSample(splat, createSplats() + ((size_t)gridX + (size_t)gridZ * m_size) * 4);
+}
+
+void Heightfield::setGridColor(int32_t gridX, int32_t gridZ, const Color4f& color)
+{
+	if (gridX < 0 || gridX >= m_size || gridZ < 0 || gridZ >= m_size)
+		return;
+	encodeSample(color, createColors() + ((size_t)gridX + (size_t)gridZ * m_size) * 4);
 }
 
 float Heightfield::getGridHeightNearest(int32_t gridX, int32_t gridZ) const
@@ -281,6 +325,24 @@ float Heightfield::getWorldAttributeDensity(float worldX, float worldZ, uint8_t 
 	) / 255.0f;
 }
 
+Color4f Heightfield::getGridSplat(int32_t gridX, int32_t gridZ) const
+{
+	if (m_splats.c_ptr() == nullptr)
+		return decodeSample(c_defaultSplat);
+	gridX = clamp(gridX, 0, m_size - 1);
+	gridZ = clamp(gridZ, 0, m_size - 1);
+	return decodeSample(m_splats.c_ptr() + ((size_t)gridX + (size_t)gridZ * m_size) * 4);
+}
+
+Color4f Heightfield::getGridColor(int32_t gridX, int32_t gridZ) const
+{
+	if (m_colors.c_ptr() == nullptr)
+		return decodeSample(c_defaultColor);
+	gridX = clamp(gridX, 0, m_size - 1);
+	gridZ = clamp(gridZ, 0, m_size - 1);
+	return decodeSample(m_colors.c_ptr() + ((size_t)gridX + (size_t)gridZ * m_size) * 4);
+}
+
 uint8_t* Heightfield::createAttributes(uint8_t attribute)
 {
 	if (attribute >= MaxAttributes)
@@ -314,6 +376,16 @@ bool Heightfield::haveAttribute(uint8_t attribute) const
 	}
 
 	return false;
+}
+
+uint8_t* Heightfield::createSplats()
+{
+	return createLayer(m_splats, m_size, c_defaultSplat);
+}
+
+uint8_t* Heightfield::createColors()
+{
+	return createLayer(m_colors, m_size, c_defaultColor);
 }
 
 void Heightfield::gridToWorld(int32_t gridX, int32_t gridZ, float& outWorldX, float& outWorldZ) const

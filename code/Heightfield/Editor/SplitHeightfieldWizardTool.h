@@ -12,19 +12,19 @@
 
 // import/export mechanism.
 #undef T_DLLCLASS
-#if defined(T_TERRAIN_EDITOR_EXPORT)
+#if defined(T_HEIGHTFIELD_EDITOR_EXPORT)
 #	define T_DLLCLASS T_DLLEXPORT
 #else
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor::terrain
+namespace traktor::hf
 {
 
-/*! Split heightfield and maps of a terrain into tiles.
- * \ingroup Terrain
+/*! Split heightfield, with all of its layers, into tiles.
+ * \ingroup Heightfield
  */
-class T_DLLCLASS SplitTerrainWizardTool : public editor::IWizardTool
+class T_DLLCLASS SplitHeightfieldWizardTool : public editor::IWizardTool
 {
 	T_RTTI_CLASS;
 
