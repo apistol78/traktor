@@ -33,6 +33,7 @@
 #include "World/Entity/IntervalTransformComponent.h"
 #include "World/Entity/LightComponent.h"
 #include "World/Entity/ProbeComponent.h"
+#include "World/Entity/RTWorldComponent.h"
 #include "World/IEntityRenderer.h"
 #include "World/IrradianceGrid.h"
 #include "World/Shared/Passes/AmbientOcclusionPass.h"
@@ -157,6 +158,10 @@ void WorldRendererDeferred::setup(
 			entityRenderer->setup(context, worldRenderView, r.objects);
 		}
 	}
+
+	// Resolved after entity setup since adding RT instances might replace the top level structure.
+	const RTWorldComponent* rtWorldComponent = m_rayTracingEnabled ? world->getComponent< RTWorldComponent >() : nullptr;
+	m_gatheredView.rtWorldTopLevel = (rtWorldComponent != nullptr) ? rtWorldComponent->getTopLevel() : nullptr;
 
 	// Add visual target sets.
 	const Rational r = floatToRational(resolutionScale);

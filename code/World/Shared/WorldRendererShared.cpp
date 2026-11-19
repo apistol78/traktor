@@ -27,7 +27,6 @@
 #include "World/Entity/LightComponent.h"
 #include "World/Entity/PostProcessComponent.h"
 #include "World/Entity/ProbeComponent.h"
-#include "World/Entity/RTWorldComponent.h"
 #include "World/IEntityRenderer.h"
 #include "World/IrradianceGrid.h"
 #include "World/IWorldComponent.h"
@@ -368,11 +367,6 @@ void WorldRendererShared::gather(const World* world, const WorldRenderView& worl
 			m_gatheredView.colorCorrection = colorCorrectionComponent;
 		else if (auto postProcessComponent = dynamic_type_cast< const PostProcessComponent* >(component))
 			m_gatheredView.postProcess = postProcessComponent;
-		else if (m_rayTracingEnabled)
-		{
-			if (auto rtWorldComponent = dynamic_type_cast< const RTWorldComponent* >(component))
-				m_gatheredView.rtWorldTopLevel = rtWorldComponent->getTopLevel();
-		}
 	}
 
 	// Arrange lights.
