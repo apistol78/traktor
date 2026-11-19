@@ -53,17 +53,14 @@ const render::Handle c_handleTerrain_WorldExtent(L"Terrain_WorldExtent");
 const render::Handle c_handleTerrain_PatchExtent(L"Terrain_PatchExtent");
 const render::Handle c_handleTerrain_TileTransform(L"Terrain_TileTransform");
 const render::Handle c_handleTerrain_DebugMap(L"Terrain_DebugMap");
-const render::Handle c_handleTerrain_DebugPatchIndex(L"Terrain_DebugPatchIndex");
 const render::Handle c_handleTerrain_CutEnable(L"Terrain_CutEnable");
 const render::Handle c_handleTerrain_PatchData(L"Terrain_PatchData");
 
-const uint32_t c_rtPatchCells = 64;	//!< Number of cells along each side of a ray tracing patch.
+const uint32_t c_rtPatchCells = 64; //!< Number of cells along each side of a ray tracing patch.
 const float c_rtCellSize = 2.0f;	//!< Approximate size of a ray tracing cell, in world units.
-
 const int32_t c_patchLodSteps = 3;
-
-const float c_tileLoadDistance = 640.0f;	//!< Tiles within this distance from camera are loaded.
-const float c_tileUnloadDistance = 768.0f;	//!< Tiles beyond this distance from camera are unloaded.
+const float c_tileLoadDistance = 640.0f;   //!< Tiles within this distance from camera are loaded.
+const float c_tileUnloadDistance = 768.0f; //!< Tiles beyond this distance from camera are unloaded.
 
 struct DrawData
 {
@@ -71,6 +68,7 @@ struct DrawData
 	float surfaceOffset[4];
 	float patchBoundingBoxMn[4];
 	float patchBoundingBoxMx[4];
+	float extra[4];
 };
 
 Ref< render::ITexture > create1x1Texture(render::IRenderSystem* renderSystem, const Color4ub& value)
@@ -215,8 +213,7 @@ bool TerrainComponent::queryRay(const Vector4& worldRayOrigin, const Vector4& wo
 			if (
 				!tile.loaded &&
 				position.x() >= tile.boundingBox.mn.x() && position.x() <= tile.boundingBox.mx.x() &&
-				position.z() >= tile.boundingBox.mn.z() && position.z() <= tile.boundingBox.mx.z()
-			)
+				position.z() >= tile.boundingBox.mn.z() && position.z() <= tile.boundingBox.mx.z())
 			{
 				outDistance = distance;
 				found = true;
@@ -1021,6 +1018,16 @@ void TerrainComponent::setupTile(Tile& tile, int32_t viewIndex, const world::Wor
 
 		visiblePatch.patchAabb.mn.storeAligned(data->patchBoundingBoxMn);
 		visiblePatch.patchAabb.mx.storeAligned(data->patchBoundingBoxMx);
+
+		if (m_visualizeMode == VmPatchLod)
+			data->extra[0] = (float)viewPatch.lastPatchLod;
+		else if (m_visualizeMode == VmTile)
+			data->extra[0] = (float)(tile.debugIndex % 4);
+		else
+			data->extra[0] = 0.0f;
+
+		data->extra[1] = data->extra[2] = data->extra[3] = 0.0f;
+
 		data++;
 	}
 
@@ -1080,11 +1087,7 @@ void TerrainComponent::buildTile(const Tile& tile, int32_t viewIndex, const worl
 	// Scale and offset from tile texture coordinates into terrain texture coordinates.
 	const Vector4& terrainOrigin = m_overview.worldOrigin;
 	const Vector4& terrainExtent = m_overview.worldExtent;
-	rb->programParams->setVectorParameter(c_handleTerrain_TileTransform, Vector4(
-		tile.worldExtent.x() / terrainExtent.x(),
-		tile.worldExtent.z() / terrainExtent.z(),
-		(tile.worldOrigin.x() - terrainOrigin.x()) / terrainExtent.x(),
-		(tile.worldOrigin.z() - terrainOrigin.z()) / terrainExtent.z()));
+	rb->programParams->setVectorParameter(c_handleTerrain_TileTransform, Vector4(tile.worldExtent.x() / terrainExtent.x(), tile.worldExtent.z() / terrainExtent.z(), (tile.worldOrigin.x() - terrainOrigin.x()) / terrainExtent.x(), (tile.worldOrigin.z() - terrainOrigin.z()) / terrainExtent.z()));
 
 	if (m_visualizeMode == VmColorMap)
 		rb->programParams->setTextureParameter(c_handleTerrain_DebugMap, colorMap ? colorMap : m_defaultColorMap.ptr());
@@ -1096,11 +1099,6 @@ void TerrainComponent::buildTile(const Tile& tile, int32_t viewIndex, const worl
 		rb->programParams->setTextureParameter(c_handleTerrain_DebugMap, tile.resources.splatMap);
 	else if (m_visualizeMode == VmCutMap)
 		rb->programParams->setTextureParameter(c_handleTerrain_DebugMap, cutMap ? cutMap : m_defaultCutMap.ptr());
-
-	if (m_visualizeMode == VmPatchLod)
-		rb->programParams->setVectorParameter(c_handleTerrain_DebugPatchIndex, Vector4(0.0f, 0.0f, 0.0f, 0.0f));
-	else if (m_visualizeMode == VmTile)
-		rb->programParams->setVectorParameter(c_handleTerrain_DebugPatchIndex, Vector4(tile.debugIndex % 4, 0.0f, 0.0f, 0.0f));
 
 	worldRenderPass.setProgramParameters(rb->programParams);
 

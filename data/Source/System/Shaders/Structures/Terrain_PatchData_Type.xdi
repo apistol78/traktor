@@ -21,5 +21,10 @@
 			<type>Float4</type>
 			<length>0</length>
 		</item>
+		<item>
+			<name>extra</name>
+			<type>Float4</type>
+			<length>0</length>
+		</item>
 	</elements>
 </object>

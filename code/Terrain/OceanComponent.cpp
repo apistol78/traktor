@@ -101,6 +101,7 @@ struct DrawData
 	float surfaceOffset[4];
 	float patchBoundingBoxMn[4];
 	float patchBoundingBoxMx[4];
+	float extra[4];
 };
 
 enum StitchEdge
