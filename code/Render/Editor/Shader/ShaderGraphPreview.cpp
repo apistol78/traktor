@@ -6,20 +6,22 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Render/Editor/Shader/ShaderGraphPreview.h"
+
 #include "Core/Io/FileSystem.h"
 #include "Core/Serialization/DeepHash.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyString.h"
 #include "Core/Thread/Acquire.h"
 #include "Database/Database.h"
-#include "Drawing/Image.h"
+#include "Drawing/Filters/BrightnessContrastFilter.h"
 #include "Drawing/Filters/ScaleFilter.h"
+#include "Drawing/Image.h"
 #include "Editor/IEditor.h"
+#include "Render/Editor/Shader/Algorithms/ShaderGraphEvaluator.h"
 #include "Render/Editor/Shader/FragmentLinker.h"
 #include "Render/Editor/Shader/Nodes.h"
 #include "Render/Editor/Shader/ShaderGraph.h"
-#include "Render/Editor/Shader/ShaderGraphPreview.h"
-#include "Render/Editor/Shader/Algorithms/ShaderGraphEvaluator.h"
 #include "Render/Editor/Texture/TextureAsset.h"
 #include "Render/Editor/Texture/TrimSheetBrowsePreview.h"
 
@@ -35,8 +37,8 @@ ShaderGraphPreview::ShaderGraphPreview(const editor::IEditor* editor)
 }
 
 ShaderGraphPreview::ShaderGraphPreview(const std::wstring& assetPath, db::Database* database)
-:	m_assetPath(assetPath)
-,	m_database(database)
+	: m_assetPath(assetPath)
+	, m_database(database)
 {
 }
 
@@ -90,44 +92,42 @@ Ref< const drawing::Image > ShaderGraphPreview::generateUncached(const ShaderGra
 		{
 			for (int32_t x = 0; x < width; ++x)
 			{
-				evaluator.setValue(positionPin, Constant(
-					float(x) / (width - 1),
-					float(y) / (height - 1),
-					0.0f,
-					0.0f
-				));
+				evaluator.setValue(positionPin, Constant(float(x) / (width - 1), float(y) / (height - 1), 0.0f, 0.0f));
 				const Constant c = evaluator.evaluate(outputPin).cast(PinType::Scalar4);
 				image->setPixelUnsafe(x, y, Color4f(c.x(), c.y(), c.z(), c.w()));
 			}
 		}
 	}
-	else
+	else if (auto colorNode = dynamic_type_cast< const Color* >(outputPin->getNode()))
 	{
-		if (auto colorNode = dynamic_type_cast<const Color*>(outputPin->getNode()))
+		image = new drawing::Image(drawing::PixelFormat::getR8G8B8A8(), width, height);
+		image->clear(colorNode->getColor());
+	}
+	else if (auto textureNode = dynamic_type_cast< const Texture* >(outputPin->getNode()))
+	{
+		Ref< const render::TextureAsset > textureAsset = m_database->getObjectReadOnly< render::TextureAsset >(textureNode->getExternal());
+		if (textureAsset)
 		{
-			image = new drawing::Image(drawing::PixelFormat::getR8G8B8A8(), width, height);
-			image->clear(colorNode->getColor());
-		}
-		else if (auto textureNode = dynamic_type_cast<const Texture*>(outputPin->getNode()))
-		{
-			Ref< const render::TextureAsset > textureAsset = m_database->getObjectReadOnly< render::TextureAsset >(textureNode->getExternal());
-			if (textureAsset)
+			const Path filePath = FileSystem::getInstance().getAbsolutePath(m_assetPath, textureAsset->getFileName());
+			Ref< IStream > file = FileSystem::getInstance().open(filePath, File::FmRead);
+			if (file)
 			{
-				const Path filePath = FileSystem::getInstance().getAbsolutePath(m_assetPath, textureAsset->getFileName());
-				Ref< IStream > file = FileSystem::getInstance().open(filePath, File::FmRead);
-				if (file)
+				image = drawing::Image::load(file, textureAsset->getFileName().getExtension());
+				if (image)
 				{
-					image = drawing::Image::load(file, textureAsset->getFileName().getExtension());
-					if (image)
+					const drawing::ScaleFilter scaleFilter(width, height, drawing::ScaleFilter::MnAverage, drawing::ScaleFilter::MgLinear);
+					image->apply(&scaleFilter);
+
+					if (abs(textureAsset->m_output.m_brightness) > FUZZY_EPSILON || abs(textureAsset->m_output.m_contrast - 1.0f) > FUZZY_EPSILON)
 					{
-						const drawing::ScaleFilter scaleFilter(width, height, drawing::ScaleFilter::MnAverage, drawing::ScaleFilter::MgLinear);
-						image->apply(&scaleFilter);
+						const drawing::BrightnessContrastFilter brightnessContrastFiler(textureAsset->m_output.m_brightness, textureAsset->m_output.m_contrast);
+						image->apply(&brightnessContrastFiler);
 					}
 				}
 			}
-			else
-				image = TrimSheetBrowsePreview::generateImage(m_assetPath, m_database, textureNode->getExternal(), width, height);
 		}
+		else
+			image = TrimSheetBrowsePreview::generateImage(m_assetPath, m_database, textureNode->getExternal(), width, height);
 	}
 
 	return image;
