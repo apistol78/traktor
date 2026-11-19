@@ -1002,8 +1002,8 @@ else
 			<id>{EC854AD8-5264-5D4C-83FF-8167663DA901}</id>
 			<comment/>
 			<position>
-				<first>3844</first>
-				<second>-2882</second>
+				<first>4147</first>
+				<second>-2889</second>
 			</position>
 			<name>L_AtlasTransform</name>
 		</item>
@@ -1011,16 +1011,16 @@ else
 			<id>{263D4672-45AF-6343-9C19-EB96B45D6423}</id>
 			<comment/>
 			<position>
-				<first>3842</first>
-				<second>-3162</second>
+				<first>4145</first>
+				<second>-3169</second>
 			</position>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{068CBD76-B11C-DD49-81F6-7C2733DCDE13}</id>
 			<comment/>
 			<position>
-				<first>4076</first>
-				<second>-3145</second>
+				<first>4379</first>
+				<second>-3152</second>
 			</position>
 			<name>L_ViewToLight</name>
 		</item>
@@ -1136,8 +1136,8 @@ else
 			<id>{F5EB0244-AC11-2146-85F4-6A420BC0D973}</id>
 			<comment/>
 			<position>
-				<first>2687</first>
-				<second>-1563</second>
+				<first>2693</first>
+				<second>-1607</second>
 			</position>
 			<value>1</value>
 		</item>
@@ -1149,8 +1149,8 @@ Check max shadow distance
 			
 			]]></comment>
 			<position>
-				<first>2903</first>
-				<second>-1668</second>
+				<first>2915</first>
+				<second>-1728</second>
 			</position>
 			<branch>BrAuto</branch>
 			<operator>CoLess</operator>
@@ -1160,7 +1160,7 @@ Check max shadow distance
 			<comment/>
 			<position>
 				<first>2682</first>
-				<second>-1726</second>
+				<second>-1858</second>
 			</position>
 			<swizzle>z</swizzle>
 		</item>
@@ -1169,7 +1169,7 @@ Check max shadow distance
 			<comment/>
 			<position>
 				<first>2682</first>
-				<second>-1662</second>
+				<second>-1794</second>
 			</position>
 			<swizzle>w</swizzle>
 		</item>
@@ -1178,7 +1178,7 @@ Check max shadow distance
 			<comment/>
 			<position>
 				<first>2416</first>
-				<second>-1726</second>
+				<second>-1858</second>
 			</position>
 			<name>L_ViewPosition</name>
 		</item>
@@ -1187,7 +1187,7 @@ Check max shadow distance
 			<comment/>
 			<position>
 				<first>2371</first>
-				<second>-1598</second>
+				<second>-1730</second>
 			</position>
 			<fragmentGuid>{98E94923-B934-8E4E-ADDC-A5CF9CD1CB23}</fragmentGuid>
 			<inputPins>
@@ -1229,7 +1229,7 @@ Check max shadow distance
 			<comment/>
 			<position>
 				<first>2139</first>
-				<second>-1480</second>
+				<second>-1612</second>
 			</position>
 			<name>L_ViewToLight</name>
 		</item>
@@ -1238,7 +1238,7 @@ Check max shadow distance
 			<comment/>
 			<position>
 				<first>2139</first>
-				<second>-1544</second>
+				<second>-1676</second>
 			</position>
 			<name>L_ViewPosition</name>
 		</item>
@@ -1247,7 +1247,7 @@ Check max shadow distance
 			<comment/>
 			<position>
 				<first>2131</first>
-				<second>-1736</second>
+				<second>-1868</second>
 			</position>
 			<name>L_AtlasTransform</name>
 		</item>
@@ -1553,8 +1553,8 @@ Eye direction
 			<id>{C673BC87-9247-204D-A5D4-DD97FEE7475A}</id>
 			<comment/>
 			<position>
-				<first>2924</first>
-				<second>-1518</second>
+				<first>2951</first>
+				<second>-1823</second>
 			</position>
 			<name>L_ShadowEnable</name>
 		</item>
@@ -1576,8 +1576,8 @@ Check max shadow distance
 			<id>{E285429C-ECA8-0F49-9C96-35DB30EED8D9}</id>
 			<comment/>
 			<position>
-				<first>2937</first>
-				<second>-1454</second>
+				<first>2971</first>
+				<second>-1777</second>
 			</position>
 			<value>0</value>
 		</item>
@@ -1585,8 +1585,8 @@ Check max shadow distance
 			<id>{63726028-D091-1343-A500-8746F33FB1D2}</id>
 			<comment/>
 			<position>
-				<first>2937</first>
-				<second>-1390</second>
+				<first>2974</first>
+				<second>-1594</second>
 			</position>
 			<value>1</value>
 		</item>
@@ -1594,8 +1594,8 @@ Check max shadow distance
 			<id>{0B2541A4-2354-AF4F-A76B-3C83ABAFD08F}</id>
 			<comment/>
 			<position>
-				<first>6274</first>
-				<second>-2940</second>
+				<first>6301</first>
+				<second>-2895</second>
 			</position>
 			<name>L_ContactShadows</name>
 		</item>
@@ -1655,7 +1655,7 @@ Check max shadow distance
 			<comment/>
 			<position>
 				<first>2123</first>
-				<second>-1416</second>
+				<second>-1548</second>
 			</position>
 			<name>L_ContactShadows</name>
 		</item>
@@ -1663,8 +1663,8 @@ Check max shadow distance
 			<id>{E7FDF29D-9520-A04B-B10E-92FE2F7AE2F0}</id>
 			<comment/>
 			<position>
-				<first>2669</first>
-				<second>-1499</second>
+				<first>2670</first>
+				<second>-1715</second>
 			</position>
 		</item>
 		<item type="traktor.render.External" version="3,traktor.render.Node:1">
@@ -1672,7 +1672,7 @@ Check max shadow distance
 			<comment/>
 			<position>
 				<first>2411</first>
-				<second>-1434</second>
+				<second>-1566</second>
 			</position>
 			<fragmentGuid>{F94569E5-AAAB-DC4B-BC80-A499121F0295}</fragmentGuid>
 			<inputPins>
@@ -1728,7 +1728,7 @@ Check max shadow distance
 			<comment/>
 			<position>
 				<first>2139</first>
-				<second>-1672</second>
+				<second>-1804</second>
 			</position>
 			<name>L_ShadowBias</name>
 		</item>
@@ -2218,8 +2218,8 @@ $F0 = vec4(CalculateF0(albedo, metallic), 0.0f);
 			<id>{E4480737-8DF2-EE48-AE8E-FE10A90AFCA4}</id>
 			<comment/>
 			<position>
-				<first>2932</first>
-				<second>-1907</second>
+				<first>2997</first>
+				<second>-1943</second>
 			</position>
 			<name>L_Direction</name>
 		</item>
@@ -2227,8 +2227,8 @@ $F0 = vec4(CalculateF0(albedo, metallic), 0.0f);
 			<id>{68ECDAE9-1A5E-EA4D-A310-816363CB8944}</id>
 			<comment/>
 			<position>
-				<first>2932</first>
-				<second>-1843</second>
+				<first>3006</first>
+				<second>-1897</second>
 			</position>
 			<name>L_ViewPosition</name>
 		</item>
@@ -2937,7 +2937,7 @@ $U = 1.0f - d;
 			<comment/>
 			<position>
 				<first>2400</first>
-				<second>-1662</second>
+				<second>-1794</second>
 			</position>
 			<parameterDeclaration>{C07DE459-F7F5-E342-A08D-9713D548C99D}</parameterDeclaration>
 		</item>
@@ -2946,7 +2946,7 @@ $U = 1.0f - d;
 			<comment/>
 			<position>
 				<first>2115</first>
-				<second>-1608</second>
+				<second>-1740</second>
 			</position>
 			<parameterDeclaration>{4FAD9362-0B48-CC41-A154-D6806896E9E6}</parameterDeclaration>
 		</item>
@@ -3087,16 +3087,16 @@ $U = 1.0f - d;
 			<id>{9DF5B021-D529-4945-B25E-6D25A3B050B1}</id>
 			<comment/>
 			<position>
-				<first>3258</first>
-				<second>-3129</second>
+				<first>3561</first>
+				<second>-3136</second>
 			</position>
 		</item>
 		<item type="traktor.render.MemberValue" version="traktor.render.Node:1">
 			<id>{7C68C31F-0ACF-564B-ADEF-32A5D5439E52}</id>
 			<comment/>
 			<position>
-				<first>3608</first>
-				<second>-3303</second>
+				<first>3911</first>
+				<second>-3310</second>
 			</position>
 			<memberName>ViewToLight0</memberName>
 		</item>
@@ -3104,8 +3104,8 @@ $U = 1.0f - d;
 			<id>{AFB7A6E9-B7FA-8C47-9287-DC323847E2CD}</id>
 			<comment/>
 			<position>
-				<first>3608</first>
-				<second>-3204</second>
+				<first>3911</first>
+				<second>-3211</second>
 			</position>
 			<memberName>ViewToLight1</memberName>
 		</item>
@@ -3113,8 +3113,8 @@ $U = 1.0f - d;
 			<id>{E39A366C-D7CB-1943-B80D-44B027258909}</id>
 			<comment/>
 			<position>
-				<first>3608</first>
-				<second>-3105</second>
+				<first>3911</first>
+				<second>-3112</second>
 			</position>
 			<memberName>ViewToLight2</memberName>
 		</item>
@@ -3122,8 +3122,8 @@ $U = 1.0f - d;
 			<id>{3FFA06DC-2E8B-A94E-9961-A5572876B6DC}</id>
 			<comment/>
 			<position>
-				<first>3608</first>
-				<second>-3006</second>
+				<first>3911</first>
+				<second>-3013</second>
 			</position>
 			<memberName>ViewToLight3</memberName>
 		</item>
@@ -3131,8 +3131,8 @@ $U = 1.0f - d;
 			<id>{C7543DB3-2996-E54C-A157-66662E4F862C}</id>
 			<comment/>
 			<position>
-				<first>3610</first>
-				<second>-2914</second>
+				<first>3913</first>
+				<second>-2921</second>
 			</position>
 			<memberName>AtlasTransform</memberName>
 		</item>
@@ -3301,8 +3301,8 @@ $Output = BlueNoise(seed);
 			<id>{1F958DF2-EB0F-4CB1-A336-8BC56DA9B871}</id>
 			<comment/>
 			<position>
-				<first>3049</first>
-				<second>-3858</second>
+				<first>3553</first>
+				<second>-3874</second>
 			</position>
 			<name>GetShadowIndex</name>
 			<technique/>
@@ -3444,8 +3444,8 @@ if (lightType.x == 2.0f && lightType.y > 0.0f)
 			<id>{6141EC71-9C72-4AFF-8FD8-D9CA3051BD66}</id>
 			<comment/>
 			<position>
-				<first>2701</first>
-				<second>1695</second>
+				<first>2751</first>
+				<second>1680</second>
 			</position>
 			<name>L_ViewToLight</name>
 		</item>
@@ -3453,8 +3453,8 @@ if (lightType.x == 2.0f && lightType.y > 0.0f)
 			<id>{EFE58DC9-A238-4EDE-B280-F1917EA2E8DB}</id>
 			<comment/>
 			<position>
-				<first>2693</first>
-				<second>1427</second>
+				<first>2735</first>
+				<second>1412</second>
 			</position>
 			<name>L_AtlasTransform</name>
 		</item>
@@ -3479,8 +3479,8 @@ if (lightType.x == 2.0f && lightType.y > 0.0f)
 			<id>{9761B483-AF1F-4B78-9331-2B6E5AC7FB5D}</id>
 			<comment/>
 			<position>
-				<first>-1800</first>
-				<second>2400</second>
+				<first>2161</first>
+				<second>-3535</second>
 			</position>
 			<name>ShadowNormalOffset</name>
 			<technique/>
@@ -3535,8 +3535,8 @@ $Output = vec4(P + N * normalOffset, 1.0f);
 			<id>{FB474E6B-AA48-4A2C-B4B0-1D633A6A4E4B}</id>
 			<comment/>
 			<position>
-				<first>-2100</first>
-				<second>2400</second>
+				<first>1861</first>
+				<second>-3535</second>
 			</position>
 			<name>L_ViewPosition</name>
 		</item>
@@ -3544,8 +3544,8 @@ $Output = vec4(P + N * normalOffset, 1.0f);
 			<id>{E47CB102-29BF-4B0C-87B3-E3082C65897B}</id>
 			<comment/>
 			<position>
-				<first>-2100</first>
-				<second>2440</second>
+				<first>1861</first>
+				<second>-3495</second>
 			</position>
 			<name>L_ViewNormal</name>
 		</item>
@@ -3553,8 +3553,8 @@ $Output = vec4(P + N * normalOffset, 1.0f);
 			<id>{6E0CD7ED-2D93-4ACB-BC69-1418A99BCC23}</id>
 			<comment/>
 			<position>
-				<first>-1500</first>
-				<second>2400</second>
+				<first>2461</first>
+				<second>-3535</second>
 			</position>
 			<name>L_ShadowPosition</name>
 		</item>
@@ -3562,8 +3562,8 @@ $Output = vec4(P + N * normalOffset, 1.0f);
 			<id>{8CB56827-4618-414E-8942-42D934112F58}</id>
 			<comment/>
 			<position>
-				<first>-1700</first>
-				<second>2300</second>
+				<first>3263</first>
+				<second>-3854</second>
 			</position>
 			<name>L_ShadowPosition</name>
 		</item>
@@ -3571,8 +3571,8 @@ $Output = vec4(P + N * normalOffset, 1.0f);
 			<id>{CCCF339C-2C90-42C9-8F90-D02FD57C2569}</id>
 			<comment/>
 			<position>
-				<first>2400</first>
-				<second>1100</second>
+				<first>2455</first>
+				<second>1008</second>
 			</position>
 			<name>ShadowMetricBias</name>
 			<technique/>
@@ -3650,8 +3650,8 @@ $Output = $MetricBias * $ShadowType.z / (depth * depth);
 			<id>{98021404-3236-4012-ABC7-C72FD4F7F464}</id>
 			<comment/>
 			<position>
-				<first>2700</first>
-				<second>1600</second>
+				<first>2445</first>
+				<second>1479</second>
 			</position>
 			<name>ShadowMetricBias</name>
 			<technique/>
@@ -3711,8 +3711,8 @@ $Output = $MetricBias * $ShadowType.z / (depth * depth);
 			<id>{2C5C4774-DD62-4685-8EF6-2DF1773BA536}</id>
 			<comment/>
 			<position>
-				<first>2400</first>
-				<second>1600</second>
+				<first>2137</first>
+				<second>1462</second>
 			</position>
 			<name>L_ShadowPosition</name>
 		</item>
@@ -3720,10 +3720,37 @@ $Output = $MetricBias * $ShadowType.z / (depth * depth);
 			<id>{2C65246D-56C1-4652-BE90-051F451309E9}</id>
 			<comment/>
 			<position>
-				<first>2400</first>
-				<second>1660</second>
+				<first>2735</first>
+				<second>1637</second>
 			</position>
 			<name>L_ShadowPosition</name>
+		</item>
+		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
+			<id>{430B575E-0AA2-994B-AA74-499BE929138D}</id>
+			<comment/>
+			<position>
+				<first>2263</first>
+				<second>1148</second>
+			</position>
+			<parameterDeclaration>{F67DC97C-6998-3743-9E39-137850D48C97}</parameterDeclaration>
+		</item>
+		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
+			<id>{5CC66985-650D-4847-9D65-416AB470B66B}</id>
+			<comment/>
+			<position>
+				<first>2221</first>
+				<second>1610</second>
+			</position>
+			<parameterDeclaration>{F67DC97C-6998-3743-9E39-137850D48C97}</parameterDeclaration>
+		</item>
+		<item type="traktor.render.Parameter" version="traktor.render.Node:1">
+			<id>{64CBC44D-6063-E74F-9CFF-D39728071D26}</id>
+			<comment/>
+			<position>
+				<first>2703</first>
+				<second>1561</second>
+			</position>
+			<parameterDeclaration>{4FAD9362-0B48-CC41-A154-D6806896E9E6}</parameterDeclaration>
 		</item>
 	</nodes>
 	<edges>
@@ -4735,16 +4762,6 @@ $Output = $MetricBias * $ShadowType.z / (depth * depth);
 			<destination>
 				<node ref="/object/nodes/item[157]"/>
 				<id>{FFDB9FDA-39B0-844D-98DB-B36853469D19}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[159]"/>
-				<id>{D33F8931-C90C-4EBA-8A04-A31D3E08FAB7}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[143]"/>
-				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
@@ -6499,16 +6516,6 @@ $Output = $MetricBias * $ShadowType.z / (depth * depth);
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[229]"/>
-				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[276]"/>
-				<id>{4020E901-E457-6D4A-9CB8-7A8881B4D794}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
 				<node ref="/object/nodes/item[34]"/>
 				<id>{9E839249-E9B9-4736-8BDD-A95A1C892B42}</id>
 			</source>
@@ -6669,16 +6676,6 @@ $Output = $MetricBias * $ShadowType.z / (depth * depth);
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[233]"/>
-				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[286]"/>
-				<id>{220DDA95-7E1E-4BA1-8D27-372D9C3E2AA1}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
 				<node ref="/object/nodes/item[288]"/>
 				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
 			</source>
@@ -6759,16 +6756,6 @@ $Output = $MetricBias * $ShadowType.z / (depth * depth);
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[233]"/>
-				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[289]"/>
-				<id>{DA0C8864-6AEB-487A-9061-535AE9414C55}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
 				<node ref="/object/nodes/item[291]"/>
 				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
 			</source>
@@ -6785,6 +6772,46 @@ $Output = $MetricBias * $ShadowType.z / (depth * depth);
 			<destination>
 				<node ref="/object/nodes/item[276]"/>
 				<id>{2A0E04B1-B1D0-3D45-91D5-559E94641FD0}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[292]"/>
+				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[286]"/>
+				<id>{220DDA95-7E1E-4BA1-8D27-372D9C3E2AA1}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[293]"/>
+				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[289]"/>
+				<id>{DA0C8864-6AEB-487A-9061-535AE9414C55}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[294]"/>
+				<id>{D101AE9F-E124-4371-8603-15D187427DDA}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[276]"/>
+				<id>{4020E901-E457-6D4A-9CB8-7A8881B4D794}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[144]"/>
+				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[143]"/>
+				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
 			</destination>
 		</item>
 	</edges>
@@ -6857,8 +6884,8 @@ $Output = $MetricBias * $ShadowType.z / (depth * depth);
 				<second>-4641</second>
 			</position>
 			<size>
-				<first>2599</first>
-				<second>2477</second>
+				<first>3073</first>
+				<second>2465</second>
 			</size>
 		</item>
 		<item type="traktor.render.Group">

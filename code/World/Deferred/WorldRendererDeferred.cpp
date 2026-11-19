@@ -32,7 +32,6 @@
 #include "World/Entity/FogComponent.h"
 #include "World/Entity/IntervalTransformComponent.h"
 #include "World/Entity/LightComponent.h"
-#include "World/World.h"
 #include "World/Entity/ProbeComponent.h"
 #include "World/IEntityRenderer.h"
 #include "World/IrradianceGrid.h"
@@ -52,6 +51,7 @@
 #include "World/Shared/Passes/VolumetricFogPass.h"
 #include "World/Shared/Passes/ZPrePass.h"
 #include "World/Shared/WorldRenderPassShared.h"
+#include "World/World.h"
 #include "World/WorldBuildContext.h"
 #include "World/WorldEntityRenderers.h"
 #include "World/WorldHandles.h"
@@ -116,7 +116,7 @@ void WorldRendererDeferred::setup(
 {
 	WorldRenderView worldRenderView = immutableWorldRenderView;
 	const uint32_t count = m_state[worldRenderView.getIndex()].count;
-	const bool needJitter =  (m_postProcessPass != nullptr) ? m_postProcessPass->needCameraJitter() : false;
+	const bool needJitter = (m_postProcessPass != nullptr) ? m_postProcessPass->needCameraJitter() : false;
 
 	// Adjust view size to properly reflect our internal resolution.
 	const float resolutionScale = (m_postProcessPass != nullptr) ? m_postProcessPass->getResolutionScale() : 1.0f;
@@ -198,7 +198,7 @@ void WorldRendererDeferred::setup(
 
 	// Add passes to render graph.
 	m_lightClusterPass->setup(worldRenderView, m_gatheredView);
-	
+
 	// ... using gathered renderables.
 	const auto zprepassTargetSetId = m_zPrePass->setup(worldRenderView, m_gatheredView, renderGraph, hizTextureId, visualTargetSetId.current);
 	const auto gbufferTargetSetId = m_gbufferPass->setup(worldRenderView, m_gatheredView, ShaderTechnique::DeferredGBufferWrite, renderGraph, hizTextureId, zprepassTargetSetId, visualTargetSetId.current);
@@ -215,7 +215,7 @@ void WorldRendererDeferred::setup(
 	const auto irradianceTargetSetId = m_irradiancePass->setup(worldRenderView, m_gatheredView, lightSBuffer, lightGridSBuffer, lightGridIndexSBuffer, needJitter, count, renderGraph, gbufferTargetSetId, velocityTargetSetId, halfResDepthTextureId, visualTargetSetId.current, irradianceFieldTextureId);
 	const auto ambientOcclusionTargetSetId = m_ambientOcclusionPass->setup(worldRenderView, m_gatheredView, needJitter, count, renderGraph, gbufferTargetSetId, halfResDepthTextureId, visualTargetSetId.current);
 	const auto fogVolumeTextureId = m_volumetricFogPass->setup(worldRenderView, m_gatheredView, lightSBuffer, tileSBuffer, lightIndexSBuffer, m_whiteTexture, count, m_state[worldRenderView.getIndex()].slicePositions, renderGraph, shadowMapAtlasTargetSetId);
-	const auto contactShadowsTargetSetId = m_contactShadowsPass->setup(worldRenderView, m_gatheredView, renderGraph, gbufferTargetSetId, visualTargetSetId.current);
+	const auto contactShadowsTargetSetId = m_contactShadowsPass->setup(worldRenderView, m_gatheredView, needJitter, count, renderGraph, gbufferTargetSetId, visualTargetSetId.current);
 	const auto reflectionsTargetSetId = m_reflectionsPass->setup(worldRenderView, m_gatheredView, lightSBuffer, lightGridSBuffer, lightGridIndexSBuffer, m_blackCubeTexture, needJitter, count, renderGraph, gbufferTargetSetId, dbufferTargetSetId, visualTargetSetId.previous, velocityTargetSetId, halfResDepthTextureId, visualTargetSetId.current);
 
 	setupVisualPass(
@@ -293,7 +293,7 @@ void WorldRendererDeferred::setupVisualPass(
 		rp->addInput(dbufferTargetSetId);
 		rp->addInput(irradianceTargetSetId);
 		rp->addInput(ambientOcclusionTargetSetId);
-		// rp->addInput(contactShadowsTargetSetId);
+		rp->addInput(contactShadowsTargetSetId);
 		rp->addInput(reflectionsTargetSetId);
 		rp->addInput(shadowMapAtlasTargetSetId);
 		rp->addInput(fogVolumeTextureId);
@@ -321,7 +321,7 @@ void WorldRendererDeferred::setupVisualPass(
 			const auto dbufferTargetSet = renderGraph.getTargetSet(dbufferTargetSetId);
 			const auto irradianceTargetSet = renderGraph.getTargetSet(irradianceTargetSetId);
 			const auto ambientOcclusionTargetSet = renderGraph.getTargetSet(ambientOcclusionTargetSetId);
-			// const auto contactShadowsTargetSet = renderGraph.getTargetSet(contactShadowsTargetSetId);
+			const auto contactShadowsTargetSet = renderGraph.getTargetSet(contactShadowsTargetSetId);
 			const auto reflectionsTargetSet = renderGraph.getTargetSet(reflectionsTargetSetId);
 			const auto shadowAtlasTargetSet = renderGraph.getTargetSet(shadowMapAtlasTargetSetId);
 			const auto fogVolumeTexture = renderGraph.getTexture(fogVolumeTextureId);
@@ -391,10 +391,10 @@ void WorldRendererDeferred::setupVisualPass(
 			else
 				sharedParams->setTextureParameter(ShaderParameter::OcclusionMap, m_whiteTexture);
 
-			// if (contactShadowsTargetSet != nullptr)
-			// 	sharedParams->setTextureParameter(ShaderParameter::ContactShadowsMap, contactShadowsTargetSet->getColorTexture(0));
-			// else
-			// 	sharedParams->setTextureParameter(ShaderParameter::ContactShadowsMap, m_blackTexture);
+			 if (contactShadowsTargetSet != nullptr)
+			 	sharedParams->setTextureParameter(ShaderParameter::ContactShadowsMap, contactShadowsTargetSet->getColorTexture(0));
+			 else
+			 	sharedParams->setTextureParameter(ShaderParameter::ContactShadowsMap, m_blackTexture);
 
 			if (reflectionsTargetSet != nullptr)
 				sharedParams->setTextureParameter(ShaderParameter::ReflectionMap, reflectionsTargetSet->getColorTexture(0));

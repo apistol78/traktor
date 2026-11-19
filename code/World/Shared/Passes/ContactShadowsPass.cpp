@@ -68,6 +68,8 @@ void ContactShadowsPass::destroy()
 render::RGTargetSet ContactShadowsPass::setup(
 	const WorldRenderView& worldRenderView,
 	const GatherView& gatheredView,
+	bool needJitter,
+	uint32_t frameCount,
 	render::RenderGraph& renderGraph,
 	render::RGTargetSet gbufferTargetSetId,
 	render::RGTargetSet outputTargetSetId) const
@@ -117,8 +119,12 @@ render::RGTargetSet ContactShadowsPass::setup(
 	clear.colors[0] = Color4f(0.0f, 0.0f, 0.0f, 0.0f);
 	rp->setOutput(contactShadowsTargetSetId, clear, render::TfNone, render::TfColor);
 
+	const Vector2 jrc = needJitter ? jitter(frameCount) / worldRenderView.getViewSize() : Vector2::zero();
+	const Vector2 jrp = needJitter ? jitter(frameCount - 1) / worldRenderView.getViewSize() : Vector2::zero();
+
 	auto setParameters = [=](const render::RenderGraph& renderGraph, render::ProgramParameters* params) {
 		const auto gbufferTargetSet = renderGraph.getTargetSet(gbufferTargetSetId);
+		params->setVectorParameter(ShaderParameter::Jitter, Vector4(jrp.x, -jrp.y, jrc.x, -jrc.y)); // Texture space.
 		params->setTextureParameter(ShaderParameter::GBufferA, gbufferTargetSet->getColorTexture(0));
 		params->setTextureParameter(ShaderParameter::GBufferB, gbufferTargetSet->getColorTexture(1));
 		params->setTextureParameter(ShaderParameter::GBufferC, gbufferTargetSet->getColorTexture(2));

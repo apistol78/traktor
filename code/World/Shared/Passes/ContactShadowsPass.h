@@ -51,6 +51,8 @@ public:
 	render::RGTargetSet setup(
 		const WorldRenderView& worldRenderView,
 		const GatherView& gatheredView,
+		bool needJitter,
+		uint32_t frameCount,
 		render::RenderGraph& renderGraph,
 		render::RGTargetSet gbufferTargetSetId,
 		render::RGTargetSet outputTargetSetId) const;
