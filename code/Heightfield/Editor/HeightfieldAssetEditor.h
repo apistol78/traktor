@@ -10,6 +10,9 @@
 
 #include "Core/Ref.h"
 #include "Editor/IObjectEditor.h"
+#include "Ui/Rect.h"
+
+#include <functional>
 
 namespace traktor::drawing
 {
@@ -28,10 +31,16 @@ class IEditor;
 namespace traktor::ui
 {
 
+class Bitmap;
+class Canvas;
 class Container;
 class Edit;
-class Image;
+class FocusEvent;
+class KeyDownEvent;
+class MouseButtonDownEvent;
+class PaintEvent;
 class ToolBarButtonClickEvent;
+class ToolBarDropDown;
 
 }
 
@@ -64,18 +73,70 @@ private:
 	editor::IEditor* m_editor;
 	Ref< db::Instance > m_instance;
 	Ref< HeightfieldAsset > m_asset;
-	Ref< Heightfield > m_heightfield;
-	Ref< drawing::Image > m_previewImage;
+	Ref< drawing::Image > m_previewImages[4];
+	Ref< drawing::Image > m_tilePreviewImages[4];
+	Ref< ui::Bitmap > m_previewBitmap;
+	Ref< ui::Bitmap > m_tilePreviewBitmap;
 	Ref< ui::Container > m_container;
 	Ref< ui::Edit > m_editExtent[3];
 	Ref< ui::Edit > m_editTiles;
-	Ref< ui::Edit > m_editSize;
-	Ref< ui::Image > m_imagePreview;
-	bool m_heightfieldModified = false;
+	Ref< ui::ToolBarDropDown > m_toolLayer;
+	Ref< ui::Widget > m_previewControl;
+	Ref< ui::Widget > m_tilePreviewControl;
+	int32_t m_tileSize = 0;
+	int32_t m_previewStep = 1;
+	int32_t m_tilePreviewStep = 1;
+	int32_t m_selectedTileX = 0;
+	int32_t m_selectedTileZ = 0;
+
+	//! Read, modify and write tiles in range, inclusive, row by row; modify return false to abort.
+	bool modifyTiles(int32_t tileX0, int32_t tileZ0, int32_t tileX1, int32_t tileZ1, const std::function< bool(Heightfield* tile, int32_t tileX, int32_t tileZ) >& modify);
+
+	//! Import raw file covering tiles in range into selected layer.
+	bool importRaw(int32_t tileX0, int32_t tileZ0, int32_t tileX1, int32_t tileZ1);
+
+	//! Clear selected layer of tiles in range.
+	bool clear(int32_t tileX0, int32_t tileZ0, int32_t tileX1, int32_t tileZ1);
+
+	bool remapHeights();
+
+	//! Transform unit heights of all tiles, h * scale + offset.
+	bool scaleHeights(float scale, float offset);
+
+	//! Add or remove tiles at +X/+Z edges; tile size is kept thus world extent change accordingly.
+	bool resizeTiles(int32_t tileCount);
+
+	//! Apply world extent and tile count fields; modifies heightfield.
+	void applyFields();
+
+	void updateFields();
+
+	//! Read every tile into preview images.
+	bool readPreview();
+
+	//! Read selected tile into tile preview images.
+	bool readTilePreview();
+
+	//! Box filter heightfield, by step, into all four layer images at x0, z0.
+	void updatePreview(const Heightfield* heightfield, int32_t step, int32_t x0, int32_t z0, Ref< drawing::Image >* images);
 
 	void updatePreviewImage();
 
+	ui::Rect getPreviewRect(const ui::Widget* control) const;
+
+	void paintPreview(ui::Canvas& canvas, ui::Widget* control, ui::Bitmap* bitmap) const;
+
 	void eventToolBar(ui::ToolBarButtonClickEvent* event);
+
+	void eventFieldFocus(ui::FocusEvent* event);
+
+	void eventFieldKeyDown(ui::KeyDownEvent* event);
+
+	void eventPreviewPaint(ui::PaintEvent* event);
+
+	void eventPreviewButtonDown(ui::MouseButtonDownEvent* event);
+
+	void eventTilePreviewPaint(ui::PaintEvent* event);
 };
 
 }

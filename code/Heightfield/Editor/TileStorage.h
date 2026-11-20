@@ -11,6 +11,7 @@
 #include "Core/Math/Vector4.h"
 #include "Core/Object.h"
 #include "Core/Ref.h"
+#include "Core/RefArray.h"
 
 #include <string>
 
@@ -83,6 +84,9 @@ public:
 
 	//! Write single tile, with all of its layers, exactly as stored.
 	bool writeStoredTile(int32_t tileX, int32_t tileZ, const Heightfield* tile) const;
+
+	//! Write tiles in range, inclusive tile coordinates, row major, exactly as stored; tiles are encoded in parallel.
+	bool writeStoredTiles(int32_t tileX0, int32_t tileZ0, int32_t tileX1, int32_t tileZ1, const RefArray< const Heightfield >& tiles) const;
 
 private:
 	Ref< db::Instance > m_instance;

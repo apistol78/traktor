@@ -27,6 +27,7 @@
 #include "Heightfield/HeightfieldFormat.h"
 
 #include <algorithm>
+#include <atomic>
 #include <cstring>
 
 namespace traktor::hf
@@ -325,29 +326,55 @@ Ref< Heightfield > TileStorage::readStoredTile(const Vector4& worldExtent, int32
 
 bool TileStorage::writeStoredTile(int32_t tileX, int32_t tileZ, const Heightfield* tile) const
 {
-	const std::wstring name = getChannelName(L"Data", tileX, tileZ);
+	RefArray< const Heightfield > tiles;
+	tiles.push_back(tile);
+	return writeStoredTiles(tileX, tileZ, tileX, tileZ, tiles);
+}
 
-	Ref< IStream > stream = m_instance->writeData(name);
-	if (!stream)
+bool TileStorage::writeStoredTiles(int32_t tileX0, int32_t tileZ0, int32_t tileX1, int32_t tileZ1, const RefArray< const Heightfield >& tiles) const
+{
+	const int32_t width = tileX1 - tileX0 + 1;
+
+	// Streams are created by calling thread, which owns the transaction; tiles are encoded in parallel.
+	RefArray< IStream > streams;
+	for (int32_t tz = tileZ0; tz <= tileZ1; ++tz)
 	{
-		log::error << L"Unable to write heightfield; failed to create \"" << name << L"\" in instance." << Endl;
-		return false;
+		for (int32_t tx = tileX0; tx <= tileX1; ++tx)
+		{
+			Ref< IStream > stream = m_instance->writeData(getChannelName(L"Data", tx, tz));
+			if (!stream)
+			{
+				log::error << L"Unable to write heightfield; failed to create \"" << getChannelName(L"Data", tx, tz) << L"\" in instance." << Endl;
+				return false;
+			}
+			streams.push_back(stream);
+		}
 	}
 
-	bool result;
-	if (m_tileCount > 0)
-	{
-		Ref< IStream > deflate = new compress::DeflateStreamZip(stream, c_zipBufferSize);
-		result = HeightfieldFormat().write(deflate, tile);
-		deflate->close();
-	}
-	else
-		result = HeightfieldFormat().write(stream, tile);
+	std::atomic< bool > result = true;
+	AlignedVector< Job::task_t > tasks;
+	for (int32_t i = 0; i < (int32_t)streams.size(); ++i)
+		tasks.push_back([&, i]() {
+			IStream* stream = streams[i];
+			bool written;
+			if (m_tileCount > 0)
+			{
+				Ref< IStream > deflate = new compress::DeflateStreamZip(stream, c_zipBufferSize);
+				written = HeightfieldFormat().write(deflate, tiles[i]);
+				deflate->close();
+			}
+			else
+				written = HeightfieldFormat().write(stream, tiles[i]);
 
-	stream->close();
+			stream->close();
 
-	if (!result)
-		log::error << L"Unable to write heightfield; failed to write \"" << name << L"\"." << Endl;
+			if (!written)
+			{
+				log::error << L"Unable to write heightfield; failed to write \"" << getChannelName(L"Data", tileX0 + i % width, tileZ0 + i / width) << L"\"." << Endl;
+				result = false;
+			}
+		});
+	JobManager::getInstance().fork(tasks.c_ptr(), tasks.size());
 
 	return result;
 }

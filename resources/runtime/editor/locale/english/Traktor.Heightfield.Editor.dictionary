@@ -22,6 +22,22 @@
 			<second>(world units)</second>
 		</item>
 		<item>
+			<first>HEIGHTFIELD_ASSET_IMPORT_RAW_MESSAGE</first>
+			<second>Raw must be square; heights and cuts have one component, splats and colors four (RGBA). Y range puts raw zero at 0 m, 0 to skip.</second>
+		</item>
+		<item>
+			<first>HEIGHTFIELD_ASSET_IMPORT_RAW_TITLE</first>
+			<second>Import raw</second>
+		</item>
+		<item>
+			<first>HEIGHTFIELD_ASSET_REMAP_HEIGHTS_MESSAGE</first>
+			<second>Remap heights of all tiles linearly from one range into another (world units).</second>
+		</item>
+		<item>
+			<first>HEIGHTFIELD_ASSET_REMAP_HEIGHTS_TITLE</first>
+			<second>Remap heights</second>
+		</item>
+		<item>
 			<first>HEIGHTFIELD_ASSET_SIZE</first>
 			<second>Data size</second>
 		</item>
