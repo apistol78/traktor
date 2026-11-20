@@ -145,9 +145,9 @@ private:
 
 	void eventTimer(ui::TimerEvent* event);
 
-	void eventInstanceSelect(ui::SelectionChangeEvent* event);
+	void eventTreeGroupSelect(ui::SelectionChangeEvent* event);
 
-	void eventTreeInstanceButtonDown(ui::TreeViewItemMouseButtonDownEvent* event);
+	void eventTreeGroupButtonDown(ui::TreeViewItemMouseButtonDownEvent* event);
 
 	void eventTreeContentChange(ui::TreeViewContentChangeEvent* event);
 

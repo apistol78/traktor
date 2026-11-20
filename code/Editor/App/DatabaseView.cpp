@@ -422,8 +422,8 @@ bool DatabaseView::create(ui::Widget* parent)
 		m_treeDatabase->addImage(new ui::StyleBitmap(L"Editor.Database.Types", i));
 	for (int32_t i = 0; i < 23; ++i)
 		m_treeDatabase->addImage(new ui::StyleBitmap(L"Editor.Database.TypesHidden", i));
-	m_treeDatabase->addEventHandler< ui::SelectionChangeEvent >(this, &DatabaseView::eventInstanceSelect);
-	m_treeDatabase->addEventHandler< ui::TreeViewItemMouseButtonDownEvent >(this, &DatabaseView::eventTreeInstanceButtonDown);
+	m_treeDatabase->addEventHandler< ui::SelectionChangeEvent >(this, &DatabaseView::eventTreeGroupSelect);
+	m_treeDatabase->addEventHandler< ui::TreeViewItemMouseButtonDownEvent >(this, &DatabaseView::eventTreeGroupButtonDown);
 	m_treeDatabase->addEventHandler< ui::TreeViewContentChangeEvent >(this, &DatabaseView::eventTreeContentChange);
 	m_treeDatabase->addEventHandler< ui::DragEvent >(this, &DatabaseView::eventInstanceDrag);
 	m_treeDatabase->setEnable(false);
@@ -1296,7 +1296,7 @@ void DatabaseView::updateGridInstances(const db::Instance* highlightInstance)
 	{
 		db::Group* group = item->getData< db::Group >(L"GROUP");
 		if (group)
-			db::findChildInstances(group, db::FindInstanceAll(), childInstances);
+			db::recursiveFindChildInstances(group, db::FindInstanceAll(), childInstances);
 	}
 	childInstances.sort([](const db::Instance* a, const db::Instance* b) {
 		return compareIgnoreCase(a->getName(), b->getName()) < 0;
@@ -1621,7 +1621,7 @@ void DatabaseView::eventTimer(ui::TimerEvent* event)
 	}
 }
 
-void DatabaseView::eventInstanceSelect(ui::SelectionChangeEvent* event)
+void DatabaseView::eventTreeGroupSelect(ui::SelectionChangeEvent* event)
 {
 	if (m_treeDatabase->getItems(ui::TreeView::GfDescendants | ui::TreeView::GfSelectedOnly).empty())
 		return;
@@ -1629,7 +1629,7 @@ void DatabaseView::eventInstanceSelect(ui::SelectionChangeEvent* event)
 	updateGridInstances(nullptr);
 }
 
-void DatabaseView::eventTreeInstanceButtonDown(ui::TreeViewItemMouseButtonDownEvent* event)
+void DatabaseView::eventTreeGroupButtonDown(ui::TreeViewItemMouseButtonDownEvent* event)
 {
 	if (event->getButton() != ui::MbtRight)
 		return;
