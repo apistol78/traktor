@@ -15,15 +15,23 @@
 		</item>
 		<item>
 			<first>HEIGHTFIELD_ASSET_EXTENT</first>
-			<second>World extent</second>
+			<second>World size</second>
 		</item>
 		<item>
 			<first>HEIGHTFIELD_ASSET_EXTENT_UNIT</first>
-			<second>(world units)</second>
+			<second>(metres)</second>
+		</item>
+		<item>
+			<first>HEIGHTFIELD_ASSET_HEIGHTS_UNIT</first>
+			<second>(heights)</second>
+		</item>
+		<item>
+			<first>HEIGHTFIELD_ASSET_IMPORT_RAW_HEIGHTS_MESSAGE</first>
+			<second>Raw must be square with one component. Lowest and highest raw values are minimum and maximum height; ocean elevation, in the same heights, is moved to world height zero.</second>
 		</item>
 		<item>
 			<first>HEIGHTFIELD_ASSET_IMPORT_RAW_MESSAGE</first>
-			<second>Raw must be square; heights and cuts have one component, splats and colors four (RGBA). Y range puts raw zero at 0 m, 0 to skip.</second>
+			<second>Raw must be square; cuts have one component, splats and colors four (RGBA).</second>
 		</item>
 		<item>
 			<first>HEIGHTFIELD_ASSET_IMPORT_RAW_TITLE</first>
@@ -31,7 +39,7 @@
 		</item>
 		<item>
 			<first>HEIGHTFIELD_ASSET_REMAP_HEIGHTS_MESSAGE</first>
-			<second>Remap heights of all tiles linearly from one range into another (world units).</second>
+			<second>Remap heights of all tiles linearly from one range into another (metres).</second>
 		</item>
 		<item>
 			<first>HEIGHTFIELD_ASSET_REMAP_HEIGHTS_TITLE</first>
@@ -50,8 +58,20 @@
 			<second>Tiles</second>
 		</item>
 		<item>
+			<first>HEIGHTFIELD_ASSET_TILE_HEIGHTS</first>
+			<second>Tile heights</second>
+		</item>
+		<item>
+			<first>HEIGHTFIELD_ASSET_TILE_SIZE</first>
+			<second>Tile size</second>
+		</item>
+		<item>
 			<first>HEIGHTFIELD_ASSET_TILE_UNIT</first>
 			<second>(tiles)</second>
+		</item>
+		<item>
+			<first>HEIGHTFIELD_ASSET_UNTILED</first>
+			<second>Untiled</second>
 		</item>
 		<item>
 			<first>IMPORT_HEIGHTFIELD_WIZARDTOOL_DESCRIPTION</first>

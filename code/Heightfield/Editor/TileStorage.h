@@ -49,7 +49,7 @@ public:
 	/*! \param tileCount Number of tiles along each side, 0 for a single untiled channel. */
 	explicit TileStorage(const db::Instance* instance, int32_t tileCount);
 
-	//! Size of overview; heightfield is downsampled by largest power of two which keep samples within overview sample distance.
+	//! Size of overview; heightfield is downsampled by largest power of two which keep samples within overview sample distance, or until within maximum overview size.
 	static int32_t calculateOverviewSize(int32_t size, float worldSize);
 
 	//! Release decoded tiles kept by region reads.

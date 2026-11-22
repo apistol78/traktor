@@ -38,6 +38,7 @@ namespace
 const uint32_t c_zipBufferSize = 65536;
 const float c_overviewSampleDistance = 2.0f;			 //!< Maximum distance between overview samples, in world units.
 const int32_t c_overviewMinSize = 2048;					 //!< Overview isn't downsampled below this size.
+const int32_t c_overviewMaxSize = 4096;					 //!< Overview is downsampled until within this size, regardless of sample distance.
 const int32_t c_rowsPerTask = 64;						 //!< Output rows per task; multiple of 8 so packed cut bits of tasks never share a byte.
 const int64_t c_maxCachedBytes = 4096ll * 1024 * 1024;	 //!< Bytes of decoded tiles kept by region reads.
 const uint32_t c_layers[] = { Heightfield::LySplat, Heightfield::LyColor };
@@ -119,7 +120,7 @@ TileStorage::TileStorage(const db::Instance* instance, int32_t tileCount)
 int32_t TileStorage::calculateOverviewSize(int32_t size, float worldSize)
 {
 	int32_t step = 1;
-	while ((size % (step * 2)) == 0 && size / (step * 2) >= c_overviewMinSize && step * 2 * worldSize / size <= c_overviewSampleDistance)
+	while ((size % (step * 2)) == 0 && size / (step * 2) >= c_overviewMinSize && (size / step > c_overviewMaxSize || step * 2 * worldSize / size <= c_overviewSampleDistance))
 		step *= 2;
 	return size / step;
 }

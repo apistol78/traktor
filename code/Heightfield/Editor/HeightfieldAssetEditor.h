@@ -34,11 +34,14 @@ namespace traktor::ui
 class Bitmap;
 class Canvas;
 class Container;
+class DropDown;
 class Edit;
 class FocusEvent;
 class KeyDownEvent;
 class MouseButtonDownEvent;
 class PaintEvent;
+class SelectionChangeEvent;
+class Static;
 class ToolBarButtonClickEvent;
 class ToolBarDropDown;
 
@@ -79,7 +82,9 @@ private:
 	Ref< ui::Bitmap > m_tilePreviewBitmap;
 	Ref< ui::Container > m_container;
 	Ref< ui::Edit > m_editExtent[3];
-	Ref< ui::Edit > m_editTiles;
+	Ref< ui::DropDown > m_dropTiles;
+	Ref< ui::Static > m_staticTileSize;
+	Ref< ui::Static > m_staticTileHeights;
 	Ref< ui::ToolBarDropDown > m_toolLayer;
 	Ref< ui::Widget > m_previewControl;
 	Ref< ui::Widget > m_tilePreviewControl;
@@ -103,12 +108,13 @@ private:
 	//! Transform unit heights of all tiles, h * scale + offset.
 	bool scaleHeights(float scale, float offset);
 
-	//! Add or remove tiles at +X/+Z edges; tile size is kept thus world extent change accordingly.
-	bool resizeTiles(int32_t tileCount);
+	//! Redistribute heightfield over new number of tiles; total size and world extent are kept.
+	bool redistributeTiles(int32_t tileCount);
 
-	//! Apply world extent and tile count fields; modifies heightfield.
+	//! Apply world size and tile count fields; modifies heightfield.
 	void applyFields();
 
+	//! Update fields and tile information from asset.
 	void updateFields();
 
 	//! Read every tile into preview images.
@@ -131,6 +137,8 @@ private:
 	void eventFieldFocus(ui::FocusEvent* event);
 
 	void eventFieldKeyDown(ui::KeyDownEvent* event);
+
+	void eventTilesChange(ui::SelectionChangeEvent* event);
 
 	void eventPreviewPaint(ui::PaintEvent* event);
 
