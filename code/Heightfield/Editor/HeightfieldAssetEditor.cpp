@@ -65,6 +65,7 @@ const wchar_t* c_rawVerticalAlignments[] = { L"Top", L"Bottom", nullptr };
 const wchar_t* c_rawSizes[] = { L"Keep raw size", L"Resize to target", nullptr };
 const int32_t c_maxPreviewSize = 1024;
 const int32_t c_maxTileCount = 64;
+const int32_t c_maxTileSize = 8192;
 const float c_extentEpsilon = 0.01f;
 const Color4f c_clearSplat(1.0f, 0.0f, 0.0f, 0.0f);
 const Color4f c_clearColor(128.0f / 255.0f, 128.0f / 255.0f, 128.0f / 255.0f, 0.0f);
@@ -163,6 +164,102 @@ void copyRegion(const Heightfield* source, int32_t sx, int32_t sz, Heightfield* 
 	}
 }
 
+//! Two old samples, as tile and local coordinates, which are filtered into a new sample along one axis.
+struct ResampleAxis
+{
+	int32_t tile[2];
+	int32_t local[2];
+	float f;
+};
+
+//! Old samples along one axis for tile size new samples starting at global sample n0; samples are cell centered.
+void calculateResampleAxis(int32_t n0, int32_t tileSize, int32_t size, int32_t oldTileSize, int32_t oldSize, AlignedVector< ResampleAxis >& outAxis)
+{
+	outAxis.resize(tileSize);
+	for (int32_t i = 0; i < tileSize; ++i)
+	{
+		const double u = clamp((n0 + i + 0.5) * oldSize / size - 0.5, 0.0, (double)(oldSize - 1));
+		const int32_t s0 = (int32_t)u;
+		const int32_t s1 = std::min(s0 + 1, oldSize - 1);
+		outAxis[i] = { { s0 / oldTileSize, s1 / oldTileSize }, { s0 % oldTileSize, s1 % oldTileSize }, (float)(u - s0) };
+	}
+}
+
+//! Resample new tile from count * count old tiles; all layers are bilinear filtered except cuts which are nearest.
+Ref< Heightfield > resampleTile(const RefArray< const Heightfield >& oldTiles, int32_t count, const AlignedVector< ResampleAxis >& columns, const AlignedVector< ResampleAxis >& rows, const Vector4& worldExtent)
+{
+	const int32_t tileSize = (int32_t)columns.size();
+	Ref< Heightfield > tile = new Heightfield(tileSize, worldExtent, Vector4::zero());
+
+	// Optional layers are created when any contributing old tile has them.
+	bool haveSplats = false;
+	bool haveColors = false;
+	bool haveAttributes[Heightfield::MaxAttributes] = { false };
+	for (int32_t oz = rows.front().tile[0]; oz <= rows.back().tile[1]; ++oz)
+	{
+		for (int32_t ox = columns.front().tile[0]; ox <= columns.back().tile[1]; ++ox)
+		{
+			const Heightfield* old = oldTiles[ox + oz * count];
+			haveSplats |= (old->getSplats() != nullptr);
+			haveColors |= (old->getColors() != nullptr);
+			for (uint8_t a = 0; a < Heightfield::MaxAttributes; ++a)
+				haveAttributes[a] |= (old->getAttributes(a) != nullptr);
+		}
+	}
+
+	for (int32_t z = 0; z < tileSize; ++z)
+	{
+		const ResampleAxis& r = rows[z];
+		for (int32_t x = 0; x < tileSize; ++x)
+		{
+			const ResampleAxis& c = columns[x];
+			const Heightfield* old[] =
+			{
+				oldTiles[c.tile[0] + r.tile[0] * count],
+				oldTiles[c.tile[1] + r.tile[0] * count],
+				oldTiles[c.tile[0] + r.tile[1] * count],
+				oldTiles[c.tile[1] + r.tile[1] * count]
+			};
+			const int32_t lx[] = { c.local[0], c.local[1], c.local[0], c.local[1] };
+			const int32_t lz[] = { r.local[0], r.local[0], r.local[1], r.local[1] };
+
+			float h[4];
+			for (int32_t i = 0; i < 4; ++i)
+				h[i] = old[i]->getGridHeightNearestUnsafe(lx[i], lz[i]);
+			tile->setGridHeight(x, z, lerp(lerp(h[0], h[1], c.f), lerp(h[2], h[3], c.f), r.f));
+
+			const int32_t nearest = ((c.f < 0.5f) ? 0 : 1) + ((r.f < 0.5f) ? 0 : 2);
+			tile->setGridCut(x, z, old[nearest]->getGridCut(lx[nearest], lz[nearest]));
+
+			if (haveSplats)
+			{
+				const Color4f s0 = lerp(old[0]->getGridSplat(lx[0], lz[0]), old[1]->getGridSplat(lx[1], lz[1]), Scalar(c.f));
+				const Color4f s1 = lerp(old[2]->getGridSplat(lx[2], lz[2]), old[3]->getGridSplat(lx[3], lz[3]), Scalar(c.f));
+				tile->setGridSplat(x, z, lerp(s0, s1, Scalar(r.f)));
+			}
+
+			if (haveColors)
+			{
+				const Color4f c0 = lerp(old[0]->getGridColor(lx[0], lz[0]), old[1]->getGridColor(lx[1], lz[1]), Scalar(c.f));
+				const Color4f c1 = lerp(old[2]->getGridColor(lx[2], lz[2]), old[3]->getGridColor(lx[3], lz[3]), Scalar(c.f));
+				tile->setGridColor(x, z, lerp(c0, c1, Scalar(r.f)));
+			}
+
+			for (uint8_t a = 0; a < Heightfield::MaxAttributes; ++a)
+			{
+				if (!haveAttributes[a])
+					continue;
+				float d[4];
+				for (int32_t i = 0; i < 4; ++i)
+					d[i] = old[i]->getGridAttributeDensity(lx[i], lz[i], a);
+				tile->setGridAttribute(x, z, a, (uint8_t)(lerp(lerp(d[0], d[1], c.f), lerp(d[2], d[3], c.f), r.f) + 0.5f));
+			}
+		}
+	}
+
+	return tile;
+}
+
 //! Smallest power of two step, dividing tile size, which keeps count tiles within preview size limit.
 int32_t calculatePreviewStep(int32_t tileSize, int32_t count)
 {
@@ -218,16 +315,34 @@ bool HeightfieldAssetEditor::create(ui::Widget* parent, db::Instance* instance, 
 	Ref< ui::Static > staticExtentUnit = new ui::Static();
 	staticExtentUnit->create(containerFields, i18n::Text(L"HEIGHTFIELD_ASSET_EXTENT_UNIT"));
 
-	// Tile count; only counts which divide size are listed, first item is untiled.
+	// Heights of entire heightfield.
+	Ref< ui::Static > staticWorldHeights = new ui::Static();
+	staticWorldHeights->create(containerFields, i18n::Text(L"HEIGHTFIELD_ASSET_WORLD_HEIGHTS"));
+
+	m_staticWorldHeights = new ui::Static();
+	m_staticWorldHeights->create(containerFields, L"");
+
+	Ref< ui::Static > staticWorldHeightsUnit = new ui::Static();
+	staticWorldHeightsUnit->create(containerFields, i18n::Text(L"HEIGHTFIELD_ASSET_HEIGHTS_UNIT"));
+
+	// Heights per metre along X; heightfield is resampled when changed.
+	Ref< ui::Static > staticResolution = new ui::Static();
+	staticResolution->create(containerFields, i18n::Text(L"HEIGHTFIELD_ASSET_RESOLUTION"));
+
+	m_editResolution = new ui::Edit();
+	m_editResolution->create(containerFields, L"", ui::WsNone, new ui::NumericEditValidator(true, 0.0f));
+	m_editResolution->addEventHandler< ui::FocusEvent >(this, &HeightfieldAssetEditor::eventFieldFocus);
+	m_editResolution->addEventHandler< ui::KeyDownEvent >(this, &HeightfieldAssetEditor::eventFieldKeyDown);
+
+	Ref< ui::Static > staticResolutionUnit = new ui::Static();
+	staticResolutionUnit->create(containerFields, i18n::Text(L"HEIGHTFIELD_ASSET_RESOLUTION_UNIT"));
+
+	// Tile count; listed by update fields.
 	Ref< ui::Static > staticTiles = new ui::Static();
 	staticTiles->create(containerFields, i18n::Text(L"HEIGHTFIELD_ASSET_TILES"));
 
 	m_dropTiles = new ui::DropDown();
 	m_dropTiles->create(containerFields);
-	m_dropTiles->add(i18n::Text(L"HEIGHTFIELD_ASSET_UNTILED"));
-	for (int32_t i = 1; i <= c_maxTileCount; ++i)
-		if (((m_tileSize * count) % i) == 0)
-			m_dropTiles->add(toString(i));
 	m_dropTiles->addEventHandler< ui::SelectionChangeEvent >(this, &HeightfieldAssetEditor::eventTilesChange);
 
 	Ref< ui::Static > staticTileUnit = new ui::Static();
@@ -251,6 +366,16 @@ bool HeightfieldAssetEditor::create(ui::Widget* parent, db::Instance* instance, 
 
 	Ref< ui::Static > staticTileHeightsUnit = new ui::Static();
 	staticTileHeightsUnit->create(containerFields, i18n::Text(L"HEIGHTFIELD_ASSET_HEIGHTS_UNIT"));
+
+	// Heights of overview, low resolution tile covering entire heightfield.
+	Ref< ui::Static > staticOverviewHeights = new ui::Static();
+	staticOverviewHeights->create(containerFields, i18n::Text(L"HEIGHTFIELD_ASSET_OVERVIEW_HEIGHTS"));
+
+	m_staticOverviewHeights = new ui::Static();
+	m_staticOverviewHeights->create(containerFields, L"");
+
+	Ref< ui::Static > staticOverviewHeightsUnit = new ui::Static();
+	staticOverviewHeightsUnit->create(containerFields, i18n::Text(L"HEIGHTFIELD_ASSET_HEIGHTS_UNIT"));
 
 	updateFields();
 
@@ -727,6 +852,68 @@ bool HeightfieldAssetEditor::redistributeTiles(int32_t tileCount)
 	return true;
 }
 
+bool HeightfieldAssetEditor::resampleTiles(int32_t tileSize)
+{
+	const int32_t tileCount = m_asset->getTileCount();
+	const int32_t count = std::max(tileCount, 1);
+	const int32_t oldSize = m_tileSize * count;
+	const int32_t size = tileSize * count;
+	const Vector4 worldExtent = m_asset->getWorldExtent();
+	const TileStorage storage(m_instance, tileCount);
+
+	// New row tz overwrites old row tz; old rows are kept until no following row reference them.
+	RefArray< const Heightfield > oldTiles(count * count);
+	AlignedVector< ResampleAxis > rows;
+	for (int32_t tz = 0; tz < count; ++tz)
+	{
+		calculateResampleAxis(tz * tileSize, tileSize, size, m_tileSize, oldSize, rows);
+		const int32_t oz0 = rows.front().tile[0];
+		const int32_t oz1 = rows.back().tile[1];
+
+		for (int32_t j = 0; j < oz0 * count; ++j)
+			oldTiles[j] = nullptr;
+
+		for (int32_t oz = oz0; oz <= oz1; ++oz)
+		{
+			if (oldTiles[oz * count] != nullptr)
+				continue;
+
+			AlignedVector< Job::task_t > tasks;
+			for (int32_t ox = 0; ox < count; ++ox)
+				tasks.push_back([&, ox, oz]() {
+					oldTiles[ox + oz * count] = storage.readStoredTile(worldExtent, ox, oz);
+				});
+			JobManager::getInstance().fork(tasks.c_ptr(), tasks.size());
+
+			for (int32_t ox = 0; ox < count; ++ox)
+				if (oldTiles[ox + oz * count] == nullptr)
+					return false;
+		}
+
+		// New tiles of a row are resampled in parallel.
+		RefArray< const Heightfield > tiles(count);
+		AlignedVector< Job::task_t > tasks;
+		for (int32_t tx = 0; tx < count; ++tx)
+			tasks.push_back([&, tx]() {
+				AlignedVector< ResampleAxis > columns;
+				calculateResampleAxis(tx * tileSize, tileSize, size, m_tileSize, oldSize, columns);
+				tiles[tx] = resampleTile(oldTiles, count, columns, rows, worldExtent);
+			});
+		JobManager::getInstance().fork(tasks.c_ptr(), tasks.size());
+
+		if (!storage.writeStoredTiles(0, tz, count - 1, tz, tiles))
+			return false;
+	}
+
+	m_tileSize = tileSize;
+
+	if (!readPreview() || !readTilePreview())
+		return false;
+
+	updatePreviewImage();
+	return true;
+}
+
 void HeightfieldAssetEditor::applyFields()
 {
 	const Vector4 worldExtent = m_asset->getWorldExtent();
@@ -737,6 +924,8 @@ void HeightfieldAssetEditor::applyFields()
 	const float y = parseString< float >(m_editExtent[1]->getText(), worldExtent.y());
 	const float z = parseString< float >(m_editExtent[2]->getText(), worldExtent.z());
 
+	const float resolution = parseString< float >(m_editResolution->getText(), 0.0f);
+
 	// First tile item is untiled.
 	const int32_t tileItem = m_dropTiles->getSelected();
 	const int32_t newTileCount = (tileItem > 0) ? parseString< int32_t >(m_dropTiles->getSelectedItem(), tileCount) : ((tileItem == 0) ? 0 : tileCount);
@@ -744,26 +933,18 @@ void HeightfieldAssetEditor::applyFields()
 	if (newTileCount != tileCount && !redistributeTiles(newTileCount))
 		log::error << L"Unable to change number of heightfield tiles." << Endl;
 
-	// Horizontal extent only scales and repositions existing tiles.
-	if (x > 0.0f && z > 0.0f && (std::abs(x - worldExtent.x()) > c_extentEpsilon || std::abs(z - worldExtent.z()) > c_extentEpsilon))
+	// Resolution is relative to current world size, thus changing world size keep heights.
+	const int32_t count = std::max(m_asset->getTileCount(), 1);
+	const int32_t newTileSize = std::max((int32_t)std::round(worldExtent.x() * resolution / count), 1);
+	if (resolution > 0.0f && newTileSize != m_tileSize)
 	{
-		const Vector4& currentWorldExtent = m_asset->getWorldExtent();
-		m_asset->setWorldExtent(Vector4(x, currentWorldExtent.y(), z, 0.0f));
+		if (newTileSize > c_maxTileSize)
+			log::error << L"Unable to change heightfield resolution; tile would have " << newTileSize << L" heights, more than " << c_maxTileSize << L", use more tiles." << Endl;
+		else if (!resampleTiles(newTileSize))
+			log::error << L"Unable to change heightfield resolution." << Endl;
 	}
 
-	// Heights are re-encoded to keep world heights in new vertical extent.
-	if (y > 0.0f && std::abs(y - worldExtent.y()) > c_extentEpsilon)
-	{
-		const float scale = worldExtent.y() / y;
-		if (scaleHeights(scale, 0.5f - 0.5f * scale))
-		{
-			const Vector4& currentWorldExtent = m_asset->getWorldExtent();
-			m_asset->setWorldExtent(Vector4(currentWorldExtent.x(), y, currentWorldExtent.z(), 0.0f));
-		}
-		else
-			log::error << L"Unable to change vertical extent of heightfield." << Endl;
-	}
-
+	m_asset->setWorldExtent(Vector4(x, y, z, 0.0f));
 	updateFields();
 }
 
@@ -773,17 +954,30 @@ void HeightfieldAssetEditor::updateFields()
 	const int32_t tileCount = m_asset->getTileCount();
 	const int32_t count = std::max(tileCount, 1);
 
+	const int32_t size = m_tileSize * count;
+	const int32_t overviewSize = TileStorage::calculateOverviewSize(size, worldExtent.x());
+
 	m_editExtent[0]->setText(toString(worldExtent.x()));
 	m_editExtent[1]->setText(toString(worldExtent.y()));
 	m_editExtent[2]->setText(toString(worldExtent.z()));
+	m_editResolution->setText(toString(size / worldExtent.x()));
+
+	// Only tile counts which divide size are listed, first item is untiled.
+	m_dropTiles->removeAll();
+	m_dropTiles->add(i18n::Text(L"HEIGHTFIELD_ASSET_UNTILED"));
+	for (int32_t i = 1; i <= c_maxTileCount; ++i)
+		if ((size % i) == 0)
+			m_dropTiles->add(toString(i));
 
 	if (tileCount > 0)
 		m_dropTiles->select(toString(tileCount));
 	else
 		m_dropTiles->select(0);
 
+	m_staticWorldHeights->setText(toString(size) + L" x " + toString(size));
 	m_staticTileSize->setText(toString(worldExtent.x() / count) + L" x " + toString(worldExtent.z() / count));
 	m_staticTileHeights->setText(toString(m_tileSize) + L" x " + toString(m_tileSize));
+	m_staticOverviewHeights->setText(toString(overviewSize) + L" x " + toString(overviewSize));
 
 	// Tile information changes width of fields.
 	m_staticTileSize->getParent()->update();

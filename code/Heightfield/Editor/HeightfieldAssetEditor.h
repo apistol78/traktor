@@ -82,9 +82,12 @@ private:
 	Ref< ui::Bitmap > m_tilePreviewBitmap;
 	Ref< ui::Container > m_container;
 	Ref< ui::Edit > m_editExtent[3];
+	Ref< ui::Static > m_staticWorldHeights;
+	Ref< ui::Edit > m_editResolution;
 	Ref< ui::DropDown > m_dropTiles;
 	Ref< ui::Static > m_staticTileSize;
 	Ref< ui::Static > m_staticTileHeights;
+	Ref< ui::Static > m_staticOverviewHeights;
 	Ref< ui::ToolBarDropDown > m_toolLayer;
 	Ref< ui::Widget > m_previewControl;
 	Ref< ui::Widget > m_tilePreviewControl;
@@ -110,6 +113,9 @@ private:
 
 	//! Redistribute heightfield over new number of tiles; total size and world extent are kept.
 	bool redistributeTiles(int32_t tileCount);
+
+	//! Resample heightfield into tiles of new size; tile count and world extent are kept.
+	bool resampleTiles(int32_t tileSize);
 
 	//! Apply world size and tile count fields; modifies heightfield.
 	void applyFields();

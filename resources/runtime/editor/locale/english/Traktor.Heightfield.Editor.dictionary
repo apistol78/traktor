@@ -38,12 +38,24 @@
 			<second>Import raw</second>
 		</item>
 		<item>
+			<first>HEIGHTFIELD_ASSET_OVERVIEW_HEIGHTS</first>
+			<second>Overview heights</second>
+		</item>
+		<item>
 			<first>HEIGHTFIELD_ASSET_REMAP_HEIGHTS_MESSAGE</first>
 			<second>Remap heights of all tiles linearly from one range into another (metres).</second>
 		</item>
 		<item>
 			<first>HEIGHTFIELD_ASSET_REMAP_HEIGHTS_TITLE</first>
 			<second>Remap heights</second>
+		</item>
+		<item>
+			<first>HEIGHTFIELD_ASSET_RESOLUTION</first>
+			<second>Resolution</second>
+		</item>
+		<item>
+			<first>HEIGHTFIELD_ASSET_RESOLUTION_UNIT</first>
+			<second>(heights per metre)</second>
 		</item>
 		<item>
 			<first>HEIGHTFIELD_ASSET_SIZE</first>
@@ -72,6 +84,10 @@
 		<item>
 			<first>HEIGHTFIELD_ASSET_UNTILED</first>
 			<second>Untiled</second>
+		</item>
+		<item>
+			<first>HEIGHTFIELD_ASSET_WORLD_HEIGHTS</first>
+			<second>World heights</second>
 		</item>
 		<item>
 			<first>IMPORT_HEIGHTFIELD_WIZARDTOOL_DESCRIPTION</first>
