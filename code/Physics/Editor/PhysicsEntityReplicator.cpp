@@ -262,7 +262,7 @@ Ref< model::Model > PhysicsEntityReplicator::createModel(
 		if (!heightfieldAsset)
 			return nullptr;
 
-		Ref< hf::Heightfield > heightfield = hf::TileStorage(heightfieldAssetInstance, heightfieldAsset->getTileCount()).readHeightfieldOverview(heightfieldAsset->getWorldExtent());
+		Ref< hf::Heightfield > heightfield = hf::TileStorage(heightfieldAssetInstance, heightfieldAsset).readHeightfieldOverview(heightfieldAsset->getWorldExtent());
 		if (!heightfield)
 			return nullptr;
 

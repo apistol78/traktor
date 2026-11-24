@@ -148,7 +148,7 @@ Ref< Json > HeightfieldQueryTool::invoke(const Json* arguments, std::wstring& ou
 	}
 	hf::HeightfieldAsset* asset = static_cast< hf::HeightfieldAsset* >(object.ptr());
 
-	const hf::TileStorage storage(instance, asset->getTileCount());
+	const hf::TileStorage storage(instance, asset);
 	const int32_t size = storage.readSize();
 	if (size <= 0)
 	{

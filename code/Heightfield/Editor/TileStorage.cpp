@@ -10,19 +10,22 @@
 
 #include "Compress/Zip/DeflateStreamZip.h"
 #include "Compress/Zip/InflateStreamZip.h"
-#include "Core/Containers/AlignedVector.h"
 #include "Core/Containers/SmallMap.h"
 #include "Core/Date/DateTime.h"
 #include "Core/Io/IStream.h"
+#include "Core/Io/Reader.h"
+#include "Core/Io/Writer.h"
 #include "Core/Log/Log.h"
 #include "Core/Math/MathUtils.h"
 #include "Core/Misc/Murmur3.h"
+#include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/String.h"
 #include "Core/Thread/Acquire.h"
 #include "Core/Thread/Job.h"
 #include "Core/Thread/JobManager.h"
 #include "Core/Thread/Semaphore.h"
 #include "Database/Instance.h"
+#include "Heightfield/Editor/HeightfieldAsset.h"
 #include "Heightfield/Heightfield.h"
 #include "Heightfield/HeightfieldFormat.h"
 
@@ -35,18 +38,32 @@ namespace traktor::hf
 namespace
 {
 
+const int32_t c_streamVersion = 1;
 const uint32_t c_zipBufferSize = 65536;
 const float c_overviewSampleDistance = 2.0f;			 //!< Maximum distance between overview samples, in world units.
 const int32_t c_overviewMinSize = 2048;					 //!< Overview isn't downsampled below this size.
 const int32_t c_overviewMaxSize = 4096;					 //!< Overview is downsampled until within this size, regardless of sample distance.
 const int32_t c_rowsPerTask = 64;						 //!< Output rows per task; multiple of 8 so packed cut bits of tasks never share a byte.
 const int64_t c_maxCachedBytes = 4096ll * 1024 * 1024;	 //!< Bytes of decoded tiles kept by region reads.
-const uint32_t c_layers[] = { Heightfield::LySplat, Heightfield::LyColor };
+const uint32_t c_channels[] = { Heightfield::LySplat, Heightfield::LyColor };
+
+//! Data streams of a tile; one stream for each attribute follow mask.
+enum Stream
+{
+	StHeights,
+	StCuts,
+	StSplats,
+	StColors,
+	StMask,
+	StAttributes
+};
+
+const wchar_t* c_streamNames[] = { L"Heights", L"Cuts", L"Splats", L"Colors", L"Mask" };
 
 struct CachedTile
 {
 	Ref< const Heightfield > tile;
-	uint64_t lastWriteTime;
+	uint64_t stamp;
 	uint64_t lastUsed;
 };
 
@@ -55,37 +72,200 @@ SmallMap< std::wstring, CachedTile > s_cache;
 int64_t s_cacheBytes = 0;
 uint64_t s_cacheUseCounter = 0;
 
-uint8_t* createLayer(Heightfield* heightfield, uint32_t layer)
+//! Compressed data stream of instance, closed when destroyed.
+struct ReadStream
 {
-	return (layer == Heightfield::LySplat) ? heightfield->createSplats() : heightfield->createColors();
+	Ref< IStream > data;
+	Ref< IStream > inflate;
+
+	~ReadStream()
+	{
+		safeClose(inflate);
+		safeClose(data);
+	}
+
+	//! Open stream and read its header.
+	bool open(const db::Instance* instance, const std::wstring& name, int32_t& outSize)
+	{
+		if ((data = instance->readData(name)) == nullptr)
+			return false;
+
+		inflate = new compress::InflateStreamZip(data, c_zipBufferSize);
+
+		int32_t version = 0;
+		Reader(inflate) >> version;
+		Reader(inflate) >> outSize;
+		return version == c_streamVersion && outSize > 0;
+	}
+
+	bool read(void* block, int64_t bytes)
+	{
+		return Reader(inflate).read(block, bytes) == bytes;
+	}
+};
+
+std::wstring getStreamName(int32_t stream)
+{
+	return (stream < StAttributes) ? std::wstring(c_streamNames[stream]) : L"Attribute" + toString(stream - StAttributes);
 }
 
-const uint8_t* getLayer(const Heightfield* heightfield, uint32_t layer)
+uint8_t* createChannel(Heightfield* heightfield, uint32_t channel)
 {
-	return (layer == Heightfield::LySplat) ? heightfield->getSplats() : heightfield->getColors();
+	return (channel == Heightfield::LySplat) ? heightfield->createSplats() : heightfield->createColors();
 }
 
-//! Memory of heights and optional layers of tile.
+const uint8_t* getChannel(const Heightfield* heightfield, uint32_t channel)
+{
+	return (channel == Heightfield::LySplat) ? heightfield->getSplats() : heightfield->getColors();
+}
+
+int32_t getChannelStream(uint32_t channel)
+{
+	return (channel == Heightfield::LySplat) ? StSplats : StColors;
+}
+
+//! Optional channels, Heightfield::Layers, of tile.
+uint32_t tileChannels(const Heightfield* tile)
+{
+	uint32_t channels = 0;
+	for (const uint32_t channel : c_channels)
+		if (getChannel(tile, channel))
+			channels |= channel;
+	return channels;
+}
+
+//! Attributes, one bit each, of tile which carry any density.
+uint32_t tileAttributes(const Heightfield* tile)
+{
+	uint32_t attributes = 0;
+	for (uint8_t a = 0; a < Heightfield::MaxAttributes; ++a)
+		if (tile->haveAttribute(a))
+			attributes |= 1 << a;
+	return attributes;
+}
+
+//! Memory of heights and optional channels of tile.
 int64_t tileBytes(const Heightfield* tile)
 {
 	const int64_t samples = (int64_t)tile->getSize() * tile->getSize();
 	return samples * (sizeof(height_t) + (tile->getSplats() ? 4 : 0) + (tile->getColors() ? 4 : 0));
 }
 
-void tileRange(const int32_t* region, int32_t tileCount, int32_t tileWidth, int32_t tileHeight, int32_t outRange[4])
+//! Tile of layer without data; heights at world zero, nothing cut.
+Ref< Heightfield > createDefaultTile(int32_t size, const Vector4& worldExtent)
 {
-	if (region)
+	Ref< Heightfield > tile = new Heightfield(size, worldExtent, Vector4::zero());
+	tile->setGridHeight(0, 0, 0.5f);
+	std::fill_n(tile->getHeights(), (size_t)size * size, tile->getHeights()[0]);
+	std::memset(tile->getCuts(), 0xff, ((size_t)size * size + 7) / 8);
+	tile->updateCellBounds();
+	return tile;
+}
+
+//! Read data of stream which header match size.
+bool readStream(const db::Instance* instance, const std::wstring& name, int32_t size, void* data, int64_t bytes)
+{
+	ReadStream stream;
+	int32_t streamSize;
+	return stream.open(instance, name, streamSize) && streamSize == size && stream.read(data, bytes);
+}
+
+//! Write stream of tile; heights also carry which optional channels and attributes tile has.
+bool writeStream(IStream* stream, const Heightfield* tile, const uint8_t* mask, int32_t which)
+{
+	const int32_t size = tile->getSize();
+	const int64_t samples = (int64_t)size * size;
+
+	Ref< IStream > deflate = new compress::DeflateStreamZip(stream, c_zipBufferSize);
+	Writer writer(deflate);
+	writer << c_streamVersion;
+	writer << size;
+
+	int64_t bytes = 0;
+	int64_t written = 0;
+	switch (which)
 	{
-		outRange[0] = clamp(region[0] / tileWidth, 0, tileCount - 1);
-		outRange[1] = clamp(region[1] / tileHeight, 0, tileCount - 1);
-		outRange[2] = clamp(region[2] / tileWidth, 0, tileCount - 1);
-		outRange[3] = clamp(region[3] / tileHeight, 0, tileCount - 1);
+	case StHeights:
+		writer << tileChannels(tile);
+		writer << tileAttributes(tile);
+		bytes = samples * sizeof(height_t);
+		written = writer.write(tile->getHeights(), bytes);
+		break;
+
+	case StCuts:
+		bytes = (samples + 7) / 8;
+		written = writer.write(tile->getCuts(), bytes);
+		break;
+
+	case StSplats:
+		bytes = samples * 4;
+		written = writer.write(tile->getSplats(), bytes);
+		break;
+
+	case StColors:
+		bytes = samples * 4;
+		written = writer.write(tile->getColors(), bytes);
+		break;
+
+	case StMask:
+		bytes = samples;
+		written = writer.write(mask, bytes);
+		break;
+
+	default:
+		bytes = samples;
+		written = writer.write(tile->getAttributes((uint8_t)(which - StAttributes)), bytes);
+		break;
 	}
-	else
+
+	deflate->close();
+	stream->close();
+	return written == bytes;
+}
+
+//! Blend values of layer onto merged by mask.
+void blendValues(uint8_t* merged, const uint8_t* layer, const uint8_t* mask, int32_t samples, int32_t components)
+{
+	for (int32_t i = 0; i < samples; ++i)
 	{
-		outRange[0] = outRange[1] = 0;
-		outRange[2] = outRange[3] = tileCount - 1;
+		const uint32_t m = mask[i];
+		if (m == 0)
+			continue;
+
+		for (int32_t c = 0; c < components; ++c)
+		{
+			const size_t j = (size_t)i * components + c;
+			merged[j] = (uint8_t)((merged[j] * (255 - m) + layer[j] * m + 127) / 255);
+		}
 	}
+}
+
+//! Blend layer onto merged by mask; optional channels and attributes which layer doesn't have are kept.
+void blendLayer(Heightfield* merged, const Heightfield* layer, const uint8_t* mask)
+{
+	const int32_t size = merged->getSize();
+	const int32_t samples = size * size;
+
+	height_t* mergedHeights = merged->getHeights();
+	const height_t* layerHeights = layer->getHeights();
+	for (int32_t i = 0; i < samples; ++i)
+	{
+		const uint32_t m = mask[i];
+		if (m == 0)
+			continue;
+
+		mergedHeights[i] = (height_t)((mergedHeights[i] * (255 - m) + layerHeights[i] * m + 127) / 255);
+		if (m >= 128)
+			merged->setGridCut(i % size, i / size, layer->getGridCut(i % size, i / size));
+	}
+
+	for (uint8_t a = 0; a < Heightfield::MaxAttributes; ++a)
+		if (const uint8_t* attributes = layer->getAttributes(a))
+			blendValues(merged->createAttributes(a), attributes, mask, samples, 1);
+
+	for (const uint32_t channel : c_channels)
+		if (const uint8_t* values = getChannel(layer, channel))
+			blendValues(createChannel(merged, channel), values, mask, samples, 4);
 }
 
 //! Range, [outBegin, outEnd), of region samples which map onto tile; samples outside are clamped onto edge tiles.
@@ -105,16 +285,22 @@ int32_t bandEnd(int32_t begin, int32_t end, int32_t step)
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.hf.TileStorage", TileStorage, Object)
 
-TileStorage::TileStorage(db::Instance* instance, int32_t tileCount)
-	: m_instance(instance)
-	, m_tileCount(tileCount)
+TileStorage::TileStorage(db::Instance* instance, const HeightfieldAsset* asset)
+	: TileStorage(instance, asset, asset->getTileCount())
 {
 }
 
-TileStorage::TileStorage(const db::Instance* instance, int32_t tileCount)
-	: m_instance(const_cast< db::Instance* >(instance))
+TileStorage::TileStorage(const db::Instance* instance, const HeightfieldAsset* asset)
+	: TileStorage(const_cast< db::Instance* >(instance), asset, asset->getTileCount())
+{
+}
+
+TileStorage::TileStorage(db::Instance* instance, const HeightfieldAsset* asset, int32_t tileCount)
+	: m_instance(instance)
 	, m_tileCount(tileCount)
 {
+	for (const auto& layer : asset->getLayers())
+		m_layerIds.push_back(layer.id);
 }
 
 int32_t TileStorage::calculateOverviewSize(int32_t size, float worldSize)
@@ -135,31 +321,34 @@ void TileStorage::flushCache()
 int32_t TileStorage::readSize() const
 {
 	int32_t size;
-	uint32_t layers;
-	if (!readHeader(0, 0, size, layers))
+	uint32_t channels;
+	if (!readHeader(0, 0, 0, size, channels))
 		return 0;
 
 	return size * std::max(m_tileCount, 1);
 }
 
-uint32_t TileStorage::readLayers() const
+uint32_t TileStorage::readChannels() const
 {
 	const int32_t count = std::max(m_tileCount, 1);
-	uint32_t layers = 0;
-	for (int32_t tz = 0; tz < count && layers != Heightfield::LyAll; ++tz)
+	uint32_t channels = 0;
+	for (int32_t layer = 0; layer < (int32_t)m_layerIds.size(); ++layer)
 	{
-		for (int32_t tx = 0; tx < count && layers != Heightfield::LyAll; ++tx)
+		for (int32_t tz = 0; tz < count && channels != Heightfield::LyAll; ++tz)
 		{
-			int32_t size;
-			uint32_t tileLayers;
-			if (readHeader(tx, tz, size, tileLayers))
-				layers |= tileLayers;
+			for (int32_t tx = 0; tx < count && channels != Heightfield::LyAll; ++tx)
+			{
+				int32_t size;
+				uint32_t tileChannels;
+				if (readHeader(layer, tx, tz, size, tileChannels))
+					channels |= tileChannels;
+			}
 		}
 	}
-	return layers;
+	return channels;
 }
 
-Ref< Heightfield > TileStorage::readHeightfield(const Vector4& worldExtent, uint32_t layers) const
+Ref< Heightfield > TileStorage::readHeightfield(const Vector4& worldExtent, uint32_t channels) const
 {
 	const int32_t size = readSize();
 	if (size <= 0)
@@ -168,10 +357,10 @@ Ref< Heightfield > TileStorage::readHeightfield(const Vector4& worldExtent, uint
 		return nullptr;
 	}
 
-	return readHeightfieldRegion(worldExtent, size / std::max(m_tileCount, 1), 0, 0, size, 1, layers);
+	return readHeightfieldRegion(-1, worldExtent, size / std::max(m_tileCount, 1), 0, 0, size, 1, channels);
 }
 
-Ref< Heightfield > TileStorage::readHeightfieldTile(const Vector4& worldExtent, int32_t tileX, int32_t tileZ, int32_t border, uint32_t layers) const
+Ref< Heightfield > TileStorage::readHeightfieldTile(const Vector4& worldExtent, int32_t tileX, int32_t tileZ, int32_t border, uint32_t channels) const
 {
 	const int32_t size = readSize();
 	if (size <= 0)
@@ -181,10 +370,10 @@ Ref< Heightfield > TileStorage::readHeightfieldTile(const Vector4& worldExtent, 
 	}
 
 	const int32_t tileSize = size / std::max(m_tileCount, 1);
-	return readHeightfieldRegion(worldExtent, tileSize, tileX * tileSize - border, tileZ * tileSize - border, tileSize + 1 + 2 * border, 1, layers);
+	return readHeightfieldRegion(-1, worldExtent, tileSize, tileX * tileSize - border, tileZ * tileSize - border, tileSize + 1 + 2 * border, 1, channels);
 }
 
-Ref< Heightfield > TileStorage::readHeightfieldOverview(const Vector4& worldExtent, int32_t size, uint32_t layers) const
+Ref< Heightfield > TileStorage::readHeightfieldOverview(const Vector4& worldExtent, int32_t size, uint32_t channels) const
 {
 	const int32_t fullSize = readSize();
 	if (fullSize <= 0 || size <= 0 || (fullSize % size) != 0)
@@ -193,7 +382,7 @@ Ref< Heightfield > TileStorage::readHeightfieldOverview(const Vector4& worldExte
 		return nullptr;
 	}
 
-	return readHeightfieldRegion(worldExtent, fullSize / std::max(m_tileCount, 1), 0, 0, fullSize, fullSize / size, layers);
+	return readHeightfieldRegion(-1, worldExtent, fullSize / std::max(m_tileCount, 1), 0, 0, fullSize, fullSize / size, channels);
 }
 
 Ref< Heightfield > TileStorage::readHeightfieldOverview(const Vector4& worldExtent) const
@@ -208,26 +397,229 @@ Ref< Heightfield > TileStorage::readHeightfieldOverview(const Vector4& worldExte
 	return readHeightfieldOverview(worldExtent, calculateOverviewSize(fullSize, worldExtent.x()));
 }
 
-bool TileStorage::writeHeightfield(const Heightfield* heightfield, const int32_t* region) const
+uint32_t TileStorage::readStamp(int32_t tileX0, int32_t tileZ0, int32_t tileX1, int32_t tileZ1) const
 {
-	if (m_tileCount <= 0)
-		return writeStoredTile(0, 0, heightfield);
+	const int32_t count = std::max(m_tileCount, 1);
 
-	const int32_t size = heightfield->getSize();
-	if ((size % m_tileCount) != 0)
+	Murmur3 hash;
+	hash.begin();
+
+	for (int32_t tz = std::max(tileZ0, 0); tz <= std::min(tileZ1, count - 1); ++tz)
 	{
-		log::error << L"Unable to write heightfield; size " << size << L" not divisible into " << m_tileCount << L" tiles." << Endl;
+		for (int32_t tx = std::max(tileX0, 0); tx <= std::min(tileX1, count - 1); ++tx)
+		{
+			// Every stream of a layer's tile is written along with its heights, except mask.
+			AlignedVector< std::wstring > names = { getChannelName(-1, L"Data", tx, tz) };
+			for (int32_t layer = 0; layer < (int32_t)m_layerIds.size(); ++layer)
+			{
+				names.push_back(getChannelName(layer, c_streamNames[StHeights], tx, tz));
+				names.push_back(getChannelName(layer, c_streamNames[StMask], tx, tz));
+			}
+
+			for (const auto& name : names)
+			{
+				DateTime lastWriteTime;
+				const uint64_t stamp[] = {
+					(uint64_t)tx,
+					(uint64_t)tz,
+					m_instance->getDataLastWriteTime(name, lastWriteTime) ? lastWriteTime.getSecondsSinceEpoch() : 0
+				};
+				hash.feedBuffer(stamp, sizeof(stamp));
+			}
+		}
+	}
+
+	hash.end();
+	return hash.get();
+}
+
+Ref< Heightfield > TileStorage::readMergedTile(const Vector4& worldExtent, int32_t tileX, int32_t tileZ) const
+{
+	Ref< Heightfield > merged = readStoredTile(0, worldExtent, tileX, tileZ);
+	if (!merged)
+	{
+		log::error << L"Unable to read heightfield; no tile " << tileX << L", " << tileZ << L" in instance." << Endl;
+		return nullptr;
+	}
+
+	const int32_t size = merged->getSize();
+	AlignedVector< uint8_t > mask;
+	bool blended = false;
+
+	for (int32_t layer = 1; layer < (int32_t)m_layerIds.size(); ++layer)
+	{
+		// Layers without mask doesn't contribute.
+		if (!readStoredMask(layer, tileX, tileZ, size, mask))
+			continue;
+
+		Ref< const Heightfield > tile = readStoredTile(layer, worldExtent, tileX, tileZ);
+		if (!tile || tile->getSize() != size)
+		{
+			log::error << L"Unable to read heightfield; tile " << tileX << L", " << tileZ << L" of layer " << layer << L" missing or size mismatch." << Endl;
+			return nullptr;
+		}
+
+		blendLayer(merged, tile, mask.c_ptr());
+		blended = true;
+	}
+
+	if (blended)
+		merged->updateCellBounds();
+
+	return merged;
+}
+
+Ref< Heightfield > TileStorage::readLayerTile(int32_t layer, const Vector4& worldExtent, int32_t tileX, int32_t tileZ, AlignedVector< uint8_t >* outMask) const
+{
+	Ref< Heightfield > tile = readStoredTile(layer, worldExtent, tileX, tileZ);
+	if (!tile)
+	{
+		const int32_t tileSize = readSize() / std::max(m_tileCount, 1);
+		if (layer == 0 || tileSize <= 0)
+		{
+			log::error << L"Unable to read heightfield; no tile " << tileX << L", " << tileZ << L" in instance." << Endl;
+			return nullptr;
+		}
+		tile = createDefaultTile(tileSize, worldExtent);
+	}
+
+	if (outMask)
+	{
+		const int32_t size = tile->getSize();
+		if (layer == 0 || !readStoredMask(layer, tileX, tileZ, size, *outMask))
+		{
+			outMask->resize(0);
+			outMask->resize((size_t)size * size, (layer == 0) ? 255 : 0);
+		}
+	}
+
+	return tile;
+}
+
+bool TileStorage::writeLayerTiles(int32_t layer, int32_t tileX0, int32_t tileZ0, int32_t tileX1, int32_t tileZ1, const RefArray< const Heightfield >& tiles, const AlignedVector< AlignedVector< uint8_t > >* masks) const
+{
+	struct Write
+	{
+		Ref< IStream > stream;
+		int32_t tile;
+		int32_t which;
+	};
+
+	const int32_t width = tileX1 - tileX0 + 1;
+
+	// Streams are created by calling thread, which owns the transaction; streams are encoded in parallel.
+	AlignedVector< Write > writes;
+	for (int32_t i = 0; i < (int32_t)tiles.size(); ++i)
+	{
+		const Heightfield* tile = tiles[i];
+		const int32_t tileX = tileX0 + i % width;
+		const int32_t tileZ = tileZ0 + i / width;
+
+		AlignedVector< int32_t > which = { StHeights, StCuts };
+		for (const uint32_t channel : c_channels)
+			if (getChannel(tile, channel))
+				which.push_back(getChannelStream(channel));
+		for (uint8_t a = 0; a < Heightfield::MaxAttributes; ++a)
+			if (tile->haveAttribute(a))
+				which.push_back(StAttributes + a);
+
+		if (masks && layer > 0)
+		{
+			if ((*masks)[i].size() != (size_t)tile->getSize() * tile->getSize())
+			{
+				log::error << L"Unable to write heightfield; mask of tile " << tileX << L", " << tileZ << L" size mismatch." << Endl;
+				return false;
+			}
+			which.push_back(StMask);
+		}
+
+		for (const int32_t w : which)
+		{
+			const std::wstring name = getChannelName(layer, getStreamName(w), tileX, tileZ);
+			Ref< IStream > stream = m_instance->writeData(name);
+			if (!stream)
+			{
+				log::error << L"Unable to write heightfield; failed to create \"" << name << L"\" in instance." << Endl;
+				return false;
+			}
+			writes.push_back({ stream, i, w });
+		}
+	}
+
+	std::atomic< bool > result = true;
+	AlignedVector< Job::task_t > tasks;
+	for (int32_t i = 0; i < (int32_t)writes.size(); ++i)
+		tasks.push_back([&, i]() {
+			const Write& write = writes[i];
+			const uint8_t* mask = (write.which == StMask) ? (*masks)[write.tile].c_ptr() : nullptr;
+			if (!writeStream(write.stream, tiles[write.tile], mask, write.which))
+			{
+				log::error << L"Unable to write heightfield; failed to write \"" << getStreamName(write.which) << L"\" of tile " << tileX0 + write.tile % width << L", " << tileZ0 + write.tile / width << L"." << Endl;
+				result = false;
+			}
+		});
+	JobManager::getInstance().fork(tasks.c_ptr(), tasks.size());
+
+	return result;
+}
+
+Ref< Heightfield > TileStorage::readLayerHeightfield(int32_t layer, const Vector4& worldExtent, AlignedVector< uint8_t >* outMask) const
+{
+	const int32_t size = readSize();
+	if (size <= 0)
+	{
+		log::error << L"Unable to read heightfield; no data in instance." << Endl;
+		return nullptr;
+	}
+
+	const int32_t count = std::max(m_tileCount, 1);
+	const int32_t tileSize = size / count;
+
+	Ref< Heightfield > heightfield = readHeightfieldRegion(layer, worldExtent, tileSize, 0, 0, size, 1, Heightfield::LyAll);
+	if (!heightfield)
+		return nullptr;
+
+	if (outMask)
+	{
+		outMask->resize(0);
+		outMask->resize((size_t)size * size, (layer == 0) ? 255 : 0);
+
+		AlignedVector< uint8_t > mask;
+		for (int32_t tz = 0; tz < count && layer > 0; ++tz)
+		{
+			for (int32_t tx = 0; tx < count; ++tx)
+			{
+				if (!readStoredMask(layer, tx, tz, tileSize, mask))
+					continue;
+
+				for (int32_t z = 0; z < tileSize; ++z)
+					std::memcpy(outMask->ptr() + (size_t)tx * tileSize + ((size_t)tz * tileSize + z) * size, mask.c_ptr() + (size_t)z * tileSize, tileSize);
+			}
+		}
+	}
+
+	return heightfield;
+}
+
+bool TileStorage::writeLayerHeightfield(int32_t layer, const Heightfield* heightfield, const AlignedVector< uint8_t >* mask) const
+{
+	const int32_t count = std::max(m_tileCount, 1);
+	const int32_t size = heightfield->getSize();
+	if ((size % count) != 0)
+	{
+		log::error << L"Unable to write heightfield; size " << size << L" not divisible into " << count << L" tiles." << Endl;
 		return false;
 	}
 
-	const int32_t tileSize = size / m_tileCount;
+	const int32_t tileSize = size / count;
 
-	int32_t range[4];
-	tileRange(region, m_tileCount, tileSize, tileSize, range);
-
-	for (int32_t tz = range[1]; tz <= range[3]; ++tz)
+	// Tiles of a row are written together so they're encoded in parallel.
+	for (int32_t tz = 0; tz < count; ++tz)
 	{
-		for (int32_t tx = range[0]; tx <= range[2]; ++tx)
+		RefArray< const Heightfield > tiles;
+		AlignedVector< AlignedVector< uint8_t > > masks;
+
+		for (int32_t tx = 0; tx < count; ++tx)
 		{
 			const int32_t x0 = tx * tileSize;
 			const int32_t z0 = tz * tileSize;
@@ -236,7 +628,7 @@ bool TileStorage::writeHeightfield(const Heightfield* heightfield, const int32_t
 
 			for (int32_t z = 0; z < tileSize; ++z)
 			{
-				std::memcpy(tile->getHeights() + z * tileSize, heightfield->getHeights() + x0 + (z0 + z) * size, tileSize * sizeof(height_t));
+				std::memcpy(tile->getHeights() + (size_t)z * tileSize, heightfield->getHeights() + x0 + (size_t)(z0 + z) * size, tileSize * sizeof(height_t));
 				for (int32_t x = 0; x < tileSize; ++x)
 					tile->setGridCut(x, z, heightfield->getGridCut(x0 + x, z0 + z));
 			}
@@ -249,145 +641,58 @@ bool TileStorage::writeHeightfield(const Heightfield* heightfield, const int32_t
 
 				uint8_t* dst = tile->createAttributes(a);
 				for (int32_t z = 0; z < tileSize; ++z)
-					std::memcpy(dst + z * tileSize, src + x0 + (z0 + z) * size, tileSize);
+					std::memcpy(dst + (size_t)z * tileSize, src + x0 + (size_t)(z0 + z) * size, tileSize);
 			}
 
-			for (const uint32_t layer : c_layers)
+			for (const uint32_t channel : c_channels)
 			{
-				const uint8_t* src = getLayer(heightfield, layer);
+				const uint8_t* src = getChannel(heightfield, channel);
 				if (!src)
 					continue;
 
-				uint8_t* dst = createLayer(tile, layer);
+				uint8_t* dst = createChannel(tile, channel);
 				for (int32_t z = 0; z < tileSize; ++z)
 					std::memcpy(dst + (size_t)z * tileSize * 4, src + ((size_t)x0 + (size_t)(z0 + z) * size) * 4, tileSize * 4);
 			}
 
-			if (!writeStoredTile(tx, tz, tile))
-				return false;
+			if (mask)
+			{
+				AlignedVector< uint8_t >& tileMask = masks.push_back();
+				tileMask.resize((size_t)tileSize * tileSize);
+				for (int32_t z = 0; z < tileSize; ++z)
+					std::memcpy(tileMask.ptr() + (size_t)z * tileSize, mask->c_ptr() + x0 + (size_t)(z0 + z) * size, tileSize);
+			}
+
+			tiles.push_back(tile);
 		}
+
+		if (!writeLayerTiles(layer, 0, tz, count - 1, tz, tiles, mask ? &masks : nullptr))
+			return false;
 	}
 
 	return true;
 }
 
-uint32_t TileStorage::readStamp(const std::wstring& name, int32_t tileX0, int32_t tileZ0, int32_t tileX1, int32_t tileZ1) const
+std::wstring TileStorage::getChannelName(int32_t layer, const std::wstring& channel, int32_t tileX, int32_t tileZ) const
 {
-	const int32_t count = std::max(m_tileCount, 1);
-
-	Murmur3 hash;
-	hash.begin();
-
-	for (int32_t tz = std::max(tileZ0, 0); tz <= std::min(tileZ1, count - 1); ++tz)
-	{
-		for (int32_t tx = std::max(tileX0, 0); tx <= std::min(tileX1, count - 1); ++tx)
-		{
-			DateTime lastWriteTime;
-			const uint64_t stamp[] = {
-				(uint64_t)tx,
-				(uint64_t)tz,
-				m_instance->getDataLastWriteTime(getChannelName(name, tx, tz), lastWriteTime) ? lastWriteTime.getSecondsSinceEpoch() : 0
-			};
-			hash.feedBuffer(stamp, sizeof(stamp));
-		}
-	}
-
-	hash.end();
-	return hash.get();
-}
-
-Ref< Heightfield > TileStorage::readStoredTile(const Vector4& worldExtent, int32_t tileX, int32_t tileZ) const
-{
-	const std::wstring name = getChannelName(L"Data", tileX, tileZ);
-
-	Ref< IStream > stream = m_instance->readData(name);
-	if (!stream)
-	{
-		log::error << L"Unable to read heightfield; no \"" << name << L"\" in instance." << Endl;
-		return nullptr;
-	}
-
-	Ref< Heightfield > tile;
-	if (m_tileCount > 0)
-	{
-		Ref< IStream > inflate = new compress::InflateStreamZip(stream, c_zipBufferSize);
-		tile = HeightfieldFormat().read(inflate, worldExtent, Vector4::zero());
-		inflate->close();
-	}
-	else
-		tile = HeightfieldFormat().read(stream, worldExtent, Vector4::zero());
-
-	stream->close();
-
-	if (!tile)
-		log::error << L"Unable to read heightfield; corrupt \"" << name << L"\"." << Endl;
-
-	return tile;
-}
-
-bool TileStorage::writeStoredTile(int32_t tileX, int32_t tileZ, const Heightfield* tile) const
-{
-	RefArray< const Heightfield > tiles;
-	tiles.push_back(tile);
-	return writeStoredTiles(tileX, tileZ, tileX, tileZ, tiles);
-}
-
-bool TileStorage::writeStoredTiles(int32_t tileX0, int32_t tileZ0, int32_t tileX1, int32_t tileZ1, const RefArray< const Heightfield >& tiles) const
-{
-	const int32_t width = tileX1 - tileX0 + 1;
-
-	// Streams are created by calling thread, which owns the transaction; tiles are encoded in parallel.
-	RefArray< IStream > streams;
-	for (int32_t tz = tileZ0; tz <= tileZ1; ++tz)
-	{
-		for (int32_t tx = tileX0; tx <= tileX1; ++tx)
-		{
-			Ref< IStream > stream = m_instance->writeData(getChannelName(L"Data", tx, tz));
-			if (!stream)
-			{
-				log::error << L"Unable to write heightfield; failed to create \"" << getChannelName(L"Data", tx, tz) << L"\" in instance." << Endl;
-				return false;
-			}
-			streams.push_back(stream);
-		}
-	}
-
-	std::atomic< bool > result = true;
-	AlignedVector< Job::task_t > tasks;
-	for (int32_t i = 0; i < (int32_t)streams.size(); ++i)
-		tasks.push_back([&, i]() {
-			IStream* stream = streams[i];
-			bool written;
-			if (m_tileCount > 0)
-			{
-				Ref< IStream > deflate = new compress::DeflateStreamZip(stream, c_zipBufferSize);
-				written = HeightfieldFormat().write(deflate, tiles[i]);
-				deflate->close();
-			}
-			else
-				written = HeightfieldFormat().write(stream, tiles[i]);
-
-			stream->close();
-
-			if (!written)
-			{
-				log::error << L"Unable to write heightfield; failed to write \"" << getChannelName(L"Data", tileX0 + i % width, tileZ0 + i / width) << L"\"." << Endl;
-				result = false;
-			}
-		});
-	JobManager::getInstance().fork(tasks.c_ptr(), tasks.size());
-
-	return result;
-}
-
-std::wstring TileStorage::getChannelName(const std::wstring& name, int32_t tileX, int32_t tileZ) const
-{
+	// Negative layer is unprefixed, as data was named before layers.
+	const std::wstring name = (layer >= 0) ? L"L" + toString(m_layerIds[layer]) + L"_" + channel : channel;
 	return (m_tileCount > 0) ? name + L"_" + toString(tileX) + L"_" + toString(tileZ) : name;
 }
 
-bool TileStorage::readHeader(int32_t tileX, int32_t tileZ, int32_t& outSize, uint32_t& outLayers) const
+bool TileStorage::readHeader(int32_t layer, int32_t tileX, int32_t tileZ, int32_t& outSize, uint32_t& outChannels) const
 {
-	Ref< IStream > stream = m_instance->readData(getChannelName(L"Data", tileX, tileZ));
+	ReadStream heights;
+	if (heights.open(m_instance, getChannelName(layer, c_streamNames[StHeights], tileX, tileZ), outSize))
+	{
+		Reader(heights.inflate) >> outChannels;
+		return true;
+	}
+
+	if (layer > 0)
+		return false;
+
+	Ref< IStream > stream = m_instance->readData(getChannelName(-1, L"Data", tileX, tileZ));
 	if (!stream)
 		return false;
 
@@ -395,7 +700,7 @@ bool TileStorage::readHeader(int32_t tileX, int32_t tileZ, int32_t& outSize, uin
 	if (m_tileCount > 0)
 		source = new compress::InflateStreamZip(stream, 4096);
 
-	const bool result = HeightfieldFormat().readHeader(source, outSize, outLayers);
+	const bool result = HeightfieldFormat().readHeader(source, outSize, outChannels);
 
 	if (source != stream)
 		source->close();
@@ -404,25 +709,93 @@ bool TileStorage::readHeader(int32_t tileX, int32_t tileZ, int32_t& outSize, uin
 	return result;
 }
 
-Ref< const Heightfield > TileStorage::readCachedTile(const Vector4& worldExtent, int32_t tileX, int32_t tileZ) const
+Ref< Heightfield > TileStorage::readStoredTile(int32_t layer, const Vector4& worldExtent, int32_t tileX, int32_t tileZ) const
 {
-	const std::wstring name = getChannelName(L"Data", tileX, tileZ);
-	const std::wstring key = m_instance->getGuid().format() + L"/" + name;
+	ReadStream heights;
+	int32_t size;
+	if (!heights.open(m_instance, getChannelName(layer, c_streamNames[StHeights], tileX, tileZ), size))
+	{
+		if (layer > 0)
+			return nullptr;
 
-	DateTime lastWriteTime;
-	m_instance->getDataLastWriteTime(name, lastWriteTime);
+		Ref< IStream > stream = m_instance->readData(getChannelName(-1, L"Data", tileX, tileZ));
+		if (!stream)
+			return nullptr;
+
+		Ref< Heightfield > tile;
+		if (m_tileCount > 0)
+		{
+			Ref< IStream > inflate = new compress::InflateStreamZip(stream, c_zipBufferSize);
+			tile = HeightfieldFormat().read(inflate, worldExtent, Vector4::zero());
+			inflate->close();
+		}
+		else
+			tile = HeightfieldFormat().read(stream, worldExtent, Vector4::zero());
+
+		stream->close();
+
+		if (!tile)
+			log::error << L"Unable to read heightfield; corrupt tile " << tileX << L", " << tileZ << L"." << Endl;
+
+		return tile;
+	}
+
+	uint32_t channels = 0;
+	uint32_t attributes = 0;
+	Reader(heights.inflate) >> channels;
+	Reader(heights.inflate) >> attributes;
+
+	const int64_t samples = (int64_t)size * size;
+	Ref< Heightfield > tile = new Heightfield(size, worldExtent, Vector4::zero());
+
+	bool result =
+		heights.read(tile->getHeights(), samples * sizeof(height_t)) &&
+		readStream(m_instance, getChannelName(layer, c_streamNames[StCuts], tileX, tileZ), size, tile->getCuts(), (samples + 7) / 8);
+
+	for (uint8_t a = 0; a < Heightfield::MaxAttributes && result; ++a)
+	{
+		if ((attributes & (1 << a)) != 0)
+			result = readStream(m_instance, getChannelName(layer, getStreamName(StAttributes + a), tileX, tileZ), size, tile->createAttributes(a), samples);
+	}
+
+	for (const uint32_t channel : c_channels)
+	{
+		if (result && (channels & channel) != 0)
+			result = readStream(m_instance, getChannelName(layer, getStreamName(getChannelStream(channel)), tileX, tileZ), size, createChannel(tile, channel), samples * 4);
+	}
+
+	if (!result)
+	{
+		log::error << L"Unable to read heightfield; corrupt tile " << tileX << L", " << tileZ << L" of layer " << layer << L"." << Endl;
+		return nullptr;
+	}
+
+	tile->updateCellBounds();
+	return tile;
+}
+
+bool TileStorage::readStoredMask(int32_t layer, int32_t tileX, int32_t tileZ, int32_t size, AlignedVector< uint8_t >& outMask) const
+{
+	outMask.resize((size_t)size * size);
+	return readStream(m_instance, getChannelName(layer, c_streamNames[StMask], tileX, tileZ), size, outMask.ptr(), outMask.size());
+}
+
+Ref< const Heightfield > TileStorage::readCachedTile(int32_t layer, const Vector4& worldExtent, int32_t tileX, int32_t tileZ) const
+{
+	const std::wstring key = m_instance->getGuid().format() + L"/" + toString(m_tileCount) + L"/" + toString((layer >= 0) ? m_layerIds[layer] : -1) + L"/" + toString(tileX) + L"_" + toString(tileZ);
+	const uint64_t stamp = readStamp(tileX, tileZ, tileX, tileZ);
 
 	{
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(s_cacheLock);
 		auto it = s_cache.find(key);
-		if (it != s_cache.end() && it->second.lastWriteTime == (uint64_t)lastWriteTime)
+		if (it != s_cache.end() && it->second.stamp == stamp)
 		{
 			it->second.lastUsed = ++s_cacheUseCounter;
 			return it->second.tile;
 		}
 	}
 
-	Ref< const Heightfield > tile = readStoredTile(worldExtent, tileX, tileZ);
+	Ref< const Heightfield > tile = (layer >= 0) ? readLayerTile(layer, worldExtent, tileX, tileZ) : readMergedTile(worldExtent, tileX, tileZ);
 	if (!tile)
 		return nullptr;
 
@@ -447,12 +820,12 @@ Ref< const Heightfield > TileStorage::readCachedTile(const Vector4& worldExtent,
 		s_cache.erase(lru);
 	}
 
-	s_cache.insert(key, { tile, (uint64_t)lastWriteTime, ++s_cacheUseCounter });
+	s_cache.insert(key, { tile, stamp, ++s_cacheUseCounter });
 	s_cacheBytes += bytes;
 	return tile;
 }
 
-Ref< Heightfield > TileStorage::readHeightfieldRegion(const Vector4& worldExtent, int32_t tileSize, int32_t x0, int32_t z0, int32_t width, int32_t step, uint32_t layers) const
+Ref< Heightfield > TileStorage::readHeightfieldRegion(int32_t layer, const Vector4& worldExtent, int32_t tileSize, int32_t x0, int32_t z0, int32_t width, int32_t step, uint32_t channels) const
 {
 	const int32_t count = std::max(m_tileCount, 1);
 	const int32_t size = tileSize * count;
@@ -463,31 +836,31 @@ Ref< Heightfield > TileStorage::readHeightfieldRegion(const Vector4& worldExtent
 	const Vector4 extent = (width == size) ? worldExtent : Vector4(cellX * width, worldExtent.y(), cellZ * width, 0.0f);
 	Ref< Heightfield > heightfield = new Heightfield(outSize, extent, Vector4::zero());
 
-	// Optional layers are only read if stored; tiles without layer contribute the layer's default.
-	const uint32_t optionalLayers = (layers != 0) ? (layers & readLayers()) : 0;
+	// Optional channels are only read if stored; tiles without channel contribute the channel's default.
+	const uint32_t optionalChannels = (channels != 0) ? (channels & readChannels()) : 0;
 	Ref< Heightfield > defaults = new Heightfield(1, worldExtent, Vector4::zero());
 
 	// Box filtered regions are accumulated before being normalized.
 	AlignedVector< uint32_t > heightSums;
 	AlignedVector< uint32_t > cutSums;
 	AlignedVector< uint32_t > attributeSums[Heightfield::MaxAttributes];
-	AlignedVector< uint32_t > layerSums[sizeof_array(c_layers)];
+	AlignedVector< uint32_t > channelSums[sizeof_array(c_channels)];
 	uint8_t* attributes[Heightfield::MaxAttributes] = { nullptr };
-	uint8_t* outputLayers[sizeof_array(c_layers)] = { nullptr };
+	uint8_t* outputChannels[sizeof_array(c_channels)] = { nullptr };
 	if (step > 1)
 	{
 		heightSums.resize(outSize * outSize, 0);
 		cutSums.resize(outSize * outSize, 0);
 	}
-	for (int32_t i = 0; i < sizeof_array(c_layers); ++i)
+	for (int32_t i = 0; i < sizeof_array(c_channels); ++i)
 	{
-		if ((optionalLayers & c_layers[i]) == 0)
+		if ((optionalChannels & c_channels[i]) == 0)
 			continue;
 
-		outputLayers[i] = createLayer(heightfield, c_layers[i]);
-		createLayer(defaults, c_layers[i]);
+		outputChannels[i] = createChannel(heightfield, c_channels[i]);
+		createChannel(defaults, c_channels[i]);
 		if (step > 1)
-			layerSums[i].resize((size_t)outSize * outSize * 4, 0);
+			channelSums[i].resize((size_t)outSize * outSize * 4, 0);
 	}
 
 	const int32_t mnx = clamp(x0, 0, size - 1) / tileSize;
@@ -502,7 +875,7 @@ Ref< Heightfield > TileStorage::readHeightfieldRegion(const Vector4& worldExtent
 		AlignedVector< Job::task_t > tasks;
 		for (int32_t tx = mnx; tx <= mxx; ++tx)
 			tasks.push_back([&, tx]() {
-				rowTiles[tx - mnx] = readCachedTile(worldExtent, tx, tz);
+				rowTiles[tx - mnx] = readCachedTile(layer, worldExtent, tx, tz);
 			});
 		JobManager::getInstance().fork(tasks.c_ptr(), tasks.size());
 
@@ -551,18 +924,18 @@ Ref< Heightfield > TileStorage::readHeightfieldRegion(const Vector4& worldExtent
 					for (uint8_t a = 0; a < Heightfield::MaxAttributes; ++a)
 						tileAttributes[a] = tile->getAttributes(a);
 
-					// Default of layer is a single sample, thus read with zero stride.
-					const uint8_t* tileLayers[sizeof_array(c_layers)] = { nullptr };
-					size_t tileLayerStrides[sizeof_array(c_layers)] = { 0 };
-					for (int32_t i = 0; i < sizeof_array(c_layers); ++i)
+					// Default of channel is a single sample, thus read with zero stride.
+					const uint8_t* tileChannels[sizeof_array(c_channels)] = { nullptr };
+					size_t tileChannelStrides[sizeof_array(c_channels)] = { 0 };
+					for (int32_t i = 0; i < sizeof_array(c_channels); ++i)
 					{
-						if (!outputLayers[i])
+						if (!outputChannels[i])
 							continue;
 
-						tileLayers[i] = getLayer(tile, c_layers[i]);
-						tileLayerStrides[i] = tileLayers[i] ? 4 : 0;
-						if (!tileLayers[i])
-							tileLayers[i] = getLayer(defaults, c_layers[i]);
+						tileChannels[i] = getChannel(tile, c_channels[i]);
+						tileChannelStrides[i] = tileChannels[i] ? 4 : 0;
+						if (!tileChannels[i])
+							tileChannels[i] = getChannel(defaults, c_channels[i]);
 					}
 
 					int32_t ix0, ix1;
@@ -587,10 +960,10 @@ Ref< Heightfield > TileStorage::readHeightfieldRegion(const Vector4& worldExtent
 								for (uint8_t a = 0; a < Heightfield::MaxAttributes; ++a)
 									if (tileAttributes[a])
 										attributeSums[a][dst] += tileAttributes[a][src];
-								for (int32_t i = 0; i < sizeof_array(c_layers); ++i)
-									if (tileLayers[i])
+								for (int32_t i = 0; i < sizeof_array(c_channels); ++i)
+									if (tileChannels[i])
 										for (int32_t c = 0; c < 4; ++c)
-											layerSums[i][(size_t)dst * 4 + c] += tileLayers[i][src * tileLayerStrides[i] + c];
+											channelSums[i][(size_t)dst * 4 + c] += tileChannels[i][src * tileChannelStrides[i] + c];
 							}
 							else
 							{
@@ -599,9 +972,9 @@ Ref< Heightfield > TileStorage::readHeightfieldRegion(const Vector4& worldExtent
 								for (uint8_t a = 0; a < Heightfield::MaxAttributes; ++a)
 									if (tileAttributes[a])
 										attributes[a][dst] = tileAttributes[a][src];
-								for (int32_t i = 0; i < sizeof_array(c_layers); ++i)
-									if (tileLayers[i])
-										std::memcpy(outputLayers[i] + (size_t)dst * 4, tileLayers[i] + src * tileLayerStrides[i], 4);
+								for (int32_t i = 0; i < sizeof_array(c_channels); ++i)
+									if (tileChannels[i])
+										std::memcpy(outputChannels[i] + (size_t)dst * 4, tileChannels[i] + src * tileChannelStrides[i], 4);
 							}
 						}
 					}
@@ -628,9 +1001,9 @@ Ref< Heightfield > TileStorage::readHeightfieldRegion(const Vector4& worldExtent
 			for (int32_t i = 0; i < outSize * outSize; ++i)
 				attributes[i] = (uint8_t)((attributeSums[a][i] + n / 2) / n);
 		}
-		for (int32_t i = 0; i < sizeof_array(c_layers); ++i)
-			for (size_t j = 0; j < layerSums[i].size(); ++j)
-				outputLayers[i][j] = (uint8_t)((layerSums[i][j] + n / 2) / n);
+		for (int32_t i = 0; i < sizeof_array(c_channels); ++i)
+			for (size_t j = 0; j < channelSums[i].size(); ++j)
+				outputChannels[i][j] = (uint8_t)((channelSums[i][j] + n / 2) / n);
 	}
 
 	heightfield->setWorldCenter(Vector4(

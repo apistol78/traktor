@@ -8,6 +8,7 @@
  */
 #pragma once
 
+#include "Core/Containers/AlignedVector.h"
 #include "Core/Math/Vector4.h"
 #include "Core/Object.h"
 #include "Core/Ref.h"
@@ -34,20 +35,27 @@ namespace traktor::hf
 {
 
 class Heightfield;
+class HeightfieldAsset;
 
-/*! Read and write data of a source instance, either as a single "<name>" channel or as compressed "<name>_<x>_<z>" tiles.
+/*! Read and write data of a heightfield asset's layers.
  * \ingroup Heightfield
+ *
+ * Each channel of a layer, heights, cuts, splats, colors, each attribute
+ * and mask, is stored as a separate compressed instance data stream,
+ * "L<id>_<channel>" or, when tiled, "L<id>_<channel>_<x>_<z>".
+ * Merged reads blend layers, bottom first, by their masks.
  */
 class T_DLLCLASS TileStorage : public Object
 {
 	T_RTTI_CLASS;
 
 public:
-	/*! \param tileCount Number of tiles along each side, 0 for a single untiled channel. */
-	explicit TileStorage(db::Instance* instance, int32_t tileCount);
+	explicit TileStorage(db::Instance* instance, const HeightfieldAsset* asset);
 
-	/*! \param tileCount Number of tiles along each side, 0 for a single untiled channel. */
-	explicit TileStorage(const db::Instance* instance, int32_t tileCount);
+	explicit TileStorage(const db::Instance* instance, const HeightfieldAsset* asset);
+
+	/*! \param tileCount Number of tiles along each side, instead of asset's, 0 for a single untiled channel. */
+	explicit TileStorage(db::Instance* instance, const HeightfieldAsset* asset, int32_t tileCount);
 
 	//! Size of overview; heightfield is downsampled by largest power of two which keep samples within overview sample distance, or until within maximum overview size.
 	static int32_t calculateOverviewSize(int32_t size, float worldSize);
@@ -58,50 +66,68 @@ public:
 	//! Number of samples along each side of the whole heightfield; 0 if unable to read.
 	int32_t readSize() const;
 
-	//! Optional layers, Heightfield::Layers, stored by any tile.
-	uint32_t readLayers() const;
+	//! Optional channels, Heightfield::Layers, stored by any tile of any layer.
+	uint32_t readChannels() const;
 
-	/*! \param layers Optional layers, Heightfield::Layers, to read if stored; tiles without a layer get the layer's default. */
-	Ref< Heightfield > readHeightfield(const Vector4& worldExtent, uint32_t layers = 0) const;
+	/*! Read merged heightfield.
+	 * \param channels Optional channels, Heightfield::Layers, to read if stored; tiles without a channel get the channel's default.
+	 */
+	Ref< Heightfield > readHeightfield(const Vector4& worldExtent, uint32_t channels = 0) const;
 
-	/*! Read tile, including one row and column of its +X/+Z neighbours and border samples on all sides, positioned in world. */
-	Ref< Heightfield > readHeightfieldTile(const Vector4& worldExtent, int32_t tileX, int32_t tileZ, int32_t border, uint32_t layers = 0) const;
+	/*! Read merged tile, including one row and column of its +X/+Z neighbours and border samples on all sides, positioned in world. */
+	Ref< Heightfield > readHeightfieldTile(const Vector4& worldExtent, int32_t tileX, int32_t tileZ, int32_t border, uint32_t channels = 0) const;
 
-	//! Read whole heightfield box filtered into size * size samples.
-	Ref< Heightfield > readHeightfieldOverview(const Vector4& worldExtent, int32_t size, uint32_t layers = 0) const;
+	//! Read whole merged heightfield box filtered into size * size samples.
+	Ref< Heightfield > readHeightfieldOverview(const Vector4& worldExtent, int32_t size, uint32_t channels = 0) const;
 
-	//! Read whole heightfield box filtered into overview of calculated size.
+	//! Read whole merged heightfield box filtered into overview of calculated size.
 	Ref< Heightfield > readHeightfieldOverview(const Vector4& worldExtent) const;
 
-	/*! Write heightfield; only tiles intersecting region, { x0, z0, x1, z1 } inclusive grid coordinates, if specified. */
-	bool writeHeightfield(const Heightfield* heightfield, const int32_t* region = nullptr) const;
+	//! Stamp which change whenever any tile of any layer in range, inclusive tile coordinates, is written.
+	uint32_t readStamp(int32_t tileX0, int32_t tileZ0, int32_t tileX1, int32_t tileZ1) const;
 
-	//! Stamp which change whenever any tile in range, inclusive tile coordinates, is written.
-	uint32_t readStamp(const std::wstring& name, int32_t tileX0, int32_t tileZ0, int32_t tileX1, int32_t tileZ1) const;
+	//! Read single tile, with all channels, of all layers blended by their masks.
+	Ref< Heightfield > readMergedTile(const Vector4& worldExtent, int32_t tileX, int32_t tileZ) const;
 
-	//! Read single tile, with all of its layers, exactly as stored; null if missing.
-	Ref< Heightfield > readStoredTile(const Vector4& worldExtent, int32_t tileX, int32_t tileZ) const;
+	/*! Read single tile of layer, with all channels, exactly as stored.
+	 *
+	 * Layers above base which have no data in tile get a default tile.
+	 * \param outMask Optional mask of tile, one byte per sample; base layer is full and layers without mask are empty.
+	 */
+	Ref< Heightfield > readLayerTile(int32_t layer, const Vector4& worldExtent, int32_t tileX, int32_t tileZ, AlignedVector< uint8_t >* outMask = nullptr) const;
 
-	//! Write single tile, with all of its layers, exactly as stored.
-	bool writeStoredTile(int32_t tileX, int32_t tileZ, const Heightfield* tile) const;
+	/*! Write tiles of layer in range, inclusive tile coordinates, row major; channels are encoded in parallel.
+	 * \param masks Optional masks of tiles; base layer's mask isn't stored.
+	 */
+	bool writeLayerTiles(int32_t layer, int32_t tileX0, int32_t tileZ0, int32_t tileX1, int32_t tileZ1, const RefArray< const Heightfield >& tiles, const AlignedVector< AlignedVector< uint8_t > >* masks = nullptr) const;
 
-	//! Write tiles in range, inclusive tile coordinates, row major, exactly as stored; tiles are encoded in parallel.
-	bool writeStoredTiles(int32_t tileX0, int32_t tileZ0, int32_t tileX1, int32_t tileZ1, const RefArray< const Heightfield >& tiles) const;
+	//! Read whole layer, and optionally its mask, assembled from tiles.
+	Ref< Heightfield > readLayerHeightfield(int32_t layer, const Vector4& worldExtent, AlignedVector< uint8_t >* outMask = nullptr) const;
+
+	//! Write whole layer, and optionally its mask, split into tiles.
+	bool writeLayerHeightfield(int32_t layer, const Heightfield* heightfield, const AlignedVector< uint8_t >* mask = nullptr) const;
 
 private:
 	Ref< db::Instance > m_instance;
+	AlignedVector< int32_t > m_layerIds;
 	int32_t m_tileCount;
 
-	std::wstring getChannelName(const std::wstring& name, int32_t tileX, int32_t tileZ) const;
+	std::wstring getChannelName(int32_t layer, const std::wstring& channel, int32_t tileX, int32_t tileZ) const;
 
-	//! Read size and optional layers of single tile.
-	bool readHeader(int32_t tileX, int32_t tileZ, int32_t& outSize, uint32_t& outLayers) const;
+	//! Read size and optional channels of single tile of layer.
+	bool readHeader(int32_t layer, int32_t tileX, int32_t tileZ, int32_t& outSize, uint32_t& outChannels) const;
 
-	//! Read stored tile through cache shared by all storages; cached tiles are immutable.
-	Ref< const Heightfield > readCachedTile(const Vector4& worldExtent, int32_t tileX, int32_t tileZ) const;
+	//! Read single tile of layer as stored; base layer falls back on heightfield format, as stored before layers; null if missing.
+	Ref< Heightfield > readStoredTile(int32_t layer, const Vector4& worldExtent, int32_t tileX, int32_t tileZ) const;
 
-	//! Read region, of width * width samples starting at x0, z0, box filtered by step; samples outside heightfield are clamped to edge.
-	Ref< Heightfield > readHeightfieldRegion(const Vector4& worldExtent, int32_t tileSize, int32_t x0, int32_t z0, int32_t width, int32_t step, uint32_t layers) const;
+	//! Read mask of tile of layer; false if not stored.
+	bool readStoredMask(int32_t layer, int32_t tileX, int32_t tileZ, int32_t size, AlignedVector< uint8_t >& outMask) const;
+
+	//! Read merged tile, or tile of layer, through cache shared by all storages; cached tiles are immutable.
+	Ref< const Heightfield > readCachedTile(int32_t layer, const Vector4& worldExtent, int32_t tileX, int32_t tileZ) const;
+
+	//! Read region of merged heightfield, or of layer, of width * width samples starting at x0, z0, box filtered by step; samples outside heightfield are clamped to edge.
+	Ref< Heightfield > readHeightfieldRegion(int32_t layer, const Vector4& worldExtent, int32_t tileSize, int32_t x0, int32_t z0, int32_t width, int32_t step, uint32_t channels) const;
 };
 
 }

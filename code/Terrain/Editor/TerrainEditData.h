@@ -45,6 +45,8 @@ namespace traktor::terrain
  * \ingroup Terrain
  *
  * Coordinates are grid coordinates of entire terrain.
+ * Heightfield is read with all layers merged; edits are written
+ * into top layer, which take over each edited sample through its mask.
  */
 class T_DLLCLASS TerrainEditData : public Object
 {
@@ -91,13 +93,15 @@ public:
 
 	bool setColor(int32_t x, int32_t z, const Color4f& color);
 
-	//! Write modified tiles into heightfield instance.
+	//! Write modified tiles, and masks, of edit layer into heightfield instance.
 	bool writeHeightfield();
 
 private:
 	struct Tile
 	{
-		Ref< hf::Heightfield > heightfield;
+		Ref< hf::Heightfield > merged;	//!< All layers merged; same as edit if edit layer is base.
+		Ref< hf::Heightfield > edit;	//!< Tile of edit layer.
+		AlignedVector< uint8_t > mask;	//!< Mask of edit layer.
 		bool modified = false;
 	};
 
@@ -107,10 +111,14 @@ private:
 	int32_t m_size = 0;
 	int32_t m_tileCount = 0;
 	int32_t m_tileSize = 0;
+	int32_t m_editLayer = 0;
 	AlignedVector< Tile > m_tiles;
 
-	//! Heightfield tile of grid coordinate; coordinate is converted into tile's coordinate.
-	hf::Heightfield* getHeightfieldTile(int32_t& inoutX, int32_t& inoutZ);
+	//! Tile of grid coordinate; coordinate is converted into tile's coordinate.
+	Tile* getTile(int32_t& inoutX, int32_t& inoutZ);
+
+	//! Tile of grid coordinate prepared for edit of sample; coordinate is converted into tile's coordinate.
+	Tile* editTile(int32_t& inoutX, int32_t& inoutZ);
 };
 
 }

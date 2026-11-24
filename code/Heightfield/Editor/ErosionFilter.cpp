@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -60,7 +60,7 @@ g is gravity that accelerates the flows.
 
 	AlignedVector< Vector2 > erosion(size * size, Vector2(0.0f, 0.0f));
 
-	static const int32_t MAX_PATH_LEN = size*4;
+	const int32_t MAX_PATH_LEN = size * 4;
 
 	#define HMAP_INDEX(X, Z) (clamp((X), 0, size - 1) + clamp((Z), 0, size - 1) * size)
 	#define HMAP(X, Z) hmap[HMAP_INDEX((X), (Z))]

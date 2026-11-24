@@ -14,18 +14,6 @@
 			<second>Export heightfield...</second>
 		</item>
 		<item>
-			<first>HEIGHTFIELD_ASSET_EXTENT</first>
-			<second>World size</second>
-		</item>
-		<item>
-			<first>HEIGHTFIELD_ASSET_EXTENT_UNIT</first>
-			<second>(metres)</second>
-		</item>
-		<item>
-			<first>HEIGHTFIELD_ASSET_HEIGHTS_UNIT</first>
-			<second>(heights)</second>
-		</item>
-		<item>
 			<first>HEIGHTFIELD_ASSET_IMPORT_RAW_HEIGHTS_MESSAGE</first>
 			<second>Raw must be square with one component. Lowest and highest raw values are minimum and maximum height; ocean elevation, in the same heights, is moved to world height zero.</second>
 		</item>
@@ -38,8 +26,24 @@
 			<second>Import raw</second>
 		</item>
 		<item>
-			<first>HEIGHTFIELD_ASSET_OVERVIEW_HEIGHTS</first>
-			<second>Overview heights</second>
+			<first>HEIGHTFIELD_ASSET_LAYER</first>
+			<second>Layer</second>
+		</item>
+		<item>
+			<first>HEIGHTFIELD_ASSET_EDIT_LAYER</first>
+			<second>scene edits</second>
+		</item>
+		<item>
+			<first>HEIGHTFIELD_ASSET_NEW_LAYER</first>
+			<second>Layer</second>
+		</item>
+		<item>
+			<first>HEIGHTFIELD_ASSET_REGENERATE_TITLE</first>
+			<second>Regenerate heightfield</second>
+		</item>
+		<item>
+			<first>HEIGHTFIELD_ASSET_REGENERATE_MESSAGE</first>
+			<second>Generating heights from procedural rules...</second>
 		</item>
 		<item>
 			<first>HEIGHTFIELD_ASSET_REMAP_HEIGHTS_MESSAGE</first>
@@ -50,44 +54,28 @@
 			<second>Remap heights</second>
 		</item>
 		<item>
-			<first>HEIGHTFIELD_ASSET_RESOLUTION</first>
-			<second>Resolution</second>
+			<first>HEIGHTFIELD_ASSET_RESOLUTION_MESSAGE</first>
+			<second>Resample every layer into new number of heights per metre, along world size X; tile count and world size are kept.</second>
 		</item>
 		<item>
-			<first>HEIGHTFIELD_ASSET_RESOLUTION_UNIT</first>
-			<second>(heights per metre)</second>
+			<first>HEIGHTFIELD_ASSET_RESOLUTION_TITLE</first>
+			<second>Change resolution</second>
 		</item>
 		<item>
-			<first>HEIGHTFIELD_ASSET_SIZE</first>
-			<second>Data size</second>
-		</item>
-		<item>
-			<first>HEIGHTFIELD_ASSET_SIZE_UNIT</first>
-			<second>(pixels)</second>
+			<first>HEIGHTFIELD_ASSET_STATUS</first>
+			<second>{0} x {0} heights, tiles of {1} x {1} heights, overview of {2} x {2} heights, {3:%g} heights per metre</second>
 		</item>
 		<item>
 			<first>HEIGHTFIELD_ASSET_TILES</first>
 			<second>Tiles</second>
 		</item>
 		<item>
-			<first>HEIGHTFIELD_ASSET_TILE_HEIGHTS</first>
-			<second>Tile heights</second>
-		</item>
-		<item>
-			<first>HEIGHTFIELD_ASSET_TILE_SIZE</first>
-			<second>Tile size</second>
-		</item>
-		<item>
-			<first>HEIGHTFIELD_ASSET_TILE_UNIT</first>
-			<second>(tiles)</second>
+			<first>HEIGHTFIELD_ASSET_TILE_COUNT</first>
+			<second>{0} x {0} tiles</second>
 		</item>
 		<item>
 			<first>HEIGHTFIELD_ASSET_UNTILED</first>
 			<second>Untiled</second>
-		</item>
-		<item>
-			<first>HEIGHTFIELD_ASSET_WORLD_HEIGHTS</first>
-			<second>World heights</second>
 		</item>
 		<item>
 			<first>IMPORT_HEIGHTFIELD_WIZARDTOOL_DESCRIPTION</first>

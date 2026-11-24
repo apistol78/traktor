@@ -17,13 +17,34 @@
 
 namespace traktor::terrain
 {
+namespace
+{
+
+//! Copy every channel of sample from source into target.
+void copySample(const hf::Heightfield* source, hf::Heightfield* target, int32_t x, int32_t z)
+{
+	target->setGridHeight(x, z, source->getGridHeightNearestUnsafe(x, z));
+	target->setGridCut(x, z, source->getGridCut(x, z));
+
+	for (uint8_t a = 0; a < hf::Heightfield::MaxAttributes; ++a)
+		if (source->getAttributes(a) || target->getAttributes(a))
+			target->setGridAttribute(x, z, a, source->getGridAttributeDensity(x, z, a));
+
+	if (source->getSplats() || target->getSplats())
+		target->setGridSplat(x, z, source->getGridSplat(x, z));
+
+	if (source->getColors() || target->getColors())
+		target->setGridColor(x, z, source->getGridColor(x, z));
+}
+
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.TerrainEditData", TerrainEditData, Object)
 
 bool TerrainEditData::create(const db::Instance* heightfieldInstance, const hf::HeightfieldAsset* heightfieldAsset)
 {
 	m_heightfieldInstance = heightfieldInstance;
-	m_storage = new hf::TileStorage(m_heightfieldInstance, heightfieldAsset->getTileCount());
+	m_storage = new hf::TileStorage(m_heightfieldInstance, heightfieldAsset);
 
 	m_worldExtent = heightfieldAsset->getWorldExtent();
 	m_tileCount = std::max(heightfieldAsset->getTileCount(), 1);
@@ -35,6 +56,8 @@ bool TerrainEditData::create(const db::Instance* heightfieldInstance, const hf::
 		return false;
 	}
 
+	// Top layer is edited.
+	m_editLayer = (int32_t)heightfieldAsset->getLayers().size() - 1;
 	m_tileSize = m_size / m_tileCount;
 	m_tiles.resize(m_tileCount * m_tileCount);
 	return true;
@@ -44,8 +67,8 @@ float TerrainEditData::getGridHeightNearest(int32_t gridX, int32_t gridZ)
 {
 	gridX = clamp(gridX, 0, m_size - 1);
 	gridZ = clamp(gridZ, 0, m_size - 1);
-	hf::Heightfield* tile = getHeightfieldTile(gridX, gridZ);
-	return tile ? tile->getGridHeightNearestUnsafe(gridX, gridZ) : 0.0f;
+	const Tile* tile = getTile(gridX, gridZ);
+	return tile ? tile->merged->getGridHeightNearestUnsafe(gridX, gridZ) : 0.0f;
 }
 
 float TerrainEditData::getGridHeightBilinear(float gridX, float gridZ)
@@ -86,21 +109,20 @@ void TerrainEditData::setGridHeight(int32_t gridX, int32_t gridZ, float unitY)
 	if (gridX < 0 || gridX >= m_size || gridZ < 0 || gridZ >= m_size)
 		return;
 
-	const int32_t tileIndex = (gridX / m_tileSize) + (gridZ / m_tileSize) * m_tileCount;
-	hf::Heightfield* tile = getHeightfieldTile(gridX, gridZ);
+	Tile* tile = editTile(gridX, gridZ);
 	if (!tile)
 		return;
 
-	tile->setGridHeight(gridX, gridZ, unitY);
-	m_tiles[tileIndex].modified = true;
+	tile->merged->setGridHeight(gridX, gridZ, unitY);
+	tile->edit->setGridHeight(gridX, gridZ, unitY);
 }
 
 bool TerrainEditData::getGridCut(int32_t gridX, int32_t gridZ)
 {
 	gridX = clamp(gridX, 0, m_size - 1);
 	gridZ = clamp(gridZ, 0, m_size - 1);
-	hf::Heightfield* tile = getHeightfieldTile(gridX, gridZ);
-	return tile ? tile->getGridCut(gridX, gridZ) : true;
+	const Tile* tile = getTile(gridX, gridZ);
+	return tile ? tile->merged->getGridCut(gridX, gridZ) : true;
 }
 
 void TerrainEditData::setGridCut(int32_t gridX, int32_t gridZ, bool cut)
@@ -108,21 +130,20 @@ void TerrainEditData::setGridCut(int32_t gridX, int32_t gridZ, bool cut)
 	if (gridX < 0 || gridX >= m_size || gridZ < 0 || gridZ >= m_size)
 		return;
 
-	const int32_t tileIndex = (gridX / m_tileSize) + (gridZ / m_tileSize) * m_tileCount;
-	hf::Heightfield* tile = getHeightfieldTile(gridX, gridZ);
+	Tile* tile = editTile(gridX, gridZ);
 	if (!tile)
 		return;
 
-	tile->setGridCut(gridX, gridZ, cut);
-	m_tiles[tileIndex].modified = true;
+	tile->merged->setGridCut(gridX, gridZ, cut);
+	tile->edit->setGridCut(gridX, gridZ, cut);
 }
 
 uint8_t TerrainEditData::getGridAttributeDensity(int32_t gridX, int32_t gridZ, uint8_t attribute)
 {
 	gridX = clamp(gridX, 0, m_size - 1);
 	gridZ = clamp(gridZ, 0, m_size - 1);
-	hf::Heightfield* tile = getHeightfieldTile(gridX, gridZ);
-	return tile ? tile->getGridAttributeDensity(gridX, gridZ, attribute) : 0;
+	const Tile* tile = getTile(gridX, gridZ);
+	return tile ? tile->merged->getGridAttributeDensity(gridX, gridZ, attribute) : 0;
 }
 
 void TerrainEditData::setGridAttribute(int32_t gridX, int32_t gridZ, uint8_t attribute, uint8_t density)
@@ -130,13 +151,12 @@ void TerrainEditData::setGridAttribute(int32_t gridX, int32_t gridZ, uint8_t att
 	if (gridX < 0 || gridX >= m_size || gridZ < 0 || gridZ >= m_size)
 		return;
 
-	const int32_t tileIndex = (gridX / m_tileSize) + (gridZ / m_tileSize) * m_tileCount;
-	hf::Heightfield* tile = getHeightfieldTile(gridX, gridZ);
+	Tile* tile = editTile(gridX, gridZ);
 	if (!tile)
 		return;
 
-	tile->setGridAttribute(gridX, gridZ, attribute, density);
-	m_tiles[tileIndex].modified = true;
+	tile->merged->setGridAttribute(gridX, gridZ, attribute, density);
+	tile->edit->setGridAttribute(gridX, gridZ, attribute, density);
 }
 
 Vector4 TerrainEditData::normalAt(float gridX, float gridZ)
@@ -191,11 +211,11 @@ bool TerrainEditData::getSplat(int32_t x, int32_t z, Color4f& outSplat)
 	if (x < 0 || x >= m_size || z < 0 || z >= m_size)
 		return false;
 
-	hf::Heightfield* tile = getHeightfieldTile(x, z);
+	const Tile* tile = getTile(x, z);
 	if (!tile)
 		return false;
 
-	outSplat = tile->getGridSplat(x, z);
+	outSplat = tile->merged->getGridSplat(x, z);
 	return true;
 }
 
@@ -204,13 +224,12 @@ bool TerrainEditData::setSplat(int32_t x, int32_t z, const Color4f& splat)
 	if (x < 0 || x >= m_size || z < 0 || z >= m_size)
 		return false;
 
-	const int32_t tileIndex = (x / m_tileSize) + (z / m_tileSize) * m_tileCount;
-	hf::Heightfield* tile = getHeightfieldTile(x, z);
+	Tile* tile = editTile(x, z);
 	if (!tile)
 		return false;
 
-	tile->setGridSplat(x, z, splat);
-	m_tiles[tileIndex].modified = true;
+	tile->merged->setGridSplat(x, z, splat);
+	tile->edit->setGridSplat(x, z, splat);
 	return true;
 }
 
@@ -219,11 +238,11 @@ bool TerrainEditData::getColor(int32_t x, int32_t z, Color4f& outColor)
 	if (x < 0 || x >= m_size || z < 0 || z >= m_size)
 		return false;
 
-	hf::Heightfield* tile = getHeightfieldTile(x, z);
+	const Tile* tile = getTile(x, z);
 	if (!tile)
 		return false;
 
-	outColor = tile->getGridColor(x, z);
+	outColor = tile->merged->getGridColor(x, z);
 	return true;
 }
 
@@ -232,13 +251,12 @@ bool TerrainEditData::setColor(int32_t x, int32_t z, const Color4f& color)
 	if (x < 0 || x >= m_size || z < 0 || z >= m_size)
 		return false;
 
-	const int32_t tileIndex = (x / m_tileSize) + (z / m_tileSize) * m_tileCount;
-	hf::Heightfield* tile = getHeightfieldTile(x, z);
+	Tile* tile = editTile(x, z);
 	if (!tile)
 		return false;
 
-	tile->setGridColor(x, z, color);
-	m_tiles[tileIndex].modified = true;
+	tile->merged->setGridColor(x, z, color);
+	tile->edit->setGridColor(x, z, color);
 	return true;
 }
 
@@ -250,7 +268,11 @@ bool TerrainEditData::writeHeightfield()
 		if (!tile.modified)
 			continue;
 
-		if (!m_storage->writeStoredTile(i % m_tileCount, i / m_tileCount, tile.heightfield))
+		RefArray< const hf::Heightfield > tiles;
+		tiles.push_back(tile.edit);
+
+		const AlignedVector< AlignedVector< uint8_t > > masks(1, tile.mask);
+		if (!m_storage->writeLayerTiles(m_editLayer, i % m_tileCount, i / m_tileCount, i % m_tileCount, i / m_tileCount, tiles, &masks))
 			return false;
 
 		tile.modified = false;
@@ -258,7 +280,7 @@ bool TerrainEditData::writeHeightfield()
 	return true;
 }
 
-hf::Heightfield* TerrainEditData::getHeightfieldTile(int32_t& inoutX, int32_t& inoutZ)
+TerrainEditData::Tile* TerrainEditData::getTile(int32_t& inoutX, int32_t& inoutZ)
 {
 	const int32_t tileX = inoutX / m_tileSize;
 	const int32_t tileZ = inoutZ / m_tileSize;
@@ -266,16 +288,38 @@ hf::Heightfield* TerrainEditData::getHeightfieldTile(int32_t& inoutX, int32_t& i
 	inoutZ -= tileZ * m_tileSize;
 
 	Tile& tile = m_tiles[tileX + tileZ * m_tileCount];
-	if (!tile.heightfield)
+	if (!tile.merged)
 	{
-		tile.heightfield = m_storage->readStoredTile(m_worldExtent, tileX, tileZ);
-		if (tile.heightfield && tile.heightfield->getSize() != m_tileSize)
+		Ref< hf::Heightfield > edit = m_storage->readLayerTile(m_editLayer, m_worldExtent, tileX, tileZ, &tile.mask);
+		Ref< hf::Heightfield > merged = (m_editLayer > 0) ? m_storage->readMergedTile(m_worldExtent, tileX, tileZ) : edit;
+		if (!edit || !merged || edit->getSize() != m_tileSize || merged->getSize() != m_tileSize)
 		{
-			log::error << L"Unable to edit terrain; tile " << tileX << L", " << tileZ << L" size mismatch." << Endl;
-			tile.heightfield = nullptr;
+			log::error << L"Unable to edit terrain; tile " << tileX << L", " << tileZ << L" missing or size mismatch." << Endl;
+			return nullptr;
 		}
+
+		tile.merged = merged;
+		tile.edit = edit;
 	}
-	return tile.heightfield;
+	return &tile;
+}
+
+TerrainEditData::Tile* TerrainEditData::editTile(int32_t& inoutX, int32_t& inoutZ)
+{
+	Tile* tile = getTile(inoutX, inoutZ);
+	if (!tile)
+		return nullptr;
+
+	// Edit layer take over sample entirely, thus it's first seeded with merged sample.
+	uint8_t& weight = tile->mask[inoutX + inoutZ * m_tileSize];
+	if (weight != 255)
+	{
+		copySample(tile->merged, tile->edit, inoutX, inoutZ);
+		weight = 255;
+	}
+
+	tile->modified = true;
+	return tile;
 }
 
 }

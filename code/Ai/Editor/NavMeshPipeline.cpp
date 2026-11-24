@@ -200,8 +200,8 @@ uint32_t readTerrainStamp(editor::IPipelineBuilder* pipelineBuilder, const NavMe
 	int32_t range[4];
 	getTerrainTileRange(heightfieldAsset, bounds.transform(terrain.transform.inverse()), range);
 
-	const hf::TileStorage tileStorage(heightfieldInstance, heightfieldAsset->getTileCount());
-	return DeepHash(heightfieldAsset).get() + tileStorage.readStamp(L"Data", range[0], range[1], range[2], range[3]);
+	const hf::TileStorage tileStorage(heightfieldInstance, heightfieldAsset);
+	return DeepHash(heightfieldAsset).get() + tileStorage.readStamp(range[0], range[1], range[2], range[3]);
 }
 
 /*! Convert heightfield tiles of terrain overlapping bounds, or every tile if bounds are empty, at full resolution.
@@ -215,7 +215,7 @@ bool createTerrainModels(editor::IPipelineBuilder* pipelineBuilder, const NavMes
 		return false;
 
 	const Vector4& worldExtent = heightfieldAsset->getWorldExtent();
-	const hf::TileStorage tileStorage(heightfieldInstance, heightfieldAsset->getTileCount());
+	const hf::TileStorage tileStorage(heightfieldInstance, heightfieldAsset);
 	const int32_t tileCount = std::max(heightfieldAsset->getTileCount(), 1);
 
 	int32_t range[4];

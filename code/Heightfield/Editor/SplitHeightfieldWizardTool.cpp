@@ -87,17 +87,13 @@ bool SplitHeightfieldWizardTool::launch(ui::Widget* parent, editor::IEditor* edi
 		return false;
 	}
 
-	// Read everything before anything is modified.
-	const TileStorage sourceStorage(instance, heightfieldAsset->getTileCount());
-	const TileStorage targetStorage(instance, tileCount);
+	const TileStorage sourceStorage(instance, heightfieldAsset);
+	const TileStorage targetStorage(instance, heightfieldAsset, tileCount);
 
-	Ref< Heightfield > heightfield = sourceStorage.readHeightfield(worldExtent, Heightfield::LyAll);
-	if (!heightfield)
-		return false;
-
-	if ((heightfield->getSize() % tileCount) != 0)
+	const int32_t size = sourceStorage.readSize();
+	if (size <= 0 || (size % tileCount) != 0)
 	{
-		log::error << L"Unable to split heightfield; size " << heightfield->getSize() << L" not divisible into " << tileCount << L" * " << tileCount << L" tiles." << Endl;
+		log::error << L"Unable to split heightfield; size " << size << L" not divisible into " << tileCount << L" * " << tileCount << L" tiles." << Endl;
 		return false;
 	}
 
@@ -107,12 +103,17 @@ bool SplitHeightfieldWizardTool::launch(ui::Widget* parent, editor::IEditor* edi
 		return false;
 	}
 
-	heightfieldAsset->setTileCount(tileCount);
+	// Data is removed when committed, thus each layer is read before it's written.
+	bool result = instance->removeAllData();
+	for (int32_t layer = 0; layer < (int32_t)heightfieldAsset->getLayers().size() && result; ++layer)
+	{
+		AlignedVector< uint8_t > mask;
+		Ref< Heightfield > heightfield = sourceStorage.readLayerHeightfield(layer, worldExtent, &mask);
+		result = heightfield && targetStorage.writeLayerHeightfield(layer, heightfield, &mask);
+	}
 
-	const bool result =
-		instance->removeAllData() &&
-		targetStorage.writeHeightfield(heightfield) &&
-		instance->setObject(heightfieldAsset);
+	heightfieldAsset->setTileCount(tileCount);
+	result = result && instance->setObject(heightfieldAsset);
 
 	if (!result || !instance->commit())
 	{
@@ -121,7 +122,7 @@ bool SplitHeightfieldWizardTool::launch(ui::Widget* parent, editor::IEditor* edi
 		return false;
 	}
 
-	log::info << L"Heightfield split into " << tileCount << L" * " << tileCount << L" tiles of " << heightfield->getSize() / tileCount << L" samples." << Endl;
+	log::info << L"Heightfield split into " << tileCount << L" * " << tileCount << L" tiles of " << size / tileCount << L" samples." << Endl;
 	return true;
 }
 

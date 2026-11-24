@@ -310,7 +310,7 @@ bool OcclusionTexturePipeline::buildOutput(
 		return false;
 	}
 
-	Ref< Heightfield > heightfield = TileStorage(heightfieldAssetInstance, heightfieldAsset->getTileCount()).readHeightfield(heightfieldAsset->getWorldExtent());
+	Ref< Heightfield > heightfield = TileStorage(heightfieldAssetInstance, heightfieldAsset).readHeightfield(heightfieldAsset->getWorldExtent());
 	if (!heightfield)
 	{
 		log::error << L"Heightfield pipeline failed; unable to read heights" << Endl;

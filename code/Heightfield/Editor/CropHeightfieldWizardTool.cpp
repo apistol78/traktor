@@ -55,13 +55,11 @@ bool CropHeightfieldWizardTool::launch(ui::Widget* parent, editor::IEditor* edit
 		return false;
 	}
 
-	const TileStorage tileStorage(instance, heightfieldAsset->getTileCount());
+	const TileStorage tileStorage(instance, heightfieldAsset);
 
-	Ref< Heightfield > heightfield = tileStorage.readHeightfield(heightfieldAsset->getWorldExtent(), Heightfield::LyAll);
-	if (!heightfield)
+	const int32_t originalSize = tileStorage.readSize();
+	if (originalSize <= 0)
 		return false;
-
-	const int32_t originalSize = heightfield->getSize();
 
 	ui::InputDialog::Field fields[] = {
 		ui::InputDialog::Field(L"Left", L"0", new ui::NumericEditValidator(false)),
@@ -95,43 +93,60 @@ bool CropHeightfieldWizardTool::launch(ui::Widget* parent, editor::IEditor* edit
 		return false;
 	}
 
-	Ref< Heightfield > cropped = new Heightfield(size, heightfield->getWorldExtent(), heightfield->getWorldCenter());
-
-	const uint8_t* splats = heightfield->getSplats();
-	const uint8_t* colors = heightfield->getColors();
-	uint8_t* croppedSplats = splats ? cropped->createSplats() : nullptr;
-	uint8_t* croppedColors = colors ? cropped->createColors() : nullptr;
-
-	for (int32_t iy = 0; iy < size; ++iy)
-	{
-		for (int32_t ix = 0; ix < size; ++ix)
-		{
-			const int32_t sx = clamp(ix + x, 0, originalSize - 1);
-			const int32_t sy = clamp(iy + y, 0, originalSize - 1);
-
-			cropped->setGridHeight(ix, iy, heightfield->getGridHeightNearest(sx, sy));
-			cropped->setGridCut(ix, iy, heightfield->getGridCut(sx, sy));
-
-			for (uint8_t a = 0; a < Heightfield::MaxAttributes; ++a)
-				if (heightfield->getAttributes(a))
-					cropped->setGridAttribute(ix, iy, a, heightfield->getGridAttributeDensity(sx, sy, a));
-
-			const size_t dst = ((size_t)ix + (size_t)iy * size) * 4;
-			const size_t src = ((size_t)sx + (size_t)sy * originalSize) * 4;
-			if (croppedSplats)
-				std::memcpy(croppedSplats + dst, splats + src, 4);
-			if (croppedColors)
-				std::memcpy(croppedColors + dst, colors + src, 4);
-		}
-	}
-
 	if (!instance->checkout())
 	{
 		log::error << L"Unable to checkout heightfield instance." << Endl;
 		return false;
 	}
 
-	if (!tileStorage.writeHeightfield(cropped) || !instance->commit())
+	// Each layer, with its mask, is cropped.
+	bool result = true;
+	for (int32_t layer = 0; layer < (int32_t)heightfieldAsset->getLayers().size() && result; ++layer)
+	{
+		AlignedVector< uint8_t > mask;
+		Ref< Heightfield > heightfield = tileStorage.readLayerHeightfield(layer, heightfieldAsset->getWorldExtent(), &mask);
+		if (!heightfield)
+		{
+			result = false;
+			break;
+		}
+
+		Ref< Heightfield > cropped = new Heightfield(size, heightfield->getWorldExtent(), heightfield->getWorldCenter());
+		AlignedVector< uint8_t > croppedMask((size_t)size * size);
+
+		const uint8_t* splats = heightfield->getSplats();
+		const uint8_t* colors = heightfield->getColors();
+		uint8_t* croppedSplats = splats ? cropped->createSplats() : nullptr;
+		uint8_t* croppedColors = colors ? cropped->createColors() : nullptr;
+
+		for (int32_t iy = 0; iy < size; ++iy)
+		{
+			for (int32_t ix = 0; ix < size; ++ix)
+			{
+				const int32_t sx = clamp(ix + x, 0, originalSize - 1);
+				const int32_t sy = clamp(iy + y, 0, originalSize - 1);
+
+				cropped->setGridHeight(ix, iy, heightfield->getGridHeightNearest(sx, sy));
+				cropped->setGridCut(ix, iy, heightfield->getGridCut(sx, sy));
+
+				for (uint8_t a = 0; a < Heightfield::MaxAttributes; ++a)
+					if (heightfield->getAttributes(a))
+						cropped->setGridAttribute(ix, iy, a, heightfield->getGridAttributeDensity(sx, sy, a));
+
+				const size_t dst = (size_t)ix + (size_t)iy * size;
+				const size_t src = (size_t)sx + (size_t)sy * originalSize;
+				if (croppedSplats)
+					std::memcpy(croppedSplats + dst * 4, splats + src * 4, 4);
+				if (croppedColors)
+					std::memcpy(croppedColors + dst * 4, colors + src * 4, 4);
+				croppedMask[dst] = mask[src];
+			}
+		}
+
+		result = tileStorage.writeLayerHeightfield(layer, cropped, &croppedMask);
+	}
+
+	if (!result || !instance->commit())
 	{
 		log::error << L"Unable to crop heightfield; failed to write heightfield." << Endl;
 		instance->revert();

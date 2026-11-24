@@ -8,15 +8,13 @@
  */
 #include "Heightfield/Editor/NewHeightfieldWizardTool.h"
 
-#include "Core/Io/FileSystem.h"
-#include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
 #include "Database/Group.h"
 #include "Database/Instance.h"
 #include "Heightfield/Editor/HeightfieldAsset.h"
 #include "Heightfield/Editor/NewHeightfieldDialog.h"
+#include "Heightfield/Editor/TileStorage.h"
 #include "Heightfield/Heightfield.h"
-#include "Heightfield/HeightfieldFormat.h"
 #include "I18N/Text.h"
 
 namespace traktor::hf
@@ -85,16 +83,13 @@ bool NewHeightfieldWizardTool::launch(ui::Widget* parent, editor::IEditor* edito
 
 	heightfield->updateCellBounds();
 
-	Ref< IStream > file = heightfieldInstance->writeData(L"Data");
-	if (!file)
-		return false;
-
-	HeightfieldFormat().write(file, heightfield);
-
-	file->close();
-	file = nullptr;
-
 	Ref< HeightfieldAsset > heightfieldAsset = new HeightfieldAsset(worldExtent);
+	if (!TileStorage(heightfieldInstance, heightfieldAsset).writeLayerHeightfield(0, heightfield))
+	{
+		heightfieldInstance->revert();
+		return false;
+	}
+
 	heightfieldInstance->setObject(heightfieldAsset);
 	heightfieldInstance->commit();
 

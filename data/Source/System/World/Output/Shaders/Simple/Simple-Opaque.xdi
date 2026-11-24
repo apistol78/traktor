@@ -38,7 +38,7 @@
 			<alphaTestFunction>CfLess</alphaTestFunction>
 			<alphaTestReference>128</alphaTestReference>
 			<alphaToCoverageEnable>false</alphaToCoverageEnable>
-			<wireframe>false</wireframe>
+			<wireframe>true</wireframe>
 			<stencilEnable>false</stencilEnable>
 			<stencilFail>SoKeep</stencilFail>
 			<stencilZFail>SoKeep</stencilZFail>

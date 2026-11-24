@@ -182,7 +182,7 @@ void addTileDependencies(
 {
 	const uint32_t flags = editor::PdfBuild | editor::PdfResource;
 	const int32_t tileCount = std::max(heightfieldAsset->getTileCount(), 1);
-	const hf::TileStorage tileStorage(heightfieldInstance, heightfieldAsset->getTileCount());
+	const hf::TileStorage tileStorage(heightfieldInstance, heightfieldAsset);
 	const std::wstring path = (tileX >= 0) ? outputPath + L"/Tiles/" + toString(tileX) + L"_" + toString(tileZ) : outputPath + L"/Overview";
 	const uint32_t assetHash = DeepHash(heightfieldAsset).get();
 
@@ -191,8 +191,8 @@ void addTileDependencies(
 	const int32_t z0 = (tileX >= 0) ? tileZ : 0;
 	const int32_t x1 = (tileX >= 0) ? tileX + 1 : tileCount - 1;
 	const int32_t z1 = (tileX >= 0) ? tileZ + 1 : tileCount - 1;
-	const uint32_t stamp = assetHash + tileStorage.readStamp(L"Data", x0, z0, x1, z1);
-	const uint32_t normalStamp = (tileX >= 0) ? assetHash + tileStorage.readStamp(L"Data", tileX - 1, tileZ - 1, tileX + 1, tileZ + 1) : stamp;
+	const uint32_t stamp = assetHash + tileStorage.readStamp(x0, z0, x1, z1);
+	const uint32_t normalStamp = (tileX >= 0) ? assetHash + tileStorage.readStamp(tileX - 1, tileZ - 1, tileX + 1, tileZ + 1) : stamp;
 
 	Ref< hf::HeightfieldTileAsset > heightfieldTile = new hf::HeightfieldTileAsset();
 	heightfieldTile->m_heightfield = resource::Id< hf::Heightfield >(heightfieldInstance->getGuid());
@@ -304,14 +304,14 @@ bool TerrainPipeline::buildDependencies(
 		const int32_t tileCount = std::max(heightfieldAsset->getTileCount(), 1);
 
 		Ref< db::Instance > heightfieldInstance = pipelineDepends->getSourceDatabase()->getInstance(terrainAsset->getHeightfield());
-		const int32_t size = heightfieldInstance ? hf::TileStorage(heightfieldInstance, heightfieldAsset->getTileCount()).readSize() : 0;
+		const int32_t size = heightfieldInstance ? hf::TileStorage(heightfieldInstance, heightfieldAsset).readSize() : 0;
 		if (size <= 0)
 		{
 			log::error << L"Terrain pipeline failed; unable to read size of heightfield." << Endl;
 			return false;
 		}
 
-		const uint32_t layers = hf::TileStorage(heightfieldInstance, heightfieldAsset->getTileCount()).readLayers();
+		const uint32_t layers = hf::TileStorage(heightfieldInstance, heightfieldAsset).readChannels();
 		const bool haveSplat = (layers & hf::Heightfield::LySplat) != 0;
 		const bool haveColor = (layers & hf::Heightfield::LyColor) != 0;
 
@@ -349,7 +349,7 @@ bool TerrainPipeline::buildOutput(
 
 		const bool color = (imageAsset->m_name == L"Color");
 		const uint32_t layer = color ? hf::Heightfield::LyColor : hf::Heightfield::LySplat;
-		const hf::TileStorage tileStorage(heightfieldInstance, heightfieldAsset->getTileCount());
+		const hf::TileStorage tileStorage(heightfieldInstance, heightfieldAsset);
 
 		Ref< hf::Heightfield > heightfield = (imageAsset->m_tileX >= 0) ? tileStorage.readHeightfieldTile(heightfieldAsset->getWorldExtent(), imageAsset->m_tileX, imageAsset->m_tileZ, 0, layer) : tileStorage.readHeightfieldOverview(heightfieldAsset->getWorldExtent(), imageAsset->m_overviewSize, layer);
 		const uint8_t* data = heightfield ? (color ? heightfield->getColors() : heightfield->getSplats()) : nullptr;
@@ -389,7 +389,7 @@ bool TerrainPipeline::buildOutput(
 			return false;
 		}
 
-		const hf::TileStorage tileStorage(heightfieldAssetInstance, heightfieldAsset->getTileCount());
+		const hf::TileStorage tileStorage(heightfieldAssetInstance, heightfieldAsset);
 
 		const int32_t size = tileStorage.readSize();
 		if (size <= 0)
@@ -404,7 +404,7 @@ bool TerrainPipeline::buildOutput(
 		const Guid surfaceShaderGuid = combineGuids(c_guidSurfaceShaderSeed, outputGuid);
 
 		// Splat and color layers are built as tiles; terrains without splat use a simple default.
-		const uint32_t layers = tileStorage.readLayers();
+		const uint32_t layers = tileStorage.readChannels();
 		const bool haveSplat = (layers & hf::Heightfield::LySplat) != 0;
 		const bool haveColor = (layers & hf::Heightfield::LyColor) != 0;
 		if (!haveSplat)

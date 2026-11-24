@@ -24,7 +24,6 @@
 #include "Heightfield/Editor/HeightfieldAsset.h"
 #include "Heightfield/Editor/TileStorage.h"
 #include "Heightfield/Heightfield.h"
-#include "Heightfield/HeightfieldFormat.h"
 #include "I18N/Text.h"
 #include "Ui/FileDialog.h"
 
@@ -214,15 +213,12 @@ bool ImportHeightfieldWizardTool::launch(ui::Widget* parent, editor::IEditor* ed
 		Ref< db::Instance > heightfieldInstance = group->createInstance(instanceName);
 		heightfieldInstance->setObject(heightfieldAsset);
 
-		Ref< IStream > data = heightfieldInstance->writeData(L"Data");
-		if (!data)
+		if (!TileStorage(heightfieldInstance, heightfieldAsset).writeLayerHeightfield(0, heightfield))
 		{
 			log::error << L"Failed to write heightfield data into instance; import heights failed." << Endl;
 			heightfieldInstance->revert();
 			return false;
 		}
-
-		HeightfieldFormat().write(data, heightfield);
 
 		heightfieldInstance->commit();
 	}
@@ -234,9 +230,9 @@ bool ImportHeightfieldWizardTool::launch(ui::Widget* parent, editor::IEditor* ed
 			return false;
 		}
 
-		// Replace heightfield in existing asset.
+		// Replace base layer of existing asset.
 		Ref< const HeightfieldAsset > heightfieldAsset = instance->getObject< HeightfieldAsset >();
-		if (!heightfieldAsset || !TileStorage(instance, heightfieldAsset->getTileCount()).writeHeightfield(heightfield))
+		if (!heightfieldAsset || !TileStorage(instance, heightfieldAsset).writeLayerHeightfield(0, heightfield))
 		{
 			log::error << L"Failed to write heightfield data into instance; import heights failed." << Endl;
 			instance->revert();
