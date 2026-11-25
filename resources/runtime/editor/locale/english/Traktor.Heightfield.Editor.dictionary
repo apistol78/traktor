@@ -30,20 +30,12 @@
 			<second>Layer</second>
 		</item>
 		<item>
-			<first>HEIGHTFIELD_ASSET_EDIT_LAYER</first>
-			<second>scene edits</second>
+			<first>HEIGHTFIELD_ASSET_LAYER_TYPE</first>
+			<second>Type</second>
 		</item>
 		<item>
 			<first>HEIGHTFIELD_ASSET_NEW_LAYER</first>
 			<second>Layer</second>
-		</item>
-		<item>
-			<first>HEIGHTFIELD_ASSET_REGENERATE_TITLE</first>
-			<second>Regenerate heightfield</second>
-		</item>
-		<item>
-			<first>HEIGHTFIELD_ASSET_REGENERATE_MESSAGE</first>
-			<second>Generating heights from procedural rules...</second>
 		</item>
 		<item>
 			<first>HEIGHTFIELD_ASSET_REMAP_HEIGHTS_MESSAGE</first>

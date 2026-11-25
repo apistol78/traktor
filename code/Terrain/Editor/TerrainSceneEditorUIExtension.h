@@ -8,8 +8,11 @@
  */
 #pragma once
 
+#include "Core/Containers/AlignedVector.h"
 #include "Scene/Editor/ISceneEditorUIExtension.h"
 #include "Ui/Events/AllEvents.h"
+
+#include <string>
 
 namespace traktor::scene
 {
@@ -51,6 +54,9 @@ public:
 
 	void setSurfaceShaderName(int32_t channel, const std::wstring& name);
 
+	//! Set names of edit layers which are selectable, and which is selected.
+	void setEditLayers(const AlignedVector< std::wstring >& names, int32_t selected);
+
 private:
 	scene::SceneEditorContext* m_context;
 	Ref< TerrainEditModifier > m_terrainEditModifier;
@@ -71,6 +77,7 @@ private:
 	Ref< ui::ToolBarEmbed > m_toolStrength;
 	Ref< ui::ColorControl > m_colorControl;
 	Ref< ui::ToolBarEmbed > m_toolColor;
+	Ref< ui::ToolBarDropDown > m_toolLayer;
 	Ref< ui::ToolBarDropDown > m_toolMaterial;
 	Ref< ui::ToolBarDropDown > m_toolAttribute;
 	Ref< ui::ToolBarDropDown > m_toolVisualize;

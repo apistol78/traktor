@@ -34,6 +34,10 @@
       <second>Flatten brush</second>
     </item>
     <item>
+      <first>TERRAIN_EDITOR_LAYER</first>
+      <second>Layer</second>
+    </item>
+    <item>
       <first>TERRAIN_EDITOR_MATERIAL</first>
       <second>Material</second>
     </item>

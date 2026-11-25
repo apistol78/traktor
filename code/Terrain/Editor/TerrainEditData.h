@@ -45,15 +45,17 @@ namespace traktor::terrain
  * \ingroup Terrain
  *
  * Coordinates are grid coordinates of entire terrain.
- * Heightfield is read with all layers merged; edits are written
- * into top layer, which take over each edited sample through its mask.
+ * Heightfield is read with layers up to, and including, edit layer merged;
+ * edits are written into edit layer, which take over each edited sample through its mask.
+ * Reads with merged set read all layers merged, as displayed.
  */
 class T_DLLCLASS TerrainEditData : public Object
 {
 	T_RTTI_CLASS;
 
 public:
-	bool create(const db::Instance* heightfieldInstance, const hf::HeightfieldAsset* heightfieldAsset);
+	/*! \param editLayerId Identifier of edit layer which is edited. */
+	bool create(const db::Instance* heightfieldInstance, const hf::HeightfieldAsset* heightfieldAsset, int32_t editLayerId);
 
 	int32_t getSize() const { return m_size; }
 
@@ -63,43 +65,44 @@ public:
 
 	const Vector4& getWorldExtent() const { return m_worldExtent; }
 
-	float getGridHeightNearest(int32_t gridX, int32_t gridZ);
+	float getGridHeightNearest(int32_t gridX, int32_t gridZ, bool merged = false);
 
-	float getGridHeightBilinear(float gridX, float gridZ);
+	float getGridHeightBilinear(float gridX, float gridZ, bool merged = false);
 
-	float getWorldHeight(float worldX, float worldZ);
+	float getWorldHeight(float worldX, float worldZ, bool merged = false);
 
 	void setGridHeight(int32_t gridX, int32_t gridZ, float unitY);
 
-	bool getGridCut(int32_t gridX, int32_t gridZ);
+	bool getGridCut(int32_t gridX, int32_t gridZ, bool merged = false);
 
 	void setGridCut(int32_t gridX, int32_t gridZ, bool cut);
 
-	uint8_t getGridAttributeDensity(int32_t gridX, int32_t gridZ, uint8_t attribute);
+	uint8_t getGridAttributeDensity(int32_t gridX, int32_t gridZ, uint8_t attribute, bool merged = false);
 
 	void setGridAttribute(int32_t gridX, int32_t gridZ, uint8_t attribute, uint8_t density);
 
-	Vector4 normalAt(float gridX, float gridZ);
+	Vector4 normalAt(float gridX, float gridZ, bool merged = false);
 
 	float worldToUnit(float worldY) const;
 
 	void worldToGrid(float worldX, float worldZ, float& outGridX, float& outGridZ) const;
 
-	bool getSplat(int32_t x, int32_t z, Color4f& outSplat);
+	bool getSplat(int32_t x, int32_t z, Color4f& outSplat, bool merged = false);
 
 	bool setSplat(int32_t x, int32_t z, const Color4f& splat);
 
-	bool getColor(int32_t x, int32_t z, Color4f& outColor);
+	bool getColor(int32_t x, int32_t z, Color4f& outColor, bool merged = false);
 
 	bool setColor(int32_t x, int32_t z, const Color4f& color);
 
-	//! Write modified tiles, and masks, of edit layer into heightfield instance.
+	//! Write modified tiles, and masks, of edit layer into heightfield instance; layers above edit layer are evaluated again onto written tiles.
 	bool writeHeightfield();
 
 private:
 	struct Tile
 	{
-		Ref< hf::Heightfield > merged;	//!< All layers merged; same as edit if edit layer is base.
+		Ref< hf::Heightfield > merged;	//!< All layers merged; same as level if edit layer is top.
+		Ref< hf::Heightfield > level;	//!< Layers up to, and including, edit layer merged; same as edit if edit layer is base.
 		Ref< hf::Heightfield > edit;	//!< Tile of edit layer.
 		AlignedVector< uint8_t > mask;	//!< Mask of edit layer.
 		bool modified = false;
@@ -112,6 +115,7 @@ private:
 	int32_t m_tileCount = 0;
 	int32_t m_tileSize = 0;
 	int32_t m_editLayer = 0;
+	int32_t m_layerCount = 0;
 	AlignedVector< Tile > m_tiles;
 
 	//! Tile of grid coordinate; coordinate is converted into tile's coordinate.

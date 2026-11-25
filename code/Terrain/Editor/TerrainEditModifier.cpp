@@ -16,6 +16,7 @@
 #include "Drawing/Image.h"
 #include "Editor/IDocument.h"
 #include "Editor/IEditor.h"
+#include "Heightfield/Editor/EditLayer.h"
 #include "Heightfield/Editor/HeightfieldAsset.h"
 #include "Heightfield/Heightfield.h"
 #include "Render/IRenderSystem.h"
@@ -188,10 +189,10 @@ void fillTileMap(render::ITexture* tileMap, TileMap map, TerrainEditData* data, 
 			const int32_t gx = std::min(tileX + x, size - 1);
 
 			if (map == TileMap::Heights)
-				((float*)row)[x] = data->getGridHeightNearest(gx, gz);
+				((float*)row)[x] = data->getGridHeightNearest(gx, gz, true);
 			else if (map == TileMap::Normals)
 			{
-				const Vector4 normal = data->normalAt((float)gx, (float)gz) * Vector4(0.5f, 0.5f, 0.5f, 0.0f) + Vector4(0.5f, 0.5f, 0.5f, 0.0f);
+				const Vector4 normal = data->normalAt((float)gx, (float)gz, true) * Vector4(0.5f, 0.5f, 0.5f, 0.0f) + Vector4(0.5f, 0.5f, 0.5f, 0.0f);
 				uint8_t* ptr = row + x * 4;
 				ptr[0] = uint8_t(normal.x() * 255);
 				ptr[1] = uint8_t(normal.z() * 255);
@@ -202,9 +203,9 @@ void fillTileMap(render::ITexture* tileMap, TileMap map, TerrainEditData* data, 
 			{
 				Color4f color(0.0f, 0.0f, 0.0f, 0.0f);
 				if (map == TileMap::Splat)
-					data->getSplat(gx, gz, color);
+					data->getSplat(gx, gz, color, true);
 				else
-					data->getColor(gx, gz, color);
+					data->getColor(gx, gz, color, true);
 
 				float rgba[4];
 				color.saturated().storeUnaligned(rgba);
@@ -214,7 +215,7 @@ void fillTileMap(render::ITexture* tileMap, TileMap map, TerrainEditData* data, 
 					ptr[i] = uint8_t(rgba[i] * 255.0f + 0.5f);
 			}
 			else
-				row[x] = data->getGridCut(gx, gz) ? 0xff : 0x00;
+				row[x] = data->getGridCut(gx, gz, true) ? 0xff : 0x00;
 		}
 	}
 
@@ -279,9 +280,35 @@ bool TerrainEditModifier::activate()
 
 	m_heightfieldInstance = terrainAsset ? sourceDatabase->getInstance(terrainAsset->getHeightfield()) : nullptr;
 	Ref< const hf::HeightfieldAsset > heightfieldAsset = m_heightfieldInstance ? m_heightfieldInstance->getObject< hf::HeightfieldAsset >() : nullptr;
+	if (!heightfieldAsset)
+	{
+		deactivate();
+		return false;
+	}
+
+	// Top edit layer is edited unless another edit layer has been selected.
+	AlignedVector< std::wstring > editLayerNames;
+	m_editLayerIds.resize(0);
+	for (const hf::HeightfieldAssetLayer* layer : heightfieldAsset->getLayers())
+	{
+		if (is_a< hf::EditLayer >(layer))
+		{
+			m_editLayerIds.push_back(layer->getId());
+			editLayerNames.push_back(layer->getName());
+		}
+	}
+
+	int32_t editLayer = (int32_t)m_editLayerIds.size() - 1;
+	for (int32_t i = 0; i < (int32_t)m_editLayerIds.size(); ++i)
+	{
+		if (m_editLayerIds[i] == m_editLayerId)
+			editLayer = i;
+	}
+	m_editLayerId = (editLayer >= 0) ? m_editLayerIds[editLayer] : -1;
+	m_context->getUIExtensionOf< TerrainSceneEditorUIExtension >()->setEditLayers(editLayerNames, editLayer);
 
 	m_data = new TerrainEditData();
-	if (!heightfieldAsset || !m_data->create(m_heightfieldInstance, heightfieldAsset))
+	if (!m_data->create(m_heightfieldInstance, heightfieldAsset, m_editLayerId))
 	{
 		deactivate();
 		return false;
@@ -561,6 +588,25 @@ void TerrainEditModifier::setFallOffImage(drawing::Image* fallOffImage)
 	m_fallOffImage = fallOffImage;
 }
 
+void TerrainEditModifier::setEditLayer(int32_t editLayer)
+{
+	if (editLayer < 0 || editLayer >= (int32_t)m_editLayerIds.size())
+		return;
+
+	m_editLayerId = m_editLayerIds[editLayer];
+	if (!m_data)
+		return;
+
+	// Edits are written at end of each stroke, thus only data and brush need to be created for new edit layer.
+	Ref< const hf::HeightfieldAsset > heightfieldAsset = m_heightfieldAsset ? m_heightfieldAsset : m_heightfieldInstance->getObject< hf::HeightfieldAsset >();
+	Ref< TerrainEditData > data = new TerrainEditData();
+	if (!heightfieldAsset || !data->create(m_heightfieldInstance, heightfieldAsset, m_editLayerId))
+		return;
+
+	m_data = data;
+	setBrush(type_of(m_brush));
+}
+
 bool TerrainEditModifier::begin(bool inverted)
 {
 	if (!m_data)
@@ -720,10 +766,10 @@ void TerrainEditModifier::updateTiles(const int32_t* region, uint32_t brushMode)
 				{
 					for (int32_t x = tileRegion[0]; x <= tileRegion[2]; ++x)
 					{
-						heightfield->setGridHeight(x, z, m_data->getGridHeightNearest(x0 + x, z0 + z));
-						heightfield->setGridCut(x, z, m_data->getGridCut(x0 + x, z0 + z));
+						heightfield->setGridHeight(x, z, m_data->getGridHeightNearest(x0 + x, z0 + z, true));
+						heightfield->setGridCut(x, z, m_data->getGridCut(x0 + x, z0 + z, true));
 						if ((brushMode & IBrush::MdAttribute) != 0)
-							heightfield->setGridAttribute(x, z, (uint8_t)m_attribute, m_data->getGridAttributeDensity(x0 + x, z0 + z, (uint8_t)m_attribute));
+							heightfield->setGridAttribute(x, z, (uint8_t)m_attribute, m_data->getGridAttributeDensity(x0 + x, z0 + z, (uint8_t)m_attribute, true));
 					}
 				}
 				heightfield->updateCellBounds(tileRegion[0], tileRegion[1], tileRegion[2], tileRegion[3]);
@@ -734,37 +780,11 @@ void TerrainEditModifier::updateTiles(const int32_t* region, uint32_t brushMode)
 
 void TerrainEditModifier::end()
 {
-	// Terrain layers are scattered from tile heightfields.
-	for (auto terrainLayer : m_terrainLayers)
-		terrainLayer->updatePatches();
-
 	float gx, gz;
 	m_data->worldToGrid(m_center.x(), m_center.z(), gx, gz);
 	m_brush->end(gx, gz);
 
-	// Update error metrics of edited tiles after stroke to prevent popping while drawing.
-	if (
-		(m_brushMode & IBrush::MdHeight) != 0 &&
-		m_applied)
-	{
-		const int32_t tileCount = m_data->getTileCount();
-		const int32_t tileSize = m_data->getTileSize();
-
-		for (int32_t i = 0; i < (int32_t)m_tileMaps.size(); ++i)
-		{
-			const int32_t x0 = (i % tileCount) * tileSize;
-			const int32_t z0 = (i / tileCount) * tileSize;
-			if (
-				!m_tileMaps[i].heightMap ||
-				m_dirtyRegion[2] < x0 || m_dirtyRegion[0] > x0 + tileSize ||
-				m_dirtyRegion[3] < z0 || m_dirtyRegion[1] > z0 + tileSize)
-				continue;
-
-			m_terrainComponent->updateTilePatches(i, m_dirtyRegion);
-		}
-	}
-
-	// Write modified tiles of heightfield.
+	// Write modified tiles of heightfield; layers above edit layer are evaluated again onto stroke.
 	if (m_brushMode != 0 && m_heightfieldInstance)
 	{
 		if (!m_context->getDocument()->containInstance(m_heightfieldInstance))
@@ -788,10 +808,40 @@ void TerrainEditModifier::end()
 		}
 
 		if (m_data->writeHeightfield())
+		{
 			m_context->getDocument()->setModified();
+			if (m_applied)
+				updateTiles(m_dirtyRegion, m_brushMode);
+		}
 		else
 			log::error << L"Unable to write heightfield." << Endl;
 	}
+
+	// Update error metrics of edited tiles after stroke to prevent popping while drawing.
+	if (
+		(m_brushMode & IBrush::MdHeight) != 0 &&
+		m_applied)
+	{
+		const int32_t tileCount = m_data->getTileCount();
+		const int32_t tileSize = m_data->getTileSize();
+
+		for (int32_t i = 0; i < (int32_t)m_tileMaps.size(); ++i)
+		{
+			const int32_t x0 = (i % tileCount) * tileSize;
+			const int32_t z0 = (i / tileCount) * tileSize;
+			if (
+				!m_tileMaps[i].heightMap ||
+				m_dirtyRegion[2] < x0 || m_dirtyRegion[0] > x0 + tileSize ||
+				m_dirtyRegion[3] < z0 || m_dirtyRegion[1] > z0 + tileSize)
+				continue;
+
+			m_terrainComponent->updateTilePatches(i, m_dirtyRegion);
+		}
+	}
+
+	// Terrain layers are scattered from tile heightfields.
+	for (auto terrainLayer : m_terrainLayers)
+		terrainLayer->updatePatches();
 
 	m_context->raiseRedraw(nullptr);
 }

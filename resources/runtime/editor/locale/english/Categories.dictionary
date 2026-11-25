@@ -70,10 +70,6 @@
 			<second>Heightfield occlusion texture</second>
 		</item>
 		<item>
-			<first>TRAKTOR_HF_PROCEDURALHEIGHTFIELDASSET</first>
-			<second>Procedural heightfield</second>
-		</item>
-		<item>
 			<first>TRAKTOR_I18N_DICTIONARY</first>
 			<second>Language dictionary</second>
 		</item>

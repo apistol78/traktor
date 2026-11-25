@@ -131,6 +131,9 @@ public:
 
 	void setFallOffImage(drawing::Image* fallOffImage);
 
+	//! Select edit layer, as index among edit layers of heightfield, which is edited.
+	void setEditLayer(int32_t editLayer);
+
 private:
 	scene::SceneEditorContext* m_context;
 	Ref< scene::EntityAdapter > m_terrainAdapter;
@@ -139,6 +142,8 @@ private:
 	RefArray< TerrainLayerComponent > m_terrainLayers;
 	Ref< db::Instance > m_heightfieldInstance;
 	Ref< hf::HeightfieldAsset > m_heightfieldAsset;
+	AlignedVector< int32_t > m_editLayerIds;
+	int32_t m_editLayerId = -1;
 	Ref< TerrainEditData > m_data;
 	AlignedVector< TileMaps > m_tileMaps;
 	Ref< IBrush > m_brush;

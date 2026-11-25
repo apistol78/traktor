@@ -87,6 +87,9 @@ bool TerrainSceneEditorUIExtension::create(ui::Widget* parent, ui::ToolBar* tool
 
 	m_toolColor = new ui::ToolBarEmbed(m_colorControl, 24_ut, 16_ut);
 
+	// Edit layers are listed when modifier is activated.
+	m_toolLayer = new ui::ToolBarDropDown(ui::Command(L"Terrain.Editor.SelectLayer"), 120_ut, i18n::Text(L"TERRAIN_EDITOR_LAYER"));
+
 	m_toolMaterial = new ui::ToolBarDropDown(ui::Command(L"Terrain.Editor.SelectMaterial"), 160_ut, i18n::Text(L"TERRAIN_EDITOR_MATERIAL"));
 	m_toolMaterial->add(L"1");
 	m_toolMaterial->add(L"2");
@@ -121,6 +124,7 @@ bool TerrainSceneEditorUIExtension::create(ui::Widget* parent, ui::ToolBar* tool
 
 	toolBar->addItem(new ui::ToolBarSeparator());
 	toolBar->addItem(m_toolToggleEditTerrain);
+	toolBar->addItem(m_toolGroup->addItem(m_toolLayer));
 	toolBar->addItem(m_toolGroup->addItem(m_toolToggleMaterial));
 	toolBar->addItem(m_toolGroup->addItem(m_toolToggleColor));
 	toolBar->addItem(m_toolGroup->addItem(m_toolToggleElevate));
@@ -237,6 +241,14 @@ bool TerrainSceneEditorUIExtension::handleCommand(const ui::Command& command)
 	}
 
 	{
+		if (command == L"Terrain.Editor.SelectLayer")
+		{
+			m_terrainEditModifier->setEditLayer(m_toolLayer->getSelected());
+			return true;
+		}
+	}
+
+	{
 		if (command == L"Terrain.Editor.SelectMaterial")
 		{
 			updateModifierState();
@@ -275,6 +287,14 @@ void TerrainSceneEditorUIExtension::handleDatabaseEvent(db::Database* database, 
 void TerrainSceneEditorUIExtension::setSurfaceShaderName(int32_t channel, const std::wstring& name)
 {
 	m_toolMaterial->setItem(channel, str(L"%d. ", channel) + name);
+}
+
+void TerrainSceneEditorUIExtension::setEditLayers(const AlignedVector< std::wstring >& names, int32_t selected)
+{
+	m_toolLayer->removeAll();
+	for (const auto& name : names)
+		m_toolLayer->add(name);
+	m_toolLayer->select(selected);
 }
 
 void TerrainSceneEditorUIExtension::updateModifierState()

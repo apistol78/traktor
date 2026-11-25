@@ -11,6 +11,7 @@
 #include "Core/Log/Log.h"
 #include "Core/Math/MathUtils.h"
 #include "Database/Instance.h"
+#include "Heightfield/Editor/EditLayer.h"
 #include "Heightfield/Editor/HeightfieldAsset.h"
 #include "Heightfield/Editor/TileStorage.h"
 #include "Heightfield/Heightfield.h"
@@ -41,7 +42,7 @@ void copySample(const hf::Heightfield* source, hf::Heightfield* target, int32_t 
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.TerrainEditData", TerrainEditData, Object)
 
-bool TerrainEditData::create(const db::Instance* heightfieldInstance, const hf::HeightfieldAsset* heightfieldAsset)
+bool TerrainEditData::create(const db::Instance* heightfieldInstance, const hf::HeightfieldAsset* heightfieldAsset, int32_t editLayerId)
 {
 	m_heightfieldInstance = heightfieldInstance;
 	m_storage = new hf::TileStorage(m_heightfieldInstance, heightfieldAsset);
@@ -56,31 +57,43 @@ bool TerrainEditData::create(const db::Instance* heightfieldInstance, const hf::
 		return false;
 	}
 
-	// Top layer is edited.
-	m_editLayer = (int32_t)heightfieldAsset->getLayers().size() - 1;
+	const auto& layers = heightfieldAsset->getLayers();
+	m_layerCount = (int32_t)layers.size();
+	m_editLayer = -1;
+	for (int32_t i = 0; i < m_layerCount; ++i)
+	{
+		if (layers[i]->getId() == editLayerId && is_a< hf::EditLayer >(layers[i]))
+			m_editLayer = i;
+	}
+	if (m_editLayer < 0)
+	{
+		log::error << L"Unable to edit terrain; no edit layer " << editLayerId << L" in heightfield." << Endl;
+		return false;
+	}
+
 	m_tileSize = m_size / m_tileCount;
 	m_tiles.resize(m_tileCount * m_tileCount);
 	return true;
 }
 
-float TerrainEditData::getGridHeightNearest(int32_t gridX, int32_t gridZ)
+float TerrainEditData::getGridHeightNearest(int32_t gridX, int32_t gridZ, bool merged)
 {
 	gridX = clamp(gridX, 0, m_size - 1);
 	gridZ = clamp(gridZ, 0, m_size - 1);
 	const Tile* tile = getTile(gridX, gridZ);
-	return tile ? tile->merged->getGridHeightNearestUnsafe(gridX, gridZ) : 0.0f;
+	return tile ? (merged ? tile->merged : tile->level)->getGridHeightNearestUnsafe(gridX, gridZ) : 0.0f;
 }
 
-float TerrainEditData::getGridHeightBilinear(float gridX, float gridZ)
+float TerrainEditData::getGridHeightBilinear(float gridX, float gridZ, bool merged)
 {
 	const int32_t igridX = clamp((int32_t)gridX, 0, m_size - 2);
 	const int32_t igridZ = clamp((int32_t)gridZ, 0, m_size - 2);
 
 	float hts[] = {
-		getGridHeightNearest(igridX, igridZ),
-		getGridHeightNearest(igridX + 1, igridZ),
-		getGridHeightNearest(igridX, igridZ + 1),
-		getGridHeightNearest(igridX + 1, igridZ + 1)
+		getGridHeightNearest(igridX, igridZ, merged),
+		getGridHeightNearest(igridX + 1, igridZ, merged),
+		getGridHeightNearest(igridX, igridZ + 1, merged),
+		getGridHeightNearest(igridX + 1, igridZ + 1, merged)
 	};
 
 	const float fgridX = gridX - igridX;
@@ -97,11 +110,11 @@ float TerrainEditData::getGridHeightBilinear(float gridX, float gridZ)
 	return hl + (hr - hl) * fgridX;
 }
 
-float TerrainEditData::getWorldHeight(float worldX, float worldZ)
+float TerrainEditData::getWorldHeight(float worldX, float worldZ, bool merged)
 {
 	float gridX, gridZ;
 	worldToGrid(worldX, worldZ, gridX, gridZ);
-	return m_worldExtent.y() * (getGridHeightBilinear(gridX, gridZ) - 0.5f);
+	return m_worldExtent.y() * (getGridHeightBilinear(gridX, gridZ, merged) - 0.5f);
 }
 
 void TerrainEditData::setGridHeight(int32_t gridX, int32_t gridZ, float unitY)
@@ -113,16 +126,20 @@ void TerrainEditData::setGridHeight(int32_t gridX, int32_t gridZ, float unitY)
 	if (!tile)
 		return;
 
-	tile->merged->setGridHeight(gridX, gridZ, unitY);
+	// Merged follow change of level until layers above edit layer are evaluated again.
+	if (tile->merged != tile->level)
+		tile->merged->setGridHeight(gridX, gridZ, tile->merged->getGridHeightNearestUnsafe(gridX, gridZ) + unitY - tile->level->getGridHeightNearestUnsafe(gridX, gridZ));
+
+	tile->level->setGridHeight(gridX, gridZ, unitY);
 	tile->edit->setGridHeight(gridX, gridZ, unitY);
 }
 
-bool TerrainEditData::getGridCut(int32_t gridX, int32_t gridZ)
+bool TerrainEditData::getGridCut(int32_t gridX, int32_t gridZ, bool merged)
 {
 	gridX = clamp(gridX, 0, m_size - 1);
 	gridZ = clamp(gridZ, 0, m_size - 1);
 	const Tile* tile = getTile(gridX, gridZ);
-	return tile ? tile->merged->getGridCut(gridX, gridZ) : true;
+	return tile ? (merged ? tile->merged : tile->level)->getGridCut(gridX, gridZ) : true;
 }
 
 void TerrainEditData::setGridCut(int32_t gridX, int32_t gridZ, bool cut)
@@ -135,15 +152,16 @@ void TerrainEditData::setGridCut(int32_t gridX, int32_t gridZ, bool cut)
 		return;
 
 	tile->merged->setGridCut(gridX, gridZ, cut);
+	tile->level->setGridCut(gridX, gridZ, cut);
 	tile->edit->setGridCut(gridX, gridZ, cut);
 }
 
-uint8_t TerrainEditData::getGridAttributeDensity(int32_t gridX, int32_t gridZ, uint8_t attribute)
+uint8_t TerrainEditData::getGridAttributeDensity(int32_t gridX, int32_t gridZ, uint8_t attribute, bool merged)
 {
 	gridX = clamp(gridX, 0, m_size - 1);
 	gridZ = clamp(gridZ, 0, m_size - 1);
 	const Tile* tile = getTile(gridX, gridZ);
-	return tile ? tile->merged->getGridAttributeDensity(gridX, gridZ, attribute) : 0;
+	return tile ? (merged ? tile->merged : tile->level)->getGridAttributeDensity(gridX, gridZ, attribute) : 0;
 }
 
 void TerrainEditData::setGridAttribute(int32_t gridX, int32_t gridZ, uint8_t attribute, uint8_t density)
@@ -156,10 +174,11 @@ void TerrainEditData::setGridAttribute(int32_t gridX, int32_t gridZ, uint8_t att
 		return;
 
 	tile->merged->setGridAttribute(gridX, gridZ, attribute, density);
+	tile->level->setGridAttribute(gridX, gridZ, attribute, density);
 	tile->edit->setGridAttribute(gridX, gridZ, attribute, density);
 }
 
-Vector4 TerrainEditData::normalAt(float gridX, float gridZ)
+Vector4 TerrainEditData::normalAt(float gridX, float gridZ, bool merged)
 {
 	const float c_distance = 0.5f;
 	const float directions[][2] = {
@@ -173,11 +192,11 @@ Vector4 TerrainEditData::normalAt(float gridX, float gridZ)
 		{ -c_distance, 0.0f }
 	};
 
-	const float h0 = getGridHeightBilinear(gridX, gridZ);
+	const float h0 = getGridHeightBilinear(gridX, gridZ, merged);
 
 	float h[sizeof_array(directions)];
 	for (uint32_t i = 0; i < sizeof_array(directions); ++i)
-		h[i] = getGridHeightBilinear(gridX + directions[i][0], gridZ + directions[i][1]);
+		h[i] = getGridHeightBilinear(gridX + directions[i][0], gridZ + directions[i][1], merged);
 
 	const float sx = m_worldExtent.x() / m_size;
 	const float sy = m_worldExtent.y();
@@ -206,7 +225,7 @@ void TerrainEditData::worldToGrid(float worldX, float worldZ, float& outGridX, f
 	outGridZ = m_size * (worldZ + m_worldExtent.z() * 0.5f) / m_worldExtent.z() - 0.5f;
 }
 
-bool TerrainEditData::getSplat(int32_t x, int32_t z, Color4f& outSplat)
+bool TerrainEditData::getSplat(int32_t x, int32_t z, Color4f& outSplat, bool merged)
 {
 	if (x < 0 || x >= m_size || z < 0 || z >= m_size)
 		return false;
@@ -215,7 +234,7 @@ bool TerrainEditData::getSplat(int32_t x, int32_t z, Color4f& outSplat)
 	if (!tile)
 		return false;
 
-	outSplat = tile->merged->getGridSplat(x, z);
+	outSplat = (merged ? tile->merged : tile->level)->getGridSplat(x, z);
 	return true;
 }
 
@@ -229,11 +248,12 @@ bool TerrainEditData::setSplat(int32_t x, int32_t z, const Color4f& splat)
 		return false;
 
 	tile->merged->setGridSplat(x, z, splat);
+	tile->level->setGridSplat(x, z, splat);
 	tile->edit->setGridSplat(x, z, splat);
 	return true;
 }
 
-bool TerrainEditData::getColor(int32_t x, int32_t z, Color4f& outColor)
+bool TerrainEditData::getColor(int32_t x, int32_t z, Color4f& outColor, bool merged)
 {
 	if (x < 0 || x >= m_size || z < 0 || z >= m_size)
 		return false;
@@ -242,7 +262,7 @@ bool TerrainEditData::getColor(int32_t x, int32_t z, Color4f& outColor)
 	if (!tile)
 		return false;
 
-	outColor = tile->merged->getGridColor(x, z);
+	outColor = (merged ? tile->merged : tile->level)->getGridColor(x, z);
 	return true;
 }
 
@@ -256,6 +276,7 @@ bool TerrainEditData::setColor(int32_t x, int32_t z, const Color4f& color)
 		return false;
 
 	tile->merged->setGridColor(x, z, color);
+	tile->level->setGridColor(x, z, color);
 	tile->edit->setGridColor(x, z, color);
 	return true;
 }
@@ -276,6 +297,14 @@ bool TerrainEditData::writeHeightfield()
 			return false;
 
 		tile.modified = false;
+
+		if (tile.merged != tile.level)
+		{
+			Ref< hf::Heightfield > merged = m_storage->readMergedTile(m_worldExtent, i % m_tileCount, i / m_tileCount);
+			if (!merged)
+				return false;
+			tile.merged = merged;
+		}
 	}
 	return true;
 }
@@ -291,14 +320,16 @@ TerrainEditData::Tile* TerrainEditData::getTile(int32_t& inoutX, int32_t& inoutZ
 	if (!tile.merged)
 	{
 		Ref< hf::Heightfield > edit = m_storage->readLayerTile(m_editLayer, m_worldExtent, tileX, tileZ, &tile.mask);
-		Ref< hf::Heightfield > merged = (m_editLayer > 0) ? m_storage->readMergedTile(m_worldExtent, tileX, tileZ) : edit;
-		if (!edit || !merged || edit->getSize() != m_tileSize || merged->getSize() != m_tileSize)
+		Ref< hf::Heightfield > level = (m_editLayer > 0) ? m_storage->readMergedTile(m_worldExtent, tileX, tileZ, m_editLayer + 1) : edit;
+		Ref< hf::Heightfield > merged = (m_editLayer < m_layerCount - 1) ? m_storage->readMergedTile(m_worldExtent, tileX, tileZ) : level;
+		if (!edit || !level || !merged || edit->getSize() != m_tileSize || level->getSize() != m_tileSize || merged->getSize() != m_tileSize)
 		{
 			log::error << L"Unable to edit terrain; tile " << tileX << L", " << tileZ << L" missing or size mismatch." << Endl;
 			return nullptr;
 		}
 
 		tile.merged = merged;
+		tile.level = level;
 		tile.edit = edit;
 	}
 	return &tile;
@@ -310,11 +341,11 @@ TerrainEditData::Tile* TerrainEditData::editTile(int32_t& inoutX, int32_t& inout
 	if (!tile)
 		return nullptr;
 
-	// Edit layer take over sample entirely, thus it's first seeded with merged sample.
+	// Edit layer take over sample entirely, thus it's first seeded with level sample.
 	uint8_t& weight = tile->mask[inoutX + inoutZ * m_tileSize];
 	if (weight != 255)
 	{
-		copySample(tile->merged, tile->edit, inoutX, inoutZ);
+		copySample(tile->level, tile->edit, inoutX, inoutZ);
 		weight = 255;
 	}
 

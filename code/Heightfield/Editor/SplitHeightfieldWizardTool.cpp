@@ -12,6 +12,7 @@
 #include "Core/Misc/String.h"
 #include "Database/Instance.h"
 #include "Heightfield/Editor/HeightfieldAsset.h"
+#include "Heightfield/Editor/HeightfieldAssetLayer.h"
 #include "Heightfield/Editor/TileStorage.h"
 #include "Heightfield/Heightfield.h"
 #include "I18N/Text.h"
@@ -103,10 +104,13 @@ bool SplitHeightfieldWizardTool::launch(ui::Widget* parent, editor::IEditor* edi
 		return false;
 	}
 
-	// Data is removed when committed, thus each layer is read before it's written.
+	// Data is removed when committed, thus each layer is read before it's written; layers without stored data are skipped.
 	bool result = instance->removeAllData();
 	for (int32_t layer = 0; layer < (int32_t)heightfieldAsset->getLayers().size() && result; ++layer)
 	{
+		if (!heightfieldAsset->getLayers()[layer]->haveData() && !heightfieldAsset->getLayers()[layer]->haveMask())
+			continue;
+
 		AlignedVector< uint8_t > mask;
 		Ref< Heightfield > heightfield = sourceStorage.readLayerHeightfield(layer, worldExtent, &mask);
 		result = heightfield && targetStorage.writeLayerHeightfield(layer, heightfield, &mask);

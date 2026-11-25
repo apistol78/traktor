@@ -13,6 +13,7 @@
 #include "Core/Misc/String.h"
 #include "Database/Instance.h"
 #include "Heightfield/Editor/HeightfieldAsset.h"
+#include "Heightfield/Editor/HeightfieldAssetLayer.h"
 #include "Heightfield/Editor/TileStorage.h"
 #include "Heightfield/Heightfield.h"
 #include "I18N/Text.h"
@@ -99,10 +100,13 @@ bool CropHeightfieldWizardTool::launch(ui::Widget* parent, editor::IEditor* edit
 		return false;
 	}
 
-	// Each layer, with its mask, is cropped.
+	// Each layer, with its mask, is cropped; layers without stored data are skipped.
 	bool result = true;
 	for (int32_t layer = 0; layer < (int32_t)heightfieldAsset->getLayers().size() && result; ++layer)
 	{
+		if (!heightfieldAsset->getLayers()[layer]->haveData() && !heightfieldAsset->getLayers()[layer]->haveMask())
+			continue;
+
 		AlignedVector< uint8_t > mask;
 		Ref< Heightfield > heightfield = tileStorage.readLayerHeightfield(layer, heightfieldAsset->getWorldExtent(), &mask);
 		if (!heightfield)

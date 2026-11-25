@@ -16,9 +16,6 @@
 #include "Core/Misc/String.h"
 #include "Core/Thread/Job.h"
 #include "Core/Thread/JobManager.h"
-#include "Core/Thread/Thread.h"
-#include "Core/Thread/ThreadManager.h"
-#include "Database/Database.h"
 #include "Database/Instance.h"
 #include "Drawing/Image.h"
 #include "Drawing/PixelFormat.h"
@@ -27,18 +24,22 @@
 #include "Editor/IEditorPageSite.h"
 #include "Editor/PropertiesView.h"
 #include "Heightfield/Heightfield.h"
+#include "Heightfield/Editor/EditLayer.h"
 #include "Heightfield/Editor/HeightfieldAsset.h"
 #include "Heightfield/Editor/HeightfieldAssetEditor.h"
-#include "Heightfield/Editor/ProceduralHeightfieldAsset.h"
+#include "Heightfield/Editor/HeightfieldAssetLayer.h"
 #include "Heightfield/Editor/TileStorage.h"
 #include "I18N/Format.h"
 #include "I18N/Text.h"
-#include "Ui/BackgroundWorkerDialog.h"
 #include "Ui/Bitmap.h"
 #include "Ui/Container.h"
 #include "Ui/FileDialog.h"
+#include "Ui/GridView/GridColumn.h"
+#include "Ui/GridView/GridRow.h"
+#include "Ui/GridView/GridView.h"
 #include "Ui/InputDialog.h"
 #include "Ui/NumericEditValidator.h"
+#include "Ui/Splitter.h"
 #include "Ui/StatusBar/StatusBar.h"
 #include "Ui/StyleSheet.h"
 #include "Ui/TableLayout.h"
@@ -317,7 +318,7 @@ bool HeightfieldAssetEditor::create(ui::Container* parent)
 
 	const int32_t count = std::max(m_asset->getTileCount(), 1);
 	m_tileSize = TileStorage(m_instance, m_asset).readSize() / count;
-	m_layer = 0;
+	m_layer = -1;
 	if (m_tileSize <= 0 || !readPreview() || !readTilePreview())
 	{
 		log::error << L"Heightfield asset editor failed; unable to read heights." << Endl;
@@ -327,8 +328,7 @@ bool HeightfieldAssetEditor::create(ui::Container* parent)
 	m_container = new ui::Container();
 	m_container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%,*", 0_ut, 0_ut));
 
-	// Layers and tile counts are listed by update fields.
-	m_toolLayer = new ui::ToolBarDropDown(ui::Command(L"HeightfieldAssetEditor.Layer"), 150_ut, i18n::Text(L"HEIGHTFIELD_ASSET_LAYER"));
+	// Tile counts are listed by update fields.
 	m_toolTiles = new ui::ToolBarDropDown(ui::Command(L"HeightfieldAssetEditor.Tiles"), 100_ut, i18n::Text(L"HEIGHTFIELD_ASSET_TILES"));
 
 	m_toolChannel = new ui::ToolBarDropDown(ui::Command(L"HeightfieldAssetEditor.Channel"), 100_ut, L"Channel");
@@ -341,9 +341,10 @@ bool HeightfieldAssetEditor::create(ui::Container* parent)
 
 	m_toolBar = new ui::ToolBar();
 	m_toolBar->create(m_container);
-	m_toolBar->addItem(m_toolLayer);
-	m_toolBar->addItem(new ui::ToolBarButton(L"Add layer", ui::Command(L"HeightfieldAssetEditor.AddLayer")));
+	m_toolBar->addItem(new ui::ToolBarButton(L"Add layer...", ui::Command(L"HeightfieldAssetEditor.AddLayer")));
 	m_toolBar->addItem(new ui::ToolBarButton(L"Remove layer", ui::Command(L"HeightfieldAssetEditor.RemoveLayer")));
+	m_toolBar->addItem(new ui::ToolBarButton(L"Move layer up", ui::Command(L"HeightfieldAssetEditor.MoveLayerUp")));
+	m_toolBar->addItem(new ui::ToolBarButton(L"Move layer down", ui::Command(L"HeightfieldAssetEditor.MoveLayerDown")));
 	m_toolBar->addItem(new ui::ToolBarSeparator());
 	m_toolBar->addItem(m_toolChannel);
 	m_toolBar->addItem(new ui::ToolBarSeparator());
@@ -354,14 +355,23 @@ bool HeightfieldAssetEditor::create(ui::Container* parent)
 	m_toolBar->addItem(new ui::ToolBarButton(L"Clear selected tile", ui::Command(L"HeightfieldAssetEditor.ClearTile")));
 	m_toolBar->addItem(new ui::ToolBarSeparator());
 	m_toolBar->addItem(new ui::ToolBarButton(L"Remap heights...", ui::Command(L"HeightfieldAssetEditor.RemapHeights")));
-	m_toolBar->addItem(new ui::ToolBarButton(L"Regenerate", ui::Command(L"HeightfieldAssetEditor.Regenerate")));
 	m_toolBar->addItem(new ui::ToolBarSeparator());
 	m_toolBar->addItem(m_toolTiles);
 	m_toolBar->addItem(new ui::ToolBarButton(L"Change resolution...", ui::Command(L"HeightfieldAssetEditor.ChangeResolution")));
 	m_toolBar->addEventHandler< ui::ToolBarButtonClickEvent >(this, &HeightfieldAssetEditor::eventToolBar);
 
+	Ref< ui::Splitter > splitter = new ui::Splitter();
+	splitter->create(m_container, true, 250_ut);
+
+	// Layers are listed top first, thus evaluated from bottom of list and up; no layer selected previews all layers merged.
+	m_gridLayers = new ui::GridView();
+	m_gridLayers->create(splitter, ui::GridView::WsColumnHeader | ui::WsDoubleBuffer);
+	m_gridLayers->addColumn(new ui::GridColumn(i18n::Text(L"HEIGHTFIELD_ASSET_LAYER"), 140_ut));
+	m_gridLayers->addColumn(new ui::GridColumn(i18n::Text(L"HEIGHTFIELD_ASSET_LAYER_TYPE"), 100_ut));
+	m_gridLayers->addEventHandler< ui::SelectionChangeEvent >(this, &HeightfieldAssetEditor::eventLayerSelect);
+
 	Ref< ui::Container > containerPreviews = new ui::Container();
-	containerPreviews->create(m_container, ui::WsNone, new ui::TableLayout(L"50%,50%", L"100%", 4_ut, 4_ut));
+	containerPreviews->create(splitter, ui::WsNone, new ui::TableLayout(L"50%,50%", L"100%", 4_ut, 4_ut));
 
 	m_previewControl = new ui::Widget();
 	m_previewControl->create(containerPreviews, ui::WsDoubleBuffer);
@@ -410,25 +420,60 @@ bool HeightfieldAssetEditor::handleCommand(const ui::Command& command)
 
 	const int32_t count = std::max(m_asset->getTileCount(), 1);
 
-	if (command == L"HeightfieldAssetEditor.Layer")
-		selectLayer(m_toolLayer->getSelected());
-	else if (command == L"HeightfieldAssetEditor.AddLayer")
+	// Only what selected layer store can be modified.
+	const bool modifyMask =
+		command == L"HeightfieldAssetEditor.ImportRaw" ||
+		command == L"HeightfieldAssetEditor.ImportRawTile" ||
+		command == L"HeightfieldAssetEditor.Clear" ||
+		command == L"HeightfieldAssetEditor.ClearTile";
+	const bool modify = modifyMask || command == L"HeightfieldAssetEditor.RemapHeights";
+	const HeightfieldAssetLayer* selectedLayer = (m_layer >= 0) ? m_asset->getLayers()[m_layer] : nullptr;
+	if (modify && !(selectedLayer && (selectedLayer->haveData() || (modifyMask && selectedLayer->haveMask() && m_toolChannel->getSelected() == ChMask))))
 	{
-		m_asset->addLayer(std::wstring(i18n::Text(L"HEIGHTFIELD_ASSET_NEW_LAYER")) + L" " + toString((int32_t)m_asset->getLayers().size()));
-		m_propertiesView->setPropertyObject(m_asset);
+		log::error << L"Unable to modify heightfield; select a layer with data, or mask of a layer with mask." << Endl;
+		return true;
+	}
+
+	if (command == L"HeightfieldAssetEditor.AddLayer")
+	{
+		const TypeInfo* layerType = m_editor->browseType(makeTypeInfoSet< HeightfieldAssetLayer >(), false, true);
+		Ref< HeightfieldAssetLayer > layer = layerType ? dynamic_type_cast< HeightfieldAssetLayer* >(layerType->createInstance()) : nullptr;
+		if (!layer)
+			return true;
+
+		layer->setName(std::wstring(i18n::Text(L"HEIGHTFIELD_ASSET_NEW_LAYER")) + L" " + toString((int32_t)m_asset->getLayers().size()));
+		m_asset->addLayer(layer);
+		m_document->setModified();
 		selectLayer((int32_t)m_asset->getLayers().size() - 1);
+		updateFields();
 	}
 	else if (command == L"HeightfieldAssetEditor.RemoveLayer")
 	{
 		// Data of removed layer is left in instance; layer identifiers are never reused.
-		if (m_layer == 0)
+		if (m_layer <= 0)
 		{
-			log::error << L"Unable to remove layer; base layer can't be removed." << Endl;
+			log::error << L"Unable to remove layer; " << ((m_layer < 0) ? L"no layer selected." : L"base layer can't be removed.") << Endl;
 			return true;
 		}
 		m_asset->getLayers().erase(m_asset->getLayers().begin() + m_layer);
-		m_propertiesView->setPropertyObject(m_asset);
-		selectLayer(m_layer);
+		m_document->setModified();
+		selectLayer(-1);
+		updateFields();
+	}
+	else if (command == L"HeightfieldAssetEditor.MoveLayerUp" || command == L"HeightfieldAssetEditor.MoveLayerDown")
+	{
+		// Base layer stays at bottom.
+		RefArray< HeightfieldAssetLayer >& layers = m_asset->getLayers();
+		const int32_t to = m_layer + ((command == L"HeightfieldAssetEditor.MoveLayerUp") ? 1 : -1);
+		if (m_layer <= 0 || to <= 0 || to >= (int32_t)layers.size())
+			return true;
+
+		Ref< HeightfieldAssetLayer > layer = layers[m_layer];
+		layers.erase(layers.begin() + m_layer);
+		layers.insert(layers.begin() + to, layer);
+		m_document->setModified();
+		selectLayer(to);
+		updateFields();
 	}
 	else if (command == L"HeightfieldAssetEditor.Channel")
 		updatePreviewImage();
@@ -442,8 +487,6 @@ bool HeightfieldAssetEditor::handleCommand(const ui::Command& command)
 		clear(m_selectedTileX, m_selectedTileZ, m_selectedTileX, m_selectedTileZ);
 	else if (command == L"HeightfieldAssetEditor.RemapHeights")
 		remapHeights();
-	else if (command == L"HeightfieldAssetEditor.Regenerate")
-		regenerate();
 	else if (command == L"HeightfieldAssetEditor.Tiles")
 	{
 		const AlignedVector< int32_t > tileCounts = validTileCounts(m_tileSize * count);
@@ -467,7 +510,6 @@ bool HeightfieldAssetEditor::modifyTiles(int32_t tileX0, int32_t tileZ0, int32_t
 {
 	const TileStorage storage(m_instance, m_asset);
 	const Vector4 worldExtent = m_asset->getWorldExtent();
-	const int32_t previewTileSize = m_tileSize / m_previewStep;
 
 	bool result = true;
 	for (int32_t tz = tileZ0; tz <= tileZ1 && result; ++tz)
@@ -482,9 +524,6 @@ bool HeightfieldAssetEditor::modifyTiles(int32_t tileX0, int32_t tileZ0, int32_t
 				Ref< Heightfield > tile = storage.readLayerTile(m_layer, worldExtent, tx, tz, &mask);
 				if (!tile || !modify(tile, mask.ptr(), tx, tz))
 					return;
-				updatePreview(tile, mask.c_ptr(), m_previewStep, tx * previewTileSize, tz * previewTileSize, m_previewImages);
-				if (tx == m_selectedTileX && tz == m_selectedTileZ)
-					updatePreview(tile, mask.c_ptr(), m_tilePreviewStep, 0, 0, m_tilePreviewImages);
 				tiles[tx - tileX0] = tile;
 			});
 		JobManager::getInstance().fork(tasks.c_ptr(), tasks.size());
@@ -495,7 +534,12 @@ bool HeightfieldAssetEditor::modifyTiles(int32_t tileX0, int32_t tileZ0, int32_t
 		result = result && storage.writeLayerTiles(m_layer, tileX0, tz, tileX1, tz, tiles, &masks);
 	}
 
+	// Cached reads doesn't see written data before it's committed; preview is re-read as modified layer affect layers above.
+	TileStorage::flushCache();
+
 	m_document->setModified();
+	readPreview();
+	readTilePreview();
 	updatePreviewImage();
 	return result;
 }
@@ -703,10 +747,10 @@ bool HeightfieldAssetEditor::clear(int32_t tileX0, int32_t tileZ0, int32_t tileX
 		if (!haveChannel)
 			return true;
 
-		// Cleared mask makes layer not contribute.
+		// Cleared mask is reset to default.
 		if (channel == ChMask)
 		{
-			std::memset(mask, 0, (size_t)m_tileSize * m_tileSize);
+			std::memset(mask, getDefaultMask(), (size_t)m_tileSize * m_tileSize);
 			return true;
 		}
 
@@ -777,49 +821,6 @@ bool HeightfieldAssetEditor::scaleHeights(float scale, float offset)
 		for (int32_t z = 0; z < m_tileSize; ++z)
 			for (int32_t x = 0; x < m_tileSize; ++x)
 				tile->setGridHeight(x, z, tile->getGridHeightNearestUnsafe(x, z) * scale + offset);
-		return true;
-	});
-}
-
-bool HeightfieldAssetEditor::regenerate()
-{
-	const HeightfieldAsset::Layer& layer = m_asset->getLayers()[m_layer];
-	Ref< const ProceduralHeightfieldAsset > procedural = m_editor->getSourceDatabase()->getObjectReadOnly< ProceduralHeightfieldAsset >(layer.procedural);
-	if (!procedural)
-	{
-		log::error << L"Unable to regenerate heightfield; no procedural heightfield asset in layer \"" << layer.name << L"\"." << Endl;
-		return false;
-	}
-
-	const int32_t count = std::max(m_asset->getTileCount(), 1);
-	const int32_t size = m_tileSize * count;
-
-	// Generate on a separate thread while a busy dialog keeps UI responsive.
-	Ref< Heightfield > heightfield = new Heightfield(size, m_asset->getWorldExtent(), Vector4::zero());
-	Thread* thread = ThreadManager::getInstance().create([&]() {
-		procedural->generate(heightfield);
-	}, L"Regenerate heightfield");
-	if (!thread)
-		return false;
-
-	thread->start();
-
-	ui::BackgroundWorkerDialog busyDialog;
-	busyDialog.create(m_container, i18n::Text(L"HEIGHTFIELD_ASSET_REGENERATE_TITLE"), i18n::Text(L"HEIGHTFIELD_ASSET_REGENERATE_MESSAGE"), false);
-	busyDialog.execute(thread, nullptr);
-	busyDialog.destroy();
-
-	ThreadManager::getInstance().destroy(thread);
-
-	// Tiles are written by UI thread since it owns instance transaction; generated heights cover entire layer.
-	return modifyTiles(0, 0, count - 1, count - 1, [&](Heightfield* tile, uint8_t* mask, int32_t tileX, int32_t tileZ) {
-		for (int32_t z = 0; z < m_tileSize; ++z)
-			std::memcpy(
-				tile->getHeights() + (size_t)z * m_tileSize,
-				heightfield->getHeights() + (size_t)tileX * m_tileSize + (size_t)(tileZ * m_tileSize + z) * size,
-				m_tileSize * sizeof(height_t)
-			);
-		std::memset(mask, 255, (size_t)m_tileSize * m_tileSize);
 		return true;
 	});
 }
@@ -898,9 +899,12 @@ bool HeightfieldAssetEditor::redistributeTiles(int32_t tileCount)
 	// New row tz overwrites old row tz; when tiles shrink rows are written bottom up so old rows are read first.
 	const bool bottomUp = (tileSize < m_tileSize);
 
-	// Base layer is rewritten last since size of other layers' default tiles is read from it.
+	// Base layer is rewritten last since size of other layers' default tiles is read from it; layers without stored data are skipped.
 	for (int32_t layer = (int32_t)m_asset->getLayers().size() - 1; layer >= 0; --layer)
 	{
+		if (!m_asset->getLayers()[layer]->haveData() && !m_asset->getLayers()[layer]->haveMask())
+			continue;
+
 		// Old tiles are read when first overlapped by a new row and released once passed.
 		RefArray< const Heightfield > oldTiles(oldCount * oldCount);
 		AlignedVector< AlignedVector< uint8_t > > oldMasks(oldCount * oldCount);
@@ -972,6 +976,8 @@ bool HeightfieldAssetEditor::redistributeTiles(int32_t tileCount)
 	m_selectedTileX = std::min(m_selectedTileX, count - 1);
 	m_selectedTileZ = std::min(m_selectedTileZ, count - 1);
 
+	TileStorage::flushCache();
+
 	if (!readPreview() || !readTilePreview())
 		return false;
 
@@ -990,9 +996,12 @@ bool HeightfieldAssetEditor::resampleTiles(int32_t tileSize)
 
 	m_document->setModified();
 
-	// Base layer is rewritten last since size of other layers' default tiles is read from it.
+	// Base layer is rewritten last since size of other layers' default tiles is read from it; layers without stored data are skipped.
 	for (int32_t layer = (int32_t)m_asset->getLayers().size() - 1; layer >= 0; --layer)
 	{
+		if (!m_asset->getLayers()[layer]->haveData() && !m_asset->getLayers()[layer]->haveMask())
+			continue;
+
 		// New row tz overwrites old row tz; old rows are kept until no following row reference them.
 		RefArray< const Heightfield > oldTiles(count * count);
 		AlignedVector< AlignedVector< uint8_t > > oldMasks(count * count);
@@ -1045,6 +1054,8 @@ bool HeightfieldAssetEditor::resampleTiles(int32_t tileSize)
 
 	m_tileSize = tileSize;
 
+	TileStorage::flushCache();
+
 	if (!readPreview() || !readTilePreview())
 		return false;
 
@@ -1054,10 +1065,10 @@ bool HeightfieldAssetEditor::resampleTiles(int32_t tileSize)
 
 void HeightfieldAssetEditor::selectLayer(int32_t layer)
 {
-	m_layer = clamp(layer, 0, (int32_t)m_asset->getLayers().size() - 1);
+	m_layer = (layer >= 0 && layer < (int32_t)m_asset->getLayers().size()) ? layer : -1;
+	m_propertiesView->setPropertyObject((m_layer >= 0) ? (ISerializable*)m_asset->getLayers()[m_layer] : m_asset);
 	readPreview();
 	readTilePreview();
-	updateFields();
 	updatePreviewImage();
 }
 
@@ -1067,12 +1078,15 @@ void HeightfieldAssetEditor::updateFields()
 	const int32_t size = m_tileSize * std::max(tileCount, 1);
 	const float worldWidth = m_asset->getWorldExtent().x();
 
-	// Top layer is edited in scene editor.
+	m_gridLayers->removeAllRows();
 	const auto& layers = m_asset->getLayers();
-	m_toolLayer->removeAll();
-	for (int32_t i = 0; i < (int32_t)layers.size(); ++i)
-		m_toolLayer->add((i > 0 && i == (int32_t)layers.size() - 1) ? layers[i].name + L" (" + std::wstring(i18n::Text(L"HEIGHTFIELD_ASSET_EDIT_LAYER")) + L")" : layers[i].name);
-	m_toolLayer->select(m_layer);
+	for (int32_t i = (int32_t)layers.size() - 1; i >= 0; --i)
+	{
+		const std::wstring typeName = type_name(layers[i]);
+		ui::GridRow* row = m_gridLayers->addRow({ layers[i]->getName(), typeName.substr(typeName.rfind(L'.') + 1) });
+		if (i == m_layer)
+			row->setState(row->getState() | ui::GridRow::Selected);
+	}
 
 	m_toolTiles->removeAll();
 	for (const int32_t count : validTileCounts(size))
@@ -1088,6 +1102,21 @@ void HeightfieldAssetEditor::updateFields()
 	m_statusBar->update();
 }
 
+uint8_t HeightfieldAssetEditor::getDefaultMask() const
+{
+	// Base layer and layers without data cover everything, edit layers nothing.
+	return (m_layer <= 0 || !m_asset->getLayers()[m_layer]->haveData()) ? 255 : 0;
+}
+
+void HeightfieldAssetEditor::readMask(const TileStorage& storage, int32_t tileX, int32_t tileZ, AlignedVector< uint8_t >& outMask) const
+{
+	if (m_layer > 0 && storage.readStoredMask(m_layer, tileX, tileZ, m_tileSize, outMask))
+		return;
+
+	outMask.resize(0);
+	outMask.resize((size_t)m_tileSize * m_tileSize, getDefaultMask());
+}
+
 bool HeightfieldAssetEditor::readPreview()
 {
 	const TileStorage storage(m_instance, m_asset);
@@ -1100,7 +1129,8 @@ bool HeightfieldAssetEditor::readPreview()
 	for (auto& previewImage : m_previewImages)
 		previewImage = new drawing::Image(drawing::PixelFormat::getR8G8B8(), previewTileSize * count, previewTileSize * count);
 
-	// Tiles of a row are read in parallel.
+	// Tiles are output of selected layer, with its mask; tiles of a row are read in parallel.
+	const int32_t layerCount = (m_layer >= 0) ? m_layer + 1 : -1;
 	std::atomic< bool > result = true;
 	for (int32_t tz = 0; tz < count; ++tz)
 	{
@@ -1108,7 +1138,8 @@ bool HeightfieldAssetEditor::readPreview()
 		for (int32_t tx = 0; tx < count; ++tx)
 			tasks.push_back([&, tx]() {
 				AlignedVector< uint8_t > mask;
-				Ref< const Heightfield > tile = storage.readLayerTile(m_layer, worldExtent, tx, tz, &mask);
+				readMask(storage, tx, tz, mask);
+				Ref< const Heightfield > tile = storage.readMergedTile(worldExtent, tx, tz, layerCount);
 				if (tile)
 					updatePreview(tile, mask.c_ptr(), m_previewStep, tx * previewTileSize, tz * previewTileSize, m_previewImages);
 				else
@@ -1122,8 +1153,10 @@ bool HeightfieldAssetEditor::readPreview()
 
 bool HeightfieldAssetEditor::readTilePreview()
 {
+	const TileStorage storage(m_instance, m_asset);
 	AlignedVector< uint8_t > mask;
-	Ref< const Heightfield > tile = TileStorage(m_instance, m_asset).readLayerTile(m_layer, m_asset->getWorldExtent(), m_selectedTileX, m_selectedTileZ, &mask);
+	readMask(storage, m_selectedTileX, m_selectedTileZ, mask);
+	Ref< const Heightfield > tile = storage.readMergedTile(m_asset->getWorldExtent(), m_selectedTileX, m_selectedTileZ, (m_layer >= 0) ? m_layer + 1 : -1);
 	if (!tile)
 		return false;
 
@@ -1226,9 +1259,33 @@ void HeightfieldAssetEditor::eventToolBar(ui::ToolBarButtonClickEvent* event)
 	handleCommand(event->getCommand());
 }
 
+void HeightfieldAssetEditor::eventLayerSelect(ui::SelectionChangeEvent* event)
+{
+	const RefArray< ui::GridRow >& rows = m_gridLayers->getRows();
+	const ui::GridRow* selectedRow = m_gridLayers->getSelectedRow();
+
+	// Rows are listed top layer first.
+	int32_t layer = -1;
+	for (int32_t i = 0; i < (int32_t)rows.size(); ++i)
+	{
+		if (rows[i] == selectedRow)
+			layer = (int32_t)rows.size() - 1 - i;
+	}
+
+	selectLayer(layer);
+}
+
 void HeightfieldAssetEditor::eventPropertiesChanged(ui::ContentChangeEvent* event)
 {
 	updateFields();
+
+	// Only name of edit layers is a property, everything else affect preview.
+	if (m_layer < 0 || !is_a< EditLayer >(m_asset->getLayers()[m_layer]))
+	{
+		readPreview();
+		readTilePreview();
+		updatePreviewImage();
+	}
 }
 
 void HeightfieldAssetEditor::eventPreviewPaint(ui::PaintEvent* event)

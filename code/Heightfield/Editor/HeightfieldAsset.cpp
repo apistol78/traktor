@@ -8,25 +8,56 @@
  */
 #include "Heightfield/Editor/HeightfieldAsset.h"
 
+#include "Core/Guid.h"
 #include "Core/Serialization/AttributeDirection.h"
 #include "Core/Serialization/AttributePrivate.h"
-#include "Core/Serialization/AttributeReadOnly.h"
-#include "Core/Serialization/AttributeType.h"
 #include "Core/Serialization/AttributeUnit.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberAlignedVector.h"
 #include "Core/Serialization/MemberComposite.h"
-#include "Heightfield/Editor/ProceduralHeightfieldAsset.h"
+#include "Core/Serialization/MemberRefArray.h"
+#include "Heightfield/Editor/EditLayer.h"
 
 namespace traktor::hf
 {
+namespace
+{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.hf.HeightfieldAsset", 12, HeightfieldAsset, ISerializable)
+//! Layer as serialized before layers were objects; procedural heightfield assets are no longer supported.
+struct LegacyLayer
+{
+	int32_t id = 0;
+	std::wstring name;
+
+	void serialize(ISerializer& s)
+	{
+		s >> Member< int32_t >(L"id", id);
+		s >> Member< std::wstring >(L"name", name);
+		s >> ObsoleteMember< Guid >(L"procedural");
+	}
+};
+
+Ref< EditLayer > createBaseLayer()
+{
+	Ref< EditLayer > layer = new EditLayer();
+	layer->setName(L"Base");
+	return layer;
+}
+
+}
+
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.hf.HeightfieldAsset", 13, HeightfieldAsset, ISerializable)
+
+HeightfieldAsset::HeightfieldAsset()
+{
+	m_layers.push_back(createBaseLayer());
+}
 
 HeightfieldAsset::HeightfieldAsset(const Vector4& worldExtent)
-	: m_worldExtent(worldExtent)
+	: HeightfieldAsset()
 {
+	m_worldExtent = worldExtent;
 }
 
 void HeightfieldAsset::serialize(ISerializer& s)
@@ -49,28 +80,38 @@ void HeightfieldAsset::serialize(ISerializer& s)
 	if (s.getVersion() >= 9)
 		s >> Member< int32_t >(L"tileCount", m_tileCount, AttributePrivate());
 
-	// Earlier versions have a single base layer.
-	if (s.getVersion() >= 12)
+	// Earlier versions have a single base layer; layers of version 12 are converted into edit layers.
+	if (s.getVersion() >= 13)
 	{
 		s >> Member< int32_t >(L"nextLayerId", m_nextLayerId, AttributePrivate());
-		s >> MemberAlignedVector< Layer, MemberComposite< Layer > >(L"layers", m_layers, AttributeReadOnly());
-		if (m_layers.empty())
-			m_layers.push_back({ 0, L"Base", Guid() });
+		s >> MemberRefArray< HeightfieldAssetLayer >(L"layers", m_layers, AttributePrivate());
+	}
+	else if (s.getVersion() >= 12)
+	{
+		AlignedVector< LegacyLayer > layers;
+		s >> Member< int32_t >(L"nextLayerId", m_nextLayerId, AttributePrivate());
+		s >> MemberAlignedVector< LegacyLayer, MemberComposite< LegacyLayer > >(L"layers", layers);
+
+		m_layers.resize(0);
+		for (const auto& layer : layers)
+		{
+			Ref< EditLayer > editLayer = new EditLayer();
+			editLayer->m_id = layer.id;
+			editLayer->setName(layer.name);
+			m_layers.push_back(editLayer);
+		}
 	}
 	else if (s.getVersion() >= 11)
-		s >> Member< Guid >(L"procedural", m_layers.front().procedural, AttributeType(type_of< ProceduralHeightfieldAsset >()));
+		s >> ObsoleteMember< Guid >(L"procedural");
+
+	if (m_layers.empty())
+		m_layers.push_back(createBaseLayer());
 }
 
-void HeightfieldAsset::addLayer(const std::wstring& name)
+void HeightfieldAsset::addLayer(HeightfieldAssetLayer* layer)
 {
-	m_layers.push_back({ m_nextLayerId++, name, Guid() });
-}
-
-void HeightfieldAsset::Layer::serialize(ISerializer& s)
-{
-	s >> Member< int32_t >(L"id", id, AttributePrivate());
-	s >> Member< std::wstring >(L"name", name);
-	s >> Member< Guid >(L"procedural", procedural, AttributeType(type_of< ProceduralHeightfieldAsset >()));
+	layer->m_id = m_nextLayerId++;
+	m_layers.push_back(layer);
 }
 
 }

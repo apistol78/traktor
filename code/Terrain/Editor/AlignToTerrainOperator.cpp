@@ -21,6 +21,7 @@
 #include "Database/Instance.h"
 #include "Editor/IPipelineCommon.h"
 #include "Heightfield/Editor/HeightfieldAsset.h"
+#include "Heightfield/Editor/HeightfieldAssetLayer.h"
 #include "Heightfield/Heightfield.h"
 #include "Model/Model.h"
 #include "Scene/Editor/SceneAsset.h"
@@ -128,9 +129,9 @@ float sampleTerrain(const TerrainComponent* terrainComponent, TerrainEditData* t
 	if (outNormal)
 	{
 		terrainData->worldToGrid(worldX, worldZ, gridX, gridZ);
-		*outNormal = terrainData->normalAt(gridX, gridZ);
+		*outNormal = terrainData->normalAt(gridX, gridZ, true);
 	}
-	return terrainData->getWorldHeight(worldX, worldZ);
+	return terrainData->getWorldHeight(worldX, worldZ, true);
 }
 
 /*! Sample terrain below entity's projected footprint, relative to entity origin, at no coarser resolution than terrain.
@@ -436,9 +437,9 @@ bool AlignToTerrainOperator::transform(
 	if (!heightfieldAsset)
 		return true;
 
-	// Tiles of terrain data are read when first sampled.
+	// Tiles of terrain data are read when first sampled; data is never edited, thus base layer is given as edit layer.
 	Ref< TerrainEditData > terrainData = new TerrainEditData();
-	if (!terrainData->create(heightfieldInstance, heightfieldAsset))
+	if (!terrainData->create(heightfieldInstance, heightfieldAsset, heightfieldAsset->getLayers().front()->getId()))
 		return true;
 
 	// Loaded tiles of instantiated terrain are used if available, avoid reading them from database.

@@ -36,14 +36,16 @@ namespace traktor::hf
 
 class Heightfield;
 class HeightfieldAsset;
+class HeightfieldAssetLayer;
 
 /*! Read and write data of a heightfield asset's layers.
  * \ingroup Heightfield
  *
- * Each channel of a layer, heights, cuts, splats, colors, each attribute
+ * Each channel of a layer's tile, heights, cuts, splats, colors, each attribute
  * and mask, is stored as a separate compressed instance data stream,
  * "L<id>_<channel>" or, when tiled, "L<id>_<channel>_<x>_<z>".
- * Merged reads blend layers, bottom first, by their masks.
+ * Merged reads start from base layer, then let each layer above modify
+ * output of layer below.
  */
 class T_DLLCLASS TileStorage : public Object
 {
@@ -60,8 +62,17 @@ public:
 	//! Size of overview; heightfield is downsampled by largest power of two which keep samples within overview sample distance, or until within maximum overview size.
 	static int32_t calculateOverviewSize(int32_t size, float worldSize);
 
-	//! Release decoded tiles kept by region reads.
+	//! Release decoded tiles kept by region reads and invalidate global stamps.
 	static void flushCache();
+
+	/*! Number of tiles along each side; 0 if data is stored as a single, untiled, channel. */
+	int32_t getTileCount() const { return m_tileCount; }
+
+	//! Key of layer, or of merged layers if -1, unique among all storages; for caches shared by storages.
+	std::wstring getCacheKey(int32_t layer) const;
+
+	//! Stamp which change whenever layer or any layer below change, any tile of any layer is written when a layer is global, or caches are flushed.
+	uint64_t getGlobalStamp(int32_t layer) const;
 
 	//! Number of samples along each side of the whole heightfield; 0 if unable to read.
 	int32_t readSize() const;
@@ -83,20 +94,20 @@ public:
 	//! Read whole merged heightfield box filtered into overview of calculated size.
 	Ref< Heightfield > readHeightfieldOverview(const Vector4& worldExtent) const;
 
-	//! Stamp which change whenever any tile of any layer in range, inclusive tile coordinates, is written.
+	//! Stamp which change whenever any tile of any layer in range, inclusive tile coordinates, is written; or any tile at all if a layer is global.
 	uint32_t readStamp(int32_t tileX0, int32_t tileZ0, int32_t tileX1, int32_t tileZ1) const;
 
-	//! Read single tile, with all channels, of all layers blended by their masks.
-	Ref< Heightfield > readMergedTile(const Vector4& worldExtent, int32_t tileX, int32_t tileZ) const;
+	/*! Read single tile, with all channels, of layers evaluated bottom first.
+	 * \param layerCount Number of layers, from bottom, which are evaluated; -1 for all.
+	 */
+	Ref< Heightfield > readMergedTile(const Vector4& worldExtent, int32_t tileX, int32_t tileZ, int32_t layerCount = -1) const;
 
-	/*! Read single tile of layer, with all channels, exactly as stored.
-	 *
-	 * Layers above base which have no data in tile get a default tile.
-	 * \param outMask Optional mask of tile, one byte per sample; base layer is full and layers without mask are empty.
+	/*! Read single tile of layer alone, with all channels, as read by layer.
+	 * \param outMask Optional mask of tile, one byte per sample.
 	 */
 	Ref< Heightfield > readLayerTile(int32_t layer, const Vector4& worldExtent, int32_t tileX, int32_t tileZ, AlignedVector< uint8_t >* outMask = nullptr) const;
 
-	/*! Write tiles of layer in range, inclusive tile coordinates, row major; channels are encoded in parallel.
+	/*! Write tiles of layer in range, inclusive tile coordinates, row major; only what layer store is written, channels are encoded in parallel.
 	 * \param masks Optional masks of tiles; base layer's mask isn't stored.
 	 */
 	bool writeLayerTiles(int32_t layer, int32_t tileX0, int32_t tileZ0, int32_t tileX1, int32_t tileZ1, const RefArray< const Heightfield >& tiles, const AlignedVector< AlignedVector< uint8_t > >* masks = nullptr) const;
@@ -107,21 +118,26 @@ public:
 	//! Write whole layer, and optionally its mask, split into tiles.
 	bool writeLayerHeightfield(int32_t layer, const Heightfield* heightfield, const AlignedVector< uint8_t >* mask = nullptr) const;
 
+	//! Tile without data, of same size as base layer's tiles, positioned in world; heights at world zero, nothing cut.
+	Ref< Heightfield > createTile(const Vector4& worldExtent, int32_t tileX, int32_t tileZ) const;
+
+	//! Read single tile of layer as stored, positioned in world; base layer falls back on heightfield format, as stored before layers; null if missing.
+	Ref< Heightfield > readStoredTile(int32_t layer, const Vector4& worldExtent, int32_t tileX, int32_t tileZ) const;
+
+	//! Read mask of tile of layer; false if not stored.
+	bool readStoredMask(int32_t layer, int32_t tileX, int32_t tileZ, int32_t size, AlignedVector< uint8_t >& outMask) const;
+
 private:
 	Ref< db::Instance > m_instance;
-	AlignedVector< int32_t > m_layerIds;
+	RefArray< const HeightfieldAssetLayer > m_layers;
+	AlignedVector< uint32_t > m_layerHashes;	//!< Hash of each layer and all layers below.
 	int32_t m_tileCount;
+	uint32_t m_globalStamp = 0;	//!< Stamp of every tile; only if a layer is global.
 
 	std::wstring getChannelName(int32_t layer, const std::wstring& channel, int32_t tileX, int32_t tileZ) const;
 
 	//! Read size and optional channels of single tile of layer.
 	bool readHeader(int32_t layer, int32_t tileX, int32_t tileZ, int32_t& outSize, uint32_t& outChannels) const;
-
-	//! Read single tile of layer as stored; base layer falls back on heightfield format, as stored before layers; null if missing.
-	Ref< Heightfield > readStoredTile(int32_t layer, const Vector4& worldExtent, int32_t tileX, int32_t tileZ) const;
-
-	//! Read mask of tile of layer; false if not stored.
-	bool readStoredMask(int32_t layer, int32_t tileX, int32_t tileZ, int32_t size, AlignedVector< uint8_t >& outMask) const;
 
 	//! Read merged tile, or tile of layer, through cache shared by all storages; cached tiles are immutable.
 	Ref< const Heightfield > readCachedTile(int32_t layer, const Vector4& worldExtent, int32_t tileX, int32_t tileZ) const;

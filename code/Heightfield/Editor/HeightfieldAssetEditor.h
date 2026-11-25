@@ -8,6 +8,7 @@
  */
 #pragma once
 
+#include "Core/Containers/AlignedVector.h"
 #include "Core/Ref.h"
 #include "Editor/IEditorPage.h"
 #include "Ui/Rect.h"
@@ -37,8 +38,10 @@ namespace traktor::ui
 class Bitmap;
 class Canvas;
 class ContentChangeEvent;
+class GridView;
 class MouseButtonDownEvent;
 class PaintEvent;
+class SelectionChangeEvent;
 class StatusBar;
 class ToolBar;
 class ToolBarButtonClickEvent;
@@ -52,6 +55,7 @@ namespace traktor::hf
 
 class Heightfield;
 class HeightfieldAsset;
+class TileStorage;
 
 class HeightfieldAssetEditor : public editor::IEditorPage
 {
@@ -80,9 +84,9 @@ private:
 	Ref< ui::Bitmap > m_tilePreviewBitmap;
 	Ref< ui::Container > m_container;
 	Ref< ui::ToolBar > m_toolBar;
-	Ref< ui::ToolBarDropDown > m_toolLayer;
 	Ref< ui::ToolBarDropDown > m_toolTiles;
 	Ref< ui::ToolBarDropDown > m_toolChannel;
+	Ref< ui::GridView > m_gridLayers;
 	Ref< ui::Widget > m_previewControl;
 	Ref< ui::Widget > m_tilePreviewControl;
 	Ref< ui::StatusBar > m_statusBar;
@@ -92,7 +96,7 @@ private:
 	int32_t m_tilePreviewStep = 1;
 	int32_t m_selectedTileX = 0;
 	int32_t m_selectedTileZ = 0;
-	int32_t m_layer = 0;
+	int32_t m_layer = -1;
 
 	//! Read, modify and write tiles, and masks, of selected layer in range, inclusive, row by row; modify return false to abort.
 	bool modifyTiles(int32_t tileX0, int32_t tileZ0, int32_t tileX1, int32_t tileZ1, const std::function< bool(Heightfield* tile, uint8_t* mask, int32_t tileX, int32_t tileZ) >& modify);
@@ -108,9 +112,6 @@ private:
 	//! Transform unit heights of all tiles of selected layer, h * scale + offset.
 	bool scaleHeights(float scale, float offset);
 
-	//! Regenerate heights of selected layer from its procedural heightfield asset; other channels are kept and mask is filled.
-	bool regenerate();
-
 	//! Ask for new resolution, in heights per metre, and resample every layer into it.
 	bool changeResolution();
 
@@ -120,16 +121,22 @@ private:
 	//! Resample every layer into tiles of new size; tile count and world extent are kept.
 	bool resampleTiles(int32_t tileSize);
 
-	//! Select layer which previews and tools operate on.
+	//! Select layer which previews, properties and tools operate on; -1 previews all layers merged.
 	void selectLayer(int32_t layer);
 
 	//! Update layers, tile counts and status from asset.
 	void updateFields();
 
-	//! Read every tile of selected layer into preview images.
+	//! Mask of samples without stored mask in selected layer.
+	uint8_t getDefaultMask() const;
+
+	//! Read mask of tile of selected layer; full if no layer is selected.
+	void readMask(const TileStorage& storage, int32_t tileX, int32_t tileZ, AlignedVector< uint8_t >& outMask) const;
+
+	//! Read every tile, output of selected layer or of all layers if none is selected, and mask of selected layer into preview images.
 	bool readPreview();
 
-	//! Read selected tile of selected layer into tile preview images.
+	//! Read selected tile, output of selected layer or of all layers if none is selected, and mask of selected layer into tile preview images.
 	bool readTilePreview();
 
 	//! Box filter heightfield and mask, by step, into all five channel images at x0, z0.
@@ -142,6 +149,8 @@ private:
 	void paintPreview(ui::Canvas& canvas, ui::Widget* control, ui::Bitmap* bitmap) const;
 
 	void eventToolBar(ui::ToolBarButtonClickEvent* event);
+
+	void eventLayerSelect(ui::SelectionChangeEvent* event);
 
 	void eventPropertiesChanged(ui::ContentChangeEvent* event);
 
