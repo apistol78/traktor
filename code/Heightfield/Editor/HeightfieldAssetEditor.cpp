@@ -427,7 +427,7 @@ bool HeightfieldAssetEditor::handleCommand(const ui::Command& command)
 		command == L"HeightfieldAssetEditor.Clear" ||
 		command == L"HeightfieldAssetEditor.ClearTile";
 	const bool modify = modifyMask || command == L"HeightfieldAssetEditor.RemapHeights";
-	const HeightfieldAssetLayer* selectedLayer = (m_layer >= 0) ? m_asset->getLayers()[m_layer] : nullptr;
+	const HeightfieldAssetLayer* selectedLayer = (m_layer >= 0) ? m_asset->getLayers()[m_layer].c_ptr() : nullptr;
 	if (modify && !(selectedLayer && (selectedLayer->haveData() || (modifyMask && selectedLayer->haveMask() && m_toolChannel->getSelected() == ChMask))))
 	{
 		log::error << L"Unable to modify heightfield; select a layer with data, or mask of a layer with mask." << Endl;
