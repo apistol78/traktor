@@ -107,6 +107,7 @@ private:
 	typedef SmallMap< Guid, Aabb3 > boundingBoxCache_t;
 
 	SmallMap< const TypeInfo*, Ref< const world::IEntityReplicator > > m_entityReplicators;
+	std::wstring m_heightfieldCachePath;
 
 	/*! Collect geometry, through entity replicators, of an entity in it's own local space.
 	 * External entities are resolved into their cached contact bounding box instead of their models.

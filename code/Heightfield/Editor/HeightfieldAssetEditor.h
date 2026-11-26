@@ -9,6 +9,7 @@
 #pragma once
 
 #include "Core/Containers/AlignedVector.h"
+#include "Core/Containers/SmallMap.h"
 #include "Core/Ref.h"
 #include "Editor/IEditorPage.h"
 #include "Ui/Rect.h"
@@ -73,11 +74,20 @@ public:
 	virtual bool handleCommand(const ui::Command& command) override final;
 
 private:
+	//! Preview of output of a layer, and stamp of output of each tile when it was read.
+	struct Preview
+	{
+		Ref< drawing::Image > images[5];
+		AlignedVector< uint64_t > stamps;
+	};
+
 	editor::IEditor* m_editor;
 	editor::IEditorPageSite* m_site;
 	editor::IDocument* m_document;
 	Ref< db::Instance > m_instance;
 	Ref< HeightfieldAsset > m_asset;
+	std::wstring m_cachePath;
+	SmallMap< int32_t, Preview > m_previews; //!< Previews by identifier of layer, -1 for all layers merged.
 	Ref< drawing::Image > m_previewImages[5];
 	Ref< drawing::Image > m_tilePreviewImages[5];
 	Ref< ui::Bitmap > m_previewBitmap;
@@ -133,7 +143,7 @@ private:
 	//! Read mask of tile of selected layer; full if no layer is selected.
 	void readMask(const TileStorage& storage, int32_t tileX, int32_t tileZ, AlignedVector< uint8_t >& outMask) const;
 
-	//! Read every tile, output of selected layer or of all layers if none is selected, and mask of selected layer into preview images.
+	//! Read tiles which output has changed, output of selected layer or of all layers if none is selected, and mask of selected layer into preview images.
 	bool readPreview();
 
 	//! Read selected tile, output of selected layer or of all layers if none is selected, and mask of selected layer into tile preview images.

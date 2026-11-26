@@ -22,8 +22,8 @@ vec3 GetSkyColor(vec3 sunDirection, vec3 sunColor, vec3 overHorizon, vec3 underH
 #define CLOUD_SELF_SHADOW_STEPS			12
 
 #define EARTH_RADIUS   					(70000.0f)
-#define CLOUDS_BOTTOM   				(1050.0f)
-#define CLOUDS_TOP      				(2450.0f)
+#define CLOUDS_BOTTOM   				(2000.0f)
+#define CLOUDS_TOP      				(2500.0f)
 
 #define CLOUDS_COVERAGE					(0.5f)
 

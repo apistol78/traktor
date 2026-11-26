@@ -17,9 +17,11 @@
 #include "Core/Math/Transform.h"
 #include "Core/Math/Vector4.h"
 #include "Core/Misc/SafeDestroy.h"
+#include "Core/Settings/PropertyString.h"
 #include "Database/Database.h"
 #include "Database/Instance.h"
 #include "Editor/IPipelineCommon.h"
+#include "Editor/IPipelineSettings.h"
 #include "Heightfield/Editor/HeightfieldAsset.h"
 #include "Heightfield/Editor/HeightfieldAssetLayer.h"
 #include "Heightfield/Heightfield.h"
@@ -258,6 +260,8 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.terrain.AlignToTerrainOperator", 0, Ali
 
 bool AlignToTerrainOperator::create(const editor::IPipelineSettings* settings)
 {
+	m_heightfieldCachePath = settings->getPropertyExcludeHash< std::wstring >(L"Pipeline.HeightfieldCache.Path", L"");
+
 	// Create entity replicators; used to measure entity footprints.
 	for (const auto& entityReplicatorType : type_of< world::IEntityReplicator >().findAllOf(false))
 	{
@@ -439,7 +443,7 @@ bool AlignToTerrainOperator::transform(
 
 	// Tiles of terrain data are read when first sampled; data is never edited, thus base layer is given as edit layer.
 	Ref< TerrainEditData > terrainData = new TerrainEditData();
-	if (!terrainData->create(heightfieldInstance, heightfieldAsset, heightfieldAsset->getLayers().front()->getId()))
+	if (!terrainData->create(heightfieldInstance, heightfieldAsset, heightfieldAsset->getLayers().front()->getId(), m_heightfieldCachePath))
 		return true;
 
 	// Loaded tiles of instantiated terrain are used if available, avoid reading them from database.

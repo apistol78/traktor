@@ -28,26 +28,6 @@ namespace traktor::hf
 namespace
 {
 
-/*
-
-http://ranmantaru.com/blog/2011/10/08/water-erosion-on-heightmap-terrain/
-
-Kq and minSlope are for soil carry capacity (see the formula above).
-Kw is water evaporation speed.
-Kr is erosion speed (how fast the soil is removed).
-Kd is deposition speed (how fast the extra sediment is dropped).
-Ki is direction inertia. Higher values make channel turns smoother.
-g is gravity that accelerates the flows.
-
-*/
-const float Kq = 10.0f;
-const float Kw = 0.001f;
-const float Kr = 0.9f;
-const float Kd = 0.02f;
-const float Ki = 0.1f;
-const float minSlope = 0.05f;
-const float Kg = 20.0f * 2.0f;
-
 const int32_t c_regionSize = 64;	//!< Samples along each side of a region.
 const int32_t c_regionMargin = 16;	//!< Samples outside of region where droplet keep running; less than half of region minus footprint of a move.
 const int32_t c_samplesPerDroplet = 512;	//!< Samples per droplet of a batch.
@@ -108,7 +88,7 @@ float random(int32_t index, int32_t move)
 /*! Move droplet until it's trapped, out of moves or beyond margin of region.
  * \return True if droplet is finished, false if it continue in another region.
  */
-bool run(Droplet& d, float* hmap, int32_t size, int32_t maxMoves, int32_t region, int32_t regions)
+bool run(Droplet& d, const ErosionFilter::Parameters& p, float* hmap, int32_t size, int32_t maxMoves, int32_t region, int32_t regions)
 {
 	// Heights are read when droplet start or resume, since other droplets may have changed them since it was paused.
 	d.h00 = sample(hmap, size, d.xi, d.zi);
@@ -125,8 +105,8 @@ bool run(Droplet& d, float* hmap, int32_t size, int32_t maxMoves, int32_t region
 		const float gx = d.h00 + d.h01 - d.h10 - d.h11;
 		const float gz = d.h00 + d.h10 - d.h01 - d.h11;
 
-		d.dx = (d.dx - gx) * Ki + gx;
-		d.dz = (d.dz - gz) * Ki + gz;
+		d.dx = (d.dx - gx) * p.inertia + gx;
+		d.dz = (d.dz - gz) * p.inertia + gz;
 
 		const float dl = std::sqrt(d.dx * d.dx + d.dz * d.dz);
 		if (dl <= FUZZY_EPSILON)
@@ -171,17 +151,17 @@ bool run(Droplet& d, float* hmap, int32_t size, int32_t maxMoves, int32_t region
 		}
 
 		float dh = d.h - nh;
-		float ds = d.s - std::max(dh, minSlope) * d.v * d.w * Kq;
+		float ds = d.s - std::max(dh, p.minSlope) * d.v * d.w * p.capacity;
 		if (ds >= 0.0f)
 		{
-			ds *= Kd;
+			ds *= p.deposition;
 			deposit(hmap, size, d, ds);
 			dh += ds;
 			d.s -= ds;
 		}
 		else
 		{
-			ds = std::min(ds * -Kr, dh * 0.99f);
+			ds = std::min(ds * -p.erosion, dh * 0.99f);
 			for (int32_t z = d.zi - 1; z <= d.zi + 2; ++z)
 			{
 				const float zo = z - d.zp;
@@ -197,8 +177,8 @@ bool run(Droplet& d, float* hmap, int32_t size, int32_t maxMoves, int32_t region
 			d.s += ds;
 		}
 
-		d.v = std::sqrt(d.v * d.v + Kg * dh);
-		d.w *= 1.0f - Kw;
+		d.v = std::sqrt(d.v * d.v + p.gravity * dh);
+		d.w *= 1.0f - p.evaporation;
 
 		d.xp = nxp;
 		d.zp = nzp;
@@ -221,8 +201,8 @@ bool run(Droplet& d, float* hmap, int32_t size, int32_t maxMoves, int32_t region
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.hf.ErosionFilter", ErosionFilter, Object)
 
-ErosionFilter::ErosionFilter(int32_t iterations)
-:	m_iterations(iterations)
+ErosionFilter::ErosionFilter(const Parameters& parameters)
+:	m_parameters(parameters)
 {
 }
 
@@ -245,12 +225,12 @@ void ErosionFilter::apply(Heightfield* heightfield) const
 	AlignedVector< AlignedVector< Droplet > > left(regions * regions);
 	AlignedVector< int32_t > active;
 	Random rnd;
-	for (int32_t batch = 0; batch < m_iterations; batch += batchSize)
+	for (int32_t batch = 0; batch < m_parameters.iterations; batch += batchSize)
 	{
 		// Droplets start at random positions, in order, in region of their start.
-		for (int32_t i = batch; i < std::min(batch + batchSize, m_iterations); ++i)
+		for (int32_t i = batch; i < std::min(batch + batchSize, m_parameters.iterations); ++i)
 		{
-			const Vector2 ruv = Quasirandom::hammersley(i, m_iterations, rnd);
+			const Vector2 ruv = Quasirandom::hammersley(i, m_parameters.iterations, rnd);
 			Droplet d = {};
 			d.index = i;
 			d.xi = (int32_t)(ruv.x * (size - 1));
@@ -278,7 +258,7 @@ void ErosionFilter::apply(Heightfield* heightfield) const
 					{
 						const int32_t r = active[i];
 						for (Droplet& d : bins[r])
-							if (!run(d, hmap.ptr(), size, maxMoves, r, regions))
+							if (!run(d, m_parameters, hmap.ptr(), size, maxMoves, r, regions))
 								left[r].push_back(d);
 						bins[r].resize(0);
 					}

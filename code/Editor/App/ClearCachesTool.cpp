@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2023 Anders Pistol.
+ * Copyright (c) 2022-2026 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -90,6 +90,15 @@ bool ClearCachesTool::launch(ui::Widget* parent, IEditor* editor, const Property
 	{
 		const std::wstring cachePath = editor->getSettings()->getProperty< std::wstring >(L"Pipeline.ModelCache.Path");
 		log::info << L"Clearing model cache \"" << cachePath << L"\"..." << Endl;
+		if (!clearDirectory(cachePath))
+		{
+			log::error << L"Failed to clear path \"" << cachePath << L"\"." << Endl;
+			return false;
+		}
+	}
+	{
+		const std::wstring cachePath = editor->getSettings()->getProperty< std::wstring >(L"Pipeline.HeightfieldCache.Path");
+		log::info << L"Clearing heightfield cache \"" << cachePath << L"\"..." << Endl;
 		if (!clearDirectory(cachePath))
 		{
 			log::error << L"Failed to clear path \"" << cachePath << L"\"." << Endl;

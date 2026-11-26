@@ -11,6 +11,8 @@
 #include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
 #include "Core/RefArray.h"
+#include "Core/Settings/PropertyGroup.h"
+#include "Core/Settings/PropertyString.h"
 #include "Database/Database.h"
 #include "Database/Instance.h"
 #include "Drawing/Image.h"
@@ -308,7 +310,7 @@ bool TerrainEditModifier::activate()
 	m_context->getUIExtensionOf< TerrainSceneEditorUIExtension >()->setEditLayers(editLayerNames, editLayer);
 
 	m_data = new TerrainEditData();
-	if (!m_data->create(m_heightfieldInstance, heightfieldAsset, m_editLayerId))
+	if (!m_data->create(m_heightfieldInstance, heightfieldAsset, m_editLayerId, m_context->getEditor()->getSettings()->getProperty< std::wstring >(L"Pipeline.HeightfieldCache.Path")))
 	{
 		deactivate();
 		return false;
@@ -600,7 +602,7 @@ void TerrainEditModifier::setEditLayer(int32_t editLayer)
 	// Edits are written at end of each stroke, thus only data and brush need to be created for new edit layer.
 	Ref< const hf::HeightfieldAsset > heightfieldAsset = m_heightfieldAsset ? m_heightfieldAsset : m_heightfieldInstance->getObject< hf::HeightfieldAsset >();
 	Ref< TerrainEditData > data = new TerrainEditData();
-	if (!heightfieldAsset || !data->create(m_heightfieldInstance, heightfieldAsset, m_editLayerId))
+	if (!heightfieldAsset || !data->create(m_heightfieldInstance, heightfieldAsset, m_editLayerId, m_context->getEditor()->getSettings()->getProperty< std::wstring >(L"Pipeline.HeightfieldCache.Path")))
 		return;
 
 	m_data = data;

@@ -42,10 +42,10 @@ void copySample(const hf::Heightfield* source, hf::Heightfield* target, int32_t 
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.TerrainEditData", TerrainEditData, Object)
 
-bool TerrainEditData::create(const db::Instance* heightfieldInstance, const hf::HeightfieldAsset* heightfieldAsset, int32_t editLayerId)
+bool TerrainEditData::create(const db::Instance* heightfieldInstance, const hf::HeightfieldAsset* heightfieldAsset, int32_t editLayerId, const std::wstring& cachePath)
 {
 	m_heightfieldInstance = heightfieldInstance;
-	m_storage = new hf::TileStorage(m_heightfieldInstance, heightfieldAsset);
+	m_storage = new hf::TileStorage(m_heightfieldInstance, heightfieldAsset, cachePath);
 
 	m_worldExtent = heightfieldAsset->getWorldExtent();
 	m_tileCount = std::max(heightfieldAsset->getTileCount(), 1);

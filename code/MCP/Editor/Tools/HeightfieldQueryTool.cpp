@@ -13,6 +13,8 @@
 #include "Core/Math/MathUtils.h"
 #include "Core/Math/Vector4.h"
 #include "Core/Serialization/ISerializable.h"
+#include "Core/Settings/PropertyGroup.h"
+#include "Core/Settings/PropertyString.h"
 #include "Database/Database.h"
 #include "Database/Instance.h"
 #include "Editor/IEditor.h"
@@ -148,7 +150,7 @@ Ref< Json > HeightfieldQueryTool::invoke(const Json* arguments, std::wstring& ou
 	}
 	hf::HeightfieldAsset* asset = static_cast< hf::HeightfieldAsset* >(object.ptr());
 
-	const hf::TileStorage storage(instance, asset);
+	const hf::TileStorage storage(instance, asset, m_editor->getSettings()->getProperty< std::wstring >(L"Pipeline.HeightfieldCache.Path"));
 	const int32_t size = storage.readSize();
 	if (size <= 0)
 	{

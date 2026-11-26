@@ -12,6 +12,7 @@
 #include "Compress/Zip/InflateStreamZip.h"
 #include "Core/Containers/SmallMap.h"
 #include "Core/Date/DateTime.h"
+#include "Core/Guid.h"
 #include "Core/Io/IStream.h"
 #include "Core/Io/Reader.h"
 #include "Core/Io/Writer.h"
@@ -28,6 +29,7 @@
 #include "Database/Instance.h"
 #include "Heightfield/Editor/HeightfieldAsset.h"
 #include "Heightfield/Editor/HeightfieldAssetLayer.h"
+#include "Heightfield/Editor/HeightfieldCache.h"
 #include "Heightfield/Heightfield.h"
 #include "Heightfield/HeightfieldFormat.h"
 
@@ -40,7 +42,7 @@ namespace traktor::hf
 namespace
 {
 
-const int32_t c_streamVersion = 1;
+const int32_t c_streamVersion = 2;
 const uint32_t c_zipBufferSize = 65536;
 const float c_overviewSampleDistance = 2.0f;			 //!< Maximum distance between overview samples, in world units.
 const int32_t c_overviewMinSize = 2048;					 //!< Overview isn't downsampled below this size.
@@ -73,7 +75,6 @@ Semaphore s_cacheLock;
 SmallMap< std::wstring, CachedTile > s_cache;
 int64_t s_cacheBytes = 0;
 uint64_t s_cacheUseCounter = 0;
-std::atomic< uint32_t > s_flushCount = 0;
 
 //! Compressed data stream of instance, closed when destroyed.
 struct ReadStream
@@ -87,8 +88,8 @@ struct ReadStream
 		safeClose(data);
 	}
 
-	//! Open stream and read its header.
-	bool open(const db::Instance* instance, const std::wstring& name, int32_t& outSize)
+	//! Open stream and read its header; stamp is zero if stream was stored before stamps were.
+	bool open(const db::Instance* instance, const std::wstring& name, int32_t& outSize, uint64_t& outStamp)
 	{
 		if ((data = instance->readData(name)) == nullptr)
 			return false;
@@ -98,7 +99,14 @@ struct ReadStream
 		int32_t version = 0;
 		Reader(inflate) >> version;
 		Reader(inflate) >> outSize;
-		return version == c_streamVersion && outSize > 0;
+		if (version < 1 || version > c_streamVersion || outSize <= 0)
+			return false;
+
+		outStamp = 0;
+		if (version >= 2)
+			Reader(inflate) >> outStamp;
+
+		return true;
 	}
 
 	bool read(void* block, int64_t bytes)
@@ -110,6 +118,25 @@ struct ReadStream
 std::wstring getStreamName(int32_t stream)
 {
 	return (stream < StAttributes) ? std::wstring(c_streamNames[stream]) : L"Attribute" + toString(stream - StAttributes);
+}
+
+uint64_t hash64(const void* data, size_t bytes)
+{
+	Murmur3 low(0), high(1);
+	for (Murmur3* hash : { &low, &high })
+	{
+		hash->begin();
+		hash->feedBuffer(data, bytes);
+		hash->end();
+	}
+	return ((uint64_t)high.get() << 32) | low.get();
+}
+
+//! Unique stamp of newly written data.
+uint64_t createStamp()
+{
+	const Guid guid = Guid::create();
+	return hash64((const uint8_t*)guid, 16);
 }
 
 uint8_t* createChannel(Heightfield* heightfield, uint32_t channel)
@@ -169,11 +196,12 @@ bool readStream(const db::Instance* instance, const std::wstring& name, int32_t 
 {
 	ReadStream stream;
 	int32_t streamSize;
-	return stream.open(instance, name, streamSize) && streamSize == size && stream.read(data, bytes);
+	uint64_t stamp;
+	return stream.open(instance, name, streamSize, stamp) && streamSize == size && stream.read(data, bytes);
 }
 
 //! Write stream of tile; heights also carry which optional channels and attributes tile has.
-bool writeStream(IStream* stream, const Heightfield* tile, const uint8_t* mask, int32_t which)
+bool writeStream(IStream* stream, const Heightfield* tile, const uint8_t* mask, int32_t which, uint64_t stamp)
 {
 	const int32_t size = tile->getSize();
 	const int64_t samples = (int64_t)size * size;
@@ -182,6 +210,7 @@ bool writeStream(IStream* stream, const Heightfield* tile, const uint8_t* mask, 
 	Writer writer(deflate);
 	writer << c_streamVersion;
 	writer << size;
+	writer << stamp;
 
 	int64_t bytes = 0;
 	int64_t written = 0;
@@ -242,34 +271,42 @@ int32_t bandEnd(int32_t begin, int32_t end, int32_t step)
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.hf.TileStorage", TileStorage, Object)
 
-TileStorage::TileStorage(db::Instance* instance, const HeightfieldAsset* asset)
+TileStorage::TileStorage(db::Instance* instance, const HeightfieldAsset* asset, const Path& cachePath)
 	: TileStorage(instance, asset, asset->getTileCount())
 {
+	m_cachePath = cachePath;
 }
 
-TileStorage::TileStorage(const db::Instance* instance, const HeightfieldAsset* asset)
+TileStorage::TileStorage(const db::Instance* instance, const HeightfieldAsset* asset, const Path& cachePath)
 	: TileStorage(const_cast< db::Instance* >(instance), asset, asset->getTileCount())
 {
+	m_cachePath = cachePath;
 }
 
 TileStorage::TileStorage(db::Instance* instance, const HeightfieldAsset* asset, int32_t tileCount)
 	: m_instance(instance)
 	, m_tileCount(tileCount)
 {
-	bool global = false;
 	for (const HeightfieldAssetLayer* layer : asset->getLayers())
 	{
 		m_layerHashes.push_back((m_layers.empty() ? 0 : m_layerHashes.back() * 31) + DeepHash(layer).get());
 		m_layers.push_back(layer);
-		global |= layer->isGlobal();
 	}
 
-	// Global layers are affected by every tile.
-	if (global)
-	{
-		const int32_t count = std::max(m_tileCount, 1);
-		m_globalStamp = readStamp(0, 0, count - 1, count - 1);
-	}
+	const float base[] = { asset->getWorldExtent().x(), asset->getWorldExtent().y(), asset->getWorldExtent().z(), (float)m_tileCount };
+	m_baseStamp = hash64(base, sizeof(base));
+
+	const int32_t count = std::max(m_tileCount, 1);
+	const int32_t tiles = count * count;
+	m_ownStamps.resize(m_layers.size() * tiles, 0);
+	m_stamps.resize(m_layers.size() * tiles, 0);
+	m_globalStamps.resize(m_layers.size(), 0);
+
+	for (int32_t layer = 0; layer < (int32_t)m_layers.size(); ++layer)
+		for (int32_t i = 0; i < tiles; ++i)
+			m_ownStamps[layer * tiles + i] = readOwnStamp(layer, i % count, i / count);
+
+	calculateStamps(true);
 }
 
 int32_t TileStorage::calculateOverviewSize(int32_t size, float worldSize)
@@ -285,7 +322,6 @@ void TileStorage::flushCache()
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(s_cacheLock);
 	s_cache.clear();
 	s_cacheBytes = 0;
-	++s_flushCount;
 }
 
 std::wstring TileStorage::getCacheKey(int32_t layer) const
@@ -293,14 +329,15 @@ std::wstring TileStorage::getCacheKey(int32_t layer) const
 	return m_instance->getGuid().format() + L"/" + toString(m_tileCount) + L"/" + toString((layer >= 0) ? m_layers[layer]->getId() : -1);
 }
 
+uint64_t TileStorage::getStamp(int32_t layer, int32_t tileX, int32_t tileZ) const
+{
+	const int32_t count = std::max(m_tileCount, 1);
+	return m_stamps[layer * count * count + tileX + tileZ * count];
+}
+
 uint64_t TileStorage::getGlobalStamp(int32_t layer) const
 {
-	const uint32_t stamps[] = { m_globalStamp, s_flushCount };
-	Murmur3 hash;
-	hash.begin();
-	hash.feedBuffer(stamps, sizeof(stamps));
-	hash.end();
-	return ((uint64_t)m_layerHashes[layer] << 32) | hash.get();
+	return m_globalStamps[layer];
 }
 
 int32_t TileStorage::readSize() const
@@ -385,63 +422,44 @@ Ref< Heightfield > TileStorage::readHeightfieldOverview(const Vector4& worldExte
 uint32_t TileStorage::readStamp(int32_t tileX0, int32_t tileZ0, int32_t tileX1, int32_t tileZ1) const
 {
 	const int32_t count = std::max(m_tileCount, 1);
+	const int32_t top = (int32_t)m_layers.size() - 1;
 
 	Murmur3 hash;
 	hash.begin();
-
-	if (m_globalStamp != 0)
-		hash.feedBuffer(&m_globalStamp, sizeof(m_globalStamp));
-
 	for (int32_t tz = std::max(tileZ0, 0); tz <= std::min(tileZ1, count - 1); ++tz)
 	{
 		for (int32_t tx = std::max(tileX0, 0); tx <= std::min(tileX1, count - 1); ++tx)
 		{
-			// Every stream of a layer's tile is written along with its heights, except mask.
-			AlignedVector< std::wstring > names = { getChannelName(-1, L"Data", tx, tz) };
-			for (int32_t layer = 0; layer < (int32_t)m_layers.size(); ++layer)
-			{
-				names.push_back(getChannelName(layer, c_streamNames[StHeights], tx, tz));
-				names.push_back(getChannelName(layer, c_streamNames[StMask], tx, tz));
-			}
-
-			for (const auto& name : names)
-			{
-				DateTime lastWriteTime;
-				const uint64_t stamp[] = {
-					(uint64_t)tx,
-					(uint64_t)tz,
-					m_instance->getDataLastWriteTime(name, lastWriteTime) ? lastWriteTime.getSecondsSinceEpoch() : 0
-				};
-				hash.feedBuffer(stamp, sizeof(stamp));
-			}
+			const uint64_t stamp = getStamp(top, tx, tz);
+			hash.feedBuffer(&stamp, sizeof(stamp));
 		}
 	}
-
 	hash.end();
 	return hash.get();
 }
 
 Ref< Heightfield > TileStorage::readMergedTile(const Vector4& worldExtent, int32_t tileX, int32_t tileZ, int32_t layerCount) const
 {
-	Ref< Heightfield > merged = readStoredTile(0, worldExtent, tileX, tileZ);
-	if (!merged)
-	{
-		log::error << L"Unable to read heightfield; no tile " << tileX << L", " << tileZ << L" in instance." << Endl;
-		return nullptr;
-	}
-
-	// Each layer above base modify output of layer below.
 	const int32_t layers = (layerCount >= 0) ? std::min(layerCount, (int32_t)m_layers.size()) : (int32_t)m_layers.size();
-	for (int32_t layer = 1; layer < layers; ++layer)
+	if (layers <= 1)
 	{
-		if (!m_layers[layer]->apply(this, layer, worldExtent, tileX, tileZ, merged))
-			return nullptr;
+		Ref< Heightfield > merged = readStoredTile(0, worldExtent, tileX, tileZ);
+		if (!merged)
+			log::error << L"Unable to read heightfield; no tile " << tileX << L", " << tileZ << L" in instance." << Endl;
+		return merged;
 	}
 
-	if (layers > 1)
+	// Output of layer is read from cache, or evaluated from output of layer below, which is also cached.
+	const int32_t layer = layers - 1;
+	const int32_t count = std::max(m_tileCount, 1);
+	const std::wstring name = m_instance->getGuid().format() + L"_" + toString(m_layers[layer]->getId()) + L"_" + toString(tileX) + L"_" + toString(tileZ);
+	return HeightfieldCache::getInstance().get(m_cachePath, name, getStamp(layer, tileX, tileZ), getTileExtent(worldExtent, count), getTileCenter(worldExtent, count, tileX, tileZ), [&]() -> Ref< Heightfield > {
+		Ref< Heightfield > merged = readMergedTile(worldExtent, tileX, tileZ, layer);
+		if (!merged || !m_layers[layer]->apply(this, layer, worldExtent, tileX, tileZ, merged))
+			return nullptr;
 		merged->updateCellBounds();
-
-	return merged;
+		return merged;
+	});
 }
 
 Ref< Heightfield > TileStorage::readLayerTile(int32_t layer, const Vector4& worldExtent, int32_t tileX, int32_t tileZ, AlignedVector< uint8_t >* outMask) const
@@ -458,6 +476,7 @@ bool TileStorage::writeLayerTiles(int32_t layer, int32_t tileX0, int32_t tileZ0,
 		int32_t which;
 	};
 
+	const int32_t count = std::max(m_tileCount, 1);
 	const int32_t width = tileX1 - tileX0 + 1;
 
 	const bool haveData = m_layers[layer]->haveData();
@@ -468,8 +487,9 @@ bool TileStorage::writeLayerTiles(int32_t layer, int32_t tileX0, int32_t tileZ0,
 		return false;
 	}
 
-	// Streams are created by calling thread, which owns the transaction; streams are encoded in parallel.
+	// Streams of a tile carry a new stamp; streams are created by calling thread, which owns the transaction, and encoded in parallel.
 	AlignedVector< Write > writes;
+	AlignedVector< uint64_t > stamps;
 	for (int32_t i = 0; i < (int32_t)tiles.size(); ++i)
 	{
 		const Heightfield* tile = tiles[i];
@@ -509,6 +529,8 @@ bool TileStorage::writeLayerTiles(int32_t layer, int32_t tileX0, int32_t tileZ0,
 			}
 			writes.push_back({ stream, i, w });
 		}
+
+		stamps.push_back(createStamp());
 	}
 
 	std::atomic< bool > result = true;
@@ -517,7 +539,7 @@ bool TileStorage::writeLayerTiles(int32_t layer, int32_t tileX0, int32_t tileZ0,
 		tasks.push_back([&, i]() {
 			const Write& write = writes[i];
 			const uint8_t* mask = (write.which == StMask) ? (*masks)[write.tile].c_ptr() : nullptr;
-			if (!writeStream(write.stream, tiles[write.tile], mask, write.which))
+			if (!writeStream(write.stream, tiles[write.tile], mask, write.which, stamps[write.tile]))
 			{
 				log::error << L"Unable to write heightfield; failed to write \"" << getStreamName(write.which) << L"\" of tile " << tileX0 + write.tile % width << L", " << tileZ0 + write.tile / width << L"." << Endl;
 				result = false;
@@ -525,7 +547,30 @@ bool TileStorage::writeLayerTiles(int32_t layer, int32_t tileX0, int32_t tileZ0,
 		});
 	JobManager::getInstance().fork(tasks.c_ptr(), tasks.size());
 
-	return result;
+	if (!result)
+		return false;
+
+	for (int32_t i = 0; i < (int32_t)tiles.size(); ++i)
+	{
+		const int32_t tileX = tileX0 + i % width;
+		const int32_t tileZ = tileZ0 + i / width;
+		m_ownStamps[layer * count * count + tileX + tileZ * count] = readOwnStamp(layer, tileX, tileZ);
+	}
+
+	// Global layers aren't evaluated again for each write through storage, thus their outputs are unique to storage.
+	if (!m_written)
+	{
+		const uint64_t unique = createStamp();
+		for (uint64_t& globalStamp : m_globalStamps)
+		{
+			const uint64_t values[] = { globalStamp, unique };
+			globalStamp = hash64(values, sizeof(values));
+		}
+		m_written = true;
+	}
+
+	calculateStamps(false);
+	return true;
 }
 
 Ref< Heightfield > TileStorage::readLayerHeightfield(int32_t layer, const Vector4& worldExtent, AlignedVector< uint8_t >* outMask) const
@@ -675,7 +720,8 @@ Ref< Heightfield > TileStorage::readStoredTile(int32_t layer, const Vector4& wor
 
 	ReadStream heights;
 	int32_t size;
-	if (!heights.open(m_instance, getChannelName(layer, c_streamNames[StHeights], tileX, tileZ), size))
+	uint64_t stamp;
+	if (!heights.open(m_instance, getChannelName(layer, c_streamNames[StHeights], tileX, tileZ), size, stamp))
 	{
 		if (layer > 0)
 			return nullptr;
@@ -749,10 +795,71 @@ std::wstring TileStorage::getChannelName(int32_t layer, const std::wstring& chan
 	return (m_tileCount > 0) ? name + L"_" + toString(tileX) + L"_" + toString(tileZ) : name;
 }
 
+uint64_t TileStorage::readOwnStamp(int32_t layer, int32_t tileX, int32_t tileZ) const
+{
+	const std::wstring names[] = {
+		getChannelName(layer, c_streamNames[StHeights], tileX, tileZ),
+		getChannelName(layer, c_streamNames[StMask], tileX, tileZ),
+		getChannelName(-1, L"Data", tileX, tileZ)
+	};
+	const bool stored[] = { m_layers[layer]->haveData(), m_layers[layer]->haveMask() && layer > 0, layer == 0 };
+
+	uint64_t stamps[sizeof_array(names)] = { 0 };
+	for (int32_t i = 0; i < sizeof_array(names); ++i)
+	{
+		if (!stored[i])
+			continue;
+
+		ReadStream stream;
+		int32_t size;
+		uint64_t stamp;
+		if (stream.open(m_instance, names[i], size, stamp) && stamp != 0)
+		{
+			stamps[i] = stamp;
+			continue;
+		}
+
+		DateTime lastWriteTime;
+		if (stream.data && m_instance->getDataLastWriteTime(names[i], lastWriteTime))
+			stamps[i] = lastWriteTime.getSecondsSinceEpoch();
+	}
+
+	return hash64(stamps, sizeof(stamps));
+}
+
+void TileStorage::calculateStamps(bool global) const
+{
+	const int32_t count = std::max(m_tileCount, 1);
+	const int32_t tiles = count * count;
+
+	// Output of global layer depend on entire output of layer below.
+	for (int32_t layer = 0; layer < (int32_t)m_layers.size(); ++layer)
+	{
+		if (global && layer > 0)
+		{
+			const uint64_t below = hash64(&m_stamps[(layer - 1) * tiles], tiles * sizeof(uint64_t));
+			const uint64_t stamps[] = { below, m_layerHashes[layer] };
+			m_globalStamps[layer] = hash64(stamps, sizeof(stamps));
+		}
+
+		for (int32_t i = 0; i < tiles; ++i)
+		{
+			const uint64_t stamps[] = {
+				(layer > 0) ? m_stamps[(layer - 1) * tiles + i] : m_baseStamp + i,
+				m_layerHashes[layer],
+				m_ownStamps[layer * tiles + i],
+				m_layers[layer]->isGlobal() ? m_globalStamps[layer] : 0
+			};
+			m_stamps[layer * tiles + i] = hash64(stamps, sizeof(stamps));
+		}
+	}
+}
+
 bool TileStorage::readHeader(int32_t layer, int32_t tileX, int32_t tileZ, int32_t& outSize, uint32_t& outChannels) const
 {
 	ReadStream heights;
-	if (heights.open(m_instance, getChannelName(layer, c_streamNames[StHeights], tileX, tileZ), outSize))
+	uint64_t stamp;
+	if (heights.open(m_instance, getChannelName(layer, c_streamNames[StHeights], tileX, tileZ), outSize, stamp))
 	{
 		Reader(heights.inflate) >> outChannels;
 		return true;
@@ -781,8 +888,7 @@ bool TileStorage::readHeader(int32_t layer, int32_t tileX, int32_t tileZ, int32_
 Ref< const Heightfield > TileStorage::readCachedTile(int32_t layer, const Vector4& worldExtent, int32_t tileX, int32_t tileZ) const
 {
 	const std::wstring key = getCacheKey(layer) + L"/" + toString(tileX) + L"_" + toString(tileZ);
-	const uint32_t layersHash = (layer >= 0) ? m_layerHashes[layer] : m_layerHashes.back();
-	const uint64_t stamp = ((uint64_t)layersHash << 32) | readStamp(tileX, tileZ, tileX, tileZ);
+	const uint64_t stamp = getStamp((layer >= 0) ? layer : (int32_t)m_layers.size() - 1, tileX, tileZ);
 
 	{
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(s_cacheLock);

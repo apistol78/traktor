@@ -43,6 +43,7 @@ public:
 
 private:
 	std::wstring m_assetPath;
+	std::wstring m_heightfieldCachePath;
 };
 
 }

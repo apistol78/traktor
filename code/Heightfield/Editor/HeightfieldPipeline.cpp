@@ -32,6 +32,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.hf.HeightfieldPipeline", 5, Heightfield
 bool HeightfieldPipeline::create(const editor::IPipelineSettings* settings, db::Database* database)
 {
 	m_assetPath = settings->getPropertyExcludeHash< std::wstring >(L"Pipeline.AssetPath", L"");
+	m_heightfieldCachePath = settings->getPropertyExcludeHash< std::wstring >(L"Pipeline.HeightfieldCache.Path", L"");
 	return true;
 }
 
@@ -92,7 +93,7 @@ bool HeightfieldPipeline::buildOutput(
 			return false;
 		}
 
-		const TileStorage tileStorage(heightfieldInstance, heightfieldAsset);
+		const TileStorage tileStorage(heightfieldInstance, heightfieldAsset, m_heightfieldCachePath);
 		if (tileAsset->m_tileX >= 0)
 			heightfield = tileStorage.readHeightfieldTile(heightfieldAsset->getWorldExtent(), tileAsset->m_tileX, tileAsset->m_tileZ, 0);
 		else
@@ -103,7 +104,7 @@ bool HeightfieldPipeline::buildOutput(
 		heightfieldAsset = checked_type_cast< const HeightfieldAsset* >(sourceAsset);
 
 		// Product of asset itself is a low resolution overview.
-		heightfield = TileStorage(sourceInstance, heightfieldAsset).readHeightfieldOverview(heightfieldAsset->getWorldExtent());
+		heightfield = TileStorage(sourceInstance, heightfieldAsset, m_heightfieldCachePath).readHeightfieldOverview(heightfieldAsset->getWorldExtent());
 	}
 
 	if (!heightfield)

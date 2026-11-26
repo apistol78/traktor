@@ -9,6 +9,7 @@
 #pragma once
 
 #include "Core/Containers/AlignedVector.h"
+#include "Core/Io/Path.h"
 #include "Core/Math/Vector4.h"
 #include "Core/Object.h"
 #include "Core/Ref.h"
@@ -46,15 +47,21 @@ class HeightfieldAssetLayer;
  * "L<id>_<channel>" or, when tiled, "L<id>_<channel>_<x>_<z>".
  * Merged reads start from base layer, then let each layer above modify
  * output of layer below.
+ *
+ * Each stream carry a stamp, written along with it, so outputs of layers can be
+ * cached outside of instance, in HeightfieldCache, keyed by stamps of everything
+ * they're evaluated from.
  */
 class T_DLLCLASS TileStorage : public Object
 {
 	T_RTTI_CLASS;
 
 public:
-	explicit TileStorage(db::Instance* instance, const HeightfieldAsset* asset);
+	/*! \param cachePath Directory where outputs of layers are cached; not cached if empty. */
+	explicit TileStorage(db::Instance* instance, const HeightfieldAsset* asset, const Path& cachePath = Path());
 
-	explicit TileStorage(const db::Instance* instance, const HeightfieldAsset* asset);
+	/*! \param cachePath Directory where outputs of layers are cached; not cached if empty. */
+	explicit TileStorage(const db::Instance* instance, const HeightfieldAsset* asset, const Path& cachePath = Path());
 
 	/*! \param tileCount Number of tiles along each side, instead of asset's, 0 for a single untiled channel. */
 	explicit TileStorage(db::Instance* instance, const HeightfieldAsset* asset, int32_t tileCount);
@@ -62,7 +69,7 @@ public:
 	//! Size of overview; heightfield is downsampled by largest power of two which keep samples within overview sample distance, or until within maximum overview size.
 	static int32_t calculateOverviewSize(int32_t size, float worldSize);
 
-	//! Release decoded tiles kept by region reads and invalidate global stamps.
+	//! Release decoded tiles kept by region reads.
 	static void flushCache();
 
 	/*! Number of tiles along each side; 0 if data is stored as a single, untiled, channel. */
@@ -71,7 +78,10 @@ public:
 	//! Key of layer, or of merged layers if -1, unique among all storages; for caches shared by storages.
 	std::wstring getCacheKey(int32_t layer) const;
 
-	//! Stamp which change whenever layer or any layer below change, any tile of any layer is written when a layer is global, or caches are flushed.
+	//! Stamp of output of layer at tile; changes whenever layer, layers below or their tiles which output depend on change.
+	uint64_t getStamp(int32_t layer, int32_t tileX, int32_t tileZ) const;
+
+	//! Stamp of layer and entire output of layers below; taken when storage is created, once written through storage it's unique to storage.
 	uint64_t getGlobalStamp(int32_t layer) const;
 
 	//! Number of samples along each side of the whole heightfield; 0 if unable to read.
@@ -94,10 +104,10 @@ public:
 	//! Read whole merged heightfield box filtered into overview of calculated size.
 	Ref< Heightfield > readHeightfieldOverview(const Vector4& worldExtent) const;
 
-	//! Stamp which change whenever any tile of any layer in range, inclusive tile coordinates, is written; or any tile at all if a layer is global.
+	//! Stamp which change whenever merged output of any tile in range, inclusive tile coordinates, change.
 	uint32_t readStamp(int32_t tileX0, int32_t tileZ0, int32_t tileX1, int32_t tileZ1) const;
 
-	/*! Read single tile, with all channels, of layers evaluated bottom first.
+	/*! Read single tile, with all channels, of layers evaluated bottom first; output of each layer is read from cache, or cached, if storage has a cache path.
 	 * \param layerCount Number of layers, from bottom, which are evaluated; -1 for all.
 	 */
 	Ref< Heightfield > readMergedTile(const Vector4& worldExtent, int32_t tileX, int32_t tileZ, int32_t layerCount = -1) const;
@@ -130,11 +140,23 @@ public:
 private:
 	Ref< db::Instance > m_instance;
 	RefArray< const HeightfieldAssetLayer > m_layers;
-	AlignedVector< uint32_t > m_layerHashes;	//!< Hash of each layer and all layers below.
+	AlignedVector< uint64_t > m_layerHashes; //!< Hash of each layer and all layers below.
+	Path m_cachePath;
 	int32_t m_tileCount;
-	uint32_t m_globalStamp = 0;	//!< Stamp of every tile; only if a layer is global.
+	uint64_t m_baseStamp = 0;						  //!< Stamp of world extent and tile count.
+	mutable AlignedVector< uint64_t > m_ownStamps;	  //!< Stamp of each layer's stored tiles, layer major.
+	mutable AlignedVector< uint64_t > m_stamps;		  //!< Stamp of each layer's output.
+	mutable AlignedVector< uint64_t > m_globalStamps; //!< Stamp of each layer and entire output of layers below.
+	mutable bool m_written = false;					  //!< Written through, thus global stamps are unique to storage.
 
+	//! Name of channel of layer, or of data stored before layers if layer is -1.
 	std::wstring getChannelName(int32_t layer, const std::wstring& channel, int32_t tileX, int32_t tileZ) const;
+
+	//! Read stamp of tile of layer from its streams; streams stored before stamps are stamped by when they were written.
+	uint64_t readOwnStamp(int32_t layer, int32_t tileX, int32_t tileZ) const;
+
+	//! Calculate stamps of each layer's output from stamps of stored tiles; stamps of entire outputs are only calculated if global.
+	void calculateStamps(bool global) const;
 
 	//! Read size and optional channels of single tile of layer.
 	bool readHeader(int32_t layer, int32_t tileX, int32_t tileZ, int32_t& outSize, uint32_t& outChannels) const;

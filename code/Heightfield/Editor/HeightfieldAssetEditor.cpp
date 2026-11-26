@@ -14,6 +14,8 @@
 #include "Core/Math/MathUtils.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/String.h"
+#include "Core/Settings/PropertyGroup.h"
+#include "Core/Settings/PropertyString.h"
 #include "Core/Thread/Job.h"
 #include "Core/Thread/JobManager.h"
 #include "Database/Instance.h"
@@ -24,7 +26,6 @@
 #include "Editor/IEditorPageSite.h"
 #include "Editor/PropertiesView.h"
 #include "Heightfield/Heightfield.h"
-#include "Heightfield/Editor/EditLayer.h"
 #include "Heightfield/Editor/HeightfieldAsset.h"
 #include "Heightfield/Editor/HeightfieldAssetEditor.h"
 #include "Heightfield/Editor/HeightfieldAssetLayer.h"
@@ -75,6 +76,7 @@ const wchar_t* c_rawHorizontalAlignments[] = { L"Left", L"Right", nullptr };
 const wchar_t* c_rawVerticalAlignments[] = { L"Top", L"Bottom", nullptr };
 const wchar_t* c_rawSizes[] = { L"Keep raw size", L"Resize to target", nullptr };
 const int32_t c_maxPreviewSize = 1024;
+const int32_t c_tilesPerBatch = 32; //!< Preview tiles read at once; bounds memory of tiles evaluated in parallel.
 const int32_t c_maxTileCount = 64;
 const int32_t c_maxTileSize = 8192;
 const float c_extentEpsilon = 0.01f;
@@ -316,6 +318,8 @@ bool HeightfieldAssetEditor::create(ui::Container* parent)
 	if (!m_instance || !m_asset)
 		return false;
 
+	m_cachePath = m_editor->getSettings()->getProperty< std::wstring >(L"Pipeline.HeightfieldCache.Path");
+
 	const int32_t count = std::max(m_asset->getTileCount(), 1);
 	m_tileSize = TileStorage(m_instance, m_asset).readSize() / count;
 	m_layer = -1;
@@ -533,9 +537,6 @@ bool HeightfieldAssetEditor::modifyTiles(int32_t tileX0, int32_t tileZ0, int32_t
 
 		result = result && storage.writeLayerTiles(m_layer, tileX0, tz, tileX1, tz, tiles, &masks);
 	}
-
-	// Cached reads doesn't see written data before it's committed; preview is re-read as modified layer affect layers above.
-	TileStorage::flushCache();
 
 	m_document->setModified();
 	readPreview();
@@ -976,8 +977,6 @@ bool HeightfieldAssetEditor::redistributeTiles(int32_t tileCount)
 	m_selectedTileX = std::min(m_selectedTileX, count - 1);
 	m_selectedTileZ = std::min(m_selectedTileZ, count - 1);
 
-	TileStorage::flushCache();
-
 	if (!readPreview() || !readTilePreview())
 		return false;
 
@@ -1054,8 +1053,6 @@ bool HeightfieldAssetEditor::resampleTiles(int32_t tileSize)
 
 	m_tileSize = tileSize;
 
-	TileStorage::flushCache();
-
 	if (!readPreview() || !readTilePreview())
 		return false;
 
@@ -1119,41 +1116,60 @@ void HeightfieldAssetEditor::readMask(const TileStorage& storage, int32_t tileX,
 
 bool HeightfieldAssetEditor::readPreview()
 {
-	const TileStorage storage(m_instance, m_asset);
+	const TileStorage storage(m_instance, m_asset, m_cachePath);
 	const Vector4 worldExtent = m_asset->getWorldExtent();
 	const int32_t count = std::max(m_asset->getTileCount(), 1);
+	const int32_t layer = (m_layer >= 0) ? m_layer : (int32_t)m_asset->getLayers().size() - 1;
 
 	m_previewStep = calculatePreviewStep(m_tileSize, count);
-
 	const int32_t previewTileSize = m_tileSize / m_previewStep;
-	for (auto& previewImage : m_previewImages)
-		previewImage = new drawing::Image(drawing::PixelFormat::getR8G8B8(), previewTileSize * count, previewTileSize * count);
 
-	// Tiles are output of selected layer, with its mask; tiles of a row are read in parallel.
-	const int32_t layerCount = (m_layer >= 0) ? m_layer + 1 : -1;
+	Preview& preview = m_previews[(m_layer >= 0) ? m_asset->getLayers()[m_layer]->getId() : -1];
+	if (preview.stamps.size() != (size_t)count * count || preview.images[0]->getWidth() != previewTileSize * count)
+	{
+		for (auto& image : preview.images)
+			image = new drawing::Image(drawing::PixelFormat::getR8G8B8(), previewTileSize * count, previewTileSize * count);
+		preview.stamps.resize(0);
+		preview.stamps.resize((size_t)count * count, 0);
+	}
+
+	// Only tiles which output has changed since preview was read are read again.
+	AlignedVector< int32_t > stale;
+	for (int32_t i = 0; i < count * count; ++i)
+		if (preview.stamps[i] != storage.getStamp(layer, i % count, i / count))
+			stale.push_back(i);
+
 	std::atomic< bool > result = true;
-	for (int32_t tz = 0; tz < count; ++tz)
+	for (size_t first = 0; first < stale.size(); first += c_tilesPerBatch)
 	{
 		AlignedVector< Job::task_t > tasks;
-		for (int32_t tx = 0; tx < count; ++tx)
-			tasks.push_back([&, tx]() {
+		for (size_t i = first; i < std::min(first + c_tilesPerBatch, stale.size()); ++i)
+			tasks.push_back([&, i]() {
+				const int32_t tx = stale[i] % count;
+				const int32_t tz = stale[i] / count;
 				AlignedVector< uint8_t > mask;
 				readMask(storage, tx, tz, mask);
-				Ref< const Heightfield > tile = storage.readMergedTile(worldExtent, tx, tz, layerCount);
+				Ref< const Heightfield > tile = storage.readMergedTile(worldExtent, tx, tz, layer + 1);
 				if (tile)
-					updatePreview(tile, mask.c_ptr(), m_previewStep, tx * previewTileSize, tz * previewTileSize, m_previewImages);
+				{
+					updatePreview(tile, mask.c_ptr(), m_previewStep, tx * previewTileSize, tz * previewTileSize, preview.images);
+					preview.stamps[stale[i]] = storage.getStamp(layer, tx, tz);
+				}
 				else
 					result = false;
 			});
 		JobManager::getInstance().fork(tasks.c_ptr(), tasks.size());
 	}
 
+	for (int32_t i = 0; i < sizeof_array(m_previewImages); ++i)
+		m_previewImages[i] = preview.images[i];
+
 	return result;
 }
 
 bool HeightfieldAssetEditor::readTilePreview()
 {
-	const TileStorage storage(m_instance, m_asset);
+	const TileStorage storage(m_instance, m_asset, m_cachePath);
 	AlignedVector< uint8_t > mask;
 	readMask(storage, m_selectedTileX, m_selectedTileZ, mask);
 	Ref< const Heightfield > tile = storage.readMergedTile(m_asset->getWorldExtent(), m_selectedTileX, m_selectedTileZ, (m_layer >= 0) ? m_layer + 1 : -1);
@@ -1278,14 +1294,9 @@ void HeightfieldAssetEditor::eventLayerSelect(ui::SelectionChangeEvent* event)
 void HeightfieldAssetEditor::eventPropertiesChanged(ui::ContentChangeEvent* event)
 {
 	updateFields();
-
-	// Only name of edit layers is a property, everything else affect preview.
-	if (m_layer < 0 || !is_a< EditLayer >(m_asset->getLayers()[m_layer]))
-	{
-		readPreview();
-		readTilePreview();
-		updatePreviewImage();
-	}
+	readPreview();
+	readTilePreview();
+	updatePreviewImage();
 }
 
 void HeightfieldAssetEditor::eventPreviewPaint(ui::PaintEvent* event)

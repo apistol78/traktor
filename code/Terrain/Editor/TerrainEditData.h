@@ -14,6 +14,8 @@
 #include "Core/Object.h"
 #include "Core/Ref.h"
 
+#include <string>
+
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_TERRAIN_EDITOR_EXPORT)
@@ -54,8 +56,10 @@ class T_DLLCLASS TerrainEditData : public Object
 	T_RTTI_CLASS;
 
 public:
-	/*! \param editLayerId Identifier of edit layer which is edited. */
-	bool create(const db::Instance* heightfieldInstance, const hf::HeightfieldAsset* heightfieldAsset, int32_t editLayerId);
+	/*! \param editLayerId Identifier of edit layer which is edited.
+	 * \param cachePath Directory where outputs of heightfield layers are cached.
+	 */
+	bool create(const db::Instance* heightfieldInstance, const hf::HeightfieldAsset* heightfieldAsset, int32_t editLayerId, const std::wstring& cachePath);
 
 	int32_t getSize() const { return m_size; }
 

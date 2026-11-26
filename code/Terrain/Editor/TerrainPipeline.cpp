@@ -260,6 +260,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.terrain.TerrainPipeline", 20, TerrainPi
 bool TerrainPipeline::create(const editor::IPipelineSettings* settings, db::Database* database)
 {
 	m_assetPath = settings->getPropertyExcludeHash< std::wstring >(L"Pipeline.AssetPath", L"");
+	m_heightfieldCachePath = settings->getPropertyExcludeHash< std::wstring >(L"Pipeline.HeightfieldCache.Path", L"");
 	return editor::DefaultPipeline::create(settings, database);
 }
 
@@ -349,7 +350,7 @@ bool TerrainPipeline::buildOutput(
 
 		const bool color = (imageAsset->m_name == L"Color");
 		const uint32_t layer = color ? hf::Heightfield::LyColor : hf::Heightfield::LySplat;
-		const hf::TileStorage tileStorage(heightfieldInstance, heightfieldAsset);
+		const hf::TileStorage tileStorage(heightfieldInstance, heightfieldAsset, m_heightfieldCachePath);
 
 		Ref< hf::Heightfield > heightfield = (imageAsset->m_tileX >= 0) ? tileStorage.readHeightfieldTile(heightfieldAsset->getWorldExtent(), imageAsset->m_tileX, imageAsset->m_tileZ, 0, layer) : tileStorage.readHeightfieldOverview(heightfieldAsset->getWorldExtent(), imageAsset->m_overviewSize, layer);
 		const uint8_t* data = heightfield ? (color ? heightfield->getColors() : heightfield->getSplats()) : nullptr;
@@ -389,7 +390,7 @@ bool TerrainPipeline::buildOutput(
 			return false;
 		}
 
-		const hf::TileStorage tileStorage(heightfieldAssetInstance, heightfieldAsset);
+		const hf::TileStorage tileStorage(heightfieldAssetInstance, heightfieldAsset, m_heightfieldCachePath);
 
 		const int32_t size = tileStorage.readSize();
 		if (size <= 0)

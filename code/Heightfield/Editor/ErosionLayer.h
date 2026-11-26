@@ -8,6 +8,7 @@
  */
 #pragma once
 
+#include "Heightfield/Editor/ErosionFilter.h"
 #include "Heightfield/Editor/HeightfieldAssetLayer.h"
 
 // import/export mechanism.
@@ -43,8 +44,8 @@ public:
 	virtual void serialize(ISerializer& s) override final;
 
 private:
-	int32_t m_iterations = 100000;	//!< Number of water droplets.
-	float m_resolution = 4.0f;		//!< Distance, in metres, between erosion samples; zero to erode at resolution of heightfield.
+	ErosionFilter::Parameters m_parameters;
+	float m_resolution = 4.0f; //!< Distance, in metres, between erosion samples; zero to erode at resolution of heightfield.
 
 	//! Read entire heightfield, of layers below merged, at resolution of layer, both before and after it's eroded; cached.
 	bool readEroded(const TileStorage* storage, int32_t layer, const Vector4& worldExtent, Ref< const Heightfield >& outBelow, Ref< const Heightfield >& outEroded) const;

@@ -8,6 +8,7 @@
  */
 #include "Heightfield/Editor/HeightfieldAssetLayer.h"
 
+#include "Core/Serialization/AttributeNoHash.h"
 #include "Core/Serialization/AttributePrivate.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
@@ -35,7 +36,7 @@ bool HeightfieldAssetLayer::haveMask() const
 void HeightfieldAssetLayer::serialize(ISerializer& s)
 {
 	s >> Member< int32_t >(L"id", m_id, AttributePrivate());
-	s >> Member< std::wstring >(L"name", m_name);
+	s >> Member< std::wstring >(L"name", m_name, AttributeNoHash());
 }
 
 }

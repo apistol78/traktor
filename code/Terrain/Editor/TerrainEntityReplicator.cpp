@@ -34,6 +34,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.shape.TerrainEntityReplicator", 0, Terr
 bool TerrainEntityReplicator::create(const editor::IPipelineSettings* settings)
 {
 	m_assetPath = settings->getPropertyIncludeHash< std::wstring >(L"Pipeline.AssetPath", L"");
+	m_heightfieldCachePath = settings->getPropertyExcludeHash< std::wstring >(L"Pipeline.HeightfieldCache.Path", L"");
 	return true;
 }
 
@@ -76,7 +77,7 @@ Ref< model::Model > TerrainEntityReplicator::createModel(
 	if (!heightfieldAsset)
 		return nullptr;
 
-	const hf::TileStorage storage(heightfieldAssetInstance, heightfieldAsset);
+	const hf::TileStorage storage(heightfieldAssetInstance, heightfieldAsset, m_heightfieldCachePath);
 	const int32_t size = storage.readSize();
 
 	Ref< hf::Heightfield > heightfield = storage.readHeightfieldOverview(heightfieldAsset->getWorldExtent());

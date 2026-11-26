@@ -114,6 +114,7 @@ private:
 	static void setupConfig(const NavMeshAsset* asset, rcConfig& outCfg);
 
 	std::wstring m_assetPath;
+	std::wstring m_heightfieldCachePath;
 	bool m_editor = false;
 	bool m_build = true;
 	SmallMap< const TypeInfo*, Ref< const world::IEntityReplicator > > m_entityReplicators;

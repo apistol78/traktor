@@ -207,7 +207,7 @@ uint32_t readTerrainStamp(editor::IPipelineBuilder* pipelineBuilder, const NavMe
 /*! Convert heightfield tiles of terrain overlapping bounds, or every tile if bounds are empty, at full resolution.
  * Tiles include enough samples of their neighbours to cover border around bounds.
  */
-bool createTerrainModels(editor::IPipelineBuilder* pipelineBuilder, const NavMeshTerrain& terrain, const Aabb3& bounds, float border, AlignedVector< NavMeshSourceModel >& outNavModels)
+bool createTerrainModels(editor::IPipelineBuilder* pipelineBuilder, const std::wstring& heightfieldCachePath, const NavMeshTerrain& terrain, const Aabb3& bounds, float border, AlignedVector< NavMeshSourceModel >& outNavModels)
 {
 	Ref< db::Instance > heightfieldInstance;
 	Ref< const hf::HeightfieldAsset > heightfieldAsset;
@@ -215,7 +215,7 @@ bool createTerrainModels(editor::IPipelineBuilder* pipelineBuilder, const NavMes
 		return false;
 
 	const Vector4& worldExtent = heightfieldAsset->getWorldExtent();
-	const hf::TileStorage tileStorage(heightfieldInstance, heightfieldAsset);
+	const hf::TileStorage tileStorage(heightfieldInstance, heightfieldAsset, heightfieldCachePath);
 	const int32_t tileCount = std::max(heightfieldAsset->getTileCount(), 1);
 
 	int32_t range[4];
@@ -843,6 +843,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.ai.NavMeshPipeline", 23, NavMeshPipelin
 bool NavMeshPipeline::create(const editor::IPipelineSettings* settings, db::Database* database)
 {
 	m_assetPath = settings->getPropertyExcludeHash< std::wstring >(L"Pipeline.AssetPath", L"");
+	m_heightfieldCachePath = settings->getPropertyExcludeHash< std::wstring >(L"Pipeline.HeightfieldCache.Path", L"");
 	m_editor = settings->getPropertyIncludeHash< bool >(L"Pipeline.TargetEditor", false);
 	m_build = settings->getPropertyIncludeHash< bool >(L"NavMeshPipeline.Build", true);
 
@@ -1067,7 +1068,7 @@ bool NavMeshPipeline::buildSingle(editor::IPipelineBuilder* pipelineBuilder, con
 
 	for (const auto& terrain : source.terrains)
 	{
-		if (!createTerrainModels(pipelineBuilder, terrain, source.maximumBounds, 0.0f, source.models))
+		if (!createTerrainModels(pipelineBuilder, m_heightfieldCachePath, terrain, source.maximumBounds, 0.0f, source.models))
 		{
 			log::error << L"NavMesh pipeline failed; unable to convert terrain." << Endl;
 			return false;
@@ -1444,7 +1445,7 @@ bool NavMeshPipeline::buildChunk(editor::IPipelineBuilder* pipelineBuilder, cons
 
 	for (const auto& terrain : chunkAsset->m_terrains)
 	{
-		if (!createTerrainModels(pipelineBuilder, { terrain.terrain, terrain.transform }, chunkBounds, border, source.models))
+		if (!createTerrainModels(pipelineBuilder, m_heightfieldCachePath, { terrain.terrain, terrain.transform }, chunkBounds, border, source.models))
 		{
 			log::error << L"NavMesh pipeline failed; unable to convert terrain." << Endl;
 			return false;

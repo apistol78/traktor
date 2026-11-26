@@ -79,7 +79,7 @@ float sampleCubicDifference(const Heightfield* a, const Heightfield* b, float gr
 
 }
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.hf.ErosionLayer", 0, ErosionLayer, HeightfieldAssetLayer)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.hf.ErosionLayer", 1, ErosionLayer, HeightfieldAssetLayer)
 
 bool ErosionLayer::apply(const TileStorage* storage, int32_t layer, const Vector4& worldExtent, int32_t tileX, int32_t tileZ, Heightfield* inoutTile) const
 {
@@ -145,8 +145,19 @@ bool ErosionLayer::haveMask() const
 void ErosionLayer::serialize(ISerializer& s)
 {
 	HeightfieldAssetLayer::serialize(s);
-	s >> Member< int32_t >(L"iterations", m_iterations, AttributeRange(0));
+	s >> Member< int32_t >(L"iterations", m_parameters.iterations, AttributeRange(0));
 	s >> Member< float >(L"resolution", m_resolution, AttributeRange(0.0f) | AttributeUnit(UnitType::Metres));
+
+	if (s.getVersion< ErosionLayer >() >= 1)
+	{
+		s >> Member< float >(L"capacity", m_parameters.capacity, AttributeRange(0.0f));
+		s >> Member< float >(L"minSlope", m_parameters.minSlope, AttributeRange(0.0f) | AttributeUnit(UnitType::Metres));
+		s >> Member< float >(L"evaporation", m_parameters.evaporation, AttributeRange(0.0f, 1.0f));
+		s >> Member< float >(L"erosion", m_parameters.erosion, AttributeRange(0.0f, 1.0f));
+		s >> Member< float >(L"deposition", m_parameters.deposition, AttributeRange(0.0f, 1.0f));
+		s >> Member< float >(L"inertia", m_parameters.inertia, AttributeRange(0.0f, 1.0f));
+		s >> Member< float >(L"gravity", m_parameters.gravity, AttributeRange(0.0f));
+	}
 }
 
 bool ErosionLayer::readEroded(const TileStorage* storage, int32_t layer, const Vector4& worldExtent, Ref< const Heightfield >& outBelow, Ref< const Heightfield >& outEroded) const
@@ -235,7 +246,9 @@ bool ErosionLayer::readEroded(const TileStorage* storage, int32_t layer, const V
 
 	Ref< Heightfield > eroded = new Heightfield(size, worldExtent, Vector4::zero());
 	std::memcpy(eroded->getHeights(), below->getHeights(), (size_t)size * size * sizeof(height_t));
-	ErosionFilter(m_iterations).apply(eroded);
+	ErosionFilter::Parameters parameters = m_parameters;
+	parameters.iterations = m_parameters.iterations * 1000;
+	ErosionFilter(parameters).apply(eroded);
 
 	entry->stamp = stamp;
 	entry->below = below;

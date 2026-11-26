@@ -45,6 +45,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.hf.HeightfieldTexturePipeline", 8, Heig
 bool HeightfieldTexturePipeline::create(const editor::IPipelineSettings* settings, db::Database* database)
 {
 	m_assetPath = settings->getPropertyExcludeHash< std::wstring >(L"Pipeline.AssetPath", L"");
+	m_heightfieldCachePath = settings->getPropertyExcludeHash< std::wstring >(L"Pipeline.HeightfieldCache.Path", L"");
 
 	const std::wstring hf = settings->getPropertyIncludeHash< std::wstring >(L"HeightfieldTexturePipeline.HeightFormat", L"HfFloat32");
 	if (hf == L"HfFloat16")
@@ -130,7 +131,7 @@ bool HeightfieldTexturePipeline::buildOutput(
 	// Normals of tiles need a border of samples from neighbour tiles.
 	const int32_t border = (asset->m_tileX >= 0 && asset->m_output == HeightfieldTextureAsset::OtNormals) ? 1 : 0;
 
-	const TileStorage tileStorage(heightfieldAssetInstance, heightfieldAsset);
+	const TileStorage tileStorage(heightfieldAssetInstance, heightfieldAsset, m_heightfieldCachePath);
 
 	Ref< Heightfield > heightfield;
 	if (asset->m_tileX >= 0)

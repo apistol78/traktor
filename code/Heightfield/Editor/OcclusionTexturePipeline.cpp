@@ -226,6 +226,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.hf.OcclusionTexturePipeline", 3, Occlus
 bool OcclusionTexturePipeline::create(const editor::IPipelineSettings* settings, db::Database* database)
 {
 	m_assetPath = settings->getPropertyExcludeHash< std::wstring >(L"Pipeline.AssetPath", L"");
+	m_heightfieldCachePath = settings->getPropertyExcludeHash< std::wstring >(L"Pipeline.HeightfieldCache.Path", L"");
 	m_editor = settings->getPropertyIncludeHash< bool >(L"Pipeline.TargetEditor", false);
 	return true;
 }
@@ -310,7 +311,7 @@ bool OcclusionTexturePipeline::buildOutput(
 		return false;
 	}
 
-	Ref< Heightfield > heightfield = TileStorage(heightfieldAssetInstance, heightfieldAsset).readHeightfield(heightfieldAsset->getWorldExtent());
+	Ref< Heightfield > heightfield = TileStorage(heightfieldAssetInstance, heightfieldAsset, m_heightfieldCachePath).readHeightfield(heightfieldAsset->getWorldExtent());
 	if (!heightfield)
 	{
 		log::error << L"Heightfield pipeline failed; unable to read heights" << Endl;

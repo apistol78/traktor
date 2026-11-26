@@ -53,6 +53,7 @@ bool PhysicsEntityReplicator::create(const editor::IPipelineSettings* settings)
 {
 	m_assetPath = settings->getPropertyExcludeHash< std::wstring >(L"Pipeline.AssetPath");
 	m_modelCachePath = settings->getPropertyExcludeHash< std::wstring >(L"Pipeline.ModelCache.Path");
+	m_heightfieldCachePath = settings->getPropertyExcludeHash< std::wstring >(L"Pipeline.HeightfieldCache.Path", L"");
 	return true;
 }
 
@@ -262,7 +263,7 @@ Ref< model::Model > PhysicsEntityReplicator::createModel(
 		if (!heightfieldAsset)
 			return nullptr;
 
-		Ref< hf::Heightfield > heightfield = hf::TileStorage(heightfieldAssetInstance, heightfieldAsset).readHeightfieldOverview(heightfieldAsset->getWorldExtent());
+		Ref< hf::Heightfield > heightfield = hf::TileStorage(heightfieldAssetInstance, heightfieldAsset, m_heightfieldCachePath).readHeightfieldOverview(heightfieldAsset->getWorldExtent());
 		if (!heightfield)
 			return nullptr;
 
