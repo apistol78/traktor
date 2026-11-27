@@ -15,11 +15,9 @@
 #include "Render/Buffer.h"
 #include "Render/Context/RenderContext.h"
 #include "Render/Frame/RenderGraph.h"
-#include "Render/Image2/ImageGraph.h"
-#include "Render/Image2/ImageGraphContext.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderTargetSet.h"
-#include "Render/ScreenRenderer.h"
+#include "Render/Shader.h"
 #include "Resource/IResourceManager.h"
 #include "World/Entity/LightComponent.h"
 #include "World/IEntityRenderer.h"
@@ -52,7 +50,7 @@ struct World_Reservoir_Type
 
 const resource::Id< render::Shader > c_irradianceFieldComputeShader(L"{593A522F-206C-9046-B8A1-25488BEA362A}");
 const resource::Id< render::Shader > c_irradianceComputeShader(L"{7C871925-C1A9-5B47-A361-114BC8FB5A98}");
-const resource::Id< render::ImageGraph > c_irradianceDenoise(L"{14A0E977-7C13-9B43-A26E-F1D21117AEC6}");
+const resource::Id< render::Shader > c_irradianceDenoiseShader(L"{67D57965-F927-D040-B2B6-18B1A41A9807}");
 
 const render::Handle s_handleTechniqueIrradiance_RT(L"World_ComputeIrradiance_RT");
 const render::Handle s_handleIrradianceOutput(L"World_IrradianceOutput");
@@ -78,9 +76,9 @@ bool RTIrradiancePass::create(resource::IResourceManager* resourceManager, rende
 		log::error << L"Unable to create irradiance compute shader." << Endl;
 		return false;
 	}
-	if (!resourceManager->bind(c_irradianceDenoise, m_irradianceDenoise))
+	if (!resourceManager->bind(c_irradianceDenoiseShader, m_irradianceDenoiseShader))
 	{
-		log::error << L"Unable to create irradiance denoiser process." << Endl;
+		log::error << L"Unable to create irradiance denoiser shader." << Endl;
 		return false;
 	}
 
@@ -99,22 +97,11 @@ bool RTIrradiancePass::create(resource::IResourceManager* resourceManager, rende
 	if ((m_irradianceFieldTextures[1] = renderSystem->createVolumeTexture(vtcd, T_FILE_LINE_W)) == nullptr)
 		return false;
 
-	// Create screen renderer.
-	m_screenRenderer = new render::ScreenRenderer();
-	if (!m_screenRenderer->create(renderSystem))
-		return false;
-
 	const std::wstring id = Guid::create().format();
 	m_persistentReservoirBuffers[0] = render::Handle(render::getParameterHandle(std::wstring(L"World_Reservoir_Even_") + id));
 	m_persistentReservoirBuffers[1] = render::Handle(render::getParameterHandle(std::wstring(L"World_Reservoir_Odd_") + id));
 
-	// Use half-resolution output if high quality or less.
-	//
-	//        | Half res | Irr field
-	// Medium |   Yes    |    Yes
-	// High   |    No    |    Yes
-	// Ultra  |    No    |     No
-	//
+	// Half resolution at medium quality or less, irradiance field at high quality or less.
 	m_halfResolution = (bool)(desc.quality.irradiance <= Quality::Medium);
 	m_useIrradianceField = (bool)(desc.quality.irradiance <= Quality::High);
 	return true;
@@ -124,9 +111,8 @@ void RTIrradiancePass::destroy()
 {
 	safeDestroy(m_irradianceFieldTextures[0]);
 	safeDestroy(m_irradianceFieldTextures[1]);
-	safeDestroy(m_screenRenderer);
 	m_irradianceComputeShader.clear();
-	m_irradianceDenoise.clear();
+	m_irradianceDenoiseShader.clear();
 }
 
 render::RGTargetSet RTIrradiancePass::setup(
@@ -146,7 +132,7 @@ render::RGTargetSet RTIrradiancePass::setup(
 {
 	T_PROFILER_SCOPE(L"RTIrradiancePass::setup");
 
-	if (m_irradianceComputeShader == nullptr || m_irradianceDenoise == nullptr /* || gbufferTargetSetId == 0*/)
+	if (m_irradianceComputeShader == nullptr || m_irradianceDenoiseShader == nullptr /* || gbufferTargetSetId == 0*/)
 		return render::RGTargetSet::Invalid;
 
 	const bool irradianceEnable = (bool)(gatheredView.irradianceGrid != nullptr);
@@ -257,6 +243,7 @@ render::RGTargetSet RTIrradiancePass::setup(
 			renderBlock->programParams->endParameters(renderContext);
 
 			renderContext->compute(renderBlock);
+			renderContext->compute< render::BarrierRenderBlock >(render::Stage::Compute, render::Stage::Compute | render::Stage::Fragment, irradianceFieldTextureCurrent, 0);
 		});
 
 		renderGraph.addPass(rp);
@@ -304,43 +291,41 @@ render::RGTargetSet RTIrradiancePass::setup(
 			renderBlock->programParams->endParameters(renderContext);
 
 			renderContext->compute(renderBlock);
+			renderContext->compute< render::BarrierRenderBlock >(render::Stage::Compute, render::Stage::Compute, irradianceTexture, 0);
 		});
 		renderGraph.addPass(rp);
 	}
 
-	// Add denoiser render pass.
+	// Add denoiser compute pass.
 	{
-		render::ImageGraphView view;
-		view.viewFrustum = worldRenderView.getViewFrustum();
-		view.view = worldRenderView.getView();
-		view.projection = worldRenderView.getProjection();
-
-		render::ImageGraphContext igctx;
-		igctx.setTechniqueFlag(ShaderPermutation::IrradianceEnable, irradianceEnable);
-		igctx.setTechniqueFlag(ShaderPermutation::IrradianceSingle, irradianceSingle);
-		igctx.setTechniqueFlag(ShaderPermutation::RayTracingEnable, true);
-		igctx.associateTexture(ShaderParameter::InputColor, irradianceTextureId);
-		igctx.associateTextureTargetSet(ShaderParameter::InputVelocity, velocityTargetSetId, 0);
-
 		Ref< render::RenderPass > rp = new render::RenderPass(L"Irradiance denoiser");
 		rp->addInput(gbufferTargetSetId);
-		rp->addInput(velocityTargetSetId);
-		rp->addInput(halfResDepthTextureId);
 		rp->addInput(irradianceTextureId);
+		rp->setOutput(irradianceFinalTargetSetId);
+		rp->addBuild(
+			[=, this](const render::RenderGraph& renderGraph, render::RenderContext* renderContext) {
+			render::ITexture* gbufferTexture = renderGraph.getTargetSet(gbufferTargetSetId)->getColorTexture(0);
+			render::ITexture* irradianceTexture = renderGraph.getTexture(irradianceTextureId);
+			render::ITexture* irradianceFinalTexture = renderGraph.getTargetSet(irradianceFinalTargetSetId)->getColorTexture(0);
 
-		render::Clear clear;
-		clear.mask = render::CfColor;
-		clear.colors[0] = Color4f(0.0f, 0.0f, 0.0f, 1.0f);
-		rp->setOutput(irradianceFinalTargetSetId, clear, render::TfNone, render::TfColor);
+			const render::ITexture::Size outputSize = irradianceFinalTexture->getSize();
 
-		m_irradianceDenoise->addPasses(
-			m_screenRenderer,
-			renderGraph,
-			rp,
-			igctx,
-			view,
-			setParameters);
+			auto renderBlock = renderContext->allocNamed< render::ComputeRenderBlock >(L"Irradiance denoiser");
+			renderBlock->program = m_irradianceDenoiseShader->getProgram().program;
+			renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
+			renderBlock->workSize[0] = outputSize.x;
+			renderBlock->workSize[1] = outputSize.y;
+			renderBlock->workSize[2] = 1;
+			renderBlock->programParams->beginParameters(renderContext);
+			renderBlock->programParams->setTextureParameter(ShaderParameter::IrradianceMap, irradianceTexture);
+			renderBlock->programParams->setTextureParameter(ShaderParameter::GBufferA, gbufferTexture);
+			renderBlock->programParams->setFloatParameter(ShaderParameter::Random, s_random.nextFloat());
+			renderBlock->programParams->setImageViewParameter(s_handleIrradianceOutput, irradianceFinalTexture, 0);
+			renderBlock->programParams->endParameters(renderContext);
 
+			renderContext->compute(renderBlock);
+			renderContext->compute< render::BarrierRenderBlock >(render::Stage::Compute, render::Stage::Fragment, irradianceFinalTexture, 0);
+		});
 		renderGraph.addPass(rp);
 	}
 

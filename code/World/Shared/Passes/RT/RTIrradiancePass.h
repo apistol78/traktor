@@ -16,11 +16,9 @@ namespace traktor::render
 {
 
 class Buffer;
-class ImageGraph;
 class IRenderSystem;
 class ITexture;
 class RenderGraph;
-class ScreenRenderer;
 class Shader;
 
 }
@@ -68,11 +66,10 @@ public:
 		render::RGTexture& outIrradianceFieldTextureId) const;
 
 private:
-	Ref< render::ScreenRenderer > m_screenRenderer;
 	Ref< render::ITexture > m_irradianceFieldTextures[2];
 	resource::Proxy< render::Shader > m_irradianceFieldComputeShader;
 	resource::Proxy< render::Shader > m_irradianceComputeShader;
-	resource::Proxy< render::ImageGraph > m_irradianceDenoise;
+	resource::Proxy< render::Shader > m_irradianceDenoiseShader;
 	render::Handle m_persistentReservoirBuffers[2];
 	bool m_halfResolution = false;
 	bool m_useIrradianceField = false;
