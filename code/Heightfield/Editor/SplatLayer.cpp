@@ -66,11 +66,11 @@ bool SplatLayer::apply(const TileStorage* storage, int32_t layer, const Vector4&
 		return true;
 
 	const int32_t size = inoutTile->getSize();
-	AlignedVector< uint8_t > mask;
+	AlignedVector< uint16_t > mask;
 	if (!storage->readStoredMask(layer, tileX, tileZ, size, mask))
 	{
 		mask.resize(0);
-		mask.resize((size_t)size * size, 255);
+		mask.resize((size_t)size * size, 65535);
 	}
 
 	float x0, z0, x1, z1;
@@ -83,7 +83,7 @@ bool SplatLayer::apply(const TileStorage* storage, int32_t layer, const Vector4&
 	{
 		for (int32_t x = 0; x < size; ++x)
 		{
-			const uint8_t m = mask[x + (size_t)z * size];
+			const uint16_t m = mask[x + (size_t)z * size];
 			if (m == 0)
 				continue;
 
@@ -110,7 +110,7 @@ bool SplatLayer::apply(const TileStorage* storage, int32_t layer, const Vector4&
 
 			// Partly covered samples are blended with their splat, as are partly masked.
 			const Color4f splat = Color4f(weights[0], weights[1], weights[2], weights[3]) / Scalar(total);
-			const float blend = std::min(total, 1.0f) * m / 255.0f;
+			const float blend = std::min(total, 1.0f) * m / 65535.0f;
 			inoutTile->setGridSplat(x, z, lerp(inoutTile->getGridSplat(x, z), splat, Scalar(blend)));
 		}
 	}
@@ -118,7 +118,7 @@ bool SplatLayer::apply(const TileStorage* storage, int32_t layer, const Vector4&
 	return true;
 }
 
-Ref< Heightfield > SplatLayer::read(const TileStorage* storage, int32_t layer, const Vector4& worldExtent, int32_t tileX, int32_t tileZ, AlignedVector< uint8_t >* outMask) const
+Ref< Heightfield > SplatLayer::read(const TileStorage* storage, int32_t layer, const Vector4& worldExtent, int32_t tileX, int32_t tileZ, AlignedVector< uint16_t >* outMask) const
 {
 	// Splats depend on layers below, thus layer alone is an empty tile.
 	Ref< Heightfield > tile = storage->createTile(worldExtent, tileX, tileZ);
@@ -129,7 +129,7 @@ Ref< Heightfield > SplatLayer::read(const TileStorage* storage, int32_t layer, c
 	if (outMask && !storage->readStoredMask(layer, tileX, tileZ, size, *outMask))
 	{
 		outMask->resize(0);
-		outMask->resize((size_t)size * size, 255);
+		outMask->resize((size_t)size * size, 65535);
 	}
 
 	return tile;

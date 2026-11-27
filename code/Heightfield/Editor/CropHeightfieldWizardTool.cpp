@@ -107,7 +107,7 @@ bool CropHeightfieldWizardTool::launch(ui::Widget* parent, editor::IEditor* edit
 		if (!heightfieldAsset->getLayers()[layer]->haveData() && !heightfieldAsset->getLayers()[layer]->haveMask())
 			continue;
 
-		AlignedVector< uint8_t > mask;
+		AlignedVector< uint16_t > mask;
 		Ref< Heightfield > heightfield = tileStorage.readLayerHeightfield(layer, heightfieldAsset->getWorldExtent(), &mask);
 		if (!heightfield)
 		{
@@ -116,7 +116,7 @@ bool CropHeightfieldWizardTool::launch(ui::Widget* parent, editor::IEditor* edit
 		}
 
 		Ref< Heightfield > cropped = new Heightfield(size, heightfield->getWorldExtent(), heightfield->getWorldCenter());
-		AlignedVector< uint8_t > croppedMask((size_t)size * size);
+		AlignedVector< uint16_t > croppedMask((size_t)size * size);
 
 		const uint8_t* splats = heightfield->getSplats();
 		const uint8_t* colors = heightfield->getColors();

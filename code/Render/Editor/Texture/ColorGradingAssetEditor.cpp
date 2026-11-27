@@ -115,7 +115,7 @@ bool ColorGradingAssetEditor::create(ui::Widget* parent, db::Instance* instance,
 
 	m_sliderContrast = new ui::Slider();
 	m_sliderContrast->create(containerSliders);
-	m_sliderContrast->setRange(0, 400);
+	m_sliderContrast->setLimits(0, 400);
 	m_sliderContrast->setValue((int32_t)(m_asset->m_contrast * 100.0f));
 	m_sliderContrast->addEventHandler< ui::ContentChangeEvent >(this, &ColorGradingAssetEditor::eventSliderChange);
 
@@ -124,7 +124,7 @@ bool ColorGradingAssetEditor::create(ui::Widget* parent, db::Instance* instance,
 
 	m_sliderSaturation = new ui::Slider();
 	m_sliderSaturation->create(containerSliders);
-	m_sliderSaturation->setRange(0, 400);
+	m_sliderSaturation->setLimits(0, 400);
 	m_sliderSaturation->setValue((int32_t)(m_asset->m_saturation * 100.0f));
 	m_sliderSaturation->addEventHandler< ui::ContentChangeEvent >(this, &ColorGradingAssetEditor::eventSliderChange);
 

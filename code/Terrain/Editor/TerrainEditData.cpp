@@ -38,6 +38,12 @@ void copySample(const hf::Heightfield* source, hf::Heightfield* target, int32_t 
 		target->setGridColor(x, z, source->getGridColor(x, z));
 }
 
+//! Height stored in edit layer for height of sample; delta edit layer store height relative to layers below.
+float storedHeight(const hf::Heightfield* below, int32_t x, int32_t z, float unitY)
+{
+	return below ? unitY - below->getGridHeightNearestUnsafe(x, z) + hf::EditLayer::ZeroDelta / 65535.0f : unitY;
+}
+
 }
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.TerrainEditData", TerrainEditData, Object)
@@ -62,8 +68,12 @@ bool TerrainEditData::create(const db::Instance* heightfieldInstance, const hf::
 	m_editLayer = -1;
 	for (int32_t i = 0; i < m_layerCount; ++i)
 	{
-		if (layers[i]->getId() == editLayerId && is_a< hf::EditLayer >(layers[i]))
+		const hf::EditLayer* editLayer = dynamic_type_cast< const hf::EditLayer* >(layers[i]);
+		if (layers[i]->getId() == editLayerId && editLayer)
+		{
 			m_editLayer = i;
+			m_delta = editLayer->isDelta() && i > 0;
+		}
 	}
 	if (m_editLayer < 0)
 	{
@@ -131,7 +141,7 @@ void TerrainEditData::setGridHeight(int32_t gridX, int32_t gridZ, float unitY)
 		tile->merged->setGridHeight(gridX, gridZ, tile->merged->getGridHeightNearestUnsafe(gridX, gridZ) + unitY - tile->level->getGridHeightNearestUnsafe(gridX, gridZ));
 
 	tile->level->setGridHeight(gridX, gridZ, unitY);
-	tile->edit->setGridHeight(gridX, gridZ, unitY);
+	tile->edit->setGridHeight(gridX, gridZ, storedHeight(tile->below, gridX, gridZ, unitY));
 }
 
 bool TerrainEditData::getGridCut(int32_t gridX, int32_t gridZ, bool merged)
@@ -292,7 +302,7 @@ bool TerrainEditData::writeHeightfield()
 		RefArray< const hf::Heightfield > tiles;
 		tiles.push_back(tile.edit);
 
-		const AlignedVector< AlignedVector< uint8_t > > masks(1, tile.mask);
+		const AlignedVector< AlignedVector< uint16_t > > masks(1, tile.mask);
 		if (!m_storage->writeLayerTiles(m_editLayer, i % m_tileCount, i / m_tileCount, i % m_tileCount, i / m_tileCount, tiles, &masks))
 			return false;
 
@@ -322,7 +332,8 @@ TerrainEditData::Tile* TerrainEditData::getTile(int32_t& inoutX, int32_t& inoutZ
 		Ref< hf::Heightfield > edit = m_storage->readLayerTile(m_editLayer, m_worldExtent, tileX, tileZ, &tile.mask);
 		Ref< hf::Heightfield > level = (m_editLayer > 0) ? m_storage->readMergedTile(m_worldExtent, tileX, tileZ, m_editLayer + 1) : edit;
 		Ref< hf::Heightfield > merged = (m_editLayer < m_layerCount - 1) ? m_storage->readMergedTile(m_worldExtent, tileX, tileZ) : level;
-		if (!edit || !level || !merged || edit->getSize() != m_tileSize || level->getSize() != m_tileSize || merged->getSize() != m_tileSize)
+		Ref< hf::Heightfield > below = m_delta ? m_storage->readMergedTile(m_worldExtent, tileX, tileZ, m_editLayer) : nullptr;
+		if (!edit || !level || !merged || edit->getSize() != m_tileSize || level->getSize() != m_tileSize || merged->getSize() != m_tileSize || (m_delta && (!below || below->getSize() != m_tileSize)))
 		{
 			log::error << L"Unable to edit terrain; tile " << tileX << L", " << tileZ << L" missing or size mismatch." << Endl;
 			return nullptr;
@@ -331,6 +342,7 @@ TerrainEditData::Tile* TerrainEditData::getTile(int32_t& inoutX, int32_t& inoutZ
 		tile.merged = merged;
 		tile.level = level;
 		tile.edit = edit;
+		tile.below = below;
 	}
 	return &tile;
 }
@@ -342,11 +354,12 @@ TerrainEditData::Tile* TerrainEditData::editTile(int32_t& inoutX, int32_t& inout
 		return nullptr;
 
 	// Edit layer take over sample entirely, thus it's first seeded with level sample.
-	uint8_t& weight = tile->mask[inoutX + inoutZ * m_tileSize];
-	if (weight != 255)
+	uint16_t& weight = tile->mask[inoutX + inoutZ * m_tileSize];
+	if (weight != 65535)
 	{
 		copySample(tile->level, tile->edit, inoutX, inoutZ);
-		weight = 255;
+		tile->edit->setGridHeight(inoutX, inoutZ, storedHeight(tile->below, inoutX, inoutZ, tile->level->getGridHeightNearestUnsafe(inoutX, inoutZ)));
+		weight = 65535;
 	}
 
 	tile->modified = true;

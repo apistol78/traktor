@@ -140,7 +140,7 @@ bool ShapeLayer::apply(const TileStorage* storage, int32_t layer, const Vector4&
 	return true;
 }
 
-Ref< Heightfield > ShapeLayer::read(const TileStorage* storage, int32_t layer, const Vector4& worldExtent, int32_t tileX, int32_t tileZ, AlignedVector< uint8_t >* outMask) const
+Ref< Heightfield > ShapeLayer::read(const TileStorage* storage, int32_t layer, const Vector4& worldExtent, int32_t tileX, int32_t tileZ, AlignedVector< uint16_t >* outMask) const
 {
 	// Path is stroked onto an empty tile; mask cover changed samples.
 	Ref< Heightfield > tile = storage->createTile(worldExtent, tileX, tileZ);
@@ -156,7 +156,7 @@ Ref< Heightfield > ShapeLayer::read(const TileStorage* storage, int32_t layer, c
 		const size_t samples = (size_t)tile->getSize() * tile->getSize();
 		outMask->resize(samples);
 		for (size_t i = 0; i < samples; ++i)
-			(*outMask)[i] = (tile->getHeights()[i] != flat) ? 255 : 0;
+			(*outMask)[i] = (tile->getHeights()[i] != flat) ? 65535 : 0;
 	}
 
 	return tile;

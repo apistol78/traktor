@@ -74,7 +74,7 @@ bool TerrainSceneEditorUIExtension::create(ui::Widget* parent, ui::ToolBar* tool
 
 	m_sliderStrength = new ui::Slider();
 	m_sliderStrength->create(toolBar);
-	m_sliderStrength->setRange(0, 10);
+	m_sliderStrength->setLimits(0, 10);
 	m_sliderStrength->setValue(5);
 	m_sliderStrength->addEventHandler< ui::ContentChangeEvent >(this, &TerrainSceneEditorUIExtension::eventSliderStrengthChange);
 

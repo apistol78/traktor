@@ -436,7 +436,7 @@ void BankAssetEditor::updateProperties()
 
 		Ref< ui::Slider > sliderParameter = new ui::Slider();
 		sliderParameter->create(m_containerParameters);
-		sliderParameter->setRange(0, 100);
+		sliderParameter->setLimits(0, 100);
 		sliderParameter->addEventHandler< ui::ContentChangeEvent >(this, &BankAssetEditor::eventParameterChange);
 		sliderParameter->setData(L"ID", new HandleWrapper(
 			getParameterHandle(property)

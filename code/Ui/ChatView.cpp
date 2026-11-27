@@ -220,7 +220,7 @@ void ChatView::updateScrollBar()
 	// in pixels. Handing it the overflow instead leaves nothing to scroll:
 	// the slider fills its track and every position clamps to zero.
 	//
-	// Page first, because setRange is what re-clamps the position and it uses
+	// Page first, because setLimits is what re-clamps the position and it uses
 	// whichever page is current when it runs.
 	m_scrollBar->setPage(std::max(1, inner.getHeight()));
 	m_scrollBar->setRange(std::max(0, m_contentHeight));

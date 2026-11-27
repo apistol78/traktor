@@ -74,11 +74,11 @@ bool TerraceLayer::apply(const TileStorage* storage, int32_t layer, const Vector
 		return true;
 
 	const int32_t size = inoutTile->getSize();
-	AlignedVector< uint8_t > mask;
+	AlignedVector< uint16_t > mask;
 	if (!storage->readStoredMask(layer, tileX, tileZ, size, mask))
 	{
 		mask.resize(0);
-		mask.resize((size_t)size * size, 255);
+		mask.resize((size_t)size * size, 65535);
 	}
 
 	const float exponent = 1.0f / std::max(1.0f - m_sharpness, 0.01f);
@@ -87,7 +87,7 @@ bool TerraceLayer::apply(const TileStorage* storage, int32_t layer, const Vector
 	{
 		for (int32_t x = 0; x < size; ++x)
 		{
-			const uint8_t m = mask[x + (size_t)z * size];
+			const uint16_t m = mask[x + (size_t)z * size];
 			if (m == 0)
 				continue;
 
@@ -110,7 +110,7 @@ bool TerraceLayer::apply(const TileStorage* storage, int32_t layer, const Vector
 			const float step = (height + shift - m_offset) / m_stepHeight;
 			const float level = std::floor(step);
 			const float terraced = m_offset + (level + gain(step - level, exponent)) * m_stepHeight - shift;
-			const float weight = inside * inside * (3.0f - 2.0f * inside) * m / 255.0f;
+			const float weight = inside * inside * (3.0f - 2.0f * inside) * m / 65535.0f;
 			inoutTile->setGridHeight(x, z, inoutTile->worldToUnit(lerp(height, terraced, weight)));
 		}
 	}
@@ -118,7 +118,7 @@ bool TerraceLayer::apply(const TileStorage* storage, int32_t layer, const Vector
 	return true;
 }
 
-Ref< Heightfield > TerraceLayer::read(const TileStorage* storage, int32_t layer, const Vector4& worldExtent, int32_t tileX, int32_t tileZ, AlignedVector< uint8_t >* outMask) const
+Ref< Heightfield > TerraceLayer::read(const TileStorage* storage, int32_t layer, const Vector4& worldExtent, int32_t tileX, int32_t tileZ, AlignedVector< uint16_t >* outMask) const
 {
 	// Terraces depend on layers below, thus layer alone is an empty tile.
 	Ref< Heightfield > tile = storage->createTile(worldExtent, tileX, tileZ);
@@ -129,7 +129,7 @@ Ref< Heightfield > TerraceLayer::read(const TileStorage* storage, int32_t layer,
 	if (outMask && !storage->readStoredMask(layer, tileX, tileZ, size, *outMask))
 	{
 		outMask->resize(0);
-		outMask->resize((size_t)size * size, 255);
+		outMask->resize((size_t)size * size, 65535);
 	}
 
 	return tile;

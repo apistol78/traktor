@@ -42,6 +42,7 @@ class ContentChangeEvent;
 class GridView;
 class MouseButtonDownEvent;
 class PaintEvent;
+class RangeSlider;
 class SelectionChangeEvent;
 class StatusBar;
 class ToolBar;
@@ -78,6 +79,7 @@ private:
 	struct Preview
 	{
 		Ref< drawing::Image > images[5];
+		AlignedVector< float > heights; //!< Unit height of each pixel, colored into image of heights by selected range.
 		AlignedVector< uint64_t > stamps;
 	};
 
@@ -90,6 +92,7 @@ private:
 	SmallMap< int32_t, Preview > m_previews; //!< Previews by identifier of layer, -1 for all layers merged.
 	Ref< drawing::Image > m_previewImages[5];
 	Ref< drawing::Image > m_tilePreviewImages[5];
+	AlignedVector< float > m_tilePreviewHeights;
 	Ref< ui::Bitmap > m_previewBitmap;
 	Ref< ui::Bitmap > m_tilePreviewBitmap;
 	Ref< ui::Container > m_container;
@@ -99,6 +102,7 @@ private:
 	Ref< ui::GridView > m_gridLayers;
 	Ref< ui::Widget > m_previewControl;
 	Ref< ui::Widget > m_tilePreviewControl;
+	Ref< ui::RangeSlider > m_rangeHeight;
 	Ref< ui::StatusBar > m_statusBar;
 	Ref< editor::PropertiesView > m_propertiesView;
 	int32_t m_tileSize = 0;
@@ -107,9 +111,10 @@ private:
 	int32_t m_selectedTileX = 0;
 	int32_t m_selectedTileZ = 0;
 	int32_t m_layer = -1;
+	bool m_layerDelta = false; //!< Delta option of selected edit layer which its heights are stored as.
 
 	//! Read, modify and write tiles, and masks, of selected layer in range, inclusive, row by row; modify return false to abort.
-	bool modifyTiles(int32_t tileX0, int32_t tileZ0, int32_t tileX1, int32_t tileZ1, const std::function< bool(Heightfield* tile, uint8_t* mask, int32_t tileX, int32_t tileZ) >& modify);
+	bool modifyTiles(int32_t tileX0, int32_t tileZ0, int32_t tileX1, int32_t tileZ1, const std::function< bool(Heightfield* tile, uint16_t* mask, int32_t tileX, int32_t tileZ) >& modify);
 
 	//! Import raw file covering tiles in range into selected channel of selected layer.
 	bool importRaw(int32_t tileX0, int32_t tileZ0, int32_t tileX1, int32_t tileZ1);
@@ -138,10 +143,10 @@ private:
 	void updateFields();
 
 	//! Mask of samples without stored mask in selected layer.
-	uint8_t getDefaultMask() const;
+	uint16_t getDefaultMask() const;
 
 	//! Read mask of tile of selected layer; full if no layer is selected.
-	void readMask(const TileStorage& storage, int32_t tileX, int32_t tileZ, AlignedVector< uint8_t >& outMask) const;
+	void readMask(const TileStorage& storage, int32_t tileX, int32_t tileZ, AlignedVector< uint16_t >& outMask) const;
 
 	//! Read tiles which output has changed, output of selected layer or of all layers if none is selected, and mask of selected layer into preview images.
 	bool readPreview();
@@ -149,8 +154,11 @@ private:
 	//! Read selected tile, output of selected layer or of all layers if none is selected, and mask of selected layer into tile preview images.
 	bool readTilePreview();
 
-	//! Box filter heightfield and mask, by step, into all five channel images at x0, z0.
-	void updatePreview(const Heightfield* heightfield, const uint8_t* mask, int32_t step, int32_t x0, int32_t z0, Ref< drawing::Image >* images);
+	//! Box filter heightfield and mask, by step, into channel images at x0, z0; heights into unit heights, of same size as images, instead of image.
+	void updatePreview(const Heightfield* heightfield, const uint16_t* mask, int32_t step, int32_t x0, int32_t z0, Ref< drawing::Image >* images, AlignedVector< float >& outHeights);
+
+	//! Color unit heights into image, selected range of heights span entire ramp of colors.
+	void updateHeightImage(const AlignedVector< float >& heights, drawing::Image* image) const;
 
 	void updatePreviewImage();
 
@@ -163,6 +171,8 @@ private:
 	void eventLayerSelect(ui::SelectionChangeEvent* event);
 
 	void eventPropertiesChanged(ui::ContentChangeEvent* event);
+
+	void eventRangeHeightChange(ui::ContentChangeEvent* event);
 
 	void eventPreviewPaint(ui::PaintEvent* event);
 

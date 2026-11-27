@@ -60,7 +60,7 @@ bool SceneEditorSettingsPage::create(ui::Container* parent, const PropertyGroup*
 
 	m_sliderFov = new ui::Slider();
 	m_sliderFov->create(containerSliders);
-	m_sliderFov->setRange(10, 180);
+	m_sliderFov->setLimits(10, 180);
 	m_sliderFov->setValue(int32_t(settings->getProperty< float >(L"SceneEditor.FieldOfView", c_defaultFieldOfView)));
 	m_sliderFov->addEventHandler< ui::ContentChangeEvent >(this, &SceneEditorSettingsPage::eventValueChange);
 
@@ -72,7 +72,7 @@ bool SceneEditorSettingsPage::create(ui::Container* parent, const PropertyGroup*
 
 	m_sliderMovementSpeed = new ui::Slider();
 	m_sliderMovementSpeed->create(containerSliders);
-	m_sliderMovementSpeed->setRange(1, 1000);
+	m_sliderMovementSpeed->setLimits(1, 1000);
 	m_sliderMovementSpeed->setValue(int32_t(settings->getProperty< float >(L"SceneEditor.MovementSpeed", c_defaultMovementSpeed)));
 	m_sliderMovementSpeed->addEventHandler< ui::ContentChangeEvent >(this, &SceneEditorSettingsPage::eventValueChange);
 
@@ -84,7 +84,7 @@ bool SceneEditorSettingsPage::create(ui::Container* parent, const PropertyGroup*
 
 	m_sliderMouseWheelRate = new ui::Slider();
 	m_sliderMouseWheelRate->create(containerSliders);
-	m_sliderMouseWheelRate->setRange(1, 100);
+	m_sliderMouseWheelRate->setLimits(1, 100);
 	m_sliderMouseWheelRate->setValue(int32_t(settings->getProperty< float >(L"SceneEditor.MouseWheelRate", c_defaultMouseWheelRate)));
 	m_sliderMouseWheelRate->addEventHandler< ui::ContentChangeEvent >(this, &SceneEditorSettingsPage::eventValueChange);
 

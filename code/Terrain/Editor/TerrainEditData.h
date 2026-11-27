@@ -48,7 +48,8 @@ namespace traktor::terrain
  *
  * Coordinates are grid coordinates of entire terrain.
  * Heightfield is read with layers up to, and including, edit layer merged;
- * edits are written into edit layer, which take over each edited sample through its mask.
+ * edits are written into edit layer, which take over each edited sample through its mask;
+ * heights of delta edit layer are written relative to layers below.
  * Reads with merged set read all layers merged, as displayed.
  */
 class T_DLLCLASS TerrainEditData : public Object
@@ -108,7 +109,8 @@ private:
 		Ref< hf::Heightfield > merged;	//!< All layers merged; same as level if edit layer is top.
 		Ref< hf::Heightfield > level;	//!< Layers up to, and including, edit layer merged; same as edit if edit layer is base.
 		Ref< hf::Heightfield > edit;	//!< Tile of edit layer.
-		AlignedVector< uint8_t > mask;	//!< Mask of edit layer.
+		Ref< hf::Heightfield > below;	//!< Layers below edit layer merged; only if edit layer store deltas.
+		AlignedVector< uint16_t > mask; //!< Mask of edit layer.
 		bool modified = false;
 	};
 
@@ -119,6 +121,7 @@ private:
 	int32_t m_tileCount = 0;
 	int32_t m_tileSize = 0;
 	int32_t m_editLayer = 0;
+	bool m_delta = false;
 	int32_t m_layerCount = 0;
 	AlignedVector< Tile > m_tiles;
 

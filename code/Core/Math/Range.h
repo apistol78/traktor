@@ -32,8 +32,8 @@ public:
 	Range() = default;
 
 	Range(const Type& min_, const Type& max_)
-	:	min(min_)
-	,	max(max_)
+		: min(min_)
+		, max(max_)
 	{
 	}
 
@@ -70,22 +70,43 @@ public:
 			return v;
 	}
 
+	T_MATH_INLINE Range< Type > canonical() const
+	{
+		if (min <= max)
+			return Range< Type >(min, max);
+		else
+			return Range< Type >(max, min);
+	}
+
+	T_MATH_INLINE Type& operator[](int32_t index)
+	{
+		if (index == 0)
+			return min;
+		else
+			return max;
+	}
+
+	T_MATH_INLINE const Type& operator[](int32_t index) const
+	{
+		if (index == 0)
+			return min;
+		else
+			return max;
+	}
+
 	static T_MATH_INLINE Range< Type > unioon(const Range< Type >& a, const Range< Type >& b)
 	{
 		return Range< Type >(
 			std::min< Type >(a.min, b.min),
-			std::max< Type >(a.max, b.max)
-		);
+			std::max< Type >(a.max, b.max));
 	}
 
 	static T_MATH_INLINE Range< Type > intersection(const Range< Type >& a, const Range< Type >& b)
 	{
 		return Range< Type >(
 			std::max< Type >(a.min, b.min),
-			std::min< Type >(a.max, b.max)
-		);
+			std::min< Type >(a.max, b.max));
 	}
 };
 
 }
-

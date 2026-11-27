@@ -41,7 +41,7 @@ bool SoundPanel::create(ui::Widget* parent)
 
 	m_sliderVolume = new ui::Slider();
 	m_sliderVolume->create(this);
-	m_sliderVolume->setRange(0, 100);
+	m_sliderVolume->setLimits(0, 100);
 	m_sliderVolume->setValue(100);
 	m_sliderVolume->addEventHandler< ui::ContentChangeEvent >([&](ui::ContentChangeEvent* event) {
 		AudioSystem* audioSystem = m_editor->getObjectStore()->get< AudioSystem >();
@@ -57,7 +57,7 @@ bool SoundPanel::create(ui::Widget* parent)
 
 		Ref< ui::Slider > sliderParameter = new ui::Slider();
 		sliderParameter->create(this);
-		sliderParameter->setRange(0, 100);
+		sliderParameter->setLimits(0, 100);
 		sliderParameter->setValue(0);
 		sliderParameter->addEventHandler< ui::ContentChangeEvent >([=, this](ui::ContentChangeEvent* event) {
 			AudioSystem* audioSystem = m_editor->getObjectStore()->get< AudioSystem >();

@@ -57,10 +57,10 @@ public:
 	//! Add layer on top, with an unused identifier.
 	void addLayer(HeightfieldAssetLayer* layer);
 
-	//! Layers, bottom first; bottom layer is always an edit layer.
+	//! Layers, bottom first.
 	RefArray< HeightfieldAssetLayer >& getLayers() { return m_layers; }
 
-	//! Layers, bottom first; bottom layer is always an edit layer.
+	//! Layers, bottom first.
 	const RefArray< HeightfieldAssetLayer >& getLayers() const { return m_layers; }
 
 private:

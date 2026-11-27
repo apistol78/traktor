@@ -53,9 +53,9 @@ public:
 
 	/*! Read tile of layer alone, positioned in world.
 	 *
-	 * \param outMask Optional mask of tile, one byte per sample, where layer modify layers below.
+	 * \param outMask Optional mask of tile, 0 to 65535 per sample, where layer modify layers below.
 	 */
-	virtual Ref< Heightfield > read(const TileStorage* storage, int32_t layer, const Vector4& worldExtent, int32_t tileX, int32_t tileZ, AlignedVector< uint8_t >* outMask) const = 0;
+	virtual Ref< Heightfield > read(const TileStorage* storage, int32_t layer, const Vector4& worldExtent, int32_t tileX, int32_t tileZ, AlignedVector< uint16_t >* outMask) const = 0;
 
 	//! True if each tile of layer depend on entire heightfield of layers below.
 	virtual bool isGlobal() const;

@@ -222,7 +222,7 @@ bool MeshAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISerial
 
 	m_sliderPreviewAngle = new ui::Slider();
 	m_sliderPreviewAngle->create(containerRight);
-	m_sliderPreviewAngle->setRange(1, 100);
+	m_sliderPreviewAngle->setLimits(1, 100);
 	m_sliderPreviewAngle->addEventHandler< ui::ContentChangeEvent >(this, &MeshAssetEditor::eventPreviewAngleChange);
 
 	m_imagePreview = new ui::Image();

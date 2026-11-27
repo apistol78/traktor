@@ -89,11 +89,11 @@ bool ErosionLayer::apply(const TileStorage* storage, int32_t layer, const Vector
 		return false;
 
 	const int32_t size = inoutTile->getSize();
-	AlignedVector< uint8_t > mask;
+	AlignedVector< uint16_t > mask;
 	if (!storage->readStoredMask(layer, tileX, tileZ, size, mask))
 	{
 		mask.resize(0);
-		mask.resize((size_t)size * size, 255);
+		mask.resize((size_t)size * size, 65535);
 	}
 
 	// Change of heights by erosion is upsampled onto tile where mask cover.
@@ -101,21 +101,21 @@ bool ErosionLayer::apply(const TileStorage* storage, int32_t layer, const Vector
 	{
 		for (int32_t x = 0; x < size; ++x)
 		{
-			const uint8_t m = mask[x + (size_t)z * size];
+			const uint16_t m = mask[x + (size_t)z * size];
 			if (m == 0)
 				continue;
 
 			float worldX, worldZ, gridX, gridZ;
 			inoutTile->gridToWorld(x, z, worldX, worldZ);
 			below->worldToGrid(worldX, worldZ, gridX, gridZ);
-			inoutTile->setGridHeight(x, z, inoutTile->getGridHeightNearestUnsafe(x, z) + sampleCubicDifference(eroded, below, gridX, gridZ) * (m / 255.0f));
+			inoutTile->setGridHeight(x, z, inoutTile->getGridHeightNearestUnsafe(x, z) + sampleCubicDifference(eroded, below, gridX, gridZ) * (m / 65535.0f));
 		}
 	}
 
 	return true;
 }
 
-Ref< Heightfield > ErosionLayer::read(const TileStorage* storage, int32_t layer, const Vector4& worldExtent, int32_t tileX, int32_t tileZ, AlignedVector< uint8_t >* outMask) const
+Ref< Heightfield > ErosionLayer::read(const TileStorage* storage, int32_t layer, const Vector4& worldExtent, int32_t tileX, int32_t tileZ, AlignedVector< uint16_t >* outMask) const
 {
 	// Erosion depends on layers below, thus layer alone is an empty tile.
 	Ref< Heightfield > tile = storage->createTile(worldExtent, tileX, tileZ);
@@ -126,7 +126,7 @@ Ref< Heightfield > ErosionLayer::read(const TileStorage* storage, int32_t layer,
 	if (outMask && !storage->readStoredMask(layer, tileX, tileZ, size, *outMask))
 	{
 		outMask->resize(0);
-		outMask->resize((size_t)size * size, 255);
+		outMask->resize((size_t)size * size, 65535);
 	}
 
 	return tile;

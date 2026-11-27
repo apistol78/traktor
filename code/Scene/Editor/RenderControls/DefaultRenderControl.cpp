@@ -254,13 +254,13 @@ bool DefaultRenderControl::create(ui::Widget* parent, SceneEditorContext* contex
 
 	m_sliderDebugAlpha = new ui::Slider();
 	m_sliderDebugAlpha->create(m_toolBar);
-	m_sliderDebugAlpha->setRange(0, 100);
+	m_sliderDebugAlpha->setLimits(0, 100);
 	m_sliderDebugAlpha->setValue(100);
 	m_sliderDebugAlpha->addEventHandler< ui::ContentChangeEvent >(this, &DefaultRenderControl::eventSliderDebugChange);
 
 	m_sliderDebugMip = new ui::Slider();
 	m_sliderDebugMip->create(m_toolBar);
-	m_sliderDebugMip->setRange(0, 100);
+	m_sliderDebugMip->setLimits(0, 100);
 	m_sliderDebugMip->setValue(100);
 	m_sliderDebugMip->addEventHandler< ui::ContentChangeEvent >(this, &DefaultRenderControl::eventSliderDebugChange);
 

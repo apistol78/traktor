@@ -326,7 +326,7 @@ Ref< Widget > PreviewWidgetFactory::create(Widget* parent, const StyleSheet* sty
 		Ref< Slider > slider = new Slider();
 		slider->setStyleSheet(styleSheet);
 		slider->create(parent);
-		slider->setRange(0, 100);
+		slider->setLimits(0, 100);
 		slider->setValue(50);
 		return slider;
 	}

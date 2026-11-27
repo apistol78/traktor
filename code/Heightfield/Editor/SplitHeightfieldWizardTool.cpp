@@ -111,7 +111,7 @@ bool SplitHeightfieldWizardTool::launch(ui::Widget* parent, editor::IEditor* edi
 		if (!heightfieldAsset->getLayers()[layer]->haveData() && !heightfieldAsset->getLayers()[layer]->haveMask())
 			continue;
 
-		AlignedVector< uint8_t > mask;
+		AlignedVector< uint16_t > mask;
 		Ref< Heightfield > heightfield = sourceStorage.readLayerHeightfield(layer, worldExtent, &mask);
 		result = heightfield && targetStorage.writeLayerHeightfield(layer, heightfield, &mask);
 	}

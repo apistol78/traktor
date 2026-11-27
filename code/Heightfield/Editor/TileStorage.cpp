@@ -42,7 +42,7 @@ namespace traktor::hf
 namespace
 {
 
-const int32_t c_streamVersion = 2;
+const int32_t c_streamVersion = 3;
 const uint32_t c_zipBufferSize = 65536;
 const float c_overviewSampleDistance = 2.0f;			 //!< Maximum distance between overview samples, in world units.
 const int32_t c_overviewMinSize = 2048;					 //!< Overview isn't downsampled below this size.
@@ -81,6 +81,7 @@ struct ReadStream
 {
 	Ref< IStream > data;
 	Ref< IStream > inflate;
+	int32_t version = 0;
 
 	~ReadStream()
 	{
@@ -96,7 +97,6 @@ struct ReadStream
 
 		inflate = new compress::InflateStreamZip(data, c_zipBufferSize);
 
-		int32_t version = 0;
 		Reader(inflate) >> version;
 		Reader(inflate) >> outSize;
 		if (version < 1 || version > c_streamVersion || outSize <= 0)
@@ -201,7 +201,7 @@ bool readStream(const db::Instance* instance, const std::wstring& name, int32_t 
 }
 
 //! Write stream of tile; heights also carry which optional channels and attributes tile has.
-bool writeStream(IStream* stream, const Heightfield* tile, const uint8_t* mask, int32_t which, uint64_t stamp)
+bool writeStream(IStream* stream, const Heightfield* tile, const uint16_t* mask, int32_t which, uint64_t stamp)
 {
 	const int32_t size = tile->getSize();
 	const int64_t samples = (int64_t)size * size;
@@ -239,7 +239,7 @@ bool writeStream(IStream* stream, const Heightfield* tile, const uint8_t* mask, 
 		break;
 
 	case StMask:
-		bytes = samples;
+		bytes = samples * sizeof(uint16_t);
 		written = writer.write(mask, bytes);
 		break;
 
@@ -307,6 +307,15 @@ TileStorage::TileStorage(db::Instance* instance, const HeightfieldAsset* asset, 
 			m_ownStamps[layer * tiles + i] = readOwnStamp(layer, i % count, i / count);
 
 	calculateStamps(true);
+
+	// Size of tiles is read from first tile stored by any layer.
+	for (int32_t i = 0; i < (int32_t)m_layers.size() * tiles && m_tileSize <= 0; ++i)
+	{
+		int32_t size;
+		uint32_t channels;
+		if (m_layers[i / tiles]->haveData() && readHeader(i / tiles, (i % tiles) % count, (i % tiles) / count, size, channels))
+			m_tileSize = size;
+	}
 }
 
 int32_t TileStorage::calculateOverviewSize(int32_t size, float worldSize)
@@ -342,12 +351,7 @@ uint64_t TileStorage::getGlobalStamp(int32_t layer) const
 
 int32_t TileStorage::readSize() const
 {
-	int32_t size;
-	uint32_t channels;
-	if (!readHeader(0, 0, 0, size, channels))
-		return 0;
-
-	return size * std::max(m_tileCount, 1);
+	return m_tileSize * std::max(m_tileCount, 1);
 }
 
 uint32_t TileStorage::readChannels() const
@@ -441,7 +445,8 @@ uint32_t TileStorage::readStamp(int32_t tileX0, int32_t tileZ0, int32_t tileX1, 
 Ref< Heightfield > TileStorage::readMergedTile(const Vector4& worldExtent, int32_t tileX, int32_t tileZ, int32_t layerCount) const
 {
 	const int32_t layers = (layerCount >= 0) ? std::min(layerCount, (int32_t)m_layers.size()) : (int32_t)m_layers.size();
-	if (layers <= 1)
+	const int32_t layer = std::max(layers - 1, 0);
+	if (layer == 0 && m_layers[0]->haveData())
 	{
 		Ref< Heightfield > merged = readStoredTile(0, worldExtent, tileX, tileZ);
 		if (!merged)
@@ -449,12 +454,11 @@ Ref< Heightfield > TileStorage::readMergedTile(const Vector4& worldExtent, int32
 		return merged;
 	}
 
-	// Output of layer is read from cache, or evaluated from output of layer below, which is also cached.
-	const int32_t layer = layers - 1;
+	// Output of layer is read from cache, or evaluated from output of layer below, or from an empty tile if base, which is also cached.
 	const int32_t count = std::max(m_tileCount, 1);
 	const std::wstring name = m_instance->getGuid().format() + L"_" + toString(m_layers[layer]->getId()) + L"_" + toString(tileX) + L"_" + toString(tileZ);
 	return HeightfieldCache::getInstance().get(m_cachePath, name, getStamp(layer, tileX, tileZ), getTileExtent(worldExtent, count), getTileCenter(worldExtent, count, tileX, tileZ), [&]() -> Ref< Heightfield > {
-		Ref< Heightfield > merged = readMergedTile(worldExtent, tileX, tileZ, layer);
+		Ref< Heightfield > merged = (layer > 0) ? readMergedTile(worldExtent, tileX, tileZ, layer) : createTile(worldExtent, tileX, tileZ);
 		if (!merged || !m_layers[layer]->apply(this, layer, worldExtent, tileX, tileZ, merged))
 			return nullptr;
 		merged->updateCellBounds();
@@ -462,12 +466,12 @@ Ref< Heightfield > TileStorage::readMergedTile(const Vector4& worldExtent, int32
 	});
 }
 
-Ref< Heightfield > TileStorage::readLayerTile(int32_t layer, const Vector4& worldExtent, int32_t tileX, int32_t tileZ, AlignedVector< uint8_t >* outMask) const
+Ref< Heightfield > TileStorage::readLayerTile(int32_t layer, const Vector4& worldExtent, int32_t tileX, int32_t tileZ, AlignedVector< uint16_t >* outMask) const
 {
 	return m_layers[layer]->read(this, layer, worldExtent, tileX, tileZ, outMask);
 }
 
-bool TileStorage::writeLayerTiles(int32_t layer, int32_t tileX0, int32_t tileZ0, int32_t tileX1, int32_t tileZ1, const RefArray< const Heightfield >& tiles, const AlignedVector< AlignedVector< uint8_t > >* masks) const
+bool TileStorage::writeLayerTiles(int32_t layer, int32_t tileX0, int32_t tileZ0, int32_t tileX1, int32_t tileZ1, const RefArray< const Heightfield >& tiles, const AlignedVector< AlignedVector< uint16_t > >* masks) const
 {
 	struct Write
 	{
@@ -538,7 +542,7 @@ bool TileStorage::writeLayerTiles(int32_t layer, int32_t tileX0, int32_t tileZ0,
 	for (int32_t i = 0; i < (int32_t)writes.size(); ++i)
 		tasks.push_back([&, i]() {
 			const Write& write = writes[i];
-			const uint8_t* mask = (write.which == StMask) ? (*masks)[write.tile].c_ptr() : nullptr;
+			const uint16_t* mask = (write.which == StMask) ? (*masks)[write.tile].c_ptr() : nullptr;
 			if (!writeStream(write.stream, tiles[write.tile], mask, write.which, stamps[write.tile]))
 			{
 				log::error << L"Unable to write heightfield; failed to write \"" << getStreamName(write.which) << L"\" of tile " << tileX0 + write.tile % width << L", " << tileZ0 + write.tile / width << L"." << Endl;
@@ -549,6 +553,9 @@ bool TileStorage::writeLayerTiles(int32_t layer, int32_t tileX0, int32_t tileZ0,
 
 	if (!result)
 		return false;
+
+	if (m_tileSize <= 0 && haveData && !tiles.empty())
+		m_tileSize = tiles[0]->getSize();
 
 	for (int32_t i = 0; i < (int32_t)tiles.size(); ++i)
 	{
@@ -573,7 +580,7 @@ bool TileStorage::writeLayerTiles(int32_t layer, int32_t tileX0, int32_t tileZ0,
 	return true;
 }
 
-Ref< Heightfield > TileStorage::readLayerHeightfield(int32_t layer, const Vector4& worldExtent, AlignedVector< uint8_t >* outMask) const
+Ref< Heightfield > TileStorage::readLayerHeightfield(int32_t layer, const Vector4& worldExtent, AlignedVector< uint16_t >* outMask) const
 {
 	const int32_t size = readSize();
 	if (size <= 0)
@@ -596,7 +603,7 @@ Ref< Heightfield > TileStorage::readLayerHeightfield(int32_t layer, const Vector
 		// Masks are read through layer, since layer decide mask of tiles; tiles of a row are read in parallel.
 		for (int32_t tz = 0; tz < count; ++tz)
 		{
-			AlignedVector< AlignedVector< uint8_t > > masks(count);
+			AlignedVector< AlignedVector< uint16_t > > masks(count);
 			AlignedVector< Job::task_t > tasks;
 			for (int32_t tx = 0; tx < count; ++tx)
 				tasks.push_back([&, tx]() {
@@ -614,7 +621,7 @@ Ref< Heightfield > TileStorage::readLayerHeightfield(int32_t layer, const Vector
 				}
 
 				for (int32_t z = 0; z < tileSize; ++z)
-					std::memcpy(outMask->ptr() + (size_t)tx * tileSize + ((size_t)tz * tileSize + z) * size, masks[tx].c_ptr() + (size_t)z * tileSize, tileSize);
+					std::memcpy(outMask->ptr() + (size_t)tx * tileSize + ((size_t)tz * tileSize + z) * size, masks[tx].c_ptr() + (size_t)z * tileSize, tileSize * sizeof(uint16_t));
 			}
 		}
 	}
@@ -622,7 +629,7 @@ Ref< Heightfield > TileStorage::readLayerHeightfield(int32_t layer, const Vector
 	return heightfield;
 }
 
-bool TileStorage::writeLayerHeightfield(int32_t layer, const Heightfield* heightfield, const AlignedVector< uint8_t >* mask) const
+bool TileStorage::writeLayerHeightfield(int32_t layer, const Heightfield* heightfield, const AlignedVector< uint16_t >* mask) const
 {
 	const int32_t count = std::max(m_tileCount, 1);
 	const int32_t size = heightfield->getSize();
@@ -638,7 +645,7 @@ bool TileStorage::writeLayerHeightfield(int32_t layer, const Heightfield* height
 	for (int32_t tz = 0; tz < count; ++tz)
 	{
 		RefArray< const Heightfield > tiles;
-		AlignedVector< AlignedVector< uint8_t > > masks;
+		AlignedVector< AlignedVector< uint16_t > > masks;
 
 		for (int32_t tx = 0; tx < count; ++tx)
 		{
@@ -678,10 +685,10 @@ bool TileStorage::writeLayerHeightfield(int32_t layer, const Heightfield* height
 
 			if (mask)
 			{
-				AlignedVector< uint8_t >& tileMask = masks.push_back();
+				AlignedVector< uint16_t >& tileMask = masks.push_back();
 				tileMask.resize((size_t)tileSize * tileSize);
 				for (int32_t z = 0; z < tileSize; ++z)
-					std::memcpy(tileMask.ptr() + (size_t)z * tileSize, mask->c_ptr() + x0 + (size_t)(z0 + z) * size, tileSize);
+					std::memcpy(tileMask.ptr() + (size_t)z * tileSize, mask->c_ptr() + x0 + (size_t)(z0 + z) * size, tileSize * sizeof(uint16_t));
 			}
 
 			tiles.push_back(tile);
@@ -782,10 +789,26 @@ Ref< Heightfield > TileStorage::readStoredTile(int32_t layer, const Vector4& wor
 	return tile;
 }
 
-bool TileStorage::readStoredMask(int32_t layer, int32_t tileX, int32_t tileZ, int32_t size, AlignedVector< uint8_t >& outMask) const
+bool TileStorage::readStoredMask(int32_t layer, int32_t tileX, int32_t tileZ, int32_t size, AlignedVector< uint16_t >& outMask) const
 {
-	outMask.resize((size_t)size * size);
-	return readStream(m_instance, getChannelName(layer, c_streamNames[StMask], tileX, tileZ), size, outMask.ptr(), outMask.size());
+	ReadStream stream;
+	int32_t streamSize;
+	uint64_t stamp;
+	if (!stream.open(m_instance, getChannelName(layer, c_streamNames[StMask], tileX, tileZ), streamSize, stamp) || streamSize != size)
+		return false;
+
+	const int64_t samples = (int64_t)size * size;
+	outMask.resize(samples);
+	if (stream.version >= 3)
+		return stream.read(outMask.ptr(), samples * sizeof(uint16_t));
+
+	// Masks stored before version 3 have one byte per sample.
+	AlignedVector< uint8_t > bytes(samples);
+	if (!stream.read(bytes.ptr(), samples))
+		return false;
+	for (int64_t i = 0; i < samples; ++i)
+		outMask[i] = bytes[i] * 257;
+	return true;
 }
 
 std::wstring TileStorage::getChannelName(int32_t layer, const std::wstring& channel, int32_t tileX, int32_t tileZ) const
@@ -802,7 +825,7 @@ uint64_t TileStorage::readOwnStamp(int32_t layer, int32_t tileX, int32_t tileZ) 
 		getChannelName(layer, c_streamNames[StMask], tileX, tileZ),
 		getChannelName(-1, L"Data", tileX, tileZ)
 	};
-	const bool stored[] = { m_layers[layer]->haveData(), m_layers[layer]->haveMask() && layer > 0, layer == 0 };
+	const bool stored[] = { m_layers[layer]->haveData(), m_layers[layer]->haveMask() && layer > 0, layer == 0 && m_layers[layer]->haveData() };
 
 	uint64_t stamps[sizeof_array(names)] = { 0 };
 	for (int32_t i = 0; i < sizeof_array(names); ++i)

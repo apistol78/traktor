@@ -179,7 +179,7 @@ bool EffectEditorPage::create(ui::Container* parent)
 
 	m_sliderExtraVelocity= new ui::Slider();
 	m_sliderExtraVelocity->create(m_toolBar);
-	m_sliderExtraVelocity->setRange(0, 100);
+	m_sliderExtraVelocity->setLimits(0, 100);
 	m_sliderExtraVelocity->setValue(0);
 	m_sliderExtraVelocity->addEventHandler< ui::ContentChangeEvent >(this, &EffectEditorPage::eventSliderExtraVelocityChange);
 

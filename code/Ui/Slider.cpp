@@ -6,21 +6,22 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Ui/Slider.h"
+
 #include "Ui/Application.h"
 #include "Ui/Canvas.h"
-#include "Ui/Slider.h"
 #include "Ui/StyleSheet.h"
 
 namespace traktor::ui
 {
-	namespace
-	{
+namespace
+{
 
 const Unit c_margin = 8_ut;
 const Unit c_knobRadius = 6_ut;
 const Unit c_trackHeight = 4_ut;
 
-	}
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.Slider", Slider, Widget)
 
@@ -38,9 +39,9 @@ bool Slider::create(Widget* parent, uint32_t style)
 	return true;
 }
 
-void Slider::setRange(int32_t minValue, int32_t maxValue)
+void Slider::setLimits(int32_t minValue, int32_t maxValue)
 {
-	m_range = Range< int32_t >(minValue, maxValue);
+	m_limits = Range< int32_t >(minValue, maxValue);
 	update();
 }
 
@@ -73,9 +74,9 @@ void Slider::eventButtonDown(MouseButtonDownEvent* event)
 	auto sz = getInnerRect().getSize();
 	const auto& pt = event->getPosition();
 
-	const int32_t value = m_range.clamp(m_value);
+	const int32_t value = m_limits.clamp(m_value);
 	const int32_t dist = sz.cx - pixel(c_margin) * 2;
-	const int32_t knob = pixel(c_margin) + int32_t(dist * float(value - m_range.min) / m_range.delta());
+	const int32_t knob = pixel(c_margin) + int32_t(dist * float(value - m_limits.min) / m_limits.delta());
 	const int32_t knobL = knob - pixel(c_knobRadius);
 	const int32_t knobR = knob + pixel(c_knobRadius);
 
@@ -88,7 +89,7 @@ void Slider::eventButtonDown(MouseButtonDownEvent* event)
 	}
 	else if (pt.x < knobL)
 	{
-		m_value = m_range.clamp(m_value - m_range.delta() / 10);
+		m_value = m_limits.clamp(m_value - m_limits.delta() / 10);
 		update();
 
 		ContentChangeEvent contentChangeEvent(this);
@@ -96,7 +97,7 @@ void Slider::eventButtonDown(MouseButtonDownEvent* event)
 	}
 	else if (pt.x > knobR)
 	{
-		m_value = m_range.clamp(m_value + m_range.delta() / 10);
+		m_value = m_limits.clamp(m_value + m_limits.delta() / 10);
 		update();
 
 		ContentChangeEvent contentChangeEvent(this);
@@ -131,9 +132,9 @@ void Slider::eventMouseMove(MouseMoveEvent* event)
 
 	const int32_t x = pt.x - pixel(c_margin);
 	const int32_t dist = sz.cx - pixel(c_margin) * 2;
-	const int32_t value = int32_t(m_range.delta() * float(x) / dist + 0.5f);
+	const int32_t value = int32_t(m_limits.delta() * float(x) / dist + 0.5f);
 
-	m_value = m_range.clamp(value);
+	m_value = m_limits.clamp(value);
 	update();
 
 	ContentChangeEvent contentChangeEvent(this);
@@ -151,15 +152,16 @@ void Slider::eventPaint(PaintEvent* event)
 	const int32_t half = pixel(c_trackHeight) / 2;
 	const int32_t radius = pixel(c_knobRadius);
 
-	const int32_t value = m_range.clamp(m_value);
+	const int32_t value = m_limits.clamp(m_value);
 	const int32_t dist = rcInner.getSize().cx - pixel(c_margin) * 2;
-	const int32_t knob = rcInner.left + pixel(c_margin) + int32_t(dist * float(value - m_range.min) / m_range.delta());
+	const int32_t knob = rcInner.left + pixel(c_margin) + int32_t(dist * float(value - m_limits.min) / m_limits.delta());
 
 	// Track, as a rounded bar the full width.
 	const Rect rcTrack(
-		rcInner.left + pixel(c_margin), cy - half,
-		rcInner.right - pixel(c_margin), cy + half
-	);
+		rcInner.left + pixel(c_margin),
+		cy - half,
+		rcInner.right - pixel(c_margin),
+		cy + half);
 	canvas.setBackground(ss->getColor(this, L"track-color"));
 	canvas.fillRoundRect(rcTrack, half);
 
